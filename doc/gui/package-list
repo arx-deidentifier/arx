@@ -1,0 +1,13 @@
+org.deidentifier.flash
+org.deidentifier.flash.gui
+org.deidentifier.flash.gui.resources
+org.deidentifier.flash.gui.view.def
+org.deidentifier.flash.gui.view.impl
+org.deidentifier.flash.gui.view.impl.analyze
+org.deidentifier.flash.gui.view.impl.common
+org.deidentifier.flash.gui.view.impl.define
+org.deidentifier.flash.gui.view.impl.explore
+org.deidentifier.flash.gui.view.impl.menu
+org.deidentifier.flash.gui.worker
+org.deidentifier.flash.io
+org.deidentifier.flash.metric
