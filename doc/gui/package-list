@@ -1,0 +1,14 @@
+org.deidentifier.arx
+org.deidentifier.arx.gui
+org.deidentifier.arx.gui.resources
+org.deidentifier.arx.gui.view.def
+org.deidentifier.arx.gui.view.impl
+org.deidentifier.arx.gui.view.impl.analyze
+org.deidentifier.arx.gui.view.impl.common
+org.deidentifier.arx.gui.view.impl.define
+org.deidentifier.arx.gui.view.impl.explore
+org.deidentifier.arx.gui.view.impl.menu
+org.deidentifier.arx.gui.worker
+org.deidentifier.arx.io
+org.deidentifier.arx.metric
+org.deidentifier.arx.risk
