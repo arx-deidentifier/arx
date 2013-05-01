@@ -1,7 +1,7 @@
 INTRODUCTION
 ************
 
-This project provides a generic Java framework for the efficient implementation of globally optimal full-domain anonymity algorithms. It implements several optimizations which require monotonic generalization hierarchies and monotonic metrics for information loss. It further provides an implementation of the ARX algorithm. ARX is a highly efficient algorithm that implements a novel strategy and fully exploits the implementation framework. It offers stable execution times.
+This project provides a generic Java framework for the efficient implementation of globally optimal full-domain anonymity algorithms. It implements several optimizations which require monotonic generalization hierarchies and monotonic metrics for information loss. It further provides an implementation of the Flash algorithm. Flash is a highly efficient algorithm that implements a novel strategy and fully exploits the implementation framework. It offers stable execution times.
 
 The framework currently distinguishes between four different types of attributes:
 
