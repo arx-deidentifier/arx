@@ -20,8 +20,6 @@ package org.deidentifier.arx.test;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.deidentifier.arx.examples.Example1;
 import org.deidentifier.arx.examples.Example2;
 import org.deidentifier.arx.examples.Example3;
@@ -30,6 +28,7 @@ import org.deidentifier.arx.examples.Example5;
 import org.deidentifier.arx.examples.Example6;
 import org.deidentifier.arx.examples.Example7;
 import org.deidentifier.arx.examples.Example8;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestExamples {

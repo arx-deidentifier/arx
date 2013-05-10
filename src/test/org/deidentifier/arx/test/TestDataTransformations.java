@@ -22,15 +22,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,13 +51,9 @@ public class TestDataTransformations extends TestAnonymizer {
         try {
             provider.createDataDefinition();
             final Data data = provider.getData();
-            data.getDefinition()
-                .setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("zipcode",
-                                  AttributeType.IDENTIFYING_ATTRIBUTE);
+            data.getDefinition().setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
+            data.getDefinition().setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
+            data.getDefinition().setAttributeType("zipcode", AttributeType.IDENTIFYING_ATTRIBUTE);
 
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setSuppressionString("-");
@@ -76,13 +71,9 @@ public class TestDataTransformations extends TestAnonymizer {
         try {
             provider.createDataDefinition();
             final Data data = provider.getData();
-            data.getDefinition()
-                .setAttributeType("age", AttributeType.INSENSITIVE_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("zipcode",
-                                  AttributeType.INSENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("age", AttributeType.INSENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
 
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.kAnonymize(data, 2, 0.0d);
@@ -101,12 +92,9 @@ public class TestDataTransformations extends TestAnonymizer {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             provider.createDataDefinition();
             final Data data = provider.getData();
-            data.getDefinition()
-                .setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
 
             anonymizer.kAnonymize(data, 2, -0.2d);
         } catch (final IllegalArgumentException e) {
@@ -116,8 +104,7 @@ public class TestDataTransformations extends TestAnonymizer {
     }
 
     @Test
-    public void testHierarchyWithHeightOne() throws IllegalArgumentException,
-                                            IOException {
+    public void testHierarchyWithHeightOne() throws IllegalArgumentException, IOException {
         provider.createDataDefinitionWithHeightOne();
         final Data data = provider.getData();
 
@@ -136,9 +123,7 @@ public class TestDataTransformations extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.kAnonymize(data,
-                                                                      2,
-                                                                      0.0d));
+        final String[][] result = resultToArray(anonymizer.kAnonymize(data, 2, 0.0d));
 
         final String[][] expected = { { "age", "gender", "zipcode" },
                 { "<50", "*", "816**" },
@@ -157,16 +142,12 @@ public class TestDataTransformations extends TestAnonymizer {
 
         provider.createDataDefinition();
         final Data data = provider.getData();
-        data.getDefinition()
-            .setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.lDiversify(data,
-                                                                      2,
-                                                                      false,
-                                                                      0.0d));
+        final String[][] result = resultToArray(anonymizer.lDiversify(data, 2, false, 0.0d));
 
         // TODO: check if result is correct!
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -186,16 +167,12 @@ public class TestDataTransformations extends TestAnonymizer {
 
         provider.createDataDefinition();
         final Data data = provider.getData();
-        data.getDefinition()
-            .setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.lDiversify(data,
-                                                                      2,
-                                                                      true,
-                                                                      0.0d));
+        final String[][] result = resultToArray(anonymizer.lDiversify(data, 2, true, 0.0d));
 
         // TODO: check if result is correct!
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -215,16 +192,12 @@ public class TestDataTransformations extends TestAnonymizer {
 
         provider.createDataDefinition();
         final Data data = provider.getData();
-        data.getDefinition()
-            .setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("age", AttributeType.SENSITIVE_ATTRIBUTE);
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.lDiversify(data,
-                                                                      3.0d,
-                                                                      2,
-                                                                      0.0d));
+        final String[][] result = resultToArray(anonymizer.lDiversify(data, 3.0d, 2, 0.0d));
 
         // TODO: check if result is correct!
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -247,10 +220,8 @@ public class TestDataTransformations extends TestAnonymizer {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             provider.createDataDefinition();
             final Data data = provider.getData();
-            data.getDefinition()
-                .setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
-            data.getDefinition()
-                .setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
+            data.getDefinition().setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
 
             anonymizer.kAnonymize(data, 2, -0.2d);
         } catch (final IllegalArgumentException e) {
@@ -268,15 +239,9 @@ public class TestDataTransformations extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.kAnonymize(data,
-                                                                      2,
-                                                                      0.0d));
-        final String[][] result3 = resultToArray(anonymizer.kAnonymize(data,
-                                                                       3,
-                                                                       0.0d));
-        final String[][] result2 = resultToArray(anonymizer.kAnonymize(data,
-                                                                       2,
-                                                                       0.0d));
+        final String[][] result = resultToArray(anonymizer.kAnonymize(data, 2, 0.0d));
+        final String[][] result3 = resultToArray(anonymizer.kAnonymize(data, 3, 0.0d));
+        final String[][] result2 = resultToArray(anonymizer.kAnonymize(data, 2, 0.0d));
 
         final String[][] expected = { { "age", "gender", "zipcode" },
                 { "<50", "*", "816**" },
@@ -357,16 +322,12 @@ public class TestDataTransformations extends TestAnonymizer {
 
         data.getDefinition().setAttributeType("age", age);
         data.getDefinition().setAttributeType("zipcode", zipcode);
-        data.getDefinition()
-            .setAttributeType("disease", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("disease", AttributeType.SENSITIVE_ATTRIBUTE);
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.tClosify(data,
-                                                                    2,
-                                                                    0.6d,
-                                                                    0.0d));
+        final String[][] result = resultToArray(anonymizer.tClosify(data, 2, 0.6d, 0.0d));
 
         // TODO: check if result is correct!
         final String[][] expected = { { "zipcode", "age", "disease" },
@@ -425,60 +386,25 @@ public class TestDataTransformations extends TestAnonymizer {
 
         // Define sensitive value hierarchy
         final DefaultHierarchy disease = Hierarchy.create();
-        disease.add("flu",
-                    "respiratory infection",
-                    "vascular lung disease",
-                    "respiratory&digestive system disease");
-        disease.add("pneumonia",
-                    "respiratory infection",
-                    "vascular lung disease",
-                    "respiratory&digestive system disease");
-        disease.add("bronchitis",
-                    "respiratory infection",
-                    "vascular lung disease",
-                    "respiratory&digestive system disease");
-        disease.add("pulmonary edema",
-                    "vascular lung disease",
-                    "vascular lung disease",
-                    "respiratory&digestive system disease");
-        disease.add("pulmonary embolism",
-                    "vascular lung disease",
-                    "vascular lung disease",
-                    "respiratory&digestive system disease");
-        disease.add("gastric ulcer",
-                    "stomach disease",
-                    "digestive system disease",
-                    "respiratory&digestive system disease");
-        disease.add("stomach cancer",
-                    "stomach disease",
-                    "digestive system disease",
-                    "respiratory&digestive system disease");
-        disease.add("gastritis",
-                    "stomach disease",
-                    "digestive system disease",
-                    "respiratory&digestive system disease");
-        disease.add("colitis",
-                    "colon disease",
-                    "digestive system disease",
-                    "respiratory&digestive system disease");
-        disease.add("colon cancer",
-                    "colon disease",
-                    "digestive system disease",
-                    "respiratory&digestive system disease");
+        disease.add("flu", "respiratory infection", "vascular lung disease", "respiratory&digestive system disease");
+        disease.add("pneumonia", "respiratory infection", "vascular lung disease", "respiratory&digestive system disease");
+        disease.add("bronchitis", "respiratory infection", "vascular lung disease", "respiratory&digestive system disease");
+        disease.add("pulmonary edema", "vascular lung disease", "vascular lung disease", "respiratory&digestive system disease");
+        disease.add("pulmonary embolism", "vascular lung disease", "vascular lung disease", "respiratory&digestive system disease");
+        disease.add("gastric ulcer", "stomach disease", "digestive system disease", "respiratory&digestive system disease");
+        disease.add("stomach cancer", "stomach disease", "digestive system disease", "respiratory&digestive system disease");
+        disease.add("gastritis", "stomach disease", "digestive system disease", "respiratory&digestive system disease");
+        disease.add("colitis", "colon disease", "digestive system disease", "respiratory&digestive system disease");
+        disease.add("colon cancer", "colon disease", "digestive system disease", "respiratory&digestive system disease");
 
         data.getDefinition().setAttributeType("age", age);
         data.getDefinition().setAttributeType("zipcode", zipcode);
-        data.getDefinition()
-            .setAttributeType("disease", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("disease", AttributeType.SENSITIVE_ATTRIBUTE);
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final String[][] result = resultToArray(anonymizer.tClosify(data,
-                                                                    2,
-                                                                    0.4d,
-                                                                    0.0d,
-                                                                    disease));
+        final String[][] result = resultToArray(anonymizer.tClosify(data, 2, 0.4d, 0.0d, disease));
 
         // TODO: check if result is correct!
         final String[][] expected = { { "zipcode", "age", "disease" },

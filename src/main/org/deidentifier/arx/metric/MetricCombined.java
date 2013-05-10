@@ -44,7 +44,7 @@ public class MetricCombined extends Metric<InformationLossCombined> {
      * @param weights
      * @return
      */
-    private static boolean isIndependent(final Metric main,
+    private static boolean isIndependent(final Metric<?> main,
                                          final Set<Metric<?>> metrics) {
         boolean independent = true;
         independent &= main.isIndependent();

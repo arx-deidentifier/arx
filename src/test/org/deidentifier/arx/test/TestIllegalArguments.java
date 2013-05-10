@@ -20,12 +20,11 @@ package org.deidentifier.arx.test;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.Data;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

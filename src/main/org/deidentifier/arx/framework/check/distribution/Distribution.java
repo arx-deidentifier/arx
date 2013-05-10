@@ -433,6 +433,7 @@ public class Distribution {
      * sortedElements and sortedFrequency arrays. In case a collission occured
      * this method also sorts the elements.
      */
+    @SuppressWarnings("unused")
     public void pack() {
         final int[] sortedelements = new int[size];
         final int[] sortedfrequency = new int[size];

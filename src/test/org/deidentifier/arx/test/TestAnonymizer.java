@@ -39,10 +39,9 @@ public abstract class TestAnonymizer extends TestCase {
 
     protected DataProvider provider = null;
 
-    protected org.deidentifier.arx.metric.Metric
-            createMetric(final Metric metricType) {
+    protected org.deidentifier.arx.metric.Metric<?> createMetric(final Metric metricType) {
         // create metric
-        org.deidentifier.arx.metric.Metric metric = null;
+        org.deidentifier.arx.metric.Metric<?> metric = null;
         switch (metricType) {
         case PREC:
             metric = org.deidentifier.arx.metric.Metric.createPrecisionMetric();
