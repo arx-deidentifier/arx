@@ -19,7 +19,7 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.ARXConfiguration.Criterion;
-import org.deidentifier.arx.framework.BitSetCompressed;
+import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.Configuration;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
@@ -84,7 +84,7 @@ public class HashGroupify implements IHashGroupify {
     private final int              absoluteMaxOutliers;
 
     /** d-presence */
-    private final BitSetCompressed researchSubset;
+    private final CompressedBitSet researchSubset;
 
     /** d-presence */
     private final double           dMin;

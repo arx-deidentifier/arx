@@ -18,88 +18,145 @@
 
 package org.deidentifier.arx;
 
+import java.util.Set;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.framework.CompressedBitSet;
 
-public interface ARXConfiguration {
-
-    public static enum Criterion {
+public class ARXConfiguration {
+    
+    public static enum CriterionType {
         K_ANONYMITY,
         L_DIVERSITY,
         T_CLOSENESS,
         D_PRESENCE;
     }
+    
+    public static abstract class PrivacyCriterion{
+        public final CriterionType type;
+        public final int snapshotLength;
+        public final boolean monotonic;
+        public PrivacyCriterion(CriterionType type, int snapshotLength, boolean monotonic){
+            this.type = type;
+            this.snapshotLength = snapshotLength;
+            this.monotonic = monotonic;
+        }
+    }
+    
+    public static class KAnonymityCriterion extends PrivacyCriterion{
+        
+        public final int k;
+        public KAnonymityCriterion(int k){
+            super(CriterionType.K_ANONYMITY, 2, true);
+            this.k = k;
+        }
+    }
+    public static class LDiversityCriterion extends PrivacyCriterion{
+        
+        public static enum DiversityMeasure{
+            ENTROPY,
+            RECURSIVE,
+            DISTINCT
+        }
+        
+        public final int l;
+        public final double c;
+        public final DiversityMeasure measure;
+        
+        public LDiversityCriterion(int l, boolean entropy){
+            super(CriterionType.L_DIVERSITY, 4, false);
+            this.l = l;
+            this.c = Double.NaN;
+            if (entropy){
+                this.measure = DiversityMeasure.DISTINCT;
+            } else {
+                this.measure = DiversityMeasure.RECURSIVE;
+            }
+            
+        }
+        
+        public LDiversityCriterion(double c, int l){
+            super(CriterionType.L_DIVERSITY, 4, false);
+            this.c = c;
+            this.l = l;
+            this.measure = DiversityMeasure.RECURSIVE;
+        }
+        
+    }
+    public static class TClosenessCriterion extends PrivacyCriterion{
+        public static enum ClosenessMeasure{
+            HIERARCHICAL_EMD,
+            BASIC_EMD
+        }
+        
+        public final double t;
+        public final ClosenessMeasure measure;
+        public final Hierarchy hierarchy;
+        
+        public TClosenessCriterion(double t){
+            super(CriterionType.T_CLOSENESS, 4, false);
+            this.t = t;
+            this.measure = ClosenessMeasure.BASIC_EMD;
+            this.hierarchy = null;
+        }
+        
+        public TClosenessCriterion(double t, Hierarchy h){
+            super(CriterionType.T_CLOSENESS, 4, false);
+            this.t = t;
+            this.measure = ClosenessMeasure.HIERARCHICAL_EMD;
+            hierarchy = h;
+        }
+        
+    }
+    public static class DPresenceCriterion extends PrivacyCriterion{
+        
+        public final double dMin;
+        public final double dMax;
+        private final Set<Integer> subset;
+        public DPresenceCriterion(double dMin, double dMax, Set<Integer> subset) {
+            super(CriterionType.D_PRESENCE, 3, false);
+            this.dMin = dMin;
+            this.dMax = dMax;
+            this.subset = subset;
+        }
+        public CompressedBitSet getResearchSubset(Data data){
+            // TODO: Is it a good idea to call getHandle() here?
+            CompressedBitSet c = new CompressedBitSet(data.getHandle().getNumRows());
+                for (Integer line : subset) {
+                    c.set(line);
+                }
+                return c;
+            }
+        }
+    
 
-    public static enum LDiversityCriterion {
-        DISTINCT,
-        ENTROPY,
-        RECURSIVE;
+    /** Do we assume practical monotonicity */
+    private boolean                                practicalMonotonicity           = false;
+
+    /** Relative tuple outliers */
+    private double                                 maxOutliers             = -1;
+
+    /** Criteria*/
+    private PrivacyCriterion[] criteria;
+    
+    public final double getRelativeMaxOutliers() {
+        return maxOutliers;
+    }
+    
+    public final int getAbsoluteMaxOutliers(int dataLength) {
+        return (int)Math.floor(this.maxOutliers * (double)dataLength);
     }
 
-    public static enum TClosenessCriterion {
-        EMD_EQUAL,
-        EMD_HIERARCHICAL;
+    public boolean isPracticalMonotonicity() {
+        return practicalMonotonicity;
     }
 
-    /**
-     * Returns the absolute maximum of outliers
-     * 
-     * @return
-     */
-    public abstract int getAbsoluteMaxOutliers();
-
-    /**
-     * @return the c
-     */
-    public abstract double getC();
-
-    /**
-     * @return the criterion
-     */
-    public abstract ARXConfiguration.Criterion getCriterion();
-
-    /**
-     * @return the k
-     */
-    public abstract int getK();
-
-    /**
-     * @return the l
-     */
-    public abstract int getL();
-
-    /**
-     * @return the ldiversityCriterion
-     */
-    public abstract ARXConfiguration.LDiversityCriterion
-            getLDiversityCriterion();
-
-    /**
-     * @return the relativeMaxOutliers
-     */
-    public abstract double getRelativeMaxOutliers();
-
-    /**
-     * Returns the hierarchy required for EMD_HIERARCHICAL t-closeness
-     * 
-     * @return
-     */
-    public abstract Hierarchy getSensitiveHierarchy();
-
-    /**
-     * @return the t
-     */
-    public abstract double getT();
-
-    /**
-     * @return the tclosenessCriterion
-     */
-    public abstract ARXConfiguration.TClosenessCriterion
-            getTClosenessCriterion();
-
-    /**
-     * Returns whether practical monotonicity has been assumed
-     * 
-     * @return
-     */
-    public abstract boolean isPracticalMonotonicity();
+    public boolean containsCriterion(CriterionType type){
+        for (PrivacyCriterion c : criteria){
+            if (c.type == type){
+                return true;
+            }
+        }
+        return false;
+    }
 }

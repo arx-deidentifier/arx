@@ -134,7 +134,7 @@ public final class Configuration implements ARXConfiguration {
     private double                                 dMax                            = -1;
 
     /** D-Presence */
-    private BitSetCompressed                       researchSubsetBitSet            = null;
+    private CompressedBitSet                       researchSubsetBitSet            = null;
 
     /** D-Presence */
     private Set<Integer>                           researchSubset                  = null;
@@ -142,14 +142,6 @@ public final class Configuration implements ARXConfiguration {
     /** D-Presence */
     private boolean                                dPresenceParamsSet              = false;
 
-    /** Do we assume practical monotonicity */
-    private boolean                                practicalMonotonicity           = false;
-
-    /** The pruning mode in the history */
-    private HistoryPruning                         pruning                         = HistoryPruning.ANONYMOUS;
-
-    /** The history size mode */
-    private HistorySize                            historySize                     = HistorySize.RESTRICTED_HISTORY_SIZE;
 
     /**
      * Creates an l-diversity configuration
@@ -425,16 +417,6 @@ public final class Configuration implements ARXConfiguration {
     /*
      * (non-Javadoc)
      * 
-     * @see org.deidentifier.ARX.f#getRelativeMaxOutliers()
-     */
-    @Override
-    public final double getRelativeMaxOutliers() {
-        return relativeMaxOutliers;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.deidentifier.ARX.f#getTClosenessHierarchy()
      */
     @Override
@@ -564,7 +546,7 @@ public final class Configuration implements ARXConfiguration {
      * 
      * @return the d-presence research subset bitset
      */
-    public BitSetCompressed getResearchSubset() {
+    public CompressedBitSet getResearchSubset() {
         if (dPresenceParamsSet) {
             return researchSubsetBitSet;
         } else {
@@ -574,7 +556,7 @@ public final class Configuration implements ARXConfiguration {
 
     public void createResearchBitSet(int dataLength) {
         dPresenceParamsSet = true;
-        researchSubsetBitSet = new BitSetCompressed(dataLength);
+        researchSubsetBitSet = new CompressedBitSet(dataLength);
         for (Integer line : researchSubset) {
             researchSubsetBitSet.set(line);
         }
