@@ -1,21 +1,10 @@
 INTRODUCTION
 ************
 
-This project provides a generic Java framework for the efficient implementation of globally optimal full-domain anonymity algorithms. It implements several optimizations which require monotonic generalization hierarchies and monotonic metrics for information loss. It further provides an implementation of the Flash algorithm. Flash is a highly efficient algorithm that implements a novel strategy and fully exploits the implementation framework. It offers stable execution times.
+This project aims at providing a comprehensive, open source anonymization framework for sensitive personal data. It is able to alter the data in a way that guarantees minimal information loss while making sure that the transformed data adheres to well-known privacy criteria, such as k-anonymity, l-diversity or t-closeness. 
+It implements a globally optimal full-domain anonymity algorithms and uses several optimizations which results in a highly efficient framework. It also provides an implementation of the Flash algorithm which uses a novel search strategy and fully exploits the implementation framework. It offers stable execution times.
 
-The framework currently distinguishes between four different types of attributes:
-
-- Insensitive attributes will be kept as is.
-- Directly identifying attributes (such as name) will be removed from the dataset.
-- Quasi-identifying attributes (such as age or zipcode) will be transformed by applying the provided generalization hierarchies.
-- Sensitive attributes will be kept as is and can be utilized to generate l-diverse/t-close transformations. 
-
-The supported metrics for information loss are: 
-
-- Height.
-- Precision.
-- Monotonic Discernability (DM*).
-- Non-Uniform Entropy. 
+More details can be found at: http://arx.deidentifier.org/
 
 LICENSE
 *******
@@ -31,4 +20,4 @@ You should have received a copy of the GNU General Public License along with thi
 EXTERNAL LIBRARIES
 ******************
 
-The framework uses external libraries. The according licenses are listed in license.txt
+The framework uses external libraries. The according licenses are listed in the respective lib folders.
