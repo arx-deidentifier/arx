@@ -2,7 +2,7 @@ INTRODUCTION
 ************
 
 This project aims at providing a comprehensive, open source anonymization framework for sensitive personal data. It is able to alter the data in a way that guarantees minimal information loss while making sure that the transformed data adheres to well-known privacy criteria, such as k-anonymity, l-diversity or t-closeness. 
-It implements a globally optimal full-domain anonymity algorithms and uses several optimizations which results in a highly efficient framework. It also provides an implementation of the Flash algorithm which uses a novel search strategy and fully exploits the implementation framework. It offers stable execution times.
+It implements a globally optimal full-domain anonymity algorithm and uses several optimizations which results in a highly efficient anonymization tool. It therefore provides an implementation of the Flash algorithm which uses a novel search strategy and fully exploits the implementation framework. It offers stable execution times.
 
 More details can be found at: http://arx.deidentifier.org/
 
