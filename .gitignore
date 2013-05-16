@@ -3,3 +3,5 @@
 /bin
 /data-complete
 /.settings
+/junit_test_data.csv
+/junit_test_hierarchy_age.csv
