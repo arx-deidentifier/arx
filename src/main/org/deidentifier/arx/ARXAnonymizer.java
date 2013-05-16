@@ -222,6 +222,7 @@ public class ARXAnonymizer {
                 config.setTree(manager.getTree());
                 break;
             }
+            break;
         case D_PRESENCE:
             config.createResearchBitSet(manager.getDataQI().getDataLength());
             break;
