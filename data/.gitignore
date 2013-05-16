@@ -37,3 +37,15 @@
 /ihis_hierarchy_YEAR.csv
 /ihis.csv
 /test_anonymized.csv
+/cornell_hierarchy_Age.csv
+/cornell_hierarchy_Education.csv
+/cornell_hierarchy_Gender.csv
+/cornell_hierarchy_Race.csv
+/cornell_prasser.csv
+/cornell.csv
+/dis_hierarchy_age.csv
+/dis_hierarchy_gender.csv
+/dis_hierarchy_zipcode.csv
+/dis.csv
+/old_hierarchy_occupation.csv
+/old_hierarchy_salary-class.csv
