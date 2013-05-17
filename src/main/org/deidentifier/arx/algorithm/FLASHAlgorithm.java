@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import org.deidentifier.arx.framework.Configuration.HistoryPruning;
+import org.deidentifier.arx.ARXConfiguration.KAnonymityCriterion;
 import org.deidentifier.arx.framework.check.INodeChecker;
+import org.deidentifier.arx.framework.check.history.History;
+import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 
@@ -60,12 +62,17 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
 
     /** Traverse type of 2PF */
     private TraverseType              traverseType;
+    
+    /** The history*/
+    private History                   history;
 
     /**
      * Creates a new instance of the ARX algorithm.
      * 
      * @param lattice
      *            The lattice
+     * @param history
+     *            The history
      * @param checker
      *            The checker
      * @param metric
@@ -80,26 +87,24 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
         sorted = new boolean[lattice.getSize()];
         path = new ArrayList<Node>();
         stack = new Stack<Node>();
+        this.history = checker.getHistory();
 
-        // BEWARE: IF we assume practical monotonicity then we assume
+        // IF we assume practical monotonicity then we assume
         // monotonicity for both criterion AND metric!
-        // BEWARE: We assume monotonicity for everything with 0% suppression
+        // We assume monotonicity for everything with 0% suppression
         if ((checker.getConfiguration().getAbsoluteMaxOutliers() == 0) ||
             (checker.getConfiguration().isCriterionMonotonic() && checker.getMetric()
                                                                          .isMonotonic()) ||
             (checker.getConfiguration().isPracticalMonotonicity())) {
             traverseType = TraverseType.FIRST_PHASE_ONLY;
-            checker.getConfiguration()
-                   .setHistoryPruning(HistoryPruning.ANONYMOUS);
+            history.setPruningStrategy(PruningStrategy.ANONYMOUS);
         } else {
-            if (checker.getConfiguration().isSubCriterionKAnonymity()) {
+            if (checker.getConfiguration().containsCriterion(KAnonymityCriterion.class)) {
                 traverseType = TraverseType.FIRST_AND_SECOND_PHASE;
-                checker.getConfiguration()
-                       .setHistoryPruning(HistoryPruning.K_ANONYMOUS);
+                history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
             } else {
                 traverseType = TraverseType.SECOND_PHASE_ONLY;
-                checker.getConfiguration()
-                       .setHistoryPruning(HistoryPruning.CHECKED);
+                history.setPruningStrategy(PruningStrategy.CHECKED);
             }
         }
     }
@@ -381,43 +386,17 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                                 head = checkPathBinary(path);
                             }
 
+                            // if second phase needed, process path
                             if (head != null &&
-                                (traverseType == TraverseType.FIRST_AND_SECOND_PHASE || traverseType == TraverseType.SECOND_PHASE_ONLY)) { // if
-                                                                                                                                           // second
-                                                                                                                                           // phase
-                                                                                                                                           // needed,
-                                                                                                                                           // process
-                                                                                                                                           // path
-                                final HistoryPruning pruning = checker.getConfiguration()
-                                                                      .getHistoryPruning();
-                                checker.getConfiguration()
-                                       .setHistoryPruning(HistoryPruning.CHECKED); // change
-                                                                                   // history
-                                                                                   // pruning
-                                                                                   // strategy
-
-                                if (traverseType == TraverseType.FIRST_AND_SECOND_PHASE) { // untag
-                                                                                           // all
-                                                                                           // nodes
-                                                                                           // above
-                                                                                           // firstTrueNode
-                                                                                           // if
-                                                                                           // they
-                                                                                           // have
-                                                                                           // already
-                                                                                           // been
-                                                                                           // tagged
-                                                                                           // by
-                                                                                           // first
-                                                                                           // phase;
-                                                                                           // they
-                                                                                           // will
-                                                                                           // all
-                                                                                           // be
-                                                                                           // tagged
-                                                                                           // again
-                                                                                           // by
-                                                                                           // stackARX
+                                (traverseType == TraverseType.FIRST_AND_SECOND_PHASE || traverseType == TraverseType.SECOND_PHASE_ONLY)) {
+                                
+                                // Change strategy
+                                final PruningStrategy pruning = history.getPruningStrategy();
+                                history.setPruningStrategy(PruningStrategy.CHECKED);
+                                
+                                // Untag all nodes above first anonymous node if they have already been tagged by first phase;
+                                // They will all be tagged again by StackFlash
+                                if (traverseType == TraverseType.FIRST_AND_SECOND_PHASE) { 
                                     lattice.doUnTagUpwards(head);
                                 }
 
@@ -430,12 +409,8 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                                     }
                                 }
 
-                                checker.getConfiguration()
-                                       .setHistoryPruning(pruning); // change
-                                                                    // history
-                                                                    // pruning
-                                                                    // strategy
-                                                                    // back
+                                // Switch back to previous strategy
+                                history.setPruningStrategy(pruning);
                             }
                         }
                     }

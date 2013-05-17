@@ -23,11 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.ARXConfiguration.KAnonymityCriterion;
+import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
+import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
+import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion.ClosenessMeasure;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
-import org.deidentifier.arx.framework.Configuration;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -77,9 +79,6 @@ public class ARXAnonymizer {
             this.lattice = lattice;
         }
     }
-
-    /** Assume practical monotonicity? */
-    private boolean       practicalMonotonicity = false;
 
     /** Remove outliers? */
     private boolean       removeOutliers        = true;
@@ -209,28 +208,7 @@ public class ARXAnonymizer {
         this.suppressionString = suppressionString;
     }
 
-    protected Result anonymizeInternal(final Configuration config, final DataManager manager) {
-
-        // Prepare if required
-        switch (config.getCriterion()) {
-        case T_CLOSENESS:
-            switch (config.getTClosenessCriterion()) {
-            case EMD_EQUAL:
-                config.setDistribution(manager.getDistribution());
-                break;
-            case EMD_HIERARCHICAL:
-                config.setTree(manager.getTree());
-                break;
-            }
-        case D_PRESENCE:
-            config.createResearchBitSet(manager.getDataQI().getDataLength());
-            break;
-
-        case K_ANONYMITY:
-        case L_DIVERSITY:
-            // do nothing
-            break;
-        }
+    protected Result anonymizeInternal(final ARXConfiguration config, final DataManager manager) {
 
         // Check
         checkAfterEncoding(config, manager);
@@ -251,7 +229,6 @@ public class ARXAnonymizer {
         final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
 
         // Build an algorithm instance
-        config.setPracticalMonotonicity(practicalMonotonicity);
         final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy);
 
         // Attach the listener
@@ -267,16 +244,19 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Internal method that executes the ARX algorithm.
-     * 
-     * @param manager
-     *            the data manager
-     * @param config
-     *            the config
-     * @return the ARX result internal
+     * Performs data anonymization
+     * @param data The data
+     * @param config The privacy config
+     * @return ARXResult
      * @throws IOException
      */
-    protected ARXResult anonymizeInternal(final Data data, final Configuration config) throws IOException {
+    public ARXResult anonymize(final Data data, final ARXConfiguration config) throws IOException {
+
+        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
+        if (config.containsCriterion(LDiversityCriterion.class) ||
+            config.containsCriterion(TClosenessCriterion.class)){
+            if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
+        }
 
         // Obtain handle
         final DataHandle handle = data.getHandle();
@@ -286,8 +266,8 @@ public class ARXAnonymizer {
         checkBeforeEncoding(config.getRelativeMaxOutliers(), handle.getDefinition().getHierarchies());
 
         final DataManager manager = prepareDataManager(handle, config);
-        final int absoulteMaxOutliers = (int) (manager.getDataQI().getDataLength() * config.getRelativeMaxOutliers());
-        config.setAbsoluteMaxOutliers(absoulteMaxOutliers);
+
+        config.initialize(manager);
 
         final long time = System.currentTimeMillis();
 
@@ -300,9 +280,7 @@ public class ARXAnonymizer {
                                                                 suppressionString,
                                                                 handle.getDefinition(),
                                                                 result.lattice,
-                                                                practicalMonotonicity,
                                                                 removeOutliers,
-                                                                config.getAbsoluteMaxOutliers(),
                                                                 config);
         // Pairing
         outHandle.associate(handle);
@@ -317,21 +295,23 @@ public class ARXAnonymizer {
      * @param manager
      *            the manager
      */
-    private void checkAfterEncoding(final Configuration config, final DataManager manager) {
+    private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
 
-        switch (config.getCriterion()) {
-        case K_ANONYMITY:
-            // Check group size
-            final int k = config.getK();
-            if ((k > manager.getDataQI().getDataLength()) || (k < 1)) { throw new IllegalArgumentException("Group size k " + k + " musst be positive and less or equal than the number of rows " +
-                                                                                                           manager.getDataQI().getDataLength()); }
-            break;
-
-        default:
-            // check nothing
-            break;
+        if (config.containsCriterion(KAnonymityCriterion.class)){
+            for (KAnonymityCriterion c : config.getCriteria(KAnonymityCriterion.class)){
+                if ((c.k > manager.getDataQI().getDataLength()) || (c.k < 1)) { 
+                    throw new IllegalArgumentException("Group size k " + c.k + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
+                }
+            }
         }
-
+        if (config.containsCriterion(LDiversityCriterion.class)){
+            for (LDiversityCriterion c : config.getCriteria(LDiversityCriterion.class)){
+                if ((c.l > manager.getDataQI().getDataLength()) || (c.l < 1)) { 
+                    throw new IllegalArgumentException("Group size k " + c.l + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
+                }
+            }
+        }
+        
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
             if (!hierarchy.isMonotonic()) { throw new IllegalArgumentException("The hierarchy for the attribute '" + hierarchy.getName() + "' is not monotonic!"); }
@@ -417,105 +397,12 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Returns whether the algorithm assumes practical monotonicity
-     * 
-     * @return
-     */
-    public boolean isPracticalMonotonicity() {
-        return practicalMonotonicity;
-    }
-
-    /**
      * Does the anonymizer remove outliers from the dataset?
      * 
      * @return
      */
     public boolean isRemoveOutliers() {
         return removeOutliers;
-    }
-
-    /**
-     * Performs k-anonymization.
-     * 
-     * @param data
-     *            The data definition
-     * @param k
-     *            The value of k
-     * @param maxOutliers
-     *            The number of allowed outliers from range [0;1]
-     * @return the ARX result
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public ARXResult kAnonymize(final Data data, final int k, final double maxOutliers) throws IllegalArgumentException, IOException {
-
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        final Configuration config = Configuration.getKAnonymityConfiguration(maxOutliers, k);
-        final ARXResult result = anonymizeInternal(data, config);
-        return result;
-    }
-
-    /**
-     * Performs recursive (c,l)-diversity anonymization.
-     * 
-     * @param data
-     *            The data definition
-     * @param c
-     *            The value of c
-     * @param l
-     *            The value of l
-     * @param maxOutliers
-     *            The number of allowed outliers from range [0;1]
-     * @return the ARX result
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public ARXResult lDiversify(final Data data, final double c, final int l, final double maxOutliers) throws IllegalArgumentException, IOException {
-
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        final Configuration config = Configuration.getLDiversityConfiguration(maxOutliers, c, l);
-        if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
-
-        final ARXResult result = anonymizeInternal(data, config);
-        return result;
-    }
-
-    /**
-     * Performs entropy or distinct l-diversity anonymization.
-     * 
-     * @param data
-     *            The data definition
-     * @param l
-     *            The value of l
-     * @param entropy
-     *            Choose between entropy or distinct l-diversity
-     * @param maxOutliers
-     *            The allowed relative number of allowed outliers from range
-     *            [0;1]
-     * @return the ARX result
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public ARXResult lDiversify(final Data data, final int l, final boolean entropy, final double maxOutliers) throws IllegalArgumentException, IOException {
-
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        Configuration config = null;
-        if (entropy) {
-            config = Configuration.getLDiversityConfiguration(maxOutliers, l, ARXConfiguration.LDiversityCriterion.ENTROPY);
-        } else {
-            config = Configuration.getLDiversityConfiguration(maxOutliers, l, ARXConfiguration.LDiversityCriterion.DISTINCT);
-        }
-
-        if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
-
-        final ARXResult result = anonymizeInternal(data, config);
-        return result;
     }
 
     /**
@@ -529,7 +416,7 @@ public class ARXAnonymizer {
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    private DataManager prepareDataManager(final DataHandle handle, final Configuration config) throws IOException {
+    private DataManager prepareDataManager(final DataHandle handle, final ARXConfiguration config) throws IOException {
 
         // Extract definitions
         final Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
@@ -545,11 +432,14 @@ public class ARXAnonymizer {
 
         // Encode
         final Map<String, String[][]> sensitive = new HashMap<String, String[][]>();
-        if (config.getSensitiveHierarchy() != null) {
-            sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), config.getSensitiveHierarchy().getHierarchy());
-        } else {
-            if (!handle.getDefinition().getSensitiveAttributes().isEmpty()) {
-                sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), null);
+        if (!handle.getDefinition().getSensitiveAttributes().isEmpty()) {
+            sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), null);
+        }
+        if (config.containsCriterion(TClosenessCriterion.class)){
+            for (TClosenessCriterion c : config.getCriteria(TClosenessCriterion.class)){
+                if (c.measure == ClosenessMeasure.HIERARCHICAL_DISTANCE_EMD){
+                    sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.hierarchy.getHierarchy());
+                }
             }
         }
         final DataManager manager = new DataManager(header, dataArray, dictionary, hierarchies, minGeneralizations, maxGeneralizations, sensitive, insensitiveAttributes, identifiers);
@@ -614,16 +504,6 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Should the algorithm assume practical monotonicity
-     * 
-     * @param val
-     * @return
-     */
-    public void setPracticalMonotonicity(final boolean val) {
-        practicalMonotonicity = val;
-    }
-
-    /**
      * Set whether the anonymizer should remove outliers
      * 
      * @param value
@@ -642,94 +522,4 @@ public class ARXAnonymizer {
         if (suppressionString == null) { throw new NullPointerException("suppressionString must not be null"); }
         this.suppressionString = suppressionString;
     }
-
-    /**
-     * Performs t-closeness anoymization based on earth-movers-distance with
-     * equal distance assumption.
-     * 
-     * @param data
-     *            the data
-     * @param k
-     *            the k
-     * @param t
-     *            the t
-     * @param maxOutliers
-     *            The number of allowed outliers from range [0;1]
-     * @return the ARX result
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public ARXResult tClosify(final Data data, final int k, final double t, final double maxOutliers) throws IllegalArgumentException, IOException {
-
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        final Configuration config = Configuration.getTClosenessConfiguration(maxOutliers, k, t);
-        if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
-
-        final ARXResult result = anonymizeInternal(data, config);
-        return result;
-    }
-
-    /**
-     * Performs t-closeness anoymization with earth movers distance with
-     * hierarchical distance calculation.
-     * 
-     * @param data
-     *            the data
-     * @param k
-     *            the k
-     * @param t
-     *            the t
-     * @param maxOutliers
-     *            The number of allowed outliers from range [0;1]
-     * @param hierarchy
-     * @return the ARX result
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public ARXResult tClosify(final Data data, final int k, final double t, final double maxOutliers, final Hierarchy hierarchy) throws IllegalArgumentException, IOException {
-
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        final Configuration config = Configuration.getTClosenessConfiguration(maxOutliers, k, t, hierarchy);
-        if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
-
-        if ((hierarchy == null) || (hierarchy.getHierarchy().length == 0) || (hierarchy.getHierarchy()[0].length == 0)) { throw new IllegalArgumentException("You need to specify a generalization hierarchy for the sensitive attribute!"); }
-
-        final ARXResult result = anonymizeInternal(data, config);
-        return result;
-    }
-
-    /**
-     * Performs t-closeness anoymization with earth movers distance with
-     * hierarchical distance calculation.
-     * 
-     * @param data
-     *            the data
-     * @param k
-     *            the k
-     * @param t
-     *            the t
-     * @param maxOutliers
-     *            The number of allowed outliers from range [0;1]
-     * @param hierarchy
-     * @return the ARX result
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public ARXResult dpresencify(final Data data, final int k, final double dMin, final double dMax, final double maxOutliers, final Set<Integer> researchSubset) throws IllegalArgumentException,
-                                                                                                                                                                   IOException {
-
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        if ((researchSubset == null) || (researchSubset.size() == 0)) { throw new IllegalArgumentException("You need to specify a research subset!"); }
-
-        final Configuration config = Configuration.getDPresenceConfiguration(maxOutliers, k, dMin, dMax, researchSubset);
-        final ARXResult result = anonymizeInternal(data, config);
-        return result;
-    }
-
 }

@@ -18,9 +18,9 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Criterion;
 import org.deidentifier.arx.framework.CompressedBitSet;
-import org.deidentifier.arx.framework.Configuration;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
 
@@ -43,7 +43,7 @@ public class HashGroupify implements IHashGroupify {
     /** The first entry. */
     private HashGroupifyEntry      firstEntry;
 
-    private final Configuration    config;
+    private final ARXConfiguration    config;
 
     /** The last entry. */
     private HashGroupifyEntry      lastEntry;
@@ -100,7 +100,7 @@ public class HashGroupify implements IHashGroupify {
      * @param config
      *            the config
      */
-    public HashGroupify(int capacity, final Configuration config) {
+    public HashGroupify(int capacity, final ARXConfiguration config) {
 
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
