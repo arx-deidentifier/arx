@@ -19,11 +19,11 @@
 package org.deidentifier.arx.framework;
 
 /**
- * 100 Chunks: 16071504 = 16 10 Chunks: 7877528 = 8 1 Chunk: 11314160 = 11.
+ * A compressed bitset
  *
- * @author prasser
+ * @author Prasser, Kohlmayer
  */
-public class BitSetCompressed {
+public class CompressedBitSet {
 
     /** The Constant ADDRESS_BITS_PER_UNIT. */
     private static final int ADDRESS_BITS_PER_UNIT = 3;
@@ -40,32 +40,24 @@ public class BitSetCompressed {
     /** The chunk size in bytes. */
     private final int        chunkSizeInBytes;
 
-    /** The current chunk index. */
-    private int              currentChunkIndex;
-
     /** The modulo mask. */
     private final int        moduloMask;
 
-    /** The pre calculated_bit_index_mask. */
-    private final int        preCalculated_bit_index_mask;
+    /** The pre-calculated bitmask. */
+    private final int        bitMask;
 
     /** The shift value. */
     private final int        shiftValue;
-
-    /** The size. */
-    private final int        size;
 
     /**
      * Instantiates a new bit set compressed byte chunks shift.
      *
      * @param size the size
      */
-    public BitSetCompressed(final int size) {
-        this.size = size;
-        currentChunkIndex = -1;
+    public CompressedBitSet(final int size) {
 
-        // calculate next power of 2
-        final int sizeinBits = ((size + BitSetCompressed.NUM_CHUNKS) - 1) / BitSetCompressed.NUM_CHUNKS;
+        // Calculate next power of 2
+        final int sizeinBits = ((size + CompressedBitSet.NUM_CHUNKS) - 1) / CompressedBitSet.NUM_CHUNKS;
         int chunkSizeTemp = 1;
         while (chunkSizeTemp < sizeinBits) {
             chunkSizeTemp <<= 1;
@@ -76,46 +68,37 @@ public class BitSetCompressed {
         final int newNumChunks = ((size + chunkSizeInBits) - 1) / chunkSizeInBits;
         chunks = new byte[newNumChunks][];
         moduloMask = chunkSizeInBits - 1;
-        preCalculated_bit_index_mask = BitSetCompressed.BIT_INDEX_MASK & moduloMask;
+        bitMask = CompressedBitSet.BIT_INDEX_MASK & moduloMask;
     }
 
     /**
-     * Gets the.
+     * Gets the bit
      *
      * @param bit the bit
      * @return true, if successful
      */
     public final boolean get(final int bit) {
 
-        currentChunkIndex = bit >> shiftValue;
+        int idx = bit >> shiftValue;
 
-        if (chunks[currentChunkIndex] == null) { return false; }
+        if (chunks[idx] == null) { return false; }
 
-        return ((chunks[currentChunkIndex][(bit & moduloMask) >> BitSetCompressed.ADDRESS_BITS_PER_UNIT] & (1 << (bit & preCalculated_bit_index_mask))) != 0);
+        return ((chunks[idx][(bit & moduloMask) >> CompressedBitSet.ADDRESS_BITS_PER_UNIT] & (1 << (bit & bitMask))) != 0);
     }
 
     /**
-     * Recreate.
-     *
-     * @return the bit set compressed byte chunks shift
-     */
-    public final BitSetCompressed recreate() {
-        return new BitSetCompressed(size);
-    }
-
-    /**
-     * Sets the.
+     * Sets the bit
      *
      * @param bit the bit
      */
     public final void set(final int bit) {
 
-        currentChunkIndex = bit >> shiftValue;
+        int idx = bit >> shiftValue;
 
-        if (chunks[currentChunkIndex] == null) {
-            chunks[currentChunkIndex] = new byte[chunkSizeInBytes];
+        if (chunks[idx] == null) {
+            chunks[idx] = new byte[chunkSizeInBytes];
         }
 
-        chunks[currentChunkIndex][(bit & moduloMask) >> BitSetCompressed.ADDRESS_BITS_PER_UNIT] |= 1 << (bit & preCalculated_bit_index_mask);
+        chunks[idx][(bit & moduloMask) >> CompressedBitSet.ADDRESS_BITS_PER_UNIT] |= 1 << (bit & bitMask);
     }
 }

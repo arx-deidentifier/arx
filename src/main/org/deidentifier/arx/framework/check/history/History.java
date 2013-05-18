@@ -21,7 +21,7 @@ package org.deidentifier.arx.framework.check.history;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -34,6 +34,13 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Prasser, Kohlmayer
  */
 public class History {
+    
+
+    public static enum PruningStrategy {
+        ANONYMOUS,
+        K_ANONYMOUS,
+        CHECKED
+    }
 
     /** The actual buffer. */
     private MRUCache<Node>           cache          = null;
@@ -57,11 +64,14 @@ public class History {
     private final IntArrayDictionary dictionarySensFreq;
 
     /** Current config */
-    private final Configuration      config;
+    private final ARXConfiguration      config;
 
     /** The node backing the last returned snapshot */
     private Node                     resultNode;
-
+    
+    /** The current pruning strategy*/
+    private PruningStrategy pruningStrategy;
+   
     /**
      * Creates a new history.
      * 
@@ -76,17 +86,25 @@ public class History {
                    final int maxSize,
                    final double snapshotSizeDataset,
                    final double snapshotSizeSnapshot,
-                   final Configuration config,
+                   final ARXConfiguration config,
                    final IntArrayDictionary dictionarySensValue,
                    final IntArrayDictionary dictionarySensFreq) {
         this.snapshotSizeDataset = (long) (rowCount * snapshotSizeDataset);
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-        cache = new MRUCache<Node>(maxSize);
-        nodeToSnapshot = new HashMap<Node, int[]>(maxSize);
+        this.cache = new MRUCache<Node>(maxSize);
+        this.nodeToSnapshot = new HashMap<Node, int[]>(maxSize);
         this.maxSize = maxSize;
         this.dictionarySensFreq = dictionarySensFreq;
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
+    }
+    
+    /**
+     * Set the pruning strategy
+     * @param pruning
+     */
+    public void setPruningStrategy(PruningStrategy pruning){
+        this.pruningStrategy = pruning;
     }
 
     /**
@@ -98,7 +116,7 @@ public class History {
      */
     private final boolean canPrune(final Node node) {
         boolean prune = true;
-        switch (config.getHistoryPruning()) {
+        switch (pruningStrategy) {
         case ANONYMOUS:
             for (final Node upNode : node.getSuccessors()) {
                 if (!upNode.isAnonymous()) {
@@ -128,7 +146,7 @@ public class History {
     }
 
     /**
-     * Creates the snapshot.
+     * Creates a generic snapshot for all criteria
      * 
      * @param g
      *            the g
@@ -136,66 +154,25 @@ public class History {
      */
     private final int[] createSnapshot(final IHashGroupify g) {
         // Copy Groupify
-        final int[] data = new int[g.size() * 2];
+        final int[] data = new int[g.size() * config.getSnapshotLength()];
         int index = 0;
         HashGroupifyEntry m = g.getFirstEntry();
+        int offset = 0;
+        if (config.requiresSecondCounter()) offset = 1;
         while (m != null) {
             // Store element
             data[index] = m.representant;
             data[index + 1] = m.count;
+            if (config.requiresSecondCounter()){
+                data[index + 2] = m.pcount;
+            }
+            if (config.requiresDistributions()){
+                final Distribution fSet = m.distribution;
+                fSet.pack();
+                data[index + 2 + offset] = dictionarySensValue.probe(fSet.getElements());
+                data[index + 3 + offset] = dictionarySensFreq.probe(fSet.getFrequency());
+            }
             index += 2;
-            // Next element
-            m = m.nextOrdered;
-        }
-        return data;
-    }
-
-    /**
-     * Creates the snapshot for d presence including the subset count.
-     * 
-     * @param g
-     *            the g
-     * @return the int[]
-     */
-    private final int[] createSnapshotDPresence(final IHashGroupify g) {
-        // Copy Groupify
-        final int[] data = new int[g.size() * 3];
-        int index = 0;
-        HashGroupifyEntry m = g.getFirstEntry();
-        while (m != null) {
-            // Store element
-            data[index] = m.representant;
-            data[index + 1] = m.count;
-            data[index + 1] = m.pcount;
-            index += 3;
-            // Next element
-            m = m.nextOrdered;
-        }
-        return data;
-    }
-
-    /**
-     * Creates the snapshot including the dictionary encoded frequency set
-     * 
-     * @param g
-     * @return
-     */
-    private final int[] createSnapshotFrequencySet(final IHashGroupify g) {
-        // Copy Groupify
-        final int[] data = new int[g.size() * 4];
-        int index = 0;
-
-        HashGroupifyEntry m = g.getFirstEntry();
-        while (m != null) {
-
-            // Store element
-            data[index] = m.representant;
-            data[index + 1] = m.count;
-            final Distribution fSet = m.distribution;
-            fSet.pack();
-            data[index + 2] = dictionarySensValue.probe(fSet.getElements());
-            data[index + 3] = dictionarySensFreq.probe(fSet.getFrequency());
-            index += 4;
             // Next element
             m = m.nextOrdered;
         }
@@ -293,18 +270,11 @@ public class History {
 
     private final void removeHistoryEntry(final Node node) {
         final int[] snapshot = nodeToSnapshot.remove(node);
-
-        // in case of l-diversity/t-closeness clear freqdictionary
-        switch (config.getCriterion()) {
-        case L_DIVERSITY:
-        case T_CLOSENESS:
+        if (config.requiresDistributions()){
             for (int i = 0; i < snapshot.length; i += 4) {
                 dictionarySensValue.decrementRefCount(snapshot[i + 2]);
                 dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
             }
-            break;
-        default:
-            break;
         }
     }
 
@@ -335,31 +305,12 @@ public class History {
 
         // Store only if significantly smaller
         if (usedSnapshot != null) {
-            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getCriterionSpecificSnapshotLength()));
+            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
             if (percentSize > snapshotSizeSnapshot) { return false; }
         }
 
         // Create the snapshot
-        int[] data = null;
-
-        switch (config.getCriterion()) {
-        case K_ANONYMITY:
-            data = createSnapshot(g);
-            break;
-
-        case L_DIVERSITY:
-        case T_CLOSENESS:
-
-            data = createSnapshotFrequencySet(g);
-            break;
-
-        case D_PRESENCE:
-            data = createSnapshotDPresence(g);
-            break;
-
-        default:
-            throw new UnsupportedOperationException(config.getCriterion() + ": currenty not supported");
-        }
+        int[] data = createSnapshot(g);
 
         // if cache size is to large purge
         if (cache.size() >= maxSize) {
@@ -371,5 +322,13 @@ public class History {
         cache.append(node);
 
         return true;
+    }
+
+    /**
+     * Returns the current pruning strategy
+     * @return
+     */
+    public PruningStrategy getPruningStrategy() {
+        return this.pruningStrategy;
     }
 }
