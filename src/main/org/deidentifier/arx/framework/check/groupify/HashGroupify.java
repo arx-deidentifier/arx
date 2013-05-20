@@ -92,14 +92,14 @@ public class HashGroupify implements IHashGroupify {
 
         // Extract monotonic subcriterion
         if (config.containsCriterion(KAnonymity.class)) {
-            k = config.getCriteria(KAnonymity.class).iterator().next().getK();
+            k = config.getCriterion(KAnonymity.class).getK();
         } else {
             k = Integer.MAX_VALUE;
         }
         
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            subset = config.getCriteria(DPresence.class).iterator().next().getResearchSubset();
+            subset = config.getCriterion(DPresence.class).getResearchSubset();
         } else {
             subset = null;
         }
@@ -361,7 +361,7 @@ public class HashGroupify implements IHashGroupify {
         while (entry != null) {
 
             // Check for anonymity
-            final boolean anonymous = isAnonymous(entry);
+            final boolean anonymous = isAnonymousIgnoreKAnonymity(entry);
 
             // Determine outliers
             if (!anonymous) {
@@ -381,6 +381,19 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
+     * Checks whether the given entry is anonymous, ignoring k-anonymity
+     * @param entry
+     * @return
+     */
+    private boolean isAnonymousIgnoreKAnonymity(HashGroupifyEntry entry) {
+        for (PrivacyCriterion c : config.getCriteriaIgnoreKAnonymity()) {
+            if (!c.isAnonymous(entry)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
      * Checks whether the given entry is anonymous
      * @param entry
      * @return
@@ -393,7 +406,6 @@ public class HashGroupify implements IHashGroupify {
         }
         return true;
     }
-
     /**
      * Is the current transformation k-anonymous? CAUTION: Call before
      * isAnonymous()!

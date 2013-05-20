@@ -196,11 +196,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         // Find sensitive hierarchy
         Hierarchy sensitiveHierarchy = null;
         if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
-            for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)){
-                if (c.getHierarchy() != null){
-                    sensitiveHierarchy = c.getHierarchy();
-                    break;
-                }
+            HierarchicalDistanceTCloseness c = config.getCriterion(HierarchicalDistanceTCloseness.class);
+            if (c.getHierarchy() != null){
+                sensitiveHierarchy = c.getHierarchy();
             }
         }
         

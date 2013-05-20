@@ -19,11 +19,17 @@
 package org.deidentifier.arx;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
@@ -45,6 +51,9 @@ public class ARXConfiguration implements Serializable{
     
     /** Criteria*/
     private PrivacyCriterion[] criteria = new PrivacyCriterion[0];
+
+    /** Optimized list of criteria*/
+    private PrivacyCriterion[] optimizedCriteria = new PrivacyCriterion[0];
     
     /** Do the criteria require a counter per equivalence class*/
     public static final int REQUIREMENT_COUNTER = 0x1;
@@ -148,14 +157,20 @@ public class ARXConfiguration implements Serializable{
      * @return
      */
     @SuppressWarnings("unchecked")
-    public<T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz){
+    public<T extends PrivacyCriterion> T getCriterion(Class<T> clazz){
         Set<T> result = new HashSet<T>();
         for (PrivacyCriterion c : criteria){
             if (clazz.isInstance(c)){
                 result.add((T)c);
             }
         }
-        return result;
+        if (result.size()>1) {
+            throw new RuntimeException("More than one matches the query!");
+        } else if (result.size()==1){ 
+            return result.iterator().next();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -163,14 +178,38 @@ public class ARXConfiguration implements Serializable{
      * @param manager
      */
     protected void initialize(DataManager manager) {
+        
+        // Compute requirements
         this.requirements = 0x0;
         for (PrivacyCriterion c : criteria){
             c.initialize(manager);
             this.requirements |= c.getRequirements();
         }
+        
+        // Compute max outliers
         absMaxOutliers = (int)Math.floor(this.relMaxOutliers * (double)manager.getDataQI().getDataLength());
+        
+        // Compute optimized array with criteria, assuming complexities 
+        // dPresence <= lDiversity <= tCloseness and ignoring kAnonymity
+        // TODO: Configuration should not know anything about them
+        List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
+        if (this.containsCriterion(DPresence.class)){
+            list.add(this.getCriterion(DPresence.class));
+        }
+        if (this.containsCriterion(LDiversity.class)){
+            list.add(this.getCriterion(LDiversity.class));
+        }
+        if (this.containsCriterion(TCloseness.class)){
+            list.add(this.getCriterion(TCloseness.class));
+        }
+        this.optimizedCriteria = list.toArray(new PrivacyCriterion[0]);
+        
+        // Change order of criteria
+        if (this.containsCriterion(KAnonymity.class)){
+            list.add(0, this.getCriterion(KAnonymity.class));
+            this.criteria = list.toArray(new PrivacyCriterion[0]); 
+        }
     }
-    
 
     /**
      * Determines whether the anonymity criterion is montonic
@@ -209,5 +248,13 @@ public class ARXConfiguration implements Serializable{
      */
     public PrivacyCriterion[] getCriteria() {
         return this.criteria;
+    }
+
+    /**
+     * Returns all criteria, not including k-anonymity
+     * @return
+     */
+    public PrivacyCriterion[] getCriteriaIgnoreKAnonymity() {
+        return this.optimizedCriteria;
     }
 }

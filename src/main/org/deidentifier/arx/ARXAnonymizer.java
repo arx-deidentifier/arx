@@ -298,17 +298,15 @@ public class ARXAnonymizer {
     private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
 
         if (config.containsCriterion(KAnonymity.class)){
-            for (KAnonymity c : config.getCriteria(KAnonymity.class)){
-                if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
-                    throw new IllegalArgumentException("Group size k " + c.getK() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
-                }
+            KAnonymity c = config.getCriterion(KAnonymity.class);
+            if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
+                throw new IllegalArgumentException("Group size k " + c.getK() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
             }
         }
         if (config.containsCriterion(LDiversity.class)){
-            for (LDiversity c : config.getCriteria(LDiversity.class)){
-                if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
-                    throw new IllegalArgumentException("Group size k " + c.getL() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
-                }
+            LDiversity c = config.getCriterion(LDiversity.class);
+            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
+                throw new IllegalArgumentException("Group size k " + c.getL() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
             }
         }
         
@@ -436,9 +434,8 @@ public class ARXAnonymizer {
             sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), null);
         }
         if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
-            for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)){
-                sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.getHierarchy().getHierarchy());
-            }
+            HierarchicalDistanceTCloseness c = config.getCriterion(HierarchicalDistanceTCloseness.class);
+            sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.getHierarchy().getHierarchy());
         }
         final DataManager manager = new DataManager(header, dataArray, dictionary, hierarchies, minGeneralizations, maxGeneralizations, sensitive, insensitiveAttributes, identifiers);
 
