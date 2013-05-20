@@ -49,8 +49,7 @@ public class Transformer11 extends AbstractTransformer {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
+     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
      * #walkAll()
      */
     @Override
@@ -70,25 +69,23 @@ public class Transformer11 extends AbstractTransformer {
             outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
             outtuple[outindex10] = idindex10[intuple[index10]][stateindex10];
 
-            // TODO: Maybe move to a separate method shared between all transformers
-            switch (requirements){
+            // TODO: Maybe move to a separate method shared between all
+            // transformers
+            switch (requirements) {
             case ARXConfiguration.REQUIREMENT_COUNTER:
-                     groupify.addAll(outtuple, i, 1, -1, -1);
+                groupify.addAll(outtuple, i, 1, -1, -1);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | 
-                 ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
-                     groupify.addAll(outtuple, i, 1, -1, 1);
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
+                groupify.addAll(outtuple, i, 1, -1, 1);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | 
-                 ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
                  ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                     groupify.addAll(outtuple, i, 1, sensitiveValues[i], 1);
-                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                     groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
+                groupify.addAll(outtuple, i, 1, sensitiveValues[i], 1);
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
             default:
-                 throw new RuntimeException("Invalid requirements: "+requirements);
+                throw new RuntimeException("Invalid requirements: " + requirements);
             }
         }
     }
@@ -96,8 +93,7 @@ public class Transformer11 extends AbstractTransformer {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
+     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
      * #walkGroupify ()
      */
     @Override
@@ -118,28 +114,30 @@ public class Transformer11 extends AbstractTransformer {
             outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
             outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
             outtuple[outindex10] = idindex10[intuple[index10]][stateindex10];
-            
-            // TODO: Maybe move to a separate method shared between all transformers
-            switch (requirements){
+
+            // TODO: Maybe move to a separate method shared between all
+            // transformers
+            switch (requirements) {
             case ARXConfiguration.REQUIREMENT_COUNTER:
                 groupify.addGroupify(outtuple, element.representant, element.count, null, -1);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | 
-                 ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
-                     groupify.addGroupify(outtuple, element.representant, element.count, null, element.pcount);
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
+                groupify.addGroupify(outtuple, element.representant, element.count, null, element.pcount);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | 
-                 ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
                  ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                     groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, element.pcount);
-                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                     groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
+                groupify.addGroupify(outtuple,
+                                     element.representant,
+                                     element.count,
+                                     element.distribution,
+                                     element.pcount);
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
             default:
-                 throw new RuntimeException("Invalid requirements: "+requirements);
+                throw new RuntimeException("Invalid requirements: " + requirements);
             }
-            
+
             // Next element
             processed++;
             if (processed == numElements) { return; }
@@ -150,8 +148,7 @@ public class Transformer11 extends AbstractTransformer {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
+     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
      * #walkSnapshot ()
      */
     @Override
@@ -174,26 +171,34 @@ public class Transformer11 extends AbstractTransformer {
             outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
             outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
             outtuple[outindex10] = idindex10[intuple[index10]][stateindex10];
-            
-            // TODO: Maybe move to a separate method shared between all transformers
-            switch (requirements){
+
+            // TODO: Maybe move to a separate method shared between all
+            // transformers
+            switch (requirements) {
             case ARXConfiguration.REQUIREMENT_COUNTER:
                 groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, -1);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | 
-                 ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
-                     groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, snapshot[i + 2]);
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
+                groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, snapshot[i + 2]);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | 
-                 ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
                  ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                     groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 3]), dictionarySensFreq.get(snapshot[i + 4]), snapshot[i + 2]);
-                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                     groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
+                groupify.addSnapshot(outtuple,
+                                     snapshot[i],
+                                     snapshot[i + 1],
+                                     dictionarySensValue.get(snapshot[i + 3]),
+                                     dictionarySensFreq.get(snapshot[i + 4]),
+                                     snapshot[i + 2]);
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                groupify.addSnapshot(outtuple,
+                                     snapshot[i],
+                                     snapshot[i + 1],
+                                     dictionarySensValue.get(snapshot[i + 2]),
+                                     dictionarySensFreq.get(snapshot[i + 3]),
+                                     -1);
             default:
-                 throw new RuntimeException("Invalid requirements: "+requirements);
+                throw new RuntimeException("Invalid requirements: " + requirements);
             }
         }
     }
