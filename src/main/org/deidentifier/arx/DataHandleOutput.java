@@ -24,9 +24,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.data.Data;
@@ -195,8 +195,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         // Find sensitive hierarchy
         Hierarchy sensitiveHierarchy = null;
-        if (config.containsCriterion(TClosenessCriterion.class)){
-            for (TClosenessCriterion c : config.getCriteria(TClosenessCriterion.class)){
+        if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
+            for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)){
                 if (c.hierarchy != null){
                     sensitiveHierarchy = c.hierarchy;
                     break;

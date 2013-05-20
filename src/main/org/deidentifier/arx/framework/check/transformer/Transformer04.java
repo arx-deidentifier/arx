@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check.transformer;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
@@ -42,7 +42,7 @@ public class Transformer04 extends AbstractTransformer {
                          final int[] sensitiveValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
-                         final Configuration config) {
+                         final ARXConfiguration config) {
         super(data, hierarchies, sensitiveValues, dictionarySensValue, dictionarySensFreq, config);
     }
 

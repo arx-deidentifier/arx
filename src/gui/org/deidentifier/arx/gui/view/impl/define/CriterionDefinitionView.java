@@ -607,10 +607,10 @@ public class CriterionDefinitionView implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 if (tclosComboCriterion.getSelectionIndex() == 0) {
                     model.getInputConfig()
-                         .setTClosenessCriterion(TClosenessCriterion.EMD_EQUAL);
+                         .setTClosenessCriterion(EqualDistanceTCloseness.EMD_EQUAL);
                 } else if (tclosComboCriterion.getSelectionIndex() == 1) {
                     model.getInputConfig()
-                         .setTClosenessCriterion(TClosenessCriterion.EMD_HIERARCHICAL);
+                         .setTClosenessCriterion(EqualDistanceTCloseness.EMD_HIERARCHICAL);
                 }
             }
         });

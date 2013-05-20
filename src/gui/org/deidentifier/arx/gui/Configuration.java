@@ -46,7 +46,7 @@ public class Configuration implements Serializable {
     private double              t                     = 0.001d;
 
     private LDiversityCriterion lDiversityCriterion   = LDiversityCriterion.DISTINCT;
-    private TClosenessCriterion tClosenessCriterion   = TClosenessCriterion.EMD_EQUAL;
+    private EqualDistanceTCloseness tClosenessCriterion   = EqualDistanceTCloseness.EMD_EQUAL;
 
     private boolean             modified              = true;
 
@@ -146,7 +146,7 @@ public class Configuration implements Serializable {
         return t;
     }
 
-    public TClosenessCriterion getTClosenessCriterion() {
+    public EqualDistanceTCloseness getTClosenessCriterion() {
         return tClosenessCriterion;
     }
 
@@ -234,7 +234,7 @@ public class Configuration implements Serializable {
         this.t = t;
     }
 
-    public void setTClosenessCriterion(final TClosenessCriterion criterion) {
+    public void setTClosenessCriterion(final EqualDistanceTCloseness criterion) {
         tClosenessCriterion = criterion;
         setModified();
     }

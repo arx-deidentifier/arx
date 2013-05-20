@@ -49,7 +49,7 @@ public abstract class TestDataTransformationsFromFileAbstract extends
         public double                                 c;
         public ARXConfiguration.LDiversityCriterion lDiversityCriterion;
         public double                                 t;
-        public ARXConfiguration.TClosenessCriterion tClosenessCriterion;
+        public ARXConfiguration.EqualDistanceTCloseness tClosenessCriterion;
         public Metric                                 metric;
 
         public double                                 relativeMaxOutliers;
@@ -92,7 +92,7 @@ public abstract class TestDataTransformationsFromFileAbstract extends
         // new int[] { 1, 4, 1, 1, 3, 2, 2, 1 })},
         public TestCaseResult(final double t,
                               final int k,
-                              final TClosenessCriterion criterion,
+                              final EqualDistanceTCloseness criterion,
                               final String sensitiveAttribute,
                               final double relativeMaxOutliers,
                               final String dataset,

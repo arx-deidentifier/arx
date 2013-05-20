@@ -186,7 +186,7 @@ public class Transformer {
         case SNAPSHOT:
             startIndex = 0;
             stopIndex = snapshot.length /
-                        config.getCriterionSpecificSnapshotLength();
+                        config.getSnapshotLength();
             break;
         }
 

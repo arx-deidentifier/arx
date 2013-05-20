@@ -23,153 +23,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.framework.CompressedBitSet;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 
 public class ARXConfiguration implements Serializable{
     
     private static final long serialVersionUID = -6713510386735241964L;
-
-    public static enum CriterionType implements Serializable{
-        K_ANONYMITY,
-        L_DIVERSITY,
-        T_CLOSENESS,
-        D_PRESENCE;
-    }
-    
-    public static abstract class PrivacyCriterion implements Serializable{
-
-        private static final long serialVersionUID = -8460571120677880409L;
-        public final CriterionType type;
-        public final int snapshotLength;
-        public final boolean monotonic;
-        public PrivacyCriterion(CriterionType type, int snapshotLength, boolean monotonic){
-            this.type = type;
-            this.snapshotLength = snapshotLength;
-            this.monotonic = monotonic;
-        }
-        public abstract void initialize(DataManager manager);
-    }
-    
-    public static class KAnonymityCriterion extends PrivacyCriterion{
-
-        private static final long serialVersionUID = -8370928677928140572L;
-        public final int k;
-        public KAnonymityCriterion(int k){
-            super(CriterionType.K_ANONYMITY, 2, true);
-            this.k = k;
-        }
-        @Override
-        public void initialize(DataManager manager) {
-            // Nothing to do
-        }
-    }
-    public static class LDiversityCriterion extends PrivacyCriterion{
-
-        private static final long serialVersionUID = -5893481096346270328L;
-
-        public static enum DiversityMeasure implements Serializable{
-            ENTROPY,
-            RECURSIVE,
-            DISTINCT
-        }
-        
-        public final int l;
-        public final double c;
-        public final DiversityMeasure measure;
-        
-        public LDiversityCriterion(int l, boolean entropy){
-            super(CriterionType.L_DIVERSITY, 4, false);
-            this.l = l;
-            this.c = Double.NaN;
-            if (entropy){
-                this.measure = DiversityMeasure.DISTINCT;
-            } else {
-                this.measure = DiversityMeasure.RECURSIVE;
-            }
-            
-        }
-        
-        public LDiversityCriterion(double c, int l){
-            super(CriterionType.L_DIVERSITY, 4, false);
-            this.c = c;
-            this.l = l;
-            this.measure = DiversityMeasure.RECURSIVE;
-        }
-
-        @Override
-        public void initialize(DataManager manager) {
-            // Nothing to do
-        }
-        
-    }
-    public static class TClosenessCriterion extends PrivacyCriterion{
-        
-        private static final long serialVersionUID = -1383357036299011323L;
-
-        public static enum ClosenessMeasure implements Serializable{
-            HIERARCHICAL_DISTANCE_EMD,
-            EQUAL_DISTANCE_EMD
-        }
-        
-        public final double t;
-        public final ClosenessMeasure measure;
-        public final Hierarchy hierarchy;
-        
-        protected double[] distribution;
-        protected int[] tree;
-        
-        public TClosenessCriterion(double t){
-            super(CriterionType.T_CLOSENESS, 4, false);
-            this.t = t;
-            this.measure = ClosenessMeasure.EQUAL_DISTANCE_EMD;
-            this.hierarchy = null;
-        }
-        
-        public TClosenessCriterion(double t, Hierarchy h){
-            super(CriterionType.T_CLOSENESS, 4, false);
-            this.t = t;
-            this.measure = ClosenessMeasure.HIERARCHICAL_DISTANCE_EMD;
-            hierarchy = h;
-        }
-
-        @Override
-        public void initialize(DataManager manager) {
-            switch (measure){
-            case EQUAL_DISTANCE_EMD:
-                distribution = manager.getDistribution();
-                break;
-            case HIERARCHICAL_DISTANCE_EMD:
-                tree = manager.getTree();
-                break;
-            }
-        }
-    }
-    public static class DPresenceCriterion extends PrivacyCriterion{
-        
-        private static final long serialVersionUID = 8534004943055128797L;
-        
-        public final double dMin;
-        public final double dMax;
-        private final Set<Integer> subset;
-        protected CompressedBitSet bitset;
-        public DPresenceCriterion(double dMin, double dMax, Set<Integer> subset) {
-            super(CriterionType.D_PRESENCE, 3, false);
-            this.dMin = dMin;
-            this.dMax = dMax;
-            this.subset = subset;
-        }
-            
-        @Override
-        public void initialize(DataManager manager) {
-            bitset = new CompressedBitSet(manager.getDataQI().getDataLength());
-            for (Integer line : subset) {
-                bitset.set(line);
-            }
-        }
-    }
-    
 
     /** Do we assume practical monotonicity */
     private boolean                                practicalMonotonicity           = false;
@@ -232,14 +94,14 @@ public class ARXConfiguration implements Serializable{
         }
         absMaxOutliers = (int)Math.floor(this.relMaxOutliers * (double)manager.getDataQI().getDataLength());
 
-        if (containsCriterion(LDiversityCriterion.class) ||
-            containsCriterion(TClosenessCriterion.class)){
+        if (containsCriterion(LDiversity.class) ||
+            containsCriterion(TCloseness.class)){
             this.requiresDistributions = true;
         } else {
             this.requiresDistributions = false;
         }
         
-        if (containsCriterion(DPresenceCriterion.class)){
+        if (containsCriterion(DPresence.class)){
             this.requiresSecondCounter = true;
         } else {
             this.requiresSecondCounter = false;
@@ -257,13 +119,13 @@ public class ARXConfiguration implements Serializable{
         if (relMaxOutliers == 0d) { return true; }
 
         for (PrivacyCriterion c : criteria){
-            if (c instanceof TClosenessCriterion) {
+            if (c instanceof TCloseness) {
                 return false;
             }
-            else if (c instanceof LDiversityCriterion) {
+            else if (c instanceof LDiversity) {
                 return false;
             }
-            else if (c instanceof DPresenceCriterion) {
+            else if (c instanceof DPresence) {
                 throw new UnsupportedOperationException();
             }
         }
@@ -277,11 +139,11 @@ public class ARXConfiguration implements Serializable{
      */
     public int getSnapshotLength() {
         int length = 2;
-        if (this.containsCriterion(LDiversityCriterion.class) ||
-            this.containsCriterion(TClosenessCriterion.class)){
+        if (this.containsCriterion(LDiversity.class) ||
+            this.containsCriterion(TCloseness.class)){
             length += 2;
         }
-        if (this.containsCriterion(DPresenceCriterion.class)) {
+        if (this.containsCriterion(DPresence.class)) {
             length += 1;
         }
         return length;

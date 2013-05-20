@@ -19,7 +19,7 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
+import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -88,7 +88,7 @@ public class NodeChecker implements INodeChecker {
         final IntArrayDictionary dictionarySensValue;
         final IntArrayDictionary dictionarySensFreq;
 
-        if (config.containsCriterion(TClosenessCriterion.class)){
+        if (config.containsCriterion(TCloseness.class)){
             dictionarySensValue = new IntArrayDictionary(initialSize);
             dictionarySensFreq = new IntArrayDictionary(initialSize); 
         } else {

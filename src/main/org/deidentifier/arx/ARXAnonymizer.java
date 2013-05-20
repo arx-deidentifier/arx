@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.ARXConfiguration.KAnonymityCriterion;
-import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion.ClosenessMeasure;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -253,8 +253,8 @@ public class ARXAnonymizer {
     public ARXResult anonymize(final Data data, final ARXConfiguration config) throws IOException {
 
         if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        if (config.containsCriterion(LDiversityCriterion.class) ||
-            config.containsCriterion(TClosenessCriterion.class)){
+        if (config.containsCriterion(LDiversity.class) ||
+            config.containsCriterion(TCloseness.class)){
             if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
         }
 
@@ -297,15 +297,15 @@ public class ARXAnonymizer {
      */
     private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
 
-        if (config.containsCriterion(KAnonymityCriterion.class)){
-            for (KAnonymityCriterion c : config.getCriteria(KAnonymityCriterion.class)){
+        if (config.containsCriterion(KAnonymity.class)){
+            for (KAnonymity c : config.getCriteria(KAnonymity.class)){
                 if ((c.k > manager.getDataQI().getDataLength()) || (c.k < 1)) { 
                     throw new IllegalArgumentException("Group size k " + c.k + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
                 }
             }
         }
-        if (config.containsCriterion(LDiversityCriterion.class)){
-            for (LDiversityCriterion c : config.getCriteria(LDiversityCriterion.class)){
+        if (config.containsCriterion(LDiversity.class)){
+            for (LDiversity c : config.getCriteria(LDiversity.class)){
                 if ((c.l > manager.getDataQI().getDataLength()) || (c.l < 1)) { 
                     throw new IllegalArgumentException("Group size k " + c.l + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
                 }
@@ -435,11 +435,9 @@ public class ARXAnonymizer {
         if (!handle.getDefinition().getSensitiveAttributes().isEmpty()) {
             sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), null);
         }
-        if (config.containsCriterion(TClosenessCriterion.class)){
-            for (TClosenessCriterion c : config.getCriteria(TClosenessCriterion.class)){
-                if (c.measure == ClosenessMeasure.HIERARCHICAL_DISTANCE_EMD){
-                    sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.hierarchy.getHierarchy());
-                }
+        if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
+            for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)){
+                sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.hierarchy.getHierarchy());
             }
         }
         final DataManager manager = new DataManager(header, dataArray, dictionary, hierarchies, minGeneralizations, maxGeneralizations, sensitive, insensitiveAttributes, identifiers);

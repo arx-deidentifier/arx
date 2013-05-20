@@ -404,7 +404,7 @@ public class WorkerSave extends Worker<Model> {
      * @param a
      * @return
      */
-    private String toXML(final TClosenessCriterion a) {
+    private String toXML(final EqualDistanceTCloseness a) {
         if (a == null) {
             return ""; //$NON-NLS-1$
         } else {

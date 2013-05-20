@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import org.deidentifier.arx.ARXConfiguration.KAnonymityCriterion;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
@@ -99,7 +99,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
             traverseType = TraverseType.FIRST_PHASE_ONLY;
             history.setPruningStrategy(PruningStrategy.ANONYMOUS);
         } else {
-            if (checker.getConfiguration().containsCriterion(KAnonymityCriterion.class)) {
+            if (checker.getConfiguration().containsCriterion(KAnonymity.class)) {
                 traverseType = TraverseType.FIRST_AND_SECOND_PHASE;
                 history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
             } else {

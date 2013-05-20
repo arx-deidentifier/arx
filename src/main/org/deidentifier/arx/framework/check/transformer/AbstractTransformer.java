@@ -20,7 +20,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import java.util.concurrent.Callable;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -35,7 +35,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
     /** The mode of operation **/
-    protected final Configuration             config;
+    protected final ARXConfiguration             config;
 
     /** The bucket. */
     protected int                             bucket;
@@ -142,14 +142,14 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
                                final int[] sensitiveValues,
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
-                               final Configuration config) {
+                               final ARXConfiguration config) {
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
         this.sensitiveValues = sensitiveValues;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-        ssStepWidth = config.getCriterionSpecificSnapshotLength();
+        ssStepWidth = config.getSnapshotLength();
 
         // Init arrays
         dimensions = data[0].length;
