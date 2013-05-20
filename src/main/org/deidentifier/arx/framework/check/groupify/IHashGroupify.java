@@ -23,72 +23,6 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 public interface IHashGroupify {
 
     /**
-     * Adds a entry to the operator.
-     * 
-     * @param key
-     *            the key
-     * @param line
-     *            the line
-     * @param value
-     *            the value
-     */
-    public abstract void add(int[] key, int line, int value);
-
-    /**
-     * Adds an entry to this operator having already a frequency set attached.
-     * Used for l-diversity (rollup optimization).
-     * 
-     * @param key
-     *            the key
-     * @param line
-     *            the line
-     * @param value
-     *            the value
-     * @param distribution
-     *            the frequency set
-     */
-    public abstract void add(int[] key, int line, int value, Distribution frequencySet);
-
-    /**
-     * Adds an entry. Used for l-diverstiy (basic optimization).
-     * 
-     * @param key
-     *            the key
-     * @param line
-     *            the line
-     * @param value
-     *            the value
-     * @param sensitiveValue
-     *            the sensitive value
-     */
-    public abstract void add(int[] key, int line, int value, int sensitiveValue);
-
-    /**
-     * Adds an entry. Used for l-diverstiy (history optimization).
-     * 
-     * @param key
-     *            the key
-     * @param line
-     *            the line
-     * @param value
-     *            the value
-     * @param sensitiveElements
-     *            the sensitive elements
-     * @param sensitiveFrequencies
-     *            the sensitive frequencies
-     */
-    public abstract void add(int[] key, int line, int value, int[] sensitiveElements, int[] sensitiveFrequencies);
-
-    /**
-     * Adds an entry. Used for d-presence
-     * @param key the entry to add
-     * @param line the reference to the current row in the dataset
-     * @param value the count of the occurence of key
-     * @param tvalue the count of the occurence of key in the research subset
-     */
-    public abstract void addD(int[] key, int line, int value, int tvalue);
-
-    /**
      * Clear.
      */
     public abstract void clear();
@@ -142,4 +76,35 @@ public interface IHashGroupify {
      */
     public abstract int size();
 
+    /**
+     * Generic adder for all combinations of criteria in mode transform ALL
+     * @param outtuple
+     * @param representant
+     * @param count
+     * @param sensitive
+     * @param pcount
+     */
+    public abstract void addAll(int[] outtuple, int representant, int count, int sensitive, int pcount);
+    
+    /**
+     * Generic adder for all combinations of criteria in mode transform GROUPIFY
+     * @param outtuple
+     * @param representant
+     * @param count
+     * @param distribution
+     * @param pcount
+     */
+    public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution distribution, int pcount);
+    
+
+    /**
+     * Generic adder for all combinations of criteria in mode transform SNAPSHOT
+     * @param outtuple
+     * @param representant
+     * @param count
+     * @param elements
+     * @param frequencies
+     * @param pcount
+     */
+    public abstract void addSnapshot(int[] outtuple, int representant, int count, int[] elements, int[] frequencies, int pcount);
 }

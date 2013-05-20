@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -42,70 +43,107 @@ public class ARXConfiguration implements Serializable{
     /** Absolute tuple outliers*/
     private int                                    absMaxOutliers = 0;
     
-    /** Do the criteria require distributions of sensitive values in the equivalence classes */
-    private boolean requiresDistributions = false;
-    
-    /** Do the criteria require a second counter */
-    private boolean requiresSecondCounter = false;
-
     /** Criteria*/
     private PrivacyCriterion[] criteria = new PrivacyCriterion[0];
     
+    /** Do the criteria require a counter per equivalence class*/
+    public static final int REQUIREMENT_COUNTER = 0x1;
+    
+    /** Do the criteria require a second counter */
+    public static final int REQUIREMENT_SECONDARY_COUNTER = 0x2;
+    
+    /** Do the criteria require distributions of sensitive values in the equivalence classes */
+    public static final int REQUIREMENT_DISTRIBUTION = 0x4;
+    
+    /** The requirements per equivalence class*/
+    private int requirements = 0x0;
+    
+    /**
+     * Returns the maximum number of allowed outliers
+     * @return
+     */
     public final double getRelativeMaxOutliers() {
         return relMaxOutliers;
     }
     
+    /**
+     * Returns the maximum number of allowed outliers
+     * @return
+     */
     public final int getAbsoluteMaxOutliers() {
         return this.absMaxOutliers;
     }
 
+    /**
+     * Is practical monotonicity assumed
+     * @return
+     */
     public boolean isPracticalMonotonicity() {
         return practicalMonotonicity;
+    }
+    
+    /**
+     * Returns the criterias requirements
+     * @return
+     */
+    public int getRequirements(){
+        return this.requirements;
+    }
+    
+    /**
+     * Convenience method for checking the requirements
+     * @param requirement
+     * @return
+     */
+    public boolean requires(int requirement){
+        return (this.requirements & requirement) != 0;
     }
 
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz){
         for (PrivacyCriterion c : criteria){
-            if (c.getClass().equals(clazz)){
+            if (clazz.isInstance(c)){
                 return true;
             }
         }
         return false;
     }
     
+    /**
+     * Adds a criterion to the configuration
+     * @param c
+     */
     public void addCriterion(PrivacyCriterion c){
         criteria = Arrays.copyOf(criteria, criteria.length+1);
         criteria[criteria.length-1] = c;
     }
     
+    /**
+     * Returns all privacy criteria that are instances of the given class
+     * @param clazz
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public<T extends PrivacyCriterion> T[] getCriteria(Class<T> clazz){
         Set<T> result = new HashSet<T>();
         for (PrivacyCriterion c : criteria){
-            if (c.getClass().equals(clazz)){
+            if (clazz.getClass().isInstance(c)){
                 result.add((T)c);
             }
         }
         return (T[]) result.toArray();
     }
 
-    public void initialize(DataManager manager) {
+    /**
+     * Initializes the configuration
+     * @param manager
+     */
+    protected void initialize(DataManager manager) {
+        this.requirements = 0x0;
         for (PrivacyCriterion c : criteria){
             c.initialize(manager);
+            this.requirements |= c.getRequirements();
         }
         absMaxOutliers = (int)Math.floor(this.relMaxOutliers * (double)manager.getDataQI().getDataLength());
-
-        if (containsCriterion(LDiversity.class) ||
-            containsCriterion(TCloseness.class)){
-            this.requiresDistributions = true;
-        } else {
-            this.requiresDistributions = false;
-        }
-        
-        if (containsCriterion(DPresence.class)){
-            this.requiresSecondCounter = true;
-        } else {
-            this.requiresSecondCounter = false;
-        }
     }
     
 
@@ -119,17 +157,9 @@ public class ARXConfiguration implements Serializable{
         if (relMaxOutliers == 0d) { return true; }
 
         for (PrivacyCriterion c : criteria){
-            if (c instanceof TCloseness) {
-                return false;
-            }
-            else if (c instanceof LDiversity) {
-                return false;
-            }
-            else if (c instanceof DPresence) {
-                throw new UnsupportedOperationException();
-            }
+            if (!c.monotonic) return false;
         }
-        // Only k-anonymity
+        // Yes
         return true;
     }
 
@@ -139,29 +169,12 @@ public class ARXConfiguration implements Serializable{
      */
     public int getSnapshotLength() {
         int length = 2;
-        if (this.containsCriterion(LDiversity.class) ||
-            this.containsCriterion(TCloseness.class)){
+        if (this.requires(REQUIREMENT_DISTRIBUTION)){
             length += 2;
         }
-        if (this.containsCriterion(DPresence.class)) {
-            length += 1;
+        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)){
+            length +=1;
         }
         return length;
-    }
-    
-    /**
-     * Do the criteria require distributions of sensitive values in the equivalence classes
-     * @return
-     */
-    public boolean requiresDistributions() {
-        return this.requiresDistributions;
-    }
-    
-    /**
-     * Do the criteria require a second counter per equivalence class
-     * @return
-     */
-    public boolean requiresSecondCounter() {
-        return this.requiresSecondCounter;
     }
 }

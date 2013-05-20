@@ -34,7 +34,6 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Prasser, Kohlmayer
  */
 public class History {
-    
 
     public static enum PruningStrategy {
         ANONYMOUS,
@@ -64,14 +63,17 @@ public class History {
     private final IntArrayDictionary dictionarySensFreq;
 
     /** Current config */
-    private final ARXConfiguration      config;
+    private final ARXConfiguration   config;
 
     /** The node backing the last returned snapshot */
     private Node                     resultNode;
-    
-    /** The current pruning strategy*/
-    private PruningStrategy pruningStrategy;
-   
+
+    /** The current pruning strategy */
+    private PruningStrategy          pruningStrategy;
+
+    /** The current requirements */
+    private int                      requirements;
+
     /**
      * Creates a new history.
      * 
@@ -97,13 +99,15 @@ public class History {
         this.dictionarySensFreq = dictionarySensFreq;
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
+        this.requirements = config.getRequirements();
     }
-    
+
     /**
      * Set the pruning strategy
+     * 
      * @param pruning
      */
-    public void setPruningStrategy(PruningStrategy pruning){
+    public void setPruningStrategy(PruningStrategy pruning) {
         this.pruningStrategy = pruning;
     }
 
@@ -157,20 +161,30 @@ public class History {
         final int[] data = new int[g.size() * config.getSnapshotLength()];
         int index = 0;
         HashGroupifyEntry m = g.getFirstEntry();
-        int offset = 0;
-        if (config.requiresSecondCounter()) offset = 1;
         while (m != null) {
             // Store element
             data[index] = m.representant;
             data[index + 1] = m.count;
-            if (config.requiresSecondCounter()){
+            // Add data for different requirements
+            switch (requirements) {
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
                 data[index + 2] = m.pcount;
-            }
-            if (config.requiresDistributions()){
-                final Distribution fSet = m.distribution;
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
+                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                data[index + 2] = m.pcount;
+                Distribution fSet = m.distribution;
                 fSet.pack();
-                data[index + 2 + offset] = dictionarySensValue.probe(fSet.getElements());
-                data[index + 3 + offset] = dictionarySensFreq.probe(fSet.getFrequency());
+                data[index + 3] = dictionarySensValue.probe(fSet.getElements());
+                data[index + 4] = dictionarySensFreq.probe(fSet.getFrequency());
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                fSet = m.distribution;
+                fSet.pack();
+                data[index + 2] = dictionarySensValue.probe(fSet.getElements());
+                data[index + 3] = dictionarySensFreq.probe(fSet.getFrequency());
+            default:
+                throw new RuntimeException("Invalid requirements: " + requirements);
             }
             index += 2;
             // Next element
@@ -268,9 +282,14 @@ public class History {
         }
     }
 
+    /**
+     * Removes a snapshot
+     * 
+     * @param node
+     */
     private final void removeHistoryEntry(final Node node) {
         final int[] snapshot = nodeToSnapshot.remove(node);
-        if (config.requiresDistributions()){
+        if ((requirements & ARXConfiguration.REQUIREMENT_DISTRIBUTION) != 0) {
             for (int i = 0; i < snapshot.length; i += 4) {
                 dictionarySensValue.decrementRefCount(snapshot[i + 2]);
                 dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
@@ -326,6 +345,7 @@ public class History {
 
     /**
      * Returns the current pruning strategy
+     * 
      * @return
      */
     public PruningStrategy getPruningStrategy() {

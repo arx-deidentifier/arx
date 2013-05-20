@@ -35,7 +35,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
     /** The mode of operation **/
-    protected final ARXConfiguration             config;
+    protected final ARXConfiguration          config;
 
     /** The bucket. */
     protected int                             bucket;
@@ -74,14 +74,12 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     protected final GeneralizationHierarchy[] hierarchies;
 
     /** The idindex14. */
-    protected int[][]                         idindex0, idindex1, idindex2,
-            idindex3, idindex4, idindex5, idindex6, idindex7, idindex8,
-            idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
+    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5, idindex6,
+            idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
 
     /** The index14. */
-    protected int                             index0, index1, index2, index3,
-            index4, index5, index6, index7, index8, index9, index10, index11,
-            index12, index13, index14;
+    protected int                             index0, index1, index2, index3, index4, index5, index6, index7, index8,
+            index9, index10, index11, index12, index13, index14;
 
     /** The intuple. */
     protected int[]                           intuple;
@@ -92,11 +90,36 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The num elements. */
     protected int                             numElements;
 
-    /** The outindex14. */
-    protected int                             outindex0, outindex1, outindex2,
-            outindex3, outindex4, outindex5, outindex6, outindex7, outindex8,
-            outindex9, outindex10, outindex11, outindex12, outindex13,
-            outindex14;
+    /** The outindices. */
+    protected int                             outindex0;
+    /** The outindices. */
+    protected int                             outindex1;
+    /** The outindices. */
+    protected int                             outindex2;
+    /** The outindices. */
+    protected int                             outindex3;
+    /** The outindices. */
+    protected int                             outindex4;
+    /** The outindices. */
+    protected int                             outindex5;
+    /** The outindices. */
+    protected int                             outindex6;
+    /** The outindices. */
+    protected int                             outindex7;
+    /** The outindices. */
+    protected int                             outindex8;
+    /** The outindices. */
+    protected int                             outindex9;
+    /** The outindices. */
+    protected int                             outindex10;
+    /** The outindices. */
+    protected int                             outindex11;
+    /** The outindices. */
+    protected int                             outindex12;
+    /** The outindices. */
+    protected int                             outindex13;
+    /** The outindices. */
+    protected int                             outindex14;
 
     /** The outtuple. */
     protected int[]                           outtuple;
@@ -113,11 +136,36 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The start index. */
     protected int                             startIndex;
 
-    /** The stateindex14. */
-    protected int                             stateindex0, stateindex1,
-            stateindex2, stateindex3, stateindex4, stateindex5, stateindex6,
-            stateindex7, stateindex8, stateindex9, stateindex10, stateindex11,
-            stateindex12, stateindex13, stateindex14;
+    /** The stateindices */
+    protected int                             stateindex0;
+    /** The stateindices */
+    protected int                             stateindex1;
+    /** The stateindices */
+    protected int                             stateindex2;
+    /** The stateindices */
+    protected int                             stateindex3;
+    /** The stateindices */
+    protected int                             stateindex4;
+    /** The stateindices */
+    protected int                             stateindex5;
+    /** The stateindices */
+    protected int                             stateindex6;
+    /** The stateindices */
+    protected int                             stateindex7;
+    /** The stateindices */
+    protected int                             stateindex8;
+    /** The stateindices */
+    protected int                             stateindex9;
+    /** The stateindices */
+    protected int                             stateindex10;
+    /** The stateindices */
+    protected int                             stateindex11;
+    /** The stateindices */
+    protected int                             stateindex12;
+    /** The stateindices */
+    protected int                             stateindex13;
+    /** The stateindices */
+    protected int                             stateindex14;
 
     /** The state index array. */
     protected final int[]                     stateIndexArray;
@@ -125,10 +173,12 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     protected int[]                           states;
     /** The stop index. */
     protected int                             stopIndex;
-
     /** The transition. */
     protected TransitionType                  transition;
 
+    /** The requirements for each equivalence class*/
+    protected int requirements = 0x0;
+    
     /**
      * Instantiates a new abstract transformer.
      * 
@@ -149,8 +199,9 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         this.sensitiveValues = sensitiveValues;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-        ssStepWidth = config.getSnapshotLength();
-
+        this.ssStepWidth = config.getSnapshotLength();
+        this.requirements = config.getRequirements();
+        
         // Init arrays
         dimensions = data[0].length;
         int arraySizes = 15;
@@ -352,8 +403,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      * @param projection
      *            the projection
      */
-    public void updateOutIndices(final int[] activecolumns,
-                                 final long projection) {
+    public void updateOutIndices(final int[] activecolumns, final long projection) {
 
         // Make sure all 15 indices are set
         final int[] outindices2 = new int[15];
