@@ -19,13 +19,16 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXConfiguration.Criterion;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
 
 /**
- * A hash groupify operator.
+ * A hash groupify operator. It implements a hash table with chaining and keeps
+ * track of additional properties per equivalence class
  * 
  * @author Prasser, Kohlmayer
  */
@@ -43,7 +46,8 @@ public class HashGroupify implements IHashGroupify {
     /** The first entry. */
     private HashGroupifyEntry      firstEntry;
 
-    private final ARXConfiguration    config;
+    /** The current config */
+    private final ARXConfiguration config;
 
     /** The last entry. */
     private HashGroupifyEntry      lastEntry;
@@ -52,215 +56,127 @@ public class HashGroupify implements IHashGroupify {
     private final float            loadFactor = 0.75f;
 
     /**
-     * maximum number of elements that can be put in this map before having to
+     * Maximum number of elements that can be put in this map before having to
      * rehash.
      */
     private int                    threshold;
 
-    private final double           logL;
-
-    /** kanonK-anonymity config */
-    private final int              k;
-
-    /** l-diversity */
-    private final double           ldivC;
-
-    /** t-closeness */
-    private final double           tcloseT;
-
-    /** t-closeness */
-    private final int              tCloseExtraStart;
-
-    /** t-closeness */
-    private final double[]         tCloseInitialDistribution;
-
-    /** t-closeness */
-    private final int[]            tCloseTree;
-
-    /** t-closeness */
-    private final int[]            tCloseEmpty;
-
-    /** t-closeness */
+    /** Allowed tuple outliers */
     private final int              absoluteMaxOutliers;
 
-    /** d-presence */
-    private final CompressedBitSet researchSubset;
-
-    /** d-presence */
-    private final double           dMin;
-
-    /** d-presence */
-    private final double           dMax;
+    /** The parameter k, if k-anonymity is contained in the set of criteria */
+    private final int              k;
+    
+    /** The research subset, if d-presence is contained in the set of criteria */
+    private final CompressedBitSet subset;
 
     /**
-     * Constructs a new hash groupify for kanonK anonymity.
+     * Constructs a new hash groupify operator
      * 
      * @param capacity
-     *            the capacity
+     *            The capacity
      * @param config
-     *            the config
+     *            The config
      */
     public HashGroupify(int capacity, final ARXConfiguration config) {
 
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
-        elementCount = 0;
-        buckets = new HashGroupifyEntry[capacity];
-        threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
+        this.elementCount = 0;
+        this.buckets = new HashGroupifyEntry[capacity];
+        this.threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
 
         this.config = config;
-        currentOutliers = 0;
-        absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
-        ldivC = config.getC();
-        tcloseT = config.getT();
-        dMax = config.getDmax();
-        dMin = config.getDmin();
+        this.currentOutliers = 0;
+        this.absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
 
-        // Set params
-        switch (config.getCriterion()) {
-        case T_CLOSENESS:
-            logL = 0d;
-            k = config.getK();
-            switch (config.getTClosenessCriterion()) {
-            case EMD_HIERARCHICAL:
-                tCloseTree = config.getTClosenessTree();
-                tCloseExtraStart = tCloseTree[1] + 3;
-                tCloseEmpty = new int[tCloseTree[1]];
-                tCloseInitialDistribution = null;
-                researchSubset = null;
-                break;
-            case EMD_EQUAL:
-                tCloseInitialDistribution = config.getInitialDistribution();
-                tCloseTree = null;
-                tCloseExtraStart = -1;
-                tCloseEmpty = null;
-                researchSubset = null;
-                break;
-            default:
-                throw new RuntimeException("Invalid configuration!");
+        // Extract monotonic subcriterion
+        if (config.containsCriterion(KAnonymity.class)) {
+            k = config.getCriteria(KAnonymity.class)[0].getK();
+        } else {
+            k = Integer.MAX_VALUE;
+        }
+        
+        // Extract research subset
+        if (config.containsCriterion(DPresence.class)) {
+            subset = config.getCriteria(DPresence.class)[0].getResearchSubset();
+        } else {
+            subset = null;
+        }
+    }
+    
+
+    @Override
+    public void addAll(int[] key, int representant, int count, int sensitive, int pcount) {
+        
+        // Init
+        final int hash = HashTableUtil.hashcode(key);
+        final HashGroupifyEntry entry;
+        
+        // Is a research subset provided
+        if (subset!=null && subset.get(representant)) {
+            entry = addInternal(key, representant, count, hash, pcount);
+        } else {
+            entry = addInternal(key, representant, 0, hash, pcount);
+        }
+        
+        // Is a sensitive attribute provided 
+        if (sensitive!=-1){
+            if (entry.distribution == null) {
+                entry.distribution = new Distribution();
             }
-            break;
-
-        case L_DIVERSITY:
-            logL = Math.log(config.getL()) / Math.log(2);
-            tCloseEmpty = null;
-            tCloseTree = null;
-            tCloseInitialDistribution = null;
-            tCloseExtraStart = -1;
-            k = config.getL();
-            researchSubset = null;
-            break;
-
-        case K_ANONYMITY:
-            logL = 0d;
-            tCloseEmpty = null;
-            tCloseTree = null;
-            tCloseInitialDistribution = null;
-            tCloseExtraStart = -1;
-            k = config.getK();
-            researchSubset = null;
-            break;
-
-        case D_PRESENCE:
-            logL = 0d;
-            tCloseEmpty = null;
-            tCloseTree = null;
-            tCloseInitialDistribution = null;
-            tCloseExtraStart = -1;
-            researchSubset = config.getResearchSubset();
-            k = config.getK();
-            break;
-
-        default:
-            throw new RuntimeException("Invalid configuration!");
+            entry.distribution.add(sensitive);
         }
-
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#add(int[],
-     * int, int)
-     */
     @Override
-    public void add(final int[] key, final int line, final int value) {
+    public void addGroupify(int[] key, int representant, int count, Distribution distribution, int pcount) {
+        
+        // Init
         final int hash = HashTableUtil.hashcode(key);
-        addInternal(key, line, value, hash, 0);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.groupify.IHashGroupify#addD(int[], int, int, int)
-     */
-    @Override
-    public void addD(final int[] key, final int line, final int value, final int pvalue) {
-        final int hash = HashTableUtil.hashcode(key);
-        if (researchSubset.get(line)) {
-            addInternal(key, line, value, hash, pvalue);
+        final HashGroupifyEntry entry;
+        
+        // Is a research subset provided
+        if (subset!=null && subset.get(representant)) {
+            entry = addInternal(key, representant, count, hash, pcount);
         } else {
-            addInternal(key, line, 0, hash, pvalue);
+            entry = addInternal(key, representant, 0, hash, pcount);
+        }
+        
+        // Is a distribution provided 
+        if (distribution!=null){
+            if (entry.distribution == null) {
+                entry.distribution = distribution;
+            }
+            entry.distribution.merge(distribution);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#add(int[],
-     * int, int,
-     * org.deidentifier.ARX.framework.check.distribution.Distribution)
-     */
     @Override
-    public void add(final int[] key, final int line, final int value, final Distribution frequencySet) {
+    public void addSnapshot(int[] key, int representant, int count, int[] elements, int[] frequencies, int pcount) {
+        
+        // Init
         final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, line, value, hash, 0);
-        if (entry.distribution == null) {
-            entry.distribution = frequencySet;
+        final HashGroupifyEntry entry;
+        
+        // Is a research subset provided
+        if (subset!=null && subset.get(representant)) {
+            entry = addInternal(key, representant, count, hash, pcount);
         } else {
-            entry.distribution.merge(frequencySet);
+            entry = addInternal(key, representant, 0, hash, pcount);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#add(int[],
-     * int, int, int)
-     */
-    @Override
-    public void add(final int[] key, final int line, final int value, final int sensitiveValue) {
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, line, value, hash, 0);
-        if (entry.distribution == null) {
-            entry.distribution = new Distribution();
-        }
-        entry.distribution.add(sensitiveValue);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#add(int[],
-     * int, int, int[], int[])
-     */
-    @Override
-    public void add(final int[] key, final int line, final int value, final int[] sensitiveElements, final int[] sensitiveFrequencies) {
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry = addInternal(key, line, value, hash, 0);
-        if (entry.distribution == null) {
-            entry.distribution = new Distribution(sensitiveElements, sensitiveFrequencies);
-        } else {
-            entry.distribution.merge(sensitiveElements, sensitiveFrequencies);
+        
+        // Is a distribution provided 
+        if (elements!=null){
+            if (entry.distribution == null) {
+                entry.distribution = new Distribution(elements, frequencies);
+            }
+            entry.distribution.merge(elements, frequencies);
         }
     }
 
     /**
-     * Adds the internal.
+     * Internal adder method.
      * 
      * @param key
      *            the key
@@ -272,7 +188,11 @@ public class HashGroupify implements IHashGroupify {
      *            the hash
      * @return the hash groupify entry
      */
-    private final HashGroupifyEntry addInternal(final int[] key, final int line, final int value, final int hash, final int pvalue) {
+    private final HashGroupifyEntry addInternal(final int[] key,
+                                                final int line,
+                                                final int value,
+                                                final int hash,
+                                                final int pvalue) {
 
         // Add entry
         int index = hash & (buckets.length - 1);
@@ -286,16 +206,18 @@ public class HashGroupify implements IHashGroupify {
         }
         entry.count += value;
 
+        // TODO: What is this?
         // indirectly check if we are in d-presence mode
-        if (researchSubset != null) {
+        if (subset != null) {
             entry.pcount += pvalue;
             if (value > 0) { // this is a research subset line
-                // reset representant, necessary for rollup / history (otherwise researchSubset.get(line) would potentially be false)
+                // reset representant, necessary for rollup / history (otherwise
+                // researchSubset.get(line) would potentially be false)
                 entry.representant = line;
             }
         }
 
-        // Compute current outliers
+        // Compute current outliers, if k-anonymity is part of the criteria
         if (entry.count >= k) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
@@ -311,8 +233,7 @@ public class HashGroupify implements IHashGroupify {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#clear()
+     * @see org.deidentifier.ARX.framework.check.groupify.IHashGroupify#clear()
      */
     @Override
     public void clear() {
@@ -431,81 +352,46 @@ public class HashGroupify implements IHashGroupify {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#isAnonymous
-     * ()
-     */
     @Override
     public boolean isAnonymous() {
 
-        if (config.getCriterion() == Criterion.K_ANONYMITY) { return isKAnonymous(); }
-
-        // Check for k-anonymity
-        if (!isKAnonymous()) { return false; }
-
-        // Iterate over all groups
+        // Iterate over all classes
         currentOutliers = 0;
         HashGroupifyEntry entry = firstEntry;
         while (entry != null) {
+
+            // Check for anonymity
             final boolean anonymous = isAnonymous(entry);
+
+            // Determine outliers
             if (!anonymous) {
                 currentOutliers += entry.count;
+
+                // Break as soon as any class is not anonymous
                 if (currentOutliers > absoluteMaxOutliers) { return false; }
             }
+
+            // Next class
             entry.isNotOutlier = anonymous;
             entry = entry.nextOrdered;
         }
+
+        // All classes are anonymous
         return true;
     }
 
     /**
-     * Checks whether an equivalence class is anonymous
-     * 
+     * Checks whether the given entry is anonymous
      * @param entry
      * @return
      */
-    private boolean isAnonymous(final HashGroupifyEntry entry) {
-        switch (config.getCriterion()) {
-        case L_DIVERSITY:
-            switch (config.getLDiversityCriterion()) {
-            case RECURSIVE:
-                return entry.distribution.isRecursiveCLDiverse(ldivC, k);
-            case DISTINCT:
-                return entry.distribution.isDistinctLDiverse(k);
-            case ENTROPY:
-                return entry.distribution.isEntropyLDiverse(logL, k);
-            default:
-                throw new UnsupportedOperationException(config.getLDiversityCriterion() + ": currently not supported");
+    private boolean isAnonymous(HashGroupifyEntry entry) {
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (!c.isAnonymous(entry)) {
+                return false;
             }
-        case T_CLOSENESS:
-            switch (config.getTClosenessCriterion()) {
-            case EMD_EQUAL:
-                return entry.distribution.isTCloseEqualDist(tcloseT, tCloseInitialDistribution);
-            case EMD_HIERARCHICAL:
-                System.arraycopy(tCloseEmpty, 0, tCloseTree, tCloseExtraStart, tCloseEmpty.length);
-                return entry.distribution.isTCloseHierachical(tcloseT, tCloseTree);
-            default:
-                throw new UnsupportedOperationException(config.getLDiversityCriterion() + ": currently not supported");
-            }
-        case K_ANONYMITY:
-            return entry.count >= k;
-
-        case D_PRESENCE:
-            // checks if the group is part of the research subset; should be the same as researchSubset.get(entry.representant) but more efficient
-            if (entry.count > 0) {
-                double dCurrent = (double) entry.count / (double) entry.pcount;
-                // current_delta has to be between delta_min and delta_max
-                return (dCurrent >= dMin) && (dCurrent <= dMax);
-            } else {
-                return true;
-            }
-
-        default:
-            throw new UnsupportedOperationException(config.getLDiversityCriterion() + ": currently not supported");
         }
+        return true;
     }
 
     /**

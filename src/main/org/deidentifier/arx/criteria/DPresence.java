@@ -34,9 +34,9 @@ public class DPresence extends PrivacyCriterion{
     private static final long serialVersionUID = 8534004943055128797L;
     
     /** Delta min*/
-    public final double dMin;
+    private final double dMin;
     /** Delta max*/
-    public final double dMax;
+    private final double dMax;
     /** The research subset, a set of tuple ids*/
     private final Set<Integer> subset;
     /** A compressed representation of the research subset*/
@@ -79,5 +79,13 @@ public class DPresence extends PrivacyCriterion{
         } else {
             return true;
         }
+    }
+
+    /**
+     * Returns the research subset
+     * @return
+     */
+    public CompressedBitSet getResearchSubset() {
+        return this.bitset;
     }
 }

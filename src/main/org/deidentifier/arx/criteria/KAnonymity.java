@@ -30,7 +30,7 @@ public class KAnonymity extends PrivacyCriterion{
     private static final long serialVersionUID = -8370928677928140572L;
     
     /** The parameter k*/
-    public final int k;
+    private final int k;
     
     /**
      * Creates a new instance
@@ -50,5 +50,13 @@ public class KAnonymity extends PrivacyCriterion{
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return entry.count >= k;
+    }
+
+    /**
+     * Returns the parameter k
+     * @return
+     */
+    public int getK() {
+        return k;
     }
 }

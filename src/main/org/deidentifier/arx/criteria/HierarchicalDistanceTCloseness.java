@@ -31,7 +31,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     private static final long serialVersionUID = -2142590190479670706L;
     
     /** The hierarchy used for the EMD*/
-    public final Hierarchy hierarchy;
+    private final Hierarchy hierarchy;
     /** Internal tree*/
     private int[]        tree;
     /** Internal offset*/
@@ -141,5 +141,13 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 
         // check
         return cost <= t;
+    }
+
+    /**
+     * Returns the hierarchy backing the EMD calculations
+     * @return
+     */
+    public Hierarchy getHierarchy() {
+        return hierarchy;
     }
 }

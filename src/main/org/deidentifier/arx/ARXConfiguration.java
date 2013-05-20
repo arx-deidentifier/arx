@@ -157,7 +157,7 @@ public class ARXConfiguration implements Serializable{
         if (relMaxOutliers == 0d) { return true; }
 
         for (PrivacyCriterion c : criteria){
-            if (!c.monotonic) return false;
+            if (!c.isMonotonic()) return false;
         }
         // Yes
         return true;
@@ -176,5 +176,13 @@ public class ARXConfiguration implements Serializable{
             length +=1;
         }
         return length;
+    }
+
+    /**
+     * Returns all criteria
+     * @return
+     */
+    public PrivacyCriterion[] getCriteria() {
+        return this.criteria;
     }
 }

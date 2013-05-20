@@ -29,7 +29,7 @@ public abstract class TCloseness extends PrivacyCriterion {
     private static final long serialVersionUID = -139670758266526116L;
     
     /** The param t*/
-    public final double       t;
+    protected final double       t;
     
     /**
      * Creates a new instance

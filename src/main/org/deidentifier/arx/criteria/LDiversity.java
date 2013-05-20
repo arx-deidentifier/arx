@@ -29,7 +29,7 @@ public abstract class LDiversity extends PrivacyCriterion{
     private static final long serialVersionUID = 6429149925699964530L;
     
     /** The parameter l*/
-    public final int l;
+    protected final int l;
 
     /** 
      * Creates a new instance
@@ -45,5 +45,13 @@ public abstract class LDiversity extends PrivacyCriterion{
         
         // Requires a distribution, but nothing else
         return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
+    }
+
+    /**
+     * Returns the parameter l
+     * @return
+     */
+    public int getL() {
+        return l;
     }
 }

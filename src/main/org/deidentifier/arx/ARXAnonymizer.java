@@ -299,15 +299,15 @@ public class ARXAnonymizer {
 
         if (config.containsCriterion(KAnonymity.class)){
             for (KAnonymity c : config.getCriteria(KAnonymity.class)){
-                if ((c.k > manager.getDataQI().getDataLength()) || (c.k < 1)) { 
-                    throw new IllegalArgumentException("Group size k " + c.k + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
+                if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
+                    throw new IllegalArgumentException("Group size k " + c.getK() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
                 }
             }
         }
         if (config.containsCriterion(LDiversity.class)){
             for (LDiversity c : config.getCriteria(LDiversity.class)){
-                if ((c.l > manager.getDataQI().getDataLength()) || (c.l < 1)) { 
-                    throw new IllegalArgumentException("Group size k " + c.l + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
+                if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
+                    throw new IllegalArgumentException("Group size k " + c.getL() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
                 }
             }
         }
@@ -437,7 +437,7 @@ public class ARXAnonymizer {
         }
         if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
             for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)){
-                sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.hierarchy.getHierarchy());
+                sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.getHierarchy().getHierarchy());
             }
         }
         final DataManager manager = new DataManager(header, dataArray, dictionary, hierarchies, minGeneralizations, maxGeneralizations, sensitive, insensitiveAttributes, identifiers);

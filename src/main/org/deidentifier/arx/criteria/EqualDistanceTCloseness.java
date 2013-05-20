@@ -30,7 +30,7 @@ public class EqualDistanceTCloseness extends TCloseness {
     private static final long serialVersionUID = -1383357036299011323L;
 
     /** The original distribution*/
-    protected double[]        distribution;
+    private double[]        distribution;
 
     /**
      * Creates a new instance

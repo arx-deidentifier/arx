@@ -32,7 +32,7 @@ public abstract class PrivacyCriterion implements Serializable{
     private static final long serialVersionUID = -8460571120677880409L;
     
     /** Is the criterion monotonic when allowing for tuple suppression*/
-    public final boolean monotonic;
+    private final boolean monotonic;
     
     /**
      * Instantiates a new criterion
@@ -63,4 +63,12 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
+
+    /**
+     * Returns whether the criterion is monotonic with tuple suppression
+     * @return
+     */
+    public boolean isMonotonic() {
+        return this.monotonic;
+    }
 }
