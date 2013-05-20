@@ -80,6 +80,7 @@ public class Transformer07 extends AbstractTransformer {
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
+                break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
             }
@@ -126,6 +127,7 @@ public class Transformer07 extends AbstractTransformer {
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
+                break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
             }
@@ -185,6 +187,7 @@ public class Transformer07 extends AbstractTransformer {
                                      dictionarySensValue.get(snapshot[i + 2]),
                                      dictionarySensFreq.get(snapshot[i + 3]),
                                      -1);
+                break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
             }

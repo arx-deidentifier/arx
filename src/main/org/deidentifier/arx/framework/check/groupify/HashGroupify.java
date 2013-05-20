@@ -92,14 +92,14 @@ public class HashGroupify implements IHashGroupify {
 
         // Extract monotonic subcriterion
         if (config.containsCriterion(KAnonymity.class)) {
-            k = config.getCriteria(KAnonymity.class)[0].getK();
+            k = config.getCriteria(KAnonymity.class).iterator().next().getK();
         } else {
             k = Integer.MAX_VALUE;
         }
         
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            subset = config.getCriteria(DPresence.class)[0].getResearchSubset();
+            subset = config.getCriteria(DPresence.class).iterator().next().getResearchSubset();
         } else {
             subset = null;
         }

@@ -148,14 +148,14 @@ public class ARXConfiguration implements Serializable{
      * @return
      */
     @SuppressWarnings("unchecked")
-    public<T extends PrivacyCriterion> T[] getCriteria(Class<T> clazz){
+    public<T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz){
         Set<T> result = new HashSet<T>();
         for (PrivacyCriterion c : criteria){
-            if (clazz.getClass().isInstance(c)){
+            if (clazz.isInstance(c)){
                 result.add((T)c);
             }
         }
-        return (T[]) result.toArray();
+        return result;
     }
 
     /**
