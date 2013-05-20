@@ -109,11 +109,12 @@ public class Example9 extends Example {
         data.getDefinition().setAttributeType("sen", AttributeType.INSENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(Metric.createPrecisionMetric());
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new DPresence(1d/2d, 2d/3d, subset));
         config.setAllowedOutliers(0d);
+        config.setMetric(Metric.createPrecisionMetric());
         try {
 
             // Now anonymize

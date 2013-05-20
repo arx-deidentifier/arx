@@ -87,10 +87,11 @@ public class Example6 extends Example {
         data.getDefinition().setMinimumGeneralization("gender", 1);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(Metric.createHeightMetric());
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.setAllowedOutliers(0d);
+        config.setMetric(Metric.createHeightMetric());
         try {
 
             // Now anonymize

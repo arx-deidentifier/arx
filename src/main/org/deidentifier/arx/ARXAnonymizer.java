@@ -92,9 +92,6 @@ public class ARXAnonymizer {
     /** History size. */
     private int           historySize           = 200;
 
-    /** The metric. */
-    private Metric<?>     metric                = Metric.createDMStarMetric();
-
     /** The string to insert for outliers. */
     private String        suppressionString     = "*";
 
@@ -102,9 +99,7 @@ public class ARXAnonymizer {
     private ARXListener listener              = null;
 
     /**
-     * Creates a new anonymizer with the default configuration and DMStar
-     * metric.
-     * 
+     * Creates a new anonymizer with the default configuration
      */
     public ARXAnonymizer() {
         // Empty by design
@@ -113,134 +108,51 @@ public class ARXAnonymizer {
     /**
      * Creates a new anonymizer with the given configuration.
      * 
-     * @param historySize
-     *            the history size
-     * @param snapshotSizeDataset
-     *            the snapshot size
+     * @param historySize The maximum number of snapshots stored in the buffer [default=200]
+     * @param snapshotSizeDataset The maximum relative size of a snapshot compared to the dataset [default=0.2]
+     * @param snapshotSizeSnapshot The maximum relative size of a snapshot compared to its predecessor [default=0.8]
      */
-    public ARXAnonymizer(final int historySize, final double snapshotSize) {
+    public ARXAnonymizer(final int historySize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
+        if (historySize<0) 
+            throw new RuntimeException("History size must be >=0");
         this.historySize = historySize;
-        snapshotSizeDataset = snapshotSize;
+        if (snapshotSizeDataset<=0 || snapshotSizeDataset>=1) 
+            throw new RuntimeException("SnapshotSizeDataset must be >0 and <1");
+        this.snapshotSizeDataset = snapshotSizeDataset;
+        if (snapshotSizeSnapshot<=0 || snapshotSizeSnapshot>=1) 
+            throw new RuntimeException("snapshotSizeSnapshot must be >0 and <1");
+        this.snapshotSizeSnapshot = snapshotSizeSnapshot;
     }
 
-    /**
-     * Creates a new anonymizer with the given configuration and metric.
-     * 
-     * @param historySize
-     *            the history size
-     * @param snapshotSizeDataset
-     *            the snapshot size
-     * @param metric
-     *            the metric
-     */
-    public ARXAnonymizer(final int historySize, final double snapshotSize, final Metric<?> metric) {
-        this.historySize = historySize;
-        snapshotSizeDataset = snapshotSize;
-        this.metric = metric;
-    }
-
-    /**
-     * Creates a new anonymizer with the given configuration and metric.
-     * 
-     * @param historySize
-     *            the history size
-     * @param snapshotSizeDataset
-     *            the snapshot size
-     * @param metric
-     *            the metric
-     * @param suppressionString
-     *            the relativeMaxOutliers string
-     */
-    public ARXAnonymizer(final int historySize, final double snapshotSize, final Metric<?> metric, final String suppressionString) {
-        this.suppressionString = suppressionString;
-        this.historySize = historySize;
-        snapshotSizeDataset = snapshotSize;
-        this.metric = metric;
-    }
 
     /**
      * Creates a new anonymizer with the given configuration.
      * 
-     * @param historySize
-     *            the history size
-     * @param snapshotSizeDataset
-     *            the snapshot size
-     * @param suppressionString
-     *            the relativeMaxOutliers string
-     */
-    public ARXAnonymizer(final int historySize, final double snapshotSize, final String suppressionString) {
-        this.historySize = historySize;
-        snapshotSizeDataset = snapshotSize;
-        this.suppressionString = suppressionString;
-    }
-
-    /**
-     * Creates a new anonymizer with the default configuration and the given
-     * metric.
-     * 
-     * @param metric
-     *            the metric
-     */
-    public ARXAnonymizer(final Metric<?> metric) {
-        this.metric = metric;
-    }
-
-    /**
-     * Creates a new anonymizer with the given configuration.
-     * 
-     * @param metric
-     *            the metric
-     * @param suppressionString
-     *            the relativeMaxOutliers string
-     */
-    public ARXAnonymizer(final Metric<?> metric, final String suppressionString) {
-        this.metric = metric;
-        this.suppressionString = suppressionString;
-    }
-
-    /**
-     * Creates a new anonymizer with the given configuration.
-     * 
-     * @param suppressionString
-     *            the relativeMaxOutliers string
+     * @param suppressionString The string inserted for suppressed values
      */
     public ARXAnonymizer(final String suppressionString) {
         this.suppressionString = suppressionString;
     }
 
-    protected Result anonymizeInternal(final ARXConfiguration config, final DataManager manager) {
-
-        // Check
-        checkAfterEncoding(config, manager);
-
-        // Build the lattice
-        final Lattice lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
-
-        // Attach the listener
-        lattice.setListener(listener);
-
-        // Build a node checker
-        final INodeChecker checker = new NodeChecker(manager, metric, config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
-
-        // Initialize the metric
-        metric.initialize(manager.getDataQI(), manager.getHierarchies());
-
-        // Initialize the ARX strategy
-        final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
-
-        // Build an algorithm instance
-        final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy);
-
-        // Attach the listener
-        algorithm.setListener(listener);
-
-        // Execute
-        algorithm.traverse();
-
-        // Return the result
-        final Result result = new Result(metric, checker, lattice);
-
-        return result;
+    /**
+     * Creates a new anonymizer with the given configuration.
+     * 
+     * @param suppressionString The string inserted for suppressed values
+     * @param historySize The maximum number of snapshots stored in the buffer [default=200]
+     * @param snapshotSizeDataset The maximum relative size of a snapshot compared to the dataset [default=0.2]
+     * @param snapshotSizeSnapshot The maximum relative size of a snapshot compared to its predecessor [default=0.8]
+     */
+    public ARXAnonymizer(final String suppressionString, final int historySize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
+        this.suppressionString = suppressionString;
+        if (historySize<0) 
+            throw new RuntimeException("History size must be >=0");
+        this.historySize = historySize;
+        if (snapshotSizeDataset<=0 || snapshotSizeDataset>=1) 
+            throw new RuntimeException("SnapshotSizeDataset must be >0 and <1");
+        this.snapshotSizeDataset = snapshotSizeDataset;
+        if (snapshotSizeSnapshot<=0 || snapshotSizeSnapshot>=1) 
+            throw new RuntimeException("snapshotSizeSnapshot must be >0 and <1");
+        this.snapshotSizeSnapshot = snapshotSizeSnapshot;
     }
 
     /**
@@ -287,6 +199,41 @@ public class ARXAnonymizer {
         handle.associate(outHandle);
 
         return outHandle;
+    }
+
+    protected Result anonymizeInternal(final ARXConfiguration config, final DataManager manager) {
+
+        // Check
+        checkAfterEncoding(config, manager);
+
+        // Build the lattice
+        final Lattice lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
+
+        // Attach the listener
+        lattice.setListener(listener);
+
+        // Build a node checker
+        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
+
+        // Initialize the metric
+        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies());
+
+        // Initialize the ARX strategy
+        final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
+
+        // Build an algorithm instance
+        final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy);
+
+        // Attach the listener
+        algorithm.setListener(listener);
+
+        // Execute
+        algorithm.traverse();
+
+        // Return the result
+        final Result result = new Result(config.getMetric(), checker, lattice);
+
+        return result;
     }
 
     /**
@@ -374,15 +321,6 @@ public class ARXAnonymizer {
      */
     public double getMaximumSnapshotSizeSnapshot() {
         return snapshotSizeSnapshot;
-    }
-
-    /**
-     * Returns the metric utilized by the algorithm.
-     * 
-     * @return The metric
-     */
-    public Metric<?> getMetric() {
-        return metric;
     }
 
     /**
@@ -485,17 +423,6 @@ public class ARXAnonymizer {
         // Perform sanity checks
         if ((snapshotSizeSnapshot <= 0d) || (snapshotSizeSnapshot > 1d)) { throw new IllegalArgumentException("Snapshot size " + snapshotSizeSnapshot + "must be in [0,1]"); }
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-    }
-
-    /**
-     * Sets the metric to utilize by the algorithm.
-     * 
-     * @param metric
-     *            The metric
-     */
-    public void setMetric(final Metric<?> metric) {
-        if (metric == null) { throw new NullPointerException("metric must not be null"); }
-        this.metric = metric;
     }
 
     /**

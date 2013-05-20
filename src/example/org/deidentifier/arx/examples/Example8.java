@@ -135,11 +135,12 @@ public class Example8 extends Example {
             .setAttributeType("disease", AttributeType.SENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(Metric.createEntropyMetric());
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new HierarchicalDistanceTCloseness(0.6d, disease));
         config.setAllowedOutliers(0d);
+        config.setMetric(Metric.createEntropyMetric());
         try {
 
             // Now anonymize

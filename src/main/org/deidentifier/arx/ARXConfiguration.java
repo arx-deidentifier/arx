@@ -31,6 +31,7 @@ import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.metric.Metric;
 
 /**
  * A generic configuration for the ARX anonymizer
@@ -66,6 +67,9 @@ public class ARXConfiguration implements Serializable{
     
     /** The requirements per equivalence class*/
     private int requirements = 0x0;
+
+    /** The metric. */
+    private Metric<?>     metric                = Metric.createDMStarMetric();
     
     /**
      * Creates a new config without tuple suppression
@@ -75,62 +79,44 @@ public class ARXConfiguration implements Serializable{
     }
     
     /**
-     * Allows for a certain percentage of outliers and thus
-     * triggers tuple suppresion
-     * @param supp
-     */
-    public void setAllowedOutliers(double supp){
-        this.relMaxOutliers = supp;
-    }
-    
-    /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression
      * @param supp
      */
     public ARXConfiguration(double supp){
+        if (supp<0d || supp>=1d)  { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
     
     /**
-     * Returns the maximum number of allowed outliers
-     * @return
+     * Creates a new config that allows the given percentage of outliers and
+     * thus implements tuple suppression. Defines the metric for measuring information loss.
+     * @param supp
+     * @param metric
      */
-    public final double getRelativeMaxOutliers() {
-        return relMaxOutliers;
-    }
-    
-    /**
-     * Returns the maximum number of allowed outliers
-     * @return
-     */
-    public final int getAbsoluteMaxOutliers() {
-        return this.absMaxOutliers;
+    public ARXConfiguration(double supp, Metric<?> metric){
+        if (supp<0d || supp>=1d)  { throw new NullPointerException("Suppression must be >=0 and <1"); }
+        this.relMaxOutliers = supp;
+        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
+        this.metric = metric;
     }
 
     /**
-     * Is practical monotonicity assumed
-     * @return
+     * Creates a new config that allows to define the metric for measuring information loss.
+     * @param metric
      */
-    public boolean isPracticalMonotonicity() {
-        return practicalMonotonicity;
+    public ARXConfiguration(Metric<?> metric){
+        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
+        this.metric = metric;
     }
-    
+
     /**
-     * Returns the criterias requirements
-     * @return
+     * Adds a criterion to the configuration
+     * @param c
      */
-    public int getRequirements(){
-        return this.requirements;
-    }
-    
-    /**
-     * Convenience method for checking the requirements
-     * @param requirement
-     * @return
-     */
-    public boolean requires(int requirement){
-        return (this.requirements & requirement) != 0;
+    public void addCriterion(PrivacyCriterion c){
+        criteria = Arrays.copyOf(criteria, criteria.length+1);
+        criteria[criteria.length-1] = c;
     }
 
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz){
@@ -143,12 +129,27 @@ public class ARXConfiguration implements Serializable{
     }
     
     /**
-     * Adds a criterion to the configuration
-     * @param c
+     * Returns the maximum number of allowed outliers
+     * @return
      */
-    public void addCriterion(PrivacyCriterion c){
-        criteria = Arrays.copyOf(criteria, criteria.length+1);
-        criteria[criteria.length-1] = c;
+    public final int getAbsoluteMaxOutliers() {
+        return this.absMaxOutliers;
+    }
+
+    /**
+     * Returns all criteria
+     * @return
+     */
+    public PrivacyCriterion[] getCriteria() {
+        return this.criteria;
+    }
+    
+    /**
+     * Returns all criteria, not including k-anonymity
+     * @return
+     */
+    public PrivacyCriterion[] getCriteriaIgnoreKAnonymity() {
+        return this.optimizedCriteria;
     }
     
     /**
@@ -171,6 +172,45 @@ public class ARXConfiguration implements Serializable{
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns the metric used for measuring information loss
+     * @return
+     */
+    public Metric<?> getMetric(){
+        return this.metric;
+    }
+    
+    /**
+     * Returns the maximum number of allowed outliers
+     * @return
+     */
+    public final double getRelativeMaxOutliers() {
+        return relMaxOutliers;
+    }
+    
+    /**
+     * Returns the criterias requirements
+     * @return
+     */
+    public int getRequirements(){
+        return this.requirements;
+    }
+    
+    /**
+     * Returns the specific length of each entry in a snapshot
+     * @return
+     */
+    public int getSnapshotLength() {
+        int length = 2;
+        if (this.requires(REQUIREMENT_DISTRIBUTION)){
+            length += 2;
+        }
+        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)){
+            length +=1;
+        }
+        return length;
     }
 
     /**
@@ -228,33 +268,33 @@ public class ARXConfiguration implements Serializable{
     }
 
     /**
-     * Returns the specific length of each entry in a snapshot
+     * Is practical monotonicity assumed
      * @return
      */
-    public int getSnapshotLength() {
-        int length = 2;
-        if (this.requires(REQUIREMENT_DISTRIBUTION)){
-            length += 2;
-        }
-        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)){
-            length +=1;
-        }
-        return length;
+    public boolean isPracticalMonotonicity() {
+        return practicalMonotonicity;
     }
 
     /**
-     * Returns all criteria
+     * Convenience method for checking the requirements
+     * @param requirement
      * @return
      */
-    public PrivacyCriterion[] getCriteria() {
-        return this.criteria;
+    public boolean requires(int requirement){
+        return (this.requirements & requirement) != 0;
     }
 
     /**
-     * Returns all criteria, not including k-anonymity
-     * @return
+     * Allows for a certain percentage of outliers and thus
+     * triggers tuple suppresion
+     * @param supp
      */
-    public PrivacyCriterion[] getCriteriaIgnoreKAnonymity() {
-        return this.optimizedCriteria;
+    public void setAllowedOutliers(double supp){
+        this.relMaxOutliers = supp;
+    }
+
+    public void setMetric(Metric<?> metric) {
+        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
+        this.metric = metric;
     }
 }
