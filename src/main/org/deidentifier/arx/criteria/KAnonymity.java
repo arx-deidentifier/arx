@@ -1,6 +1,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The k-anonymity criterion
@@ -26,5 +27,10 @@ public class KAnonymity extends PrivacyCriterion{
     public int getRequirements(){
         // Requires only one counter
         return ARXConfiguration.REQUIREMENT_COUNTER;
+    }
+
+    @Override
+    public boolean isAnonymous(HashGroupifyEntry entry) {
+        return entry.count >= k;
     }
 }

@@ -1,6 +1,6 @@
 package org.deidentifier.arx.criteria;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The distinct l-diversity privacy criterion
@@ -16,5 +16,10 @@ public class DistinctLDiversity extends LDiversity{
      */
     public DistinctLDiversity(int l){
         super(l);
+    }
+
+    @Override
+    public boolean isAnonymous(HashGroupifyEntry entry) {
+        return entry.distribution.size() >= l;
     }
 }

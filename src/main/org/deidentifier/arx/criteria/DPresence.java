@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.CompressedBitSet;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
@@ -21,7 +22,7 @@ public class DPresence extends PrivacyCriterion{
     /** The research subset, a set of tuple ids*/
     private final Set<Integer> subset;
     /** A compressed representation of the research subset*/
-    protected CompressedBitSet bitset;
+    private CompressedBitSet bitset;
     
     /**
      * Creates a new instance
@@ -49,5 +50,16 @@ public class DPresence extends PrivacyCriterion{
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
+    }
+
+    @Override
+    public boolean isAnonymous(HashGroupifyEntry entry) {
+        if (entry.count > 0) {
+            double dCurrent = (double) entry.count / (double) entry.pcount;
+            // current_delta has to be between delta_min and delta_max
+            return (dCurrent >= dMin) && (dCurrent <= dMax);
+        } else {
+            return true;
+        }
     }
 }

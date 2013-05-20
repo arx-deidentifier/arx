@@ -2,6 +2,7 @@ package org.deidentifier.arx.criteria;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
@@ -37,4 +38,11 @@ public abstract class PrivacyCriterion implements Serializable{
      * @return
      */
     public abstract int getRequirements();
+    
+    /**
+     * Implement this, to enforce the criterion
+     * @param entry
+     * @return
+     */
+    public abstract boolean isAnonymous(HashGroupifyEntry entry);
 }
