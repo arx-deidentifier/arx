@@ -22,7 +22,7 @@ import org.deidentifier.arx.ARXConfiguration;
 
 /**
  * An abstract base class for t-closeness criteria
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public abstract class TCloseness extends PrivacyCriterion {
 

@@ -22,7 +22,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The distinct l-diversity privacy criterion
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public class DistinctLDiversity extends LDiversity{
 

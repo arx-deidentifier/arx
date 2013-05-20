@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * The d-presence criterion
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public class DPresence extends PrivacyCriterion{
     

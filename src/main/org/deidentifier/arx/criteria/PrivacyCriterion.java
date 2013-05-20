@@ -25,7 +25,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * An abstract base class for privacy criteria
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public abstract class PrivacyCriterion implements Serializable{
 

@@ -22,7 +22,7 @@ import org.deidentifier.arx.ARXConfiguration;
 
 /**
  * An abstract base class for l-diversity criteria
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public abstract class LDiversity extends PrivacyCriterion{
 

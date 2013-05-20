@@ -23,7 +23,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The entropy l-diversity criterion
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public class EntropyLDiversity extends LDiversity{
 

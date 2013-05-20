@@ -23,7 +23,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The k-anonymity criterion
- * @author Fabian Prasser
+ * @author Prasser, Kohlmayer
  */
 public class KAnonymity extends PrivacyCriterion{
 
