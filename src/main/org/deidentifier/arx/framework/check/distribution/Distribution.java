@@ -22,13 +22,9 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
 
-import cern.colt.GenericSorting;
-import cern.colt.Swapper;
-import cern.colt.function.IntComparator;
-
 /**
- * A distribution implementation. Used for l-diversity and t-closeness. It keeps
- * track of the frequencies of the sensitive values.
+ * This class can be utilized to track the distributions of values. It is backed by a hash table
+ * implementing open addressing with linear probing.
  * 
  * @author Prasser, Kohlmayer
  */

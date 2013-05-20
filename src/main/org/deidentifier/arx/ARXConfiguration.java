@@ -23,13 +23,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 
+/**
+ * A generic configuration for the ARX anonymizer
+ * @author Fabian Prasser
+ */
 public class ARXConfiguration implements Serializable{
     
     private static final long serialVersionUID = -6713510386735241964L;
