@@ -35,8 +35,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to use the API by directly providing
- * the input datasets
+ * This class implements an example on how to apply the t-closeness criterion
  * 
  * @author Prasser, Kohlmayer
  */
