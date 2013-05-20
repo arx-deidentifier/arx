@@ -175,14 +175,14 @@ public class History {
                 data[index + 2] = m.pcount;
                 Distribution fSet = m.distribution;
                 fSet.pack();
-                data[index + 3] = dictionarySensValue.probe(fSet.getElements());
-                data[index + 4] = dictionarySensFreq.probe(fSet.getFrequency());
+                data[index + 3] = dictionarySensValue.probe(fSet.getPackedElements());
+                data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 fSet = m.distribution;
                 fSet.pack();
-                data[index + 2] = dictionarySensValue.probe(fSet.getElements());
-                data[index + 3] = dictionarySensFreq.probe(fSet.getFrequency());
+                data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
+                data[index + 3] = dictionarySensFreq.probe(fSet.getPackedFrequency());
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
             }
