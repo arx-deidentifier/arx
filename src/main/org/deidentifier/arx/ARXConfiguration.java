@@ -59,6 +59,31 @@ public class ARXConfiguration implements Serializable{
     private int requirements = 0x0;
     
     /**
+     * Creates a new config without tuple suppression
+     */
+    public ARXConfiguration(){
+        this.relMaxOutliers = 0d;
+    }
+    
+    /**
+     * Allows for a certain percentage of outliers and thus
+     * triggers tuple suppresion
+     * @param supp
+     */
+    public void setAllowedOutliers(double supp){
+        this.relMaxOutliers = supp;
+    }
+    
+    /**
+     * Creates a new config that allows the given percentage of outliers and
+     * thus implements tuple suppression
+     * @param supp
+     */
+    public ARXConfiguration(double supp){
+        this.relMaxOutliers = supp;
+    }
+    
+    /**
      * Returns the maximum number of allowed outliers
      * @return
      */
