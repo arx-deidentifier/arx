@@ -69,6 +69,12 @@ public class HashGroupify implements IHashGroupify {
     
     /** The research subset, if d-presence is contained in the set of criteria */
     private final CompressedBitSet subset;
+    
+    /** Criteria*/
+    private final PrivacyCriterion[] criteria;
+    
+    /** Criteria*/
+    private final PrivacyCriterion[] criteriaIgnoreKAnonymity;
 
     /**
      * Constructs a new hash groupify operator
@@ -103,6 +109,10 @@ public class HashGroupify implements IHashGroupify {
         } else {
             subset = null;
         }
+        
+        // Extract criteria
+        criteria = config.getCriteria();
+        criteriaIgnoreKAnonymity = config.getCriteriaIgnoreKAnonymity();
     }
     
 
@@ -386,21 +396,22 @@ public class HashGroupify implements IHashGroupify {
      * @return
      */
     private boolean isAnonymousIgnoreKAnonymity(HashGroupifyEntry entry) {
-        for (PrivacyCriterion c : config.getCriteriaIgnoreKAnonymity()) {
-            if (!c.isAnonymous(entry)) {
+        for (int i=0; i<criteriaIgnoreKAnonymity.length; i++){
+            if (!criteriaIgnoreKAnonymity[i].isAnonymous(entry)) {
                 return false;
             }
         }
         return true;
     }
+    
     /**
      * Checks whether the given entry is anonymous
      * @param entry
      * @return
      */
     private boolean isAnonymous(HashGroupifyEntry entry) {
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!c.isAnonymous(entry)) {
+        for (int i=0; i<criteria.length; i++){
+            if (!criteria[i].isAnonymous(entry)) {
                 return false;
             }
         }
