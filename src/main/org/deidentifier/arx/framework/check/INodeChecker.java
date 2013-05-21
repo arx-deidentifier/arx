@@ -19,7 +19,6 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.framework.Configuration;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
