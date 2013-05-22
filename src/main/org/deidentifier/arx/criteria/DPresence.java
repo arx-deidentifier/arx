@@ -27,6 +27,12 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * The d-presence criterion
+ * Published in:
+ * Nergiz M, Atzori M, Clifton C. 
+ * Hiding the presence of individuals from shared databases. 
+ * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665–676. 
+ * Available at: http://portal.acm.org/citation.cfm?id=1247480.1247554.
+ * 
  * @author Prasser, Kohlmayer
  */
 public class DPresence extends PrivacyCriterion{
