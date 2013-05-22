@@ -51,8 +51,8 @@ public class EntropyLDiversity extends LDiversity {
         // If less than l values are present skip
         if (d.size() < l) { return false; }
 
-        // Count number of elements in entrys distribution
-        double totalElements = 0;
+        // Sum of the frequencies in distribution (=number of elements)
+        double total = 0;
         double sum1 = 0d;
 
         final int[] buckets = d.getBuckets();
@@ -60,22 +60,11 @@ public class EntropyLDiversity extends LDiversity {
             if (buckets[i] != -1) { // bucket not empty
                 final double frequency = buckets[i + 1];
                 sum1 += frequency * log2(frequency);
-                totalElements += frequency;
+                total += frequency;
             }
         }
 
-        double val = (1d / totalElements) * sum1 - log2(totalElements) * totalElements;
-
-        // // compute entropy
-        // double val = 0d;
-        // for (int i = 0; i < buckets.length; i += 2) {
-        // if (buckets[i] != -1) { // bucket not empty
-        // final int frequency = buckets[i + 1];
-        // final double p = ((double) frequency / (double) totalElements);
-        // val += p * log2(p);
-        // }
-        // }
-        val = -val;
+        final double val = -((sum1 / total) - log2(total));
 
         // check
         return val >= logL;
