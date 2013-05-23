@@ -304,6 +304,7 @@ public class History {
                 fSet.pack();
                 data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
                 data[index + 3] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+                break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
             }
