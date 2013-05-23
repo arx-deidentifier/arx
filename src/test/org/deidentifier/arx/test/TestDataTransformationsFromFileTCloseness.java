@@ -18,16 +18,10 @@
 
 package org.deidentifier.arx.test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.deidentifier.arx.Data;
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
-import org.junit.Test;
+import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -413,77 +407,5 @@ public class TestDataTransformationsFromFileTCloseness extends
         super(testCase);
     }
 
-    // old:
-    // { new TestCaseResult(0.2, 5, "occupation", 0.04d, "data/adult",
-    // Metric.ENTROPY, 400997.81985981413d, new int[] { 1, 4, 1, 0, 3, 2, 2, 1
-    // }) },
-    // { new TestCaseResult(0.2, 100, TClosenessCriterion.EMD_EQUAL, "EDUC",
-    // 0.04, "data/ihis.csv", Metric.ENTROPY, 1.4719292081181683E7d, new int[] {
-    // 0, 0, 0, 3, 4, 2, 0, 1 }) }
 
-    @Override
-    @Test
-    public void testTestCases() throws IOException {
-
-        final Data data = createDataObject(testCase);
-        final org.deidentifier.arx.metric.Metric<?> metric = createMetric(testCase);
-
-        // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(metric);
-        anonymizer.setPracticalMonotonicity(testCase.practical);
-
-        ARXResult result = null;
-
-        // Execute the algorithm
-        switch (testCase.tClosenessCriterion) {
-        case EMD_EQUAL:
-            result = anonymizer.tClosify(data,
-                                         testCase.k,
-                                         testCase.t,
-                                         testCase.relativeMaxOutliers);
-            break;
-
-        case EMD_HIERARCHICAL:
-            final Hierarchy hierarchy = Hierarchy.create(testCase.dataset.substring(0,
-                                                                                    testCase.dataset.length() - 4) +
-                                                                 "_hierarchy_" +
-                                                                 testCase.senstitiveAttribute +
-                                                                 ".csv",
-                                                         ';');
-            result = anonymizer.tClosify(data,
-                                         testCase.k,
-                                         testCase.t,
-                                         testCase.relativeMaxOutliers,
-                                         hierarchy);
-            break;
-
-        }
-
-        // check if no solution possible
-        if (testCase.bestResult == null) {
-            assertTrue(result.getGlobalOptimum() == null);
-        } else {
-
-            assertEquals(testCase.dataset +
-                                 "-should: " +
-                                 testCase.optimalInformationLoss +
-                                 "is: " +
-                                 result.getGlobalOptimum()
-                                       .getMinimumInformationLoss()
-                                       .getValue(),
-                         result.getGlobalOptimum()
-                               .getMinimumInformationLoss()
-                               .getValue(),
-                         testCase.optimalInformationLoss);
-            assertTrue(testCase.dataset +
-                               "-should: " +
-                               Arrays.toString(testCase.bestResult) +
-                               "is: " +
-                               Arrays.toString(result.getGlobalOptimum()
-                                                     .getTransformation()),
-                       Arrays.equals(result.getGlobalOptimum()
-                                           .getTransformation(),
-                                     testCase.bestResult));
-        }
-    }
 }

@@ -18,14 +18,14 @@
 
 package org.deidentifier.arx.test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.deidentifier.arx.Data;
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXResult;
-import org.junit.Test;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.metric.MetricDMStar;
+import org.deidentifier.arx.metric.MetricEntropy;
+import org.deidentifier.arx.metric.MetricNMEntropy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -36,213 +36,84 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Prasser, Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestDataTransformationsFromFileKAnonymity extends
-        TestDataTransformationsFromFileAbstract {
+public class TestDataTransformationsFromFileKAnonymity extends TestDataTransformationsFromFileAbstract {
 
     @Parameters
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
 
-                { new TestCaseResult(5,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricEntropy()).addCriterion(new KAnonymity(5)),
                                      "data/adult.csv",
-                                     Metric.ENTROPY,
                                      255559.854557311d,
                                      new int[] { 1, 0, 1, 1, 3, 2, 2, 0, 1 },
                                      false) },
-                { new TestCaseResult(100,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricEntropy()).addCriterion(new KAnonymity(100)),
                                      "data/adult.csv",
-                                     Metric.ENTROPY,
                                      379417.3460570992d,
                                      new int[] { 1, 1, 1, 1, 3, 2, 2, 1, 1 },
                                      false) },
-                { new TestCaseResult(5,
-                                     0.0d,
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricEntropy()).addCriterion(new KAnonymity(5)),
                                      "data/adult.csv",
-                                     Metric.ENTROPY,
                                      407289.53889252973d,
                                      new int[] { 1, 2, 1, 1, 3, 2, 2, 1, 1 },
                                      false) },
-                { new TestCaseResult(100,
-                                     0.0d,
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricEntropy()).addCriterion(new KAnonymity(100)),
                                      "data/adult.csv",
-                                     Metric.ENTROPY,
                                      453196.8932458746d,
                                      new int[] { 0, 4, 1, 1, 3, 2, 2, 1, 1 },
                                      false) },
-                { new TestCaseResult(5,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricEntropy()).addCriterion(new KAnonymity(5)),
                                      "data/adult.csv",
-                                     Metric.ENTROPY,
                                      255559.854557311d,
                                      new int[] { 1, 0, 1, 1, 3, 2, 2, 0, 1 },
                                      true) },
-                { new TestCaseResult(100,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricEntropy()).addCriterion(new KAnonymity(100)),
                                      "data/adult.csv",
-                                     Metric.ENTROPY,
                                      379417.3460570992d,
                                      new int[] { 1, 1, 1, 1, 3, 2, 2, 1, 1 },
                                      true) },
-                { new TestCaseResult(5,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricNMEntropy()).addCriterion(new KAnonymity(5)),
                                      "data/cup.csv",
-                                     Metric.NMENTROPY,
                                      1764006.4033760326d,
                                      new int[] { 2, 4, 0, 1, 0, 4, 4, 4 },
                                      false) },
-                { new TestCaseResult(100,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricNMEntropy()).addCriterion(new KAnonymity(100)),
                                      "data/cup.csv",
-                                     Metric.NMENTROPY,
                                      1994002.8308631128d,
                                      new int[] { 3, 4, 1, 1, 0, 4, 4, 4 },
                                      false) },
-                { new TestCaseResult(5,
-                                     0.0d,
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricNMEntropy()).addCriterion(new KAnonymity(5)),
                                      "data/cup.csv",
-                                     Metric.NMENTROPY,
                                      2445878.4248346775d,
                                      new int[] { 4, 4, 1, 1, 1, 4, 4, 4 },
                                      false) },
-                { new TestCaseResult(100,
-                                     0.0d,
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricNMEntropy()).addCriterion(new KAnonymity(100)),
                                      "data/cup.csv",
-                                     Metric.NMENTROPY,
                                      2517471.5816586106d,
                                      new int[] { 5, 4, 1, 0, 1, 4, 4, 4 },
                                      false) },
-                { new TestCaseResult(5,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricNMEntropy()).addCriterion(new KAnonymity(5)),
                                      "data/cup.csv",
-                                     Metric.NMENTROPY,
                                      1764006.4033760326d,
                                      new int[] { 2, 4, 0, 1, 0, 4, 4, 4 },
                                      true) },
-                { new TestCaseResult(100,
-                                     0.04d,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricNMEntropy()).addCriterion(new KAnonymity(100)),
                                      "data/cup.csv",
-                                     Metric.NMENTROPY,
                                      2001343.4737485615d,
                                      new int[] { 3, 4, 1, 1, 0, 1, 2, 1 },
                                      true) },
-                { new TestCaseResult(5,
-                                     0.04d,
-                                     "data/fars.csv",
-                                     Metric.DMSTAR,
-                                     4469271.0d,
-                                     new int[] { 0, 2, 2, 2, 1, 2, 1, 0 },
-                                     false) },
-                { new TestCaseResult(100,
-                                     0.04d,
-                                     "data/fars.csv",
-                                     Metric.DMSTAR,
-                                     5.6052481E7d,
-                                     new int[] { 0, 2, 3, 3, 1, 2, 2, 2 },
-                                     false) },
-                { new TestCaseResult(5,
-                                     0.0d,
-                                     "data/fars.csv",
-                                     Metric.DMSTAR,
-                                     1.42377891E8d,
-                                     new int[] { 1, 2, 3, 3, 1, 2, 1, 2 },
-                                     false) },
-                { new TestCaseResult(100,
-                                     0.0d,
-                                     "data/fars.csv",
-                                     Metric.DMSTAR,
-                                     4.36925397E8d,
-                                     new int[] { 5, 2, 3, 3, 1, 2, 0, 2 },
-                                     false) },
-                { new TestCaseResult(5,
-                                     0.04d,
-                                     "data/fars.csv",
-                                     Metric.DMSTAR,
-                                     4469271.0d,
-                                     new int[] { 0, 2, 2, 2, 1, 2, 1, 0 },
-                                     true) },
-                { new TestCaseResult(100,
-                                     0.04d,
-                                     "data/fars.csv",
-                                     Metric.DMSTAR,
-                                     5.6052481E7d,
-                                     new int[] { 0, 2, 3, 3, 1, 2, 2, 2 },
-                                     true) },
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricDMStar()).addCriterion(new KAnonymity(5)), "data/fars.csv", 4469271.0d, new int[] { 0, 2, 2, 2, 1, 2, 1, 0 }, false) },
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricDMStar()).addCriterion(new KAnonymity(100)), "data/fars.csv", 5.6052481E7d, new int[] { 0, 2, 3, 3, 1, 2, 2, 2 }, false) },
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricDMStar()).addCriterion(new KAnonymity(5)), "data/fars.csv", 1.42377891E8d, new int[] { 1, 2, 3, 3, 1, 2, 1, 2 }, false) },
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricDMStar()).addCriterion(new KAnonymity(100)), "data/fars.csv", 4.36925397E8d, new int[] { 5, 2, 3, 3, 1, 2, 0, 2 }, false) },
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricDMStar()).addCriterion(new KAnonymity(5)), "data/fars.csv", 4469271.0d, new int[] { 0, 2, 2, 2, 1, 2, 1, 0 }, true) },
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricDMStar()).addCriterion(new KAnonymity(100)), "data/fars.csv", 5.6052481E7d, new int[] { 0, 2, 3, 3, 1, 2, 2, 2 }, true) },
 
         });
     }
 
     public TestDataTransformationsFromFileKAnonymity(final TestCaseResult testCase) {
         super(testCase);
-    }
-
-    // old:
-    // { new TestCaseResult(2, 0.0d, "data/test", 3, 17.0, new int[] { 1, 1, 2
-    // }) },
-    // { new TestCaseResult(5, 0.0d, "data/adult", 9, 3.3627534E7d, new int[] {
-    // 1, 1, 1, 2, 3, 2, 2, 1, 1 }) },
-    // { new TestCaseResult(6, 0.02d, "data/adult", 9, 2300532.0d, new int[] {
-    // 1, 0, 1, 2, 3, 2, 2, 0, 1 }) },
-    // { new TestCaseResult(7, 0.0d, "data/cup", 8, 3.01506905E8d, new int[] {
-    // 4, 4, 1, 1, 1, 4, 4, 4 }) },
-    // { new TestCaseResult(8, 0.04d, "data/cup", 8, 4082603.0d, new int[] { 3,
-    // 1, 1, 1, 0, 2, 3, 4 }) },
-    // { new TestCaseResult(9, 0.0d, "data/fars", 8, 1.42377891E8d, new int[] {
-    // 1, 2, 3, 3, 1, 2, 1, 2 }) },
-    // { new TestCaseResult(4, 0.0d, "data/ihis", 9, 1.88718942E8d, new int[] {
-    // 0, 0, 2, 3, 0, 2, 0, 1, 1 }) },
-    // { new TestCaseResult(5, 0.0d, "data/atus", 9, 3.724480741E9d, new int[] {
-    // 0, 5, 0, 2, 2, 1, 2, 0, 2 }) }, // ATUS
-    // // result is
-    // // different
-    // // than
-    // // fastanon-paper;
-    // // metric
-    // // same
-
-    @Override
-    @Test
-    public void testTestCases() throws IllegalArgumentException, IOException {
-
-        final Data data = createDataObject(testCase);
-        final org.deidentifier.arx.metric.Metric<?> metric = createMetric(testCase);
-
-        // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(metric);
-        anonymizer.setPracticalMonotonicity(testCase.practical);
-
-        // Execute the algorithm
-        final ARXResult result = anonymizer.kAnonymize(data,
-                                                         testCase.k,
-                                                         testCase.relativeMaxOutliers);
-
-        // check if no solution possible
-        if (testCase.bestResult == null) {
-            assertTrue(result.getGlobalOptimum() == null);
-        } else {
-
-            assertEquals(testCase.dataset +
-                                 "-should: " +
-                                 testCase.optimalInformationLoss +
-                                 "is: " +
-                                 result.getGlobalOptimum()
-                                       .getMinimumInformationLoss()
-                                       .getValue(),
-                         result.getGlobalOptimum()
-                               .getMinimumInformationLoss()
-                               .getValue(),
-                         testCase.optimalInformationLoss);
-            assertTrue(testCase.dataset +
-                               "-should: " +
-                               Arrays.toString(testCase.bestResult) +
-                               "is: " +
-                               Arrays.toString(result.getGlobalOptimum()
-                                                     .getTransformation()),
-                       Arrays.equals(result.getGlobalOptimum()
-                                           .getTransformation(),
-                                     testCase.bestResult));
-        }
     }
 
 }
