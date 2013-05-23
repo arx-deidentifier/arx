@@ -37,12 +37,21 @@ public class History {
 
     public static enum PruningStrategy {
         ANONYMOUS,
-        K_ANONYMOUS,
-        CHECKED
+        CHECKED,
+        K_ANONYMOUS
     }
 
     /** The actual buffer. */
     private MRUCache<Node>           cache          = null;
+
+    /** Current config */
+    private final ARXConfiguration   config;
+
+    /** The dictionary for frequencies of the distributions */
+    private final IntArrayDictionary dictionarySensFreq;
+
+    /** The dictionary for values of the distributions */
+    private final IntArrayDictionary dictionarySensValue;
 
     /** Maximal number of entries. */
     private final int                maxSize;
@@ -50,29 +59,20 @@ public class History {
     /** A map from nodes to snapshots. */
     private HashMap<Node, int[]>     nodeToSnapshot = null;
 
+    /** The current pruning strategy */
+    private PruningStrategy          pruningStrategy;
+
+    /** The current requirements */
+    private final int                requirements;
+
+    /** The node backing the last returned snapshot */
+    private Node                     resultNode;
+
     /** The snapshotSizeDataset for the size of entries. */
     private final long               snapshotSizeDataset;
 
     /** The snapshotSizeDataset for the minimum required reduction of a snapshot */
     private final double             snapshotSizeSnapshot;
-
-    /** The dictionary for values of the distributions */
-    private final IntArrayDictionary dictionarySensValue;
-
-    /** The dictionary for frequencies of the distributions */
-    private final IntArrayDictionary dictionarySensFreq;
-
-    /** Current config */
-    private final ARXConfiguration   config;
-
-    /** The node backing the last returned snapshot */
-    private Node                     resultNode;
-
-    /** The current pruning strategy */
-    private PruningStrategy          pruningStrategy;
-
-    /** The current requirements */
-    private int                      requirements;
 
     /**
      * Creates a new history.
@@ -93,104 +93,13 @@ public class History {
                    final IntArrayDictionary dictionarySensFreq) {
         this.snapshotSizeDataset = (long) (rowCount * snapshotSizeDataset);
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-        this.cache = new MRUCache<Node>(maxSize);
-        this.nodeToSnapshot = new HashMap<Node, int[]>(maxSize);
+        cache = new MRUCache<Node>(maxSize);
+        nodeToSnapshot = new HashMap<Node, int[]>(maxSize);
         this.maxSize = maxSize;
         this.dictionarySensFreq = dictionarySensFreq;
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
-        this.requirements = config.getRequirements();
-    }
-
-    /**
-     * Set the pruning strategy
-     * 
-     * @param pruning
-     */
-    public void setPruningStrategy(PruningStrategy pruning) {
-        this.pruningStrategy = pruning;
-    }
-
-    /**
-     * Can a node be pruned.
-     * 
-     * @param node
-     *            the node
-     * @return true, if successful
-     */
-    private final boolean canPrune(final Node node) {
-        boolean prune = true;
-        switch (pruningStrategy) {
-        case ANONYMOUS:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isAnonymous()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        case CHECKED:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isChecked()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        case K_ANONYMOUS:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isKAnonymous()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        }
-        return prune;
-    }
-
-    /**
-     * Creates a generic snapshot for all criteria
-     * 
-     * @param g
-     *            the g
-     * @return the int[]
-     */
-    private final int[] createSnapshot(final IHashGroupify g) {
-        // Copy Groupify
-        final int[] data = new int[g.size() * config.getSnapshotLength()];
-        int index = 0;
-        HashGroupifyEntry m = g.getFirstEntry();
-        while (m != null) {
-            // Store element
-            data[index] = m.representant;
-            data[index + 1] = m.count;
-            // Add data for different requirements
-            switch (requirements) {
-            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
-                data[index + 2] = m.pcount;
-                break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                data[index + 2] = m.pcount;
-                Distribution fSet = m.distribution;
-                fSet.pack();
-                data[index + 3] = dictionarySensValue.probe(fSet.getPackedElements());
-                data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
-                break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                fSet = m.distribution;
-                fSet.pack();
-                data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
-                data[index + 3] = dictionarySensFreq.probe(fSet.getPackedFrequency());
-            default:
-                throw new RuntimeException("Invalid requirements: " + requirements);
-            }
-            index += 2;
-            // Next element
-            m = m.nextOrdered;
-        }
-        return data;
+        requirements = config.getRequirements();
     }
 
     /**
@@ -258,6 +167,151 @@ public class History {
     }
 
     /**
+     * Returns the current pruning strategy
+     * 
+     * @return
+     */
+    public PruningStrategy getPruningStrategy() {
+        return pruningStrategy;
+    }
+
+    /**
+     * Clears the history.
+     */
+    public void reset() {
+        cache.clear();
+        nodeToSnapshot.clear();
+    }
+
+    /**
+     * Set the pruning strategy
+     * 
+     * @param pruning
+     */
+    public void setPruningStrategy(final PruningStrategy pruning) {
+        pruningStrategy = pruning;
+    }
+
+    public int size() {
+        return cache.size();
+
+    }
+
+    /**
+     * Stores a snapshot.
+     * 
+     * @param node
+     *            the node
+     * @param g
+     *            the g
+     */
+    public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
+
+        if ((node.isAnonymous() || (g.size() > snapshotSizeDataset) || canPrune(node))) { return false; }
+
+        // Store only if significantly smaller
+        if (usedSnapshot != null) {
+            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
+            if (percentSize > snapshotSizeSnapshot) { return false; }
+        }
+
+        // Create the snapshot
+        final int[] data = createSnapshot(g);
+
+        // if cache size is to large purge
+        if (cache.size() >= maxSize) {
+            purgeCache();
+        }
+
+        // assign snapshot and keep reference for cache
+        nodeToSnapshot.put(node, data);
+        cache.append(node);
+
+        return true;
+    }
+
+    /**
+     * Can a node be pruned.
+     * 
+     * @param node
+     *            the node
+     * @return true, if successful
+     */
+    private final boolean canPrune(final Node node) {
+        boolean prune = true;
+        switch (pruningStrategy) {
+        case ANONYMOUS:
+            for (final Node upNode : node.getSuccessors()) {
+                if (!upNode.isAnonymous()) {
+                    prune = false;
+                    break;
+                }
+            }
+            break;
+        case CHECKED:
+            for (final Node upNode : node.getSuccessors()) {
+                if (!upNode.isChecked()) {
+                    prune = false;
+                    break;
+                }
+            }
+            break;
+        case K_ANONYMOUS:
+            for (final Node upNode : node.getSuccessors()) {
+                if (!upNode.isKAnonymous()) {
+                    prune = false;
+                    break;
+                }
+            }
+            break;
+        }
+        return prune;
+    }
+
+    /**
+     * Creates a generic snapshot for all criteria
+     * 
+     * @param g
+     *            the g
+     * @return the int[]
+     */
+    private final int[] createSnapshot(final IHashGroupify g) {
+        // Copy Groupify
+        final int[] data = new int[g.size() * config.getSnapshotLength()];
+        int index = 0;
+        HashGroupifyEntry m = g.getFirstEntry();
+        while (m != null) {
+            // Store element
+            data[index] = m.representant;
+            data[index + 1] = m.count;
+            // Add data for different requirements
+            switch (requirements) {
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
+                data[index + 2] = m.pcount;
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                data[index + 2] = m.pcount;
+                Distribution fSet = m.distribution;
+                fSet.pack();
+                data[index + 3] = dictionarySensValue.probe(fSet.getPackedElements());
+                data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+                break;
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                fSet = m.distribution;
+                fSet.pack();
+                data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
+                data[index + 3] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+            default:
+                throw new RuntimeException("Invalid requirements: " + requirements);
+            }
+            index += config.getSnapshotLength();
+            // Next element
+            m = m.nextOrdered;
+        }
+        return data;
+    }
+
+    /**
      * Remove least recently used from cache and index.
      */
     private final void purgeCache() {
@@ -289,66 +343,22 @@ public class History {
      */
     private final void removeHistoryEntry(final Node node) {
         final int[] snapshot = nodeToSnapshot.remove(node);
-        if ((requirements & ARXConfiguration.REQUIREMENT_DISTRIBUTION) != 0) {
-            for (int i = 0; i < snapshot.length; i += 4) {
+
+        switch (requirements) {
+        case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
+                dictionarySensValue.decrementRefCount(snapshot[i + 3]);
+                dictionarySensFreq.decrementRefCount(snapshot[i + 4]);
+            }
+            break;
+        case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
                 dictionarySensValue.decrementRefCount(snapshot[i + 2]);
                 dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
             }
-        }
-    }
-
-    /**
-     * Clears the history.
-     */
-    public void reset() {
-        cache.clear();
-        nodeToSnapshot.clear();
-    }
-
-    public int size() {
-        return cache.size();
-
-    }
-
-    /**
-     * Stores a snapshot.
-     * 
-     * @param node
-     *            the node
-     * @param g
-     *            the g
-     */
-    public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
-
-        if ((node.isAnonymous() || (g.size() > snapshotSizeDataset) || canPrune(node))) { return false; }
-
-        // Store only if significantly smaller
-        if (usedSnapshot != null) {
-            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
-            if (percentSize > snapshotSizeSnapshot) { return false; }
+        default:
+            throw new RuntimeException("Invalid requirements: " + requirements);
         }
 
-        // Create the snapshot
-        int[] data = createSnapshot(g);
-
-        // if cache size is to large purge
-        if (cache.size() >= maxSize) {
-            purgeCache();
-        }
-
-        // assign snapshot and keep reference for cache
-        nodeToSnapshot.put(node, data);
-        cache.append(node);
-
-        return true;
-    }
-
-    /**
-     * Returns the current pruning strategy
-     * 
-     * @return
-     */
-    public PruningStrategy getPruningStrategy() {
-        return this.pruningStrategy;
     }
 }

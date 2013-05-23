@@ -19,6 +19,7 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
@@ -38,25 +39,25 @@ import org.deidentifier.arx.metric.Metric;
 public class NodeChecker implements INodeChecker {
 
     /** The current hash groupify. */
-    protected IHashGroupify     currentGroupify;
+    protected IHashGroupify        currentGroupify;
 
     /** The history. */
-    protected History           history;
+    protected History              history;
 
     /** The last hash groupify. */
-    protected IHashGroupify     lastGroupify;
+    protected IHashGroupify        lastGroupify;
 
     /** The metric. */
-    protected Metric<?>         metric;
+    protected Metric<?>            metric;
 
     /** The state machine. */
-    protected StateMachine      stateMachine;
+    protected StateMachine         stateMachine;
 
     /** The data transformer. */
-    protected Transformer       transformer;
+    protected Transformer          transformer;
 
     /** The data. */
-    private final Data          data;
+    private final Data             data;
 
     /** The config */
     private final ARXConfiguration config;
@@ -88,15 +89,15 @@ public class NodeChecker implements INodeChecker {
         final IntArrayDictionary dictionarySensValue;
         final IntArrayDictionary dictionarySensFreq;
 
-        if (config.containsCriterion(TCloseness.class)){
+        if ((config.getRequirements() & ARXConfiguration.REQUIREMENT_DISTRIBUTION) != 0) {
             dictionarySensValue = new IntArrayDictionary(initialSize);
-            dictionarySensFreq = new IntArrayDictionary(initialSize); 
+            dictionarySensFreq = new IntArrayDictionary(initialSize);
         } else {
             // Just to allow bytecode instrumentation
             dictionarySensValue = new IntArrayDictionary(0);
             dictionarySensFreq = new IntArrayDictionary(0);
         }
-        
+
         history = new History(manager.getDataQI().getArray().length, historyMaxSize, snapshotSizeDataset, snapshotSizeSnapshot, config, dictionarySensValue, dictionarySensFreq);
 
         stateMachine = new StateMachine(history);
@@ -181,7 +182,7 @@ public class NodeChecker implements INodeChecker {
     public int getGroupOutliersCount() {
         return currentGroupify.getGroupOutliersCount();
     }
-    
+
     /**
      * Returns the checkers history, if any
      * @return
