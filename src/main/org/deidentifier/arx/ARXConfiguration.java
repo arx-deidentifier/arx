@@ -37,65 +37,65 @@ import org.deidentifier.arx.metric.Metric;
  * A generic configuration for the ARX anonymizer
  * @author Fabian Prasser
  */
-public class ARXConfiguration implements Serializable{
-    
-    private static final long serialVersionUID = -6713510386735241964L;
+public class ARXConfiguration implements Serializable {
+
+    private static final long  serialVersionUID              = -6713510386735241964L;
 
     /** Do we assume practical monotonicity */
-    private boolean                                practicalMonotonicity           = false;
+    private boolean            practicalMonotonicity         = false;
 
     /** Relative tuple outliers */
-    private double                                 relMaxOutliers = -1;
-    
+    private double             relMaxOutliers                = -1;
+
     /** Absolute tuple outliers*/
-    private int                                    absMaxOutliers = 0;
-    
+    private int                absMaxOutliers                = 0;
+
     /** Criteria*/
-    private PrivacyCriterion[] criteria = new PrivacyCriterion[0];
+    private PrivacyCriterion[] criteria                      = new PrivacyCriterion[0];
 
     /** Optimized list of criteria*/
-    private PrivacyCriterion[] optimizedCriteria = new PrivacyCriterion[0];
-    
+    private PrivacyCriterion[] optimizedCriteria             = new PrivacyCriterion[0];
+
     /** Do the criteria require a counter per equivalence class*/
-    public static final int REQUIREMENT_COUNTER = 0x1;
-    
+    public static final int    REQUIREMENT_COUNTER           = 0x1;
+
     /** Do the criteria require a second counter */
-    public static final int REQUIREMENT_SECONDARY_COUNTER = 0x2;
-    
+    public static final int    REQUIREMENT_SECONDARY_COUNTER = 0x2;
+
     /** Do the criteria require distributions of sensitive values in the equivalence classes */
-    public static final int REQUIREMENT_DISTRIBUTION = 0x4;
-    
+    public static final int    REQUIREMENT_DISTRIBUTION      = 0x4;
+
     /** The requirements per equivalence class*/
-    private int requirements = 0x0;
+    private int                requirements                  = 0x0;
 
     /** The metric. */
-    private Metric<?>     metric                = Metric.createDMStarMetric();
-    
+    private Metric<?>          metric                        = Metric.createDMStarMetric();
+
     /**
      * Creates a new config without tuple suppression
      */
-    public ARXConfiguration(){
+    public ARXConfiguration() {
         this.relMaxOutliers = 0d;
     }
-    
+
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression
      * @param supp
      */
-    public ARXConfiguration(double supp){
-        if (supp<0d || supp>=1d)  { throw new NullPointerException("Suppression must be >=0 and <1"); }
+    public ARXConfiguration(double supp) {
+        if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
-    
+
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
      * @param supp
      * @param metric
      */
-    public ARXConfiguration(double supp, Metric<?> metric){
-        if (supp<0d || supp>=1d)  { throw new NullPointerException("Suppression must be >=0 and <1"); }
+    public ARXConfiguration(double supp, Metric<?> metric) {
+        if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
@@ -105,7 +105,7 @@ public class ARXConfiguration implements Serializable{
      * Creates a new config that allows to define the metric for measuring information loss.
      * @param metric
      */
-    public ARXConfiguration(Metric<?> metric){
+    public ARXConfiguration(Metric<?> metric) {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }
@@ -114,21 +114,19 @@ public class ARXConfiguration implements Serializable{
      * Adds a criterion to the configuration
      * @param c
      */
-    public ARXConfiguration addCriterion(PrivacyCriterion c){
-        criteria = Arrays.copyOf(criteria, criteria.length+1);
-        criteria[criteria.length-1] = c;
+    public ARXConfiguration addCriterion(PrivacyCriterion c) {
+        criteria = Arrays.copyOf(criteria, criteria.length + 1);
+        criteria[criteria.length - 1] = c;
         return this;
     }
 
-    public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz){
-        for (PrivacyCriterion c : criteria){
-            if (clazz.isInstance(c)){
-                return true;
-            }
+    public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
+        for (PrivacyCriterion c : criteria) {
+            if (clazz.isInstance(c)) { return true; }
         }
         return false;
     }
-    
+
     /**
      * Returns the maximum number of allowed outliers
      * @return
@@ -144,7 +142,7 @@ public class ARXConfiguration implements Serializable{
     public PrivacyCriterion[] getCriteria() {
         return this.criteria;
     }
-    
+
     /**
      * Returns all criteria, not including k-anonymity
      * @return
@@ -152,23 +150,23 @@ public class ARXConfiguration implements Serializable{
     public PrivacyCriterion[] getCriteriaIgnoreKAnonymity() {
         return this.optimizedCriteria;
     }
-    
+
     /**
      * Returns all privacy criteria that are instances of the given class
      * @param clazz
      * @return
      */
     @SuppressWarnings("unchecked")
-    public<T extends PrivacyCriterion> T getCriterion(Class<T> clazz){
+    public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
         Set<T> result = new HashSet<T>();
-        for (PrivacyCriterion c : criteria){
-            if (clazz.isInstance(c)){
-                result.add((T)c);
+        for (PrivacyCriterion c : criteria) {
+            if (clazz.isInstance(c)) {
+                result.add((T) c);
             }
         }
-        if (result.size()>1) {
+        if (result.size() > 1) {
             throw new RuntimeException("More than one matches the query!");
-        } else if (result.size()==1){ 
+        } else if (result.size() == 1) {
             return result.iterator().next();
         } else {
             return null;
@@ -179,10 +177,10 @@ public class ARXConfiguration implements Serializable{
      * Returns the metric used for measuring information loss
      * @return
      */
-    public Metric<?> getMetric(){
+    public Metric<?> getMetric() {
         return this.metric;
     }
-    
+
     /**
      * Returns the maximum number of allowed outliers
      * @return
@@ -190,26 +188,26 @@ public class ARXConfiguration implements Serializable{
     public final double getRelativeMaxOutliers() {
         return relMaxOutliers;
     }
-    
+
     /**
      * Returns the criterias requirements
      * @return
      */
-    public int getRequirements(){
+    public int getRequirements() {
         return this.requirements;
     }
-    
+
     /**
      * Returns the specific length of each entry in a snapshot
      * @return
      */
     public int getSnapshotLength() {
         int length = 2;
-        if (this.requires(REQUIREMENT_DISTRIBUTION)){
+        if (this.requires(REQUIREMENT_DISTRIBUTION)) {
             length += 2;
         }
-        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)){
-            length +=1;
+        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
+            length += 1;
         }
         return length;
     }
@@ -219,36 +217,36 @@ public class ARXConfiguration implements Serializable{
      * @param manager
      */
     protected void initialize(DataManager manager) {
-        
+
         // Compute requirements
         this.requirements = 0x0;
-        for (PrivacyCriterion c : criteria){
+        for (PrivacyCriterion c : criteria) {
             c.initialize(manager);
             this.requirements |= c.getRequirements();
         }
-        
+
         // Compute max outliers
-        absMaxOutliers = (int)Math.floor(this.relMaxOutliers * (double)manager.getDataQI().getDataLength());
-        
-        // Compute optimized array with criteria, assuming complexities 
+        absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) manager.getDataQI().getDataLength());
+
+        // Compute optimized array with criteria, assuming complexities
         // dPresence <= lDiversity <= tCloseness and ignoring kAnonymity
         // TODO: Configuration should not know anything about them
         List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
-        if (this.containsCriterion(DPresence.class)){
+        if (this.containsCriterion(DPresence.class)) {
             list.add(this.getCriterion(DPresence.class));
         }
-        if (this.containsCriterion(LDiversity.class)){
+        if (this.containsCriterion(LDiversity.class)) {
             list.add(this.getCriterion(LDiversity.class));
         }
-        if (this.containsCriterion(TCloseness.class)){
+        if (this.containsCriterion(TCloseness.class)) {
             list.add(this.getCriterion(TCloseness.class));
         }
         this.optimizedCriteria = list.toArray(new PrivacyCriterion[0]);
-        
+
         // Change order of criteria
-        if (this.containsCriterion(KAnonymity.class)){
+        if (this.containsCriterion(KAnonymity.class)) {
             list.add(0, this.getCriterion(KAnonymity.class));
-            this.criteria = list.toArray(new PrivacyCriterion[0]); 
+            this.criteria = list.toArray(new PrivacyCriterion[0]);
         }
     }
 
@@ -261,7 +259,7 @@ public class ARXConfiguration implements Serializable{
 
         if (relMaxOutliers == 0d) { return true; }
 
-        for (PrivacyCriterion c : criteria){
+        for (PrivacyCriterion c : criteria) {
             if (!c.isMonotonic()) return false;
         }
         // Yes
@@ -281,7 +279,7 @@ public class ARXConfiguration implements Serializable{
      * @param requirement
      * @return
      */
-    public boolean requires(int requirement){
+    public boolean requires(int requirement) {
         return (this.requirements & requirement) != 0;
     }
 
@@ -290,12 +288,20 @@ public class ARXConfiguration implements Serializable{
      * triggers tuple suppresion
      * @param supp
      */
-    public void setAllowedOutliers(double supp){
+    public void setAllowedOutliers(double supp) {
         this.relMaxOutliers = supp;
     }
 
     public void setMetric(Metric<?> metric) {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
+    }
+
+    /**
+     * Set, if practical monotonicity assumed
+     * @return
+     */
+    public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
+        this.practicalMonotonicity = assumeMonotonicity;
     }
 }

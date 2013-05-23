@@ -286,6 +286,9 @@ public class History {
             data[index + 1] = m.count;
             // Add data for different requirements
             switch (requirements) {
+            case ARXConfiguration.REQUIREMENT_COUNTER:
+                // do nothing
+                break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
                 data[index + 2] = m.pcount;
                 break;
@@ -356,8 +359,6 @@ public class History {
                 dictionarySensValue.decrementRefCount(snapshot[i + 2]);
                 dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
             }
-        default:
-            throw new RuntimeException("Invalid requirements: " + requirements);
         }
 
     }
