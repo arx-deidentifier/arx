@@ -21,10 +21,12 @@ package org.deidentifier.arx.test;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
 public class TestDataHandle extends TestAnonymizer {
@@ -51,10 +53,12 @@ public class TestDataHandle extends TestAnonymizer {
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
+        
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new KAnonymity(2));
+        config.setAllowedOutliers(0d);
 
-        final ARXResult result = anonymizer.kAnonymize(provider.getData(),
-                                                         2,
-                                                         0.0d);
+        final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getHandle();
         final DataHandle inHandle = provider.getData().getHandle();
         inHandle.sort(false, 0);
@@ -100,9 +104,11 @@ public class TestDataHandle extends TestAnonymizer {
                 .getDefinition()
                 .setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
 
-        final ARXResult result = anonymizer.kAnonymize(provider.getData(),
-                                                         2,
-                                                         0.0d);
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new KAnonymity(2));
+        config.setAllowedOutliers(0d);
+
+        final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getHandle();
         outHandle.sort(false, 2);
 

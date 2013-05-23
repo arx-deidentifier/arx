@@ -21,8 +21,11 @@ package org.deidentifier.arx.test;
 import java.io.IOException;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.Data;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,8 +52,11 @@ public class TestIllegalArguments extends TestAnonymizer {
 
             data.getDefinition()
                 .setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
-            anonymizer.kAnonymize(data, 2, 1.2d);
-
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1.2d);
+            anonymizer.anonymize(provider.getData(), config);
+            
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -65,7 +71,11 @@ public class TestIllegalArguments extends TestAnonymizer {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = Data.create();
 
-            anonymizer.kAnonymize(data, 2, 1.2d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1.2d);
+            anonymizer.anonymize(data, config);
+            
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -76,9 +86,12 @@ public class TestIllegalArguments extends TestAnonymizer {
     public void testEmptyDefinition() throws IOException {
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final Data data = provider.getData();
         try {
-            anonymizer.kAnonymize(data, 2, 1.2d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1.2d);
+            anonymizer.anonymize(provider.getData(), config);
+            
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -92,7 +105,11 @@ public class TestIllegalArguments extends TestAnonymizer {
         final Data data = provider.getData();
         data.getDefinition().setAttributeType("age", Hierarchy.create());
         try {
-            anonymizer.kAnonymize(data, 2, 1.2d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1.2d);
+            anonymizer.anonymize(provider.getData(), config);
+            
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -114,13 +131,16 @@ public class TestIllegalArguments extends TestAnonymizer {
     @Test
     public void testInvalidHierarchies() throws IOException {
         provider.createWrongDataDefinition();
-        final Data data = provider.getData();
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
         try {
-            anonymizer.kAnonymize(data, 2, 0d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(0d);
+            anonymizer.anonymize(provider.getData(), config);
+            
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -133,7 +153,11 @@ public class TestIllegalArguments extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            anonymizer.kAnonymize(provider.getData(), -1, 0.0d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(-1));
+            config.setAllowedOutliers(0d);
+            anonymizer.anonymize(provider.getData(), config);
+            
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -146,7 +170,10 @@ public class TestIllegalArguments extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            anonymizer.kAnonymize(provider.getData(), 8, 0.0d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(8));
+            config.setAllowedOutliers(0d);
+            anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -159,7 +186,10 @@ public class TestIllegalArguments extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            anonymizer.kAnonymize(provider.getData(), 0, 0.0d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(0));
+            config.setAllowedOutliers(0d);
+            anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -172,7 +202,10 @@ public class TestIllegalArguments extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            anonymizer.kAnonymize(provider.getData(), 2, 1d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1d);
+            anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -185,7 +218,10 @@ public class TestIllegalArguments extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            anonymizer.kAnonymize(provider.getData(), 2, -0.2d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(-0.2d);
+            anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -198,7 +234,10 @@ public class TestIllegalArguments extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            anonymizer.kAnonymize(provider.getData(), 2, 1.2d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1.2d);
+            anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -210,7 +249,8 @@ public class TestIllegalArguments extends TestAnonymizer {
 
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
-            anonymizer.setMetric(null);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.setMetric(null);
         } catch (final NullPointerException e) {
             return;
         }
@@ -226,7 +266,10 @@ public class TestIllegalArguments extends TestAnonymizer {
         anonymizer.setSuppressionString("*");
 
         try {
-            anonymizer.kAnonymize(data, 2, 0d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(0d);
+            anonymizer.anonymize(data, config);
         } catch (final IllegalArgumentException e) {
             return;
         }
@@ -239,7 +282,10 @@ public class TestIllegalArguments extends TestAnonymizer {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = provider.getData();
             data.getDefinition().setAttributeType("age", null);
-            anonymizer.kAnonymize(data, 2, 1.2d);
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(1.2d);
+            anonymizer.anonymize(data, config);
         } catch (final NullPointerException e) {
             return;
         }

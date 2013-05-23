@@ -21,16 +21,13 @@ package org.deidentifier.arx.test;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,177 +41,27 @@ public abstract class TestDataTransformationsFromFileAbstract extends
         TestAnonymizer {
 
     public static class TestCaseResult {
-        public int                                    k;
-        public int                                    l;
-        public double                                 c;
-        public ARXConfiguration.LDiversityCriterion lDiversityCriterion;
-        public double                                 t;
-        public ARXConfiguration.EqualDistanceTCloseness tClosenessCriterion;
-        public Metric                                 metric;
-
-        public double                                 relativeMaxOutliers;
+        
+        public ARXConfiguration                       config;
         public String                                 dataset;
         public String                                 senstitiveAttribute;
-
         public double                                 optimalInformationLoss;
         public int[]                                  bestResult;
         public boolean                                practical;
 
-        // ldiv
-        // {new TestCaseResult(4.0, 5, LDiversityCriterion.ENTROPY ,
-        // "occupation", 0.04d, "data/adult.csv", Metric.ENTROPY,
-        // 228878.2039109519d, new int[] { 1, 0, 1, 1, 2, 2, 2, 1 })},
-        public TestCaseResult(final double c,
-                              final int l,
-                              final LDiversityCriterion criterion,
+        public TestCaseResult(final ARXConfiguration config,
                               final String sensitiveAttribute,
-                              final double relativeMaxOutliers,
                               final String dataset,
-                              final Metric metric,
                               final double optimalInformationLoss,
                               final int[] bestResult,
                               final boolean practical) {
-            this.c = c;
-            this.l = l;
-            lDiversityCriterion = criterion;
-            senstitiveAttribute = sensitiveAttribute;
-            this.metric = metric;
-            this.relativeMaxOutliers = relativeMaxOutliers;
+            this.config = config;
+            this.senstitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
             this.optimalInformationLoss = optimalInformationLoss;
             this.bestResult = bestResult;
             this.practical = practical;
         }
-
-        // t-close
-        // {new TestCaseResult(0.2, 100, TClosenessCriterion.EMD_EQUAL ,
-        // "occupation", 0.0d, "data/adult.csv", Metric.DMSTAR, 4.56853172E8d,
-        // new int[] { 1, 4, 1, 1, 3, 2, 2, 1 })},
-        public TestCaseResult(final double t,
-                              final int k,
-                              final EqualDistanceTCloseness criterion,
-                              final String sensitiveAttribute,
-                              final double relativeMaxOutliers,
-                              final String dataset,
-                              final Metric metric,
-                              final double optimalInformationLoss,
-                              final int[] bestResult,
-                              final boolean practical) {
-            this.t = t;
-            this.k = k;
-            tClosenessCriterion = criterion;
-            senstitiveAttribute = sensitiveAttribute;
-            this.metric = metric;
-            this.relativeMaxOutliers = relativeMaxOutliers;
-            this.dataset = dataset;
-            this.optimalInformationLoss = optimalInformationLoss;
-            this.bestResult = bestResult;
-            this.practical = practical;
-        }
-
-        // k-anon
-        // new TestCaseResult(5, 0.04, "data/adult.csv", Metric.ENTROPY,
-        // 255559.854557311d, new int[] { 1, 0, 1, 1, 3, 2, 2, 0, 1 })
-        public TestCaseResult(final int k,
-                              final double relativeMaxOutliers,
-                              final String dataset,
-                              final Metric metric,
-                              final double optimalInformationLoss,
-                              final int[] bestResult,
-                              final boolean practical) {
-            this.k = k;
-            this.metric = metric;
-            this.relativeMaxOutliers = relativeMaxOutliers;
-            this.dataset = dataset;
-            this.optimalInformationLoss = optimalInformationLoss;
-            this.bestResult = bestResult;
-            this.practical = practical;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
-            final TestCaseResult other = (TestCaseResult) obj;
-            if (!Arrays.equals(bestResult, other.bestResult)) { return false; }
-            if (Double.doubleToLongBits(c) != Double.doubleToLongBits(other.c)) { return false; }
-            if (dataset == null) {
-                if (other.dataset != null) { return false; }
-            } else if (!dataset.equals(other.dataset)) { return false; }
-            if (k != other.k) { return false; }
-            if (l != other.l) { return false; }
-            if (lDiversityCriterion != other.lDiversityCriterion) { return false; }
-            if (metric != other.metric) { return false; }
-            if (Double.doubleToLongBits(optimalInformationLoss) != Double.doubleToLongBits(other.optimalInformationLoss)) { return false; }
-            if (Double.doubleToLongBits(relativeMaxOutliers) != Double.doubleToLongBits(other.relativeMaxOutliers)) { return false; }
-            if (senstitiveAttribute == null) {
-                if (other.senstitiveAttribute != null) { return false; }
-            } else if (!senstitiveAttribute.equals(other.senstitiveAttribute)) { return false; }
-            if (Double.doubleToLongBits(t) != Double.doubleToLongBits(other.t)) { return false; }
-            if (tClosenessCriterion != other.tClosenessCriterion) { return false; }
-            return true;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = (prime * result) + Arrays.hashCode(bestResult);
-            long temp;
-            temp = Double.doubleToLongBits(c);
-            result = (prime * result) + (int) (temp ^ (temp >>> 32));
-            result = (prime * result) +
-                     ((dataset == null) ? 0 : dataset.hashCode());
-            result = (prime * result) + k;
-            result = (prime * result) + l;
-            result = (prime * result) +
-                     ((lDiversityCriterion == null) ? 0
-                             : lDiversityCriterion.hashCode());
-            result = (prime * result) +
-                     ((metric == null) ? 0 : metric.hashCode());
-            temp = Double.doubleToLongBits(optimalInformationLoss);
-            result = (prime * result) + (int) (temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(relativeMaxOutliers);
-            result = (prime * result) + (int) (temp ^ (temp >>> 32));
-            result = (prime * result) +
-                     ((senstitiveAttribute == null) ? 0
-                             : senstitiveAttribute.hashCode());
-            temp = Double.doubleToLongBits(t);
-            result = (prime * result) + (int) (temp ^ (temp >>> 32));
-            result = (prime * result) +
-                     ((tClosenessCriterion == null) ? 0
-                             : tClosenessCriterion.hashCode());
-            return result;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return "TestCaseResult [k=" + k + ", l=" + l + ", c=" + c +
-                   ", lDiversityCriterion=" + lDiversityCriterion + ", t=" + t +
-                   ", tClosenessCriterion=" + tClosenessCriterion +
-                   ", metric=" + metric + ", relativeMaxOutliers=" +
-                   relativeMaxOutliers + ", dataset=" + dataset +
-                   ", senstitiveAttribute=" + senstitiveAttribute +
-                   ", optimalInformationLoss=" + optimalInformationLoss +
-                   ", bestResult=" + Arrays.toString(bestResult) + "]";
-        }
-
     }
 
     protected final TestCaseResult testCase;
@@ -269,34 +116,6 @@ public abstract class TestDataTransformationsFromFileAbstract extends
         }
 
         return data;
-    }
-
-    public org.deidentifier.arx.metric.Metric<?>
-            createMetric(final TestCaseResult testCase) {
-        org.deidentifier.arx.metric.Metric<?> metric = null;
-        switch (testCase.metric) {
-        case PREC:
-            metric = org.deidentifier.arx.metric.Metric.createPrecisionMetric();
-            break;
-        case HEIGHT:
-            metric = org.deidentifier.arx.metric.Metric.createHeightMetric();
-            break;
-        case DMSTAR:
-            metric = org.deidentifier.arx.metric.Metric.createDMStarMetric();
-            break;
-        case DM:
-            metric = org.deidentifier.arx.metric.Metric.createDMMetric();
-            break;
-        case ENTROPY:
-            metric = org.deidentifier.arx.metric.Metric.createEntropyMetric();
-            break;
-        case NMENTROPY:
-            metric = org.deidentifier.arx.metric.Metric.createNMEntropyMetric();
-            break;
-        default:
-            break;
-        }
-        return metric;
     }
 
     @Override

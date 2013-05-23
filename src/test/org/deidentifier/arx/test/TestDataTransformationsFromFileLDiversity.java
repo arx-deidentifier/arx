@@ -22,10 +22,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
+import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.criteria.EntropyLDiversity;
+import org.deidentifier.arx.metric.MetricNMEntropy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -44,43 +47,27 @@ public class TestDataTransformationsFromFileLDiversity extends
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
 
-                { new TestCaseResult(4.0,
-                                     5,
-                                     LDiversityCriterion.ENTROPY,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricNMEntropy()).addCriterion(new EntropyLDiversity(5)),
                                      "occupation",
-                                     0.04d,
                                      "data/adult.csv",
-                                     Metric.NMENTROPY,
                                      228878.2039109519d,
                                      new int[] { 1, 0, 1, 1, 2, 2, 2, 1 },
                                      false) },
-                { new TestCaseResult(4.0,
-                                     100,
-                                     LDiversityCriterion.ENTROPY,
+                { new TestCaseResult(new ARXConfiguration(0.04d, new MetricNMEntropy()).addCriterion(new EntropyLDiversity(100)),
                                      "occupation",
-                                     0.04d,
                                      "data/adult.csv",
-                                     Metric.NMENTROPY,
                                      0.0d,
                                      null,
                                      false) },
-                { new TestCaseResult(4.0,
-                                     5,
-                                     LDiversityCriterion.ENTROPY,
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricNMEntropy()).addCriterion(new EntropyLDiversity(5)),
                                      "occupation",
-                                     0.0d,
                                      "data/adult.csv",
-                                     Metric.NMENTROPY,
                                      324620.5269918695d,
                                      new int[] { 1, 1, 1, 1, 3, 2, 2, 1 },
                                      false) },
-                { new TestCaseResult(4.0,
-                                     100,
-                                     LDiversityCriterion.ENTROPY,
+                { new TestCaseResult(new ARXConfiguration(0.0d, new MetricNMEntropy()).addCriterion(new EntropyLDiversity(100)),
                                      "occupation",
-                                     0.0d,
                                      "data/adult.csv",
-                                     Metric.NMENTROPY,
                                      0.0d,
                                      null,
                                      false) },

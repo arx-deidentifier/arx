@@ -114,9 +114,10 @@ public class ARXConfiguration implements Serializable{
      * Adds a criterion to the configuration
      * @param c
      */
-    public void addCriterion(PrivacyCriterion c){
+    public ARXConfiguration addCriterion(PrivacyCriterion c){
         criteria = Arrays.copyOf(criteria, criteria.length+1);
         criteria[criteria.length-1] = c;
+        return this;
     }
 
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz){
