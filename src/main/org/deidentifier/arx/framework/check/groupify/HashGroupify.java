@@ -35,46 +35,49 @@ import org.deidentifier.arx.framework.data.Data;
 public class HashGroupify implements IHashGroupify {
 
     /** The current outliers. */
-    private int                    currentOutliers;
+    private int                      currentOutliers;
 
     /** Current number of elements. */
-    private int                    elementCount;
+    private int                      elementCount;
 
     /** The entry array. */
-    private HashGroupifyEntry[]    buckets;
+    private HashGroupifyEntry[]      buckets;
 
     /** The first entry. */
-    private HashGroupifyEntry      firstEntry;
-
-    /** The current config */
-    private final ARXConfiguration config;
+    private HashGroupifyEntry        firstEntry;
 
     /** The last entry. */
-    private HashGroupifyEntry      lastEntry;
+    private HashGroupifyEntry        lastEntry;
 
     /** Load factor. */
-    private final float            loadFactor = 0.75f;
+    private final float              loadFactor = 0.75f;
 
     /**
      * Maximum number of elements that can be put in this map before having to
      * rehash.
      */
-    private int                    threshold;
+    private int                      threshold;
 
     /** Allowed tuple outliers */
-    private final int              absoluteMaxOutliers;
+    private final int                absoluteMaxOutliers;
 
     /** The parameter k, if k-anonymity is contained in the set of criteria */
-    private final int              k;
-    
+    private final int                k;
+
     /** The research subset, if d-presence is contained in the set of criteria */
-    private final CompressedBitSet subset;
-    
+    private final CompressedBitSet   subset;
+
     /** Criteria*/
     private final PrivacyCriterion[] criteria;
-    
+
     /** Criteria*/
     private final PrivacyCriterion[] criteriaIgnoreKAnonymity;
+    
+    /** Is k-anonymity the only criterion?*/
+    private final boolean isOnlyKAnonymity;
+    
+    /** Is k-anonymity a subcriterion?*/
+    private final boolean containsKAnonymity;
 
     /**
      * Constructs a new hash groupify operator
@@ -92,7 +95,6 @@ public class HashGroupify implements IHashGroupify {
         this.buckets = new HashGroupifyEntry[capacity];
         this.threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
 
-        this.config = config;
         this.currentOutliers = 0;
         this.absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
 
@@ -102,36 +104,40 @@ public class HashGroupify implements IHashGroupify {
         } else {
             k = Integer.MAX_VALUE;
         }
-        
+
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
             subset = config.getCriterion(DPresence.class).getResearchSubset();
         } else {
             subset = null;
         }
-        
+
         // Extract criteria
         criteria = config.getCriteria();
         criteriaIgnoreKAnonymity = config.getCriteriaIgnoreKAnonymity();
+        
+        // Extract flags
+        if (config.containsCriterion(KAnonymity.class)){
+            if (config.getCriteria().length==1){
+                this.isOnlyKAnonymity = true;
+                this.containsKAnonymity = false;
+            } else {
+                this.isOnlyKAnonymity = false;
+                this.containsKAnonymity = true;
+            }
+        } else {
+            this.isOnlyKAnonymity = false;
+            this.containsKAnonymity = false;            
+        }
     }
-    
 
     @Override
     public void addAll(int[] key, int representant, int count, int sensitive, int pcount) {
-        
-        // Init
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry;
-        
-        // Is a research subset provided
-        if (subset!=null && subset.get(representant)) {
-            entry = addInternal(key, representant, count, hash, pcount);
-        } else {
-            entry = addInternal(key, representant, 0, hash, pcount);
-        }
-        
-        // Is a sensitive attribute provided 
-        if (sensitive!=-1){
+
+        final HashGroupifyEntry entry = addInternal(key, representant, count, pcount);
+
+        // Is a sensitive attribute provided
+        if (sensitive != -1) {
             if (entry.distribution == null) {
                 entry.distribution = new Distribution();
             }
@@ -141,20 +147,11 @@ public class HashGroupify implements IHashGroupify {
 
     @Override
     public void addGroupify(int[] key, int representant, int count, Distribution distribution, int pcount) {
-        
-        // Init
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry;
-        
-        // Is a research subset provided
-        if (subset!=null && subset.get(representant)) {
-            entry = addInternal(key, representant, count, hash, pcount);
-        } else {
-            entry = addInternal(key, representant, 0, hash, pcount);
-        }
-        
-        // Is a distribution provided 
-        if (distribution!=null){
+
+        final HashGroupifyEntry entry = addInternal(key, representant, count, pcount);
+
+        // Is a distribution provided
+        if (distribution != null) {
             if (entry.distribution == null) {
                 entry.distribution = distribution;
             }
@@ -164,20 +161,11 @@ public class HashGroupify implements IHashGroupify {
 
     @Override
     public void addSnapshot(int[] key, int representant, int count, int[] elements, int[] frequencies, int pcount) {
-        
-        // Init
-        final int hash = HashTableUtil.hashcode(key);
-        final HashGroupifyEntry entry;
-        
-        // Is a research subset provided
-        if (subset!=null && subset.get(representant)) {
-            entry = addInternal(key, representant, count, hash, pcount);
-        } else {
-            entry = addInternal(key, representant, 0, hash, pcount);
-        }
-        
-        // Is a distribution provided 
-        if (elements!=null){
+
+        final HashGroupifyEntry entry = addInternal(key, representant, count, pcount);
+
+        // Is a distribution provided
+        if (elements != null) {
             if (entry.distribution == null) {
                 entry.distribution = new Distribution(elements, frequencies);
             }
@@ -198,11 +186,15 @@ public class HashGroupify implements IHashGroupify {
      *            the hash
      * @return the hash groupify entry
      */
-    private final HashGroupifyEntry addInternal(final int[] key,
-                                                final int line,
-                                                final int value,
-                                                final int hash,
-                                                final int pvalue) {
+    private final HashGroupifyEntry addInternal(final int[] key, final int representant, int count, final int pcount) {
+
+        // Init
+        final int hash = HashTableUtil.hashcode(key);
+        
+        // Is a research subset provided
+        if (subset != null && !subset.get(representant)) {
+            count = 0;
+        }
 
         // Add entry
         int index = hash & (buckets.length - 1);
@@ -212,18 +204,18 @@ public class HashGroupify implements IHashGroupify {
                 rehash();
                 index = hash & (buckets.length - 1);
             }
-            entry = createEntry(key, index, hash, line);
+            entry = createEntry(key, index, hash, representant);
         }
-        entry.count += value;
+        entry.count += count;
 
         // TODO: What is this?
         // indirectly check if we are in d-presence mode
         if (subset != null) {
-            entry.pcount += pvalue;
-            if (value > 0) { // this is a research subset line
+            entry.pcount += pcount;
+            if (count > 0) { // this is a research subset line
                 // reset representant, necessary for rollup / history (otherwise
                 // researchSubset.get(line) would potentially be false)
-                entry.representant = line;
+                entry.representant = representant;
             }
         }
 
@@ -231,10 +223,10 @@ public class HashGroupify implements IHashGroupify {
         if (entry.count >= k) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;
-                currentOutliers -= (entry.count - value);
+                currentOutliers -= (entry.count - count);
             }
         } else {
-            currentOutliers += value;
+            currentOutliers += count;
         }
 
         return entry;
@@ -364,7 +356,15 @@ public class HashGroupify implements IHashGroupify {
 
     @Override
     public boolean isAnonymous() {
-
+       
+        if (isOnlyKAnonymity) {
+            return isKAnonymous();
+        } 
+        
+        if (containsKAnonymity && !isKAnonymous()){
+            return false;
+        }
+        
         // Iterate over all classes
         currentOutliers = 0;
         HashGroupifyEntry entry = firstEntry;
@@ -396,27 +396,24 @@ public class HashGroupify implements IHashGroupify {
      * @return
      */
     private boolean isAnonymousIgnoreKAnonymity(HashGroupifyEntry entry) {
-        for (int i=0; i<criteriaIgnoreKAnonymity.length; i++){
-            if (!criteriaIgnoreKAnonymity[i].isAnonymous(entry)) {
-                return false;
-            }
+        for (int i = 0; i < criteriaIgnoreKAnonymity.length; i++) {
+            if (!criteriaIgnoreKAnonymity[i].isAnonymous(entry)) { return false; }
         }
         return true;
     }
-    
+
     /**
      * Checks whether the given entry is anonymous
      * @param entry
      * @return
      */
     private boolean isAnonymous(HashGroupifyEntry entry) {
-        for (int i=0; i<criteria.length; i++){
-            if (!criteria[i].isAnonymous(entry)) {
-                return false;
-            }
+        for (int i = 0; i < criteria.length; i++) {
+            if (!criteria[i].isAnonymous(entry)) { return false; }
         }
         return true;
     }
+
     /**
      * Is the current transformation k-anonymous? CAUTION: Call before
      * isAnonymous()!

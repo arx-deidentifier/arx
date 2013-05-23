@@ -19,8 +19,6 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.criteria.LDiversity;
-import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
