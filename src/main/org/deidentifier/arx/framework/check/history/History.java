@@ -357,6 +357,7 @@ public class History {
             }
             break;
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+        case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
                 dictionarySensValue.decrementRefCount(snapshot[i + 2]);
                 dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
