@@ -77,11 +77,11 @@ public class Transformer10 extends AbstractTransformer {
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
                 groupify.addAll(outtuple, i, 1, -1, 1);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addAll(outtuple, i, 1, sensitiveValues[i], 1);
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
                 break;
             default:
@@ -123,15 +123,11 @@ public class Transformer10 extends AbstractTransformer {
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
                 groupify.addGroupify(outtuple, element.representant, element.count, null, element.pcount);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                groupify.addGroupify(outtuple,
-                                     element.representant,
-                                     element.count,
-                                     element.distribution,
-                                     element.pcount);
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, element.pcount);
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
                 break;
             default:
@@ -180,22 +176,12 @@ public class Transformer10 extends AbstractTransformer {
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
                 groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, snapshot[i + 2]);
                 break;
-            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER |
-                 ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                groupify.addSnapshot(outtuple,
-                                     snapshot[i],
-                                     snapshot[i + 1],
-                                     dictionarySensValue.get(snapshot[i + 3]),
-                                     dictionarySensFreq.get(snapshot[i + 4]),
-                                     snapshot[i + 2]);
+            case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 3]), dictionarySensFreq.get(snapshot[i + 4]), snapshot[i + 2]);
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                groupify.addSnapshot(outtuple,
-                                     snapshot[i],
-                                     snapshot[i + 1],
-                                     dictionarySensValue.get(snapshot[i + 2]),
-                                     dictionarySensFreq.get(snapshot[i + 3]),
-                                     -1);
+            case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+                groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
                 break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);

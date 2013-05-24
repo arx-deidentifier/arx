@@ -300,6 +300,7 @@ public class History {
                 data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 fSet = m.distribution;
                 fSet.pack();
                 data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
