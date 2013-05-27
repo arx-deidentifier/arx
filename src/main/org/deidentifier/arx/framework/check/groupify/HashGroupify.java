@@ -377,7 +377,7 @@ public class HashGroupify implements IHashGroupify {
             if (!anonymous) {
                 currentOutliers += entry.count;
 
-                // Break as soon as any class is not anonymous
+                // Break as soon as too many classes are not anonymous
                 if (currentOutliers > absoluteMaxOutliers) { return false; }
             }
 
