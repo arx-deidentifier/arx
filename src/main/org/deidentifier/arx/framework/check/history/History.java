@@ -299,6 +299,7 @@ public class History {
                 data[index + 3] = dictionarySensValue.probe(fSet.getPackedElements());
                 data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
                 break;
+            // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 fSet = m.distribution;
@@ -356,6 +357,7 @@ public class History {
                 dictionarySensFreq.decrementRefCount(snapshot[i + 4]);
             }
             break;
+        // TODO: If we only need a distribution, we should get rid of the primary counter
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
         case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
