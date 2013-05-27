@@ -70,6 +70,9 @@ public class ARXConfiguration implements Serializable {
 
     /** The metric. */
     private Metric<?>          metric                        = Metric.createDMStarMetric();
+    
+    /** The snapshot length*/
+    private int snapshotLength; 
 
     /**
      * Creates a new config without tuple suppression
@@ -202,14 +205,7 @@ public class ARXConfiguration implements Serializable {
      * @return
      */
     public int getSnapshotLength() {
-        int length = 2;
-        if (this.requires(REQUIREMENT_DISTRIBUTION)) {
-            length += 2;
-        }
-        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
-            length += 1;
-        }
-        return length;
+        return this.snapshotLength;
     }
 
     /**
@@ -247,6 +243,15 @@ public class ARXConfiguration implements Serializable {
         if (this.containsCriterion(KAnonymity.class)) {
             list.add(0, this.getCriterion(KAnonymity.class));
             this.criteria = list.toArray(new PrivacyCriterion[0]);
+        }
+        
+        // Compute snapshot length
+        this.snapshotLength = 2;
+        if (this.requires(REQUIREMENT_DISTRIBUTION)) {
+            this.snapshotLength += 2;
+        }
+        if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
+            this.snapshotLength += 1;
         }
     }
 
