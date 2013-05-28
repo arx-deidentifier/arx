@@ -31,6 +31,9 @@ public class EqualDistanceTCloseness extends TCloseness {
 
     /** The original distribution*/
     private double[]          distribution;
+    
+    /** The original number of values*/
+    private double            total;
 
     /**
      * Creates a new instance
@@ -43,13 +46,13 @@ public class EqualDistanceTCloseness extends TCloseness {
     @Override
     public void initialize(DataManager manager) {
         distribution = manager.getDistribution();
+        total = manager.getDataQI().getDataLength();
     }
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
-        // calculate emd with equal distance
-
+        // Calculate EMD with equal distance
         int[] buckets = entry.distribution.getBuckets();
         int totalElements = 0;
         for (int i = 0; i < buckets.length; i += 2) {
@@ -58,10 +61,12 @@ public class EqualDistanceTCloseness extends TCloseness {
             }
         }
 
-        double val = 0d;
+        double val = total;
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
-                val += Math.abs((distribution[buckets[i]] - ((double) buckets[i + 1] / (double) totalElements)));
+                double frequency = distribution[buckets[i]];
+                // TODO: Can this be simplified (only one appearance of frequency)
+                val += Math.abs((frequency - ((double) buckets[i + 1] / (double) totalElements))) - frequency;
             }
         }
         val /= 2;
