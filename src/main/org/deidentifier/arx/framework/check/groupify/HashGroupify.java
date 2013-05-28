@@ -154,8 +154,9 @@ public class HashGroupify implements IHashGroupify {
         if (distribution != null) {
             if (entry.distribution == null) {
                 entry.distribution = distribution;
+            } else {
+                entry.distribution.merge(distribution);
             }
-            entry.distribution.merge(distribution);
         }
     }
 
@@ -168,8 +169,9 @@ public class HashGroupify implements IHashGroupify {
         if (elements != null) {
             if (entry.distribution == null) {
                 entry.distribution = new Distribution(elements, frequencies);
+            } else {
+                entry.distribution.merge(elements, frequencies);
             }
-            entry.distribution.merge(elements, frequencies);
         }
     }
 
