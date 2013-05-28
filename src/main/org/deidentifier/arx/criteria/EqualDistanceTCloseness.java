@@ -32,9 +32,6 @@ public class EqualDistanceTCloseness extends TCloseness {
     /** The original distribution*/
     private double[]          distribution;
     
-    /** The original number of values*/
-    private double            total;
-
     /**
      * Creates a new instance
      * @param t
@@ -46,7 +43,6 @@ public class EqualDistanceTCloseness extends TCloseness {
     @Override
     public void initialize(DataManager manager) {
         distribution = manager.getDistribution();
-        total = manager.getDataQI().getDataLength();
     }
 
     @Override
@@ -61,7 +57,7 @@ public class EqualDistanceTCloseness extends TCloseness {
             }
         }
 
-        double val = total;
+        double val = 1.0d;
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 double frequency = distribution[buckets[i]];
