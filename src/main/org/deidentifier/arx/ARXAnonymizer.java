@@ -175,7 +175,7 @@ public class ARXAnonymizer {
 
         // Check
         if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
-        checkBeforeEncoding(config.getRelativeMaxOutliers(), handle.getDefinition().getHierarchies());
+        checkBeforeEncoding(config.getAllowedOutliers(), handle.getDefinition().getHierarchies());
 
         final DataManager manager = prepareDataManager(handle, config);
 

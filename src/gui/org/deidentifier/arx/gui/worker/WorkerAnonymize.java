@@ -68,7 +68,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
                                                     .getInput(),
                                                model.getInputConfig().getK(),
                                                model.getInputConfig()
-                                                    .getRelativeMaxOutliers());
+                                                    .getAllowedOutliers());
                 break;
             case L_DIVERSITY:
                 switch (model.getInputConfig().getLDiversityCriterion()) {
@@ -79,7 +79,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
                                                         .getL(),
                                                    true,
                                                    model.getInputConfig()
-                                                        .getRelativeMaxOutliers());
+                                                        .getAllowedOutliers());
                     break;
                 case DISTINCT:
                     result = anonymizer.lDiversify(model.getInputConfig()
@@ -88,7 +88,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
                                                         .getL(),
                                                    false,
                                                    model.getInputConfig()
-                                                        .getRelativeMaxOutliers());
+                                                        .getAllowedOutliers());
                     break;
                 case RECURSIVE:
                     result = anonymizer.lDiversify(model.getInputConfig()
@@ -98,7 +98,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
                                                    model.getInputConfig()
                                                         .getL(),
                                                    model.getInputConfig()
-                                                        .getRelativeMaxOutliers());
+                                                        .getAllowedOutliers());
                     break;
                 }
                 break;
@@ -110,7 +110,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
                                                  model.getInputConfig().getK(),
                                                  model.getInputConfig().getT(),
                                                  model.getInputConfig()
-                                                      .getRelativeMaxOutliers());
+                                                      .getAllowedOutliers());
                     break;
                 case EMD_HIERARCHICAL:
                     result = anonymizer.tClosify(model.getInputConfig()
@@ -118,7 +118,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
                                                  model.getInputConfig().getK(),
                                                  model.getInputConfig().getT(),
                                                  model.getInputConfig()
-                                                      .getRelativeMaxOutliers(),
+                                                      .getAllowedOutliers(),
                                                  model.getInputConfig()
                                                       .getSensitiveHierarchy());
                     break;

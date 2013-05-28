@@ -20,34 +20,18 @@ package org.deidentifier.arx.gui;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXConfiguration.Criterion;
-import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
 public class Configuration implements Serializable {
 
     private static final long   serialVersionUID      = -2887699232096897527L;
 
-    private transient Hierarchy sensitiveHierarchy    = null;
     private transient Data      input                 = null;
-
+    private ARXConfiguration    config                = null;
     private boolean             removeOutliers        = true;
-    private int                 k                     = 2;
-    private double              relativeMaxOutliers   = 0d;
-    private Metric<?>           metric                = Metric.createNMEntropyMetric();
-    private Criterion           criterion             = Criterion.K_ANONYMITY;
-    private int                 l                     = 2;
-    private double              c                     = 0.001d;
-    private boolean             practicalMonotonicity = false;
-    private double              t                     = 0.001d;
-
-    private LDiversityCriterion lDiversityCriterion   = LDiversityCriterion.DISTINCT;
-    private EqualDistanceTCloseness tClosenessCriterion   = EqualDistanceTCloseness.EMD_EQUAL;
-
     private boolean             modified              = true;
 
     @Override
@@ -55,43 +39,11 @@ public class Configuration implements Serializable {
 
         final Configuration c = new Configuration();
         c.removeOutliers = removeOutliers;
-        c.k = k;
-        c.relativeMaxOutliers = relativeMaxOutliers;
-        // TODO: Might be necessary to clone the metric, if e.g. weights can be
-        // defined
-        c.metric = metric;
-        c.criterion = criterion;
-        c.l = l;
-        c.c = this.c;
-        c.practicalMonotonicity = practicalMonotonicity;
-        c.t = t;
-        c.lDiversityCriterion = lDiversityCriterion;
-        c.tClosenessCriterion = tClosenessCriterion;
-
-        if (sensitiveHierarchy != null) {
-            c.sensitiveHierarchy = sensitiveHierarchy.clone();
-        } else {
-            c.sensitiveHierarchy = null;
-        }
         c.input = input.clone();
+        c.config = config.clone();
 
         return c;
 
-    }
-
-    public ARXAnonymizer getAnonymizer(final ARXAnonymizer anonymizer) {
-        anonymizer.setMetric(getMetric());
-        anonymizer.setPracticalMonotonicity(getPracticalMonotonicity());
-        anonymizer.setRemoveOutliers(getRemoveOutliers());
-        return anonymizer;
-    }
-
-    public double getC() {
-        return c;
-    }
-
-    public Criterion getCriterion() {
-        return criterion;
     }
 
     /**
@@ -102,70 +54,19 @@ public class Configuration implements Serializable {
     }
 
     /**
-     * @return the k
+     * Has the config been modified
+     * @return
      */
-    public int getK() {
-        return k;
-    }
-
-    public int getL() {
-        return l;
-    }
-
-    public LDiversityCriterion getLDiversityCriterion() {
-        return lDiversityCriterion;
-    }
-
-    /**
-     * @return the metric
-     */
-    public Metric<?> getMetric() {
-        return metric;
-    }
-
-    public boolean getPracticalMonotonicity() {
-        return practicalMonotonicity;
-    }
-
-    /**
-     * @return the relativeMaxOutliers
-     */
-    public double getRelativeMaxOutliers() {
-        return relativeMaxOutliers;
-    }
-
-    public boolean getRemoveOutliers() {
-        return removeOutliers;
-    }
-
-    public Hierarchy getSensitiveHierarchy() {
-        return sensitiveHierarchy;
-    }
-
-    public double getT() {
-        return t;
-    }
-
-    public EqualDistanceTCloseness getTClosenessCriterion() {
-        return tClosenessCriterion;
-    }
-
     public boolean isModified() {
         return modified;
     }
 
+    /**
+     * Should outliers be removed
+     * @return
+     */
     public boolean isRemoveOutliers() {
         return removeOutliers;
-    }
-
-    public void setC(final double c) {
-        setModified();
-        this.c = c;
-    }
-
-    public void setCriterion(final Criterion criterion) {
-        setModified();
-        this.criterion = criterion;
     }
 
     /**
@@ -178,67 +79,24 @@ public class Configuration implements Serializable {
     }
 
     /**
-     * @param k
-     *            the k to set
+     * Mark as modified
      */
-    public void setK(final int k) {
-        this.k = k;
-        setModified();
-    }
-
-    public void setL(final int l) {
-        setModified();
-        this.l = l;
-    }
-
-    public void setLDiversityCriterion(final LDiversityCriterion criterion) {
-        lDiversityCriterion = criterion;
-        setModified();
-    }
-
-    public void setMetric(final Metric<?> metric) {
-        this.metric = metric;
-        setModified();
-    }
-
     private void setModified() {
         modified = true;
     }
 
-    public void setPracticalMonotonicity(final boolean practical) {
-        setModified();
-        practicalMonotonicity = practical;
-    }
-
     /**
-     * @param relativeMaxOutliers
-     *            the relativeMaxOutliers to set
+     * Sets whether outliers should be removed
+     * @param removeOutliers
      */
-    public void setRelativeMaxOutliers(final double relativeMaxOutliers) {
-        this.relativeMaxOutliers = relativeMaxOutliers;
-        setModified();
-    }
-
     public void setRemoveOutliers(final boolean removeOutliers) {
         this.removeOutliers = removeOutliers;
         setModified();
     }
-
-    public void setSensitiveHierarchy(final Hierarchy h) {
-        sensitiveHierarchy = h;
-        setModified();
-    }
-
-    public void setT(final double t) {
-        setModified();
-        this.t = t;
-    }
-
-    public void setTClosenessCriterion(final EqualDistanceTCloseness criterion) {
-        tClosenessCriterion = criterion;
-        setModified();
-    }
-
+    
+    /**
+     * Sets the config unmodified
+     */
     public void setUnmodified() {
         modified = false;
     }
@@ -259,5 +117,110 @@ public class Configuration implements Serializable {
             size *= factor;
         }
         return size <= max;
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param c
+     * @return
+     */
+    public ARXConfiguration addCriterion(PrivacyCriterion c) {
+        setModified();
+        return config.addCriterion(c);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param clazz
+     * @return
+     */
+    public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
+        return config.containsCriterion(clazz);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @return
+     */
+    public PrivacyCriterion[] getCriteria() {
+        return config.getCriteria();
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param clazz
+     * @return
+     */
+    public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
+        return config.getCriterion(clazz);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param clazz
+     * @return
+     */
+    public <T extends PrivacyCriterion> boolean removeCriterion(Class<T> clazz) {
+        setModified();
+        return config.removeCriterion(clazz);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @return
+     */
+    public Metric<?> getMetric() {
+        return config.getMetric();
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @return
+     */
+    public final double getAllowedOutliers() {
+        return config.getAllowedOutliers();
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @return
+     */
+    public final boolean isCriterionMonotonic() {
+        return config.isCriterionMonotonic();
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @return
+     */
+    public boolean isPracticalMonotonicity() {
+        return config.isPracticalMonotonicity();
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param supp
+     */
+    public void setAllowedOutliers(double supp) {
+        setModified();
+        config.setAllowedOutliers(supp);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param metric
+     */
+    public void setMetric(Metric<?> metric) {
+        setModified();
+        config.setMetric(metric);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param assumeMonotonicity
+     */
+    public void setPracticalMonotonicity(boolean assumeMonotonicity) {
+        setModified();
+        config.setPracticalMonotonicity(assumeMonotonicity);
     }
 }

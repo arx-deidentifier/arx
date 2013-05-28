@@ -182,7 +182,7 @@ public class WorkerSave extends Worker<Model> {
         b.append("\t").append("<removeOutliers>").append(toXML(config.isRemoveOutliers())).append("</removeOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         b.append("\t").append("<k>").append(toXML(config.getK())).append("</k>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<relativeMaxOutliers>").append(toXML(config.getRelativeMaxOutliers())).append("</relativeMaxOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        b.append("\t").append("<relativeMaxOutliers>").append(toXML(config.getAllowedOutliers())).append("</relativeMaxOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         b.append("\t").append("<criterion>").append(toXML(config.getCriterion())).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<metric>").append(toXML(config.getMetric().getClass().getSimpleName())).append("</metric>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

@@ -37,7 +37,7 @@ import org.deidentifier.arx.metric.Metric;
  * A generic configuration for the ARX anonymizer
  * @author Fabian Prasser
  */
-public class ARXConfiguration implements Serializable {
+public class ARXConfiguration implements Serializable, Cloneable {
 
     private static final long  serialVersionUID              = -6713510386735241964L;
 
@@ -175,6 +175,37 @@ public class ARXConfiguration implements Serializable {
             return null;
         }
     }
+    
+    /**
+     * Removes all criteria that are instances of the given class
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends PrivacyCriterion> boolean removeCriterion(Class<T> clazz) {
+        
+        // Determine elements to remove
+        Set<T> toRemove = new HashSet<T>();
+        for (PrivacyCriterion c : criteria) {
+            if (clazz.isInstance(c)) {
+                toRemove.add((T) c);
+            }
+        }
+        if (toRemove.isEmpty()) return false;
+        
+        // Build new array
+        int index = 0;
+        PrivacyCriterion[] temp = new PrivacyCriterion[criteria.length-toRemove.size()];
+        for (PrivacyCriterion c : criteria){
+            if (!toRemove.contains(c)){
+                temp[index++] = c;
+            }
+        }
+        this.criteria = temp;
+        
+        // Return
+        return true;
+    }
 
     /**
      * Returns the metric used for measuring information loss
@@ -188,7 +219,7 @@ public class ARXConfiguration implements Serializable {
      * Returns the maximum number of allowed outliers
      * @return
      */
-    public final double getRelativeMaxOutliers() {
+    public final double getAllowedOutliers() {
         return relMaxOutliers;
     }
 
@@ -308,5 +339,10 @@ public class ARXConfiguration implements Serializable {
      */
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
+    }
+    
+    public ARXConfiguration clone(){
+        // TODO: Implement!
+        throw new RuntimeException("Not implemented!");
     }
 }

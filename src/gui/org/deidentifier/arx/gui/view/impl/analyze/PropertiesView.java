@@ -395,7 +395,7 @@ public class PropertiesView implements IView {
 
         roots.clear();
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.10"), new String[] { String.valueOf(config.getRelativeMaxOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
+        new Property(Resources.getMessage("PropertiesView.10"), new String[] { String.valueOf(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         final Property identifying = new Property(attributes,
                                                   Resources.getMessage("PropertiesView.13"), new String[] { String.valueOf(data.getDefinition().getIdentifyingAttributes().size()) }); //$NON-NLS-1$
