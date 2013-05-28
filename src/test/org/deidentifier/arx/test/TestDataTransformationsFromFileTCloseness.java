@@ -294,8 +294,8 @@ public class TestDataTransformationsFromFileTCloseness extends TestDataTransform
     @Test
     public void testTestCases() throws IOException {
 
+        // TODO: Ugly hack!
         if (!testCase.config.containsCriterion(TCloseness.class)) {
-            System.out.println("hierarchicla");
             final Hierarchy hierarchy = Hierarchy.create(testCase.dataset.substring(0, testCase.dataset.length() - 4) + "_hierarchy_" + testCase.senstitiveAttribute + ".csv", ';');
             testCase.config.addCriterion(new HierarchicalDistanceTCloseness(0.2d, hierarchy));
         }

@@ -74,6 +74,7 @@ public class Transformer04 extends AbstractTransformer {
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addAll(outtuple, i, 1, sensitiveValues[i], 1);
                 break;
+            // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
@@ -114,6 +115,7 @@ public class Transformer04 extends AbstractTransformer {
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, element.pcount);
                 break;
+            // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
@@ -160,6 +162,7 @@ public class Transformer04 extends AbstractTransformer {
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 3]), dictionarySensFreq.get(snapshot[i + 4]), snapshot[i + 2]);
                 break;
+            // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
