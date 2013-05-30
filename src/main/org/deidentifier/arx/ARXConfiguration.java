@@ -51,10 +51,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                absMaxOutliers                = 0;
 
     /** Criteria*/
-    private PrivacyCriterion[] criteria                      = new PrivacyCriterion[0];
-
-    /** Optimized list of criteria*/
-    private PrivacyCriterion[] optimizedCriteria             = new PrivacyCriterion[0];
+    private PrivacyCriterion[] aCriteria                     = new PrivacyCriterion[0];
+    
+    /** The criteria*/
+    private Set<PrivacyCriterion> criteria                   = new HashSet<PrivacyCriterion>();
 
     /** Do the criteria require a counter per equivalence class*/
     public static final int    REQUIREMENT_COUNTER           = 0x1;
@@ -118,8 +118,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param c
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
-        criteria = Arrays.copyOf(criteria, criteria.length + 1);
-        criteria[criteria.length - 1] = c;
+        criteria.add(c);
         return this;
     }
 
@@ -139,19 +138,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns all criteria
+     * Returns all criteria as array. Only used internally.
      * @return
      */
-    public PrivacyCriterion[] getCriteria() {
-        return this.criteria;
+    public PrivacyCriterion[] getCriteriaAsArray() {
+        return this.aCriteria;
     }
 
     /**
-     * Returns all criteria, not including k-anonymity
+     * Returns all criteria.
      * @return
      */
-    public PrivacyCriterion[] getCriteriaIgnoreKAnonymity() {
-        return this.optimizedCriteria;
+    public Set<PrivacyCriterion> getCriteria() {
+        return this.criteria;
     }
 
     /**
@@ -191,17 +190,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 toRemove.add((T) c);
             }
         }
-        if (toRemove.isEmpty()) return false;
         
-        // Build new array
-        int index = 0;
-        PrivacyCriterion[] temp = new PrivacyCriterion[criteria.length-toRemove.size()];
-        for (PrivacyCriterion c : criteria){
-            if (!toRemove.contains(c)){
-                temp[index++] = c;
-            }
-        }
-        this.criteria = temp;
+        // Remove
+        if (toRemove.isEmpty()) return false;
+        criteria.removeAll(toRemove);
         
         // Return
         return true;
@@ -244,6 +236,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param manager
      */
     protected void initialize(DataManager manager) {
+        
+        // Check
+        if (criteria.isEmpty()){
+            throw new RuntimeException("At least one privacy criterion must be specified!");
+        }
 
         // Compute requirements
         this.requirements = 0x0;
@@ -268,13 +265,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(TCloseness.class)) {
             list.add(this.getCriterion(TCloseness.class));
         }
-        this.optimizedCriteria = list.toArray(new PrivacyCriterion[0]);
-
-        // Change order of criteria
-        if (this.containsCriterion(KAnonymity.class)) {
-            list.add(0, this.getCriterion(KAnonymity.class));
-            this.criteria = list.toArray(new PrivacyCriterion[0]);
-        }
+        this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         
         // Compute snapshot length
         this.snapshotLength = 2;
@@ -341,8 +332,33 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.practicalMonotonicity = assumeMonotonicity;
     }
     
+    /**
+     * Clones this config
+     */
     public ARXConfiguration clone(){
         // TODO: Implement!
         throw new RuntimeException("Not implemented!");
+    }
+
+    /**
+     * Returns the minimal size of an equivalence class induced by the contained criteria.
+     * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
+     * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
+     */
+    public int getMinimalGroupSize() {
+        int k = -1;
+        int l = -1;
+        
+        if (this.containsCriterion(KAnonymity.class)){
+            k = this.getCriterion(KAnonymity.class).getK();
+        }
+        
+        if (this.containsCriterion(LDiversity.class)){
+            l = this.getCriterion(LDiversity.class).getL();
+        }
+        
+        int result = Math.max(k, l);
+        if (result==-1) return Integer.MAX_VALUE;
+        else return result;
     }
 }

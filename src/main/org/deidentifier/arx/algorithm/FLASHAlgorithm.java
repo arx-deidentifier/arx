@@ -99,7 +99,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
             traverseType = TraverseType.FIRST_PHASE_ONLY;
             history.setPruningStrategy(PruningStrategy.ANONYMOUS);
         } else {
-            if (checker.getConfiguration().containsCriterion(KAnonymity.class)) {
+            if (checker.getConfiguration().getMinimalGroupSize() != Integer.MAX_VALUE) {
                 traverseType = TraverseType.FIRST_AND_SECOND_PHASE;
                 history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
             } else {

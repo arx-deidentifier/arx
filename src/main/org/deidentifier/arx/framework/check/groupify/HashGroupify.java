@@ -70,15 +70,6 @@ public class HashGroupify implements IHashGroupify {
     /** Criteria*/
     private final PrivacyCriterion[] criteria;
 
-    /** Criteria*/
-    private final PrivacyCriterion[] criteriaIgnoreKAnonymity;
-    
-    /** Is k-anonymity the only criterion?*/
-    private final boolean isOnlyKAnonymity;
-    
-    /** Is k-anonymity a subcriterion?*/
-    private final boolean containsKAnonymity;
-
     /**
      * Constructs a new hash groupify operator
      * 
@@ -98,13 +89,6 @@ public class HashGroupify implements IHashGroupify {
         this.currentOutliers = 0;
         this.absoluteMaxOutliers = config.getAbsoluteMaxOutliers();
 
-        // Extract monotonic subcriterion
-        if (config.containsCriterion(KAnonymity.class)) {
-            k = config.getCriterion(KAnonymity.class).getK();
-        } else {
-            k = Integer.MAX_VALUE;
-        }
-
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
             subset = config.getCriterion(DPresence.class).getResearchSubset();
@@ -113,22 +97,8 @@ public class HashGroupify implements IHashGroupify {
         }
 
         // Extract criteria
-        criteria = config.getCriteria();
-        criteriaIgnoreKAnonymity = config.getCriteriaIgnoreKAnonymity();
-        
-        // Extract flags
-        if (config.containsCriterion(KAnonymity.class)){
-            if (config.getCriteria().length==1){
-                this.isOnlyKAnonymity = true;
-                this.containsKAnonymity = false;
-            } else {
-                this.isOnlyKAnonymity = false;
-                this.containsKAnonymity = true;
-            }
-        } else {
-            this.isOnlyKAnonymity = false;
-            this.containsKAnonymity = false;            
-        }
+        criteria = config.getCriteriaAsArray();
+        k = config.getMinimalGroupSize();
     }
 
     @Override
@@ -359,11 +329,11 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public boolean isAnonymous() {
        
-        if (isOnlyKAnonymity) {
+        if (criteria.length==0) {
             return isKAnonymous();
         } 
         
-        if (containsKAnonymity && !isKAnonymous()){
+        if (k != Integer.MAX_VALUE && !isKAnonymous()){
             return false;
         }
         
@@ -373,7 +343,7 @@ public class HashGroupify implements IHashGroupify {
         while (entry != null) {
 
             // Check for anonymity
-            final boolean anonymous = isAnonymousIgnoreKAnonymity(entry);
+            final boolean anonymous = isAnonymous(entry);
 
             // Determine outliers
             if (!anonymous) {
@@ -393,25 +363,22 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
-     * Checks whether the given entry is anonymous, ignoring k-anonymity
-     * @param entry
-     * @return
-     */
-    private boolean isAnonymousIgnoreKAnonymity(HashGroupifyEntry entry) {
-        for (int i = 0; i < criteriaIgnoreKAnonymity.length; i++) {
-            if (!criteriaIgnoreKAnonymity[i].isAnonymous(entry)) { return false; }
-        }
-        return true;
-    }
-
-    /**
      * Checks whether the given entry is anonymous
      * @param entry
      * @return
      */
     private boolean isAnonymous(HashGroupifyEntry entry) {
+        
+        // Check minimal group size
+        if (k != Integer.MAX_VALUE && entry.count < k){
+            return false;
+        }
+        
+        // Check other criteria
         for (int i = 0; i < criteria.length; i++) {
-            if (!criteria[i].isAnonymous(entry)) { return false; }
+            if (!criteria[i].isAnonymous(entry)) { 
+                return false; 
+            }
         }
         return true;
     }

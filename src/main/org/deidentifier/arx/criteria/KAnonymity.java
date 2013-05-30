@@ -26,7 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * Published in:
  * Sweeney L. 
  * k-anonymity: A model for protecting privacy. 
- * International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems. 2002;10(5):557 – 570. 
+ * International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems. 2002;10(5):557 ï¿½ 570. 
  * Available at: http://dl.acm.org/citation.cfm?id=774552.
  * 
  * @author Prasser, Kohlmayer
@@ -55,7 +55,7 @@ public class KAnonymity extends PrivacyCriterion{
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
-        return entry.count >= k;
+        throw new RuntimeException("This should never be called!");
     }
 
     /**
