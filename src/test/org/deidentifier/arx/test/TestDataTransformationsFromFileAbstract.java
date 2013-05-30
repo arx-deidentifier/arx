@@ -133,12 +133,12 @@ public abstract class TestDataTransformationsFromFileAbstract extends TestAnonym
         if (testCase.bestResult == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
-            assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.bestResult) + "is: " + Arrays.toString(result.getGlobalOptimum().getTransformation()),
+            assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.bestResult) + " is: " + Arrays.toString(result.getGlobalOptimum().getTransformation()),
                        Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.bestResult));
             
-            assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + "is: " + result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
-                         result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
-                         testCase.optimalInformationLoss);
+            assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " + result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
+                         testCase.optimalInformationLoss,
+                         result.getGlobalOptimum().getMinimumInformationLoss().getValue());
         }
 
     }
