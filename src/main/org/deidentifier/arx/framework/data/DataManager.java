@@ -333,7 +333,7 @@ public class DataManager {
     }
 
     /**
-     * Returns the distribution for t-closeness with equal distance
+     * Returns the distribution for t-closeness
      * 
      * @return
      */
