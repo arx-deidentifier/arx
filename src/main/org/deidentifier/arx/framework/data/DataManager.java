@@ -439,10 +439,11 @@ public class DataManager {
         // count frequnecies
         final int offsetLeafs = 3;
         for (int i = 0; i < data.length; i++) {
-            int previousFreq = treeList.get(data[i][index] + offsetLeafs);
-            previousFreq++;
-            treeList.set(data[i][index] + offsetLeafs, previousFreq);
-
+            if (subset==null || subset.get(i)){
+                int previousFreq = treeList.get(data[i][index] + offsetLeafs);
+                previousFreq++;
+                treeList.set(data[i][index] + offsetLeafs, previousFreq);
+            }
         }
 
         // init extras
