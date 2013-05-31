@@ -69,6 +69,9 @@ public class DataManager {
     
     /** The research subset, if any*/
     protected CompressedBitSet                subset = null;
+    
+    /** The size of the research subset*/
+    protected int                             subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data
@@ -89,6 +92,7 @@ public class DataManager {
         for (PrivacyCriterion c : criteria) {
             if (c instanceof DPresence){
                 subset = ((DPresence)c).getResearchSubset();
+                subsetSize = ((DPresence)c).getResearchSubsetSize();
                 break;
             }
         }
@@ -333,23 +337,25 @@ public class DataManager {
      */
     public double[] getDistribution(String attribute) {
         
-        // TODO: Integrate research subset here
-
+        // TODO: Distribution size equals the size of the complete dataset
+        // TODO: Good idea?
         final int index = indexesSE.get(attribute);
         final int distinct = dataSE.getDictionary().getMapping()[index].length;
         final int[][] data = dataSE.getArray();
-
-        // Initialize counts
+        
+        // Initialize counts: iterate over all rows or the subset
         final int[] cardinalities = new int[distinct];
-        for (int i = 0; i < data.length; i++) { // iterate over all rows
-            cardinalities[data[i][index]]++;
+        for (int i = 0; i < data.length; i++) { 
+            if (subset==null || subset.get(i)){
+                cardinalities[data[i][index]]++;
+            }
         }
 
         // compute distribution
+        final double total = subset==null ? data.length : subsetSize;
         final double[] distribution = new double[cardinalities.length];
         for (int i = 0; i < distribution.length; i++) {
-            distribution[i] = ((double) cardinalities[i]) /
-                              ((double) data.length);
+            distribution[i] = (double) cardinalities[i] / total;
         }
         return distribution;
     }

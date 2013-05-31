@@ -30,7 +30,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * Published in:
  * Nergiz M, Atzori M, Clifton C. 
  * Hiding the presence of individuals from shared databases. 
- * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665–676. 
+ * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665ï¿½676. 
  * Available at: http://portal.acm.org/citation.cfm?id=1247480.1247554.
  * 
  * @author Prasser, Kohlmayer
@@ -44,9 +44,11 @@ public class DPresence extends PrivacyCriterion{
     /** Delta max*/
     private final double dMax;
     /** The research subset, a set of tuple ids*/
-    private final Set<Integer> subset;
+    private Set<Integer> subset;
     /** A compressed representation of the research subset*/
     private CompressedBitSet bitset;
+    /** The size of the research subset*/
+    private final int subsetSize;
     
     /**
      * Creates a new instance
@@ -59,6 +61,7 @@ public class DPresence extends PrivacyCriterion{
         this.dMin = dMin;
         this.dMax = dMax;
         this.subset = subset;
+        this.subsetSize = subset.size();
     }
         
     @Override
@@ -67,6 +70,7 @@ public class DPresence extends PrivacyCriterion{
         for (Integer line : subset) {
             bitset.set(line);
         }
+        this.subset = null;
     }
 
     @Override
@@ -93,5 +97,13 @@ public class DPresence extends PrivacyCriterion{
      */
     public CompressedBitSet getResearchSubset() {
         return this.bitset;
+    }
+    
+    /**
+     * Returns the size of the research subset
+     * @return
+     */
+    public int getResearchSubsetSize() {
+        return this.subsetSize;
     }
 }

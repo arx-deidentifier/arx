@@ -19,7 +19,8 @@
 package org.deidentifier.arx.framework;
 
 /**
- * A compressed bitset
+ * A compressed bitset.
+ * TODO: Replace with different implementation? At ten chunks this merely saves any space!
  *
  * @author Prasser, Kohlmayer
  */
@@ -48,7 +49,7 @@ public class CompressedBitSet {
 
     /** The shift value. */
     private final int        shiftValue;
-
+  
     /**
      * Instantiates a new bit set compressed byte chunks shift.
      *
