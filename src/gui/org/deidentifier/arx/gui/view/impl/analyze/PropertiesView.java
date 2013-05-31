@@ -445,10 +445,10 @@ public class PropertiesView implements IView {
             if (data.getDefinition().getSensitiveAttributes().contains(s)) {
                 final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 values[0] = s;
-                if (config.getSensitiveHierarchy() != null) {
+                if (config.getHierarchy(s) != null) {
                     int height = 0;
-                    if (config.getSensitiveHierarchy().getHierarchy().length > 0) {
-                        height = config.getSensitiveHierarchy().getHierarchy()[0].length;
+                    if (config.getHierarchy(s).getHierarchy().length > 0) {
+                        height = config.getHierarchy(s).getHierarchy()[0].length;
                     }
                     values[1] = data.getDefinition().getDataType(s).toString();
                     values[2] = String.valueOf(height);

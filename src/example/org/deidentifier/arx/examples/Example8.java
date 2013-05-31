@@ -138,7 +138,7 @@ public class Example8 extends Example {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
-        config.addCriterion(new HierarchicalDistanceTCloseness(0.6d, disease));
+        config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.6d, disease));
         config.setAllowedOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
         try {

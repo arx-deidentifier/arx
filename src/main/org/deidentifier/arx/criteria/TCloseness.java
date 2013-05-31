@@ -25,12 +25,12 @@ import org.deidentifier.arx.ARXConfiguration;
  * Published in:
  * Li N, Li T, Venkatasubramanian S. 
  * t-closeness: Privacy beyond k-anonymity and l-diversity. 
- * 23rd International Conference on Data Engineering. 2007:106 – 115. 
+ * 23rd International Conference on Data Engineering. 2007:106 ï¿½ 115. 
  * Available at: http://dx.doi.org/10.1109/ICDE.2007.367856.
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class TCloseness extends PrivacyCriterion {
+public abstract class TCloseness extends ExplicitPrivacyCriterion {
 
     private static final long serialVersionUID = -139670758266526116L;
     
@@ -41,8 +41,8 @@ public abstract class TCloseness extends PrivacyCriterion {
      * Creates a new instance
      * @param t
      */
-    public TCloseness(double t) {
-        super(false);
+    public TCloseness(String attribute, double t) {
+        super(attribute, false);
         this.t = t;
     }
 

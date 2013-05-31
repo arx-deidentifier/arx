@@ -32,8 +32,8 @@ public class DistinctLDiversity extends LDiversity{
      * Creates a new instance
      * @param l
      */
-    public DistinctLDiversity(int l){
-        super(l);
+    public DistinctLDiversity(String attribute, int l){
+        super(attribute, l);
     }
 
     @Override

@@ -168,7 +168,7 @@ public class TestDataTransformations extends TestAnonymizer {
         anonymizer.setSuppressionString("*");
 
         final ARXConfiguration config = new ARXConfiguration();
-        config.addCriterion(new DistinctLDiversity(2));
+        config.addCriterion(new DistinctLDiversity("age", 2));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
@@ -197,7 +197,7 @@ public class TestDataTransformations extends TestAnonymizer {
 
 
         final ARXConfiguration config = new ARXConfiguration();
-        config.addCriterion(new EntropyLDiversity(2));
+        config.addCriterion(new EntropyLDiversity("age",2));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
@@ -227,7 +227,7 @@ public class TestDataTransformations extends TestAnonymizer {
 
 
         final ARXConfiguration config = new ARXConfiguration();
-        config.addCriterion(new RecursiveCLDiversity(3.0d, 2));
+        config.addCriterion(new RecursiveCLDiversity("age", 3.0d, 2));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
@@ -378,7 +378,7 @@ public class TestDataTransformations extends TestAnonymizer {
 
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new EqualDistanceTCloseness(0.6d));
+        config.addCriterion(new EqualDistanceTCloseness("disease", 0.6d));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         
@@ -460,7 +460,7 @@ public class TestDataTransformations extends TestAnonymizer {
 
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new HierarchicalDistanceTCloseness(0.4d, disease));
+        config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         

@@ -354,29 +354,11 @@ public class ARXAnonymizer {
      */
     private DataManager prepareDataManager(final DataHandle handle, final ARXConfiguration config) throws IOException {
 
-        // Extract definitions
-        final Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
-        final Set<String> insensitiveAttributes = handle.getDefinition().getInsensitiveAttributes();
-        final Set<String> identifiers = handle.getDefinition().getIdentifyingAttributes();
-        final Map<String, Integer> minGeneralizations = handle.getDefinition().getMinimalGeneralizations();
-        final Map<String, Integer> maxGeneralizations = handle.getDefinition().getMaximalGeneralizations();
-
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-
-        // Encode
-        final Map<String, String[][]> sensitive = new HashMap<String, String[][]>();
-        if (!handle.getDefinition().getSensitiveAttributes().isEmpty()) {
-            sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), null);
-        }
-        if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
-            HierarchicalDistanceTCloseness c = config.getCriterion(HierarchicalDistanceTCloseness.class);
-            sensitive.put(handle.getDefinition().getSensitiveAttributes().iterator().next(), c.getHierarchy().getHierarchy());
-        }
-        final DataManager manager = new DataManager(header, dataArray, dictionary, hierarchies, minGeneralizations, maxGeneralizations, sensitive, insensitiveAttributes, identifiers);
-
+        final DataManager manager = new DataManager(header, dataArray, dictionary, handle.getDefinition(), config.getCriteria());
         return manager;
     }
 

@@ -39,8 +39,8 @@ public class RecursiveCLDiversity extends LDiversity{
      * @param c
      * @param l
      */
-    public RecursiveCLDiversity(double c, int l){
-        super(l);
+    public RecursiveCLDiversity(String attribute, double c, int l){
+        super(attribute, l);
         this.c = c;
     }
 

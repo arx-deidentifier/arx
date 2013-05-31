@@ -19,8 +19,12 @@
 package org.deidentifier.arx.gui;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
@@ -29,10 +33,11 @@ public class Configuration implements Serializable {
 
     private static final long   serialVersionUID      = -2887699232096897527L;
 
-    private transient Data      input                 = null;
-    private ARXConfiguration    config                = null;
-    private boolean             removeOutliers        = true;
-    private boolean             modified              = true;
+    private transient Data         input                 = null;
+    private ARXConfiguration       config                = null;
+    private boolean                removeOutliers        = true;
+    private boolean                modified              = false;
+    private Map<String, Hierarchy> hierarchies           = new HashMap<String, Hierarchy>();
 
     @Override
     public Configuration clone() {
@@ -41,9 +46,8 @@ public class Configuration implements Serializable {
         c.removeOutliers = removeOutliers;
         c.input = input.clone();
         c.config = config.clone();
-
+        c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
         return c;
-
     }
 
     /**
@@ -137,12 +141,38 @@ public class Configuration implements Serializable {
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
         return config.containsCriterion(clazz);
     }
+    
+    /**
+     * Assigns a hierarchy
+     * @param attribute
+     * @param hierarchy
+     */
+    public void setHierarchy(String attribute, Hierarchy hierarchy){
+        this.hierarchies.put(attribute, hierarchy);
+        this.setModified();
+    }
+    
+    /**
+     * Returns the assigned hierarchy, if any. Else null.
+     * @param attribute
+     */
+    public Hierarchy getHierarchy(String attribute){
+        return this.hierarchies.get(attribute);
+    }
+    
+    /**
+     * Returns the set of all assigned hierarchies
+     * @return
+     */
+    public Map<String, Hierarchy> getHierarchies(){
+        return this.hierarchies;
+    }
 
     /**
      * Delegates to an instance of ARXConfiguration
      * @return
      */
-    public PrivacyCriterion[] getCriteria() {
+    public Set<PrivacyCriterion> getCriteria() {
         return config.getCriteria();
     }
 

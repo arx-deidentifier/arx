@@ -38,8 +38,8 @@ public class EntropyLDiversity extends LDiversity {
      * Creates a new instance
      * @param l
      */
-    public EntropyLDiversity(int l) {
-        super(l);
+    public EntropyLDiversity(String attribute, int l){
+        super(attribute, l);
         logL = Math.log(l) / Math.log(2d);
     }
 

@@ -46,14 +46,14 @@ public abstract class TestDataTransformationsFromFileAbstract extends TestAnonym
 
         public ARXConfiguration config;
         public String           dataset;
-        public String           senstitiveAttribute;
+        public String           sensitiveAttribute;
         public double           optimalInformationLoss;
         public int[]            bestResult;
         public boolean          practical;
 
         public TestCaseResult(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final double optimalInformationLoss, final int[] bestResult, final boolean practical) {
             this.config = config;
-            this.senstitiveAttribute = sensitiveAttribute;
+            this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
             this.optimalInformationLoss = optimalInformationLoss;
             this.bestResult = bestResult;
@@ -99,7 +99,7 @@ public abstract class TestDataTransformationsFromFileAbstract extends TestAnonym
                 final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
                 final String attributeName = matcher.group(1);
 
-                if (!attributeName.equalsIgnoreCase(testCase.senstitiveAttribute)) {
+                if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
                     data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);

@@ -44,14 +44,14 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
      * @param t
      * @param h
      */
-    public HierarchicalDistanceTCloseness(double t, Hierarchy h) {
-        super(t);
+    public HierarchicalDistanceTCloseness(String attribute, double t, Hierarchy h) {
+        super(attribute, t);
         this.hierarchy = h;
     }
 
     @Override
     public void initialize(DataManager manager) {
-        this.tree = manager.getTree();
+        this.tree = manager.getTree(attribute);
         this.start = this.tree[1] + 3;
         this.empty = new int[this.tree[1]];
     }

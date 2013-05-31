@@ -245,8 +245,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute requirements
         this.requirements = 0x0;
         for (PrivacyCriterion c : criteria) {
-            c.initialize(manager);
             this.requirements |= c.getRequirements();
+        }
+        
+        // Initialize: Always make sure that d-presence is initialized first, because
+        // the research subset needs to be available for initializing t-closeness
+        if (this.containsCriterion(DPresence.class)){
+            this.getCriterion(DPresence.class).initialize(manager);
+        }
+        for (PrivacyCriterion c : criteria) {
+            if (!(c instanceof DPresence)){
+                c.initialize(manager);
+            }
         }
 
         // Compute max outliers

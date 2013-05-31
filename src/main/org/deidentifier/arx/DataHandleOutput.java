@@ -175,57 +175,15 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         // Set optimum in lattice
         lattice.access().setOptimum(optimum);
 
-        // Create a data manager
-        // TODO: Copy from ARXAnonymizer
-        final Map<String, String[][]> hierarchies = handle.getDefinition()
-                                                          .getHierarchies();
-        final Set<String> insensitiveAttributes = handle.getDefinition()
-                                                        .getInsensitiveAttributes();
-        final Set<String> identifiers = handle.getDefinition()
-                                              .getIdentifyingAttributes();
-        final Map<String, Integer> minGeneralizations = handle.getDefinition()
-                                                              .getMinimalGeneralizations();
-        final Map<String, Integer> maxGeneralizations = handle.getDefinition()
-                                                              .getMaximalGeneralizations();
-
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-
-        // Find sensitive hierarchy
-        Hierarchy sensitiveHierarchy = null;
-        if (config.containsCriterion(HierarchicalDistanceTCloseness.class)){
-            HierarchicalDistanceTCloseness c = config.getCriterion(HierarchicalDistanceTCloseness.class);
-            if (c.getHierarchy() != null){
-                sensitiveHierarchy = c.getHierarchy();
-            }
-        }
-        
-        // Encode
-        final Map<String, String[][]> sensitive = new HashMap<String, String[][]>();
-        if (sensitiveHierarchy != null) {
-            sensitive.put(handle.getDefinition()
-                                .getSensitiveAttributes()
-                                .iterator()
-                                .next(), sensitiveHierarchy.getHierarchy());
-        } else {
-            if (!handle.getDefinition().getSensitiveAttributes().isEmpty()) {
-                sensitive.put(handle.getDefinition()
-                                    .getSensitiveAttributes()
-                                    .iterator()
-                                    .next(), null);
-            }
-        }
         final DataManager manager = new DataManager(header,
                                                     dataArray,
                                                     dictionary,
-                                                    hierarchies,
-                                                    minGeneralizations,
-                                                    maxGeneralizations,
-                                                    sensitive,
-                                                    insensitiveAttributes,
-                                                    identifiers);
+                                                    handle.getDefinition(),
+                                                    config.getCriteria());
 
         // Initialize the metric
         metric.initialize(manager.getDataQI(), manager.getHierarchies());

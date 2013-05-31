@@ -163,7 +163,7 @@ public class DensityView implements IView {
         if (type instanceof Hierarchy) {
             hierarchy = (Hierarchy) type;
         } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            hierarchy = config.getSensitiveHierarchy();
+            hierarchy = config.getHierarchy(attribute);
         }
 
         // Count

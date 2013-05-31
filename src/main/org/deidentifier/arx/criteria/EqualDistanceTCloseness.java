@@ -36,13 +36,13 @@ public class EqualDistanceTCloseness extends TCloseness {
      * Creates a new instance
      * @param t
      */
-    public EqualDistanceTCloseness(double t) {
-        super(t);
+    public EqualDistanceTCloseness(String attribute, double t) {
+        super(attribute, t);
     }
 
     @Override
     public void initialize(DataManager manager) {
-        distribution = manager.getDistribution();
+        distribution = manager.getDistribution(attribute);
     }
 
     @Override

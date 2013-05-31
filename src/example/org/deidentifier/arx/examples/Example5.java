@@ -80,7 +80,7 @@ public class Example5 extends Example {
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
-        config.addCriterion(new RecursiveCLDiversity(3, 2));
+        config.addCriterion(new RecursiveCLDiversity("age", 3, 2));
         config.addCriterion(new KAnonymity(2));
         config.setAllowedOutliers(0d);
         try {

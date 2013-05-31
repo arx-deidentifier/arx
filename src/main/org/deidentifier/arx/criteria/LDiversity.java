@@ -30,7 +30,7 @@ import org.deidentifier.arx.ARXConfiguration;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class LDiversity extends PrivacyCriterion{
+public abstract class LDiversity extends ExplicitPrivacyCriterion{
 
     private static final long serialVersionUID = 6429149925699964530L;
     
@@ -41,8 +41,8 @@ public abstract class LDiversity extends PrivacyCriterion{
      * Creates a new instance
      * @param l
      */
-    public LDiversity(int l){
-        super(false);
+    public LDiversity(String attribute, int l){
+        super(attribute, false);
         this.l = l;    
     } 
 

@@ -24,6 +24,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.framework.CompressedBitSet;
+
 /**
  * Holds all data needed for the anonymization process.
  * 
@@ -43,8 +49,11 @@ public class DataManager {
     /** The generalization hierarchiesQI. */
     protected final GeneralizationHierarchy[] hierarchiesQI;
 
-    /** The sensitive attribute */
-    protected final GeneralizationHierarchy[] hierarchiesSE;
+    /** The sensitive attributes */
+    protected final Map<String, GeneralizationHierarchy> hierarchiesSE;
+    
+    /** The indexes of sensitive attributes*/
+    protected final Map<String, Integer> indexesSE;
 
     /** The hierarchy heights for each QI. */
     protected final int[]                     hierarchyHeights;
@@ -57,40 +66,9 @@ public class DataManager {
 
     /** The original input header */
     protected final String[]                  header;
-
-    /**
-     * Can be used to create a copy of the datamanager
-     * 
-     * @param dataQI
-     * @param dataSE
-     * @param dataIS
-     * @param hierarchiesQI
-     * @param hierarchyHeights
-     * @param maxLevels
-     * @param minLevels
-     * @param header
-     * @param strictMode
-     */
-
-    protected DataManager(final Data dataQI,
-                          final Data dataSE,
-                          final Data dataIS,
-                          final GeneralizationHierarchy[] hierarchiesQI,
-                          final GeneralizationHierarchy[] hierarchiesSE,
-                          final int[] hierarchyHeights,
-                          final int[] maxLevels,
-                          final int[] minLevels,
-                          final String[] header) {
-        this.dataQI = dataQI;
-        this.dataSE = dataSE;
-        this.dataIS = dataIS;
-        this.hierarchiesQI = hierarchiesQI;
-        this.hierarchiesSE = hierarchiesSE;
-        this.hierarchyHeights = hierarchyHeights;
-        this.maxLevels = maxLevels;
-        this.minLevels = minLevels;
-        this.header = header;
-    }
+    
+    /** The research subset, if any*/
+    protected CompressedBitSet                subset = null;
 
     /**
      * Creates a new data manager from pre-encoded data
@@ -98,38 +76,35 @@ public class DataManager {
      * @param header
      * @param data
      * @param dictionary
-     * @param generalizationHierarchies
-     * @param minGeneralization
-     * @param maxGeneralization
-     * @param sensitiveAttributes
-     * @param insensitiveAttributes
-     * @param identifiers
-     * @param strictMode
+     * @param definition
+     * @param criteria
      */
     public DataManager(final String[] header,
                        final int[][] data,
                        final Dictionary dictionary,
-                       final Map<String, String[][]> generalizationHierarchies,
-                       final Map<String, Integer> minGeneralization,
-                       final Map<String, Integer> maxGeneralization,
-                       final Map<String, String[][]> sensitiveHierarchies,
-                       final Set<String> insensitiveAttributes,
-                       final Set<String> identifiers) {
-
+                       final DataDefinition definition,
+                       final Set<PrivacyCriterion> criteria) {
+        
+        // Store research subset
+        for (PrivacyCriterion c : criteria) {
+            if (c instanceof DPresence){
+                subset = ((DPresence)c).getResearchSubset();
+                break;
+            }
+        }
+        
         // Store columns for reordering the output
         this.header = header;
 
-        sanityCheck(header,
-                    generalizationHierarchies,
-                    minGeneralization,
-                    sensitiveHierarchies,
-                    insensitiveAttributes,
-                    identifiers);
-
+        Set<String> id = getIdentifiers(header, definition);
+        Set<String> qi = definition.getQuasiIdentifyingAttributes();
+        Set<String> se = definition.getSensitiveAttributes();
+        Set<String> is = definition.getInsensitiveAttributes();
+        
         // Init dictionary
-        final Dictionary dictionaryQI = new Dictionary(generalizationHierarchies.size());
-        final Dictionary dictionarySE = new Dictionary(sensitiveHierarchies.size());
-        final Dictionary dictionaryIS = new Dictionary(insensitiveAttributes.size());
+        final Dictionary dictionaryQI = new Dictionary(qi.size());
+        final Dictionary dictionarySE = new Dictionary(se.size());
+        final Dictionary dictionaryIS = new Dictionary(is.size());
 
         // Init maps for reordering the output
         final int[] mapQI = new int[dictionaryQI.getNumDimensions()];
@@ -148,19 +123,19 @@ public class DataManager {
         final String[] headerSE = new String[dictionarySE.getNumDimensions()];
         final String[] headerIS = new String[dictionaryIS.getNumDimensions()];
         for (final String column : header) {
-            if (generalizationHierarchies.containsKey(column)) {
+            if (qi.contains(column)) {
                 map[counter] = indexQI + 1;
                 mapQI[indexQI] = counter;
                 dictionaryQI.registerAll(indexQI, dictionary, counter);
                 headerQI[indexQI] = header[counter];
                 indexQI++;
-            } else if (insensitiveAttributes.contains(column)) {
+            } else if (is.contains(column)) {
                 map[counter] = indexIS + 1000;
                 mapIS[indexIS] = counter;
                 dictionaryIS.registerAll(indexIS, dictionary, counter);
                 headerIS[indexIS] = header[counter];
                 indexIS++;
-            } else if (!identifiers.contains(column)) {
+            } else if (!id.contains(column)) {
                 map[counter] = -indexSE - 1;
                 mapSE[indexSE] = counter;
                 dictionarySE.registerAll(indexSE, dictionary, counter);
@@ -187,51 +162,68 @@ public class DataManager {
         dataIS = ddata[2];
 
         // Initialize minlevels
-        minLevels = new int[generalizationHierarchies.size()];
-        hierarchyHeights = new int[generalizationHierarchies.size()];
-        maxLevels = new int[generalizationHierarchies.size()];
+        minLevels = new int[qi.size()];
+        hierarchyHeights = new int[qi.size()];
+        maxLevels = new int[qi.size()];
 
         // Build qi generalisation hierarchiesQI
-        hierarchiesQI = new GeneralizationHierarchy[generalizationHierarchies.size()];
+        hierarchiesQI = new GeneralizationHierarchy[qi.size()];
         for (int i = 0; i < header.length; i++) {
-            if (generalizationHierarchies.containsKey(header[i])) {
+            if (qi.contains(header[i])) {
                 final int dictionaryIndex = map[i] - 1;
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];
                     hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name,
-                                                                                 generalizationHierarchies.get(name),
+                                                                                 definition.getHierarchy(name),
                                                                                  dictionaryIndex,
                                                                                  dictionaryQI);
 
                     // initialize min/max level and hierarhy height array
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
-                    final Integer minGenLevel = minGeneralization.get(name);
+                    final Integer minGenLevel = definition.getMinimumGeneralization(name);
                     minLevels[dictionaryIndex] = minGenLevel == null ? 0
                             : minGenLevel;
-                    final Integer maxGenLevel = maxGeneralization.get(name);
+                    final Integer maxGenLevel = definition.getMaximumGeneralization(name);
                     maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchyHeights[dictionaryIndex] - 1
                             : maxGenLevel;
                 }
             }
         }
+        
+        // Build map with hierarchies for sensitive attributes
+        Map<String, String[][]> sensitiveHierarchies = new HashMap<String, String[][]>();
+        for (PrivacyCriterion c : criteria){
+            if (c instanceof HierarchicalDistanceTCloseness){
+                HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness)c;
+                sensitiveHierarchies.put(t.getAttribute(), t.getHierarchy().getHierarchy());
+            }
+        }
 
         // Build sa generalisation hierarchies
-        hierarchiesSE = new GeneralizationHierarchy[sensitiveHierarchies.size()];
+        hierarchiesSE = new HashMap<String, GeneralizationHierarchy>();
+        indexesSE = new HashMap<String, Integer>();
+        int index = 0;
         for (int i = 0; i < header.length; i++) {
-            if (sensitiveHierarchies.containsKey(header[i])) { // consider only
-                                                               // sensitve
-                                                               // attributes
+            final String name = header[i];
+            if (sensitiveHierarchies.containsKey(name)) { 
                 final int dictionaryIndex = -map[i] - 1;
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
-                    final String name = header[i];
                     final String[][] hiers = sensitiveHierarchies.get(name);
                     if (hiers != null) {
-                        hierarchiesSE[dictionaryIndex] = new GeneralizationHierarchy(name,
-                                                                                     hiers,
-                                                                                     dictionaryIndex,
-                                                                                     dictionarySE);
+                        hierarchiesSE.put(name, new GeneralizationHierarchy(name,
+                                                                            hiers,
+                                                                            dictionaryIndex,
+                                                                            dictionarySE));
                     }
+                } else {
+                    throw new RuntimeException("Internal error: Invalid dictionary index!");
                 }
+            }
+            
+            // Store index for sensitive attributes
+            if (se.contains(header[i])){
+                indexesSE.put(name, index);
+                index++;
             }
         }
 
@@ -333,19 +325,24 @@ public class DataManager {
     }
 
     /**
-     * Returns the distribution for t-closeness
+     * Returns the distribution of the given sensitive attribute in
+     * the original dataset. Required for t-closeness.
      * 
-     * @return
+     * @param attribute
+     * @return distribution
      */
-    public double[] getDistribution() {
+    public double[] getDistribution(String attribute) {
+        
+        // TODO: Integrate research subset here
 
-        final int distinct = dataSE.getDictionary().getMapping()[0].length;
+        final int index = indexesSE.get(attribute);
+        final int distinct = dataSE.getDictionary().getMapping()[index].length;
         final int[][] data = dataSE.getArray();
 
         // Initialize counts
         final int[] cardinalities = new int[distinct];
         for (int i = 0; i < data.length; i++) { // iterate over all rows
-            cardinalities[data[i][0]]++;
+            cardinalities[data[i][index]]++;
         }
 
         // compute distribution
@@ -405,14 +402,19 @@ public class DataManager {
     }
 
     /**
-     * Returns the tree required for t-closeness with EMD_HIERARCHICAL
+     * Returns the tree for the given sensitive attribute, if a generalization hierarchy
+     * is associated. Required for t-closeness with hierarchical distance EMD
      * 
-     * @return
+     * @param attribute
+     * @return tree
      */
-    public int[] getTree() {
+    public int[] getTree(String attribute) {
+        
+        // TODO: Integrate research subset here
 
         final int[][] data = dataSE.getArray();
-        final int[][] hierarchy = hierarchiesSE[0].map;
+        final int index = indexesSE.get(attribute);
+        final int[][] hierarchy = hierarchiesSE.get(attribute).map;
         final int totalElementsP = data.length;
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
@@ -431,9 +433,9 @@ public class DataManager {
         // count frequnecies
         final int offsetLeafs = 3;
         for (int i = 0; i < data.length; i++) {
-            int previousFreq = treeList.get(data[i][0] + offsetLeafs);
+            int previousFreq = treeList.get(data[i][index] + offsetLeafs);
             previousFreq++;
-            treeList.set(data[i][0] + offsetLeafs, previousFreq);
+            treeList.set(data[i][index] + offsetLeafs, previousFreq);
 
         }
 
@@ -513,37 +515,38 @@ public class DataManager {
     }
 
     /**
-     * Performs a sanity check
+     * Performs a sanity check and returns all identifying attributes
      * 
      * @param columns
-     * @param generalizationHierarchies
-     * @param minGeneralization
-     * @param sensitiveAttributes
-     * @param insensitiveAttributes
-     * @param identifiers
+     * @param definition
      */
-    private void
-            sanityCheck(final String[] columns,
-                        final Map<String, String[][]> generalizationHierarchies,
-                        final Map<String, Integer> minGeneralization,
-                        final Map<String, String[][]> sensitiveHierarchy,
-                        final Set<String> insensitiveAttributes,
-                        final Set<String> identifiers) {
+    private Set<String> getIdentifiers(final String[] columns, final DataDefinition definition) {
 
-        final int mappedColumnsCount = generalizationHierarchies.size() +
-                                       sensitiveHierarchy.size() +
-                                       insensitiveAttributes.size() +
-                                       identifiers.size();
+        Set<String> result = new HashSet<String>();
+        result.addAll(definition.getIdentifyingAttributes());
+        
+        final int mappedColumnsCount = definition.getQuasiIdentifyingAttributes().size() +
+                                       definition.getSensitiveAttributes().size() +
+                                       definition.getInsensitiveAttributes().size() +
+                                       definition.getIdentifyingAttributes().size();
+        
+        // We always treat undefined attributes as identifiers
         if (mappedColumnsCount < columns.length) {
-            // TODO: We always treat undefined attributes as identifiers
             for (int i = 0; i < columns.length; i++) {
-                final String columnName = columns[i];
-                if (!(generalizationHierarchies.containsKey(columnName) ||
-                      sensitiveHierarchy.containsKey(columnName) || insensitiveAttributes.contains(columnName))) {
-                    identifiers.add(columnName);
+                
+                final String attribute = columns[i];
+                
+                // Check
+                if (!(definition.getQuasiIdentifyingAttributes().contains(attribute) ||
+                      definition.getSensitiveAttributes().contains(attribute) || 
+                      definition.getInsensitiveAttributes().contains(attribute))) {
+                    
+                    // Add to identifiers
+                    result.add(attribute);
                 }
             }
         }
+        
+        return result;
     }
-
 }
