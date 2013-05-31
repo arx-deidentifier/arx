@@ -51,4 +51,12 @@ public abstract class TCloseness extends ExplicitPrivacyCriterion {
         // Requires a distribution
         return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
     }
+    
+    /**
+     * Returns the parameter t
+     * @return
+     */
+    public double getT(){
+        return t;
+    }
 }

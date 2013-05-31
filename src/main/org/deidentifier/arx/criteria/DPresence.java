@@ -106,4 +106,21 @@ public class DPresence extends PrivacyCriterion{
     public int getResearchSubsetSize() {
         return this.subsetSize;
     }
+
+    /**
+     * Returns dMin
+     * @return
+     */
+    public double getDMin() {
+        return dMin;
+    }
+    
+
+    /**
+     * Returns dMax
+     * @return
+     */
+    public double getDMax() {
+        return dMax;
+    }
 }

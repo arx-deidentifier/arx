@@ -75,4 +75,12 @@ public class RecursiveCLDiversity extends LDiversity{
         // Check
         return frequencyCopy[frequencyCopy.length - 1] < threshold;
     }
+
+    /**
+     * Returns the parameter c
+     * @return
+     */
+    public double getC() {
+        return c;
+    }
 }
