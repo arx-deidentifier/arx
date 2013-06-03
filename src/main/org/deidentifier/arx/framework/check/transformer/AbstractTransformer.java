@@ -181,7 +181,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     protected final int[][]                   data;
 
     /** The delegate*/
-    protected IGroupify                       delegate;
+    protected final IGroupify                       delegate;
 
     /** The dictionary for the snapshot compression **/
     protected final IntArrayDictionary        dictionarySensFreq;
