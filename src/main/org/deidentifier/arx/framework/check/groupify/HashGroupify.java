@@ -104,7 +104,9 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void addAll(int[] key, int representant, int count, int sensitive, int pcount) {
 
-        final HashGroupifyEntry entry = addInternal(key, representant, count, pcount);
+        // Add
+        final int hash = HashTableUtil.hashcode(key);
+        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a sensitive attribute provided
         if (sensitive != -1) {
@@ -118,7 +120,9 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void addGroupify(int[] key, int representant, int count, Distribution distribution, int pcount) {
 
-        final HashGroupifyEntry entry = addInternal(key, representant, count, pcount);
+        // Add
+        final int hash = HashTableUtil.hashcode(key);
+        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a distribution provided
         if (distribution != null) {
@@ -133,7 +137,9 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void addSnapshot(int[] key, int representant, int count, int[] elements, int[] frequencies, int pcount) {
 
-        final HashGroupifyEntry entry = addInternal(key, representant, count, pcount);
+        // Add
+        final int hash = HashTableUtil.hashcode(key);
+        final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a distribution provided
         if (elements != null) {
@@ -158,11 +164,8 @@ public class HashGroupify implements IHashGroupify {
      *            the hash
      * @return the hash groupify entry
      */
-    private final HashGroupifyEntry addInternal(final int[] key, final int representant, int count, final int pcount) {
+    private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
 
-        // Init
-        final int hash = HashTableUtil.hashcode(key);
-        
         // Is a research subset provided
         if (subset != null && !subset.get(representant)) {
             count = 0;
