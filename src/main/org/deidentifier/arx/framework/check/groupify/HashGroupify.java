@@ -481,6 +481,10 @@ public class HashGroupify implements IHashGroupify {
                 throw new UnsupportedOperationException(config.getLDiversityCriterion() + ": currently not supported");
             }
         case T_CLOSENESS:
+
+            // Check minimal group size
+            if (entry.count < k) { return false; }
+
             switch (config.getTClosenessCriterion()) {
             case EMD_EQUAL:
                 return entry.distribution.isTCloseEqualDist(tcloseT, tCloseInitialDistribution);
