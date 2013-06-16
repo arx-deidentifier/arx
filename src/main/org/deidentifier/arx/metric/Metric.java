@@ -80,6 +80,15 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     public static Metric<InformationLossDefault> createHeightMetric() {
         return new MetricHeight();
     }
+    
+    /**
+     * Creates an average equivalence class size
+     * 
+     * @return
+     */
+    public static Metric<InformationLossDefault> createAECSMetric() {
+        return new MetricAECS();
+    }
 
     /**
      * Creates an non-monotoncic entropy metric

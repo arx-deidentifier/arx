@@ -573,7 +573,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
 
         // If current attribute is sensitive
         if (definition.getAttributeType(attribute) == AttributeType.SENSITIVE_ATTRIBUTE) {
-            model.getInputConfig().setSensitiveHierarchy(h);
+            model.getInputConfig().setHierarchy(attribute, h);
             controller.update(new ModelEvent(this,
                                              EventTarget.ATTRIBUTE_TYPE,
                                              attribute));
@@ -658,8 +658,8 @@ public class HierarchyView implements IHierarchyEditorView, IView {
                 base.setEnabled(true);
                 base.redraw();
             } else if ((type == AttributeType.SENSITIVE_ATTRIBUTE) &&
-                       (model.getInputConfig().getSensitiveHierarchy() != null)) {
-                setHierarchy(model.getInputConfig().getSensitiveHierarchy());
+                       (model.getInputConfig().getHierarchy(model.getSelectedAttribute()) != null)) {
+                setHierarchy(model.getInputConfig().getHierarchy(model.getSelectedAttribute()));
                 base.setEnabled(true);
                 base.redraw();
             } else {

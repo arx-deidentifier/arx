@@ -24,12 +24,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXConfiguration.Criterion;
-import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.data.Data;
@@ -157,95 +154,39 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     private boolean       removeOutliers;
 
     /** The configuration */
-    private Configuration config;
+    private ARXConfiguration config;
 
     /**
      * Internal constructor for deserialization
      */
     public DataHandleOutput(final DataHandle handle,
                             final DataDefinition definition,
-                            final Hierarchy sensitiveHierarchy,
                             final ARXLattice lattice,
                             final boolean removeOutliers,
                             final String suppressionString,
                             final int historySize,
                             final double snapshotSizeSnapshot,
                             final double snapshotSizeDataset,
-                            final int k,
-                            final double relativeMaxOutliers,
-                            final LDiversityCriterion criterionL,
-                            final TClosenessCriterion criterionT,
                             final Metric<?> metric,
-                            final Criterion algorithm,
-                            final int l,
-                            final double c,
-                            final boolean practicalMonotonicity,
-                            final double t,
+                            final ARXConfiguration config,
                             final ARXNode optimum,
                             final long time) {
 
         // Set optimum in lattice
         lattice.access().setOptimum(optimum);
 
-        // Create a data manager
-        // TODO: Copy from ARXAnonymizer
-        final Map<String, String[][]> hierarchies = handle.getDefinition()
-                                                          .getHierarchies();
-        final Set<String> insensitiveAttributes = handle.getDefinition()
-                                                        .getInsensitiveAttributes();
-        final Set<String> identifiers = handle.getDefinition()
-                                              .getIdentifyingAttributes();
-        final Map<String, Integer> minGeneralizations = handle.getDefinition()
-                                                              .getMinimalGeneralizations();
-        final Map<String, Integer> maxGeneralizations = handle.getDefinition()
-                                                              .getMaximalGeneralizations();
-
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-
-        // Encode
-        final Map<String, String[][]> sensitive = new HashMap<String, String[][]>();
-        if (sensitiveHierarchy != null) {
-            sensitive.put(handle.getDefinition()
-                                .getSensitiveAttributes()
-                                .iterator()
-                                .next(), sensitiveHierarchy.getHierarchy());
-        } else {
-            if (!handle.getDefinition().getSensitiveAttributes().isEmpty()) {
-                sensitive.put(handle.getDefinition()
-                                    .getSensitiveAttributes()
-                                    .iterator()
-                                    .next(), null);
-            }
-        }
         final DataManager manager = new DataManager(header,
                                                     dataArray,
                                                     dictionary,
-                                                    hierarchies,
-                                                    minGeneralizations,
-                                                    maxGeneralizations,
-                                                    sensitive,
-                                                    insensitiveAttributes,
-                                                    identifiers);
+                                                    handle.getDefinition(),
+                                                    config.getCriteria());
 
         // Initialize the metric
         metric.initialize(manager.getDataQI(), manager.getHierarchies());
-
-        final int absoluteMaxOutliers = (int) (handle.getNumRows() * relativeMaxOutliers);
-
-        // Create a config
-        final Configuration config = Configuration.getDeserializedConfiguration(algorithm,
-                                                                                absoluteMaxOutliers,
-                                                                                relativeMaxOutliers,
-                                                                                k,
-                                                                                l,
-                                                                                c,
-                                                                                criterionL,
-                                                                                t,
-                                                                                criterionT,
-                                                                                practicalMonotonicity);
 
         // Create a node checker
         final INodeChecker checker = new NodeChecker(manager,
@@ -262,9 +203,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
              suppressionString,
              definition,
              lattice,
-             practicalMonotonicity,
              removeOutliers,
-             absoluteMaxOutliers,
              config);
     }
 
@@ -290,11 +229,12 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                             final String suppressionString,
                             final DataDefinition defintion,
                             final Lattice lattice,
-                            final boolean practicalMonotonicity,
                             final boolean removeOutliers,
-                            final int maximumAbsoluteOutliers,
-                            final Configuration config) {
+                            final ARXConfiguration config) {
 
+        final boolean practicalMonotonicity = config.isPracticalMonotonicity();
+        final int maximumAbsoluteOutliers = config.getAbsoluteMaxOutliers();
+        
         final ARXLattice flattice = new ARXLattice(lattice,
                                                        manager.getDataQI()
                                                               .getHeader(),
@@ -308,9 +248,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
              suppressionString,
              defintion,
              flattice,
-             practicalMonotonicity,
              removeOutliers,
-             maximumAbsoluteOutliers,
              config);
     }
 
@@ -652,10 +590,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                       final String suppressionString,
                       final DataDefinition defintion,
                       final ARXLattice lattice,
-                      final boolean practicalMonotonicity,
                       final boolean removeOutliers,
-                      final int maximumAbsoluteOutliers,
-                      final Configuration config) {
+                      final ARXConfiguration config) {
 
         this.config = config;
         this.removeOutliers = removeOutliers;

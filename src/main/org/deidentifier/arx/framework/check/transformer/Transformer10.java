@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check.transformer;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
@@ -42,15 +42,14 @@ public class Transformer10 extends AbstractTransformer {
                          final int[] sensitiveValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
-                         final Configuration config) {
+                         final ARXConfiguration config) {
         super(data, hierarchies, sensitiveValues, dictionarySensValue, dictionarySensFreq, config);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
+     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
      * #walkAll()
      */
     @Override
@@ -68,28 +67,16 @@ public class Transformer10 extends AbstractTransformer {
             outtuple[outindex7] = idindex7[intuple[index7]][stateindex7];
             outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
             outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
-            switch (config.getCriterion()) {
-            case K_ANONYMITY:
-                groupify.add(outtuple, i, 1);
-                break;
-            case L_DIVERSITY:
-            case T_CLOSENESS:
-                groupify.add(outtuple, i, 1, sensitiveValues[i]);
-                break;
-            case D_PRESENCE:
-                groupify.addD(outtuple, i, 1, 1);
-                break;
-            default:
-                throw new UnsupportedOperationException(config.getCriterion() + ": currenty not supported");
-            }
+
+            // Call
+            delegate.callAll(outtuple, i);
         }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
+     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
      * #walkGroupify ()
      */
     @Override
@@ -109,20 +96,9 @@ public class Transformer10 extends AbstractTransformer {
             outtuple[outindex7] = idindex7[intuple[index7]][stateindex7];
             outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
             outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
-            switch (config.getCriterion()) {
-            case K_ANONYMITY:
-                groupify.add(outtuple, element.representant, element.count);
-                break;
-            case L_DIVERSITY:
-            case T_CLOSENESS:
-                groupify.add(outtuple, element.representant, element.count, element.distribution);
-                break;
-            case D_PRESENCE:
-                groupify.addD(outtuple, element.representant, element.count, element.pcount);
-                break;
-            default:
-                throw new UnsupportedOperationException(config.getCriterion() + ": currenty not supported");
-            }
+
+            // Call
+            delegate.callGroupify(outtuple, element);
 
             // Next element
             processed++;
@@ -134,8 +110,7 @@ public class Transformer10 extends AbstractTransformer {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
+     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
      * #walkSnapshot ()
      */
     @Override
@@ -157,20 +132,9 @@ public class Transformer10 extends AbstractTransformer {
             outtuple[outindex7] = idindex7[intuple[index7]][stateindex7];
             outtuple[outindex8] = idindex8[intuple[index8]][stateindex8];
             outtuple[outindex9] = idindex9[intuple[index9]][stateindex9];
-            switch (config.getCriterion()) {
-            case K_ANONYMITY:
-                groupify.add(outtuple, snapshot[i], snapshot[i + 1]);
-                break;
-            case L_DIVERSITY:
-            case T_CLOSENESS:
-                groupify.add(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]));
-                break;
-            case D_PRESENCE:
-                groupify.addD(outtuple, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
-                break;
-            default:
-                throw new UnsupportedOperationException(config.getCriterion() + ": currenty not supported");
-            }
+
+            // Call
+            delegate.callSnapshot(outtuple, snapshot, i);
         }
     }
 }

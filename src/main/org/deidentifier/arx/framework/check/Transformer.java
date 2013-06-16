@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -71,7 +71,7 @@ public class Transformer {
     /** The dictionary for the snapshot compression **/
     protected IntArrayDictionary              dictionarySensFreq;
 
-    protected final Configuration             config;
+    protected final ARXConfiguration             config;
 
     /**
      * Instantiates a new transformer.
@@ -86,7 +86,7 @@ public class Transformer {
     public Transformer(final int[][] data,
                        final GeneralizationHierarchy[] hierarchies,
                        final int[][] sensitiveData,
-                       final Configuration config,
+                       final ARXConfiguration config,
                        final IntArrayDictionary dictionarySensValue,
                        final IntArrayDictionary dictionarySensFreq) {
 
@@ -186,7 +186,7 @@ public class Transformer {
         case SNAPSHOT:
             startIndex = 0;
             stopIndex = snapshot.length /
-                        config.getCriterionSpecificSnapshotLength();
+                        config.getSnapshotLength();
             break;
         }
 

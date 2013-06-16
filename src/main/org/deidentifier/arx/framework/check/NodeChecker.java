@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -37,28 +37,28 @@ import org.deidentifier.arx.metric.Metric;
 public class NodeChecker implements INodeChecker {
 
     /** The current hash groupify. */
-    protected IHashGroupify     currentGroupify;
+    protected IHashGroupify        currentGroupify;
 
     /** The history. */
-    protected History           history;
+    protected History              history;
 
     /** The last hash groupify. */
-    protected IHashGroupify     lastGroupify;
+    protected IHashGroupify        lastGroupify;
 
     /** The metric. */
-    protected Metric<?>         metric;
+    protected Metric<?>            metric;
 
     /** The state machine. */
-    protected StateMachine      stateMachine;
+    protected StateMachine         stateMachine;
 
     /** The data transformer. */
-    protected Transformer       transformer;
+    protected Transformer          transformer;
 
     /** The data. */
-    private final Data          data;
+    private final Data             data;
 
     /** The config */
-    private final Configuration config;
+    private final ARXConfiguration config;
 
     /**
      * Creates a new NodeChecker instance.
@@ -76,7 +76,7 @@ public class NodeChecker implements INodeChecker {
      * @param snapshotSizeSnapshot
      *            The history threshold replacement
      */
-    public NodeChecker(final DataManager manager, final Metric<?> metric, final Configuration config, final int historyMaxSize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
+    public NodeChecker(final DataManager manager, final Metric<?> metric, final ARXConfiguration config, final int historyMaxSize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
 
         // Initialize all operators
         this.metric = metric;
@@ -87,22 +87,13 @@ public class NodeChecker implements INodeChecker {
         final IntArrayDictionary dictionarySensValue;
         final IntArrayDictionary dictionarySensFreq;
 
-        switch (config.getCriterion()) {
-        case K_ANONYMITY:
-        case D_PRESENCE:
+        if ((config.getRequirements() & ARXConfiguration.REQUIREMENT_DISTRIBUTION) != 0) {
+            dictionarySensValue = new IntArrayDictionary(initialSize);
+            dictionarySensFreq = new IntArrayDictionary(initialSize);
+        } else {
             // Just to allow bytecode instrumentation
             dictionarySensValue = new IntArrayDictionary(0);
             dictionarySensFreq = new IntArrayDictionary(0);
-            break;
-
-        case L_DIVERSITY:
-        case T_CLOSENESS:
-            dictionarySensValue = new IntArrayDictionary(initialSize);
-            dictionarySensFreq = new IntArrayDictionary(initialSize);
-            break;
-
-        default:
-            throw new UnsupportedOperationException(config.getCriterion() + ": currenty not supported");
         }
 
         history = new History(manager.getDataQI().getArray().length, historyMaxSize, snapshotSizeDataset, snapshotSizeSnapshot, config, dictionarySensValue, dictionarySensFreq);
@@ -166,7 +157,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public Configuration getConfiguration() {
+    public ARXConfiguration getConfiguration() {
         return config;
     }
 
@@ -188,6 +179,14 @@ public class NodeChecker implements INodeChecker {
     @Override
     public int getGroupOutliersCount() {
         return currentGroupify.getGroupOutliersCount();
+    }
+
+    /**
+     * Returns the checkers history, if any
+     * @return
+     */
+    public History getHistory() {
+        return history;
     }
 
     @Override

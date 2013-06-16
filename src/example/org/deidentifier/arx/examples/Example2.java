@@ -20,10 +20,12 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 /**
@@ -65,8 +67,11 @@ public class Example2 extends Example {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
             // Execute the algorithm
-            final ARXResult result = anonymizer.kAnonymize(data, 2, 0.0d);
-
+            final ARXConfiguration config = new ARXConfiguration();
+            config.addCriterion(new KAnonymity(2));
+            config.setAllowedOutliers(0d);
+            final ARXResult result = anonymizer.anonymize(data, config);
+            
             // Print info
             printResult(result, data);
 

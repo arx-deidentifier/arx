@@ -459,15 +459,12 @@ public class Controller implements IView {
         try {
             final CSVDataOutput out = new CSVDataOutput(file,
                                                         model.getSeparator());
-            if (model.isQuasiIdentifierSelected()) {
-                out.write(model.getInputConfig()
-                               .getInput()
-                               .getDefinition()
-                               .getHierarchy(model.getSelectedAttribute()));
+            
+            Hierarchy h = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
+            if (h==null){
+               main.showInfoDialog(Resources.getMessage("Controller.91"), Resources.getMessage("Controller.92")); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-                out.write(model.getInputConfig()
-                               .getSensitiveHierarchy()
-                               .getHierarchy());
+                out.write(h.getHierarchy());
             }
 
         } catch (final Exception e) {

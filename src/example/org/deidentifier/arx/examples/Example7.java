@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.ARXAnonymizer;
@@ -29,6 +30,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -90,11 +92,15 @@ public class Example7 extends Example {
         data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(Metric.createHeightMetric());
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new KAnonymity(2));
+        config.setAllowedOutliers(0d);
+        config.setMetric(Metric.createHeightMetric());
         try {
 
-            // Now anonymize the data
-            final ARXResult result = anonymizer.kAnonymize(data, 2, 0.0d);
+            // Now anonymize
+            final ARXResult result = anonymizer.anonymize(data, config);
 
             // Print info
             printResult(result, data);

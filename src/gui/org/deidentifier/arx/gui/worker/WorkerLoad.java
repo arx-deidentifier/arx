@@ -220,9 +220,9 @@ public class WorkerLoad extends Worker<Model> {
             final double snapshotSizeSnapshot = model.getSnapshotSizeSnapshot();
             final double snapshotSizeDataset = model.getSnapshotSizeDataset();
             final int k = config.getK();
-            final double relativeMaxOutliers = config.getRelativeMaxOutliers();
+            final double relativeMaxOutliers = config.getAllowedOutliers();
             final LDiversityCriterion criterionL = config.getLDiversityCriterion();
-            final TClosenessCriterion criterionT = config.getTClosenessCriterion();
+            final EqualDistanceTCloseness criterionT = config.getTClosenessCriterion();
             final Criterion algorithm = config.getCriterion();
             final Metric<?> metric = config.getMetric();
             final int l = config.getL();

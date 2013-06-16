@@ -24,10 +24,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.DistinctLDiversity;
+import org.deidentifier.arx.criteria.EntropyLDiversity;
+import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.gui.Configuration;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.Model;
@@ -395,7 +403,7 @@ public class PropertiesView implements IView {
 
         roots.clear();
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.10"), new String[] { String.valueOf(config.getRelativeMaxOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
+        new Property(Resources.getMessage("PropertiesView.10"), new String[] { String.valueOf(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         final Property identifying = new Property(attributes,
                                                   Resources.getMessage("PropertiesView.13"), new String[] { String.valueOf(data.getDefinition().getIdentifyingAttributes().size()) }); //$NON-NLS-1$
@@ -445,10 +453,10 @@ public class PropertiesView implements IView {
             if (data.getDefinition().getSensitiveAttributes().contains(s)) {
                 final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 values[0] = s;
-                if (config.getSensitiveHierarchy() != null) {
+                if (config.getHierarchy(s) != null) {
                     int height = 0;
-                    if (config.getSensitiveHierarchy().getHierarchy().length > 0) {
-                        height = config.getSensitiveHierarchy().getHierarchy()[0].length;
+                    if (config.getHierarchy(s).getHierarchy().length > 0) {
+                        height = config.getHierarchy(s).getHierarchy()[0].length;
                     }
                     values[1] = data.getDefinition().getDataType(s).toString();
                     values[2] = String.valueOf(height);
@@ -505,72 +513,49 @@ public class PropertiesView implements IView {
         new Property(Resources.getMessage("PropertiesView.50"), new String[] { Arrays.toString(node.getTransformation()) }); //$NON-NLS-1$
 
         if (node.isAnonymous() == Anonymity.ANONYMOUS) {
-            switch (config.getCriterion()) {
-            case K_ANONYMITY:
+
+            // First d-presence
+            if (config.containsCriterion(DPresence.class)) {
+                DPresence criterion = config.getCriterion(DPresence.class);
+                Property n = new Property(Resources.getMessage("PropertiesView.92"), new String[] { Resources.getMessage("PropertiesView.93") }); //$NON-NLS-1$ //$NON-NLS-2$
+                new Property(n, Resources.getMessage("PropertiesView.94"), new String[] { String.valueOf(criterion.getDMin())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.95"), new String[] { String.valueOf(criterion.getDMax())}); //$NON-NLS-1$
+            }
+            // Then k-anonymity
+            if (config.containsCriterion(KAnonymity.class)) {
+                KAnonymity criterion = config.getCriterion(KAnonymity.class);
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.52") }); //$NON-NLS-1$ //$NON-NLS-2$
-                new Property(n,
-                             Resources.getMessage("PropertiesView.53"), new String[] { String.valueOf(config.getK()) }); //$NON-NLS-1$
-                break;
-            case L_DIVERSITY:
-                switch (config.getLDiversityCriterion()) {
-                case DISTINCT:
-                    n = new Property(Resources.getMessage("PropertiesView.54"), new String[] { Resources.getMessage("PropertiesView.55") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.56"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
-                    n = new Property(Resources.getMessage("PropertiesView.57"), new String[] { Resources.getMessage("PropertiesView.58") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.59"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.53"), new String[] { String.valueOf(criterion.getK())}); //$NON-NLS-1$
+            }
+            
+            // Then l-diversity or t-closeness
+            int index = 0;
+            for (PrivacyCriterion c : config.getCriteria()) {
+                if (c instanceof DistinctLDiversity){
+                    DistinctLDiversity criterion = (DistinctLDiversity)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.57"), new String[] { Resources.getMessage("PropertiesView.58") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.59"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$
+                } else if (c instanceof EntropyLDiversity){
+                    EntropyLDiversity criterion = (EntropyLDiversity)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.63"), new String[] { Resources.getMessage("PropertiesView.64") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.65"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$
+                } else if (c instanceof RecursiveCLDiversity){
+                    RecursiveCLDiversity criterion = (RecursiveCLDiversity)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.69"), new String[] { Resources.getMessage("PropertiesView.70") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.71"), new String[] { String.valueOf(criterion.getC()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.72"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$                    
+                } else if (c instanceof EqualDistanceTCloseness){
+                    EqualDistanceTCloseness criterion = (EqualDistanceTCloseness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.77"), new String[] { Resources.getMessage("PropertiesView.78") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.79"), new String[] { String.valueOf(criterion.getT()) }); //$NON-NLS-1$
                     break;
-                case ENTROPY:
-                    n = new Property(Resources.getMessage("PropertiesView.60"), new String[] { Resources.getMessage("PropertiesView.61") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.62"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
-                    n = new Property(Resources.getMessage("PropertiesView.63"), new String[] { Resources.getMessage("PropertiesView.64") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.65"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
-                    break;
-                case RECURSIVE:
-                    n = new Property(Resources.getMessage("PropertiesView.66"), new String[] { Resources.getMessage("PropertiesView.67") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.68"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
-                    n = new Property(Resources.getMessage("PropertiesView.69"), new String[] { Resources.getMessage("PropertiesView.70") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.71"), new String[] { String.valueOf(config.getC()) }); //$NON-NLS-1$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.72"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
-                    break;
-                default:
-                    throw new RuntimeException(Resources.getMessage("PropertiesView.73")); //$NON-NLS-1$
+                } else if (c instanceof HierarchicalDistanceTCloseness){
+                    HierarchicalDistanceTCloseness criterion = (HierarchicalDistanceTCloseness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.84") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.85"), new String[] { String.valueOf(criterion.getT()) }); //$NON-NLS-1$
+                    final int height = config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
+                    new Property(n, "SE-"+(index++), new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                break;
-            case T_CLOSENESS:
-                switch (config.getTClosenessCriterion()) {
-                case EMD_EQUAL:
-                    n = new Property(Resources.getMessage("PropertiesView.74"), new String[] { Resources.getMessage("PropertiesView.75") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.76"), new String[] { String.valueOf(config.getK()) }); //$NON-NLS-1$
-                    n = new Property(Resources.getMessage("PropertiesView.77"), new String[] { Resources.getMessage("PropertiesView.78") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.79"), new String[] { String.valueOf(config.getT()) }); //$NON-NLS-1$
-                    break;
-                case EMD_HIERARCHICAL:
-                    n = new Property(Resources.getMessage("PropertiesView.80"), new String[] { Resources.getMessage("PropertiesView.81") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.82"), new String[] { String.valueOf(config.getK()) }); //$NON-NLS-1$
-                    n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.84") }); //$NON-NLS-1$ //$NON-NLS-2$
-                    new Property(n,
-                                 Resources.getMessage("PropertiesView.85"), new String[] { String.valueOf(config.getL()) }); //$NON-NLS-1$
-                    final int height = config.getSensitiveHierarchy()
-                                             .getHierarchy()[0].length;
-                    new Property(n,
-                                 "SE-0", new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                default:
-                    throw new RuntimeException(Resources.getMessage("PropertiesView.88")); //$NON-NLS-1$
-                }
-                break;
-            default:
-                throw new RuntimeException(Resources.getMessage("PropertiesView.89")); //$NON-NLS-1$
             }
         } else {
             new Property(Resources.getMessage("PropertiesView.90"), new String[] { Resources.getMessage("PropertiesView.91") }); //$NON-NLS-1$ //$NON-NLS-2$

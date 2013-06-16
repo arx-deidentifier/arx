@@ -226,14 +226,14 @@ public class CriterionDefinitionView implements IView {
                                                             0.999d,
                                                             kanonSliderOutlier.getSelection()));
                 kanonLabelOutlier.setText(String.valueOf(model.getInputConfig()
-                                                              .getRelativeMaxOutliers()));
+                                                              .getAllowedOutliers()));
 
                 tclosLabelOutlier.setText(kanonLabelOutlier.getText());
                 ldivLabelOutlier.setText(kanonLabelOutlier.getText());
                 tclosSliderOutliers.setSelection(kanonSliderOutlier.getSelection());
                 ldivSliderOutliers.setSelection(kanonSliderOutlier.getSelection());
 
-                if (model.getInputConfig().getRelativeMaxOutliers() != 0) {
+                if (model.getInputConfig().getAllowedOutliers() != 0) {
                     ldivButtonApproximate.setEnabled(true);
                     tclosButtonApproximate.setEnabled(true);
                 } else {
@@ -347,12 +347,12 @@ public class CriterionDefinitionView implements IView {
                                                             0.999d,
                                                             ldivSliderOutliers.getSelection()));
                 ldivLabelOutlier.setText(String.valueOf(model.getInputConfig()
-                                                             .getRelativeMaxOutliers()));
+                                                             .getAllowedOutliers()));
                 tclosLabelOutlier.setText(ldivLabelOutlier.getText());
                 tclosSliderOutliers.setSelection(ldivSliderOutliers.getSelection());
                 kanonLabelOutlier.setText(ldivLabelOutlier.getText());
                 kanonSliderOutlier.setSelection(ldivSliderOutliers.getSelection());
-                if (model.getInputConfig().getRelativeMaxOutliers() != 0) {
+                if (model.getInputConfig().getAllowedOutliers() != 0) {
                     ldivButtonApproximate.setEnabled(true);
                     tclosButtonApproximate.setEnabled(true);
                 } else {
@@ -539,12 +539,12 @@ public class CriterionDefinitionView implements IView {
                                                             0.999d,
                                                             tclosSliderOutliers.getSelection()));
                 tclosLabelOutlier.setText(String.valueOf(model.getInputConfig()
-                                                              .getRelativeMaxOutliers()));
+                                                              .getAllowedOutliers()));
                 ldivLabelOutlier.setText(tclosLabelOutlier.getText());
                 kanonLabelOutlier.setText(tclosLabelOutlier.getText());
                 ldivSliderOutliers.setSelection(tclosSliderOutliers.getSelection());
                 kanonSliderOutlier.setSelection(tclosSliderOutliers.getSelection());
-                if (model.getInputConfig().getRelativeMaxOutliers() != 0) {
+                if (model.getInputConfig().getAllowedOutliers() != 0) {
                     tclosButtonApproximate.setEnabled(true);
                     ldivButtonApproximate.setEnabled(true);
                 } else {
@@ -607,10 +607,10 @@ public class CriterionDefinitionView implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 if (tclosComboCriterion.getSelectionIndex() == 0) {
                     model.getInputConfig()
-                         .setTClosenessCriterion(TClosenessCriterion.EMD_EQUAL);
+                         .setTClosenessCriterion(EqualDistanceTCloseness.EMD_EQUAL);
                 } else if (tclosComboCriterion.getSelectionIndex() == 1) {
                     model.getInputConfig()
-                         .setTClosenessCriterion(TClosenessCriterion.EMD_HIERARCHICAL);
+                         .setTClosenessCriterion(EqualDistanceTCloseness.EMD_HIERARCHICAL);
                 }
             }
         });
@@ -765,11 +765,11 @@ public class CriterionDefinitionView implements IView {
                 kanonSliderOutlier.setSelection(doubleToSlider(0d,
                                                                0.999d,
                                                                model.getInputConfig()
-                                                                    .getRelativeMaxOutliers()));
+                                                                    .getAllowedOutliers()));
                 kanonLabelK.setText(String.valueOf(model.getInputConfig()
                                                         .getK()));
                 kanonLabelOutlier.setText(String.valueOf(model.getInputConfig()
-                                                              .getRelativeMaxOutliers()));
+                                                              .getAllowedOutliers()));
                 for (int i = 0; i < ITEMS_METRIC.length; i++) {
                     if (ITEMS_METRIC[i].getClass()
                                        .equals(model.getInputConfig()
@@ -796,11 +796,11 @@ public class CriterionDefinitionView implements IView {
                 ldivSliderOutliers.setSelection(doubleToSlider(0d,
                                                                0.999d,
                                                                model.getInputConfig()
-                                                                    .getRelativeMaxOutliers()));
+                                                                    .getAllowedOutliers()));
                 ldivLabelC.setText(String.valueOf(model.getInputConfig().getC()));
                 ldivLabelL.setText(String.valueOf(model.getInputConfig().getL()));
                 ldivLabelOutlier.setText(String.valueOf(model.getInputConfig()
-                                                             .getRelativeMaxOutliers()));
+                                                             .getAllowedOutliers()));
                 ldivButtonApproximate.setSelection(model.getInputConfig()
                                                         .getPracticalMonotonicity());
 
@@ -842,13 +842,13 @@ public class CriterionDefinitionView implements IView {
                 tclosSliderOutliers.setSelection(doubleToSlider(0d,
                                                                 0.999d,
                                                                 model.getInputConfig()
-                                                                     .getRelativeMaxOutliers()));
+                                                                     .getAllowedOutliers()));
                 tclosLabelT.setText(String.valueOf(model.getInputConfig()
                                                         .getT()));
                 tclosLabelK.setText(String.valueOf(model.getInputConfig()
                                                         .getK()));
                 tclosLabelOutlier.setText(String.valueOf(model.getInputConfig()
-                                                              .getRelativeMaxOutliers()));
+                                                              .getAllowedOutliers()));
                 tclosButtonApproximate.setSelection(model.getInputConfig()
                                                          .getPracticalMonotonicity());
 

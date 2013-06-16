@@ -18,8 +18,9 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
@@ -53,7 +54,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract Configuration getConfiguration();
+    public abstract ARXConfiguration getConfiguration();
 
     /**
      * Returns the data
@@ -117,4 +118,10 @@ public interface INodeChecker {
      * @return
      */
     public Data transformAndMarkOutliers(Node node);
+
+    /**
+     * Returns the history, if there is any
+     * @return
+     */
+    public abstract History getHistory();
 }

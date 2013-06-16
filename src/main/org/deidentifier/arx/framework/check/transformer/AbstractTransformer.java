@@ -20,7 +20,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import java.util.concurrent.Callable;
 
-import org.deidentifier.arx.framework.Configuration;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -34,8 +34,133 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
-    /** The mode of operation **/
-    protected final Configuration             config;
+    /**
+     * Implementation of the delegate for Requirements.COUNTER
+     * @author Kohlmayer, Prasser
+     */
+    protected final class GroupifyCounter implements IGroupify {
+
+        @Override
+        public final void callAll(final int[] outtuple, final int i) {
+            groupify.addAll(outtuple, i, 1, -1, -1);
+        }
+
+        @Override
+        public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
+            groupify.addGroupify(outtuple, element.representant, element.count, null, -1);
+        }
+
+        @Override
+        public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, -1);
+        }
+    }
+
+    /**
+     * Implementation of the delegate for Requirements.COUNTER | Requirements.DISTRIBUTION
+     * @author Kohlmayer, Prasser
+     */
+    protected final class GroupifyCounterDistribution implements IGroupify {
+        @Override
+        public final void callAll(final int[] outtuple, final int i) {
+            groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
+        }
+
+        @Override
+        public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
+            groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
+        }
+
+        @Override
+        public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
+        }
+    }
+
+    /**
+     * Implementation of the delegate for Requirements.COUNTER | Requirements.SECONDARY_COUNTER
+     * @author Kohlmayer, Prasser
+     */
+    protected final class GroupifyCounterSecondaryCounter implements IGroupify {
+        @Override
+        public final void callAll(final int[] outtuple, final int i) {
+            groupify.addAll(outtuple, i, 1, -1, 1);
+        }
+
+        @Override
+        public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
+            groupify.addGroupify(outtuple, element.representant, element.count, null, element.pcount);
+        }
+
+        @Override
+        public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], null, null, snapshot[i + 2]);
+        }
+    }
+
+
+    /**
+     * Implementation of the delegate for Requirements.COUNTER | Requirements.SECONDARY_COUNTER | Requirements.DISTRIBUTION
+     * @author Kohlmayer, Prasser
+     */
+    protected final class GroupifyCounterSecondaryCounterDistribution implements IGroupify {
+        @Override
+        public final void callAll(final int[] outtuple, final int i) {
+            groupify.addAll(outtuple, i, 1, sensitiveValues[i], 1);
+        }
+
+        @Override
+        public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
+            groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, element.pcount);
+        }
+
+        @Override
+        public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 3]), dictionarySensFreq.get(snapshot[i + 4]), snapshot[i + 2]);
+        }
+    }
+
+
+    /**
+     * Implementation of the delegate for Requirements.DISTRIBUTION
+     * @author Kohlmayer, Prasser
+     */
+    protected final class GroupifyDistribution implements IGroupify {
+        @Override
+        public final void callAll(final int[] outtuple, final int i) {
+            groupify.addAll(outtuple, i, 1, sensitiveValues[i], -1);
+        }
+
+        @Override
+        public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
+            groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
+        }
+
+        @Override
+        public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
+        }
+    }
+
+    /**
+     * Interface for delegates to the groupify 
+     * @author Kohlmayer, Prasser
+     *
+     */
+    protected interface IGroupify {
+        
+        /** Mode ALL*/
+        public abstract void callAll(final int[] outtuple, final int i);
+
+        /** Mode GROUPIFY*/
+        public abstract void callGroupify(final int[] outtuple, final HashGroupifyEntry element);
+
+        /** Mode SNAPSHOT*/
+        public abstract void callSnapshot(final int[] outtuple, final int[] snapshot, final int i);
+    }
+
+    /** The hash groupify*/
+    private IHashGroupify                     groupify;
 
     /** The bucket. */
     protected int                             bucket;
@@ -49,8 +174,14 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The column map array. */
     protected final int[][][]                 columnMapArray;
 
+    /** The mode of operation **/
+    protected final ARXConfiguration          config;
+
     /** The data. */
     protected final int[][]                   data;
+
+    /** The delegate*/
+    protected final IGroupify                       delegate;
 
     /** The dictionary for the snapshot compression **/
     protected final IntArrayDictionary        dictionarySensFreq;
@@ -63,66 +194,109 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
     /** The element. */
     protected HashGroupifyEntry               element;
-
-    /** The groupify. */
-    protected IHashGroupify                   groupify;
-
     /** The groupify array. */
     protected HashGroupifyEntry[]             groupifyArray;
-
     /** The hierarchies. */
     protected final GeneralizationHierarchy[] hierarchies;
-
     /** The idindex14. */
-    protected int[][]                         idindex0, idindex1, idindex2,
-            idindex3, idindex4, idindex5, idindex6, idindex7, idindex8,
-            idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
-
+    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5, idindex6, idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13,
+            idindex14;
     /** The index14. */
-    protected int                             index0, index1, index2, index3,
-            index4, index5, index6, index7, index8, index9, index10, index11,
-            index12, index13, index14;
-
+    protected int                             index0, index1, index2, index3, index4, index5, index6, index7, index8, index9, index10, index11, index12, index13, index14;
     /** The intuple. */
     protected int[]                           intuple;
-
     /** The generalization hierarchies */
     protected int[][][]                       map;
-
     /** The num elements. */
     protected int                             numElements;
+    /** The outindices. */
+    protected int                             outindex0;
+    /** The outindices. */
+    protected int                             outindex1;
+    /** The outindices. */
+    protected int                             outindex10;
+    /** The outindices. */
+    protected int                             outindex11;
+    /** The outindices. */
+    protected int                             outindex12;
+    /** The outindices. */
+    protected int                             outindex13;
+    /** The outindices. */
+    protected int                             outindex14;
 
-    /** The outindex14. */
-    protected int                             outindex0, outindex1, outindex2,
-            outindex3, outindex4, outindex5, outindex6, outindex7, outindex8,
-            outindex9, outindex10, outindex11, outindex12, outindex13,
-            outindex14;
+    /** The outindices. */
+    protected int                             outindex2;
 
+    /** The outindices. */
+    protected int                             outindex3;
+
+    /** The outindices. */
+    protected int                             outindex4;
+
+    /** The outindices. */
+    protected int                             outindex5;
+
+    /** The outindices. */
+    protected int                             outindex6;
+    /** The outindices. */
+    protected int                             outindex7;
+    /** The outindices. */
+    protected int                             outindex8;
+    /** The outindices. */
+    protected int                             outindex9;
     /** The outtuple. */
     protected int[]                           outtuple;
-
     /** The sesitive values. */
     protected final int[]                     sensitiveValues;
-
     /** The snapshot. */
     protected int[]                           snapshot;
-
     /** The size of one snapshopt entry **/
     protected final int                       ssStepWidth;
-
     /** The start index. */
     protected int                             startIndex;
+    /** The stateindices */
+    protected int                             stateindex0;
+    /** The stateindices */
+    protected int                             stateindex1;
+    /** The stateindices */
+    protected int                             stateindex10;
+    /** The stateindices */
+    protected int                             stateindex11;
+    /** The stateindices */
+    protected int                             stateindex12;
+    /** The stateindices */
+    protected int                             stateindex13;
 
-    /** The stateindex14. */
-    protected int                             stateindex0, stateindex1,
-            stateindex2, stateindex3, stateindex4, stateindex5, stateindex6,
-            stateindex7, stateindex8, stateindex9, stateindex10, stateindex11,
-            stateindex12, stateindex13, stateindex14;
+    /** The stateindices */
+    protected int                             stateindex14;
+    /** The stateindices */
+    protected int                             stateindex2;
+    /** The stateindices */
+    protected int                             stateindex3;
+    /** The stateindices */
+    protected int                             stateindex4;
+
+    /** The stateindices */
+    protected int                             stateindex5;
+
+    /** The stateindices */
+    protected int                             stateindex6;
+
+    /** The stateindices */
+    protected int                             stateindex7;
+
+    /** The stateindices */
+    protected int                             stateindex8;
+
+    /** The stateindices */
+    protected int                             stateindex9;
 
     /** The state index array. */
     protected final int[]                     stateIndexArray;
+
     /** The states. */
     protected int[]                           states;
+
     /** The stop index. */
     protected int                             stopIndex;
 
@@ -142,14 +316,14 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
                                final int[] sensitiveValues,
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
-                               final Configuration config) {
+                               final ARXConfiguration config) {
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
         this.sensitiveValues = sensitiveValues;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-        ssStepWidth = config.getCriterionSpecificSnapshotLength();
+        ssStepWidth = config.getSnapshotLength();
 
         // Init arrays
         dimensions = data[0].length;
@@ -163,6 +337,27 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         map = new int[hierarchies.length][][];
         for (int i = 0; i < hierarchies.length; i++) {
             map[i] = hierarchies[i].getArray();
+        }
+
+        // Prepare delegate
+        switch (config.getRequirements()) {
+        case ARXConfiguration.REQUIREMENT_COUNTER:
+            delegate = new GroupifyCounter();
+            break;
+        case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER:
+            delegate = new GroupifyCounterSecondaryCounter();
+            break;
+        case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            delegate = new GroupifyCounterSecondaryCounterDistribution();
+            break;
+        case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            delegate = new GroupifyCounterDistribution();
+            break;
+        case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
+            delegate = new GroupifyDistribution();
+            break;
+        default:
+            throw new RuntimeException("Invalid requirements: " + config.getRequirements());
         }
     }
 
@@ -330,21 +525,6 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     }
 
     /**
-     * Process complete input dataset.
-     */
-    protected abstract void processAll();
-
-    /**
-     * Process groupify.
-     */
-    protected abstract void processGroupify();
-
-    /**
-     * Process snapshot.
-     */
-    protected abstract void processSnapshot();
-
-    /**
      * Update out indices.
      * 
      * @param activecolumns
@@ -352,8 +532,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      * @param projection
      *            the projection
      */
-    public void updateOutIndices(final int[] activecolumns,
-                                 final long projection) {
+    public void updateOutIndices(final int[] activecolumns, final long projection) {
 
         // Make sure all 15 indices are set
         final int[] outindices2 = new int[15];
@@ -381,5 +560,20 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         outindex13 = outindices2[13];
         outindex14 = outindices2[14];
     }
+
+    /**
+     * Process complete input dataset.
+     */
+    protected abstract void processAll();
+
+    /**
+     * Process groupify.
+     */
+    protected abstract void processGroupify();
+
+    /**
+     * Process snapshot.
+     */
+    protected abstract void processSnapshot();
 
 }

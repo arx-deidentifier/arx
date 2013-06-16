@@ -22,13 +22,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 
 /**
  * This class implements an example on how to use the API by directly providing
@@ -76,8 +79,14 @@ public class Example5 extends Example {
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new RecursiveCLDiversity("age", 3, 2));
+        config.addCriterion(new KAnonymity(2));
+        config.setAllowedOutliers(0d);
         try {
-            final ARXResult result = anonymizer.lDiversify(data, 3, 2, 0.0d);
+
+            // Now anonymize
+            final ARXResult result = anonymizer.anonymize(data, config);
 
             // Print info
             printResult(result, data);

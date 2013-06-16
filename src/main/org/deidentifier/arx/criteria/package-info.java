@@ -17,10 +17,9 @@
  */
 
 /**
- * This package implements means for efficiently maintaining distributions of sensitive values
- * for each equivalence class
+ * This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence
  * 
  * @author Prasser, Kohlmayer
  */
-package org.deidentifier.arx.framework.check.distribution;
+package org.deidentifier.arx.criteria;
 

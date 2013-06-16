@@ -23,18 +23,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to use the API by directly providing
- * the input datasets
+ * This class implements an example on how to apply the d-presence criterion
  * 
  * @author Prasser, Kohlmayer
  */
@@ -61,12 +63,12 @@ public class Example9 extends Example {
         data.add("h", "Harry", "48972", "47", "Bulgaria", "1"); // 7
         data.add("i", "Iris", "48970", "52", "France", "1"); // 8
 
-        final HashSet<Integer> researchSubset = new HashSet<Integer>();
-        researchSubset.add(1);
-        researchSubset.add(2);
-        researchSubset.add(5);
-        researchSubset.add(7);
-        researchSubset.add(8);
+        final HashSet<Integer> subset = new HashSet<Integer>();
+        subset.add(1);
+        subset.add(2);
+        subset.add(5);
+        subset.add(7);
+        subset.add(8);
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();
@@ -107,17 +109,16 @@ public class Example9 extends Example {
         data.getDefinition().setAttributeType("sen", AttributeType.INSENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        // TODO: adapt metric -> entropy and dmStar
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(Metric.createPrecisionMetric());
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new KAnonymity(2));
+        config.addCriterion(new DPresence(1d/2d, 2d/3d, subset));
+        config.setAllowedOutliers(0d);
+        config.setMetric(Metric.createPrecisionMetric());
         try {
 
-            final int k = 2;
-            final double supressionRate = 0.0d;
-            final double dMin = 0.5d; // 1/2
-            final double dMax = 0.66666666666666666d; // 2/3
-
-            // final ARXResult result = anonymizer.kAnonymize(data, k, supressionRate);
-            final ARXResult result = anonymizer.dpresencify(data, k, dMin, dMax, supressionRate, researchSubset);
+            // Now anonymize
+            final ARXResult result = anonymizer.anonymize(data, config);
 
             // Print info
             printResult(result, data);

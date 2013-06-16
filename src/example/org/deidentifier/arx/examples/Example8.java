@@ -22,18 +22,20 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to use the API by directly providing
- * the input datasets
+ * This class implements an example on how to apply the t-closeness criterion
  * 
  * @author Prasser, Kohlmayer
  */
@@ -133,14 +135,17 @@ public class Example8 extends Example {
             .setAttributeType("disease", AttributeType.SENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer(Metric.createEntropyMetric());
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new KAnonymity(3));
+        config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.6d, disease));
+        config.setAllowedOutliers(0d);
+        config.setMetric(Metric.createEntropyMetric());
         try {
-            final ARXResult result = anonymizer.tClosify(data,
-                                                           3,
-                                                           0.6d,
-                                                           0.0d,
-                                                           disease);
 
+            // Now anonymize
+            final ARXResult result = anonymizer.anonymize(data, config);
+        
             // Print info
             printResult(result, data);
 

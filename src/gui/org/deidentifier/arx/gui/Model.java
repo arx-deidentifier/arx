@@ -84,12 +84,12 @@ public class Model implements Serializable {
     public ARXAnonymizer createAnonymizer() {
         outputConfig = inputConfig.clone();
         // Initialize anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setHistorySize(getHistorySize());
-        anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
-        anonymizer.setSuppressionString(getSuppressionString());
-        anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
-        this.anonymizer = inputConfig.getAnonymizer(anonymizer);
+        this.anonymizer = new ARXAnonymizer();
+        this.anonymizer.setHistorySize(getHistorySize());
+        this.anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
+        this.anonymizer.setSuppressionString(getSuppressionString());
+        this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
+        this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
         return anonymizer;
     }
 
