@@ -132,14 +132,4 @@ public class Dictionary {
             maps[targetDimension].put(vals[id], id);
         }
     }
-
-    /**
-     * Returns the size of the according dictionary
-     * 
-     * @param dimension
-     * @return
-     */
-    public int size(final int dimension) {
-        return maps[dimension].size();
-    }
 }

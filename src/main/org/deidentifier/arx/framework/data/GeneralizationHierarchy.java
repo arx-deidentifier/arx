@@ -78,7 +78,7 @@ public class GeneralizationHierarchy {
         final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
 
         // Build hierarchy
-        map = new int[dictionary.size(dimension)][height];
+        map = new int[uniqueIn][height];
         for (int i = 0; i < hierarchy.length; i++) {
             final String[] input = hierarchy[i];
             final Integer key = dictionary.probe(dimension, input[0]);
@@ -108,6 +108,35 @@ public class GeneralizationHierarchy {
         if (distinctValues[0] < uniqueIn) { throw new IllegalArgumentException("Not all data elements are contained in the hierarch for attribute '" +
                                                                                name +
                                                                                "'!"); }
+    }
+    
+
+    /**
+     * Creates a new empty generalization hierarchy from the given dictionary
+     * 
+     * @param name
+     * @param dimension
+     * @param dictionary
+     */
+    public GeneralizationHierarchy(final String name,
+                                   final int dimension,
+                                   final Dictionary dictionary) {
+
+        // Init
+        this.name = name;
+
+        // Determine number of unique input values
+        final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
+
+        // Build hierarchy
+        map = new int[uniqueIn][1];
+        for (int i=0; i<map.length; i++) {
+        	map[i][0] = i;
+        }
+        
+        // Count distinct values on each level
+        distinctValues = new int[1];
+        distinctValues[0] = uniqueIn;
     }
 
     /**

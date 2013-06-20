@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
@@ -163,8 +164,12 @@ public class DataManager {
                 final int dictionaryIndex = map[i] - 1;
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];
-                    hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
-
+                    
+                    if (definition.getAttributeType(name) instanceof Hierarchy){
+                    	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
+                    } else {
+                    	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
+                    }
                     // initialize min/max level and hierarhy height array
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
                     final Integer minGenLevel = definition.getMinimumGeneralization(name);
