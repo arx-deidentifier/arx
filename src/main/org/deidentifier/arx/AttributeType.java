@@ -344,6 +344,9 @@ public class AttributeType {
     /** Represents an insensitive attribute */
     public static AttributeType INSENSITIVE_ATTRIBUTE = new AttributeType(ATTR_TYPE_IS);
 
+    /** Represents a quasi-identifying attribute */
+    public static AttributeType QUASI_IDENTIFYING_ATTRIBUTE = new AttributeType(ATTR_TYPE_QI);
+
     /** The type */
     private int                 type                  = 0x0;
 

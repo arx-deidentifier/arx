@@ -274,10 +274,8 @@ public class DataDefinition {
      */
     public void setAttributeType(final String attribute,
                                  final AttributeType type) {
+    	
         if (type == null) { throw new NullPointerException("Type must not be null"); }
-        if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            if (!getSensitiveAttributes().isEmpty()) { throw new IllegalArgumentException("Cannot define more than one sensitive attribute!"); }
-        }
 
         // Clear if new hierarchy is set
         // TODO: Good idea?
