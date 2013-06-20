@@ -214,27 +214,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Removes all criteria that are instances of the given class
+     * Removes the given criterion
      * @param clazz
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public <T extends PrivacyCriterion> boolean removeCriterion(Class<T> clazz) {
-        
-        // Determine elements to remove
-        Set<T> toRemove = new HashSet<T>();
-        for (PrivacyCriterion c : criteria) {
-            if (clazz.isInstance(c)) {
-                toRemove.add((T) c);
-            }
-        }
-        
-        // Remove
-        if (toRemove.isEmpty()) return false;
-        criteria.removeAll(toRemove);
-        
-        // Return
-        return true;
+    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion arg) {
+        return criteria.remove(arg);
     }
 
     /**

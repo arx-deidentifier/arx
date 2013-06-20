@@ -19,14 +19,13 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -162,13 +161,44 @@ public class ARXAnonymizer {
      * @return ARXResult
      * @throws IOException
      */
-    public ARXResult anonymize(final Data data, final ARXConfiguration config) throws IOException {
+    public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
 
+    	// Lots of checks
         if (data == null) { throw new NullPointerException("Data cannot be null!"); }
         if (config.containsCriterion(LDiversity.class) ||
             config.containsCriterion(TCloseness.class)){
             if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
         }
+        for (String attr : data.getDefinition().getSensitiveAttributes()){
+        	boolean found = false;
+        	for (LDiversity c : config.getCriteria(LDiversity.class)) {
+        		if (c.getAttribute().equals(attr)) {
+        			found = true;
+        			break;
+        		}
+        	}
+        	if (!found) {
+        		for (TCloseness c : config.getCriteria(TCloseness.class)) {
+            		if (c.getAttribute().equals(attr)) {
+            			found = true;
+            			break;
+            		}
+            	}
+        	}
+        	if (!found) {
+        		throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
+        	}
+        }
+        for (LDiversity c : config.getCriteria(LDiversity.class)) {
+        	if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+        		throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+        	}
+    	}
+        for (TCloseness c : config.getCriteria(TCloseness.class)) {
+        	if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+        		throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+        	}
+    	}
 
         // Obtain handle
         final DataHandle handle = data.getHandle();
@@ -177,31 +207,68 @@ public class ARXAnonymizer {
         if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
         checkBeforeEncoding(config.getAllowedOutliers(), handle.getDefinition().getHierarchies());
 
-        final DataManager manager = prepareDataManager(handle, config);
+        if (data.getDefinition().getSensitiveAttributes().size()>1) {
+        	
+        	// Determine with what the other sensitive attributes need to be replaced
+			final AttributeType substition;
+			if (config.isProtectSensitiveAssociations()) {
+				substition = AttributeType.QUASI_IDENTIFYING_ATTRIBUTE;
+			} else {
+				substition = AttributeType.INSENSITIVE_ATTRIBUTE;
+			}
 
-        config.initialize(manager);
+			// Iterate for each sensitive attribute
+			List<String> sensitive = new ArrayList<String>(data.getDefinition().getSensitiveAttributes());
+			for (int i = 0; i < sensitive.size(); i++) {
 
-        final long time = System.currentTimeMillis();
+				// Extract
+				String attribute = sensitive.get(i);
+				config = config.clone();
+				DataDefinition definition = handle.getDefinition().clone();
 
-        final Result result = anonymizeInternal(config, manager);
+				// Remove all other l-diversity and substitute
+				for (LDiversity c : config.getCriteria(LDiversity.class)) {
+					if (!c.getAttribute().equals(attribute)) {
+						config.removeCriterion(c);
+						definition.setAttributeType(attribute, substition);
+					}
+				}
 
-        final DataHandleOutput outHandle = new DataHandleOutput(result.metric,
-                                                                manager,
-                                                                result.checker,
-                                                                System.currentTimeMillis() - time,
-                                                                suppressionString,
-                                                                handle.getDefinition(),
-                                                                result.lattice,
-                                                                removeOutliers,
-                                                                config);
-        // Pairing
-        outHandle.associate(handle);
-        handle.associate(outHandle);
+				// Remove all other t-closeness and substitute
+				for (TCloseness c : config.getCriteria(TCloseness.class)) {
+					if (!c.getAttribute().equals(attribute)) {
+						config.removeCriterion(c);
+						definition.setAttributeType(attribute, substition);
+					}
+				}
 
-        return outHandle;
+				// Anonymize
+				anonymizeInternal(handle, definition, config);
+				
+				// TODO:
+				// TODO: FLAG NODES IN THE LATTICE DEPENDING ON PREVIOUS RESULTS, IF ANY
+				// TODO:
+			}
+			
+			// Now return the result
+			throw new RuntimeException("Not implemented!");
+			
+        } else {
+        	return anonymizeInternal(handle, handle.getDefinition(), config);
+        }
+        
     }
 
-    protected Result anonymizeInternal(final ARXConfiguration config, final DataManager manager) {
+    protected ARXResult anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
+
+        // Encode
+        final DataManager manager = prepareDataManager(handle, definition, config);
+
+        // Initialize
+        config.initialize(manager);
+
+        // Stopwatch
+        final long time = System.currentTimeMillis();
 
         // Check
         checkAfterEncoding(config, manager);
@@ -233,9 +300,23 @@ public class ARXAnonymizer {
         // Return the result
         final Result result = new Result(config.getMetric(), checker, lattice);
 
-        return result;
-    }
+        // Create outhandle
+        final DataHandleOutput outHandle = new DataHandleOutput(result.metric,
+                                                                manager,
+                                                                result.checker,
+                                                                System.currentTimeMillis() - time,
+                                                                suppressionString,
+                                                                handle.getDefinition(),
+                                                                result.lattice,
+                                                                removeOutliers,
+                                                                config);
+        // Pairing
+        outHandle.associate(handle);
+        handle.associate(outHandle);
 
+        return outHandle;
+    }
+    
     /**
      * Performs some sanity checks.
      * 
@@ -349,17 +430,19 @@ public class ARXAnonymizer {
      *            the handle
      * @param config
      *            the config
+     * @param definition
+     * 			  the definition
      * @return the data manager
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    private DataManager prepareDataManager(final DataHandle handle, final ARXConfiguration config) throws IOException {
+    private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, handle.getDefinition(), config.getCriteria());
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria());
         return manager;
     }
 
