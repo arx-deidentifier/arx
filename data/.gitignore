@@ -49,3 +49,17 @@
 /dis.csv
 /old_hierarchy_occupation.csv
 /old_hierarchy_salary-class.csv
+/adult_hierarchy_age.csv
+/adult_hierarchy_education.csv
+/adult_hierarchy_marital-status.csv
+/adult_hierarchy_native-country.csv
+/adult_hierarchy_occupation.csv
+/adult_hierarchy_race.csv
+/adult_hierarchy_salary-class.csv
+/adult_hierarchy_sex.csv
+/adult_hierarchy_workclass.csv
+/adult.csv
+/test_hierarchy_age.csv
+/test_hierarchy_gender.csv
+/test_hierarchy_zipcode.csv
+/test.csv
