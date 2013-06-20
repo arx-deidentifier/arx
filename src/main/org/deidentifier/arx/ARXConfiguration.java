@@ -72,6 +72,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     
     /** The snapshot length*/
     private int snapshotLength; 
+    
+    /** Make sure that no information can be derived from associations between sensitive attributes*/
+    private boolean protectSensitiveAssociations = true;
 
     /**
      * Creates a new config without tuple suppression
@@ -328,6 +331,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Returns, whether the anonymizer should take associations between sensitive attributes into account
+     */
+    public boolean isProtectSensitiveAssociations(){
+    	return this.protectSensitiveAssociations;
+    }
+    
+    /**
      * Convenience method for checking the requirements
      * @param requirement
      * @return
@@ -356,6 +366,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
+    }
+    
+    /**
+     * Set, whether the anonymizer should take associations between sensitive attributes into account
+     * @param protect
+     */
+    public void setProtectSensitiveAssociations(boolean protect){
+    	this.protectSensitiveAssociations = protect;
     }
     
     /**
