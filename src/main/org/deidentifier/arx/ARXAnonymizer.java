@@ -251,9 +251,10 @@ public class ARXAnonymizer {
             }
         }
         if (config.containsCriterion(LDiversity.class)){
-            LDiversity c = config.getCriterion(LDiversity.class);
-            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
-                throw new IllegalArgumentException("Group size k " + c.getL() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
+            for (LDiversity c : config.getCriteria(LDiversity.class)){
+	            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
+	                throw new IllegalArgumentException("Group size l " + c.getL() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
+	            }
             }
         }
         

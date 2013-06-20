@@ -20,7 +20,6 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -159,6 +158,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     @SuppressWarnings("unchecked")
+    public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
+        Set<T> result = new HashSet<T>();
+        for (PrivacyCriterion c : criteria) {
+            if (clazz.isInstance(c)) {
+                result.add((T) c);
+            }
+        }
+        if (result.isEmpty()) return null;
+        else return result;
+    }
+    
+    /**
+     * Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
     public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
         Set<T> result = new HashSet<T>();
         for (PrivacyCriterion c : criteria) {
@@ -270,10 +286,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
             list.add(this.getCriterion(DPresence.class));
         }
         if (this.containsCriterion(LDiversity.class)) {
-            list.add(this.getCriterion(LDiversity.class));
+            list.addAll(this.getCriteria(LDiversity.class));
         }
         if (this.containsCriterion(TCloseness.class)) {
-            list.add(this.getCriterion(TCloseness.class));
+            list.addAll(this.getCriteria(TCloseness.class));
         }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         
@@ -364,7 +380,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         
         if (this.containsCriterion(LDiversity.class)){
-            l = this.getCriterion(LDiversity.class).getL();
+        	for (LDiversity c : this.getCriteria(LDiversity.class)){
+        		l = Math.max(l, c.getL());
+        	}
         }
         
         int result = Math.max(k, l);

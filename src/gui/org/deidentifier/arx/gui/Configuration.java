@@ -190,6 +190,15 @@ public class Configuration implements Serializable {
      * @param clazz
      * @return
      */
+    public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
+        return config.getCriteria(clazz);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration
+     * @param clazz
+     * @return
+     */
     public <T extends PrivacyCriterion> boolean removeCriterion(Class<T> clazz) {
         setModified();
         return config.removeCriterion(clazz);
