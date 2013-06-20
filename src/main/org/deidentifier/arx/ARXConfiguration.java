@@ -38,7 +38,17 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXConfiguration implements Serializable, Cloneable {
 
+	/** For serialization*/
     private static final long  serialVersionUID              = -6713510386735241964L;
+
+    /** Do the criteria require a counter per equivalence class*/
+    public static final int    REQUIREMENT_COUNTER           = 0x1;
+
+    /** Do the criteria require a second counter */
+    public static final int    REQUIREMENT_SECONDARY_COUNTER = 0x2;
+
+    /** Do the criteria require distributions of sensitive values in the equivalence classes */
+    public static final int    REQUIREMENT_DISTRIBUTION      = 0x4;
 
     /** Do we assume practical monotonicity */
     private boolean            practicalMonotonicity         = false;
@@ -55,15 +65,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** The criteria*/
     private Set<PrivacyCriterion> criteria                   = new HashSet<PrivacyCriterion>();
 
-    /** Do the criteria require a counter per equivalence class*/
-    public static final int    REQUIREMENT_COUNTER           = 0x1;
-
-    /** Do the criteria require a second counter */
-    public static final int    REQUIREMENT_SECONDARY_COUNTER = 0x2;
-
-    /** Do the criteria require distributions of sensitive values in the equivalence classes */
-    public static final int    REQUIREMENT_DISTRIBUTION      = 0x4;
-
     /** The requirements per equivalence class*/
     private int                requirements                  = 0x0;
 
@@ -75,6 +76,24 @@ public class ARXConfiguration implements Serializable, Cloneable {
     
     /** Make sure that no information can be derived from associations between sensitive attributes*/
     private boolean protectSensitiveAssociations = true;
+
+    /**
+     * Clones this config
+     */
+    public ARXConfiguration clone(){
+        ARXConfiguration result = new ARXConfiguration();
+        result.practicalMonotonicity         = this.practicalMonotonicity;
+        result.relMaxOutliers                = this.relMaxOutliers;
+        result.absMaxOutliers                = this.absMaxOutliers;
+        result.aCriteria                     = this.aCriteria;
+        result.criteria                      = this.criteria;
+        result.requirements                  = this.requirements;
+        result.metric                        = this.metric;
+        result.snapshotLength				 = this.snapshotLength;
+        result.protectSensitiveAssociations  = this.protectSensitiveAssociations;
+        return result;
+
+    }
 
     /**
      * Creates a new config without tuple suppression
@@ -376,14 +395,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     	this.protectSensitiveAssociations = protect;
     }
     
-    /**
-     * Clones this config
-     */
-    public ARXConfiguration clone(){
-        // TODO: Implement!
-        throw new RuntimeException("Not implemented!");
-    }
-
     /**
      * Returns the minimal size of an equivalence class induced by the contained criteria.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
