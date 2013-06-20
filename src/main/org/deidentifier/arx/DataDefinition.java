@@ -305,6 +305,9 @@ public class DataDefinition {
      */
     public void setMaximumGeneralization(final String attribute,
                                          final int maximum) {
+    	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
+    		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
+    	}
         maxGeneralization.put(attribute, maximum);
     }
 
@@ -316,6 +319,9 @@ public class DataDefinition {
      */
     public void setMinimumGeneralization(final String attribute,
                                          final int minimum) {
+    	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
+    		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
+    	}
         minGeneralization.put(attribute, minimum);
     }
 }
