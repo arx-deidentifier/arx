@@ -21,6 +21,7 @@ package org.deidentifier.arx.test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -30,6 +31,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
@@ -195,12 +197,10 @@ public class TestDataTransformations extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-
         final ARXConfiguration config = new ARXConfiguration();
-        config.addCriterion(new EntropyLDiversity("age",2));
+        config.addCriterion(new EntropyLDiversity("age", 2));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
-
 
         // TODO: check if result is correct!
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -225,12 +225,10 @@ public class TestDataTransformations extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new RecursiveCLDiversity("age", 3.0d, 2));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
-
 
         // TODO: check if result is correct!
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -276,17 +274,16 @@ public class TestDataTransformations extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
-        
+
         config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
         config.setAllowedOutliers(0d);
         final String[][] result3 = resultToArray(anonymizer.anonymize(data, config));
-        
+
         config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.setAllowedOutliers(0d);
@@ -381,7 +378,7 @@ public class TestDataTransformations extends TestAnonymizer {
         config.addCriterion(new EqualDistanceTCloseness("disease", 0.6d));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
-        
+
         // TODO: check if result is correct!
         final String[][] expected = { { "zipcode", "age", "disease" },
                 { "4767*", "<=40", "gastric ulcer" },
@@ -457,13 +454,12 @@ public class TestDataTransformations extends TestAnonymizer {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
         config.setAllowedOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
-        
+
         // TODO: check if result is correct!
         final String[][] expected = { { "zipcode", "age", "disease" },
                 { "4767*", "<=40", "gastric ulcer" },
@@ -475,6 +471,96 @@ public class TestDataTransformations extends TestAnonymizer {
                 { "4760*", "<=40", "bronchitis" },
                 { "4767*", "<=40", "pneumonia" },
                 { "4760*", "<=40", "stomach cancer" } };
+
+        assertTrue(Arrays.deepEquals(result, expected));
+    }
+
+    @Test
+    public void testDPresenceWithoutOutliers() throws IOException {
+        // Example taken from the d-presence paper
+
+        // Define Public Data P
+        final DefaultData data = Data.create();
+        data.add("identifier", "name", "zip", "age", "nationality", "sen");
+        data.add("a", "Alice", "47906", "35", "USA", "0"); // 0
+        data.add("b", "Bob", "47903", "59", "Canada", "1"); // 1
+        data.add("c", "Christine", "47906", "42", "USA", "1"); // 2
+        data.add("d", "Dirk", "47630", "18", "Brazil", "0"); // 3
+        data.add("e", "Eunice", "47630", "22", "Brazil", "0"); // 4
+        data.add("f", "Frank", "47633", "63", "Peru", "1"); // 5
+        data.add("g", "Gail", "48973", "33", "Spain", "0"); // 6
+        data.add("h", "Harry", "48972", "47", "Bulgaria", "1"); // 7
+        data.add("i", "Iris", "48970", "52", "France", "1"); // 8
+
+        final HashSet<Integer> subset = new HashSet<Integer>();
+        subset.add(1);
+        subset.add(2);
+        subset.add(5);
+        subset.add(7);
+        subset.add(8);
+
+        // Define hierarchies
+        final DefaultHierarchy age = Hierarchy.create();
+        age.add("18", "1*", "<=40", "*");
+        age.add("22", "2*", "<=40", "*");
+        age.add("33", "3*", "<=40", "*");
+        age.add("35", "3*", "<=40", "*");
+        age.add("42", "4*", ">40", "*");
+        age.add("47", "4*", ">40", "*");
+        age.add("52", "5*", ">40", "*");
+        age.add("59", "5*", ">40", "*");
+        age.add("63", "6*", ">40", "*");
+
+        final DefaultHierarchy nationality = Hierarchy.create();
+        nationality.add("Canada", "N. America", "America", "*");
+        nationality.add("USA", "N. America", "America", "*");
+        nationality.add("Peru", "S. America", "America", "*");
+        nationality.add("Brazil", "S. America", "America", "*");
+        nationality.add("Bulgaria", "E. Europe", "Europe", "*");
+        nationality.add("France", "W. Europe", "Europe", "*");
+        nationality.add("Spain", "W. Europe", "Europe", "*");
+
+        final DefaultHierarchy zip = Hierarchy.create();
+        zip.add("47630", "4763*", "476*", "47*", "4*", "*");
+        zip.add("47633", "4763*", "476*", "47*", "4*", "*");
+        zip.add("47903", "4790*", "479*", "47*", "4*", "*");
+        zip.add("47906", "4790*", "479*", "47*", "4*", "*");
+        zip.add("48970", "4897*", "489*", "48*", "4*", "*");
+        zip.add("48972", "4897*", "489*", "48*", "4*", "*");
+        zip.add("48973", "4897*", "489*", "48*", "4*", "*");
+
+        // Set data attribute types
+        data.getDefinition().setAttributeType("identifier", AttributeType.IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setAttributeType("name", AttributeType.IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setAttributeType("zip", zip);
+        data.getDefinition().setAttributeType("age", age);
+        data.getDefinition().setAttributeType("nationality", nationality);
+        data.getDefinition().setAttributeType("sen", AttributeType.INSENSITIVE_ATTRIBUTE);
+
+        // Create an instance of the anonymizer
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = new ARXConfiguration();
+        config.addCriterion(new KAnonymity(2));
+        config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
+        config.setAllowedOutliers(0d);
+        config.setMetric(org.deidentifier.arx.metric.Metric.createPrecisionMetric());
+        final String[][] result = resultToArray(anonymizer.anonymize(data, config));
+
+        // TODO: check if result is correct!
+        final String[][] expected = {
+
+                { "identifier", "name", "zip", "age", "nationality", "sen" },
+                { "*", "*", "47*", "*", "America", "0" },
+                { "*", "*", "47*", "*", "America", "1" },
+                { "*", "*", "47*", "*", "America", "1" },
+                { "*", "*", "47*", "*", "America", "0" },
+                { "*", "*", "47*", "*", "America", "0" },
+                { "*", "*", "47*", "*", "America", "1" },
+                { "*", "*", "48*", "*", "Europe", "0" },
+                { "*", "*", "48*", "*", "Europe", "1" },
+                { "*", "*", "48*", "*", "Europe", "1" }
+
+        };
 
         assertTrue(Arrays.deepEquals(result, expected));
     }

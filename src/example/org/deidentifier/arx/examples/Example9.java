@@ -58,7 +58,7 @@ public class Example9 extends Example {
         data.add("c", "Christine", "47906", "42", "USA", "1"); // 2
         data.add("d", "Dirk", "47630", "18", "Brazil", "0"); // 3
         data.add("e", "Eunice", "47630", "22", "Brazil", "0"); // 4
-        data.add("f", "Frank", "47633", "63", "Peru", "0"); // 5
+        data.add("f", "Frank", "47633", "63", "Peru", "1"); // 5
         data.add("g", "Gail", "48973", "33", "Spain", "0"); // 6
         data.add("h", "Harry", "48972", "47", "Bulgaria", "1"); // 7
         data.add("i", "Iris", "48970", "52", "France", "1"); // 8
@@ -112,9 +112,9 @@ public class Example9 extends Example {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(1d/2d, 2d/3d, subset));
+        config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
         config.setAllowedOutliers(0d);
-        config.setMetric(Metric.createPrecisionMetric());
+        config.setMetric(Metric.createEntropyMetric());
         try {
 
             // Now anonymize

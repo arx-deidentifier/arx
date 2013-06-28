@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric;
 
 import java.util.Map;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -80,13 +81,11 @@ public class MetricWeighted extends Metric<InformationLossCombined> {
     }
 
     @Override
-    protected InformationLossCombined
-            evaluateInternal(final Node node, final IHashGroupify groupify) {
+    protected InformationLossCombined evaluateInternal(final Node node, final IHashGroupify groupify) {
 
         double value = 0;
         for (final Metric<?> metric : weights.keySet()) {
-            value += metric.evaluateInternal(node, groupify).getValue() *
-                     weights.get(metric);
+            value += metric.evaluateInternal(node, groupify).getValue() * weights.get(metric);
         }
         final InformationLossCombined result = new InformationLossCombined(value);
         for (final Metric<?> metric : weights.keySet()) {
@@ -96,11 +95,9 @@ public class MetricWeighted extends Metric<InformationLossCombined> {
     }
 
     @Override
-    protected void
-            initializeInternal(final Data input,
-                               final GeneralizationHierarchy[] hierarchies) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         for (final Metric<?> metric : weights.keySet()) {
-            metric.initializeInternal(input, hierarchies);
+            metric.initializeInternal(input, hierarchies, config);
         }
     }
 

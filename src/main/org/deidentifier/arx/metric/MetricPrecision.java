@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx.metric;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -42,8 +43,7 @@ public class MetricPrecision extends MetricDefault {
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node,
-                                                   final IHashGroupify g) {
+    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
         double divisor = 0;
@@ -56,8 +56,7 @@ public class MetricPrecision extends MetricDefault {
     }
 
     @Override
-    public void initializeInternal(final Data input,
-                                   final GeneralizationHierarchy[] hierarchies) {
+    public void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
 
         // Initialize maximum levels
         maxLevels = new int[hierarchies.length];

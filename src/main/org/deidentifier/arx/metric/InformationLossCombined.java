@@ -36,30 +36,19 @@ class InformationLossCombined extends InformationLossDefault {
     /** The values for all metrics */
     protected Map<Metric<?>, InformationLoss> values           = new HashMap<Metric<?>, InformationLoss>();
 
-    InformationLossCombined(final double value) {
-        super(value);
-    }
-
     /**
      * For cloning
      * 
      * @param value
      * @param values
      */
-    private InformationLossCombined(final double value,
-                                    final Map<Metric<?>, InformationLoss> values) {
+    private InformationLossCombined(final double value, final Map<Metric<?>, InformationLoss> values) {
         super(value);
         this.values = values;
     }
 
-    @Override
-    protected InformationLoss clone() {
-
-        final Map<Metric<?>, InformationLoss> map = new HashMap<Metric<?>, InformationLoss>();
-        for (final Metric<?> m : map.keySet()) {
-            map.put(m, values.get(m).clone());
-        }
-        return new InformationLossCombined(getValue(), map);
+    InformationLossCombined(final double value) {
+        super(value);
     }
 
     /**
@@ -95,13 +84,22 @@ class InformationLossCombined extends InformationLossDefault {
         }
     }
 
+    @Override
+    protected InformationLoss clone() {
+
+        final Map<Metric<?>, InformationLoss> map = new HashMap<Metric<?>, InformationLoss>();
+        for (final Metric<?> m : map.keySet()) {
+            map.put(m, values.get(m).clone());
+        }
+        return new InformationLossCombined(getValue(), map);
+    }
+
     /**
      * Set the value for a certain metric
      * 
      * @param values
      */
-    protected void
-            setValue(final Metric<?> metric, final InformationLoss value) {
+    protected void setValue(final Metric<?> metric, final InformationLoss value) {
         values.put(metric, value);
     }
 }

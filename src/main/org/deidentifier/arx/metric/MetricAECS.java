@@ -18,6 +18,11 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Set;
+
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -34,6 +39,7 @@ public class MetricAECS extends MetricDefault {
 
     private static final long serialVersionUID = -532478849890959974L;
     private double            numRecordsTotal  = 0d;
+    private boolean           dPresence        = false;
 
     public MetricAECS() {
         super(true, false);
@@ -41,13 +47,37 @@ public class MetricAECS extends MetricDefault {
 
     @Override
     public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-        final double value = numRecordsTotal / (double) g.size();
-        System.out.println(value);
+
+        int size = 0;
+        if (dPresence) { // in d-presence mode use only ECs which contain at least one research subset tuple
+            HashGroupifyEntry m = g.getFirstEntry();
+            while (m != null) {
+                if (m.count > 0) {
+                    size++;
+                }
+                m = m.nextOrdered;
+            }
+        } else {
+            size = g.size();
+        }
+
+        final double value = numRecordsTotal / size;
+        // System.out.println(value);
         return new InformationLossDefault(value);
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies) {
-        numRecordsTotal = input.getDataLength();
+    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+
+        if (config.containsCriterion(DPresence.class)) {
+            dPresence = true;
+            Set<DPresence> crits = config.getCriteria(DPresence.class);
+            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
+            for (DPresence dPresence : crits) {
+                numRecordsTotal = dPresence.getResearchSubsetSize();
+            }
+        } else {
+            numRecordsTotal = input.getDataLength();
+        }
     }
 }

@@ -40,8 +40,7 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node,
-                                                   final IHashGroupify g) {
+    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {

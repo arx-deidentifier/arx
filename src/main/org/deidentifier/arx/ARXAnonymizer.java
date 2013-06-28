@@ -283,7 +283,7 @@ public class ARXAnonymizer {
         final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
-        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies());
+        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
 
         // Initialize the ARX strategy
         final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());

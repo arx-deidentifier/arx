@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric;
 
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -44,8 +45,7 @@ public class MetricCombined extends Metric<InformationLossCombined> {
      * @param weights
      * @return
      */
-    private static boolean isIndependent(final Metric<?> main,
-                                         final Set<Metric<?>> metrics) {
+    private static boolean isIndependent(final Metric<?> main, final Set<Metric<?>> metrics) {
         boolean independent = true;
         independent &= main.isIndependent();
         for (final Metric<?> key : metrics) {
@@ -54,11 +54,11 @@ public class MetricCombined extends Metric<InformationLossCombined> {
         return independent;
     }
 
-    /** The metrics */
-    private final Set<Metric<?>> metrics = null;
-
     /** The main */
     private Metric<?>            main;
+
+    /** The metrics */
+    private final Set<Metric<?>> metrics = null;
 
     /**
      * Creates a new combined metric
@@ -70,8 +70,7 @@ public class MetricCombined extends Metric<InformationLossCombined> {
     }
 
     @Override
-    protected InformationLossCombined
-            evaluateInternal(final Node node, final IHashGroupify groupify) {
+    protected InformationLossCombined evaluateInternal(final Node node, final IHashGroupify groupify) {
 
         final double value = main.evaluateInternal(node, groupify).getValue();
         final InformationLossCombined result = new InformationLossCombined(value);
@@ -82,19 +81,16 @@ public class MetricCombined extends Metric<InformationLossCombined> {
     }
 
     @Override
-    protected void
-            initializeInternal(final Data input,
-                               final GeneralizationHierarchy[] hierarchies) {
-        main.initializeInternal(input, hierarchies);
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+        main.initializeInternal(input, hierarchies, config);
         for (final Metric<?> metric : metrics) {
-            metric.initializeInternal(input, hierarchies);
+            metric.initializeInternal(input, hierarchies, config);
         }
     }
 
     @Override
     protected InformationLoss maxInternal() {
-        final InformationLossCombined max = new InformationLossCombined(main.max()
-                                                                            .getValue());
+        final InformationLossCombined max = new InformationLossCombined(main.max().getValue());
         for (final Metric<?> metric : metrics) {
             max.setValue(metric, metric.max());
         }
@@ -103,8 +99,7 @@ public class MetricCombined extends Metric<InformationLossCombined> {
 
     @Override
     protected InformationLoss minInternal() {
-        final InformationLossCombined min = new InformationLossCombined(main.min()
-                                                                            .getValue());
+        final InformationLossCombined min = new InformationLossCombined(main.min().getValue());
         for (final Metric<?> metric : metrics) {
             min.setValue(metric, metric.min());
         }

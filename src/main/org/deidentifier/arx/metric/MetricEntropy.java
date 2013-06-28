@@ -19,7 +19,11 @@
 package org.deidentifier.arx.metric;
 
 import java.util.Arrays;
+import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.Dictionary;
@@ -37,6 +41,9 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricEntropy extends MetricDefault {
 
+    /** Value unknown */
+    private static final double NA               = Double.POSITIVE_INFINITY;
+
     /**
      * 
      */
@@ -44,18 +51,6 @@ public class MetricEntropy extends MetricDefault {
 
     /** Log 2 */
     static final double         log2             = Math.log(2);
-
-    /** Column -> Id -> Level -> Count */
-    private int[][][]           cardinalities;
-
-    /** Column -> Id -> Level -> Output */
-    private int[][][]           hierarchies;
-
-    /** Column -> Level -> Value */
-    private double[][]          cache;
-
-    /** Value unknown */
-    private static final double NA               = Double.POSITIVE_INFINITY;
 
     /**
      * Computes log 2
@@ -67,6 +62,15 @@ public class MetricEntropy extends MetricDefault {
         return Math.log(num) / log2;
     }
 
+    /** Column -> Level -> Value */
+    private double[][] cache;
+
+    /** Column -> Id -> Level -> Count */
+    private int[][][]  cardinalities;
+
+    /** Column -> Id -> Level -> Output */
+    private int[][][]  hierarchies;
+
     public MetricEntropy() {
         super(true, true);
     }
@@ -76,8 +80,7 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node,
-                                                   final IHashGroupify g) {
+    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Init
         double result = 0;
@@ -96,7 +99,9 @@ public class MetricEntropy extends MetricDefault {
                     final int out = hierarchy[in][state];
                     final double a = cardinality[in][0];
                     final double b = cardinality[out][state];
-                    value += a * log2(a / b);
+                    if (a != 0d) {
+                        value += a * log2(a / b);
+                    }
                 }
                 cache[column][state] = value;
             }
@@ -106,12 +111,20 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    public void
-            initializeInternal(final Data input,
-                               final GeneralizationHierarchy[] ahierarchies) {
+    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
 
         // Obtain dictionary
         final Dictionary dictionary = input.getDictionary();
+
+        // Obtain research subset
+        CompressedBitSet rSubset = null;
+        if (config.containsCriterion(DPresence.class)) {
+            Set<DPresence> crits = config.getCriteria(DPresence.class);
+            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
+            for (DPresence dPresence : crits) {
+                rSubset = dPresence.getResearchSubset();
+            }
+        }
 
         // Create reference to the hierarchies
         final int[][] data = input.getArray();
@@ -127,10 +140,22 @@ public class MetricEntropy extends MetricDefault {
             cardinalities[i] = new int[dictionary.getMapping()[i].length][ahierarchies[i].getArray()[0].length];
             // Column -> Id -> Level -> Count
         }
-        for (int i = 0; i < data.length; i++) {
-            final int[] row = data[i];
-            for (int column = 0; column < row.length; column++) {
-                cardinalities[column][row[column]][0]++;
+
+        if (rSubset != null) { // dpresence mode
+            for (int i = 0; i < data.length; i++) { // only use the rows contained in the research subset
+                if (rSubset.get(i)) {
+                    final int[] row = data[i];
+                    for (int column = 0; column < row.length; column++) {
+                        cardinalities[column][row[column]][0]++;
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < data.length; i++) {
+                final int[] row = data[i];
+                for (int column = 0; column < row.length; column++) {
+                    cardinalities[column][row[column]][0]++;
+                }
             }
         }
 

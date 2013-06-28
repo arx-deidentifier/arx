@@ -25,20 +25,13 @@ import java.io.Serializable;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class InformationLoss implements Comparable<InformationLoss>,
-        Serializable {
+public abstract class InformationLoss implements Comparable<InformationLoss>, Serializable {
 
     private static final long serialVersionUID = -5347658129539223333L;
 
     InformationLoss() {
         // Package visibility
     }
-
-    /**
-     * Returns a clone of this object
-     */
-    @Override
-    protected abstract InformationLoss clone();
 
     /**
      * Returns the information loss
@@ -60,4 +53,10 @@ public abstract class InformationLoss implements Comparable<InformationLoss>,
      * @param other
      */
     public abstract void min(InformationLoss other);
+
+    /**
+     * Returns a clone of this object
+     */
+    @Override
+    protected abstract InformationLoss clone();
 }

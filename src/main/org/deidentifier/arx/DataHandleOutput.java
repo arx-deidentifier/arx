@@ -186,7 +186,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                     config.getCriteria());
 
         // Initialize the metric
-        metric.initialize(manager.getDataQI(), manager.getHierarchies());
+        metric.initialize(manager.getDataQI(), manager.getHierarchies(), config);
 
         // Create a node checker
         final INodeChecker checker = new NodeChecker(manager,

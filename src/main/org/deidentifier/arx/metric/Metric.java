@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -32,15 +33,22 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     private static final long serialVersionUID = -2657745103125430229L;
 
     /**
+     * Creates an average equivalence class size
+     * 
+     * @return
+     */
+    public static Metric<InformationLossDefault> createAECSMetric() {
+        return new MetricAECS();
+    }
+
+    /**
      * Creates a weighted metric
      * 
      * @param main
      *            the main metric
      * @return
      */
-    public static Metric<InformationLossCombined>
-            createCombinedMetric(final Metric<?> main,
-                                 final Set<Metric<?>> others) {
+    public static Metric<InformationLossCombined> createCombinedMetric(final Metric<?> main, final Set<Metric<?>> others) {
         return new MetricCombined(main, others);
     }
 
@@ -80,15 +88,6 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     public static Metric<InformationLossDefault> createHeightMetric() {
         return new MetricHeight();
     }
-    
-    /**
-     * Creates an average equivalence class size
-     * 
-     * @return
-     */
-    public static Metric<InformationLossDefault> createAECSMetric() {
-        return new MetricAECS();
-    }
 
     /**
      * Creates an non-monotoncic entropy metric
@@ -115,22 +114,21 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      *            the weights
      * @return
      */
-    public static Metric<InformationLossCombined>
-            createWeightedMetric(final Map<Metric<?>, Double> weights) {
+    public static Metric<InformationLossCombined> createWeightedMetric(final Map<Metric<?>, Double> weights) {
         return new MetricWeighted(weights);
     }
 
     /** The global optimum */
     private transient Node            globalOptimum          = null;
 
-    /** The optimal information loss */
-    private transient InformationLoss optimalInformationLoss = null;
+    /** Is the metric independent? */
+    private boolean                   independent            = false;
 
     /** Is the metric monotonic? */
     private boolean                   monotonic              = false;
 
-    /** Is the metric independent? */
-    private boolean                   independent            = false;
+    /** The optimal information loss */
+    private transient InformationLoss optimalInformationLoss = null;
 
     /**
      * Create a new metric
@@ -159,24 +157,11 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
 
         // Store optimum
         // Store global optimum
-        if ((globalOptimum == null) ||
-            (node.getInformationLoss().compareTo(optimalInformationLoss) < 0)) {
+        if ((globalOptimum == null) || (node.getInformationLoss().compareTo(optimalInformationLoss) < 0)) {
             this.globalOptimum = node;
             this.optimalInformationLoss = node.getInformationLoss();
         }
     }
-
-    /**
-     * Evaluates the metric for the given node
-     * 
-     * @param node
-     *            The node for which to compute the information loss
-     * @param groupify
-     *            The groupify operator of the previous check
-     * @return the double
-     */
-    protected abstract T evaluateInternal(final Node node,
-                                          final IHashGroupify groupify);
 
     /**
      * Returns the global optimum
@@ -193,22 +178,11 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @param input
      * @param hierarchies
      */
-    public final void initialize(final Data input,
-                                 final GeneralizationHierarchy[] hierarchies) {
+    public final void initialize(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         this.globalOptimum = null;
         this.optimalInformationLoss = null;
-        initializeInternal(input, hierarchies);
+        initializeInternal(input, hierarchies, config);
     }
-
-    /**
-     * Implement this to initialize the metric.
-     * 
-     * @param input
-     * @param hierarchies
-     */
-    protected abstract void
-            initializeInternal(final Data input,
-                               final GeneralizationHierarchy[] hierarchies);
 
     /**
      * Returns whether this metric requires the transformed data or groups to
@@ -237,13 +211,6 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
-     * Returns an instance of the maximal value
-     * 
-     * @return
-     */
-    protected abstract InformationLoss maxInternal();
-
-    /**
      * Returns the minimal value
      * 
      * @return
@@ -253,9 +220,36 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
+     * Evaluates the metric for the given node
+     * 
+     * @param node
+     *            The node for which to compute the information loss
+     * @param groupify
+     *            The groupify operator of the previous check
+     * @return the double
+     */
+    protected abstract T evaluateInternal(final Node node, final IHashGroupify groupify);
+
+    /**
+     * Implement this to initialize the metric.
+     * 
+     * @param input
+     * @param hierarchies
+     */
+    protected abstract void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
+
+    /**
+     * Returns an instance of the maximal value
+     * 
+     * @return
+     */
+    protected abstract InformationLoss maxInternal();
+
+    /**
      * Returns an instance of the minimal value
      * 
      * @return
      */
     protected abstract InformationLoss minInternal();
+
 }

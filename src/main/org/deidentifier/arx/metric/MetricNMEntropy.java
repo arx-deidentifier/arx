@@ -21,6 +21,7 @@ package org.deidentifier.arx.metric;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
@@ -52,12 +53,10 @@ public class MetricNMEntropy extends MetricEntropy {
 
     @Override
     @SuppressWarnings("unchecked")
-    public InformationLossDefault evaluateInternal(final Node node,
-                                                   final IHashGroupify g) {
+    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
-        final double originalInfoLoss = super.evaluateInternal(node, g)
-                                             .getValue();
+        final double originalInfoLoss = super.evaluateInternal(node, g).getValue();
 
         // Compute loss induced by suppression
         // Init TODO: Use lightweight alternative to Map<Integer, Integer>();
@@ -70,7 +69,8 @@ public class MetricNMEntropy extends MetricEntropy {
             original[i] = new HashMap<Integer, Integer>();
         }
 
-        // Compute counts for suppressed values in each column
+        // Compute counts for suppressed values in each column 
+        // No change for d-presence needed; m.count contains the research subset count already
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
             if (!m.isNotOutlier) {
@@ -91,9 +91,7 @@ public class MetricNMEntropy extends MetricEntropy {
         // Evaluate entropy for suppressed tuples
         for (int i = 0; i < original.length; i++) {
             for (final double count : original[i].values()) {
-                additionalInfoLoss += count *
-                                      MetricEntropy.log2(count /
-                                                         suppressedTuples);
+                additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
             }
         }
 
@@ -102,9 +100,7 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    public void
-            initializeInternal(final Data input,
-                               final GeneralizationHierarchy[] ahierarchies) {
-        super.initializeInternal(input, ahierarchies);
+    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+        super.initializeInternal(input, ahierarchies, config);
     }
 }

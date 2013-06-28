@@ -38,59 +38,59 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXConfiguration implements Serializable, Cloneable {
 
-	/** For serialization*/
-    private static final long  serialVersionUID              = -6713510386735241964L;
+    /** For serialization*/
+    private static final long     serialVersionUID              = -6713510386735241964L;
 
     /** Do the criteria require a counter per equivalence class*/
-    public static final int    REQUIREMENT_COUNTER           = 0x1;
+    public static final int       REQUIREMENT_COUNTER           = 0x1;
 
     /** Do the criteria require a second counter */
-    public static final int    REQUIREMENT_SECONDARY_COUNTER = 0x2;
+    public static final int       REQUIREMENT_SECONDARY_COUNTER = 0x2;
 
     /** Do the criteria require distributions of sensitive values in the equivalence classes */
-    public static final int    REQUIREMENT_DISTRIBUTION      = 0x4;
+    public static final int       REQUIREMENT_DISTRIBUTION      = 0x4;
 
     /** Do we assume practical monotonicity */
-    private boolean            practicalMonotonicity         = false;
+    private boolean               practicalMonotonicity         = false;
 
     /** Relative tuple outliers */
-    private double             relMaxOutliers                = -1;
+    private double                relMaxOutliers                = -1;
 
     /** Absolute tuple outliers*/
-    private int                absMaxOutliers                = 0;
+    private int                   absMaxOutliers                = 0;
 
     /** Criteria*/
-    private PrivacyCriterion[] aCriteria                     = new PrivacyCriterion[0];
-    
+    private PrivacyCriterion[]    aCriteria                     = new PrivacyCriterion[0];
+
     /** The criteria*/
-    private Set<PrivacyCriterion> criteria                   = new HashSet<PrivacyCriterion>();
+    private Set<PrivacyCriterion> criteria                      = new HashSet<PrivacyCriterion>();
 
     /** The requirements per equivalence class*/
-    private int                requirements                  = 0x0;
+    private int                   requirements                  = 0x0;
 
     /** The metric. */
-    private Metric<?>          metric                        = Metric.createDMStarMetric();
-    
+    private Metric<?>             metric                        = Metric.createDMStarMetric();
+
     /** The snapshot length*/
-    private int snapshotLength; 
-    
+    private int                   snapshotLength;
+
     /** Make sure that no information can be derived from associations between sensitive attributes*/
-    private boolean protectSensitiveAssociations = true;
+    private boolean               protectSensitiveAssociations  = true;
 
     /**
      * Clones this config
      */
-    public ARXConfiguration clone(){
+    public ARXConfiguration clone() {
         ARXConfiguration result = new ARXConfiguration();
-        result.practicalMonotonicity         = this.practicalMonotonicity;
-        result.relMaxOutliers                = this.relMaxOutliers;
-        result.absMaxOutliers                = this.absMaxOutliers;
-        result.aCriteria                     = this.aCriteria;
-        result.criteria                      = this.criteria;
-        result.requirements                  = this.requirements;
-        result.metric                        = this.metric;
-        result.snapshotLength				 = this.snapshotLength;
-        result.protectSensitiveAssociations  = this.protectSensitiveAssociations;
+        result.practicalMonotonicity = this.practicalMonotonicity;
+        result.relMaxOutliers = this.relMaxOutliers;
+        result.absMaxOutliers = this.absMaxOutliers;
+        result.aCriteria = this.aCriteria;
+        result.criteria = this.criteria;
+        result.requirements = this.requirements;
+        result.metric = this.metric;
+        result.snapshotLength = this.snapshotLength;
+        result.protectSensitiveAssociations = this.protectSensitiveAssociations;
         return result;
 
     }
@@ -187,10 +187,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 result.add((T) c);
             }
         }
-        if (result.isEmpty()) return null;
-        else return result;
+        // if (result.isEmpty()) return null;
+        // else
+        return result;
     }
-    
+
     /**
      * Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.
      * @param clazz
@@ -212,7 +213,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return null;
         }
     }
-    
+
     /**
      * Removes the given criterion
      * @param clazz
@@ -259,25 +260,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param manager
      */
     protected void initialize(DataManager manager) {
-        
+
         // Check
-        if (criteria.isEmpty()){
-            throw new RuntimeException("At least one privacy criterion must be specified!");
-        }
+        if (criteria.isEmpty()) { throw new RuntimeException("At least one privacy criterion must be specified!"); }
 
         // Compute requirements
         this.requirements = 0x0;
         for (PrivacyCriterion c : criteria) {
             this.requirements |= c.getRequirements();
         }
-        
+
         // Initialize: Always make sure that d-presence is initialized first, because
         // the research subset needs to be available for initializing t-closeness
-        if (this.containsCriterion(DPresence.class)){
+        if (this.containsCriterion(DPresence.class)) {
             this.getCriterion(DPresence.class).initialize(manager);
         }
         for (PrivacyCriterion c : criteria) {
-            if (!(c instanceof DPresence)){
+            if (!(c instanceof DPresence)) {
                 c.initialize(manager);
             }
         }
@@ -299,7 +298,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             list.addAll(this.getCriteria(TCloseness.class));
         }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
-        
+
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
@@ -337,10 +336,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /**
      * Returns, whether the anonymizer should take associations between sensitive attributes into account
      */
-    public boolean isProtectSensitiveAssociations(){
-    	return this.protectSensitiveAssociations;
+    public boolean isProtectSensitiveAssociations() {
+        return this.protectSensitiveAssociations;
     }
-    
+
     /**
      * Convenience method for checking the requirements
      * @param requirement
@@ -371,15 +370,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
     }
-    
+
     /**
      * Set, whether the anonymizer should take associations between sensitive attributes into account
      * @param protect
      */
-    public void setProtectSensitiveAssociations(boolean protect){
-    	this.protectSensitiveAssociations = protect;
+    public void setProtectSensitiveAssociations(boolean protect) {
+        this.protectSensitiveAssociations = protect;
     }
-    
+
     /**
      * Returns the minimal size of an equivalence class induced by the contained criteria.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
@@ -388,19 +387,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public int getMinimalGroupSize() {
         int k = -1;
         int l = -1;
-        
-        if (this.containsCriterion(KAnonymity.class)){
+
+        if (this.containsCriterion(KAnonymity.class)) {
             k = this.getCriterion(KAnonymity.class).getK();
         }
-        
-        if (this.containsCriterion(LDiversity.class)){
-        	for (LDiversity c : this.getCriteria(LDiversity.class)){
-        		l = Math.max(l, c.getL());
-        	}
+
+        if (this.containsCriterion(LDiversity.class)) {
+            for (LDiversity c : this.getCriteria(LDiversity.class)) {
+                l = Math.max(l, c.getL());
+            }
         }
-        
+
         int result = Math.max(k, l);
-        if (result==-1) return Integer.MAX_VALUE;
+        if (result == -1) return Integer.MAX_VALUE;
         else return result;
     }
 }

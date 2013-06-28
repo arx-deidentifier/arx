@@ -26,27 +26,22 @@ package org.deidentifier.arx.metric;
  */
 class InformationLossDefault extends InformationLoss {
 
-    /**
-     * 
-     */
-    private static final long           serialVersionUID = -4341081298410703417L;
-
     /** Max value */
     public static final InformationLoss MAX              = new InformationLossDefault(Double.MAX_VALUE);
 
     /** Min value */
     public static final InformationLoss MIN              = new InformationLossDefault(0);
 
+    /**
+     * 
+     */
+    private static final long           serialVersionUID = -4341081298410703417L;
+
     /** Current value */
     private double                      value;
 
     InformationLossDefault(final double value) {
         this.value = value;
-    }
-
-    @Override
-    protected InformationLoss clone() {
-        return new InformationLossDefault(value);
     }
 
     @Override
@@ -79,5 +74,10 @@ class InformationLossDefault extends InformationLoss {
         if (other.getValue() < getValue()) {
             value = other.getValue();
         }
+    }
+
+    @Override
+    protected InformationLoss clone() {
+        return new InformationLossDefault(value);
     }
 }

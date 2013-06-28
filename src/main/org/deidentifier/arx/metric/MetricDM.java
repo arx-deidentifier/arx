@@ -18,6 +18,10 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Set;
+
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
@@ -41,8 +45,7 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node,
-                                                   final IHashGroupify g) {
+    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
@@ -57,9 +60,15 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
-    public void
-            initializeInternal(final Data input,
-                               final GeneralizationHierarchy[] ahierarchies) {
-        rowCount = input.getDataLength();
+    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+        if (config.containsCriterion(DPresence.class)) {
+            Set<DPresence> crits = config.getCriteria(DPresence.class);
+            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
+            for (DPresence dPresence : crits) {
+                rowCount = dPresence.getResearchSubsetSize();
+            }
+        } else {
+            rowCount = input.getDataLength();
+        }
     }
 }
