@@ -279,4 +279,11 @@ public class Node {
         this.level = level;
     }
 
+    /**
+     * Marks a node as "not checked"
+     */
+	public void setNotChecked() {
+		this.checked = false;
+	}
+
 }

@@ -388,9 +388,12 @@ public class ARXAnonymizer {
     private void reset(Lattice lattice) {
 		for (Node[] level : lattice.getLevels()){
 			for (Node node : level){
-				node.setNotTagged();
-				node.setAnonymous(false);
-				node.setKAnonymous(false);
+				if (node.isAnonymous()){
+					node.setNotTagged();
+					node.setNotChecked();
+					node.setAnonymous(false);
+					node.setKAnonymous(false);
+				}
 			}
 		}
 	}
