@@ -291,6 +291,9 @@ public class ARXAnonymizer {
 						
 					// Simply reset the lattice
 					} else {
+						// TODO: When resetting the lattice, the k-anonymity property could be preserved
+						// TODO: Furthermore, there is no need to execute the first phase during subsequent
+						// TODO: runs of the algorithm
 						reset(result.lattice);
 						lattice = result.lattice;
 					}
