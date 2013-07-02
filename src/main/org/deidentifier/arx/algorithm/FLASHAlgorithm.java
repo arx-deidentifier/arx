@@ -170,20 +170,8 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
 
         }
 
-        if (checker.getMetric().isMonotonic() && node.isAnonymous()) { // in
-                                                                       // case
-                                                                       // metric
-                                                                       // is
-                                                                       // monotone
-                                                                       // it
-                                                                       // can
-                                                                       // be
-                                                                       // tagged
-                                                                       // if
-                                                                       // the
-                                                                       // node
-                                                                       // is
-                                                                       // anonymous
+        // in case metric is monotone it can be tagged if the node is anonymous
+        if (checker.getMetric().isMonotonic() && node.isAnonymous()) { 
             lattice.tagAnonymous(node, node.isAnonymous());
         } else {
             node.setTagged();
@@ -207,7 +195,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
             final int mid = (low + high) >>> 1;
             final Node node = path.get(mid);
 
-            if (!node.isTagged()) { // TODO: necessary??
+            if (!node.isTagged()) { 
                 checkNode1(node);
                 if (!isNodeAnonymous(node)) { // put only non-anonymous nodes in
                                               // pqueue, as potetnially a
@@ -240,11 +228,11 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
     private final void checkPathExhaustive(final List<Node> path) {
 
         for (final Node node : path) {
-            if (!node.isTagged()) { // TODO: necessary??
+            if (!node.isTagged()) { 
                 checkNode2(node);
-                for (final Node up : node.getSuccessors()) { // put all nodes in
-                                                             // stack
-                    if (!up.isTagged()) { // only unknown nodes are nesessary
+                // Put all untagged nodes on the stack
+                for (final Node up : node.getSuccessors()) {
+                    if (!up.isTagged()) {
                         stack.push(up);
                     }
                 }
@@ -287,9 +275,8 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
      */
     private boolean isNodeAnonymous(final Node node) {
 
-        switch (traverseType) { // SECOND_PHASE_ONLY not needed, as
-                                // isNodeAnonymous is only used during first
-                                // phase
+    	// SECOND_PHASE_ONLY not needed, as isNodeAnonymous is only used during the first phase
+        switch (traverseType) { 
         case FIRST_PHASE_ONLY:
             return node.isAnonymous();
         case FIRST_AND_SECOND_PHASE:
@@ -372,16 +359,15 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
             Node[] level;
             level = this.sort(i);
             for (final Node node : level) {
-                if (!node.isTagged()) { // TODO: nesessary?
+                if (!node.isTagged()) { 
                     pqueue.add(node);
                     while (!pqueue.isEmpty()) {
                         Node head = pqueue.poll();
-                        if (!head.isTagged()) { // if anonymity state is unknown
+                        // if anonymity is unknown
+                        if (!head.isTagged()) {
+                        	// If first phase is needed
                             if (traverseType == TraverseType.FIRST_PHASE_ONLY ||
-                                traverseType == TraverseType.FIRST_AND_SECOND_PHASE) { // if
-                                                                                       // first
-                                                                                       // phase
-                                                                                       // needed
+                                traverseType == TraverseType.FIRST_AND_SECOND_PHASE) { 
                                 findPath(head);
                                 head = checkPathBinary(path);
                             }
