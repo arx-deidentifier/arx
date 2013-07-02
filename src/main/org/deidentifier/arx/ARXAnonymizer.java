@@ -36,6 +36,7 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.LatticeBuilder;
+import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -61,6 +62,9 @@ public class ARXAnonymizer {
 
         /** The lattice. */
         final Lattice      lattice;
+        
+        /** The data manager*/
+        final DataManager  manager;
 
         /**
          * Creates a new instance.
@@ -71,12 +75,39 @@ public class ARXAnonymizer {
          *            the checker
          * @param lattice
          *            the lattice
+         * @param manager
+         *            the manager
          */
-        private Result(final Metric<?> metric, final INodeChecker checker, final Lattice lattice) {
+        private Result(final Metric<?> metric, final INodeChecker checker, final Lattice lattice, final DataManager manager) {
             this.metric = metric;
             this.checker = checker;
             this.lattice = lattice;
+            this.manager = manager;
         }
+
+        /**
+         * Creates a final result from this temporary result
+         * @param anonymizer
+         * @param handle
+         * @param time
+         * @return
+         */
+		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
+
+			// Create outhandle
+			final DataHandleOutput outHandle = new DataHandleOutput(
+					this.metric, this.manager, this.checker,
+					System.currentTimeMillis() - time, suppressionString,
+					handle.getDefinition(), this.lattice, removeOutliers,
+					config);
+			
+            // Pairing
+            outHandle.associate(handle);
+            handle.associate(outHandle);
+
+            // Return
+            return outHandle;
+		}
     }
 
     /** Remove outliers? */
@@ -163,6 +194,9 @@ public class ARXAnonymizer {
      */
     public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
 
+        // Stopwatch
+        final long time = System.currentTimeMillis();
+
     	// Lots of checks
         if (data == null) { throw new NullPointerException("Data cannot be null!"); }
         if (config.containsCriterion(LDiversity.class) ||
@@ -217,6 +251,9 @@ public class ARXAnonymizer {
 				substition = AttributeType.INSENSITIVE_ATTRIBUTE;
 			}
 
+			// The temporary result
+			Result result = null;
+			
 			// Iterate for each sensitive attribute
 			List<String> sensitive = new ArrayList<String>(data.getDefinition().getSensitiveAttributes());
 			for (int i = 0; i < sensitive.size(); i++) {
@@ -243,23 +280,63 @@ public class ARXAnonymizer {
 				}
 
 				// Anonymize
-				anonymizeInternal(handle, definition, config);
+				Lattice lattice = null;
+				if (result != null){
+					
+					// Redefine the lattice
+					if (config.isProtectSensitiveAssociations()) {
+						throw new RuntimeException("Not implemented!");
+						
+					// Simply reset the lattice
+					} else {
+						reset(result.lattice);
+						lattice = result.lattice;
+					}
+				}
 				
-				// TODO:
-				// TODO: FLAG NODES IN THE LATTICE DEPENDING ON PREVIOUS RESULTS, IF ANY
-				// TODO:
+				// Next iteration
+				result = anonymizeInternal(handle, definition, config, lattice);
 			}
 			
-			// Now return the result
-			throw new RuntimeException("Not implemented!");
+			// Redefine the last result
+			if (config.isProtectSensitiveAssociations()){
+				throw new RuntimeException("Not implemented!");
+				
+			// Simply return the last result
+			} else {
+				return result.asResult(config, handle, time);
+			}
 			
         } else {
-        	return anonymizeInternal(handle, handle.getDefinition(), config);
+
+        	// Execute
+        	return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
         }
         
     }
 
-    protected ARXResult anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
+    /**
+     * Build a new lattice and run the algorithm
+     * @param handle
+     * @param definition
+     * @param config
+     * @return
+     * @throws IOException
+     */
+    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
+    	return anonymizeInternal(handle, definition, config, null);
+    }
+
+    /**
+     * Reset a previous lattice and run the algorithm 
+     * @param handle
+     * @param definition
+     * @param config
+     * @param lattice
+     * @return
+     * @throws IOException
+     */
+    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice) throws IOException{
 
         // Encode
         final DataManager manager = prepareDataManager(handle, definition, config);
@@ -267,14 +344,15 @@ public class ARXAnonymizer {
         // Initialize
         config.initialize(manager);
 
-        // Stopwatch
-        final long time = System.currentTimeMillis();
-
         // Check
         checkAfterEncoding(config, manager);
 
-        // Build the lattice
-        final Lattice lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
+        // Build or clean the lattice
+        if (lattice==null){
+        	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
+        } else {
+        	reset(lattice);
+        }
 
         // Attach the listener
         lattice.setListener(listener);
@@ -298,26 +376,24 @@ public class ARXAnonymizer {
         algorithm.traverse();
 
         // Return the result
-        final Result result = new Result(config.getMetric(), checker, lattice);
-
-        // Create outhandle
-        final DataHandleOutput outHandle = new DataHandleOutput(result.metric,
-                                                                manager,
-                                                                result.checker,
-                                                                System.currentTimeMillis() - time,
-                                                                suppressionString,
-                                                                handle.getDefinition(),
-                                                                result.lattice,
-                                                                removeOutliers,
-                                                                config);
-        // Pairing
-        outHandle.associate(handle);
-        handle.associate(outHandle);
-
-        return outHandle;
+        return new Result(config.getMetric(), checker, lattice, manager);
     }
     
     /**
+     * Resets a lattice, i.e., it marks all anonymous transformations as "not visited"
+     * @param lattice
+     */
+    private void reset(Lattice lattice) {
+		for (Node[] level : lattice.getLevels()){
+			for (Node node : level){
+				node.setNotTagged();
+				node.setAnonymous(false);
+				node.setKAnonymous(false);
+			}
+		}
+	}
+
+	/**
      * Performs some sanity checks.
      * 
      * @param manager
