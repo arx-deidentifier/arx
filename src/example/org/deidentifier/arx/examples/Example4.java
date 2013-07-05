@@ -115,10 +115,8 @@ public class Example4 extends Example {
             }
 
         } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (final IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

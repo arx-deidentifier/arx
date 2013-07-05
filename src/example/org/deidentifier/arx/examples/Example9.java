@@ -50,25 +50,21 @@ public class Example9 extends Example {
      */
     public static void main(final String[] args) {
 
-        // Define Public Data P
+        // Define public dataset
         final DefaultData data = Data.create();
         data.add("identifier", "name", "zip", "age", "nationality", "sen");
-        data.add("a", "Alice", "47906", "35", "USA", "0"); // 0
-        data.add("b", "Bob", "47903", "59", "Canada", "1"); // 1
-        data.add("c", "Christine", "47906", "42", "USA", "1"); // 2
-        data.add("d", "Dirk", "47630", "18", "Brazil", "0"); // 3
-        data.add("e", "Eunice", "47630", "22", "Brazil", "0"); // 4
-        data.add("f", "Frank", "47633", "63", "Peru", "1"); // 5
-        data.add("g", "Gail", "48973", "33", "Spain", "0"); // 6
-        data.add("h", "Harry", "48972", "47", "Bulgaria", "1"); // 7
-        data.add("i", "Iris", "48970", "52", "France", "1"); // 8
+        data.add("a", "Alice", "47906", "35", "USA", "0");
+        data.add("b", "Bob", "47903", "59", "Canada", "1");
+        data.add("c", "Christine", "47906", "42", "USA", "1");
+        data.add("d", "Dirk", "47630", "18", "Brazil", "0");
+        data.add("e", "Eunice", "47630", "22", "Brazil", "0");
+        data.add("f", "Frank", "47633", "63", "Peru", "1");
+        data.add("g", "Gail", "48973", "33", "Spain", "0");
+        data.add("h", "Harry", "48972", "47", "Bulgaria", "1");
+        data.add("i", "Iris", "48970", "52", "France", "1");
 
-        final HashSet<Integer> subset = new HashSet<Integer>();
-        subset.add(1);
-        subset.add(2);
-        subset.add(5);
-        subset.add(7);
-        subset.add(8);
+        // Define research subset
+        final HashSet<Integer> subset = new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8));
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();
@@ -131,10 +127,8 @@ public class Example9 extends Example {
                 System.out.println(Arrays.toString(transformed.next()));
             }
         } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (final IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

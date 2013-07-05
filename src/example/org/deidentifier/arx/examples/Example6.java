@@ -108,11 +108,10 @@ public class Example6 extends Example {
                 System.out.print("   ");
                 System.out.println(Arrays.toString(transformed.next()));
             }
+
         } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (final IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

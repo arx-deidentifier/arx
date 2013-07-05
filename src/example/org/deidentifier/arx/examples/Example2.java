@@ -77,16 +77,12 @@ public class Example2 extends Example {
 
             // Write results
             System.out.print(" - Writing data...");
-            final CSVDataOutput out = new CSVDataOutput("data/test_anonymized.csv",
-                                                        ';');
-            out.write(result.getHandle().iterator());
+            result.getHandle().save("data/test_anonymized.csv", ';');
             System.out.println("Done!");
 
         } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (final IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

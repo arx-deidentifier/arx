@@ -91,43 +91,43 @@ public class Example8 extends Example {
         disease.add("flu",
                     "respiratory infection",
                     "vascular lung disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("pneumonia",
                     "respiratory infection",
                     "vascular lung disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("bronchitis",
                     "respiratory infection",
                     "vascular lung disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("pulmonary edema",
                     "vascular lung disease",
                     "vascular lung disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("pulmonary embolism",
                     "vascular lung disease",
                     "vascular lung disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("gastric ulcer",
                     "stomach disease",
                     "digestive system disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("stomach cancer",
                     "stomach disease",
                     "digestive system disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("gastritis",
                     "stomach disease",
                     "digestive system disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("colitis",
                     "colon disease",
                     "digestive system disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
         disease.add("colon cancer",
                     "colon disease",
                     "digestive system disease",
-                    "respiratory&digestive system disease");
+                    "respiratory & digestive system disease");
 
         data.getDefinition().setAttributeType("age", age);
         data.getDefinition().setAttributeType("zipcode", zipcode);
@@ -158,10 +158,8 @@ public class Example8 extends Example {
                 System.out.println(Arrays.toString(transformed.next()));
             }
         } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (final IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
