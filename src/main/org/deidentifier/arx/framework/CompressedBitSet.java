@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.framework;
 
+import java.util.Arrays;
+
 /**
  * A compressed bitset.
  * TODO: Replace with different implementation? At ten chunks this merely saves any space!
@@ -49,6 +51,9 @@ public class CompressedBitSet {
 
     /** The shift value. */
     private final int        shiftValue;
+    
+    /** The size*/
+    private final int        size;
   
     /**
      * Instantiates a new bit set compressed byte chunks shift.
@@ -70,6 +75,7 @@ public class CompressedBitSet {
         chunks = new byte[newNumChunks][];
         moduloMask = chunkSizeInBits - 1;
         bitMask = CompressedBitSet.BIT_INDEX_MASK & moduloMask;
+        this.size = size;
     }
 
     /**
@@ -101,5 +107,27 @@ public class CompressedBitSet {
         }
 
         chunks[idx][(bit & moduloMask) >> CompressedBitSet.ADDRESS_BITS_PER_UNIT] |= 1 << (bit & bitMask);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.deepHashCode(chunks);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        CompressedBitSet other = (CompressedBitSet) obj;
+        if (!Arrays.deepEquals(chunks, other.chunks)) return false;
+        return true;
+    }
+    
+    public int getSize(){
+        return this.size;
     }
 }

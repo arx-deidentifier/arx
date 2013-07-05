@@ -36,7 +36,7 @@ class DataHandleInput extends DataHandle {
 
     /** The dictionary */
     protected Dictionary dictionary = null;
-
+    
     /**
      * Creates a new data handle
      * 

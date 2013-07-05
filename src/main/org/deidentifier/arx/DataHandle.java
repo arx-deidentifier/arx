@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.GenericSorting;
@@ -394,5 +396,54 @@ public abstract class DataHandle {
      * @param row2
      */
     protected abstract void swapInternal(int row1, int row2);
-
+    
+    /**
+     * Returns a new data handle that represents a context specific view on the dataset
+     * @return
+     */
+    public DataHandle getContextSpecificView(ARXConfiguration config){
+        if (config.containsCriterion(DPresence.class)) {
+            return getContextSpecificView(config.getCriterion(DPresence.class).getResearchSubset());
+        } else {
+            return this;
+        }
+    }
+    
+    /** The current research subset*/
+    private CompressedBitSet subset = null;
+    
+    /** The hashcode of the current research subset*/
+    private int subsetHash = 0;
+    
+    /** The view on the current research subset*/
+    private DataHandleSubset subsetView = null;
+    
+    /**
+     * Creates and caches a context specific view for a given research subset
+     * @param subset
+     * @return
+     */
+    private DataHandle getContextSpecificView(CompressedBitSet subset) {
+     
+        if (this.subsetView != null){
+            
+            if (this.subset == subset){
+                return this.subsetView;
+            } else if (this.subsetHash == subset.hashCode() && this.subset.equals(subset)){
+                this.subset = subset;
+                return this.subsetView;
+            } else {
+                this.subsetView = new DataHandleSubset(this, subset);
+                this.subsetHash = subset.hashCode();
+                this.subset = subset;
+                return this.subsetView;
+            }
+            
+        } else {
+            this.subsetView = new DataHandleSubset(this, subset);
+            this.subsetHash = subset.hashCode();
+            this.subset = subset;
+            return this.subsetView;
+        }
+    }
 }
