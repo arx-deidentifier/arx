@@ -96,7 +96,21 @@ public class DPresence extends PrivacyCriterion{
      * @return
      */
     public CompressedBitSet getResearchSubset() {
-        return this.bitset;
+        if (this.bitset != null) {
+            return this.bitset;
+        } else {
+            // TODO: This returns a potentially dangerous temporary representation of the 
+            // TODO: bit set that might not be long enough. Required, e.g., for DataHandle.getContextSpecificView();
+            int max = Integer.MIN_VALUE;
+            for (int i : subset){
+                max = Math.max(max, i);
+            }
+            CompressedBitSet set = new CompressedBitSet(max);
+            for (Integer line : subset) {
+                set.set(line);
+            }
+            return set;
+        }
     }
     
     /**
