@@ -70,7 +70,6 @@ public class DPresence extends PrivacyCriterion{
         for (Integer line : subset) {
             bitset.set(line);
         }
-        this.subset = null;
     }
 
     @Override

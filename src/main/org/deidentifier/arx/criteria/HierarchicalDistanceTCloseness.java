@@ -33,7 +33,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     /** The hierarchy used for the EMD*/
     private final Hierarchy hierarchy;
     /** Internal tree*/
-    private int[]        tree;
+    private int[] tree;
     /** Internal offset*/
     private int start;
     /** Internal empty tree*/
