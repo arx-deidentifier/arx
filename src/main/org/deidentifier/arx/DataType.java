@@ -20,15 +20,20 @@ package org.deidentifier.arx;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This class provides access to the data types supported by the ARX framework
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class DataType {
+public abstract class DataType<T> {
+	
+	/*
+	 * TODO: Implement Boolean, Integer, Float
+	 */
 
-    private static class ARXDate extends DataType {
+	public static class ARXDate extends DataType<Date> {
 
         SimpleDateFormat format;
         String           string;
@@ -44,7 +49,7 @@ public abstract class DataType {
         }
 
         @Override
-        public DataType clone() {
+        public DataType<Date> clone() {
             return new ARXDate(string);
         }
 
@@ -70,11 +75,25 @@ public abstract class DataType {
         public String toString() {
             return "Date(" + string + ")";
         }
+        
+        @Override
+        public Date fromString(String s) {
+        	try {
+				return format.parse(s);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
+        }
+
+        @Override
+        public String toString(Date s){
+        	return format.format(s);
+        }
     }
 
-    private static class ARXDecimal extends DataType {
+    public static class ARXDecimal extends DataType<Double> {
         @Override
-        public DataType clone() {
+        public DataType<Double> clone() {
             return this;
         }
 
@@ -96,11 +115,21 @@ public abstract class DataType {
         public String toString() {
             return "Decimal";
         }
+        
+        @Override
+        public Double fromString(String s) {
+        	return Double.valueOf(s);
+        }
+
+        @Override
+        public String toString(Double s){
+        	return String.valueOf(s);
+        }
     }
 
-    private static class ARXString extends DataType {
+    public static class ARXString extends DataType<String> {
         @Override
-        public DataType clone() {
+        public DataType<String> clone() {
             return this;
         }
 
@@ -121,16 +150,26 @@ public abstract class DataType {
         public String toString() {
             return "String";
         }
+        
+        @Override
+        public String fromString(String s) {
+        	return s;
+        }
+
+        @Override
+        public String toString(String s){
+        	return s;
+        }
     }
 
     /** A decimal datatype */
-    public static final DataType DECIMAL = new ARXDecimal();
+    public static final DataType<Double> DECIMAL = new ARXDecimal();
 
     /** A string datatype */
-    public static final DataType STRING  = new ARXString();
+    public static final DataType<String> STRING  = new ARXString();
 
     /** A date datatype with default fomat dd.mm.yyyy */
-    public static final DataType DATE    = new ARXDate();
+    public static final DataType<Date> DATE    = new ARXDate();
 
     /**
      * A date datatype with given format
@@ -139,12 +178,16 @@ public abstract class DataType {
      * @param format
      * @return
      */
-    public static final DataType DATE(final String format) {
+    public static final DataType<Date> DATE(final String format) {
         return new ARXDate(format);
     }
 
     @Override
-    public abstract DataType clone();
+    public abstract DataType<T> clone();
+    
+    public abstract String toString(T t);
+    
+    public abstract T fromString(String s);
 
     public abstract int
             compare(String s1, String s2) throws NumberFormatException,
