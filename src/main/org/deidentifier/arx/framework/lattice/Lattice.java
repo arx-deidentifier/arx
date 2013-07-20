@@ -40,7 +40,10 @@ public class Lattice {
     private int           size          = 0;
 
     /** A listener */
-    private ARXListener listener      = null;
+    private ARXListener   listener      = null;
+    
+    /** A multiplier for the listener*/
+    private int           multiplier    = 1;
 
     /**
      * Initializes a lattice.
@@ -99,7 +102,7 @@ public class Lattice {
 
         // Call listener
         if (listener != null) {
-            listener.nodeTagged(size);
+            listener.nodeTagged(size * multiplier);
         }
 
         // Traverse
@@ -137,7 +140,7 @@ public class Lattice {
 
         // Call listener
         if (listener != null) {
-            listener.nodeTagged(size);
+            listener.nodeTagged(size * multiplier);
         }
 
         // Traverse
@@ -257,5 +260,15 @@ public class Lattice {
         if (!node.isTagged()) {
             doTagKAnonymous(node, kAnonymous);
         }
+    }
+
+    /**
+     * Sets a multiplier, which is used to multiply the number of nodes in the lattice when calling a
+     * listener. Needed to return the correct progress information when anonymizing with multiple
+     * sensitive attributes
+     * @param multiplier
+     */
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
     }
 }

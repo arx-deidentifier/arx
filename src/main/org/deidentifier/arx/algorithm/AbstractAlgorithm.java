@@ -39,8 +39,6 @@ public abstract class AbstractAlgorithm {
     /** The lattice. */
     protected Lattice       lattice  = null;
 
-    /** A listener */
-    protected ARXListener listener = null;
 
     /**
      * Walks the lattice.
@@ -71,15 +69,6 @@ public abstract class AbstractAlgorithm {
             }
         }
         return results;
-    }
-
-    /**
-     * Attaches a listener
-     * 
-     * @param listener
-     */
-    public void setListener(final ARXListener listener) {
-        this.listener = listener;
     }
 
     /**

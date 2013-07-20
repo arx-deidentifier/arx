@@ -300,7 +300,7 @@ public class ARXAnonymizer {
 				}
 				
 				// Next iteration
-				result = anonymizeInternal(handle, definition, config, lattice);
+				result = anonymizeInternal(handle, definition, config, lattice, sensitive.size());
 			}
 			
 			// Redefine the last result
@@ -329,7 +329,7 @@ public class ARXAnonymizer {
      * @throws IOException
      */
     protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
-    	return anonymizeInternal(handle, definition, config, null);
+    	return anonymizeInternal(handle, definition, config, null, 1);
     }
 
     /**
@@ -341,7 +341,7 @@ public class ARXAnonymizer {
      * @return
      * @throws IOException
      */
-    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice) throws IOException{
+    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice, int multiplier) throws IOException{
 
         // Encode
         final DataManager manager = prepareDataManager(handle, definition, config);
@@ -361,6 +361,7 @@ public class ARXAnonymizer {
 
         // Attach the listener
         lattice.setListener(listener);
+        lattice.setMultiplier(multiplier);
 
         // Build a node checker
         final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
@@ -373,9 +374,6 @@ public class ARXAnonymizer {
 
         // Build an algorithm instance
         final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy);
-
-        // Attach the listener
-        algorithm.setListener(listener);
 
         // Execute
         algorithm.traverse();

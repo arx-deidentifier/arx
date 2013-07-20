@@ -26,14 +26,6 @@ package org.deidentifier.arx;
 public interface ARXListener {
 
     /**
-     * Is called when a node is checked
-     * 
-     * @param numNodes
-     *            The total number of nodes in the lattice
-     */
-    public void nodeChecked(int numNodes);
-
-    /**
      * Is called when a node is tagged
      * 
      * @param numNodes
