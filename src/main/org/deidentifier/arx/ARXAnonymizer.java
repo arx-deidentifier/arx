@@ -78,7 +78,7 @@ public class ARXAnonymizer {
          * @param manager
          *            the manager
          */
-        private Result(final Metric<?> metric, final INodeChecker checker, final Lattice lattice, final DataManager manager) {
+        Result(final Metric<?> metric, final INodeChecker checker, final Lattice lattice, final DataManager manager) {
             this.metric = metric;
             this.checker = checker;
             this.lattice = lattice;
