@@ -70,18 +70,16 @@ public class LatticeBuilder {
      */
     private int buildLevelsAndMap() {
 
-        final IDGenerator generator = new IDGenerator();
-
         // Init
         final int numQIs = maxLevels.length;
         int numNodes = 1;
         final int[] offsets = new int[numQIs];
         final int[] maxIndices = new int[numQIs];
         int maxLevel = 1;
+        int id = 0;
 
         // Step 1
         for (int i = 0; i < numQIs; i++) {
-            // curlelemsize needs to be maxheight
             final int curMaxGeneralizationHeight = maxLevels[i] + 1;
             offsets[i] = numNodes;
             numNodes *= (curMaxGeneralizationHeight - minLevels[i]);
@@ -93,7 +91,7 @@ public class LatticeBuilder {
         final int[] levelsize = new int[maxLevel];
         final Node[] nodeArray = new Node[numNodes];
         for (int i = 0; i < nodeArray.length; i++) {
-            nodeArray[i] = new Node(generator);
+            nodeArray[i] = new Node(id++);
         }
 
         // Step 3

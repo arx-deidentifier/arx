@@ -68,8 +68,8 @@ public class Node {
     /**
      * Instantiates a new node.
      */
-    public Node(final IDGenerator generator) {
-        id = generator.get();
+    public Node(final int id) {
+        this.id = id;
         anonymous = false;
         tagged = false;
         informationLoss = null;
