@@ -138,11 +138,6 @@ public class Lattice {
         // Count
         untaggedCount[node.getLevel()]--;
 
-        // Call listener
-        if (listener != null) {
-            listener.nodeTagged(size * multiplier);
-        }
-
         // Traverse
         if (kAnonymous) {
             for (final Node up : node.getSuccessors()) {
