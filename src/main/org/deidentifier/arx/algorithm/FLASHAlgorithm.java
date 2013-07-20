@@ -117,9 +117,6 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
     protected void checkNode1(final Node node) {
         
         checker.check(node);
-
-        // NOTE: SECOND_PHASE_ONLY not needed, as in this case
-        // checkNode1 would never been called
         switch (traverseType) { 
             case FIRST_PHASE_ONLY:
                 lattice.tagAnonymous(node, node.isAnonymous());
@@ -128,7 +125,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                 lattice.tagKAnonymous(node, node.isKAnonymous());
                 break;
             default:
-                throw new RuntimeException("Not implemented!");
+                throw new RuntimeException("This method must not be called when only executing the 2nd phase!");
         }
     }
 
