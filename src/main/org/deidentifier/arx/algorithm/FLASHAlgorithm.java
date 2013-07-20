@@ -374,8 +374,9 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                                 final PruningStrategy pruning = history.getPruningStrategy();
                                 history.setPruningStrategy(PruningStrategy.CHECKED);
                                 
-                                // Untag all nodes above first anonymous node if they have already been tagged by first phase;
-                                // They will all be tagged again by StackFlash
+                                // Untag all nodes above first anonymous node if they have 
+                                // already been tagged in first phase.
+                                // They will all be tagged again in the second phase
                                 if (traverseType == TraverseType.FIRST_AND_SECOND_PHASE) { 
                                     lattice.doUnTagUpwards(head);
                                 }
