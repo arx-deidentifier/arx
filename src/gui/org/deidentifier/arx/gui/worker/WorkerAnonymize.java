@@ -20,8 +20,8 @@ package org.deidentifier.arx.gui.worker;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.deidentifier.arx.ARXAdapter;
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.Model;
@@ -49,7 +49,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         // Initialize anonymizer
         final ARXAnonymizer anonymizer = model.createAnonymizer();
 
-        anonymizer.setListener(new ARXAdapter() {
+        anonymizer.setListener(new ARXListener() {
             int count = 0;
 
             @Override

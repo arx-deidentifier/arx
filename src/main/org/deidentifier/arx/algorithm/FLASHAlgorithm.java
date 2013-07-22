@@ -89,9 +89,9 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
         stack = new Stack<Node>();
         this.history = checker.getHistory();
 
-        // IF we assume practical monotonicity then we assume
+        // NOTE: If we assume practical monotonicity then we assume
         // monotonicity for both criterion AND metric!
-        // We assume monotonicity for everything with 0% suppression
+        // NOTE: We assume monotonicity for criterion with 0% suppression
         if ((checker.getConfiguration().getAbsoluteMaxOutliers() == 0) ||
             (checker.getConfiguration().isCriterionMonotonic() && checker.getMetric()
                                                                          .isMonotonic()) ||
@@ -115,22 +115,17 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
      * @param node
      */
     protected void checkNode1(final Node node) {
+        
         checker.check(node);
-
-        if (listener != null) {
-            listener.nodeChecked(lattice.getSize());
-        }
-
-        switch (traverseType) { // SECOND_PHASE_ONLY not needed, as in this case
-                                // checkNode1 would never been called
-        case FIRST_PHASE_ONLY:
-            lattice.tagAnonymous(node, node.isAnonymous());
-            break;
-        case FIRST_AND_SECOND_PHASE:
-            lattice.tagKAnonymous(node, node.isKAnonymous());
-            break;
-        default:
-            throw new RuntimeException("Not implemented!");
+        switch (traverseType) { 
+            case FIRST_PHASE_ONLY:
+                lattice.tagAnonymous(node, node.isAnonymous());
+                break;
+            case FIRST_AND_SECOND_PHASE:
+                lattice.tagKAnonymous(node, node.isKAnonymous());
+                break;
+            default:
+                throw new RuntimeException("This method must not be called when only executing the 2nd phase!");
         }
     }
 
@@ -142,7 +137,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
     protected void checkNode2(final Node node) {
         if (!node.isChecked()) {
 
-            // TODO: revisit var1 & var2 !!
+            // TODO: Rethink var1 & var2
             final boolean var1 = !checker.getMetric().isMonotonic() &&
                                  checker.getConfiguration()
                                         .isCriterionMonotonic();
@@ -153,7 +148,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                                  checker.getConfiguration()
                                         .isPracticalMonotonicity();
 
-            // BEWARE: Might return non-anonymous result as optimum, when
+            // NOTE: Might return non-anonymous result as optimum, when
             // 1. the criterion is not monotonic, and
             // 2. practical monotonicity is assumed, and
             // 3. the metric is non-monotonic BUT independent.
@@ -162,15 +157,11 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                 checker.getMetric().evaluate(node, null);
             } else {
                 checker.check(node);
-
-                if (listener != null) {
-                    listener.nodeChecked(lattice.getSize());
-                }
             }
 
         }
 
-        // in case metric is monotone it can be tagged if the node is anonymous
+        // In case metric is monotone it can be tagged if the node is anonymous
         if (checker.getMetric().isMonotonic() && node.isAnonymous()) { 
             lattice.tagAnonymous(node, node.isAnonymous());
         } else {
@@ -380,8 +371,9 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                                 final PruningStrategy pruning = history.getPruningStrategy();
                                 history.setPruningStrategy(PruningStrategy.CHECKED);
                                 
-                                // Untag all nodes above first anonymous node if they have already been tagged by first phase;
-                                // They will all be tagged again by StackFlash
+                                // Untag all nodes above first anonymous node if they have 
+                                // already been tagged in first phase.
+                                // They will all be tagged again in the second phase
                                 if (traverseType == TraverseType.FIRST_AND_SECOND_PHASE) { 
                                     lattice.doUnTagUpwards(head);
                                 }
