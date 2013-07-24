@@ -18,22 +18,17 @@
 
 package org.deidentifier.arx;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.IDGenerator;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
