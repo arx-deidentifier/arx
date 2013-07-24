@@ -448,7 +448,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         // Prepare
         lastNode = currentNode;
-        final Node node = new Node(new IDGenerator());
+        final Node node = new Node(0);
         node.setTransformation(fnode.getTransformation(), 0);
         if (currentNode.isChecked()) {
             node.setChecked();
