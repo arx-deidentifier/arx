@@ -123,6 +123,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                 break;
             case FIRST_AND_SECOND_PHASE:
                 lattice.tagKAnonymous(node, node.isKAnonymous());
+                lattice.triggerTagged();
                 break;
             default:
                 throw new RuntimeException("This method must not be called when only executing the 2nd phase!");
@@ -167,6 +168,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
         } else {
             node.setTagged();
             lattice.untaggedCount[node.getLevel()]--;
+            lattice.triggerTagged();
         }
     }
 

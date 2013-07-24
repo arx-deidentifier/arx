@@ -266,4 +266,11 @@ public class Lattice {
     public void setMultiplier(int multiplier) {
         this.multiplier = multiplier;
     }
+
+    /**
+     * Triggers a tagged event at the listener
+     */
+	public void triggerTagged() {
+		this.listener.nodeTagged(size * multiplier);
+	}
 }

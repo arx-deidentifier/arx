@@ -394,6 +394,8 @@ public class ARXAnonymizer {
 					node.setNotChecked();
 					node.setAnonymous(false);
 					node.setKAnonymous(false);
+				} else {
+					lattice.triggerTagged();
 				}
 			}
 		}
