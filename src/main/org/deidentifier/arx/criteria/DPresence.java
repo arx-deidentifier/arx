@@ -18,9 +18,8 @@
 
 package org.deidentifier.arx.criteria;
 
-import java.util.Set;
-
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -44,11 +43,9 @@ public class DPresence extends PrivacyCriterion{
     /** Delta max*/
     private final double dMax;
     /** The research subset, a set of tuple ids*/
-    private Set<Integer> subset;
+    private DataSubset subset;
     /** A compressed representation of the research subset*/
     private CompressedBitSet bitset;
-    /** The size of the research subset*/
-    private final int subsetSize;
     
     /**
      * Creates a new instance
@@ -56,20 +53,17 @@ public class DPresence extends PrivacyCriterion{
      * @param dMax Delta max
      * @param subset Research subset
      */
-    public DPresence(double dMin, double dMax, Set<Integer> subset) {
+    public DPresence(double dMin, double dMax, DataSubset subset) {
         super(false);
         this.dMin = dMin;
         this.dMax = dMax;
         this.subset = subset;
-        this.subsetSize = subset.size();
+        this.bitset = subset.getBitSet();
     }
         
     @Override
     public void initialize(DataManager manager) {
-        bitset = new CompressedBitSet(manager.getDataQI().getDataLength());
-        for (Integer line : subset) {
-            bitset.set(line);
-        }
+        // Nothing to do
     }
 
     @Override
@@ -95,21 +89,7 @@ public class DPresence extends PrivacyCriterion{
      * @return
      */
     public CompressedBitSet getResearchSubset() {
-        if (this.bitset != null) {
-            return this.bitset;
-        } else {
-            // TODO: This returns a potentially dangerous temporary representation of the 
-            // TODO: bit set that might not be long enough. Required, e.g., for DataHandle.getContextSpecificView();
-            int max = Integer.MIN_VALUE;
-            for (int i : subset){
-                max = Math.max(max, i);
-            }
-            CompressedBitSet set = new CompressedBitSet(max);
-            for (Integer line : subset) {
-                set.set(line);
-            }
-            return set;
-        }
+        return this.bitset;
     }
     
     /**
@@ -117,7 +97,7 @@ public class DPresence extends PrivacyCriterion{
      * @return
      */
     public int getResearchSubsetSize() {
-        return this.subsetSize;
+        return this.subset.getSortedIndices().length;
     }
 
     /**

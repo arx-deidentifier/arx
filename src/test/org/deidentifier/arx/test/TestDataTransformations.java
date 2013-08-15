@@ -31,6 +31,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
@@ -492,12 +493,13 @@ public class TestDataTransformations extends TestAnonymizer {
         data.add("h", "Harry", "48972", "47", "Bulgaria", "1"); // 7
         data.add("i", "Iris", "48970", "52", "France", "1"); // 8
 
-        final HashSet<Integer> subset = new HashSet<Integer>();
-        subset.add(1);
-        subset.add(2);
-        subset.add(5);
-        subset.add(7);
-        subset.add(8);
+        final HashSet<Integer> indices = new HashSet<Integer>();
+        indices.add(1);
+        indices.add(2);
+        indices.add(5);
+        indices.add(7);
+        indices.add(8);
+        final DataSubset subset = DataSubset.create(data, indices);
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();

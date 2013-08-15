@@ -27,6 +27,7 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
@@ -64,7 +65,7 @@ public class Example9 extends Example {
         data.add("i", "Iris", "48970", "52", "France", "1");
 
         // Define research subset
-        final HashSet<Integer> subset = new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8));
+        final DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8)));
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();
