@@ -26,6 +26,10 @@ public class DataHandleSubset extends DataHandle {
      */
     public DataHandleSubset(DataHandle source, CompressedBitSet subset){
         this.source = source;
+        this.dataTypes = source.dataTypes;
+        this.definition = source.definition;
+        this.header = source.header;
+        this.other = source.other;
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int i=0; i<subset.getSize(); i++){
             if (subset.get(i)) list.add(i);

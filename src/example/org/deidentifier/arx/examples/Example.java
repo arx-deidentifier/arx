@@ -20,6 +20,8 @@ package org.deidentifier.arx.examples;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.Data;
@@ -88,6 +90,14 @@ public abstract class Example {
         for (int i = 0; i < qis.size(); i++) {
             System.out.println("   * " + identifiers[i] + ": " +
                                generalizations[i]);
+        }
+    }
+    
+
+    protected static void print(Iterator<String[]> iterator){
+        while (iterator.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(iterator.next()));
         }
     }
 }

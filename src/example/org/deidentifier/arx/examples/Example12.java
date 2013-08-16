@@ -131,24 +131,24 @@ public class Example12 extends Example {
             // Now anonymize
             final ARXResult result = anonymizer.anonymize(data, config);
 
+            // Print input
+            System.out.println(" - Input data:");
+            print(data.getHandle().iterator());
+
+            // Print input
+            System.out.println(" - Input research subset:");
+            print(data.getHandle().getContextSpecificView(config).iterator());
+
             // Print info
             printResult(result, data);
-
-            // Process results
+                     
+            // Print results
             System.out.println(" - Transformed data:");
-            Iterator<String[]> transformed = result.getHandle().iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
-            
-            // Process results
+            print(result.getHandle().iterator());
+
+            // Print results
             System.out.println(" - Transformed research subset:");
-            transformed = result.getHandle().getContextSpecificView(config).iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
-            }
+            print(result.getHandle().getContextSpecificView(config).iterator());
             
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);
