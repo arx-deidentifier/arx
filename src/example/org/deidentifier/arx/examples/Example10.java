@@ -20,28 +20,28 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example on how to apply the d-presence criterion
+ * and create a research subset by providing a data subset
  * 
  * @author Prasser, Kohlmayer
  */
-public class Example9 extends Example {
+public class Example10 extends Example {
 
     /**
      * Entry point.
@@ -63,9 +63,18 @@ public class Example9 extends Example {
         data.add("g", "Gail", "48973", "33", "Spain", "0");
         data.add("h", "Harry", "48972", "47", "Bulgaria", "1");
         data.add("i", "Iris", "48970", "52", "France", "1");
+        
+        // Define research subset
+        final DefaultData subsetData = Data.create();
+        subsetData.add("identifier", "name", "zip", "age", "nationality", "sen");
+        subsetData.add("b", "Bob", "47903", "59", "Canada", "1");
+        subsetData.add("c", "Christine", "47906", "42", "USA", "1");
+        subsetData.add("f", "Frank", "47633", "63", "Peru", "1");
+        subsetData.add("h", "Harry", "48972", "47", "Bulgaria", "1");
+        subsetData.add("i", "Iris", "48970", "52", "France", "1");
 
         // Define research subset
-        final DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8)));
+        final DataSubset subset = DataSubset.create(data, subsetData);
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();

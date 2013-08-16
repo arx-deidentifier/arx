@@ -27,6 +27,7 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
@@ -38,10 +39,11 @@ import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example on how to apply the d-presence criterion
+ * and create a research subset by providing a complex data selector
  * 
  * @author Prasser, Kohlmayer
  */
-public class Example9 extends Example {
+public class Example12 extends Example {
 
     /**
      * Entry point.
@@ -65,7 +67,19 @@ public class Example9 extends Example {
         data.add("i", "Iris", "48970", "52", "France", "1");
 
         // Define research subset
-        final DataSubset subset = DataSubset.create(data, new HashSet<Integer>(Arrays.asList(1, 2, 5, 7, 8)));
+        DataSelector selector = DataSelector.create(data)
+                                .begin()
+                                    .field("identifier").equals("b")
+                                    .and()
+                                    .field("nationality").equals("Canada")
+                                .end()
+                                .or().field("identifier").equals("c")
+                                .or().field("name").equals("Christine")
+                                .or().equals("Frank")
+                                .or().equals("Harry")
+                                .or().equals("Iris");
+        
+        final DataSubset subset = DataSubset.create(data, selector);
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();
@@ -127,7 +141,7 @@ public class Example9 extends Example {
                 System.out.print("   ");
                 System.out.println(Arrays.toString(transformed.next()));
             }
-
+            
             // Process results
             System.out.println(" - Transformed research subset:");
             transformed = result.getHandle().getContextSpecificView(config).iterator();
