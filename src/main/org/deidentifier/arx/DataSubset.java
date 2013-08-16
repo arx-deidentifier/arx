@@ -1,5 +1,6 @@
 package org.deidentifier.arx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,8 +112,28 @@ public class DataSubset {
      * @return
      */
     public static DataSubset create(Data data, DataSelector selector){
-        // TODO: Implement
-        throw new RuntimeException("Not implemented!"); 
+        
+        // Init
+        int rows = data.getHandle().getNumRows();
+        CompressedBitSet bitset = new CompressedBitSet(rows);
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        
+        // Check
+        for (int i=0; i<rows; i++){
+            if (selector.selected(i)) {
+                bitset.set(i);
+                list.add(i);
+            }
+        }
+        
+        // Convert
+        int[] array = new int[list.size()];
+        for (int i=0; i<list.size(); i++){
+            array[i] = list.get(i);
+        }
+        
+        // Return
+        return new DataSubset(bitset, array);
     }
     
     /**

@@ -67,21 +67,7 @@ public class DataSelector {
             super(2);
         }
     }
-    
-    private class CompiledOperator {
-        public final Operator operator;
-        public final int lOffset;
-        public final int lLength;
-        public final int rOffset;
-        public final int rLength;
-        private CompiledOperator(Operator operator, int lOffset, int lLength, int rOffset, int rLength) {
-            this.operator = operator;
-            this.lOffset = lOffset;
-            this.lLength = lLength;
-            this.rOffset = rOffset;
-            this.rLength = rLength;
-        }
-    }
+   
     
     /* **************************************
      * Class
@@ -303,16 +289,120 @@ public class DataSelector {
      * Compile
      * **************************************/
     protected void compile(){
-        CompiledOperator op = compile(0, operators.size());
-        if (op.operator == null || op.lLength != 0 || op.rLength != 0) {
-            throw new RuntimeException("Cannot parse expression!");
+        this.root = compile(operators, 0, operators.size());
+        if (this.root == null) {
+            throw new RuntimeException("Cannot parse expression");
+        } 
+    }
+
+    /**
+     * Parses the list of operators within the given range
+     * @param ops
+     * @param offset
+     * @param length
+     * @return
+     */
+    private Operator compile(List<Operator> ops, int offset, int length) {
+        
+        int lLength = findExpression(ops, offset, length);
+        
+        if (lLength == length){
+            
+            // Case 1: EXPR
+            if (length == 1){
+                
+                // Return single operator
+                return ops.get(offset);
+                
+            } else if ((ops.get(offset) instanceof PrecedenceOperator) &&
+                       (ops.get(offset + length - 1) instanceof PrecedenceOperator)){
+                
+                // Remove brackets
+                return compile(ops, offset+1, length-2);
+                
+            } else {
+                throw new RuntimeException("Invalid expression");
+            }
+            
         } else {
-            this.root = op.operator;
+            
+            // Case 2: EXPR <OP> EXPR
+            if (!(ops.get(offset + lLength) instanceof BinaryOperator)){
+                
+                // Invalid
+                throw new RuntimeException("Expecting EXPR <OP> EXPR");
+            } else {
+                
+                // Binary operator
+                BinaryOperator bop = (BinaryOperator)ops.get(offset + lLength);
+                bop.left = compile(ops, offset, lLength);
+                bop.right = compile(ops, offset + lLength + 1, length - lLength - 1);
+                return bop;
+            }
         }
     }
 
-    private CompiledOperator compile(int offset, int length) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * Finds an expression within the given range
+     * @param ops
+     * @param offset
+     * @param length
+     * @return
+     */
+    private int findExpression(List<Operator> ops, int offset, int length) {
+        
+        Operator op = ops.get(offset);
+        if (op instanceof BinaryOperator) {
+            
+            // Invalid
+            throw new RuntimeException("Expression must not start with binary operator");
+        } else if (op instanceof UnaryOperator) {
+            
+            // Just a unary operator
+            return 1;
+            
+        } else if (op instanceof PrecedenceOperator) {
+            
+            PrecedenceOperator pop = (PrecedenceOperator)op;
+            
+            if (!pop.begin) {
+                
+                // Invalid
+                throw new RuntimeException("Invalid paranthesis");
+                
+            } else {
+                
+                // Find closing bracket
+                int open = 1;
+                for (int i=offset+1; i<length; i++){
+                    if (ops.get(i) instanceof PrecedenceOperator){
+                        pop = (PrecedenceOperator)ops.get(i);
+                        if (pop.begin) open++;
+                        else open--;
+                        if (open == 0){
+                            return i-offset+1;
+                        }
+                    }
+                }
+                // Invalid
+                throw new RuntimeException("Missing closing paranthesis");
+            }
+        } else {
+            
+            // Invalid
+            throw new RuntimeException("Unknown operator");
+        }
+    }
+    
+    /**
+     * Determines whether the given row is selected by the expression
+     * @param row
+     * @return
+     */
+    public boolean selected(int row){
+        if (root == null) {
+            compile();
+        }
+        return root.eval(row);
     }
 }
