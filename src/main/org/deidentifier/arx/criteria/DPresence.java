@@ -34,7 +34,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * 
  * @author Prasser, Kohlmayer
  */
-public class DPresence extends PrivacyCriterion{
+public class DPresence extends ImplicitPrivacyCriterion{
     
     private static final long serialVersionUID = 8534004943055128797L;
     

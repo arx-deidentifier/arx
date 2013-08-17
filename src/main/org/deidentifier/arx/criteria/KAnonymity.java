@@ -31,7 +31,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * 
  * @author Prasser, Kohlmayer
  */
-public class KAnonymity extends PrivacyCriterion{
+public class KAnonymity extends ImplicitPrivacyCriterion{
 
     private static final long serialVersionUID = -8370928677928140572L;
     
