@@ -401,9 +401,9 @@ public abstract class DataHandle {
      * Returns a new data handle that represents a context specific view on the dataset
      * @return
      */
-    public DataHandle getContextSpecificView(ARXConfiguration config){
+    public DataHandle getView(ARXConfiguration config){
         if (config.containsCriterion(DPresence.class)) {
-            return getContextSpecificView(config.getCriterion(DPresence.class).getResearchSubset());
+            return getView(config.getCriterion(DPresence.class).getResearchSubset());
         } else {
             return this;
         }
@@ -423,7 +423,7 @@ public abstract class DataHandle {
      * @param subset
      * @return
      */
-    private DataHandle getContextSpecificView(CompressedBitSet subset) {
+    private DataHandle getView(CompressedBitSet subset) {
      
         if (this.subsetView != null){
             

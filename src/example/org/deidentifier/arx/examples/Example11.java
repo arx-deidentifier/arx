@@ -126,7 +126,7 @@ public class Example11 extends Example {
 
             // Print input
             System.out.println(" - Input research subset:");
-            print(data.getHandle().getContextSpecificView(config).iterator());
+            print(data.getHandle().getView(config).iterator());
 
             // Print info
             printResult(result, data);
@@ -137,7 +137,7 @@ public class Example11 extends Example {
 
             // Print results
             System.out.println(" - Transformed research subset:");
-            print(result.getHandle().getContextSpecificView(config).iterator());
+            print(result.getHandle().getView(config).iterator());
             
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);

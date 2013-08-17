@@ -139,7 +139,7 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    public DataHandle getContextSpecificView(ARXConfiguration config){
+    public DataHandle getView(ARXConfiguration config){
         return this;
     }
 }
