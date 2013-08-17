@@ -30,15 +30,15 @@ import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * This class provides an implementation of the (normalized) average equivalence class size metric.
- * We dont normailze the metric as proposed in the original publications [1], as this would only be possible for k-anonymity.
- * [1] LeFevre K, DeWitt DJ, Ramakrishnan R. Mondrian Multidimensional K-Anonymity. IEEE; 2006:25–25.
+ * We dont normailze the metric as proposed in the original publication [1], as this would only be possible for k-anonymity.
+ * [1] LeFevre K, DeWitt DJ, Ramakrishnan R. Mondrian Multidimensional K-Anonymity. IEEE; 2006:25-25.
  * 
  * @author Prasser, Kohlmayer
  */
 public class MetricAECS extends MetricDefault {
 
     private static final long serialVersionUID = -532478849890959974L;
-    private double            numRecordsTotal  = 0d;
+    private double            total  = 0d;
     private boolean           dPresence        = false;
 
     public MetricAECS() {
@@ -49,7 +49,8 @@ public class MetricAECS extends MetricDefault {
     public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         int size = 0;
-        if (dPresence) { // in d-presence mode use only ECs which contain at least one research subset tuple
+        // When enforcing d-presence, use only ECs which contain at least one tuple from the research subset
+        if (dPresence) { 
             HashGroupifyEntry m = g.getFirstEntry();
             while (m != null) {
                 if (m.count > 0) {
@@ -61,8 +62,7 @@ public class MetricAECS extends MetricDefault {
             size = g.size();
         }
 
-        final double value = numRecordsTotal / size;
-        // System.out.println(value);
+        final double value = total / size;
         return new InformationLossDefault(value);
     }
 
@@ -74,10 +74,10 @@ public class MetricAECS extends MetricDefault {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
             for (DPresence dPresence : crits) {
-                numRecordsTotal = dPresence.getResearchSubsetSize();
+                total = dPresence.getResearchSubsetSize();
             }
         } else {
-            numRecordsTotal = input.getDataLength();
+            total = input.getDataLength();
         }
     }
 }

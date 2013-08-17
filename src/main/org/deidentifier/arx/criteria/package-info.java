@@ -17,7 +17,9 @@
  */
 
 /**
- * This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence
+ * This package implements different variants of k-anonymity, l-diversity, t-closeness and d-presence.
+ * k-anonymity and d-presence are implicit privacy criteria, i.e., they are implicitly bound to the
+ * quasi-identifiers, while the other criteria are explicitly bound to a specific sensitive attribute.
  * 
  * @author Prasser, Kohlmayer
  */
