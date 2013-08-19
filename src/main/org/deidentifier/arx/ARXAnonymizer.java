@@ -20,8 +20,10 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.AbstractFLASHAlgorithm;
@@ -39,8 +41,6 @@ import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.LatticeBuilder;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
-
-import cern.colt.Arrays;
 
 /**
  * This class offers several methods to define parameters and execute the ARX
@@ -247,11 +247,37 @@ public class ARXAnonymizer {
 
         // Obtain handle
         final DataHandle handle = data.getHandle();
-
-        // Check
+        
+        // Check handle
         if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
         checkBeforeEncoding(config.getAllowedOutliers(), handle.getDefinition().getHierarchies());
 
+        // Check if all defines are correct
+        Set<String> attributes = new HashSet<String>();
+        for (int i=0; i<handle.getNumColumns(); i++){
+            attributes.add(handle.getAttributeName(i));
+        }
+        for (String attribute : data.getDefinition().getSensitiveAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getInsensitiveAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Insensitive attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getIdentifyingAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getQuasiIdentifyingAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        
         if (data.getDefinition().getSensitiveAttributes().size()>1) {
         	
         	// Determine with what the other sensitive attributes need to be replaced
