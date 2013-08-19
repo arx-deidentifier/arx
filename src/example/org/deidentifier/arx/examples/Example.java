@@ -44,10 +44,20 @@ public abstract class Example {
     protected static void
             printResult(final ARXResult result, final Data data) {
 
+        // Print time
+        final DecimalFormat df1 = new DecimalFormat("#####0.00");
+        final String sTotal = df1.format(result.getTime() / 1000d) + "s";
+        System.out.println(" - Time needed: " + sTotal);
+
         // Extract
         final ARXNode optimum = result.getGlobalOptimum();
         final List<String> qis = new ArrayList<String>(data.getDefinition()
                                                            .getQuasiIdentifyingAttributes());
+        
+        if (optimum == null){
+            System.out.println(" - Criteria cannot be enforced!");
+            return;
+        }
 
         // Initialize
         final StringBuffer[] identifiers = new StringBuffer[qis.size()];
@@ -75,11 +85,6 @@ public abstract class Example {
                 generalizations[i].insert(0, " ");
             }
         }
-
-        // Print time
-        final DecimalFormat df1 = new DecimalFormat("#####0.00");
-        final String sTotal = df1.format(result.getTime() / 1000d) + "s";
-        System.out.println(" - Time needed: " + sTotal);
 
         // Print
         System.out.println(" - Information loss: " +
