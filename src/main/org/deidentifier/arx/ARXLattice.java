@@ -243,13 +243,6 @@ public class ARXLattice implements Serializable {
 
         /**
          * Constructor
-         */
-        public ARXNode() {
-            // Empty by design
-        }
-
-        /**
-         * Constructor
          * 
          * @param headermap
          */
