@@ -446,7 +446,7 @@ public class ARXAnonymizer {
 				    node.setTagged();
                     node.setChecked();
 					lattice.triggerTagged();
-					lattice.untaggedCount[node.getLevel()]--;
+					lattice.decUntaggedCount(node.getLevel());
 				}
 			}
 		}

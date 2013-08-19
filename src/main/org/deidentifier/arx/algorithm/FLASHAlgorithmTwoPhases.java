@@ -101,7 +101,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
             lattice.tagAnonymous(node, node.isAnonymous());
         } else {
             node.setTagged();
-            lattice.untaggedCount[node.getLevel()]--;
+            lattice.decUntaggedCount(node.getLevel());
             lattice.triggerTagged();
         }
     }

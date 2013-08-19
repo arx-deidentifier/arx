@@ -216,7 +216,7 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
             lattice.tagAnonymous(node, node.isAnonymous());
         } else {
             node.setTagged();
-            lattice.untaggedCount[node.getLevel()]--;
+            lattice.decUntaggedCount(node.getLevel());
             lattice.triggerTagged();
         }
     }
