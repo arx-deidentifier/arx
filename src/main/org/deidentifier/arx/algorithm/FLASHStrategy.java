@@ -117,13 +117,13 @@ public class FLASHStrategy implements Comparator<Node> {
 
         level = ((double) node.getLevel() / (double) maxlevel);
 
-        final int[] state = node.getTransformation();
-        for (int i = 0; i < state.length; i++) {
-            ddistinct += ((double) distinct[i][state[i]] / (double) (distinct[i][0]));
-            prec += ((double) state[i] / (double) (maxLevels[i] - 1));
+        final int[] transformation = node.getTransformation();
+        for (int i = 0; i < transformation.length; i++) {
+            ddistinct += ((double) distinct[i][transformation[i]] / (double) (distinct[i][0]));
+            prec += ((double) transformation[i] / (double) (maxLevels[i] - 1));
         }
-        ddistinct /= state.length;
-        prec /= state.length;
+        ddistinct /= transformation.length;
+        prec /= transformation.length;
         ddistinct = 1d - ddistinct;
 
         return new double[] { level, prec, ddistinct };

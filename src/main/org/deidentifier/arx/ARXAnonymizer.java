@@ -93,16 +93,6 @@ public class ARXAnonymizer {
             this.manager = manager;
             this.algorithm = algorithm;
         }
-        /**
-         * Creates a final result from this temporary result
-         * @param anonymizer
-         * @param handle
-         * @param time
-         * @return
-         */
-        public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
-            return asResult(config, handle, time, null);
-        }
 
         /**
          * Creates a final result from this temporary result
@@ -111,14 +101,14 @@ public class ARXAnonymizer {
          * @param time
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time, boolean[] projection) {
+		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
 
 			// Create outhandle
 			final DataHandleOutput outHandle = new DataHandleOutput(
 					this.metric, this.manager, this.checker,
 					System.currentTimeMillis() - time, suppressionString,
 					handle.getDefinition(), this.lattice, removeOutliers,
-					config, projection);
+					config);
 			
             // Pairing
             outHandle.associate(handle);
@@ -288,6 +278,7 @@ public class ARXAnonymizer {
 					if (!c.getAttribute().equals(attribute)) {
 						currentConfig.removeCriterion(c);
 						currentDefinition.setAttributeType(c.getAttribute(), substition);
+						System.out.println("Redefining: "+c.getAttribute());
 					}
 				}
 
@@ -296,6 +287,7 @@ public class ARXAnonymizer {
 					if (!c.getAttribute().equals(attribute)) {
 						currentConfig.removeCriterion(c);
 						currentDefinition.setAttributeType(c.getAttribute(), substition);
+						System.out.println("Redefining: "+c.getAttribute());
 					}
 				}
 
@@ -320,36 +312,12 @@ public class ARXAnonymizer {
 				result = anonymizeInternal(handle, currentDefinition, currentConfig, lattice, sensitive.size(), algorithm);
 			}
 			
-			// If sensitive associations have been preserved
-			// project away the artificial quasi-identifiers
-			boolean[] projection = null;
-			if (config.isProtectSensitiveAssociations()) {
-			   
-			    // Init
-                final String[] header = ((DataHandleInput) handle).header;
-			    projection = new boolean[currentDefinition.getQuasiIdentifyingAttributes().size()];
-			    int index = 0;
-			    
-			    // Order according to the position in the header
-			    // similar to DataManager
-			    for (int i=0; i<header.length; i++){
-			        
-			        boolean original = handle.getDefinition().getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI; 
-			        boolean current = currentDefinition.getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI;
-			        
-			        // Original QI
-			        if (original){
-			            projection[index++] = true;
-			        }
-			        // Artificial QI
-			        else if (current){
-			            projection[index++] = false;
-			        }
-			    }
-			}
+			// If sensitive associations have been preserved 
+			// all data needs to be re-encoded according to the original definition
+			// TODO
 			
 			// Return the result from the last iteration
-			return result.asResult(config, handle, time, projection);
+			return result.asResult(config, handle, time);
 			
         } else {
 

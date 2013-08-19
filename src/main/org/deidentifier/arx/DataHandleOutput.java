@@ -227,8 +227,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                             final DataDefinition definition,
                             final Lattice lattice,
                             final boolean removeOutliers,
-                            final ARXConfiguration config, 
-                            final boolean[] projection) {
+                            final ARXConfiguration config) {
 
         final boolean practicalMonotonicity = config.isPracticalMonotonicity();
         final int maximumAbsoluteOutliers = config.getAbsoluteMaxOutliers();
@@ -237,8 +236,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                    manager.getDataQI().getHeader(),
                                                    metric,
                                                    practicalMonotonicity,
-                                                   maximumAbsoluteOutliers,
-                                                   projection);
+                                                   maximumAbsoluteOutliers);
 
         init(manager,
              checker,

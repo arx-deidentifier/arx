@@ -213,7 +213,7 @@ public class ARXLattice implements Serializable {
 
         /** The transformation */
         private int[]                transformation;
-
+        
         /** Is it anonymous */
         private Anonymity            anonymity;
 
@@ -246,9 +246,9 @@ public class ARXLattice implements Serializable {
          * 
          * @param headermap
          */
-        private ARXNode(final Node node, final boolean[] projection, final Map<String, Integer> headermap) {
+        private ARXNode(final Node node, final Map<String, Integer> headermap) {
             this.headermap = headermap;
-            transformation = project(headermap.size(), projection, node.getTransformation());
+            transformation = node.getTransformation();
             if (node.isAnonymous()) {
                 anonymity = Anonymity.ANONYMOUS;
             } else {
@@ -260,28 +260,6 @@ public class ARXLattice implements Serializable {
             minInformationLoss = node.getInformationLoss();
             maxInformationLoss = node.getInformationLoss();
             checked = node.isChecked();
-        }
-
-        /**
-         * Projects the given array on to a new one
-         * @param size
-         * @param projection
-         * @param transformation
-         * @return
-         */
-        private int[] project(int size, boolean[] projection, int[] array) {
-            
-            if (projection == null) return array;
-            
-            int[] result = new int[size];
-            int index = 0;
-            for (int i=0; i<array.length; i++){
-                if (projection[i]) {
-                    result[index++] = array[i];
-                }
-            }
-            
-            return result;
         }
 
         /**
@@ -476,8 +454,7 @@ public class ARXLattice implements Serializable {
                  final String[] header,
                  final Metric<?> metric,
                  final boolean practicalMonotonicity,
-                 final int maxAbsoluteOutliers,
-                 final boolean[] projection) {
+                 final int maxAbsoluteOutliers) {
 
         this.metric = metric;
         this.practicalMonotonicity = practicalMonotonicity;
@@ -487,7 +464,7 @@ public class ARXLattice implements Serializable {
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
         int index = 0;
         for (int i = 0; i < header.length; i++) {
-            if (projection==null || projection[i]) headermap.put(header[i], index++);
+            headermap.put(header[i], index++);
         }
 
         // Create nodes
@@ -498,7 +475,7 @@ public class ARXLattice implements Serializable {
             final Node[] level = lattice.getLevels()[i];
             levels[i] = new ARXNode[level.length];
             for (int j = 0; j < level.length; j++) {
-                final ARXNode node = new ARXNode(level[j], projection, headermap);
+                final ARXNode node = new ARXNode(level[j], headermap);
                 if (level[j] == metric.getGlobalOptimum()) {
                     optimum = node;
                 }
