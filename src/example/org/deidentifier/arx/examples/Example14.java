@@ -64,7 +64,7 @@ public class Example14 extends Example {
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
-        config.addCriterion(new KAnonymity(1));
+        config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
         config.addCriterion(new DistinctLDiversity("disease2", 1));
         config.setProtectSensitiveAssociations(true);
@@ -171,14 +171,14 @@ public class Example14 extends Example {
     private static Data getData() {
         DefaultData data = Data.create();
         data.add("zipcode", "disease1", "age", "disease2");
-        data.add("47677", "gastric ulcer", "29", "gastric ulcer");
+        data.add("47677", "gastritis", "29", "gastric ulcer");
         data.add("47602", "gastritis", "22", "gastric ulcer");
         data.add("47678", "stomach cancer", "27", "gastric ulcer");
-        data.add("47905", "gastritis", "43", "gastric ulcer");
+        data.add("47905", "stomach cancer", "43", "gastric ulcer");
         data.add("47909", "flu", "52", "gastric ulcer");
-        data.add("47906", "bronchitis", "47", "gastric ulcer");
+        data.add("47906", "flu", "47", "gastric ulcer");
         data.add("47605", "bronchitis", "30", "gastric ulcer");
-        data.add("47673", "pneumonia", "36", "gastric ulcer");
+        data.add("47673", "bronchitis", "36", "gastric ulcer");
         data.add("47607", "stomach cancer", "32", "gastric ulcer");
         return data;
     }
