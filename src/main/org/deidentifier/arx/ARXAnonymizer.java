@@ -434,19 +434,15 @@ public class ARXAnonymizer {
      * @param lattice
      */
     private void resetLattice(Lattice lattice) {
-        int anon = 0;
-        int nonanon = 0;
         lattice.clearTags();
 		for (Node[] level : lattice.getLevels()){
 			for (Node node : level){
 				if (node.isAnonymous()){
-				    anon++;
 					node.setNotTagged();
 					node.setNotChecked();
 					node.setAnonymous(false);
 					node.setKAnonymous(node.isKAnonymous());
 				} else {
-				    nonanon++;
 				    node.setTagged();
                     node.setChecked();
 					lattice.triggerTagged();
@@ -454,7 +450,6 @@ public class ARXAnonymizer {
 				}
 			}
 		}
-		System.out.println(anon+"/"+nonanon);
 	}
 
 	/**
