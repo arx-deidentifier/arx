@@ -163,6 +163,7 @@ public class DataSubset {
     }
 
     public int[] getSortedIndices() {
+        // TODO: What is this needed for?
         return sortedIndices;
     }
 }

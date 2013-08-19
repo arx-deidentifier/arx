@@ -275,26 +275,27 @@ public class ARXAnonymizer {
 			
 			// Iterate for each sensitive attribute
 			List<String> sensitive = new ArrayList<String>(data.getDefinition().getSensitiveAttributes());
+			DataDefinition currentDefinition = null;
 			for (int i = 0; i < sensitive.size(); i++) {
 
 				// Extract current sensitive attribute
 				String attribute = sensitive.get(i);
-				config = config.clone();
-				DataDefinition definition = handle.getDefinition().clone();
+				ARXConfiguration currentConfig = config.clone();
+				currentDefinition = handle.getDefinition().clone();
 
 				// Remove all other l-diversity and substitute
-				for (LDiversity c : config.getCriteria(LDiversity.class)) {
+				for (LDiversity c : currentConfig.getCriteria(LDiversity.class)) {
 					if (!c.getAttribute().equals(attribute)) {
-						config.removeCriterion(c);
-						definition.setAttributeType(c.getAttribute(), substition);
+						currentConfig.removeCriterion(c);
+						currentDefinition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
 
 				// Remove all other t-closeness and substitute
-				for (TCloseness c : config.getCriteria(TCloseness.class)) {
+				for (TCloseness c : currentConfig.getCriteria(TCloseness.class)) {
 					if (!c.getAttribute().equals(attribute)) {
-						config.removeCriterion(c);
-						definition.setAttributeType(c.getAttribute(), substition);
+						currentConfig.removeCriterion(c);
+						currentDefinition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
 
@@ -309,26 +310,52 @@ public class ARXAnonymizer {
 					algorithm = result.algorithm;
 					
 					// Abort early
-					// TODO: Early abort triggers invalid number of events
 					if (numAnonymous == 0){
+					    // TODO: This fires an invalid number of events
 					    break;
 					}
 				}
 				
 				// Next iteration
-				result = anonymizeInternal(handle, definition, config, lattice, sensitive.size(), algorithm);
+				result = anonymizeInternal(handle, currentDefinition, currentConfig, lattice, sensitive.size(), algorithm);
+			}
+			
+			// If sensitive associations have been preserved
+			// project away the artificial quasi-identifiers
+			boolean[] projection = null;
+			if (config.isProtectSensitiveAssociations()) {
+			   
+			    // Init
+                final String[] header = ((DataHandleInput) handle).header;
+			    projection = new boolean[currentDefinition.getQuasiIdentifyingAttributes().size()];
+			    int index = 0;
+			    
+			    // Order according to the position in the header
+			    // similar to DataManager
+			    for (int i=0; i<header.length; i++){
+			        
+			        boolean original = handle.getDefinition().getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI; 
+			        boolean current = currentDefinition.getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI;
+			        
+			        // Original QI
+			        if (original){
+			            projection[index++] = true;
+			        }
+			        // Artificial QI
+			        else if (current){
+			            projection[index++] = false;
+			        }
+			    }
 			}
 			
 			// Return the result from the last iteration
-			// TODO: Should be redefined if sensitive associations are to be protected
-			return result.asResult(config, handle, time);
+			return result.asResult(config, handle, time, projection);
 			
         } else {
 
         	// Execute
         	return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
         }
-        
     }
 
     /**
