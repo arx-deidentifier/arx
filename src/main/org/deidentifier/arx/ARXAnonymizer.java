@@ -267,7 +267,7 @@ public class ARXAnonymizer {
 			List<String> sensitive = new ArrayList<String>(data.getDefinition().getSensitiveAttributes());
 			for (int i = 0; i < sensitive.size(); i++) {
 
-				// Extract
+				// Extract current sensitive attribute
 				String attribute = sensitive.get(i);
 				config = config.clone();
 				DataDefinition definition = handle.getDefinition().clone();
@@ -288,44 +288,29 @@ public class ARXAnonymizer {
 					}
 				}
 
-                // TODO: Remove this as soon as it is implemented
-                if (config.isProtectSensitiveAssociations()) {
-                    throw new RuntimeException("Not implemented!");
-                }
-                
-				// Anonymize
+				// Adopt results from the previous iteration
 				Lattice lattice = null;
 				AbstractAlgorithm algorithm = null;
 				if (result != null){
-					
-					// Redefine the lattice
-					if (config.isProtectSensitiveAssociations()) {
-						throw new RuntimeException("Not implemented!");
-						
-					// Simply reset the lattice
-					} else {
-						// TODO: We execute second-phase-only for subsequent traversals
-					    // TODO: This prevents tagging which could still be possible
-						resetLattice(result.lattice);
-						lattice = result.lattice;
-					}
-					
-					// Store algorithm
+
+					// Reset the lattice
+					int numAnonymous = resetLattice(result.lattice);
+                    lattice = result.lattice;
 					algorithm = result.algorithm;
+					
+					// Abort early
+					if (numAnonymous == 0){
+					    break;
+					}
 				}
 				
 				// Next iteration
 				result = anonymizeInternal(handle, definition, config, lattice, sensitive.size(), algorithm);
 			}
 			
-			// Redefine the last result
-			if (config.isProtectSensitiveAssociations()){
-				throw new RuntimeException("Not implemented!");
-				
-			// Simply return the last result
-			} else {
-				return result.asResult(config, handle, time);
-			}
+			// Return the result from the last iteration
+			// TODO: Should be redefined if sensitive associations are to be protected
+			return result.asResult(config, handle, time);
 			
         } else {
 
@@ -432,12 +417,15 @@ public class ARXAnonymizer {
     /**
      * Resets a lattice, i.e., it marks all anonymous transformations as "not visited"
      * @param lattice
+     * @return The number of anonymous nodes in the lattice
      */
-    private void resetLattice(Lattice lattice) {
+    private int resetLattice(Lattice lattice) {
+        int count = 0;
         lattice.clearTags();
 		for (Node[] level : lattice.getLevels()){
 			for (Node node : level){
 				if (node.isAnonymous()){
+				    count++;
 					node.setNotTagged();
 					node.setNotChecked();
 					node.setAnonymous(false);
@@ -450,6 +438,7 @@ public class ARXAnonymizer {
 				}
 			}
 		}
+		return count;
 	}
 
 	/**
