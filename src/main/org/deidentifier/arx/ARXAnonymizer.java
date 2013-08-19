@@ -267,7 +267,7 @@ public class ARXAnonymizer {
 				for (LDiversity c : config.getCriteria(LDiversity.class)) {
 					if (!c.getAttribute().equals(attribute)) {
 						config.removeCriterion(c);
-						definition.setAttributeType(attribute, substition);
+						definition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
 
@@ -275,10 +275,15 @@ public class ARXAnonymizer {
 				for (TCloseness c : config.getCriteria(TCloseness.class)) {
 					if (!c.getAttribute().equals(attribute)) {
 						config.removeCriterion(c);
-						definition.setAttributeType(attribute, substition);
+						definition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
 
+                // TODO: Remove this as soon as it is implemented
+                if (config.isProtectSensitiveAssociations()) {
+                    throw new RuntimeException("Not implemented!");
+                }
+                
 				// Anonymize
 				Lattice lattice = null;
 				if (result != null){
