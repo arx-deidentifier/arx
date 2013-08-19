@@ -66,6 +66,7 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
     /** The history*/
     private History                   history;
 
+
     /**
      * Creates a new instance of the ARX algorithm.
      * 
@@ -75,36 +76,63 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
      *            The history
      * @param checker
      *            The checker
-     * @param metric
-     *            The metric
+     * @param strategy
+     *            The strategy
      */
     public FLASHAlgorithm(final Lattice lattice,
                           final INodeChecker checker,
-                          final FLASHStrategy metric) {
+                          final FLASHStrategy strategy) {
+        this(lattice, checker, strategy, false);
+    }
+    
+    /**
+     * Creates a new instance of the ARX algorithm.
+     * 
+     * @param lattice
+     *            The lattice
+     * @param history
+     *            The history
+     * @param checker
+     *            The checker
+     * @param strategy
+     *            The strategy
+     * @param secondPhaseOnly
+     *            Force the algorithm to only perform the second phase
+     */
+    public FLASHAlgorithm(final Lattice lattice,
+                          final INodeChecker checker,
+                          final FLASHStrategy strategy,
+                          final boolean secondPhaseOnly) {
         super(lattice, checker);
-        strategy = metric;
+        this.strategy = strategy;
         pqueue = new PriorityQueue<Node>(11, strategy);
         sorted = new boolean[lattice.getSize()];
         path = new ArrayList<Node>();
         stack = new Stack<Node>();
         this.history = checker.getHistory();
 
-        // NOTE: If we assume practical monotonicity then we assume
-        // monotonicity for both criterion AND metric!
-        // NOTE: We assume monotonicity for criterion with 0% suppression
-        if ((checker.getConfiguration().getAbsoluteMaxOutliers() == 0) ||
-            (checker.getConfiguration().isCriterionMonotonic() && checker.getMetric()
-                                                                         .isMonotonic()) ||
-            (checker.getConfiguration().isPracticalMonotonicity())) {
-            traverseType = TraverseType.FIRST_PHASE_ONLY;
-            history.setPruningStrategy(PruningStrategy.ANONYMOUS);
+        if (secondPhaseOnly){
+            this.traverseType = TraverseType.SECOND_PHASE_ONLY;
+            history.setPruningStrategy(PruningStrategy.CHECKED);
         } else {
-            if (checker.getConfiguration().getMinimalGroupSize() != Integer.MAX_VALUE) {
-                traverseType = TraverseType.FIRST_AND_SECOND_PHASE;
-                history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
+
+            // NOTE: If we assume practical monotonicity then we assume
+            // monotonicity for both criterion AND metric!
+            // NOTE: We assume monotonicity for criterion with 0% suppression
+            if ((checker.getConfiguration().getAbsoluteMaxOutliers() == 0) ||
+                (checker.getConfiguration().isCriterionMonotonic() && checker.getMetric()
+                                                                             .isMonotonic()) ||
+                (checker.getConfiguration().isPracticalMonotonicity())) {
+                traverseType = TraverseType.FIRST_PHASE_ONLY;
+                history.setPruningStrategy(PruningStrategy.ANONYMOUS);
             } else {
-                traverseType = TraverseType.SECOND_PHASE_ONLY;
-                history.setPruningStrategy(PruningStrategy.CHECKED);
+                if (checker.getConfiguration().getMinimalGroupSize() != Integer.MAX_VALUE) {
+                    traverseType = TraverseType.FIRST_AND_SECOND_PHASE;
+                    history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
+                } else {
+                    traverseType = TraverseType.SECOND_PHASE_ONLY;
+                    history.setPruningStrategy(PruningStrategy.CHECKED);
+                }
             }
         }
     }
