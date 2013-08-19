@@ -32,10 +32,12 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an simple example for using multiple sensitive attributes
+ * This class implements an simple example for using multiple sensitive attributes and
+ * enforcing different privacy criteria
  * 
  * @author Prasser, Kohlmayer
  */
@@ -63,7 +65,7 @@ public class Example13 extends Example {
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
-        config.addCriterion(new HierarchicalDistanceTCloseness("disease2", 0.6d, getHierarchyDisease()));
+        config.addCriterion(new RecursiveCLDiversity("disease2", 3d, 2));
         config.setProtectSensitiveAssociations(false);
         config.setAllowedOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
@@ -167,16 +169,16 @@ public class Example13 extends Example {
 
     private static Data getData() {
         DefaultData data = Data.create();
-        data.add("zipcode", "age", "disease1", "disease2");
-        data.add("47677", "29", "gastric ulcer", "gastric ulcer");
-        data.add("47602", "22", "gastritis", "gastritis");
-        data.add("47678", "27", "stomach cancer", "stomach cancer");
-        data.add("47905", "43", "gastritis", "gastritis");
-        data.add("47909", "52", "flu", "flu");
-        data.add("47906", "47", "bronchitis", "bronchitis");
-        data.add("47605", "30", "bronchitis", "bronchitis");
-        data.add("47673", "36", "pneumonia", "pneumonia");
-        data.add("47607", "32", "stomach cancer", "stomach cancer");
+        data.add("zipcode", "disease1", "age", "disease2");
+        data.add("47677", "gastric ulcer", "29", "gastric ulcer");
+        data.add("47602", "gastritis", "22", "gastritis");
+        data.add("47678", "stomach cancer", "27", "stomach cancer");
+        data.add("47905", "gastritis", "43", "gastritis");
+        data.add("47909", "flu", "52", "flu");
+        data.add("47906", "bronchitis", "47", "bronchitis");
+        data.add("47605", "bronchitis", "30", "bronchitis");
+        data.add("47673", "pneumonia", "36", "pneumonia");
+        data.add("47607", "stomach cancer", "32", "stomach cancer");
         return data;
     }
 }
