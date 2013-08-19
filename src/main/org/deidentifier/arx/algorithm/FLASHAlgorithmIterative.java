@@ -76,29 +76,25 @@ public class FLASHAlgorithmIterative extends AbstractFLASHAlgorithm {
                     pqueue.add(node);
                     while (!pqueue.isEmpty()) {
                         Node head = pqueue.poll();
-                        
+
                         // If anonymity is unknown
                         if (!head.isTagged()) {
-                            
-                            // Second phase
-                            if (head != null){
-                                
-                                // Change strategy
-                                final PruningStrategy pruning = history.getPruningStrategy();
-                                history.setPruningStrategy(PruningStrategy.CHECKED);
-                                
-                                stack.push(head);
-                                while (!stack.isEmpty()) {
-                                    final Node start = stack.pop();
-                                    if (!start.isTagged()) {
-                                        findPath(start);
-                                        checkPathLinear(path);
-                                    }
-                                }
 
-                                // Switch back to previous strategy
-                                history.setPruningStrategy(pruning);
+                            // Second phase
+                            final PruningStrategy pruning = history.getPruningStrategy();
+                            history.setPruningStrategy(PruningStrategy.CHECKED);
+
+                            stack.push(head);
+                            while (!stack.isEmpty()) {
+                                final Node start = stack.pop();
+                                if (!start.isTagged()) {
+                                    findPath(start);
+                                    checkPathLinear(path);
+                                }
                             }
+
+                            // Switch back to previous strategy
+                            history.setPruningStrategy(pruning);
                         }
                     }
                 }

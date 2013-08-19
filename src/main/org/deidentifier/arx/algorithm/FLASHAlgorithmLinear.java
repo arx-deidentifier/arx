@@ -78,24 +78,20 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
                         if (!head.isTagged()) {
                         	
                             // Second phase
-                            if (head != null){
-                                
-                                // Change strategy
-                                final PruningStrategy pruning = history.getPruningStrategy();
-                                history.setPruningStrategy(PruningStrategy.CHECKED);
-                                
-                                stack.push(head);
-                                while (!stack.isEmpty()) {
-                                    final Node start = stack.pop();
-                                    if (!start.isTagged()) {
-                                        findPath(start);
-                                        checkPathLinear(path);
-                                    }
-                                }
+                            final PruningStrategy pruning = history.getPruningStrategy();
+                            history.setPruningStrategy(PruningStrategy.CHECKED);
 
-                                // Switch back to previous strategy
-                                history.setPruningStrategy(pruning);
+                            stack.push(head);
+                            while (!stack.isEmpty()) {
+                                final Node start = stack.pop();
+                                if (!start.isTagged()) {
+                                    findPath(start);
+                                    checkPathLinear(path);
+                                }
                             }
+
+                            // Switch back to previous strategy
+                            history.setPruningStrategy(pruning);
                         }
                     }
                 }
