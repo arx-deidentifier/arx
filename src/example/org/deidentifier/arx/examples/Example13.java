@@ -76,12 +76,14 @@ public class Example13 extends Example {
             printResult(result, data);
 
             // Process results
-            System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getHandle()
-                                                         .iterator();
-            while (transformed.hasNext()) {
-                System.out.print("   ");
-                System.out.println(Arrays.toString(transformed.next()));
+            if (result.getGlobalOptimum() != null){
+                System.out.println(" - Transformed data:");
+                final Iterator<String[]> transformed = result.getHandle()
+                                                             .iterator();
+                while (transformed.hasNext()) {
+                    System.out.print("   ");
+                    System.out.println(Arrays.toString(transformed.next()));
+                }
             }
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);
