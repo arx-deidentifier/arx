@@ -227,10 +227,10 @@ public class ARXLattice implements Serializable {
         private Map<Integer, Object> attributes = new HashMap<Integer, Object>();
 
         /** The sucessors */
-        private ARXNode[]          successors;
+        private ARXNode[]            successors;
 
         /** The predecessors */
-        private ARXNode[]          predecessors;
+        private ARXNode[]            predecessors;
 
         /** The headermap */
         private Map<String, Integer> headermap;
@@ -246,9 +246,9 @@ public class ARXLattice implements Serializable {
          * 
          * @param headermap
          */
-        private ARXNode(final Node node, final Map<String, Integer> headermap) {
+        private ARXNode(final Node node, final boolean[] projection, final Map<String, Integer> headermap) {
             this.headermap = headermap;
-            transformation = node.getTransformation();
+            transformation = project(headermap.size(), projection, node.getTransformation());
             if (node.isAnonymous()) {
                 anonymity = Anonymity.ANONYMOUS;
             } else {
@@ -260,6 +260,28 @@ public class ARXLattice implements Serializable {
             minInformationLoss = node.getInformationLoss();
             maxInformationLoss = node.getInformationLoss();
             checked = node.isChecked();
+        }
+
+        /**
+         * Projects the given array on to a new one
+         * @param size
+         * @param projection
+         * @param transformation
+         * @return
+         */
+        private int[] project(int size, boolean[] projection, int[] array) {
+            
+            if (projection == null) return array;
+            
+            int[] result = new int[size];
+            int index = 0;
+            for (int i=0; i<array.length; i++){
+                if (projection[i]) {
+                    result[index++] = array[i];
+                }
+            }
+            
+            return result;
         }
 
         /**
@@ -411,13 +433,13 @@ public class ARXLattice implements Serializable {
 
     }
 
-    private static final long       serialVersionUID = -8790104959905019184L;
+    private static final long     serialVersionUID = -8790104959905019184L;
 
     /** The levels in the lattice */
     private transient ARXNode[][] levels;
 
     /** The number of nodes */
-    private int                     size;
+    private int                   size;
 
     /** The top node */
     private transient ARXNode     top;
@@ -426,36 +448,49 @@ public class ARXLattice implements Serializable {
     private transient ARXNode     bottom;
 
     /** Assume practical monotonicity */
-    private boolean                 practicalMonotonicity;
+    private boolean               practicalMonotonicity;
 
     /** Metric */
-    private Metric<?>               metric;
+    private Metric<?>             metric;
 
     /** The current max absolute outliers */
-    private int                     maxAbsoluteOutliers;
+    private int                   maxAbsoluteOutliers;
 
     /** The accessor */
-    private final Access            access           = new Access(this);
+    private final Access          access           = new Access(this);
 
     /** The optimum */
     private transient ARXNode     optimum;
 
-    /** Constructor */
+    /**
+     * Constructor
+     * @param lattice The lattice to represent
+     * @param header The header
+     * @param metric The metric
+     * @param practicalMonotonicity Do we assume practical monotonicity
+     * @param maxAbsoluteOutliers The maximum number of outliers
+     * @param projection A projection mask for results of iterative executions.
+     *                   projection[i] must contain true if the ith QI is to be preserved
+     */
     ARXLattice(final Lattice lattice,
                  final String[] header,
                  final Metric<?> metric,
                  final boolean practicalMonotonicity,
-                 final int maxAbsoluteOutliers) {
+                 final int maxAbsoluteOutliers,
+                 final boolean[] projection) {
 
         this.metric = metric;
         this.practicalMonotonicity = practicalMonotonicity;
         this.maxAbsoluteOutliers = maxAbsoluteOutliers;
 
+        // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
+        int index = 0;
         for (int i = 0; i < header.length; i++) {
-            headermap.put(header[i], i);
+            if (projection==null || projection[i]) headermap.put(header[i], index++);
         }
 
+        // Create nodes
         final Map<Node, ARXNode> map = new HashMap<Node, ARXNode>();
         size = lattice.getSize();
         levels = new ARXNode[lattice.getLevels().length][];
@@ -463,7 +498,7 @@ public class ARXLattice implements Serializable {
             final Node[] level = lattice.getLevels()[i];
             levels[i] = new ARXNode[level.length];
             for (int j = 0; j < level.length; j++) {
-                final ARXNode node = new ARXNode(level[j], headermap);
+                final ARXNode node = new ARXNode(level[j], projection, headermap);
                 if (level[j] == metric.getGlobalOptimum()) {
                     optimum = node;
                 }
@@ -471,6 +506,8 @@ public class ARXLattice implements Serializable {
                 map.put(level[j], node);
             }
         }
+        
+        // Create relationships
         for (final Node[] level : lattice.getLevels()) {
             for (final Node node : level) {
                 final ARXNode fnode = map.get(node);

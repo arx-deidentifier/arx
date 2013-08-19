@@ -93,6 +93,16 @@ public class ARXAnonymizer {
             this.manager = manager;
             this.algorithm = algorithm;
         }
+        /**
+         * Creates a final result from this temporary result
+         * @param anonymizer
+         * @param handle
+         * @param time
+         * @return
+         */
+        public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
+            return asResult(config, handle, time, null);
+        }
 
         /**
          * Creates a final result from this temporary result
@@ -101,14 +111,14 @@ public class ARXAnonymizer {
          * @param time
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
+		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time, boolean[] projection) {
 
 			// Create outhandle
 			final DataHandleOutput outHandle = new DataHandleOutput(
 					this.metric, this.manager, this.checker,
 					System.currentTimeMillis() - time, suppressionString,
 					handle.getDefinition(), this.lattice, removeOutliers,
-					config);
+					config, projection);
 			
             // Pairing
             outHandle.associate(handle);

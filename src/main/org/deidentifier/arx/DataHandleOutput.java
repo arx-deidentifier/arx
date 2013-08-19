@@ -205,43 +205,46 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     /**
      * Instantiates a new ARX result.
      * 
-     * @param metric
-     * @param manager
-     * @param checker
-     * @param time
-     * @param suppressionString
-     * @param defintion
-     * @param lattice
-     * @param practicalMonotonicity
-     * @param removeOutliers
-     * @param maximumAbsoluteOutliers
-     * @param config
+     * @param metric The metric
+     * @param manager The data manager
+     * @param checker The node checker
+     * @param time The elapsed wall-clock  time
+     * @param suppressionString The suppression string
+     * @param definition The data definition
+     * @param lattice The lattice
+     * @param practicalMonotonicity Do we assume practical monotonicity
+     * @param removeOutliers Do we remove outliers
+     * @param maximumAbsoluteOutliers The maximum number of outliers
+     * @param config The configuration
+     * @param projection A projection mask for results of iterative executions.
+     *                   projection[i] must contain true if the ith QI is to be preserved
      */
     public DataHandleOutput(final Metric<?> metric,
                             final DataManager manager,
                             final INodeChecker checker,
                             final long time,
                             final String suppressionString,
-                            final DataDefinition defintion,
+                            final DataDefinition definition,
                             final Lattice lattice,
                             final boolean removeOutliers,
-                            final ARXConfiguration config) {
+                            final ARXConfiguration config, 
+                            final boolean[] projection) {
 
         final boolean practicalMonotonicity = config.isPracticalMonotonicity();
         final int maximumAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         
         final ARXLattice flattice = new ARXLattice(lattice,
-                                                       manager.getDataQI()
-                                                              .getHeader(),
-                                                       metric,
-                                                       practicalMonotonicity,
-                                                       maximumAbsoluteOutliers);
+                                                   manager.getDataQI().getHeader(),
+                                                   metric,
+                                                   practicalMonotonicity,
+                                                   maximumAbsoluteOutliers,
+                                                   projection);
 
         init(manager,
              checker,
              time,
              suppressionString,
-             defintion,
+             definition,
              flattice,
              removeOutliers,
              config);
@@ -318,7 +321,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataQI.getHeader().length];
 
         for (int i = 0; i < dataTypes.length; i++) {
-            final DataType[] type = dataTypes[i];
+            final DataType<?>[] type = dataTypes[i];
 
             String[] headers = null;
 
