@@ -351,6 +351,7 @@ public class ARXAnonymizer {
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
+        boolean subsequent = lattice != null;
         if (lattice==null){
         	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
         } else {
@@ -371,7 +372,7 @@ public class ARXAnonymizer {
         final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
 
         // Build an algorithm instance
-        final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy);
+        final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy, subsequent);
 
         // Execute
         algorithm.traverse();
@@ -388,11 +389,13 @@ public class ARXAnonymizer {
 		for (Node[] level : lattice.getLevels()){
 			for (Node node : level){
 				if (node.isAnonymous()){
-					node.setNotTagged();
+					node.setTagged();
 					node.setNotChecked();
 					node.setAnonymous(false);
-					node.setKAnonymous(false);
+					node.setKAnonymous(node.isKAnonymous());
 				} else {
+				    node.setTagged();
+                    node.setChecked();
 					lattice.triggerTagged();
 				}
 			}
