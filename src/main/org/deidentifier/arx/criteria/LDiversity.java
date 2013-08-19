@@ -26,7 +26,6 @@ import org.deidentifier.arx.ARXConfiguration;
  * Machanavajjhala A, Kifer D, Gehrke J. 
  * l-diversity: Privacy beyond k-anonymity. 
  * Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3. 
- * Available at: http://portal.acm.org/citation.cfm?id=1217302.
  * 
  * @author Prasser, Kohlmayer
  */

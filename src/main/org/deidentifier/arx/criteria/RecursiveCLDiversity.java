@@ -35,7 +35,10 @@ public class RecursiveCLDiversity extends LDiversity{
     private final double c;
     
     /**
-     * Creates a new instance
+     * Creates a new instance of the recursive-(c,l)-diversity criterion as proposed in:
+     * Machanavajjhala A, Kifer D, Gehrke J. 
+     * l-diversity: Privacy beyond k-anonymity. 
+     * Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3.
      * @param c
      * @param l
      */

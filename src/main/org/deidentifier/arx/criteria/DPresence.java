@@ -29,8 +29,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * Published in:
  * Nergiz M, Atzori M, Clifton C. 
  * Hiding the presence of individuals from shared databases. 
- * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665�676. 
- * Available at: http://portal.acm.org/citation.cfm?id=1247480.1247554.
+ * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665-676.
  * 
  * @author Prasser, Kohlmayer
  */
@@ -48,7 +47,10 @@ public class DPresence extends ImplicitPrivacyCriterion{
     private CompressedBitSet bitset;
     
     /**
-     * Creates a new instance
+     * Creates a new instance of the d-presence criterion as proposed in:
+     * Nergiz M, Atzori M, Clifton C. 
+     * Hiding the presence of individuals from shared databases. 
+     * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665-676.
      * @param dMin Delta min
      * @param dMax Delta max
      * @param subset Research subset
