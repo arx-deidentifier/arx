@@ -170,7 +170,7 @@ public class DataManager {
                     } else {
                     	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
                     }
-                    // initialize min/max level and hierarhy height array
+                    // Initialize hierarchy height and minimum / maximum generalization
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
                     final Integer minGenLevel = definition.getMinimumGeneralization(name);
                     minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
