@@ -103,12 +103,13 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                           final INodeChecker checker,
                           final FLASHStrategy strategy,
                           final boolean secondPhaseOnly) {
+        
         super(lattice, checker);
         this.strategy = strategy;
-        pqueue = new PriorityQueue<Node>(11, strategy);
-        sorted = new boolean[lattice.getSize()];
-        path = new ArrayList<Node>();
-        stack = new Stack<Node>();
+        this.pqueue = new PriorityQueue<Node>(11, strategy);
+        this.sorted = new boolean[lattice.getSize()];
+        this.path = new ArrayList<Node>();
+        this.stack = new Stack<Node>();
         this.history = checker.getHistory();
 
         if (secondPhaseOnly){
