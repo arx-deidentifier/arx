@@ -41,7 +41,7 @@ public class DataSelector {
         private UnaryOperator(String context) {
             super(1);
             if (context == null){
-                throw new IllegalArgumentException("No context specified!");
+                throw new IllegalArgumentException("No context specified");
             }
             column = handle.getColumnIndexOf(context);
             type = handle.getDataType(context);
