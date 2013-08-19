@@ -271,6 +271,6 @@ public class Lattice {
      * Triggers a tagged event at the listener
      */
 	public void triggerTagged() {
-		this.listener.nodeTagged(size * multiplier);
+		if (this.listener != null) this.listener.nodeTagged(size * multiplier);
 	}
 }
