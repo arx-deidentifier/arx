@@ -426,6 +426,5 @@ public class FLASHAlgorithm extends AbstractAlgorithm {
                 }
             }
         }
-
     }
 }
