@@ -30,9 +30,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -66,7 +66,7 @@ public class Example14 extends Example {
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
-        config.addCriterion(new RecursiveCLDiversity("disease2", 3d, 2));
+        config.addCriterion(new DistinctLDiversity("disease2", 1));
         config.setProtectSensitiveAssociations(true);
         config.setAllowedOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
@@ -172,14 +172,14 @@ public class Example14 extends Example {
         DefaultData data = Data.create();
         data.add("zipcode", "disease1", "age", "disease2");
         data.add("47677", "gastric ulcer", "29", "gastric ulcer");
-        data.add("47602", "gastritis", "22", "gastritis");
-        data.add("47678", "stomach cancer", "27", "stomach cancer");
-        data.add("47905", "gastritis", "43", "gastritis");
-        data.add("47909", "flu", "52", "flu");
-        data.add("47906", "bronchitis", "47", "bronchitis");
-        data.add("47605", "bronchitis", "30", "bronchitis");
-        data.add("47673", "pneumonia", "36", "pneumonia");
-        data.add("47607", "stomach cancer", "32", "stomach cancer");
+        data.add("47602", "gastritis", "22", "gastric ulcer");
+        data.add("47678", "stomach cancer", "27", "gastric ulcer");
+        data.add("47905", "gastritis", "43", "gastric ulcer");
+        data.add("47909", "flu", "52", "gastric ulcer");
+        data.add("47906", "bronchitis", "47", "gastric ulcer");
+        data.add("47605", "bronchitis", "30", "gastric ulcer");
+        data.add("47673", "pneumonia", "36", "gastric ulcer");
+        data.add("47607", "stomach cancer", "32", "gastric ulcer");
         return data;
     }
 }
