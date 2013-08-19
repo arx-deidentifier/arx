@@ -306,7 +306,7 @@ public class ARXAnonymizer {
 					} else {
 						// TODO: We execute second-phase-only for subsequent traversals
 					    // TODO: This prevents tagging which could still be possible
-						reset(result.lattice);
+						resetLattice(result.lattice);
 						lattice = result.lattice;
 					}
 					
@@ -433,14 +433,15 @@ public class ARXAnonymizer {
      * Resets a lattice, i.e., it marks all anonymous transformations as "not visited"
      * @param lattice
      */
-    private void reset(Lattice lattice) {
+    private void resetLattice(Lattice lattice) {
         int anon = 0;
         int nonanon = 0;
+        lattice.clearTags();
 		for (Node[] level : lattice.getLevels()){
 			for (Node node : level){
 				if (node.isAnonymous()){
 				    anon++;
-					node.setTagged();
+					node.setNotTagged();
 					node.setNotChecked();
 					node.setAnonymous(false);
 					node.setKAnonymous(node.isKAnonymous());
@@ -449,6 +450,7 @@ public class ARXAnonymizer {
 				    node.setTagged();
                     node.setChecked();
 					lattice.triggerTagged();
+					lattice.untaggedCount[node.getLevel()]--;
 				}
 			}
 		}
