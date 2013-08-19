@@ -199,9 +199,9 @@ public class Configuration implements Serializable {
      * @param clazz
      * @return
      */
-    public <T extends PrivacyCriterion> boolean removeCriterion(Class<T> clazz) {
+    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion c) {
         setModified();
-        return config.removeCriterion(clazz);
+        return config.removeCriterion(c);
     }
 
     /**
