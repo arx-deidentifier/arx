@@ -299,6 +299,7 @@ public class ARXAnonymizer {
 					algorithm = result.algorithm;
 					
 					// Abort early
+					// TODO: Early abort triggers invalid number of events
 					if (numAnonymous == 0){
 					    break;
 					}

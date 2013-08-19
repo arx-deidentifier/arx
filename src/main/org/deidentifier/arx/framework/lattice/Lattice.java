@@ -193,11 +193,11 @@ public class Lattice {
     }
 
     /**
-     * Returns the maximal levels for each qi
+     * Returns the maximal levels for each quasi identifier
      * 
      * @return
      */
-    public int[] getMaxLevels() {
+    public int[] getMaximumGeneralizationLevels() {
         return maxLevels;
     }
 
