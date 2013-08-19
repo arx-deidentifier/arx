@@ -59,14 +59,14 @@ public class Example14 extends Example {
         data.getDefinition().setAttributeType("age", getHierarchyAge());
         data.getDefinition().setAttributeType("zipcode", getHierarchyZipcode());
         data.getDefinition().setAttributeType("disease1", AttributeType.SENSITIVE_ATTRIBUTE);
-        data.getDefinition().setAttributeType("disease2", AttributeType.SENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
-        config.addCriterion(new DistinctLDiversity("disease2", 1));
+        config.addCriterion(new DistinctLDiversity("gender", 2));
         config.setProtectSensitiveAssociations(true);
         config.setAllowedOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
@@ -170,16 +170,16 @@ public class Example14 extends Example {
 
     private static Data getData() {
         DefaultData data = Data.create();
-        data.add("zipcode", "disease1", "age", "disease2");
-        data.add("47677", "gastritis", "29", "gastric ulcer");
-        data.add("47602", "gastritis", "22", "gastric ulcer");
-        data.add("47678", "stomach cancer", "27", "gastric ulcer");
-        data.add("47905", "stomach cancer", "43", "gastric ulcer");
-        data.add("47909", "flu", "52", "gastric ulcer");
-        data.add("47906", "flu", "47", "gastric ulcer");
-        data.add("47605", "bronchitis", "30", "gastric ulcer");
-        data.add("47673", "bronchitis", "36", "gastric ulcer");
-        data.add("47607", "stomach cancer", "32", "gastric ulcer");
+        data.add("zipcode", "disease1", "age", "gender");
+        data.add("47677", "gastritis", "29", "m");
+        data.add("47602", "gastritis", "22", "f");
+        data.add("47678", "stomach cancer", "27", "f");
+        data.add("47905", "stomach cancer", "43", "m");
+        data.add("47909", "flu", "52", "m");
+        data.add("47906", "flu", "47", "f");
+        data.add("47605", "bronchitis", "30", "f");
+        data.add("47673", "bronchitis", "36", "m");
+        data.add("47607", "stomach cancer", "32", "m");
         return data;
     }
 }
