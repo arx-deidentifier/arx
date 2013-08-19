@@ -55,7 +55,7 @@ public class FLASHAlgorithm {
             if (checker.getConfiguration().getMinimalGroupSize() != Integer.MAX_VALUE) {
                 
                /* Two-Phase FLASH*/
-               return new FLASHAlgorithmTwoPhase(lattice, checker, strategy);
+               return new FLASHAlgorithmTwoPhases(lattice, checker, strategy);
                
             } else {
                 

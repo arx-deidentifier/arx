@@ -48,7 +48,7 @@ import org.junit.Test;
  * 
  * @author Prasser, Kohlmayer
  */
-public class TestDataTransformations extends TestAnonymizer {
+public class TestDataTransformations extends AbstractTest {
 
     @Override
     @Before

@@ -36,7 +36,7 @@ import org.junit.Test;
  * 
  * @author Prasser, Kohlmayer
  */
-public class TestIllegalArguments extends TestAnonymizer {
+public class TestIllegalArguments extends AbstractTest {
 
     @Override
     @Before

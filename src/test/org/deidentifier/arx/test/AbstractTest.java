@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.deidentifier.arx.ARXResult;
 import org.junit.Before;
 
-public abstract class TestAnonymizer extends TestCase {
+public abstract class AbstractTest extends TestCase {
 
     public static enum Metric {
         DMSTAR,

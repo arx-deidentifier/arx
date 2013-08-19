@@ -30,7 +30,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  * 
  * @author Prasser, Kohlmayer
  */
-public class FLASHAlgorithmTwoPhase extends AbstractFLASHAlgorithm {
+public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
     
     /**
      * Creates a new instance of the FLASH algorithm.
@@ -44,7 +44,7 @@ public class FLASHAlgorithmTwoPhase extends AbstractFLASHAlgorithm {
      * @param strategy
      *            The strategy
      */
-    public FLASHAlgorithmTwoPhase(final Lattice lattice,
+    public FLASHAlgorithmTwoPhases(final Lattice lattice,
                           final INodeChecker checker,
                           final FLASHStrategy strategy) {
       

@@ -29,7 +29,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
-public class TestDataHandle extends TestAnonymizer {
+public class TestDataHandle extends AbstractTest {
 
     @Test
     public void testgetters() throws IllegalArgumentException, IOException {
