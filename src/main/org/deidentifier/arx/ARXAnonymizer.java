@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.AbstractFLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -55,16 +56,19 @@ public class ARXAnonymizer {
     class Result {
 
         /** The checker. */
-        final INodeChecker checker;
+        final INodeChecker      checker;
 
         /** The metric. */
-        final Metric<?>    metric;
+        final Metric<?>         metric;
 
         /** The lattice. */
-        final Lattice      lattice;
-        
-        /** The data manager*/
-        final DataManager  manager;
+        final Lattice           lattice;
+
+        /** The algorithm */
+        final AbstractAlgorithm algorithm;
+
+        /** The data manager */
+        final DataManager       manager;
 
         /**
          * Creates a new instance.
@@ -78,11 +82,16 @@ public class ARXAnonymizer {
          * @param manager
          *            the manager
          */
-        Result(final Metric<?> metric, final INodeChecker checker, final Lattice lattice, final DataManager manager) {
+        Result(final Metric<?> metric,
+               final INodeChecker checker,
+               final Lattice lattice,
+               final DataManager manager,
+               final AbstractAlgorithm algorithm) {
             this.metric = metric;
             this.checker = checker;
             this.lattice = lattice;
             this.manager = manager;
+            this.algorithm = algorithm;
         }
 
         /**
@@ -286,6 +295,7 @@ public class ARXAnonymizer {
                 
 				// Anonymize
 				Lattice lattice = null;
+				AbstractAlgorithm algorithm = null;
 				if (result != null){
 					
 					// Redefine the lattice
@@ -299,10 +309,13 @@ public class ARXAnonymizer {
 						reset(result.lattice);
 						lattice = result.lattice;
 					}
+					
+					// Store algorithm
+					algorithm = result.algorithm;
 				}
 				
 				// Next iteration
-				result = anonymizeInternal(handle, definition, config, lattice, sensitive.size());
+				result = anonymizeInternal(handle, definition, config, lattice, sensitive.size(), algorithm);
 			}
 			
 			// Redefine the last result
@@ -331,7 +344,7 @@ public class ARXAnonymizer {
      * @throws IOException
      */
     protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
-    	return anonymizeInternal(handle, definition, config, null, 1);
+    	return anonymizeInternal(handle, definition, config, null, 1, null);
     }
 
     /**
@@ -340,10 +353,11 @@ public class ARXAnonymizer {
      * @param definition
      * @param config
      * @param lattice
+     * @param algorithm
      * @return
      * @throws IOException
      */
-    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice, int multiplier) throws IOException{
+    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice, int multiplier, AbstractAlgorithm algorithm) throws IOException{
 
         // Encode
         final DataManager manager = prepareDataManager(handle, definition, config);
@@ -355,12 +369,10 @@ public class ARXAnonymizer {
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        boolean subsequent = lattice != null;
         if (lattice==null){
         	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
-        } else {
-        	reset(lattice);
-        }
+        } 
+        printLattice("[BEFORE]", lattice);
 
         // Attach the listener
         lattice.setListener(listener);
@@ -372,38 +384,75 @@ public class ARXAnonymizer {
         // Initialize the metric
         config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
 
-        // Initialize the ARX strategy
-        final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
-
-        // Build an algorithm instance
-        final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy, subsequent);
-
+        // Create an algorithm instance
+        if (algorithm != null){
+            algorithm = FLASHAlgorithm.create((AbstractFLASHAlgorithm)algorithm, checker);
+        } else {
+            algorithm = FLASHAlgorithm.create(lattice, checker, 
+                                              new FLASHStrategy(lattice, manager.getHierarchies()));
+        }
+        
         // Execute
         algorithm.traverse();
-
+        
+        printLattice("[AFTER]", lattice);
+        
         // Return the result
-        return new Result(config.getMetric(), checker, lattice, manager);
+        return new Result(config.getMetric(), checker, lattice, manager, algorithm);
     }
     
+    private void printLattice(String tag, Lattice lattice) {
+        if (lattice==null){
+            System.out.println(tag + " Empty lattice");
+            return;
+        }
+        int total = 0;
+        int tagged = 0;
+        int checked = 0;
+        int kanonymous = 0;
+        int anonymous = 0;
+        
+        for (Node[] level : lattice.getLevels()){
+            for (Node n : level){
+                if (n.isAnonymous()) anonymous++;
+                if (n.isChecked()) checked++;
+                if (n.isKAnonymous()) kanonymous++;
+                if (n.isTagged()) tagged++;
+                total++;
+            }
+        }
+        
+        System.out.println(tag + " Lattice statistics:");
+        System.out.println(" - Tagged    : "+tagged+"/"+total);
+        System.out.println(" - Checked   : "+checked+"/"+total);
+        System.out.println(" - kAnonymous: "+kanonymous+"/"+total);
+        System.out.println(" - Anonymous : "+anonymous+"/"+total);
+    }
+
     /**
      * Resets a lattice, i.e., it marks all anonymous transformations as "not visited"
      * @param lattice
      */
     private void reset(Lattice lattice) {
+        int anon = 0;
+        int nonanon = 0;
 		for (Node[] level : lattice.getLevels()){
 			for (Node node : level){
 				if (node.isAnonymous()){
+				    anon++;
 					node.setTagged();
 					node.setNotChecked();
 					node.setAnonymous(false);
 					node.setKAnonymous(node.isKAnonymous());
 				} else {
+				    nonanon++;
 				    node.setTagged();
                     node.setChecked();
 					lattice.triggerTagged();
 				}
 			}
 		}
+		System.out.println(anon+"/"+nonanon);
 	}
 
 	/**
