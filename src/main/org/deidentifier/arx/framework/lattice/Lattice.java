@@ -31,7 +31,7 @@ public class Lattice {
     private Node[][]      levels        = null;
 
     /** The levelsize. */
-    private int[]          untaggedCount = null;
+    private int[]         untaggedCount = null;
 
     /** The max states. */
     private final int[]   maxLevels;
