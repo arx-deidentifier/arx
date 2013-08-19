@@ -56,7 +56,7 @@ public abstract class DataHandle {
     protected DataDefinition definition = null;
 
     /** The data types */
-    protected DataType[][]   dataTypes  = null;
+    protected DataType<?>[][]   dataTypes  = null;
 
     /**
      * Associates this handle to another handle
@@ -188,11 +188,11 @@ public abstract class DataHandle {
      * @param attribute
      * @return
      */
-    public DataType getDataType(final String attribute) {
+    public DataType<?> getDataType(final String attribute) {
         return definition.getDataType(attribute);
     }
 
-    protected Map<String, DataType> getDataTypes() {
+    protected Map<String, DataType<?>> getDataTypes() {
         return definition.getDataTypes();
     }
 
