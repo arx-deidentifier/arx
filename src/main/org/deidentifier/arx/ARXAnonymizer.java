@@ -239,7 +239,6 @@ public class ARXAnonymizer {
 					if (!c.getAttribute().equals(attribute)) {
 						currentConfig.removeCriterion(c);
 						currentDefinition.setAttributeType(c.getAttribute(), substition);
-						System.out.println("Redefining: "+c.getAttribute());
 					}
 				}
 
@@ -248,7 +247,6 @@ public class ARXAnonymizer {
 					if (!c.getAttribute().equals(attribute)) {
 						currentConfig.removeCriterion(c);
 						currentDefinition.setAttributeType(c.getAttribute(), substition);
-						System.out.println("Redefining: "+c.getAttribute());
 					}
 				}
 
@@ -571,13 +569,11 @@ public class ARXAnonymizer {
             }
         }
         
-        
         // Perform sanity checks
         Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
         if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() >= 1d)) { throw new IllegalArgumentException("Suppression rate " + handle + "must be in [0,1["); }
         if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
         if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
-
     }
 
     /**
