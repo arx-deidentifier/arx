@@ -69,7 +69,7 @@ public class TestDataTransformations extends AbstractTest {
             anonymizer.setSuppressionString("-");
             final ARXConfiguration config = new ARXConfiguration();
             config.addCriterion(new KAnonymity(2));
-            config.setAllowedOutliers(0d);
+            config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
 
         } catch (final IllegalArgumentException e) {
@@ -91,7 +91,7 @@ public class TestDataTransformations extends AbstractTest {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final ARXConfiguration config = new ARXConfiguration();
             config.addCriterion(new KAnonymity(2));
-            config.setAllowedOutliers(0d);
+            config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
 
         } catch (final IllegalArgumentException e) {
@@ -114,7 +114,7 @@ public class TestDataTransformations extends AbstractTest {
 
             final ARXConfiguration config = new ARXConfiguration();
             config.addCriterion(new KAnonymity(2));
-            config.setAllowedOutliers(-0.2d);
+            config.setMaxOutliers(-0.2d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -130,7 +130,7 @@ public class TestDataTransformations extends AbstractTest {
         anonymizer.setSuppressionString("*");
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
         assertFalse(result.isResultAvailable());
     }
@@ -145,7 +145,7 @@ public class TestDataTransformations extends AbstractTest {
 
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(provider.getData(), config));
 
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -172,7 +172,7 @@ public class TestDataTransformations extends AbstractTest {
 
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new DistinctLDiversity("age", 2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
         // TODO: check if result is correct!
@@ -200,7 +200,7 @@ public class TestDataTransformations extends AbstractTest {
 
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new EntropyLDiversity("age", 2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
         // TODO: check if result is correct!
@@ -228,7 +228,7 @@ public class TestDataTransformations extends AbstractTest {
 
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new RecursiveCLDiversity("age", 3.0d, 2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
         // TODO: check if result is correct!
@@ -257,7 +257,7 @@ public class TestDataTransformations extends AbstractTest {
 
             final ARXConfiguration config = new ARXConfiguration();
             config.addCriterion(new KAnonymity(2));
-            config.setAllowedOutliers(0d);
+            config.setMaxOutliers(0d);
             anonymizer.anonymize(data, config);
 
         } catch (final IllegalArgumentException e) {
@@ -277,17 +277,17 @@ public class TestDataTransformations extends AbstractTest {
 
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
         config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result3 = resultToArray(anonymizer.anonymize(data, config));
 
         config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result2 = resultToArray(anonymizer.anonymize(data, config));
 
         final String[][] expected = { { "age", "gender", "zipcode" },
@@ -377,7 +377,7 @@ public class TestDataTransformations extends AbstractTest {
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new EqualDistanceTCloseness("disease", 0.6d));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
         // TODO: check if result is correct!
@@ -458,7 +458,7 @@ public class TestDataTransformations extends AbstractTest {
         ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
         // TODO: check if result is correct!
@@ -544,7 +544,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         config.setMetric(org.deidentifier.arx.metric.Metric.createPrecisionMetric());
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 

@@ -90,7 +90,7 @@ public class Example6 extends Example {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         config.setMetric(Metric.createHeightMetric());
         try {
 

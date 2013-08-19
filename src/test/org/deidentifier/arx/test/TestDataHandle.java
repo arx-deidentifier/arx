@@ -56,7 +56,7 @@ public class TestDataHandle extends AbstractTest {
         
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getHandle();
@@ -106,7 +106,7 @@ public class TestDataHandle extends AbstractTest {
 
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getHandle();

@@ -113,7 +113,7 @@ public class Example11 extends Example {
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
         try {
 

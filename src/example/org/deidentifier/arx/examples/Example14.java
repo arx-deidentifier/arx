@@ -68,7 +68,7 @@ public class Example14 extends Example {
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
         config.addCriterion(new DistinctLDiversity("gender", 2));
         config.setProtectSensitiveAssociations(true);
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
         try {
 

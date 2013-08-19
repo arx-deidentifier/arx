@@ -217,7 +217,7 @@ public class Configuration implements Serializable {
      * @return
      */
     public final double getAllowedOutliers() {
-        return config.getAllowedOutliers();
+        return config.getMaxOutliers();
     }
 
     /**
@@ -242,7 +242,7 @@ public class Configuration implements Serializable {
      */
     public void setAllowedOutliers(double supp) {
         setModified();
-        config.setAllowedOutliers(supp);
+        config.setMaxOutliers(supp);
     }
 
     /**

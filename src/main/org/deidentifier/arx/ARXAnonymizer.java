@@ -205,79 +205,10 @@ public class ARXAnonymizer {
      */
     public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
 
-        // Stopwatch
         final long time = System.currentTimeMillis();
+        checkBeforeEncoding(data, config);
+        DataHandle handle = data.getHandle();
 
-    	// Lots of checks
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        if (config.containsCriterion(LDiversity.class) ||
-            config.containsCriterion(TCloseness.class)){
-            if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
-        }
-        for (String attr : data.getDefinition().getSensitiveAttributes()){
-        	boolean found = false;
-        	for (LDiversity c : config.getCriteria(LDiversity.class)) {
-        		if (c.getAttribute().equals(attr)) {
-        			found = true;
-        			break;
-        		}
-        	}
-        	if (!found) {
-        		for (TCloseness c : config.getCriteria(TCloseness.class)) {
-            		if (c.getAttribute().equals(attr)) {
-            			found = true;
-            			break;
-            		}
-            	}
-        	}
-        	if (!found) {
-        		throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
-        	}
-        }
-        for (LDiversity c : config.getCriteria(LDiversity.class)) {
-        	if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-        		throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
-        	}
-    	}
-        for (TCloseness c : config.getCriteria(TCloseness.class)) {
-        	if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-        		throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
-        	}
-    	}
-
-        // Obtain handle
-        final DataHandle handle = data.getHandle();
-        
-        // Check handle
-        if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
-        checkBeforeEncoding(config.getAllowedOutliers(), handle.getDefinition().getHierarchies());
-
-        // Check if all defines are correct
-        Set<String> attributes = new HashSet<String>();
-        for (int i=0; i<handle.getNumColumns(); i++){
-            attributes.add(handle.getAttributeName(i));
-        }
-        for (String attribute : data.getDefinition().getSensitiveAttributes()){
-            if (!attributes.contains(attribute)) {
-                throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
-            }
-        }
-        for (String attribute : data.getDefinition().getInsensitiveAttributes()){
-            if (!attributes.contains(attribute)) {
-                throw new IllegalArgumentException("Insensitive attribute '"+attribute+"' is not contained in the dataset");
-            }
-        }
-        for (String attribute : data.getDefinition().getIdentifyingAttributes()){
-            if (!attributes.contains(attribute)) {
-                throw new IllegalArgumentException("Identifying attribute '"+attribute+"' is not contained in the dataset");
-            }
-        }
-        for (String attribute : data.getDefinition().getQuasiIdentifyingAttributes()){
-            if (!attributes.contains(attribute)) {
-                throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
-            }
-        }
-        
         if (data.getDefinition().getSensitiveAttributes().size()>1) {
         	
         	// Determine with what the other sensitive attributes need to be replaced
@@ -563,17 +494,89 @@ public class ARXAnonymizer {
     /**
      * Performs some sanity checks.
      * 
-     * @param relativeMaxOutliers
+     * @param data
      *            the allowed maximal number of outliers
-     * @param hierarchies
-     *            the hierarchies
+     * @param config
+     *            the configuration
      */
-    private void checkBeforeEncoding(final double relativeMaxOutliers, final Map<String, String[][]> hierarchies) {
+    private void checkBeforeEncoding(final Data data, final ARXConfiguration config) {
 
+
+        // Lots of checks
+        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
+        if (config.containsCriterion(LDiversity.class) ||
+            config.containsCriterion(TCloseness.class)){
+            if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
+        }
+        for (String attr : data.getDefinition().getSensitiveAttributes()){
+            boolean found = false;
+            for (LDiversity c : config.getCriteria(LDiversity.class)) {
+                if (c.getAttribute().equals(attr)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                for (TCloseness c : config.getCriteria(TCloseness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
+            }
+        }
+        for (LDiversity c : config.getCriteria(LDiversity.class)) {
+            if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (TCloseness c : config.getCriteria(TCloseness.class)) {
+            if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+
+        // Obtain handle
+        final DataHandle handle = data.getHandle();
+        
+        // Check handle
+        if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
+
+        // Check if all defines are correct
+        Set<String> attributes = new HashSet<String>();
+        for (int i=0; i<handle.getNumColumns(); i++){
+            attributes.add(handle.getAttributeName(i));
+        }
+        for (String attribute : data.getDefinition().getSensitiveAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getInsensitiveAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Insensitive attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getIdentifyingAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getQuasiIdentifyingAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        
+        
         // Perform sanity checks
-        if ((relativeMaxOutliers < 0d) || (relativeMaxOutliers >= 1d)) { throw new IllegalArgumentException("Suppression rate " + relativeMaxOutliers + "must be in [0,1["); }
-        if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
-        if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi identifier!"); }
+        Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
+        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() >= 1d)) { throw new IllegalArgumentException("Suppression rate " + handle + "must be in [0,1["); }
+        if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + config.size()); }
+        if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
 
     }
 
