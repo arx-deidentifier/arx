@@ -254,8 +254,6 @@ public class ARXAnonymizer {
 			// The temporary result
 			Result result = null;
 			
-			// TODO: This iterative process will return wrong results to listeners,
-			// TODO: as these keep track of the overall number of tagged nodes...
 			// Iterate for each sensitive attribute
 			List<String> sensitive = new ArrayList<String>(data.getDefinition().getSensitiveAttributes());
 			for (int i = 0; i < sensitive.size(); i++) {
