@@ -37,7 +37,7 @@ public class DataDefinition {
     private final Map<String, AttributeType> attributeTypes    = new HashMap<String, AttributeType>();
 
     /** The mapped data types */
-    private final Map<String, DataType>      dataTypes         = new HashMap<String, DataType>();
+    private final Map<String, DataType<?>>      dataTypes         = new HashMap<String, DataType<?>>();
 
     /** The mapped minimum generalization */
     private final Map<String, Integer>       minGeneralization = new HashMap<String, Integer>();
@@ -82,8 +82,8 @@ public class DataDefinition {
      * @param columnName
      * @return
      */
-    public DataType getDataType(final String columnName) {
-        final DataType t = dataTypes.get(columnName);
+    public DataType<?> getDataType(final String columnName) {
+        final DataType<?> t = dataTypes.get(columnName);
         if (t == null) {
             return DataType.STRING;
         } else {
@@ -96,7 +96,7 @@ public class DataDefinition {
      * 
      * @return
      */
-    protected Map<String, DataType> getDataTypes() {
+    protected Map<String, DataType<?>> getDataTypes() {
         return dataTypes;
     }
 
@@ -292,7 +292,7 @@ public class DataDefinition {
      * @param attribute
      * @param type
      */
-    public void setDataType(final String attribute, final DataType type) {
+    public void setDataType(final String attribute, final DataType<?> type) {
         if (type == null) { throw new NullPointerException("Type must not be null"); }
         dataTypes.put(attribute, type);
     }

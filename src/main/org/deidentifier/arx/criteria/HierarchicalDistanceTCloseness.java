@@ -40,7 +40,10 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     private int[] empty;
 
     /**
-     * Creates a new instance
+     * Creates a new instance of the t-closeness criterion with hierarchical earth-movers-distance as proposed in:
+     * Li N, Li T, Venkatasubramanian S. 
+     * t-Closeness: Privacy beyond k-anonymity and l-diversity. 
+     * 23rd International Conference on Data Engineering. 2007:106-115. 
      * @param t
      * @param h
      */

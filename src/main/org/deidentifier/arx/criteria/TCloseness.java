@@ -21,12 +21,10 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXConfiguration;
 
 /**
- * An abstract base class for t-closeness criteria
- * Published in:
+ * An abstract base class for t-closeness criteria as proposed in:
  * Li N, Li T, Venkatasubramanian S. 
- * t-closeness: Privacy beyond k-anonymity and l-diversity. 
- * 23rd International Conference on Data Engineering. 2007:106 � 115. 
- * Available at: http://dx.doi.org/10.1109/ICDE.2007.367856.
+ * t-Closeness: Privacy beyond k-anonymity and l-diversity. 
+ * 23rd International Conference on Data Engineering. 2007:106-115. 
  * 
  * @author Prasser, Kohlmayer
  */

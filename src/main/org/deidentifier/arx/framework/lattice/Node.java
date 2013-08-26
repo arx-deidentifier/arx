@@ -148,7 +148,7 @@ public class Node {
     }
 
     /**
-     * Returns the state
+     * Returns the transformation
      * 
      * @return
      */

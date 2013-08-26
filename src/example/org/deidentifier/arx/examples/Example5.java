@@ -82,7 +82,7 @@ public class Example5 extends Example {
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new RecursiveCLDiversity("age", 3, 2));
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         try {
 
             // Now anonymize

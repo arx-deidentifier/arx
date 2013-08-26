@@ -199,9 +199,9 @@ public class Configuration implements Serializable {
      * @param clazz
      * @return
      */
-    public <T extends PrivacyCriterion> boolean removeCriterion(Class<T> clazz) {
+    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion c) {
         setModified();
-        return config.removeCriterion(clazz);
+        return config.removeCriterion(c);
     }
 
     /**
@@ -217,7 +217,7 @@ public class Configuration implements Serializable {
      * @return
      */
     public final double getAllowedOutliers() {
-        return config.getAllowedOutliers();
+        return config.getMaxOutliers();
     }
 
     /**
@@ -242,7 +242,7 @@ public class Configuration implements Serializable {
      */
     public void setAllowedOutliers(double supp) {
         setModified();
-        config.setAllowedOutliers(supp);
+        config.setMaxOutliers(supp);
     }
 
     /**

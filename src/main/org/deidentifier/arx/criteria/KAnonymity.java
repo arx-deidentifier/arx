@@ -26,12 +26,11 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * Published in:
  * Sweeney L. 
  * k-anonymity: A model for protecting privacy. 
- * International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems. 2002;10(5):557 � 570. 
- * Available at: http://dl.acm.org/citation.cfm?id=774552.
+ * International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems. 2002;10(5):557 - 570. 
  * 
  * @author Prasser, Kohlmayer
  */
-public class KAnonymity extends PrivacyCriterion{
+public class KAnonymity extends ImplicitPrivacyCriterion{
 
     private static final long serialVersionUID = -8370928677928140572L;
     
@@ -39,7 +38,9 @@ public class KAnonymity extends PrivacyCriterion{
     private final int k;
     
     /**
-     * Creates a new instance
+     * Creates a new instance of the k-anonymity criterion as proposed in
+     * Sweeney L. k-Anonymity: A model for protecting privacy. 
+     * International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems. 2002;10(5):557 - 570. 
      * @param k
      */
     public KAnonymity(int k){

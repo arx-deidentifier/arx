@@ -33,7 +33,10 @@ public class EqualDistanceTCloseness extends TCloseness {
     private double[]          distribution;
     
     /**
-     * Creates a new instance
+     * Creates a new instance of the t-closeness criterion with equal earth-movers-distance as proposed in:
+     * Li N, Li T, Venkatasubramanian S. 
+     * t-Closeness: Privacy beyond k-anonymity and l-diversity. 
+     * 23rd International Conference on Data Engineering. 2007:106-115. 
      * @param t
      */
     public EqualDistanceTCloseness(String attribute, double t) {

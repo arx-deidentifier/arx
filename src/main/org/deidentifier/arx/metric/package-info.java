@@ -17,8 +17,8 @@
  */
 
 /**
- * This package implements several metrics for information loss. An abstract base class can be utilized for providing
- * further metrics
+ * This package implements several metrics for information loss. 
+ * An abstract base class can be utilized for implementing further metrics
  * 
  * @author Prasser, Kohlmayer
  */

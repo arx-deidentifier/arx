@@ -235,7 +235,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Returns the maximum number of allowed outliers
      * @return
      */
-    public final double getAllowedOutliers() {
+    public final double getMaxOutliers() {
         return relMaxOutliers;
     }
 
@@ -354,7 +354,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * triggers tuple suppresion
      * @param supp
      */
-    public void setAllowedOutliers(double supp) {
+    public void setMaxOutliers(double supp) {
         this.relMaxOutliers = supp;
     }
 

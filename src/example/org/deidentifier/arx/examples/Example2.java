@@ -69,7 +69,7 @@ public class Example2 extends Example {
             // Execute the algorithm
             final ARXConfiguration config = new ARXConfiguration();
             config.addCriterion(new KAnonymity(2));
-            config.setAllowedOutliers(0d);
+            config.setMaxOutliers(0d);
             final ARXResult result = anonymizer.anonymize(data, config);
             
             // Print info

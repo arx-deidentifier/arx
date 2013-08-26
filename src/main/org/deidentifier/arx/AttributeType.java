@@ -59,11 +59,7 @@ public class AttributeType {
 
             @Override
             public Hierarchy clone() {
-                final String[][] array = new String[hierarchy.length][];
-                for (int i = 0; i < hierarchy.length; i++) {
-                    array[i] = Arrays.copyOf(hierarchy[i], hierarchy[i].length);
-                }
-                return new ArrayHierarchy(hierarchy);
+                return new DefaultHierarchy(getHierarchy());
             }
 
             @Override
@@ -87,11 +83,12 @@ public class AttributeType {
             private String[][]           array = null;
 
             public DefaultHierarchy() {
-                hierarchy = new ArrayList<String[]>();
+                this.hierarchy = new ArrayList<String[]>();
             }
 
-            private DefaultHierarchy(final List<String[]> vals) {
-                hierarchy = vals;
+            private DefaultHierarchy(final String[][] array) {
+                this.array = array;
+                this.hierarchy = null;
             }
 
             /**
@@ -105,11 +102,11 @@ public class AttributeType {
 
             @Override
             public Hierarchy clone() {
-                final List<String[]> h = new ArrayList<String[]>();
-                for (final String[] row : hierarchy) {
-                    h.add(Arrays.copyOf(row, row.length));
+                if (array != null){
+                    return new DefaultHierarchy(array);
+                } else {
+                    return new DefaultHierarchy(getHierarchy());
                 }
-                return new DefaultHierarchy(h);
             }
 
             @Override
@@ -143,7 +140,11 @@ public class AttributeType {
 
             @Override
             public Hierarchy clone() {
-                throw new UnsupportedOperationException();
+                if (array != null){
+                    return new DefaultHierarchy(array);
+                } else {
+                    return new DefaultHierarchy(getHierarchy());
+                }
             }
 
             @Override

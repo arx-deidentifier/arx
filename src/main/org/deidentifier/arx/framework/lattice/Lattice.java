@@ -31,7 +31,7 @@ public class Lattice {
     private Node[][]      levels        = null;
 
     /** The levelsize. */
-    public int[]          untaggedCount = null;
+    private int[]         untaggedCount = null;
 
     /** The max states. */
     private final int[]   maxLevels;
@@ -193,11 +193,11 @@ public class Lattice {
     }
 
     /**
-     * Returns the maximal levels for each qi
+     * Returns the maximal levels for each quasi identifier
      * 
      * @return
      */
-    public int[] getMaxLevels() {
+    public int[] getMaximumGeneralizationLevels() {
         return maxLevels;
     }
 
@@ -218,6 +218,15 @@ public class Lattice {
      */
     public int getUntaggedCount(final int level) {
         return untaggedCount[level];
+    }
+    
+    /**
+     * Decrement the counter for the number of untagged nodes on the given level
+     * @param level
+     * @return
+     */
+    public void decUntaggedCount(final int level) {
+        untaggedCount[level]--;
     }
 
     /**
@@ -271,6 +280,6 @@ public class Lattice {
      * Triggers a tagged event at the listener
      */
 	public void triggerTagged() {
-		this.listener.nodeTagged(size * multiplier);
+		if (this.listener != null) this.listener.nodeTagged(size * multiplier);
 	}
 }

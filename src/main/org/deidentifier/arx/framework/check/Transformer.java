@@ -125,17 +125,17 @@ public class Transformer {
      * 
      * @param projection
      *            the projection
-     * @param state
-     *            the state
+     * @param transformation
+     *            the transformation
      * @param target
      *            the target
      * @return the hash groupify
      */
     public IHashGroupify apply(final long projection,
-                               final int[] state,
+                               final int[] transformation,
                                final IHashGroupify target) {
         return applyInternal(projection,
-                             state,
+                             transformation,
                              null,
                              target,
                              null,

@@ -21,6 +21,9 @@ package org.deidentifier.arx.test;
 import java.io.IOException;
 
 import org.deidentifier.arx.examples.Example1;
+import org.deidentifier.arx.examples.Example10;
+import org.deidentifier.arx.examples.Example11;
+import org.deidentifier.arx.examples.Example12;
 import org.deidentifier.arx.examples.Example2;
 import org.deidentifier.arx.examples.Example3;
 import org.deidentifier.arx.examples.Example4;
@@ -28,6 +31,7 @@ import org.deidentifier.arx.examples.Example5;
 import org.deidentifier.arx.examples.Example6;
 import org.deidentifier.arx.examples.Example7;
 import org.deidentifier.arx.examples.Example8;
+import org.deidentifier.arx.examples.Example9;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -113,4 +117,46 @@ public class TestExamples {
         }
     }
 
+    @Test
+    public void testExample9() {
+        try {
+            Example9.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+
+    @Test
+    public void testExample10() {
+        try {
+            Example10.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+
+    @Test
+    public void testExample11() {
+        try {
+            Example11.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    
+
+    @Test
+    public void testExample12() {
+        try {
+            Example12.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
 }

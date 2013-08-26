@@ -40,7 +40,7 @@ import org.junit.Test;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class TestDataTransformationsFromFileAbstract extends TestAnonymizer {
+public abstract class TestDataTransformationsFromFileAbstract extends AbstractTest {
 
     public static class TestCaseResult {
 

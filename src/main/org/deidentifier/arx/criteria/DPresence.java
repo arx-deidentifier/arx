@@ -18,9 +18,8 @@
 
 package org.deidentifier.arx.criteria;
 
-import java.util.Set;
-
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -30,12 +29,11 @@ import org.deidentifier.arx.framework.data.DataManager;
  * Published in:
  * Nergiz M, Atzori M, Clifton C. 
  * Hiding the presence of individuals from shared databases. 
- * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665�676. 
- * Available at: http://portal.acm.org/citation.cfm?id=1247480.1247554.
+ * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665-676.
  * 
  * @author Prasser, Kohlmayer
  */
-public class DPresence extends PrivacyCriterion{
+public class DPresence extends ImplicitPrivacyCriterion{
     
     private static final long serialVersionUID = 8534004943055128797L;
     
@@ -44,32 +42,30 @@ public class DPresence extends PrivacyCriterion{
     /** Delta max*/
     private final double dMax;
     /** The research subset, a set of tuple ids*/
-    private Set<Integer> subset;
+    private DataSubset subset;
     /** A compressed representation of the research subset*/
     private CompressedBitSet bitset;
-    /** The size of the research subset*/
-    private final int subsetSize;
     
     /**
-     * Creates a new instance
+     * Creates a new instance of the d-presence criterion as proposed in:
+     * Nergiz M, Atzori M, Clifton C. 
+     * Hiding the presence of individuals from shared databases. 
+     * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665-676.
      * @param dMin Delta min
      * @param dMax Delta max
      * @param subset Research subset
      */
-    public DPresence(double dMin, double dMax, Set<Integer> subset) {
+    public DPresence(double dMin, double dMax, DataSubset subset) {
         super(false);
         this.dMin = dMin;
         this.dMax = dMax;
         this.subset = subset;
-        this.subsetSize = subset.size();
+        this.bitset = subset.getBitSet();
     }
         
     @Override
     public void initialize(DataManager manager) {
-        bitset = new CompressedBitSet(manager.getDataQI().getDataLength());
-        for (Integer line : subset) {
-            bitset.set(line);
-        }
+        // Nothing to do
     }
 
     @Override
@@ -95,21 +91,7 @@ public class DPresence extends PrivacyCriterion{
      * @return
      */
     public CompressedBitSet getResearchSubset() {
-        if (this.bitset != null) {
-            return this.bitset;
-        } else {
-            // TODO: This returns a potentially dangerous temporary representation of the 
-            // TODO: bit set that might not be long enough. Required, e.g., for DataHandle.getContextSpecificView();
-            int max = Integer.MIN_VALUE;
-            for (int i : subset){
-                max = Math.max(max, i);
-            }
-            CompressedBitSet set = new CompressedBitSet(max);
-            for (Integer line : subset) {
-                set.set(line);
-            }
-            return set;
-        }
+        return this.bitset;
     }
     
     /**
@@ -117,7 +99,7 @@ public class DPresence extends PrivacyCriterion{
      * @return
      */
     public int getResearchSubsetSize() {
-        return this.subsetSize;
+        return this.subset.getSortedIndices().length;
     }
 
     /**

@@ -20,10 +20,13 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.AbstractFLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -55,16 +58,19 @@ public class ARXAnonymizer {
     class Result {
 
         /** The checker. */
-        final INodeChecker checker;
+        final INodeChecker      checker;
 
         /** The metric. */
-        final Metric<?>    metric;
+        final Metric<?>         metric;
 
         /** The lattice. */
-        final Lattice      lattice;
-        
-        /** The data manager*/
-        final DataManager  manager;
+        final Lattice           lattice;
+
+        /** The algorithm */
+        final AbstractAlgorithm algorithm;
+
+        /** The data manager */
+        final DataManager       manager;
 
         /**
          * Creates a new instance.
@@ -78,11 +84,16 @@ public class ARXAnonymizer {
          * @param manager
          *            the manager
          */
-        Result(final Metric<?> metric, final INodeChecker checker, final Lattice lattice, final DataManager manager) {
+        Result(final Metric<?> metric,
+               final INodeChecker checker,
+               final Lattice lattice,
+               final DataManager manager,
+               final AbstractAlgorithm algorithm) {
             this.metric = metric;
             this.checker = checker;
             this.lattice = lattice;
             this.manager = manager;
+            this.algorithm = algorithm;
         }
 
         /**
@@ -194,52 +205,9 @@ public class ARXAnonymizer {
      */
     public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
 
-        // Stopwatch
         final long time = System.currentTimeMillis();
-
-    	// Lots of checks
-        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
-        if (config.containsCriterion(LDiversity.class) ||
-            config.containsCriterion(TCloseness.class)){
-            if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
-        }
-        for (String attr : data.getDefinition().getSensitiveAttributes()){
-        	boolean found = false;
-        	for (LDiversity c : config.getCriteria(LDiversity.class)) {
-        		if (c.getAttribute().equals(attr)) {
-        			found = true;
-        			break;
-        		}
-        	}
-        	if (!found) {
-        		for (TCloseness c : config.getCriteria(TCloseness.class)) {
-            		if (c.getAttribute().equals(attr)) {
-            			found = true;
-            			break;
-            		}
-            	}
-        	}
-        	if (!found) {
-        		throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
-        	}
-        }
-        for (LDiversity c : config.getCriteria(LDiversity.class)) {
-        	if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-        		throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
-        	}
-    	}
-        for (TCloseness c : config.getCriteria(TCloseness.class)) {
-        	if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-        		throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
-        	}
-    	}
-
-        // Obtain handle
-        final DataHandle handle = data.getHandle();
-
-        // Check
-        if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
-        checkBeforeEncoding(config.getAllowedOutliers(), handle.getDefinition().getHierarchies());
+        checkBeforeEncoding(data, config);
+        DataHandle handle = data.getHandle();
 
         if (data.getDefinition().getSensitiveAttributes().size()>1) {
         	
@@ -254,211 +222,67 @@ public class ARXAnonymizer {
 			// The temporary result
 			Result result = null;
 			
-			// TODO: This iterative process will return wrong results to listeners,
-			// TODO: as these keep track of the overall number of tagged nodes...
 			// Iterate for each sensitive attribute
 			List<String> sensitive = new ArrayList<String>(data.getDefinition().getSensitiveAttributes());
+			DataDefinition currentDefinition = null;
+			DataDefinition previousDefinition = handle.getDefinition();
 			for (int i = 0; i < sensitive.size(); i++) {
 
-				// Extract
+				// Extract current sensitive attribute
 				String attribute = sensitive.get(i);
-				config = config.clone();
-				DataDefinition definition = handle.getDefinition().clone();
+				ARXConfiguration currentConfig = config.clone();
+				previousDefinition = currentDefinition;
+				currentDefinition = handle.getDefinition().clone();
 
 				// Remove all other l-diversity and substitute
-				for (LDiversity c : config.getCriteria(LDiversity.class)) {
+				for (LDiversity c : currentConfig.getCriteria(LDiversity.class)) {
 					if (!c.getAttribute().equals(attribute)) {
-						config.removeCriterion(c);
-						definition.setAttributeType(attribute, substition);
+						currentConfig.removeCriterion(c);
+						currentDefinition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
 
 				// Remove all other t-closeness and substitute
-				for (TCloseness c : config.getCriteria(TCloseness.class)) {
+				for (TCloseness c : currentConfig.getCriteria(TCloseness.class)) {
 					if (!c.getAttribute().equals(attribute)) {
-						config.removeCriterion(c);
-						definition.setAttributeType(attribute, substition);
+						currentConfig.removeCriterion(c);
+						currentDefinition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
 
-				// Anonymize
+				// Adopt results from the previous iteration
 				Lattice lattice = null;
+				AbstractAlgorithm algorithm = null;
 				if (result != null){
+
+					// Reset the lattice
+					int numAnonymous = alterLattice(result.lattice, config, ((DataHandleInput) handle).header, previousDefinition, currentDefinition);
+                    lattice = result.lattice;
+					algorithm = result.algorithm;
 					
-					// Redefine the lattice
-					if (config.isProtectSensitiveAssociations()) {
-						throw new RuntimeException("Not implemented!");
-						
-					// Simply reset the lattice
-					} else {
-						// TODO: When resetting the lattice, the k-anonymity property could be preserved
-						// TODO: Furthermore, there is no need to execute the first phase during subsequent
-						// TODO: runs of the algorithm
-						reset(result.lattice);
-						lattice = result.lattice;
+					// Abort early
+					if (numAnonymous == 0){
+					    // TODO: This fires an invalid number of events
+					    break;
 					}
 				}
 				
 				// Next iteration
-				result = anonymizeInternal(handle, definition, config, lattice, sensitive.size());
+				result = anonymizeInternal(handle, currentDefinition, currentConfig, lattice, sensitive.size(), algorithm);
 			}
 			
-			// Redefine the last result
-			if (config.isProtectSensitiveAssociations()){
-				throw new RuntimeException("Not implemented!");
-				
-			// Simply return the last result
-			} else {
-				return result.asResult(config, handle, time);
-			}
+			// If sensitive associations have been preserved 
+			// all data needs to be re-encoded according to the original definition
+			// TODO
+			
+			// Return the result from the last iteration
+			return result.asResult(config, handle, time);
 			
         } else {
 
         	// Execute
         	return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
         }
-        
-    }
-
-    /**
-     * Build a new lattice and run the algorithm
-     * @param handle
-     * @param definition
-     * @param config
-     * @return
-     * @throws IOException
-     */
-    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
-    	return anonymizeInternal(handle, definition, config, null, 1);
-    }
-
-    /**
-     * Reset a previous lattice and run the algorithm 
-     * @param handle
-     * @param definition
-     * @param config
-     * @param lattice
-     * @return
-     * @throws IOException
-     */
-    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice, int multiplier) throws IOException{
-
-        // Encode
-        final DataManager manager = prepareDataManager(handle, definition, config);
-
-        // Initialize
-        config.initialize(manager);
-
-        // Check
-        checkAfterEncoding(config, manager);
-
-        // Build or clean the lattice
-        if (lattice==null){
-        	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
-        } else {
-        	reset(lattice);
-        }
-
-        // Attach the listener
-        lattice.setListener(listener);
-        lattice.setMultiplier(multiplier);
-
-        // Build a node checker
-        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
-
-        // Initialize the metric
-        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
-
-        // Initialize the ARX strategy
-        final FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
-
-        // Build an algorithm instance
-        final AbstractAlgorithm algorithm = new FLASHAlgorithm(lattice, checker, strategy);
-
-        // Execute
-        algorithm.traverse();
-
-        // Return the result
-        return new Result(config.getMetric(), checker, lattice, manager);
-    }
-    
-    /**
-     * Resets a lattice, i.e., it marks all anonymous transformations as "not visited"
-     * @param lattice
-     */
-    private void reset(Lattice lattice) {
-		for (Node[] level : lattice.getLevels()){
-			for (Node node : level){
-				if (node.isAnonymous()){
-					node.setNotTagged();
-					node.setNotChecked();
-					node.setAnonymous(false);
-					node.setKAnonymous(false);
-				} else {
-					lattice.triggerTagged();
-				}
-			}
-		}
-	}
-
-	/**
-     * Performs some sanity checks.
-     * 
-     * @param manager
-     *            the manager
-     */
-    private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
-
-        if (config.containsCriterion(KAnonymity.class)){
-            KAnonymity c = config.getCriterion(KAnonymity.class);
-            if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
-                throw new IllegalArgumentException("Group size k " + c.getK() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
-            }
-        }
-        if (config.containsCriterion(LDiversity.class)){
-            for (LDiversity c : config.getCriteria(LDiversity.class)){
-	            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Group size l " + c.getL() + " musst be positive and less or equal than the number of rows " + manager.getDataQI().getDataLength()); 
-	            }
-            }
-        }
-        
-        // Check whether all hierarchies are monotonic
-        for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
-            if (!hierarchy.isMonotonic()) { throw new IllegalArgumentException("The hierarchy for the attribute '" + hierarchy.getName() + "' is not monotonic!"); }
-        }
-
-        // check min and max sizes
-        final int[] hierarchyHeights = manager.getHierachyHeights();
-        final int[] minLevels = manager.getMinLevels();
-        final int[] maxLevels = manager.getMaxLevels();
-
-        for (int i = 0; i < hierarchyHeights.length; i++) {
-            if (minLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
-                                                                                               minLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
-            if (minLevels[i] < 0) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "' has to be positive!"); }
-            if (maxLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
-                                                                                               maxLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
-            if (maxLevels[i] < minLevels[i]) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
-                                                                                  "' has to be lower than or requal to the defined maximum!"); }
-        }
-    }
-
-    /**
-     * Performs some sanity checks.
-     * 
-     * @param relativeMaxOutliers
-     *            the allowed maximal number of outliers
-     * @param hierarchies
-     *            the hierarchies
-     */
-    private void checkBeforeEncoding(final double relativeMaxOutliers, final Map<String, String[][]> hierarchies) {
-
-        // Perform sanity checks
-        if ((relativeMaxOutliers < 0d) || (relativeMaxOutliers >= 1d)) { throw new IllegalArgumentException("Suppression rate " + relativeMaxOutliers + "must be in [0,1["); }
-        if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
-        if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi identifier!"); }
-
     }
 
     /**
@@ -478,7 +302,7 @@ public class ARXAnonymizer {
     public double getMaximumSnapshotSizeDataset() {
         return snapshotSizeDataset;
     }
-
+    
     /**
      * Gets the snapshot size.
      * 
@@ -505,29 +329,6 @@ public class ARXAnonymizer {
      */
     public boolean isRemoveOutliers() {
         return removeOutliers;
-    }
-
-    /**
-     * Prepares the data manager.
-     * 
-     * @param handle
-     *            the handle
-     * @param config
-     *            the config
-     * @param definition
-     * 			  the definition
-     * @return the data manager
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
-
-        // Extract data
-        final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
-        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria());
-        return manager;
     }
 
     /**
@@ -593,5 +394,361 @@ public class ARXAnonymizer {
     public void setSuppressionString(final String suppressionString) {
         if (suppressionString == null) { throw new NullPointerException("suppressionString must not be null"); }
         this.suppressionString = suppressionString;
+    }
+
+    /**
+     * Adopts the lattice to the new run, i.e., it changes the order of quasi identifiers and
+     * marks all anonymous transformations as "not visited"
+     * @param lattice
+     * @return The number of anonymous nodes in the lattice
+     */
+    private int alterLattice(Lattice lattice, ARXConfiguration config, String[] header, DataDefinition previousDefinition, DataDefinition currentDefinition) {
+        
+        // If sensitive associations have been preserved
+        // change the position of the artificial quasi-identifiers
+        int from = 0;
+        int to = 0;
+        if (config.isProtectSensitiveAssociations()) {
+           from = getIndexOfArtificialQI(header, previousDefinition, currentDefinition);
+           to = getIndexOfArtificialQI(header, currentDefinition, previousDefinition);
+        }
+        
+        int count = 0;
+        lattice.clearTags();
+		for (Node[] level : lattice.getLevels()){
+			for (Node node : level){
+
+			    // Transform arrays of transformations
+			    if (config.isProtectSensitiveAssociations()) {
+			        shift(node.getTransformation(), from, to);
+			    }
+			    
+			    // Relabel
+				if (node.isAnonymous()){
+				    count++;
+					node.setNotTagged();
+					node.setNotChecked();
+					node.setAnonymous(false);
+					node.setKAnonymous(node.isKAnonymous());
+				} else {
+				    node.setTagged();
+                    node.setChecked();
+					lattice.triggerTagged();
+					lattice.decUntaggedCount(node.getLevel());
+				}
+			}
+		}
+
+        // Transform array of maximal generalizations
+        if (config.isProtectSensitiveAssociations()) {
+            shift(lattice.getMaximumGeneralizationLevels(), from, to);
+        }
+		return count;
+	}
+
+    /**
+     * Performs some sanity checks.
+     * 
+     * @param manager
+     *            the manager
+     */
+    private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
+
+        if (config.containsCriterion(KAnonymity.class)){
+            KAnonymity c = config.getCriterion(KAnonymity.class);
+            if ((c.getK() > manager.getDataQI().getDataLength()) || (c.getK() < 1)) { 
+                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataQI().getDataLength()+")"); 
+            }
+        }
+        if (config.containsCriterion(LDiversity.class)){
+            for (LDiversity c : config.getCriteria(LDiversity.class)){
+	            if ((c.getL() > manager.getDataQI().getDataLength()) || (c.getL() < 1)) { 
+	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataQI().getDataLength()+")"); 
+	            }
+            }
+        }
+        
+        // Check whether all hierarchies are monotonic
+        for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
+            if (!hierarchy.isMonotonic()) { throw new IllegalArgumentException("The hierarchy for the attribute '" + hierarchy.getName() + "' is not monotonic!"); }
+        }
+
+        // check min and max sizes
+        final int[] hierarchyHeights = manager.getHierachyHeights();
+        final int[] minLevels = manager.getMinLevels();
+        final int[] maxLevels = manager.getMaxLevels();
+
+        for (int i = 0; i < hierarchyHeights.length; i++) {
+            if (minLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
+                                                                                               minLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
+            if (minLevels[i] < 0) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "' has to be positive!"); }
+            if (maxLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
+                                                                                               maxLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
+            if (maxLevels[i] < minLevels[i]) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
+                                                                                  "' has to be lower than or requal to the defined maximum!"); }
+        }
+    }
+
+    /**
+     * Performs some sanity checks.
+     * 
+     * @param data
+     *            the allowed maximal number of outliers
+     * @param config
+     *            the configuration
+     */
+    private void checkBeforeEncoding(final Data data, final ARXConfiguration config) {
+
+
+        // Lots of checks
+        if (data == null) { throw new NullPointerException("Data cannot be null!"); }
+        if (config.containsCriterion(LDiversity.class) ||
+            config.containsCriterion(TCloseness.class)){
+            if (data.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
+        }
+        for (String attr : data.getDefinition().getSensitiveAttributes()){
+            boolean found = false;
+            for (LDiversity c : config.getCriteria(LDiversity.class)) {
+                if (c.getAttribute().equals(attr)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                for (TCloseness c : config.getCriteria(TCloseness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
+            }
+        }
+        for (LDiversity c : config.getCriteria(LDiversity.class)) {
+            if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (TCloseness c : config.getCriteria(TCloseness.class)) {
+            if (data.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+
+        // Obtain handle
+        final DataHandle handle = data.getHandle();
+        
+        // Check handle
+        if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
+
+        // Check if all defines are correct
+        Set<String> attributes = new HashSet<String>();
+        for (int i=0; i<handle.getNumColumns(); i++){
+            attributes.add(handle.getAttributeName(i));
+        }
+        for (String attribute : data.getDefinition().getSensitiveAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getInsensitiveAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Insensitive attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getIdentifyingAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        for (String attribute : data.getDefinition().getQuasiIdentifyingAttributes()){
+            if (!attributes.contains(attribute)) {
+                throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
+            }
+        }
+        
+        // Perform sanity checks
+        Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
+        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() >= 1d)) { throw new IllegalArgumentException("Suppression rate " + handle + "must be in [0,1["); }
+        if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
+        if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
+    }
+
+    /**
+     * Returns the index of the artificial QI as defined in the given definition, i.e., the QI that
+     * is not defined in the given other definition
+     * @param header
+     * @param definition
+     * @param other
+     * @return
+     */
+	private int getIndexOfArtificialQI(String[] header, DataDefinition current, DataDefinition other) {
+
+        int idx = 0;
+        for (int i=0; i<header.length; i++){
+            
+            boolean inOther = other.getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI; 
+            boolean inCurrent  = current.getAttributeType(header[i]).getType() == AttributeType.ATTR_TYPE_QI;
+            
+            if (inCurrent && !inOther){
+                return idx;
+            } else if (inCurrent){
+                idx++;
+            }
+        }
+        
+        throw new RuntimeException("Internal error: could not find artificial QI");
+    }
+
+    /**
+     * Prepares the data manager.
+     * 
+     * @param handle
+     *            the handle
+     * @param config
+     *            the config
+     * @param definition
+     * 			  the definition
+     * @return the data manager
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
+    private DataManager prepareDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
+
+        // Extract data
+        final String[] header = ((DataHandleInput) handle).header;
+        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria());
+        return manager;
+    }
+
+    private void printLattice(String tag, Lattice lattice) {
+        if (lattice==null){
+            System.out.println(tag + " Empty lattice");
+            return;
+        }
+        int total = 0;
+        int tagged = 0;
+        int checked = 0;
+        int kanonymous = 0;
+        int anonymous = 0;
+        
+        for (Node[] level : lattice.getLevels()){
+            for (Node n : level){
+                if (n.isAnonymous()) anonymous++;
+                if (n.isChecked()) checked++;
+                if (n.isKAnonymous()) kanonymous++;
+                if (n.isTagged()) tagged++;
+                total++;
+            }
+        }
+        
+        System.out.println(tag + " Lattice statistics:");
+        System.out.println(" - Tagged    : "+tagged+"/"+total);
+        System.out.println(" - Checked   : "+checked+"/"+total);
+        System.out.println(" - kAnonymous: "+kanonymous+"/"+total);
+        System.out.println(" - Anonymous : "+anonymous+"/"+total);
+    }
+
+    /**
+     * Removes the element at index 'from' and shifts all other elements to the left.
+     * Then inserts the original value from index 'from' into the new position at index 'to'.
+     * An analogous procedure is performed if to < from.
+     * @param transformation
+     * @param from
+     * @param to
+     */
+    private void shift(int[] transformation, int from, int to) {
+        
+        int value = transformation[from];
+        if (from < to){
+            
+            /*
+             * Case 1: from=1 < to=2
+             * [6, 1, 3] -> [6, 3, 1]
+             */
+            for (int i=from; i<=to-1; i++){
+                transformation[i] = transformation[i+1];
+            }
+        } else if (from > to){
+            
+            /*
+             * Case 2: from=2 < to=1
+             * [6, 3, 1] -> [6, 1, 3]
+             */
+            for (int i=from; i>=to+1; i--){
+                transformation[i] = transformation[i-1];
+            }
+        }
+        transformation[to] = value;
+    }
+
+    /**
+     * Build a new lattice and run the algorithm
+     * @param handle
+     * @param definition
+     * @param config
+     * @return
+     * @throws IOException
+     */
+    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException{
+    	return anonymizeInternal(handle, definition, config, null, 1, null);
+    }
+
+    /**
+     * Reset a previous lattice and run the algorithm 
+     * @param handle
+     * @param definition
+     * @param config
+     * @param lattice
+     * @param algorithm
+     * @return
+     * @throws IOException
+     */
+    protected Result anonymizeInternal(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config, Lattice lattice, int multiplier, AbstractAlgorithm algorithm) throws IOException{
+
+        // Encode
+        final DataManager manager = prepareDataManager(handle, definition, config);
+
+        // Initialize
+        config.initialize(manager);
+
+        // Check
+        checkAfterEncoding(config, manager);
+
+        // Build or clean the lattice
+        if (lattice==null){
+        	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
+        } 
+        printLattice("[BEFORE]", lattice);
+
+        // Attach the listener
+        lattice.setListener(listener);
+        lattice.setMultiplier(multiplier);
+
+        // Build a node checker
+        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
+
+        // Initialize the metric
+        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
+
+        // Create an algorithm instance
+        if (algorithm != null){
+            algorithm = FLASHAlgorithm.create((AbstractFLASHAlgorithm)algorithm, checker);
+        } else {
+            algorithm = FLASHAlgorithm.create(lattice, checker, 
+                                              new FLASHStrategy(lattice, manager.getHierarchies()));
+        }
+        
+        // Execute
+        algorithm.traverse();
+        
+        printLattice("[AFTER]", lattice);
+        
+        // Return the result
+        return new Result(config.getMetric(), checker, lattice, manager, algorithm);
     }
 }

@@ -101,7 +101,7 @@ public class DataManager {
         Set<String> qi = definition.getQuasiIdentifyingAttributes();
         Set<String> se = definition.getSensitiveAttributes();
         Set<String> is = definition.getInsensitiveAttributes();
-
+        
         // Init dictionary
         final Dictionary dictionaryQI = new Dictionary(qi.size());
         final Dictionary dictionarySE = new Dictionary(se.size());
@@ -165,16 +165,18 @@ public class DataManager {
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];
                     
+                    boolean isEmpty = false;
                     if (definition.getAttributeType(name) instanceof Hierarchy){
                     	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
                     } else {
+                        isEmpty = true;
                     	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
                     }
-                    // initialize min/max level and hierarhy height array
+                    // Initialize hierarchy height and minimum / maximum generalization
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
-                    final Integer minGenLevel = definition.getMinimumGeneralization(name);
+                    final Integer minGenLevel = isEmpty ? 0 : definition.getMinimumGeneralization(name);
                     minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
-                    final Integer maxGenLevel = definition.getMaximumGeneralization(name);
+                    final Integer maxGenLevel = isEmpty ? 0 : definition.getMaximumGeneralization(name);
                     maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchyHeights[dictionaryIndex] - 1 : maxGenLevel;
                 }
             }

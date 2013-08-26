@@ -29,7 +29,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
-public class TestDataHandle extends TestAnonymizer {
+public class TestDataHandle extends AbstractTest {
 
     @Test
     public void testgetters() throws IllegalArgumentException, IOException {
@@ -56,7 +56,7 @@ public class TestDataHandle extends TestAnonymizer {
         
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getHandle();
@@ -106,7 +106,7 @@ public class TestDataHandle extends TestAnonymizer {
 
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(2));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getHandle();

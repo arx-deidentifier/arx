@@ -139,7 +139,7 @@ public class Example8 extends Example {
         final ARXConfiguration config = new ARXConfiguration();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.6d, disease));
-        config.setAllowedOutliers(0d);
+        config.setMaxOutliers(0d);
         config.setMetric(Metric.createEntropyMetric());
         try {
 
