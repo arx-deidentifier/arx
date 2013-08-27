@@ -20,7 +20,6 @@ package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.distribution.Distribution;

@@ -19,8 +19,6 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;

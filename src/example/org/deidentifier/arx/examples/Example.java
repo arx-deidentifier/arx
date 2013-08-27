@@ -24,9 +24,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.Data;
-import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.Data;
 
 /**
  * This class provides a base class for examples

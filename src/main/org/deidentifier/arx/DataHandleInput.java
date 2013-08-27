@@ -105,7 +105,7 @@ class DataHandleInput extends DataHandle {
     protected void createDataTypeArray() {
         dataTypes = new DataType[1][header.length];
         for (int i = 0; i < header.length; i++) {
-            final DataType type = definition.getDataType(header[i]);
+            final DataType<?> type = definition.getDataType(header[i]);
             if (type != null) {
                 dataTypes[0][i] = type;
             } else {

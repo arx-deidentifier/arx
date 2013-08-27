@@ -20,13 +20,12 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.CSVDataOutput;
 
 /**
  * This class implements an example on how to use the API by providing CSV files

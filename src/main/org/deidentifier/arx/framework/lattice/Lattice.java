@@ -28,22 +28,22 @@ import org.deidentifier.arx.ARXListener;
 public class Lattice {
 
     /** The levels. */
-    private Node[][]      levels        = null;
+    private Node[][]    levels        = null;
 
     /** The levelsize. */
-    private int[]         untaggedCount = null;
+    private int[]       untaggedCount = null;
 
     /** The max states. */
-    private final int[]   maxLevels;
+    private final int[] maxLevels;
 
     /** The size. */
-    private int           size          = 0;
+    private int         size          = 0;
 
     /** A listener */
-    private ARXListener   listener      = null;
-    
+    private ARXListener listener      = null;
+
     /** A multiplier for the listener*/
-    private int           multiplier    = 1;
+    private int         multiplier    = 1;
 
     /**
      * Initializes a lattice.
@@ -57,9 +57,7 @@ public class Lattice {
      * @param numNodes
      *            the num nodes
      */
-    public Lattice(final Node[][] levels,
-                   final int[] maxLevels,
-                   final int numNodes) {
+    public Lattice(final Node[][] levels, final int[] maxLevels, final int numNodes) {
 
         this.maxLevels = maxLevels;
         this.levels = levels;
@@ -91,11 +89,13 @@ public class Lattice {
      * @param anonymous
      *            the anonymous
      */
-    private void doTagAnonymous(final Node node, final boolean anonymous) {
+    private void doTagAnonymous(final Node node, final boolean anonymous, final boolean kAnonymous) {
 
         // Tag
         node.setTagged();
         node.setAnonymous(anonymous);
+        node.setKAnonymous(kAnonymous);
+
 
         // Count
         untaggedCount[node.getLevel()]--;
@@ -109,13 +109,13 @@ public class Lattice {
         if (anonymous) {
             for (final Node up : node.getSuccessors()) {
                 if (!up.isTagged()) {
-                    doTagAnonymous(up, anonymous);
+                    doTagAnonymous(up, anonymous, kAnonymous);
                 }
             }
         } else {
             for (final Node down : node.getPredecessors()) {
                 if (!down.isTagged()) {
-                    doTagAnonymous(down, anonymous);
+                    doTagAnonymous(down, anonymous, kAnonymous);
                 }
             }
         }
@@ -219,7 +219,7 @@ public class Lattice {
     public int getUntaggedCount(final int level) {
         return untaggedCount[level];
     }
-    
+
     /**
      * Decrement the counter for the number of untagged nodes on the given level
      * @param level
@@ -248,7 +248,7 @@ public class Lattice {
      */
     public void tagAnonymous(final Node node, final boolean anonymous) {
         if (!node.isTagged()) {
-            doTagAnonymous(node, anonymous);
+            doTagAnonymous(node, anonymous, node.isKAnonymous());
         }
     }
 
@@ -279,7 +279,9 @@ public class Lattice {
     /**
      * Triggers a tagged event at the listener
      */
-	public void triggerTagged() {
-		if (this.listener != null) this.listener.nodeTagged(size * multiplier);
-	}
+    public void triggerTagged() {
+        if (this.listener != null) this.listener.nodeTagged(size * multiplier);
+    }
+
+  
 }
