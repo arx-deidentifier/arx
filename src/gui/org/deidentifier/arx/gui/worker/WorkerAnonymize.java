@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,11 +30,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class WorkerAnonymize extends Worker<ARXResult> {
 
     private final Model      model;
-    private final Controller controller;
 
-    public WorkerAnonymize(final Controller controller, final Model model) {
+    public WorkerAnonymize(final Model model) {
         this.model = model;
-        this.controller = controller;
     }
 
     @Override
@@ -49,6 +46,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         // Initialize anonymizer
         final ARXAnonymizer anonymizer = model.createAnonymizer();
 
+        // Add listener
         anonymizer.setListener(new ARXListener() {
             int count = 0;
 
@@ -60,72 +58,11 @@ public class WorkerAnonymize extends Worker<ARXResult> {
             }
         });
 
-        // Anonymize
+        // Perform all tasks
         try {
-            switch (model.getInputConfig().getCriterion()) {
-            case K_ANONYMITY:
-                result = anonymizer.kAnonymize(model.getInputConfig()
-                                                    .getInput(),
-                                               model.getInputConfig().getK(),
-                                               model.getInputConfig()
-                                                    .getAllowedOutliers());
-                break;
-            case L_DIVERSITY:
-                switch (model.getInputConfig().getLDiversityCriterion()) {
-                case ENTROPY:
-                    result = anonymizer.lDiversify(model.getInputConfig()
-                                                        .getInput(),
-                                                   model.getInputConfig()
-                                                        .getL(),
-                                                   true,
-                                                   model.getInputConfig()
-                                                        .getAllowedOutliers());
-                    break;
-                case DISTINCT:
-                    result = anonymizer.lDiversify(model.getInputConfig()
-                                                        .getInput(),
-                                                   model.getInputConfig()
-                                                        .getL(),
-                                                   false,
-                                                   model.getInputConfig()
-                                                        .getAllowedOutliers());
-                    break;
-                case RECURSIVE:
-                    result = anonymizer.lDiversify(model.getInputConfig()
-                                                        .getInput(),
-                                                   model.getInputConfig()
-                                                        .getC(),
-                                                   model.getInputConfig()
-                                                        .getL(),
-                                                   model.getInputConfig()
-                                                        .getAllowedOutliers());
-                    break;
-                }
-                break;
-            case T_CLOSENESS:
-                switch (model.getInputConfig().getTClosenessCriterion()) {
-                case EMD_EQUAL:
-                    result = anonymizer.tClosify(model.getInputConfig()
-                                                      .getInput(),
-                                                 model.getInputConfig().getK(),
-                                                 model.getInputConfig().getT(),
-                                                 model.getInputConfig()
-                                                      .getAllowedOutliers());
-                    break;
-                case EMD_HIERARCHICAL:
-                    result = anonymizer.tClosify(model.getInputConfig()
-                                                      .getInput(),
-                                                 model.getInputConfig().getK(),
-                                                 model.getInputConfig().getT(),
-                                                 model.getInputConfig()
-                                                      .getAllowedOutliers(),
-                                                 model.getInputConfig()
-                                                      .getSensitiveHierarchy());
-                    break;
-                }
-                break;
-            }
 
+            // Anonymize
+        	result = anonymizer.anonymize(model.getInputConfig().getInput(), model.getInputConfig().getConfig());
             arg0.beginTask(Resources.getMessage("WorkerAnonymize.2"), 2); //$NON-NLS-1$
 
             // Determine minimum and maximum information loss
