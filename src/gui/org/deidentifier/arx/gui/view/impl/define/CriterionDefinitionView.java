@@ -59,10 +59,11 @@ public class CriterionDefinitionView implements IView {
     private final Controller       controller;
     private Model                  model           = null;
 
-    private Scale                  ldivSliderOutliers;
-    private Label                  ldivLabelOutlier;
-    private Button                 ldivButtonApproximate;
-    private Combo                  ldivComboMetric;
+    private Scale                  sliderOutliers;
+    private Label                  labelOutliers;
+    private Button                 buttonPracticalMonotonicity;
+    private Button                 buttonProtectSensitiveAssociations;
+    private Combo                  comboMetric;
     private Composite			   root;
     
     public CriterionDefinitionView(final Composite parent,
@@ -80,52 +81,39 @@ public class CriterionDefinitionView implements IView {
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 4;
+        groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.11")); //$NON-NLS-1$
 
-        ldivLabelOutlier = new Label(group, SWT.BORDER | SWT.CENTER);
+        labelOutliers = new Label(group, SWT.BORDER | SWT.CENTER);
         final GridData d2 = new GridData();
         d2.minimumWidth = LABEL_WIDTH;
         d2.widthHint = LABEL_WIDTH;
-        ldivLabelOutlier.setLayoutData(d2);
-        ldivLabelOutlier.setText("0"); //$NON-NLS-1$
+        labelOutliers.setLayoutData(d2);
+        labelOutliers.setText("0"); //$NON-NLS-1$
 
-        // Build approximate button
-        ldivButtonApproximate = new Button(group, SWT.CHECK);
-        ldivButtonApproximate.setText(Resources.getMessage("CriterionDefinitionView.31")); //$NON-NLS-1$
-        ldivButtonApproximate.setSelection(false);
-        ldivButtonApproximate.setEnabled(false);
-        ldivButtonApproximate.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.getInputConfig()
-                     .setPracticalMonotonicity(ldivButtonApproximate.getSelection());
-            }
-        });
-
-        ldivSliderOutliers = new Scale(group, SWT.HORIZONTAL);
-        ldivSliderOutliers.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        ldivSliderOutliers.setMaximum(SLIDER_MAX);
-        ldivSliderOutliers.setMinimum(0);
-        ldivSliderOutliers.setSelection(0);
-        ldivSliderOutliers.addSelectionListener(new SelectionAdapter() {
+        sliderOutliers = new Scale(group, SWT.HORIZONTAL);
+        sliderOutliers.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        sliderOutliers.setMaximum(SLIDER_MAX);
+        sliderOutliers.setMinimum(0);
+        sliderOutliers.setSelection(0);
+        sliderOutliers.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getInputConfig()
                      .setAllowedOutliers(sliderToDouble(0d,
                                                             0.999d,
-                                                            ldivSliderOutliers.getSelection()));
-                ldivLabelOutlier.setText(String.valueOf(model.getInputConfig()
+                                                            sliderOutliers.getSelection()));
+                labelOutliers.setText(String.valueOf(model.getInputConfig()
                                                              .getAllowedOutliers()));
                 if (model.getInputConfig().getAllowedOutliers() != 0) {
-                    ldivButtonApproximate.setEnabled(true);
+                    buttonPracticalMonotonicity.setEnabled(true);
                 } else {
-                    ldivButtonApproximate.setSelection(false);
-                    ldivButtonApproximate.setEnabled(false);
+                    buttonPracticalMonotonicity.setSelection(false);
+                    buttonPracticalMonotonicity.setEnabled(false);
                     model.getInputConfig().setPracticalMonotonicity(false);
                 }
             }
@@ -137,7 +125,7 @@ public class CriterionDefinitionView implements IView {
 
         final Composite mBase = new Composite(group, SWT.NONE);
         final GridData d8 = SWTUtil.createFillHorizontallyGridData();
-        d8.horizontalSpan = 3;
+        d8.horizontalSpan = 2;
         mBase.setLayoutData(d8);
         final GridLayout l = new GridLayout();
         l.numColumns = 7;
@@ -149,21 +137,60 @@ public class CriterionDefinitionView implements IView {
         l.marginHeight = 0;
         mBase.setLayout(l);
 
-        ldivComboMetric = new Combo(mBase, SWT.READ_ONLY);
+        comboMetric = new Combo(mBase, SWT.READ_ONLY);
         GridData d30 = SWTUtil.createFillHorizontallyGridData();
         d30.verticalAlignment = SWT.CENTER;
-        ldivComboMetric.setLayoutData(d30);
-        ldivComboMetric.setItems(LABELS_METRIC);
-        ldivComboMetric.select(0);
-        ldivComboMetric.addSelectionListener(new SelectionAdapter() {
+        comboMetric.setLayoutData(d30);
+        comboMetric.setItems(LABELS_METRIC);
+        comboMetric.select(0);
+        comboMetric.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (ldivComboMetric.getSelectionIndex() != -1) {
-                    selectMetricAction(ITEMS_METRIC[ldivComboMetric.getSelectionIndex()]);
+                if (comboMetric.getSelectionIndex() != -1) {
+                    selectMetricAction(ITEMS_METRIC[comboMetric.getSelectionIndex()]);
                 }
             }
         });
 
+
+        // Build approximate button
+        final Label m2Label = new Label(group, SWT.PUSH);
+        m2Label.setText(Resources.getMessage("CriterionDefinitionView.31")); //$NON-NLS-1$
+
+        final GridData d82 = SWTUtil.createFillHorizontallyGridData();
+        d82.horizontalSpan = 2;
+        buttonPracticalMonotonicity = new Button(group, SWT.CHECK);
+        buttonPracticalMonotonicity.setText(Resources.getMessage("CriterionDefinitionView.53")); //$NON-NLS-1$
+        buttonPracticalMonotonicity.setSelection(false);
+        buttonPracticalMonotonicity.setEnabled(false);
+        buttonPracticalMonotonicity.setLayoutData(d82);
+        buttonPracticalMonotonicity.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.getInputConfig()
+                     .setPracticalMonotonicity(buttonPracticalMonotonicity.getSelection());
+            }
+        });
+
+        // Build protect sensitive associations button
+        final Label m3Label = new Label(group, SWT.PUSH);
+        m3Label.setText(Resources.getMessage("CriterionDefinitionView.54")); //$NON-NLS-1$
+
+        final GridData d83 = SWTUtil.createFillHorizontallyGridData();
+        d83.horizontalSpan = 2;
+        buttonProtectSensitiveAssociations = new Button(group, SWT.CHECK);
+        buttonProtectSensitiveAssociations.setText(Resources.getMessage("CriterionDefinitionView.55")); //$NON-NLS-1$
+        buttonProtectSensitiveAssociations.setSelection(true);
+        buttonProtectSensitiveAssociations.setEnabled(false);
+        buttonProtectSensitiveAssociations.setLayoutData(d83);
+        buttonProtectSensitiveAssociations.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.getInputConfig().
+                     setProtectSensitiveAssociations(buttonProtectSensitiveAssociations.getSelection());
+            }
+        });
+        
         return group;
     }
     
@@ -192,10 +219,10 @@ public class CriterionDefinitionView implements IView {
     @Override
     public void reset() {
 
-        ldivSliderOutliers.setSelection(0);
-        ldivLabelOutlier.setText("0"); //$NON-NLS-1
-        ldivButtonApproximate.setSelection(false);
-        ldivComboMetric.select(0);
+        sliderOutliers.setSelection(0);
+        labelOutliers.setText("0"); //$NON-NLS-1
+        buttonPracticalMonotonicity.setSelection(false);
+        comboMetric.select(0);
         SWTUtil.disable(root);
     }
 
@@ -226,14 +253,14 @@ public class CriterionDefinitionView implements IView {
         if (event.target == EventTarget.MODEL) {
             model = (Model) event.data;
             root.setRedraw(false);
-                ldivSliderOutliers.setSelection(doubleToSlider(0d,
+                sliderOutliers.setSelection(doubleToSlider(0d,
                                                                0.999d,
                                                                model.getInputConfig()
                                                                     .getAllowedOutliers()));
 
-                ldivLabelOutlier.setText(String.valueOf(model.getInputConfig()
+                labelOutliers.setText(String.valueOf(model.getInputConfig()
                                                              .getAllowedOutliers()));
-                ldivButtonApproximate.setSelection(model.getInputConfig()
+                buttonPracticalMonotonicity.setSelection(model.getInputConfig()
                                                         .isPracticalMonotonicity());
 
                 for (int i = 0; i < ITEMS_METRIC.length; i++) {
@@ -241,7 +268,7 @@ public class CriterionDefinitionView implements IView {
                                        .equals(model.getInputConfig()
                                                     .getMetric()
                                                     .getClass())) {
-                        ldivComboMetric.select(i);
+                        comboMetric.select(i);
                         break;
                     }
                 }
