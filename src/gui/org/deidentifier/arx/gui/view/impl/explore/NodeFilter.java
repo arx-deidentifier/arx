@@ -23,9 +23,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 
 public class NodeFilter implements Serializable {
 
@@ -49,10 +49,11 @@ public class NodeFilter implements Serializable {
     }
 
     public void allowAll() {
-        // TODO: Handle unknown
+    	// TODO: Introduce uncertain values in GUI
         anonymity.add(Anonymity.ANONYMOUS);
         anonymity.add(Anonymity.NOT_ANONYMOUS);
-        anonymity.add(Anonymity.UNKNOWN);
+        anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
+        anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
         minInformationLoss = Double.NEGATIVE_INFINITY;
         maxInformationLoss = Double.MAX_VALUE;
         for (int i = 0; i < maxLevels.length; i++) {
@@ -85,7 +86,9 @@ public class NodeFilter implements Serializable {
     }
 
     public void allowUnknown() {
-        anonymity.add(Anonymity.UNKNOWN);
+    	// TODO: Introduce uncertain values in GUI
+        anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
+        anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
     }
 
     /**
@@ -106,7 +109,8 @@ public class NodeFilter implements Serializable {
         }
 
         // Build sets
-        final Set[] required = new HashSet[optimum.length];
+        @SuppressWarnings("unchecked")
+		final Set<Integer>[] required = new HashSet[optimum.length];
         for (int j = 0; j < optimum.length; j++) {
             required[j] = new HashSet<Integer>();
         }
@@ -169,7 +173,9 @@ public class NodeFilter implements Serializable {
     }
 
     public void disallowUnknown() {
-        anonymity.remove(Anonymity.UNKNOWN);
+    	// TODO: Introduce uncertain values in GUI
+        anonymity.remove(Anonymity.PROBABLY_ANONYMOUS);
+        anonymity.remove(Anonymity.PROBABLY_NOT_ANONYMOUS);
     }
 
     /**
@@ -375,6 +381,7 @@ public class NodeFilter implements Serializable {
     }
 
     public boolean isAllowedUnknown() {
-        return anonymity.contains(Anonymity.UNKNOWN);
+        return anonymity.contains(Anonymity.PROBABLY_ANONYMOUS) ||
+        	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS); 
     }
 }
