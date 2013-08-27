@@ -62,7 +62,7 @@ public class AttributeDefinitionView implements IView {
 
     private static final String[]        COMBO2_VALUES = new String[] { Resources.getMessage("AttributeDefinitionView.4"), Resources.getMessage("AttributeDefinitionView.5"), Resources.getMessage("AttributeDefinitionView.6") };                                                   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    private static final DataType[]      COMBO2_TYPES  = new DataType[] { DataType.STRING,
+    private static final DataType<?>[]      COMBO2_TYPES  = new DataType[] { DataType.STRING,
             DataType.DECIMAL,
             DataType.DATE                             };
 
@@ -187,7 +187,7 @@ public class AttributeDefinitionView implements IView {
                         (model.getInputConfig().getInput() != null)) {
 
                         // Obtain type
-                        DataType type = COMBO2_TYPES[dataTypeCombo.getSelectionIndex()];
+                        DataType<?> type = COMBO2_TYPES[dataTypeCombo.getSelectionIndex()];
 
                         // Open dateformat dialog
                         if (type == DataType.DATE) {
@@ -283,7 +283,7 @@ public class AttributeDefinitionView implements IView {
 
     private void updateDataType() {
         // TODO: Handle DATE with user-defined format accordingly
-        final DataType dtype = model.getInputConfig()
+        final DataType<?> dtype = model.getInputConfig()
                                     .getInput()
                                     .getDefinition()
                                     .getDataType(attribute);
