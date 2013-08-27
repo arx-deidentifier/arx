@@ -76,8 +76,13 @@ public class ARXLattice implements Serializable {
         }
 
         public void
-                setPracticalMonotonicity(final boolean practicalMonotonicity) {
-            lattice.practicalMonotonicity = practicalMonotonicity;
+                setUncertainty(final boolean uncertainty) {
+            lattice.uncertainty = uncertainty;
+        }
+
+        public void
+                setMonotonicSubcriterion(final boolean containsMonotonicSubcriterion) {
+            lattice.containsMonotonicSubcriterion = containsMonotonicSubcriterion;
         }
 
         public void setSize(final int size) {
@@ -92,7 +97,8 @@ public class ARXLattice implements Serializable {
     public static enum Anonymity {
         ANONYMOUS,
         NOT_ANONYMOUS,
-        UNKNOWN
+        PROBABLY_ANONYMOUS,
+        PROBABLY_NOT_ANONYMOUS
     }
 
     /**
@@ -244,18 +250,28 @@ public class ARXLattice implements Serializable {
         /**
          * Constructor
          * 
+         * @param node
          * @param headermap
          */
         private ARXNode(final Node node, final Map<String, Integer> headermap) {
             this.headermap = headermap;
             transformation = node.getTransformation();
             if (node.isAnonymous()) {
-                anonymity = Anonymity.ANONYMOUS;
+                if (uncertainty && !node.isChecked()) {
+                    anonymity = Anonymity.PROBABLY_ANONYMOUS;
+                } else  {
+                    anonymity = Anonymity.ANONYMOUS;
+                }
             } else {
-                anonymity = Anonymity.NOT_ANONYMOUS;
-            }
-            if (practicalMonotonicity && !node.isChecked()) {
-                anonymity = Anonymity.UNKNOWN;
+                if (uncertainty && !node.isChecked()) {
+                    if (containsMonotonicSubcriterion && !node.isKAnonymous()){
+                        anonymity = Anonymity.NOT_ANONYMOUS;
+                    } else {
+                        anonymity = Anonymity.PROBABLY_NOT_ANONYMOUS;
+                    }
+                } else  {
+                    anonymity = Anonymity.NOT_ANONYMOUS;
+                }
             }
             minInformationLoss = node.getInformationLoss();
             maxInformationLoss = node.getInformationLoss();
@@ -425,8 +441,11 @@ public class ARXLattice implements Serializable {
     /** The bottom node */
     private transient ARXNode     bottom;
 
-    /** Assume practical monotonicity */
-    private boolean               practicalMonotonicity;
+    /** Are anonymity properties potentially uncertain */
+    private boolean               uncertainty;
+    
+    /** Is there a monotonic sub-criterion*/
+    private boolean               containsMonotonicSubcriterion;
 
     /** Metric */
     private Metric<?>             metric;
@@ -444,22 +463,18 @@ public class ARXLattice implements Serializable {
      * Constructor
      * @param lattice The lattice to represent
      * @param header The header
-     * @param metric The metric
-     * @param practicalMonotonicity Do we assume practical monotonicity
-     * @param maxAbsoluteOutliers The maximum number of outliers
-     * @param projection A projection mask for results of iterative executions.
-     *                   projection[i] must contain true if the ith QI is to be preserved
+     * @param config The config
      */
     ARXLattice(final Lattice lattice,
                  final String[] header,
-                 final Metric<?> metric,
-                 final boolean practicalMonotonicity,
-                 final int maxAbsoluteOutliers) {
+                 final ARXConfiguration config) {
 
-        this.metric = metric;
-        this.practicalMonotonicity = practicalMonotonicity;
-        this.maxAbsoluteOutliers = maxAbsoluteOutliers;
-
+        this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
+        this.metric = config.getMetric();
+        this.uncertainty = (config.isPracticalMonotonicity()) || 
+                           (config.getMetric().isMonotonic() && !config.isCriterionMonotonic());
+        this.containsMonotonicSubcriterion = config.getMinimalGroupSize() != Integer.MAX_VALUE;
+        
         // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
         int index = 0;

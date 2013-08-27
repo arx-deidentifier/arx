@@ -205,7 +205,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     /**
      * Instantiates a new ARX result.
      * 
-     * @param metric The metric
      * @param manager The data manager
      * @param checker The node checker
      * @param time The elapsed wall-clock  time
@@ -219,8 +218,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      * @param projection A projection mask for results of iterative executions.
      *                   projection[i] must contain true if the ith QI is to be preserved
      */
-    public DataHandleOutput(final Metric<?> metric,
-                            final DataManager manager,
+    public DataHandleOutput(final DataManager manager,
                             final INodeChecker checker,
                             final long time,
                             final String suppressionString,
@@ -229,14 +227,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                             final boolean removeOutliers,
                             final ARXConfiguration config) {
 
-        final boolean practicalMonotonicity = config.isPracticalMonotonicity();
-        final int maximumAbsoluteOutliers = config.getAbsoluteMaxOutliers();
-        
         final ARXLattice flattice = new ARXLattice(lattice,
                                                    manager.getDataQI().getHeader(),
-                                                   metric,
-                                                   practicalMonotonicity,
-                                                   maximumAbsoluteOutliers);
+                                                   config);
 
         init(manager,
              checker,

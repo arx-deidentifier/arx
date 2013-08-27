@@ -107,7 +107,7 @@ public class ARXAnonymizer {
 
 			// Create outhandle
 			final DataHandleOutput outHandle = new DataHandleOutput(
-					this.metric, this.manager, this.checker,
+					this.manager, this.checker,
 					System.currentTimeMillis() - time, suppressionString,
 					handle.getDefinition(), this.lattice, removeOutliers,
 					config);
