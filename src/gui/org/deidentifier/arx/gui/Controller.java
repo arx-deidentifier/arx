@@ -178,7 +178,7 @@ public class Controller implements IView {
         model.setOutput(null, null);
 
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(this, model);
+        final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
 
         // Show errors

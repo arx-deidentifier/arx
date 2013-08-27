@@ -262,4 +262,12 @@ public class Configuration implements Serializable {
         setModified();
         config.setPracticalMonotonicity(assumeMonotonicity);
     }
+    
+    /**
+     * Returns the current config
+     * @return
+     */
+    public ARXConfiguration getConfig(){
+    	return config;
+    }
 }
