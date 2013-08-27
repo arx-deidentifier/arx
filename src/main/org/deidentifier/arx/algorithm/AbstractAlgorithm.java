@@ -21,7 +21,6 @@ package org.deidentifier.arx.algorithm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;

@@ -31,7 +31,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Prasser, Kohlmayer
  */
 public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
-    
+
     /**
      * Creates a new instance of the FLASH algorithm.
      * 
@@ -44,10 +44,8 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
      * @param strategy
      *            The strategy
      */
-    public FLASHAlgorithmTwoPhases(final Lattice lattice,
-                          final INodeChecker checker,
-                          final FLASHStrategy strategy) {
-      
+    public FLASHAlgorithmTwoPhases(final Lattice lattice, final INodeChecker checker, final FLASHStrategy strategy) {
+
         super(lattice, checker, strategy);
         history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
     }
@@ -58,7 +56,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
      * @param node
      */
     protected void checkNode1(final Node node) {
-        
+
         checker.check(node);
         lattice.tagKAnonymous(node, node.isKAnonymous());
         lattice.triggerTagged();
@@ -73,15 +71,9 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
         if (!node.isChecked()) {
 
             // TODO: Rethink var1 & var2
-            final boolean var1 = !checker.getMetric().isMonotonic() &&
-                                 checker.getConfiguration()
-                                        .isCriterionMonotonic();
+            final boolean var1 = !checker.getMetric().isMonotonic() && checker.getConfiguration().isCriterionMonotonic();
 
-            final boolean var2 = !checker.getMetric().isMonotonic() &&
-                                 !checker.getConfiguration()
-                                         .isCriterionMonotonic() &&
-                                 checker.getConfiguration()
-                                        .isPracticalMonotonicity();
+            final boolean var2 = !checker.getMetric().isMonotonic() && !checker.getConfiguration().isCriterionMonotonic() && checker.getConfiguration().isPracticalMonotonicity();
 
             // NOTE: Might return non-anonymous result as optimum, when
             // 1. the criterion is not monotonic, and
@@ -97,7 +89,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
         }
 
         // In case metric is monotone it can be tagged if the node is anonymous
-        if (checker.getMetric().isMonotonic() && node.isAnonymous()) { 
+        if (checker.getMetric().isMonotonic() && node.isAnonymous()) {
             lattice.tagAnonymous(node, node.isAnonymous());
         } else {
             node.setTagged();
@@ -122,11 +114,11 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
             final int mid = (low + high) >>> 1;
             final Node node = path.get(mid);
 
-            if (!node.isTagged()) { 
+            if (!node.isTagged()) {
                 checkNode1(node);
-                if (!node.isKAnonymous()) { 
+                if (!node.isKAnonymous()) {
                     for (final Node up : node.getSuccessors()) {
-                        if (!up.isTagged()) { 
+                        if (!up.isTagged()) {
                             pqueue.add(up);
                         }
                     }
@@ -150,7 +142,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
      */
     @Override
     public void traverse() {
-        
+
         pqueue.clear();
         stack.clear();
         checkBottom();
@@ -161,28 +153,28 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
             Node[] level;
             level = this.sort(i);
             for (final Node node : level) {
-                if (!node.isTagged()) { 
+                if (!node.isTagged()) {
                     pqueue.add(node);
                     while (!pqueue.isEmpty()) {
                         Node head = pqueue.poll();
                         // if anonymity is unknown
                         if (!head.isTagged()) {
-                            
+
                             // First phase
-                        	findPath(head);
+                            findPath(head);
                             head = checkPathBinary(path);
 
                             // Second phase
-                            if (head != null){
-                                
+                            if (head != null) {
+
                                 final PruningStrategy pruning = history.getPruningStrategy();
                                 history.setPruningStrategy(PruningStrategy.CHECKED);
-    
+
                                 // Untag all nodes above first anonymous node if
                                 // they have already been tagged in first phase.
                                 // They will all be tagged again in the second phase
                                 lattice.doUnTagUpwards(head);
-                                
+
                                 stack.push(head);
                                 while (!stack.isEmpty()) {
                                     final Node start = stack.pop();
@@ -191,7 +183,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                                         checkPathLinear(path);
                                     }
                                 }
-    
+
                                 // Switch back to previous strategy
                                 history.setPruningStrategy(pruning);
                             }
