@@ -67,12 +67,18 @@ public class DataSubset {
      */
     public static DataSubset create(Data data, Data subset){
         
+        // TODO: This must implement an inner join
+        // TODO: E.g., results are wrong if the same tuple exists twice in the subset
+        
         // TODO: Implement more efficiently
         DataHandle bHandle = data.getHandle();
         DataHandle sHandle = subset.getHandle();
         
         // Add background data to map
         Map<Entry, Integer> background = new HashMap<Entry, Integer>();
+        // TODO: Must be Map<Entry, Map<Entry, Integer>> to support multiple identical rows
+        // TODO: When probing into the map, remove the according entry
+        
         for (int i=0; i<bHandle.getNumRows(); i++){
             String[] tuple = new String[bHandle.getNumColumns()];
             for (int j=0; j<tuple.length; j++){
