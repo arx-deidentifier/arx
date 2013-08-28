@@ -95,12 +95,18 @@ public class LatticeView extends Panel implements IView, IAttachable {
     public static final org.eclipse.swt.graphics.Color GREEN      = GUIHelper.getColor(50,
                                                                                        205,
                                                                                        50);
+    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN= GUIHelper.getColor(50,
+																			           128,
+																			           50);
     public static final org.eclipse.swt.graphics.Color ORANGE     = GUIHelper.getColor(255,
                                                                                        145,
                                                                                        0);
     public static final org.eclipse.swt.graphics.Color RED        = GUIHelper.getColor(255,
                                                                                        99,
                                                                                        71);
+    public static final org.eclipse.swt.graphics.Color LIGHT_RED  = GUIHelper.getColor(128,
+																			           99,
+																			           71);
     public static final org.eclipse.swt.graphics.Color BLUE       = GUIHelper.getColor(0,
                                                                                        0,
                                                                                        255);
@@ -108,11 +114,13 @@ public class LatticeView extends Panel implements IView, IAttachable {
                                                                                        215,
                                                                                        0);
 
-    public static final Color                          AWT_GREEN  = asAWTColor(GREEN);
-    public static final Color                          AWT_ORANGE = asAWTColor(ORANGE);
-    public static final Color                          AWT_RED    = asAWTColor(RED);
-    public static final Color                          AWT_BLUE   = asAWTColor(BLUE);
-    public static final Color                          AWT_YELLOW = asAWTColor(YELLOW);
+    public static final Color                          AWT_GREEN  		= asAWTColor(GREEN);
+    public static final Color                          AWT_LIGHT_GREEN  = asAWTColor(LIGHT_GREEN);
+    public static final Color                          AWT_ORANGE 		= asAWTColor(ORANGE);
+    public static final Color                          AWT_RED    		= asAWTColor(RED);
+    public static final Color                          AWT_LIGHT_RED    = asAWTColor(LIGHT_RED);
+    public static final Color                          AWT_BLUE   		= asAWTColor(BLUE);
+    public static final Color                          AWT_YELLOW 		= asAWTColor(YELLOW);
 
     private static Color asAWTColor(final org.eclipse.swt.graphics.Color in) {
         return new Color(in.getRed(), in.getGreen(), in.getBlue());
@@ -544,8 +552,10 @@ public class LatticeView extends Panel implements IView, IAttachable {
             } else {
                 return AWT_GREEN;
             }
-        } else if (node.isAnonymous() == Anonymity.UNKNOWN) {
-            return AWT_BLUE;
+        } else if (node.isAnonymous() == Anonymity.PROBABLY_ANONYMOUS) {
+            return AWT_LIGHT_GREEN;
+        } else if (node.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+            return AWT_LIGHT_RED;
         } else {
             return AWT_RED;
         }

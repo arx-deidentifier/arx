@@ -26,6 +26,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
@@ -262,4 +263,17 @@ public class Configuration implements Serializable {
         setModified();
         config.setPracticalMonotonicity(assumeMonotonicity);
     }
+    
+    /**
+     * Returns the current config
+     * @return
+     */
+    public ARXConfiguration getConfig(){
+    	return config;
+    }
+
+	public DataSubset getResearchSubset() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
