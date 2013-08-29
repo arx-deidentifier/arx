@@ -86,14 +86,13 @@ public class CriterionDefinitionView implements IView {
         Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 3;
+        groupInputGridLayout.numColumns = 1;
         group.setLayout(groupInputGridLayout);
 
         /*
          *  Add k-anonymity and d-presence views
          */
         GridData gd1 = SWTUtil.createFillGridData();
-        gd1.horizontalSpan = 3;
         gd1.grabExcessVerticalSpace = false;
         CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
         folder.setUnselectedCloseVisible(false);
@@ -115,6 +114,7 @@ public class CriterionDefinitionView implements IView {
         tabKAnon.setShowClose(false);
         KAnonymityView kanon = new KAnonymityView(folder, controller);
         tabKAnon.setControl(kanon.getControl());
+        folder.setSelection(tabKAnon);
 
         final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
         tabDPres.setText("d-Presence");
@@ -128,7 +128,6 @@ public class CriterionDefinitionView implements IView {
 
         // Add k-anonymity and d-presence views
         gd1 = SWTUtil.createFillGridData();
-        gd1.horizontalSpan = 3;
         gd1.grabExcessVerticalSpace = false;
         folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
         folder.setUnselectedCloseVisible(false);
@@ -144,7 +143,7 @@ public class CriterionDefinitionView implements IView {
             }
         });
         
-        // Create k-anonymity tab
+        // Create general tab
         final CTabItem tabGeneral = new CTabItem(folder, SWT.NULL);
         tabGeneral.setText("General settings");
         tabGeneral.setShowClose(false);
@@ -155,6 +154,7 @@ public class CriterionDefinitionView implements IView {
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
         tabGeneral.setControl(group);
+        folder.setSelection(tabGeneral);
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);

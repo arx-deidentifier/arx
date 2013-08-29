@@ -61,16 +61,17 @@ public class TClosenessView implements ICriterionView, IAttachable{
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 4;
+        groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
 
         // Create criterion combo
-        final Label cLabel = new Label(root, SWT.PUSH);
+        final Label cLabel = new Label(group, SWT.PUSH);
         cLabel.setText(Resources.getMessage("CriterionDefinitionView.42")); //$NON-NLS-1$
 
-        comboVariant = new Combo(root, SWT.READ_ONLY);
+        comboVariant = new Combo(group, SWT.READ_ONLY);
         GridData d32 = SWTUtil.createFillHorizontallyGridData();
         d32.verticalAlignment = SWT.CENTER;
+        d32.horizontalSpan = 2;
         comboVariant.setLayoutData(d32);
         comboVariant.setItems(VARIANTS);
         comboVariant.select(0);
@@ -82,17 +83,17 @@ public class TClosenessView implements ICriterionView, IAttachable{
         });
 
         // Create t slider
-        final Label zLabel = new Label(root, SWT.NONE);
+        final Label zLabel = new Label(group, SWT.NONE);
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.43")); //$NON-NLS-1$
 
-        labelT = new Label(root, SWT.BORDER | SWT.CENTER);
+        labelT = new Label(group, SWT.BORDER | SWT.CENTER);
         final GridData d9 = new GridData();
         d9.minimumWidth = LABEL_WIDTH;
         d9.widthHint = LABEL_WIDTH;
         labelT.setLayoutData(d9);
         labelT.setText("0.001"); //$NON-NLS-1$
 
-        sliderT = new Scale(root, SWT.HORIZONTAL);
+        sliderT = new Scale(group, SWT.HORIZONTAL);
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
         d6.horizontalSpan = 1;
         sliderT.setLayoutData(d6);
