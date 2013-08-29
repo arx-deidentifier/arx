@@ -77,6 +77,8 @@ public class DefineView implements IAttachable {
         compositeTopRight.setLayoutData(topRightLD);
         final GridLayout topRightLayout = new GridLayout();
         topRightLayout.numColumns = 1;
+//        topRightLayout.marginWidth = 0;
+        topRightLayout.marginHeight = 0;
         compositeTopRight.setLayout(topRightLayout);
 
         // Create bottom-right composite
@@ -86,6 +88,8 @@ public class DefineView implements IAttachable {
         compositeBottomRight.setLayoutData(bottomRightLD);
         final GridLayout bottomRightLayout = new GridLayout();
         bottomRightLayout.numColumns = 1;
+        bottomRightLayout.marginWidth = 0;
+        bottomRightLayout.marginHeight = 0;
         compositeBottomRight.setLayout(bottomRightLayout);
 
         // Create views

@@ -44,6 +44,7 @@ public class CriterionDefinitionView implements IView {
 
     private static final int       SLIDER_MAX      = 1000;
     private static final int       LABEL_WIDTH     = 50;
+    private static final int       LABEL_HEIGHT    = 20;
     private static final String    LABELS_METRIC[] = { Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.2"), //$NON-NLS-1$
@@ -161,9 +162,10 @@ public class CriterionDefinitionView implements IView {
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.11")); //$NON-NLS-1$
 
         labelOutliers = new Label(group, SWT.BORDER | SWT.CENTER);
-        final GridData d2 = new GridData();
+        GridData d2 = new GridData();
         d2.minimumWidth = LABEL_WIDTH;
         d2.widthHint = LABEL_WIDTH;
+        d2.heightHint = LABEL_HEIGHT;
         labelOutliers.setLayoutData(d2);
         labelOutliers.setText("0"); //$NON-NLS-1$
 
@@ -194,7 +196,11 @@ public class CriterionDefinitionView implements IView {
         // Create metric combo
         final Label mLabel = new Label(group, SWT.PUSH);
         mLabel.setText(Resources.getMessage("CriterionDefinitionView.32")); //$NON-NLS-1$
-
+        d2 = new GridData();
+        d2.heightHint = LABEL_HEIGHT;
+        d2.minimumHeight = LABEL_HEIGHT;
+        mLabel.setLayoutData(d2);
+        
         final Composite mBase = new Composite(group, SWT.NONE);
         final GridData d8 = SWTUtil.createFillHorizontallyGridData();
         d8.horizontalSpan = 2;
@@ -228,6 +234,10 @@ public class CriterionDefinitionView implements IView {
         // Build approximate button
         final Label m2Label = new Label(group, SWT.PUSH);
         m2Label.setText(Resources.getMessage("CriterionDefinitionView.31")); //$NON-NLS-1$
+        d2 = new GridData();
+        d2.heightHint = LABEL_HEIGHT;
+        d2.minimumHeight = LABEL_HEIGHT;
+        m2Label.setLayoutData(d2);
 
         final GridData d82 = SWTUtil.createFillHorizontallyGridData();
         d82.horizontalSpan = 2;
@@ -247,6 +257,10 @@ public class CriterionDefinitionView implements IView {
         // Build protect sensitive associations button
         final Label m3Label = new Label(group, SWT.PUSH);
         m3Label.setText(Resources.getMessage("CriterionDefinitionView.54")); //$NON-NLS-1$
+        d2 = new GridData();
+        d2.heightHint = LABEL_HEIGHT;
+        d2.minimumHeight = LABEL_HEIGHT;
+        m3Label.setLayoutData(d2);
 
         final GridData d83 = SWTUtil.createFillHorizontallyGridData();
         d83.horizontalSpan = 2;
