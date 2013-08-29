@@ -26,6 +26,10 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -76,13 +80,81 @@ public class CriterionDefinitionView implements IView {
     }
 
     private Composite build(final Composite parent) {
+    	
 
         // Create input group
-        final Composite group = new Composite(parent, SWT.NONE);
+        Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout groupInputGridLayout = new GridLayout();
+        GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
+
+        /*
+         *  Add k-anonymity and d-presence views
+         */
+        GridData gd1 = SWTUtil.createFillGridData();
+        gd1.horizontalSpan = 3;
+        gd1.grabExcessVerticalSpace = false;
+        CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder.setUnselectedCloseVisible(false);
+        folder.setSimple(true);
+        folder.setTabHeight(25);
+        folder.setLayoutData(gd1);
+
+        // Prevent closing
+        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            @Override
+            public void close(final CTabFolderEvent event) {
+                event.doit = false;
+            }
+        });
+        
+        // Create k-anonymity tab
+        final CTabItem tabKAnon = new CTabItem(folder, SWT.NULL);
+        tabKAnon.setText("k-Anonymity");
+        tabKAnon.setShowClose(false);
+        KAnonymityView kanon = new KAnonymityView(folder, controller);
+        tabKAnon.setControl(kanon.getControl());
+
+        final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
+        tabDPres.setText("d-Presence");
+        tabDPres.setShowClose(false);
+        DPresenceView dpres = new DPresenceView(folder, controller, model);
+        tabDPres.setControl(dpres.getControl());
+
+        /*
+         * Add general
+         */
+
+        // Add k-anonymity and d-presence views
+        gd1 = SWTUtil.createFillGridData();
+        gd1.horizontalSpan = 3;
+        gd1.grabExcessVerticalSpace = false;
+        folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder.setUnselectedCloseVisible(false);
+        folder.setSimple(true);
+        folder.setTabHeight(25);
+        folder.setLayoutData(gd1);
+
+        // Prevent closing
+        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            @Override
+            public void close(final CTabFolderEvent event) {
+                event.doit = false;
+            }
+        });
+        
+        // Create k-anonymity tab
+        final CTabItem tabGeneral = new CTabItem(folder, SWT.NULL);
+        tabGeneral.setText("General settings");
+        tabGeneral.setShowClose(false);
+
+        group = new Composite(folder, SWT.NONE);
+        group.setLayoutData(SWTUtil.createFillGridData());
+        groupInputGridLayout = new GridLayout();
+        groupInputGridLayout.numColumns = 3;
+        group.setLayout(groupInputGridLayout);
+        tabGeneral.setControl(group);
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
