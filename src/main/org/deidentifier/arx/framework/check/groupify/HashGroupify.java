@@ -112,7 +112,10 @@ public class HashGroupify implements IHashGroupify {
             if (entry.distribution == null) {
                 entry.distribution = new Distribution();
             }
-            entry.distribution.add(sensitive);
+
+            if (subset == null || subset.get(representant)) { // Only add sensitive value if in research subset
+                entry.distribution.add(sensitive);
+            }
         }
     }
 
@@ -165,7 +168,7 @@ public class HashGroupify implements IHashGroupify {
      */
     private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
 
-        // Is a research subset provided
+        // Is the line contained in the research subset
         if (subset != null && !subset.get(representant)) {
             count = 0;
         }
@@ -182,7 +185,6 @@ public class HashGroupify implements IHashGroupify {
         }
         entry.count += count;
 
-        // TODO: What is this?
         // indirectly check if we are in d-presence mode
         if (subset != null) {
             entry.pcount += pcount;
@@ -330,15 +332,11 @@ public class HashGroupify implements IHashGroupify {
 
     @Override
     public boolean isAnonymous() {
-       
-        if (criteria.length==0) {
-            return isKAnonymous();
-        } 
-        
-        if (k != Integer.MAX_VALUE && !isKAnonymous()){
-            return false;
-        }
-        
+
+        if (criteria.length == 0) { return isKAnonymous(); }
+
+        if (k != Integer.MAX_VALUE && !isKAnonymous()) { return false; }
+
         // Iterate over all classes
         currentOutliers = 0;
         HashGroupifyEntry entry = firstEntry;
@@ -370,17 +368,13 @@ public class HashGroupify implements IHashGroupify {
      * @return
      */
     private boolean isAnonymous(HashGroupifyEntry entry) {
-        
+
         // Check minimal group size
-        if (k != Integer.MAX_VALUE && entry.count < k){
-            return false;
-        }
-        
+        if (k != Integer.MAX_VALUE && entry.count < k) { return false; }
+
         // Check other criteria
         for (int i = 0; i < criteria.length; i++) {
-            if (!criteria[i].isAnonymous(entry)) { 
-                return false; 
-            }
+            if (!criteria[i].isAnonymous(entry)) { return false; }
         }
         return true;
     }

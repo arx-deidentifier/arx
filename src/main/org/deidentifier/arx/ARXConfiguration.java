@@ -281,8 +281,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
             }
         }
 
+        int dataLength = 0;
+        if (this.containsCriterion(DPresence.class)) {
+            dataLength = this.getCriterion(DPresence.class).getResearchSubsetSize();
+        } else {
+            dataLength = manager.getDataQI().getDataLength();
+        }
+
         // Compute max outliers
-        absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) manager.getDataQI().getDataLength());
+        absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
 
         // Compute optimized array with criteria, assuming complexities
         // dPresence <= lDiversity <= tCloseness and ignoring kAnonymity

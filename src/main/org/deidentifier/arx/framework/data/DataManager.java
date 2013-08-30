@@ -101,7 +101,7 @@ public class DataManager {
         Set<String> qi = definition.getQuasiIdentifyingAttributes();
         Set<String> se = definition.getSensitiveAttributes();
         Set<String> is = definition.getInsensitiveAttributes();
-        
+
         // Init dictionary
         final Dictionary dictionaryQI = new Dictionary(qi.size());
         final Dictionary dictionarySE = new Dictionary(se.size());
@@ -164,13 +164,13 @@ public class DataManager {
                 final int dictionaryIndex = map[i] - 1;
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];
-                    
+
                     boolean isEmpty = false;
-                    if (definition.getAttributeType(name) instanceof Hierarchy){
-                    	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
+                    if (definition.getAttributeType(name) instanceof Hierarchy) {
+                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
                     } else {
                         isEmpty = true;
-                    	hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
+                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
                     }
                     // Initialize hierarchy height and minimum / maximum generalization
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
@@ -421,12 +421,10 @@ public class DataManager {
      */
     public int[] getTree(String attribute) {
 
-        // TODO: Integrate research subset here
-
         final int[][] data = dataSE.getArray();
         final int index = indexesSE.get(attribute);
         final int[][] hierarchy = hierarchiesSE.get(attribute).map;
-        final int totalElementsP = data.length;
+        final int totalElementsP = subset == null ? data.length : subsetSize;
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
 
