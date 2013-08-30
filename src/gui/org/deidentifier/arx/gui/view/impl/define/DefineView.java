@@ -25,6 +25,7 @@ import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.gui.view.impl.common.DataView;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,12 +35,16 @@ public class DefineView implements IAttachable {
 
     private static final String LEFT_TEXT  = Resources.getMessage("DefineView.0"); //$NON-NLS-1$
     private static final String RIGHT_TEXT = Resources.getMessage("DefineView.1"); //$NON-NLS-1$
-
-    private final Group         compositeLeft;
-    private final Group         compositeRight;
-    private final Composite     center;
-
+    
+    private final Composite center;
+    
     public DefineView(final Composite parent, final Controller controller) {
+
+		// Define
+		Group compositeLeft;
+		Group compositeRight;
+		Composite compositeTopRight;
+		Composite compositeBottomRight;
 
         // Create center composite
         center = new Composite(parent, SWT.NONE);
@@ -64,11 +69,33 @@ public class DefineView implements IAttachable {
         final GridLayout rightLayout = new GridLayout();
         rightLayout.numColumns = 1;
         compositeRight.setLayout(rightLayout);
+        
+        // Create top-right composite
+        GridData topRightLD = SWTUtil.createFillGridData();
+        topRightLD.grabExcessVerticalSpace = true;
+        compositeTopRight = new Composite(compositeRight, SWT.NONE);
+        compositeTopRight.setLayoutData(topRightLD);
+        final GridLayout topRightLayout = new GridLayout();
+        topRightLayout.numColumns = 1;
+//        topRightLayout.marginWidth = 0;
+        topRightLayout.marginHeight = 0;
+        compositeTopRight.setLayout(topRightLayout);
+
+        // Create bottom-right composite
+        GridData bottomRightLD = SWTUtil.createFillGridData();
+        bottomRightLD.grabExcessVerticalSpace = false;
+        compositeBottomRight = new Composite(compositeRight, SWT.NONE);
+        compositeBottomRight.setLayoutData(bottomRightLD);
+        final GridLayout bottomRightLayout = new GridLayout();
+        bottomRightLayout.numColumns = 1;
+        bottomRightLayout.marginWidth = 0;
+        bottomRightLayout.marginHeight = 0;
+        compositeBottomRight.setLayout(bottomRightLayout);
 
         // Create views
         new DataView(compositeLeft, controller, EventTarget.INPUT, null);
-        new DataDefinitionView(compositeRight, controller);
-        new CriterionDefinitionView(compositeRight, controller);
+        new DataDefinitionView(compositeTopRight, controller);
+        new CriterionDefinitionView(compositeBottomRight, controller);
     }
 
     @Override

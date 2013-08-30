@@ -59,10 +59,10 @@ public class LDiversityView implements ICriterionView, IAttachable{
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 4;
+        groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
 
-        // Create k slider
+        // Create l slider
         final Label lLabel = new Label(group, SWT.NONE);
         lLabel.setText(Resources.getMessage("CriterionDefinitionView.27")); //$NON-NLS-1$
 
@@ -75,7 +75,7 @@ public class LDiversityView implements ICriterionView, IAttachable{
 
         sliderL = new Scale(group, SWT.HORIZONTAL);
         final GridData d4 = SWTUtil.createFillHorizontallyGridData();
-        d4.horizontalSpan = 2;
+        d4.horizontalSpan = 1;
         sliderL.setLayoutData(d4);
         sliderL.setMaximum(SLIDER_MAX);
         sliderL.setMinimum(0);
@@ -95,6 +95,7 @@ public class LDiversityView implements ICriterionView, IAttachable{
         comboVariant = new Combo(group, SWT.READ_ONLY);
         GridData d31 = SWTUtil.createFillHorizontallyGridData();
         d31.verticalAlignment = SWT.CENTER;
+        d31.horizontalSpan = 2;
         comboVariant.setLayoutData(d31);
         comboVariant.setItems(VARIANTS);
         comboVariant.select(0);
@@ -132,6 +133,11 @@ public class LDiversityView implements ICriterionView, IAttachable{
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
             	variant = comboVariant.getSelectionIndex();
+            	if (variant==2) {
+            		sliderC.setEnabled(true);
+            	} else {
+            		sliderC.setEnabled(false);
+            	}
             }
         });
 

@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.Model;
 import org.deidentifier.arx.gui.SWTUtil;
@@ -37,10 +37,13 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -216,6 +219,41 @@ public class AttributeDefinitionView implements IView {
         // Editor hierarchy
         editor = new HierarchyView(group, attribute, controller);
 
+
+        /*
+         *  Add k-anonymity and d-presence views
+         */
+        GridData gd1 = SWTUtil.createFillGridData();
+        gd1.grabExcessVerticalSpace = false;
+        CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder.setUnselectedCloseVisible(false);
+        folder.setSimple(true);
+        folder.setTabHeight(25);
+        folder.setLayoutData(gd1);
+
+        // Prevent closing
+        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            @Override
+            public void close(final CTabFolderEvent event) {
+                event.doit = false;
+            }
+        });
+        
+        // Create k-anonymity tab
+        final CTabItem tabLDiversity = new CTabItem(folder, SWT.NULL);
+        tabLDiversity.setText("l-Diversity");
+        tabLDiversity.setShowClose(false);
+        LDiversityView view = new LDiversityView(folder, controller, attribute);
+        tabLDiversity.setControl(view.getControl());
+        folder.setSelection(tabLDiversity);
+
+        final CTabItem tabTcloseness = new CTabItem(folder, SWT.NULL);
+        tabTcloseness.setText("t-Closeness");
+        tabTcloseness.setShowClose(false);
+        TClosenessView view2 = new TClosenessView(folder, controller, model, attribute);
+        tabTcloseness.setControl(view2.getControl());
+
+        
         // Attach to tab
         tab.setControl(group);
     }

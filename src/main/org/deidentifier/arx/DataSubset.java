@@ -3,6 +3,8 @@ package org.deidentifier.arx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,24 +69,23 @@ public class DataSubset {
      */
     public static DataSubset create(Data data, Data subset){
         
-        // TODO: This must implement an inner join
-        // TODO: E.g., results are wrong if the same tuple exists twice in the subset
-        
         // TODO: Implement more efficiently
         DataHandle bHandle = data.getHandle();
         DataHandle sHandle = subset.getHandle();
         
         // Add background data to map
-        Map<Entry, Integer> background = new HashMap<Entry, Integer>();
-        // TODO: Must be Map<Entry, Map<Entry, Integer>> to support multiple identical rows
-        // TODO: When probing into the map, remove the according entry
+        Map<Entry, List<Integer>> background = new HashMap<Entry, List<Integer>>();
         
         for (int i=0; i<bHandle.getNumRows(); i++){
             String[] tuple = new String[bHandle.getNumColumns()];
             for (int j=0; j<tuple.length; j++){
                 tuple[j] = bHandle.getValue(i, j);
             }
-            background.put(new Entry(tuple), i);
+            Entry entry = new Entry(tuple);
+            if (!background.containsKey(entry)) {
+            	background.put(entry, new ArrayList<Integer>());
+            }
+            background.get(entry).add(i);
         }
         
         // Init
@@ -98,10 +99,14 @@ public class DataSubset {
             for (int j=0; j<tuple.length; j++){
                 tuple[j] = sHandle.getValue(i, j);
             }
-            Integer index = background.get(new Entry(tuple));
-            if (index == null) {
+            List<Integer> indices = background.get(new Entry(tuple));
+            if (indices == null) {
                 throw new IllegalArgumentException("No match found for: "+tuple);
             }
+            if (indices.isEmpty()) {
+            	throw new IllegalArgumentException("Too many matches found for: "+tuple);
+            }
+            int index = indices.remove(0);
             bitset.set(index);
             array[idx++] = index;
         }

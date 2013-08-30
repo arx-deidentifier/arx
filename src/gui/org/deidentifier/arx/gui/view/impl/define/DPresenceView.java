@@ -55,21 +55,21 @@ public class DPresenceView implements ICriterionView, IAttachable{
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 4;
+        groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
 
         // Create dmin slider
-        final Label zLabel = new Label(root, SWT.NONE);
+        final Label zLabel = new Label(group, SWT.NONE);
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.50")); //$NON-NLS-1$
 
-        labelDMin = new Label(root, SWT.BORDER | SWT.CENTER);
+        labelDMin = new Label(group, SWT.BORDER | SWT.CENTER);
         final GridData d9 = new GridData();
         d9.minimumWidth = LABEL_WIDTH;
         d9.widthHint = LABEL_WIDTH;
         labelDMin.setLayoutData(d9);
         labelDMin.setText("0.001"); //$NON-NLS-1$
 
-        sliderDMin = new Scale(root, SWT.HORIZONTAL);
+        sliderDMin = new Scale(group, SWT.HORIZONTAL);
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
         d6.horizontalSpan = 1;
         sliderDMin.setLayoutData(d6);
@@ -86,17 +86,17 @@ public class DPresenceView implements ICriterionView, IAttachable{
 
 
         // Create dax slider
-        final Label z2Label = new Label(root, SWT.NONE);
+        final Label z2Label = new Label(group, SWT.NONE);
         z2Label.setText(Resources.getMessage("CriterionDefinitionView.51")); //$NON-NLS-1$
 
-        labelDMax = new Label(root, SWT.BORDER | SWT.CENTER);
+        labelDMax = new Label(group, SWT.BORDER | SWT.CENTER);
         final GridData d91 = new GridData();
         d91.minimumWidth = LABEL_WIDTH;
         d91.widthHint = LABEL_WIDTH;
         labelDMax.setLayoutData(d91);
         labelDMax.setText("0.001"); //$NON-NLS-1$
 
-        sliderDMax = new Scale(root, SWT.HORIZONTAL);
+        sliderDMax = new Scale(group, SWT.HORIZONTAL);
         final GridData d62 = SWTUtil.createFillHorizontallyGridData();
         d62.horizontalSpan = 1;
         sliderDMax.setLayoutData(d62);

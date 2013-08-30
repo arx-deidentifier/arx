@@ -26,6 +26,10 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -40,6 +44,7 @@ public class CriterionDefinitionView implements IView {
 
     private static final int       SLIDER_MAX      = 1000;
     private static final int       LABEL_WIDTH     = 50;
+    private static final int       LABEL_HEIGHT    = 20;
     private static final String    LABELS_METRIC[] = { Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.2"), //$NON-NLS-1$
@@ -76,22 +81,91 @@ public class CriterionDefinitionView implements IView {
     }
 
     private Composite build(final Composite parent) {
+    	
 
         // Create input group
-        final Composite group = new Composite(parent, SWT.NONE);
+        Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout groupInputGridLayout = new GridLayout();
+        GridLayout groupInputGridLayout = new GridLayout();
+        groupInputGridLayout.numColumns = 1;
+        group.setLayout(groupInputGridLayout);
+
+        /*
+         *  Add k-anonymity and d-presence views
+         */
+        GridData gd1 = SWTUtil.createFillGridData();
+        gd1.grabExcessVerticalSpace = false;
+        CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder.setUnselectedCloseVisible(false);
+        folder.setSimple(true);
+        folder.setTabHeight(25);
+        folder.setLayoutData(gd1);
+
+        // Prevent closing
+        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            @Override
+            public void close(final CTabFolderEvent event) {
+                event.doit = false;
+            }
+        });
+        
+        // Create k-anonymity tab
+        final CTabItem tabKAnon = new CTabItem(folder, SWT.NULL);
+        tabKAnon.setText("k-Anonymity");
+        tabKAnon.setShowClose(false);
+        KAnonymityView kanon = new KAnonymityView(folder, controller);
+        tabKAnon.setControl(kanon.getControl());
+        folder.setSelection(tabKAnon);
+
+        final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
+        tabDPres.setText("d-Presence");
+        tabDPres.setShowClose(false);
+        DPresenceView dpres = new DPresenceView(folder, controller, model);
+        tabDPres.setControl(dpres.getControl());
+
+        /*
+         * Add general
+         */
+
+        // Add k-anonymity and d-presence views
+        gd1 = SWTUtil.createFillGridData();
+        gd1.grabExcessVerticalSpace = false;
+        folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder.setUnselectedCloseVisible(false);
+        folder.setSimple(true);
+        folder.setTabHeight(25);
+        folder.setLayoutData(gd1);
+
+        // Prevent closing
+        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+            @Override
+            public void close(final CTabFolderEvent event) {
+                event.doit = false;
+            }
+        });
+        
+        // Create general tab
+        final CTabItem tabGeneral = new CTabItem(folder, SWT.NULL);
+        tabGeneral.setText("General settings");
+        tabGeneral.setShowClose(false);
+
+        group = new Composite(folder, SWT.NONE);
+        group.setLayoutData(SWTUtil.createFillGridData());
+        groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
+        tabGeneral.setControl(group);
+        folder.setSelection(tabGeneral);
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.11")); //$NON-NLS-1$
 
         labelOutliers = new Label(group, SWT.BORDER | SWT.CENTER);
-        final GridData d2 = new GridData();
+        GridData d2 = new GridData();
         d2.minimumWidth = LABEL_WIDTH;
         d2.widthHint = LABEL_WIDTH;
+        d2.heightHint = LABEL_HEIGHT;
         labelOutliers.setLayoutData(d2);
         labelOutliers.setText("0"); //$NON-NLS-1$
 
@@ -122,7 +196,11 @@ public class CriterionDefinitionView implements IView {
         // Create metric combo
         final Label mLabel = new Label(group, SWT.PUSH);
         mLabel.setText(Resources.getMessage("CriterionDefinitionView.32")); //$NON-NLS-1$
-
+        d2 = new GridData();
+        d2.heightHint = LABEL_HEIGHT;
+        d2.minimumHeight = LABEL_HEIGHT;
+        mLabel.setLayoutData(d2);
+        
         final Composite mBase = new Composite(group, SWT.NONE);
         final GridData d8 = SWTUtil.createFillHorizontallyGridData();
         d8.horizontalSpan = 2;
@@ -156,6 +234,10 @@ public class CriterionDefinitionView implements IView {
         // Build approximate button
         final Label m2Label = new Label(group, SWT.PUSH);
         m2Label.setText(Resources.getMessage("CriterionDefinitionView.31")); //$NON-NLS-1$
+        d2 = new GridData();
+        d2.heightHint = LABEL_HEIGHT;
+        d2.minimumHeight = LABEL_HEIGHT;
+        m2Label.setLayoutData(d2);
 
         final GridData d82 = SWTUtil.createFillHorizontallyGridData();
         d82.horizontalSpan = 2;
@@ -175,6 +257,10 @@ public class CriterionDefinitionView implements IView {
         // Build protect sensitive associations button
         final Label m3Label = new Label(group, SWT.PUSH);
         m3Label.setText(Resources.getMessage("CriterionDefinitionView.54")); //$NON-NLS-1$
+        d2 = new GridData();
+        d2.heightHint = LABEL_HEIGHT;
+        d2.minimumHeight = LABEL_HEIGHT;
+        m3Label.setLayoutData(d2);
 
         final GridData d83 = SWTUtil.createFillHorizontallyGridData();
         d83.horizontalSpan = 2;
