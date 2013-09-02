@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IPropertyEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

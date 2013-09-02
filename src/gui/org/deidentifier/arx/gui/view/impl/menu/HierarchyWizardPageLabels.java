@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.gui.SWTUtil;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IHierarchyEditorView;
 import org.deidentifier.arx.gui.view.impl.define.HierarchyView;
 import org.eclipse.jface.wizard.WizardPage;

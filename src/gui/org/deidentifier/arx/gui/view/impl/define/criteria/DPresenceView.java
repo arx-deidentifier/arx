@@ -1,55 +1,37 @@
-package org.deidentifier.arx.gui.view.impl.define;
+package org.deidentifier.arx.gui.view.impl.define.criteria;
 
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.Model;
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.def.IAttachable;
-import org.deidentifier.arx.gui.view.def.ICriterionView;
-import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-public class DPresenceView implements ICriterionView, IAttachable{
-
-
-    private static final int       SLIDER_MAX      = 1000;
-    private static final int       LABEL_WIDTH     = 50;
-    
-    private final Controller       controller;
-    private final Model			   model;
+public class DPresenceView extends CriterionView{
 
     private Scale                  sliderDMin;
     private Scale                  sliderDMax;
     private Label                  labelDMin;
     private Label                  labelDMax;
 
-    private double dmin = 0.001d;
-    private double dmax = 0.001d;
-    
-    private Composite root;
-
     public DPresenceView(final Composite parent,
                          final Controller controller,
                          final Model model) {
 
-    	this.model = model;
-        this.controller = controller;
-        this.controller.addListener(EventTarget.MODEL, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.root = build(parent);
+    	super(parent, controller, model);
     }
 
-	private Composite build(Composite parent) {
+    @Override
+	protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
@@ -79,8 +61,8 @@ public class DPresenceView implements ICriterionView, IAttachable{
         sliderDMin.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                dmin = sliderToDouble(0.001, 1, sliderDMin.getSelection());
-                labelDMin.setText(String.valueOf(dmin));
+                model.getDPresenceModel().setDmin(sliderToDouble(0.001, 1, sliderDMin.getSelection()));
+                labelDMin.setText(String.valueOf(model.getDPresenceModel().getDmin()));
             }
         });
 
@@ -106,36 +88,12 @@ public class DPresenceView implements ICriterionView, IAttachable{
         sliderDMax.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                dmax = sliderToDouble(0.001, 1, sliderDMax.getSelection());
-                labelDMax.setText(String.valueOf(dmax));
+                model.getDPresenceModel().setDmax(sliderToDouble(0.001, 1, sliderDMax.getSelection()));
+                labelDMax.setText(String.valueOf(model.getDPresenceModel().getDmax()));
             }
         });
 
         return group;
-	}
-
-    private double sliderToDouble(final double min,
-                                  final double max,
-                                  final int value) {
-        double val = ((double) value / (double) SLIDER_MAX) * max;
-        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-        if (val < min) {
-            val = min;
-        }
-        if (val > max) {
-            val = max;
-        }
-        return val;
-    }
-
-	@Override
-	public PrivacyCriterion getCriterion() {
-		return new DPresence(dmin, dmax, model.getInputConfig().getResearchSubset());
-	}
-
-	@Override
-	public void dispose() {
-        controller.removeListener(this);
 	}
 
 	@Override
@@ -145,22 +103,21 @@ public class DPresenceView implements ICriterionView, IAttachable{
         sliderDMax.setSelection(0);
         labelDMin.setText("0.001"); //$NON-NLS-1$
         labelDMax.setText("0.001"); //$NON-NLS-1$
-        dmin = 0.001d;
-        dmax = 0.001d;
-        SWTUtil.disable(root);
+        super.reset();
 	}
 
 	@Override
-	public void update(ModelEvent event) {
-		if (event.target == EventTarget.MODEL) {
-			SWTUtil.enable(root);
-        } else if (event.target == EventTarget.INPUT) {
-            SWTUtil.enable(root);
-        }
-	}
-
-	@Override
-	public Control getControl() {
-		return root;
+	protected boolean parse() {
+		ModelDPresenceCriterion m = model.getDPresenceModel();
+		if (m==null){
+			reset();
+			return false;
+		}
+		labelDMin.setText(String.valueOf(m.getDmin()));
+		sliderDMin.setSelection(doubleToSlider(0.001d, 1d, m.getDmin()));
+		labelDMax.setText(String.valueOf(m.getDmax()));
+		sliderDMax.setSelection(doubleToSlider(0.001d, 1d, m.getDmax()));
+		SWTUtil.enable(root);
+		return true;
 	}
 }

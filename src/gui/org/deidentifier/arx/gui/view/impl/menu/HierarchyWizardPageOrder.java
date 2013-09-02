@@ -26,8 +26,8 @@ import java.util.Comparator;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.SWTUtil;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

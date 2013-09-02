@@ -21,7 +21,7 @@ package org.deidentifier.arx.gui.view.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;

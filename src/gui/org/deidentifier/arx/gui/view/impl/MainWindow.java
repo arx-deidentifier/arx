@@ -25,9 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.Model;
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;

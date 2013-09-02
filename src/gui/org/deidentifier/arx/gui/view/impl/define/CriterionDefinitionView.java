@@ -19,11 +19,15 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.Model;
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.impl.define.criteria.DPresenceView;
+import org.deidentifier.arx.gui.view.impl.define.criteria.KAnonymityView;
+import org.deidentifier.arx.gui.view.impl.define.criteria.LDiversityView;
+import org.deidentifier.arx.gui.view.impl.define.criteria.TClosenessView;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -87,11 +91,11 @@ public class CriterionDefinitionView implements IView {
         Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 1;
+        groupInputGridLayout.numColumns = 2;
         group.setLayout(groupInputGridLayout);
 
         /*
-         *  Add k-anonymity and d-presence views
+         *  Add tab folder for criteria
          */
         GridData gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
@@ -111,33 +115,51 @@ public class CriterionDefinitionView implements IView {
         
         // Create k-anonymity tab
         final CTabItem tabKAnon = new CTabItem(folder, SWT.NULL);
-        tabKAnon.setText("k-Anonymity");
+        tabKAnon.setText("- Anonymity");
         tabKAnon.setShowClose(false);
-        KAnonymityView kanon = new KAnonymityView(folder, controller);
+        KAnonymityView kanon = new KAnonymityView(folder, controller, model);
         tabKAnon.setControl(kanon.getControl());
+        tabKAnon.setImage(controller.getResources().getImage("symbol_k.gif")); //$NON-NLS-1$
         folder.setSelection(tabKAnon);
 
+        // Create d-presence tab
         final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
-        tabDPres.setText("d-Presence");
+        tabDPres.setText("- Presence");
         tabDPres.setShowClose(false);
+        tabDPres.setImage(controller.getResources().getImage("symbol_d.gif")); //$NON-NLS-1$
         DPresenceView dpres = new DPresenceView(folder, controller, model);
         tabDPres.setControl(dpres.getControl());
+        
+        // Create l-diversity tab
+        final CTabItem tabLDiversity = new CTabItem(folder, SWT.NULL);
+        tabLDiversity.setText("- Diversity");
+        tabLDiversity.setShowClose(false);
+        tabLDiversity.setImage(controller.getResources().getImage("symbol_l.gif")); //$NON-NLS-1$
+        LDiversityView view = new LDiversityView(folder, controller, model);
+        tabLDiversity.setControl(view.getControl());
+
+        // Create t-closeness tab
+        final CTabItem tabTcloseness = new CTabItem(folder, SWT.NULL);
+        tabTcloseness.setText("- Closeness");
+        tabTcloseness.setShowClose(false);
+        tabTcloseness.setImage(controller.getResources().getImage("symbol_t.gif")); //$NON-NLS-1$
+        TClosenessView view2 = new TClosenessView(folder, controller, model);
+        tabTcloseness.setControl(view2.getControl());
 
         /*
-         * Add general
+         * Add general view
          */
-
-        // Add k-anonymity and d-presence views
         gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
-        folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
-        folder.setUnselectedCloseVisible(false);
-        folder.setSimple(true);
-        folder.setTabHeight(25);
-        folder.setLayoutData(gd1);
+        gd1.horizontalSpan = 2;
+        CTabFolder folder2 = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder2.setUnselectedCloseVisible(false);
+        folder2.setSimple(true);
+        folder2.setTabHeight(25);
+        folder2.setLayoutData(gd1);
 
         // Prevent closing
-        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+        folder2.addCTabFolder2Listener(new CTabFolder2Adapter() {
             @Override
             public void close(final CTabFolderEvent event) {
                 event.doit = false;
@@ -145,17 +167,17 @@ public class CriterionDefinitionView implements IView {
         });
         
         // Create general tab
-        final CTabItem tabGeneral = new CTabItem(folder, SWT.NULL);
+        final CTabItem tabGeneral = new CTabItem(folder2, SWT.NULL);
         tabGeneral.setText("General settings");
         tabGeneral.setShowClose(false);
 
-        group = new Composite(folder, SWT.NONE);
+        group = new Composite(folder2, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
         tabGeneral.setControl(group);
-        folder.setSelection(tabGeneral);
+        folder2.setSelection(tabGeneral);
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);

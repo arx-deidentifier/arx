@@ -21,9 +21,9 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.gui.Model;
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IPropertyEditor;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;

@@ -39,6 +39,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -130,6 +131,8 @@ public class Controller implements IView {
                                         .getHandle()
                                         .getAttributeName(i), DataType.STRING);
         }
+        
+        model.resetCriteria();
 
         // Display the changes
         update(new ModelEvent(this, EventTarget.MODEL, model));

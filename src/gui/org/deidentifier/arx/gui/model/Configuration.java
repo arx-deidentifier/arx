@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui;
+package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class Configuration implements Serializable {
     private static final long   serialVersionUID      = -2887699232096897527L;
 
     private transient Data         input                 = null;
-    private ARXConfiguration       config                = null;
+    private ARXConfiguration       config                = new ARXConfiguration();
     private boolean                removeOutliers        = true;
     private boolean                modified              = false;
     private Map<String, Hierarchy> hierarchies           = new HashMap<String, Hierarchy>();
@@ -272,8 +272,28 @@ public class Configuration implements Serializable {
     	return config;
     }
 
+    /**
+     * Returns the current research subset
+     * @return
+     */
 	public DataSubset getResearchSubset() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Protect sensitive associations
+	 * @param selection
+	 */
+	public void setProtectSensitiveAssociations(boolean selection) {
+		config.setProtectSensitiveAssociations(selection);
+	}
+	
+	/**
+	 * Protect sensitive associations
+	 * @return
+	 */
+	public boolean isProtectSensitiveAssociations() {
+		return config.isProtectSensitiveAssociations();
 	}
 }

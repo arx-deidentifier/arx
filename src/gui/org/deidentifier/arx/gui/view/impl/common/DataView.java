@@ -21,7 +21,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.Model;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;

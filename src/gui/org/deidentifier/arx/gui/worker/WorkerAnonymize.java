@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.gui.Model;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 

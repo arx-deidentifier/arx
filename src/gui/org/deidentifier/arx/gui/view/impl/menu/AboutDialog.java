@@ -19,8 +19,8 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.SWTUtil;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;

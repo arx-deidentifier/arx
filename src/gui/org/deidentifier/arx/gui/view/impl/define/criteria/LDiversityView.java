@@ -1,14 +1,14 @@
-package org.deidentifier.arx.gui.view.impl.define;
+package org.deidentifier.arx.gui.view.impl.define.criteria;
 
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.def.IAttachable;
-import org.deidentifier.arx.gui.view.def.ICriterionView;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -17,43 +17,31 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-public class LDiversityView implements ICriterionView, IAttachable{
+public class LDiversityView extends CriterionView{
 
 	private static final String    VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    private static final int       SLIDER_MAX      = 1000;
-    private static final int       LABEL_WIDTH     = 50;
-    
-    private final Controller       controller;
 
     private Scale                  sliderL;
     private Scale                  sliderC;
     private Combo                  comboVariant;
     private Label                  labelC;
     private Label                  labelL;
-
-    private String attribute;
-    private int l = 2;
-    private double c = 0.001d;
-    private int variant = 0;
-    
-    private Composite root;
+    private String 				   attribute;
 
     public LDiversityView(final Composite parent,
                           final Controller controller,
-                          final String attribute) {
-
-    	this.attribute = attribute;
-        this.controller = controller;
-        this.controller.addListener(EventTarget.MODEL, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.root = build(parent);
+                          final Model model) {
+    	
+    	super(parent, controller, model);
+    	this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
+    	this.controller.addListener(EventTarget.INPUT, this);
     }
 
-	private Composite build(Composite parent) {
+    @Override
+	protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
@@ -83,8 +71,9 @@ public class LDiversityView implements ICriterionView, IAttachable{
         sliderL.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                l = sliderToInt(2, 100, sliderL.getSelection());
-                labelL.setText(String.valueOf(l));
+            	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+            	m.setL(sliderToInt(2, 100, sliderL.getSelection()));
+                labelL.setText(String.valueOf(m.getL()));
             }
         });
 
@@ -122,18 +111,18 @@ public class LDiversityView implements ICriterionView, IAttachable{
         sliderC.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                c = sliderToDouble(0.001,
-                                          100,
-                                          sliderC.getSelection());
-                labelC.setText(String.valueOf(c));
+            	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+				m.setC(sliderToDouble(0.001d, 100d, sliderC.getSelection()));
+                labelC.setText(String.valueOf(m.getC()));
             }
         });
 
         comboVariant.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-            	variant = comboVariant.getSelectionIndex();
-            	if (variant==2) {
+            	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+            	m.setVariant(comboVariant.getSelectionIndex());
+            	if (m.getVariant()==2) {
             		sliderC.setEnabled(true);
             	} else {
             		sliderC.setEnabled(false);
@@ -144,50 +133,6 @@ public class LDiversityView implements ICriterionView, IAttachable{
         return group;
 	}
 
-    private double sliderToDouble(final double min,
-                                  final double max,
-                                  final int value) {
-        double val = ((double) value / (double) SLIDER_MAX) * max;
-        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-        if (val < min) {
-            val = min;
-        }
-        if (val > max) {
-            val = max;
-        }
-        return val;
-    }
-    
-    private int sliderToInt(final int min, final int max, final int value) {
-        int val = (int) Math.round(((double) value / (double) SLIDER_MAX) * max);
-        if (val < min) {
-            val = min;
-        }
-        if (val > max) {
-            val = max;
-        }
-        return val;
-    }
-
-	@Override
-	public PrivacyCriterion getCriterion() {
-		
-		if (variant==0){
-			return new DistinctLDiversity(attribute, l);
-		} else if (variant==1){
-			return new EntropyLDiversity(attribute, l);
-		} else if (variant==2){
-			return new RecursiveCLDiversity(attribute, c, l);
-		} else {
-			throw new RuntimeException("Internal error: invalid variant of l-diversity");
-		}
-	}
-
-	@Override
-	public void dispose() {
-        controller.removeListener(this);
-	}
-
 	@Override
 	public void reset() {
 		sliderL.setSelection(0);
@@ -195,24 +140,31 @@ public class LDiversityView implements ICriterionView, IAttachable{
         labelC.setText("0.001"); //$NON-NLS-1$
         labelL.setText("2"); //$NON-NLS-1$
         comboVariant.select(0);
-        SWTUtil.disable(root);
-        l = 2;
-        c = 0.001d;
-        variant = 0;
-        SWTUtil.disable(root);
+        super.reset();
 	}
 
 	@Override
 	public void update(ModelEvent event) {
-		if (event.target == EventTarget.MODEL) {
-			SWTUtil.enable(root);
-        } else if (event.target == EventTarget.INPUT) {
-            SWTUtil.enable(root);
-        }
+		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+			this.attribute = (String)event.data;
+			this.parse();
+		} 
+        super.update(event);
 	}
 
 	@Override
-	public Control getControl() {
-		return root;
+	protected boolean parse() {
+		ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
+		if (m==null){
+			reset();
+			return false;
+		}
+        labelC.setText(String.valueOf(m.getC()));
+        labelL.setText(String.valueOf(m.getL()));
+		sliderL.setSelection(intToSlider(2, 100, m.getL()));
+		sliderC.setSelection(doubleToSlider(0.001d, 100d, m.getC()));
+        comboVariant.select(m.getVariant());
+        SWTUtil.enable(root);
+        return true;
 	}
 }

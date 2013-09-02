@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui;
+package org.deidentifier.arx.gui.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;

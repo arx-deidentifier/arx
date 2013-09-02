@@ -19,8 +19,8 @@
 package org.deidentifier.arx.gui.view.impl.analyze;
 
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.SWTUtil;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IStatisticsView;

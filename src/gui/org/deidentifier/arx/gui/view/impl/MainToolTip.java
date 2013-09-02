@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
-import org.deidentifier.arx.gui.SWTUtil;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
