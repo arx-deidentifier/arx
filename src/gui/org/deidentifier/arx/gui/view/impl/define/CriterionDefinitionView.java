@@ -119,14 +119,14 @@ public class CriterionDefinitionView implements IView {
         tabKAnon.setShowClose(false);
         KAnonymityView kanon = new KAnonymityView(folder, controller, model);
         tabKAnon.setControl(kanon.getControl());
-        tabKAnon.setImage(controller.getResources().getImage("symbol_k.gif")); //$NON-NLS-1$
+        tabKAnon.setImage(controller.getResources().getImage("symbol_k.png")); //$NON-NLS-1$
         folder.setSelection(tabKAnon);
 
         // Create d-presence tab
         final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
         tabDPres.setText("- Presence");
         tabDPres.setShowClose(false);
-        tabDPres.setImage(controller.getResources().getImage("symbol_d.gif")); //$NON-NLS-1$
+        tabDPres.setImage(controller.getResources().getImage("symbol_d.png")); //$NON-NLS-1$
         DPresenceView dpres = new DPresenceView(folder, controller, model);
         tabDPres.setControl(dpres.getControl());
         
@@ -134,7 +134,7 @@ public class CriterionDefinitionView implements IView {
         final CTabItem tabLDiversity = new CTabItem(folder, SWT.NULL);
         tabLDiversity.setText("- Diversity");
         tabLDiversity.setShowClose(false);
-        tabLDiversity.setImage(controller.getResources().getImage("symbol_l.gif")); //$NON-NLS-1$
+        tabLDiversity.setImage(controller.getResources().getImage("symbol_l.png")); //$NON-NLS-1$
         LDiversityView view = new LDiversityView(folder, controller, model);
         tabLDiversity.setControl(view.getControl());
 
@@ -142,7 +142,7 @@ public class CriterionDefinitionView implements IView {
         final CTabItem tabTcloseness = new CTabItem(folder, SWT.NULL);
         tabTcloseness.setText("- Closeness");
         tabTcloseness.setShowClose(false);
-        tabTcloseness.setImage(controller.getResources().getImage("symbol_t.gif")); //$NON-NLS-1$
+        tabTcloseness.setImage(controller.getResources().getImage("symbol_t.png")); //$NON-NLS-1$
         TClosenessView view2 = new TClosenessView(folder, controller, model);
         tabTcloseness.setControl(view2.getControl());
 
