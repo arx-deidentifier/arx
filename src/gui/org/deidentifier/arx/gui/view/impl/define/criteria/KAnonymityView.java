@@ -81,7 +81,11 @@ public class KAnonymityView extends CriterionView {
 		}
 		labelK.setText(String.valueOf(m.getK()));
 		sliderK.setSelection(intToSlider(2, 100, m.getK()));
-		SWTUtil.enable(root);
+		if (m.isActive()) {
+			SWTUtil.enable(root);
+		} else {
+			SWTUtil.disable(root);
+		}
 		return true;
 	}
 }

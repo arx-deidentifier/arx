@@ -99,6 +99,8 @@ public class CriterionDefinitionView implements IView {
          */
         GridData gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
+        gd1.grabExcessHorizontalSpace = true;
+        gd1.horizontalSpan = 2;
         CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
         folder.setUnselectedCloseVisible(false);
         folder.setSimple(true);

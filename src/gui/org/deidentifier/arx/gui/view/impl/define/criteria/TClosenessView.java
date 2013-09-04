@@ -1,8 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.define.criteria;
 
-import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
@@ -36,6 +33,7 @@ public class TClosenessView extends CriterionView {
 		super(parent, controller, model);
 		this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
     	this.controller.addListener(EventTarget.INPUT, this);
+    	this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
 	}
 
 	@Override
@@ -112,7 +110,11 @@ public class TClosenessView extends CriterionView {
 		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
 			this.attribute = (String)event.data;
 			this.parse();
-		} 
+		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+			if (event.data.equals(this.attribute)) {
+				this.parse();
+			}
+		}
 		super.update(event);
 	}
 
@@ -126,7 +128,11 @@ public class TClosenessView extends CriterionView {
 		sliderT.setSelection(doubleToSlider(0.001d, 1d, m.getT()));
 		labelT.setText(String.valueOf(m.getT()));
 		comboVariant.select(m.getVariant());
-		SWTUtil.enable(root);
+		if (m.isActive()) {
+			SWTUtil.enable(root);
+		} else {
+			SWTUtil.disable(root);
+		}
 		return true;
 	}
 }

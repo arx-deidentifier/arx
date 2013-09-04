@@ -8,6 +8,11 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	private static final long serialVersionUID = -1765428286262869856L;
 	private double dmin = 0.001d;
 	private double dmax = 0.001d;
+	
+	public ModelDPresenceCriterion(){
+		super.setActive(true);
+	}
+	
 	public double getDmin() {
 		return dmin;
 	}

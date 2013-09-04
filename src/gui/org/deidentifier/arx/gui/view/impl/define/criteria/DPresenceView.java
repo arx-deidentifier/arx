@@ -117,7 +117,11 @@ public class DPresenceView extends CriterionView{
 		sliderDMin.setSelection(doubleToSlider(0.001d, 1d, m.getDmin()));
 		labelDMax.setText(String.valueOf(m.getDmax()));
 		sliderDMax.setSelection(doubleToSlider(0.001d, 1d, m.getDmax()));
-		SWTUtil.enable(root);
+		if (m.isActive()) {
+			SWTUtil.enable(root);
+		} else {
+			SWTUtil.disable(root);
+		}
 		return true;
 	}
 }

@@ -137,31 +137,24 @@ public class AttributeDefinitionView implements IView {
                         final DataDefinition definition = model.getInputConfig()
                                                                .getInput()
                                                                .getDefinition();
+                        
+                        // Handle QIs 
                         if (type == null) {
-
-                            // Set the attribute type
                             definition.setAttributeType(attribute,
                                                         Hierarchy.create());
                         } else {
-
-                            // Make sure, only one sensitive attribute is
-                            // defined
-                            if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-                                final Set<String> redefine = new HashSet<String>();
-                                redefine.addAll(definition.getSensitiveAttributes());
-                                for (final String other : redefine) {
-                                    // TODO: We redefine it to be
-                                    // quasi-identifiers, needs warning?
-                                    definition.setAttributeType(other,
-                                                                Hierarchy.create());
-                                    controller.update(new ModelEvent(outer,
-                                                                     EventTarget.ATTRIBUTE_TYPE,
-                                                                     other));
-                                }
-                            }
-
-                            // Set the attribute type
                             definition.setAttributeType(attribute, type);
+                        }
+                        
+                        // Enable/disable criteria for sensitive attributes
+                        if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
+                        	model.getLDiversityModel().get(attribute).setActive(true);
+                        	model.getTClosenessModel().get(attribute).setActive(true);
+                        } else {
+                        	model.getLDiversityModel().get(attribute).setActive(false);
+                        	model.getLDiversityModel().get(attribute).setEnabled(false);
+                        	model.getTClosenessModel().get(attribute).setActive(false);
+                        	model.getTClosenessModel().get(attribute).setEnabled(false);
                         }
 
                         // Update icon

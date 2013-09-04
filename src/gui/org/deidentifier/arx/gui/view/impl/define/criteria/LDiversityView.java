@@ -9,6 +9,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,6 +39,7 @@ public class LDiversityView extends CriterionView{
     	super(parent, controller, model);
     	this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
     	this.controller.addListener(EventTarget.INPUT, this);
+    	this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
     }
 
     @Override
@@ -148,7 +150,11 @@ public class LDiversityView extends CriterionView{
 		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
 			this.attribute = (String)event.data;
 			this.parse();
-		} 
+		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+			if (event.data.equals(this.attribute)) {
+				this.parse();
+			}
+		}
         super.update(event);
 	}
 
@@ -164,7 +170,11 @@ public class LDiversityView extends CriterionView{
 		sliderL.setSelection(intToSlider(2, 100, m.getL()));
 		sliderC.setSelection(doubleToSlider(0.001d, 100d, m.getC()));
         comboVariant.select(m.getVariant());
-        SWTUtil.enable(root);
+        if (m.isActive()) {
+			SWTUtil.enable(root);
+		} else {
+			SWTUtil.disable(root);
+		}
         return true;
 	}
 }
