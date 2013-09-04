@@ -43,7 +43,7 @@ public class TClosenessView extends CriterionView {
 		final Composite group = new Composite(parent, SWT.NONE);
 		group.setLayoutData(SWTUtil.createFillGridData());
 		final GridLayout groupInputGridLayout = new GridLayout();
-		groupInputGridLayout.numColumns = 3;
+		groupInputGridLayout.numColumns = 5;
 		group.setLayout(groupInputGridLayout);
 
 		// Create criterion combo
@@ -53,7 +53,7 @@ public class TClosenessView extends CriterionView {
 		comboVariant = new Combo(group, SWT.READ_ONLY);
 		GridData d32 = SWTUtil.createFillHorizontallyGridData();
 		d32.verticalAlignment = SWT.CENTER;
-		d32.horizontalSpan = 2;
+		d32.horizontalSpan = 1;
 		comboVariant.setLayoutData(d32);
 		comboVariant.setItems(VARIANTS);
 		comboVariant.select(0);

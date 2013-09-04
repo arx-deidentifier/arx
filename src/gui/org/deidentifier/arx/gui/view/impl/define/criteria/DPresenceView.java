@@ -37,7 +37,7 @@ public class DPresenceView extends CriterionView{
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 3;
+        groupInputGridLayout.numColumns = 6;
         group.setLayout(groupInputGridLayout);
 
         // Create dmin slider

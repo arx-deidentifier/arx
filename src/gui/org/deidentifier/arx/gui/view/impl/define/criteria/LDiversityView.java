@@ -1,21 +1,17 @@
 package org.deidentifier.arx.gui.view.impl.define.criteria;
 
-import org.deidentifier.arx.criteria.DistinctLDiversity;
-import org.deidentifier.arx.criteria.EntropyLDiversity;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -49,7 +45,7 @@ public class LDiversityView extends CriterionView{
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 3;
+        groupInputGridLayout.numColumns = 8;
         group.setLayout(groupInputGridLayout);
 
         // Create l slider
@@ -86,7 +82,7 @@ public class LDiversityView extends CriterionView{
         comboVariant = new Combo(group, SWT.READ_ONLY);
         GridData d31 = SWTUtil.createFillHorizontallyGridData();
         d31.verticalAlignment = SWT.CENTER;
-        d31.horizontalSpan = 2;
+        d31.horizontalSpan = 1;
         comboVariant.setLayoutData(d31);
         comboVariant.setItems(VARIANTS);
         comboVariant.select(0);
