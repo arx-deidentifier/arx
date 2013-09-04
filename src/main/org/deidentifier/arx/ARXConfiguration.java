@@ -119,7 +119,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param metric
      */
     public ARXConfiguration(double supp, Metric<?> metric) {
-        if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
+        if (supp < 0d || supp > 1d) { throw new NullPointerException("Suppression must be >=0 and <=1"); }
         this.relMaxOutliers = supp;
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
