@@ -89,7 +89,7 @@ public class MainWindow implements IMainWindow, IView {
         shell.setImage(controller.getResources().getImage("logo.png")); //$NON-NLS-1$
         shell.setMaximized(true);
         shell.setText(TITLE);
-        shell.setMinimumSize(900, 600);
+        shell.setMinimumSize(1000, 700);
 
         tooltip = new MainToolTip(shell);
         popup = new MainPopUp(shell);
