@@ -27,6 +27,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -48,18 +49,21 @@ public class AboutDialog extends TitleAreaDialog {
                                           +
                                           Resources.getMessage("AboutDialog.10") + Resources.getMessage("AboutDialog.11"); //$NON-NLS-1$ //$NON-NLS-2$
     private final Controller    controller;
+    private Image image;
 
     public AboutDialog(final Shell parentShell, final Controller controller) {
         super(parentShell);
         this.controller = controller;
+        this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
     @Override
-    public void create() {
-        super.create();
+    protected Control createContents(Composite parent) {
+    	Control contents = super.createContents(parent);
         setTitle(Resources.getMessage("AboutDialog.12")); //$NON-NLS-1$
         setMessage(Resources.getMessage("AboutDialog.13"), IMessageProvider.INFORMATION); //$NON-NLS-1$
-        setTitleImage(controller.getResources().getImage("logo.png")); //$NON-NLS-1$
+        if (image!=null) setTitleImage(image); //$NON-NLS-1$
+        return contents;
     }
 
     @Override
@@ -114,5 +118,12 @@ public class AboutDialog extends TitleAreaDialog {
     @Override
     protected boolean isResizable() {
         return false;
+    }
+    
+    @Override
+    public boolean close() {
+        if (image != null)
+            image.dispose();
+        return super.close();
     }
 }
