@@ -38,6 +38,29 @@ public class LDiversityView extends CriterionView{
     }
 
     @Override
+	public void reset() {
+		sliderL.setSelection(0);
+        sliderC.setSelection(0);
+        labelC.setText("0.001"); //$NON-NLS-1$
+        labelL.setText("2"); //$NON-NLS-1$
+        comboVariant.select(0);
+        super.reset();
+	}
+
+	@Override
+	public void update(ModelEvent event) {
+		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+			this.attribute = (String)event.data;
+			this.parse();
+		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+			if (event.data.equals(this.attribute)) {
+				this.parse();
+			}
+		}
+        super.update(event);
+	}
+
+	@Override
 	protected Composite build(Composite parent) {
 
         // Create input group
@@ -128,29 +151,6 @@ public class LDiversityView extends CriterionView{
         });
 
         return group;
-	}
-
-	@Override
-	public void reset() {
-		sliderL.setSelection(0);
-        sliderC.setSelection(0);
-        labelC.setText("0.001"); //$NON-NLS-1$
-        labelL.setText("2"); //$NON-NLS-1$
-        comboVariant.select(0);
-        super.reset();
-	}
-
-	@Override
-	public void update(ModelEvent event) {
-		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
-			this.attribute = (String)event.data;
-			this.parse();
-		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
-			if (event.data.equals(this.attribute)) {
-				this.parse();
-			}
-		}
-        super.update(event);
 	}
 
 	@Override

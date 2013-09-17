@@ -37,6 +37,27 @@ public class TClosenessView extends CriterionView {
 	}
 
 	@Override
+	public void reset() {
+		sliderT.setSelection(0);
+		labelT.setText("0.001"); //$NON-NLS-1$
+		comboVariant.select(0);
+		super.reset();
+	}
+
+	@Override
+	public void update(ModelEvent event) {
+		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+			this.attribute = (String)event.data;
+			this.parse();
+		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+			if (event.data.equals(this.attribute)) {
+				this.parse();
+			}
+		}
+		super.update(event);
+	}
+
+	@Override
 	protected Composite build(Composite parent) {
 
 		// Create input group
@@ -95,27 +116,6 @@ public class TClosenessView extends CriterionView {
 		});
 
 		return group;
-	}
-
-	@Override
-	public void reset() {
-		sliderT.setSelection(0);
-		labelT.setText("0.001"); //$NON-NLS-1$
-		comboVariant.select(0);
-		super.reset();
-	}
-
-	@Override
-	public void update(ModelEvent event) {
-		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
-			this.attribute = (String)event.data;
-			this.parse();
-		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
-			if (event.data.equals(this.attribute)) {
-				this.parse();
-			}
-		}
-		super.update(event);
 	}
 
 	@Override

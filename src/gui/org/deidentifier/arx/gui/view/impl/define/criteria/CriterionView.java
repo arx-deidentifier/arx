@@ -27,12 +27,32 @@ public abstract class CriterionView implements IView, IAttachable {
 		this.root = build(parent);
 	}
 
-	protected abstract Composite build(Composite parent);
-
 	@Override
 	public void dispose() {
 		controller.removeListener(this);
 	}
+
+	@Override
+	public Control getControl() {
+		return root;
+	}
+
+	@Override
+	public void reset() {
+		SWTUtil.disable(root);
+	}
+
+	@Override
+	public void update(ModelEvent event) {
+		if (event.target == EventTarget.MODEL) {
+			this.model = (Model) event.data;
+			if (parse()) SWTUtil.enable(root);
+		} else if (event.target == EventTarget.INPUT) {
+			if (parse()) SWTUtil.enable(root);
+		}
+	}
+
+	protected abstract Composite build(Composite parent);
 
 	/**
 	 * TODO: OK?
@@ -48,11 +68,6 @@ public abstract class CriterionView implements IView, IAttachable {
 			val = SLIDER_MAX;
 		}
 		return (int) val;
-	}
-
-	@Override
-	public Control getControl() {
-		return root;
 	}
 
 	/**
@@ -71,11 +86,6 @@ public abstract class CriterionView implements IView, IAttachable {
 	}
 
 	protected abstract boolean parse();
-
-	@Override
-	public void reset() {
-		SWTUtil.disable(root);
-	}
 
 	protected double sliderToDouble(final double min, final double max,
 			final int value) {
@@ -100,15 +110,5 @@ public abstract class CriterionView implements IView, IAttachable {
 			val = max;
 		}
 		return val;
-	}
-
-	@Override
-	public void update(ModelEvent event) {
-		if (event.target == EventTarget.MODEL) {
-			this.model = (Model) event.data;
-			if (parse()) SWTUtil.enable(root);
-		} else if (event.target == EventTarget.INPUT) {
-			if (parse()) SWTUtil.enable(root);
-		}
 	}
 }

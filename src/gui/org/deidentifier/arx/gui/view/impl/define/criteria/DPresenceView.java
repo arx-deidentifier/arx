@@ -29,6 +29,16 @@ public class DPresenceView extends CriterionView{
     }
 
     @Override
+	public void reset() {
+
+        sliderDMin.setSelection(0);
+        sliderDMax.setSelection(0);
+        labelDMin.setText("0.001"); //$NON-NLS-1$
+        labelDMax.setText("0.001"); //$NON-NLS-1$
+        super.reset();
+	}
+
+	@Override
 	protected Composite build(Composite parent) {
 
         // Create input group
@@ -92,16 +102,6 @@ public class DPresenceView extends CriterionView{
         });
 
         return group;
-	}
-
-	@Override
-	public void reset() {
-
-        sliderDMin.setSelection(0);
-        sliderDMax.setSelection(0);
-        labelDMin.setText("0.001"); //$NON-NLS-1$
-        labelDMax.setText("0.001"); //$NON-NLS-1$
-        super.reset();
 	}
 
 	@Override

@@ -26,6 +26,13 @@ public class KAnonymityView extends CriterionView {
 	}
 
 	@Override
+	public void reset() {
+		sliderK.setSelection(0);
+		labelK.setText("2");
+		super.reset();
+	}
+
+	@Override
 	protected Composite build(Composite parent) {
 
 		// Create input group
@@ -61,13 +68,6 @@ public class KAnonymityView extends CriterionView {
 			}
 		});
 		return group;
-	}
-
-	@Override
-	public void reset() {
-		sliderK.setSelection(0);
-		labelK.setText("2");
-		super.reset();
 	}
 
 	@Override
