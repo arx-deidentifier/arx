@@ -119,20 +119,21 @@ public class TClosenessView extends CriterionView {
 	}
 
 	@Override
-	protected boolean parse() {
+	protected void parse() {
 		ModelTClosenessCriterion m = model.getTClosenessModel().get(attribute);
 		if (m==null){
 			reset();
-			return false;
+			return;
 		}
+		root.setRedraw(false);
 		sliderT.setSelection(doubleToSlider(0.001d, 1d, m.getT()));
 		labelT.setText(String.valueOf(m.getT()));
 		comboVariant.select(m.getVariant());
-		if (m.isActive()) {
+		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {
 			SWTUtil.disable(root);
 		}
-		return true;
+		root.setRedraw(true);
 	}
 }

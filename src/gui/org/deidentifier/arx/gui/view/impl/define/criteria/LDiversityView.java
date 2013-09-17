@@ -154,22 +154,23 @@ public class LDiversityView extends CriterionView{
 	}
 
 	@Override
-	protected boolean parse() {
+	protected void parse() {
 		ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
 		if (m==null){
 			reset();
-			return false;
+			return;
 		}
+		root.setRedraw(false);
         labelC.setText(String.valueOf(m.getC()));
         labelL.setText(String.valueOf(m.getL()));
 		sliderL.setSelection(intToSlider(2, 100, m.getL()));
 		sliderC.setSelection(doubleToSlider(0.001d, 100d, m.getC()));
         comboVariant.select(m.getVariant());
-        if (m.isActive()) {
+        if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {
 			SWTUtil.disable(root);
 		}
-        return true;
+        root.setRedraw(true);
 	}
 }

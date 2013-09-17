@@ -5,13 +5,16 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scale;
 
 public class KAnonymityView extends CriterionView {
@@ -23,8 +26,17 @@ public class KAnonymityView extends CriterionView {
 			final Model model) {
 
 		super(parent, controller, model);
+		this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
 	}
 
+    @Override
+    public void update(ModelEvent event) {
+        if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+            this.parse();
+        }
+        super.update(event);
+    }
+    
 	@Override
 	public void reset() {
 		sliderK.setSelection(0);
@@ -67,23 +79,25 @@ public class KAnonymityView extends CriterionView {
 						.valueOf(model.getKAnonymityModel().getK()));
 			}
 		});
+
 		return group;
 	}
 
 	@Override
-	protected boolean parse() {
+	protected void parse() {
 		ModelKAnonymityCriterion m = model.getKAnonymityModel();
 		if (m==null){
 			reset();
-			return false;
+			return;
 		}
+		root.setRedraw(false);
 		labelK.setText(String.valueOf(m.getK()));
 		sliderK.setSelection(intToSlider(2, 100, m.getK()));
-		if (m.isActive()) {
+		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {
 			SWTUtil.disable(root);
 		}
-		return true;
+		root.setRedraw(true);
 	}
 }

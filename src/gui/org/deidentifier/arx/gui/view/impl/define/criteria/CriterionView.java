@@ -23,8 +23,10 @@ public abstract class CriterionView implements IView, IAttachable {
 		this.controller = controller;
 		this.controller.addListener(EventTarget.MODEL, this);
 		this.controller.addListener(EventTarget.INPUT, this);
+		this.controller.addListener(EventTarget.CRITERION_DEFINITION, this);
 		this.model = model;
 		this.root = build(parent);
+		SWTUtil.disable(root);
 	}
 
 	@Override
@@ -46,10 +48,12 @@ public abstract class CriterionView implements IView, IAttachable {
 	public void update(ModelEvent event) {
 		if (event.target == EventTarget.MODEL) {
 			this.model = (Model) event.data;
-			if (parse()) SWTUtil.enable(root);
+			parse();
 		} else if (event.target == EventTarget.INPUT) {
-			if (parse()) SWTUtil.enable(root);
-		}
+			parse();
+		} else if (event.target == EventTarget.CRITERION_DEFINITION) {
+            parse();
+        }
 	}
 
 	protected abstract Composite build(Composite parent);
@@ -85,7 +89,7 @@ public abstract class CriterionView implements IView, IAttachable {
 		return val;
 	}
 
-	protected abstract boolean parse();
+	protected abstract void parse();
 
 	protected double sliderToDouble(final double min, final double max,
 			final int value) {

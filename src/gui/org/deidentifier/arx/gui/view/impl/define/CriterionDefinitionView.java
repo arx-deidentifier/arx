@@ -20,9 +20,11 @@ package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.gui.view.impl.define.criteria.DPresenceView;
 import org.deidentifier.arx.gui.view.impl.define.criteria.KAnonymityView;
@@ -36,6 +38,7 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -79,13 +82,65 @@ public class CriterionDefinitionView implements IView {
     private Combo                  comboMetric;
     private Composite			   root;
     
+    private CTabFolder             folder;
+    private ToolItem               enable;
+    private ToolItem               push;
+    private ToolItem               pull;
+    
     public CriterionDefinitionView(final Composite parent,
                                    final Controller controller) {
 
         this.controller = controller;
         this.controller.addListener(EventTarget.MODEL, this);
         this.controller.addListener(EventTarget.INPUT, this);
+        this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
+        this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
         this.root = build(parent);
+    }
+
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+    
+    @Override
+    public void reset() {
+
+        sliderOutliers.setSelection(0);
+        labelOutliers.setText("0"); //$NON-NLS-1
+        buttonPracticalMonotonicity.setSelection(false);
+        comboMetric.select(0);
+        SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.target == EventTarget.MODEL) {
+            
+            model = (Model) event.data;
+            root.setRedraw(false);
+            sliderOutliers.setSelection(doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
+            labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
+            buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
+
+            for (int i = 0; i < ITEMS_METRIC.length; i++) {
+                if (ITEMS_METRIC[i].getClass().equals(model.getInputConfig().getMetric().getClass())) {
+                    comboMetric.select(i);
+                    break;
+                }
+            }
+            updateControlls();
+            root.setRedraw(true);
+        } else if (event.target == EventTarget.INPUT) {
+            SWTUtil.enable(root);
+            updateControlls();
+        } else if (event.target == EventTarget.SELECTED_ATTRIBUTE ||
+                   event.target == EventTarget.ATTRIBUTE_TYPE) {
+            
+            if (model != null){
+                updateControlls();
+            }
+        }
     }
 
     private Composite build(final Composite parent) {
@@ -105,7 +160,7 @@ public class CriterionDefinitionView implements IView {
         gd1.grabExcessVerticalSpace = false;
         gd1.grabExcessHorizontalSpace = true;
         gd1.horizontalSpan = 2;
-        final CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
         folder.setUnselectedCloseVisible(false);
         folder.setSimple(true);
         folder.setTabHeight(25);
@@ -117,6 +172,7 @@ public class CriterionDefinitionView implements IView {
             public void close(final CTabFolderEvent event) {
                 event.doit = false;
             }
+            
         });
         
         // Create k-anonymity tab
@@ -151,26 +207,41 @@ public class CriterionDefinitionView implements IView {
         tabTcloseness.setImage(controller.getResources().getImage("symbol_t.png")); //$NON-NLS-1$
         TClosenessView view2 = new TClosenessView(folder, controller, model);
         tabTcloseness.setControl(view2.getControl());
-
+        
+        folder.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                updateControlls();
+            }
+        });
+        
         // Create context menu
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         
-        // Alternative: cross
-        ToolItem i = new ToolItem( toolbar, SWT.PUSH );
-        i.setImage(controller.getResources().getImage("tick.png"));  //$NON-NLS-1$
-        i.setToolTipText(Resources.getMessage("CriterionDefinitionView.59"));  //$NON-NLS-1$
+        enable = new ToolItem( toolbar, SWT.PUSH );
+        enable.setImage(controller.getResources().getImage("cross.png"));  //$NON-NLS-1$
+        enable.setToolTipText(Resources.getMessage("CriterionDefinitionView.59"));  //$NON-NLS-1$
+        enable.setEnabled(false);
+        enable.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                triggerEnableEvent();
+            }
+        });
         
-        i = new ToolItem( toolbar, SWT.PUSH );
-        i.setImage(controller.getResources().getImage("bullet_arrow_up.png"));  //$NON-NLS-1$
-        i.setToolTipText(Resources.getMessage("CriterionDefinitionView.57"));  //$NON-NLS-1$
+        push = new ToolItem( toolbar, SWT.PUSH );
+        push.setImage(controller.getResources().getImage("bullet_arrow_up.png"));  //$NON-NLS-1$
+        push.setToolTipText(Resources.getMessage("CriterionDefinitionView.57"));  //$NON-NLS-1$
+        push.setEnabled(false);
         
-        i = new ToolItem( toolbar, SWT.PUSH );
-        i.setImage(controller.getResources().getImage("bullet_arrow_down.png"));  //$NON-NLS-1$
-        i.setToolTipText(Resources.getMessage("CriterionDefinitionView.58"));  //$NON-NLS-1$
+        pull = new ToolItem( toolbar, SWT.PUSH );
+        pull.setImage(controller.getResources().getImage("bullet_arrow_down.png"));  //$NON-NLS-1$
+        pull.setToolTipText(Resources.getMessage("CriterionDefinitionView.58"));  //$NON-NLS-1$
+        pull.setEnabled(false);
         
-        i = new ToolItem( toolbar, SWT.PUSH );
-        i.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
-        i.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+        ToolItem help = new ToolItem( toolbar, SWT.PUSH );
+        help.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
+        help.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
         folder.setTopRight( toolbar, SWT.RIGHT );
         
         // Fix bug when folder does not have enough space for toolbars
@@ -335,11 +406,6 @@ public class CriterionDefinitionView implements IView {
         
         return group;
     }
-    
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
 
     /**
      * TODO: OK?
@@ -356,16 +422,6 @@ public class CriterionDefinitionView implements IView {
             val = SLIDER_MAX;
         }
         return (int) val;
-    }
-
-    @Override
-    public void reset() {
-
-        sliderOutliers.setSelection(0);
-        labelOutliers.setText("0"); //$NON-NLS-1
-        buttonPracticalMonotonicity.setSelection(false);
-        comboMetric.select(0);
-        SWTUtil.disable(root);
     }
 
     private void selectMetricAction(final Metric<?> metric) {
@@ -389,35 +445,111 @@ public class CriterionDefinitionView implements IView {
         }
         return val;
     }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.target == EventTarget.MODEL) {
-            model = (Model) event.data;
-            root.setRedraw(false);
-                sliderOutliers.setSelection(doubleToSlider(0d,
-                                                               0.999d,
-                                                               model.getInputConfig()
-                                                                    .getAllowedOutliers()));
-
-                labelOutliers.setText(String.valueOf(model.getInputConfig()
-                                                             .getAllowedOutliers()));
-                buttonPracticalMonotonicity.setSelection(model.getInputConfig()
-                                                        .isPracticalMonotonicity());
-
-                for (int i = 0; i < ITEMS_METRIC.length; i++) {
-                    if (ITEMS_METRIC[i].getClass()
-                                       .equals(model.getInputConfig()
-                                                    .getMetric()
-                                                    .getClass())) {
-                        comboMetric.select(i);
-                        break;
-                    }
-                }
-            
-            root.setRedraw(true);
-        } else if (event.target == EventTarget.INPUT) {
-            SWTUtil.enable(root);
+    
+    /**
+     * Triggers an enable/disable event on the current criterion
+     */
+    private void triggerEnableEvent(){
+        
+        root.setRedraw(false);
+        ModelCriterion mc = null;
+     
+        // K-Anonymity
+        if (folder.getSelectionIndex()==0){
+            mc = model.getKAnonymityModel();
+        // D-Presence
+        } else if (folder.getSelectionIndex()==1){
+            mc = model.getDPresenceModel();
+        // L-Diversity
+        } else if (folder.getSelectionIndex()==2){
+            mc = model.getLDiversityModel().get(model.getSelectedAttribute());
+        // T-Closeness
+        } else if (folder.getSelectionIndex()==3){
+            mc = model.getTClosenessModel().get(model.getSelectedAttribute());
         }
+        
+        if (mc == null){
+            root.setRedraw(true);
+            return;
+        }
+        
+        if (mc.isActive()) {
+            if (mc.isEnabled()) {
+                mc.setEnabled(false);
+                enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
+            } else {
+                mc.setEnabled(true);
+                enable.setImage(controller.getResources().getImage("tick.png")); //$NON-NLS-1
+            } 
+            controller.update(new ModelEvent(this,
+                                             EventTarget.CRITERION_DEFINITION,
+                                             mc));
+        } 
+        root.setRedraw(true);
+    }
+    
+    /**
+     * This method adjusts the toolbar attached to the folder with criteria
+     * according to the current state of the model
+     */
+    private void updateControlls(){
+
+        root.setRedraw(false);
+        ModelCriterion mc = null;
+        
+        // K-Anonymity
+        if (folder.getSelectionIndex()==0){
+            push.setEnabled(false);
+            pull.setEnabled(false);
+            mc = model.getKAnonymityModel();
+            
+        // D-Presence
+        } else if (folder.getSelectionIndex()==1){
+            push.setEnabled(false);
+            pull.setEnabled(false);
+            mc = model.getDPresenceModel();
+            
+        // L-Diversity
+        } else if (folder.getSelectionIndex()==2){
+            mc = model.getLDiversityModel().get(model.getSelectedAttribute());
+            if (mc != null && mc.isActive() && mc.isEnabled()){
+                push.setEnabled(true);
+                pull.setEnabled(true);
+            } else {
+                push.setEnabled(false);
+                pull.setEnabled(false);
+            }
+            
+        // T-Closeness
+        } else if (folder.getSelectionIndex()==3){
+            mc = model.getTClosenessModel().get(model.getSelectedAttribute());
+            push.setEnabled(true);
+            pull.setEnabled(true);
+            if (mc != null && mc.isActive() && mc.isEnabled()){
+                push.setEnabled(true);
+                pull.setEnabled(true);
+            } else {
+                push.setEnabled(false);
+                pull.setEnabled(false);
+            }
+        }
+        
+        if (mc == null){
+            root.setRedraw(true);
+            return;
+        }
+        
+        if (mc.isActive()) {
+            enable.setEnabled(true);
+            if (mc.isEnabled()) {
+                enable.setImage(controller.getResources().getImage("tick.png")); //$NON-NLS-1
+            } else {
+                enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
+            }
+        } else {
+            enable.setEnabled(false);
+            enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
+        }
+        root.setRedraw(true);
     }
 }

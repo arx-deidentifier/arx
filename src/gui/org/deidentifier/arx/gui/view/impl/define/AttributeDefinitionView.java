@@ -156,6 +156,15 @@ public class AttributeDefinitionView implements IView {
                         	model.getTClosenessModel().get(attribute).setActive(false);
                         	model.getTClosenessModel().get(attribute).setEnabled(false);
                         }
+                        
+                        // Enable/disable criteria for quasi-identifiers
+                        if (definition.getQuasiIdentifyingAttributes().isEmpty()){
+                            model.getKAnonymityModel().setActive(false);
+                            model.getDPresenceModel().setActive(false);
+                        } else {
+                            model.getKAnonymityModel().setActive(true);
+                            model.getDPresenceModel().setActive(true);
+                        }
 
                         // Update icon
                         updateIcon();

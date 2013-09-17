@@ -5,6 +5,8 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,8 +28,17 @@ public class DPresenceView extends CriterionView{
                          final Model model) {
 
     	super(parent, controller, model);
+    	this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
     }
 
+    @Override
+    public void update(ModelEvent event) {
+        if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+            this.parse();
+        }
+        super.update(event);
+    }
+    
     @Override
 	public void reset() {
 
@@ -105,21 +116,22 @@ public class DPresenceView extends CriterionView{
 	}
 
 	@Override
-	protected boolean parse() {
+	protected void parse() {
 		ModelDPresenceCriterion m = model.getDPresenceModel();
 		if (m==null){
 			reset();
-			return false;
+			return;
 		}
+		root.setRedraw(false);
 		labelDMin.setText(String.valueOf(m.getDmin()));
 		sliderDMin.setSelection(doubleToSlider(0.001d, 1d, m.getDmin()));
 		labelDMax.setText(String.valueOf(m.getDmax()));
 		sliderDMax.setSelection(doubleToSlider(0.001d, 1d, m.getDmax()));
-		if (m.isActive()) {
+		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {
 			SWTUtil.disable(root);
 		}
-		return true;
+		root.setRedraw(true);
 	}
 }

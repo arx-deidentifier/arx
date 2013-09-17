@@ -29,14 +29,14 @@ public interface IView {
             RESULT,
             DATA_TYPE,
             ALGORITHM,
-            K,
             METRIC,
             MAX_OUTLIERS,
             FILTER,
             SELECTED_NODE,
             MODEL,
             CLIPBOARD,
-            HIERARCHY
+            HIERARCHY,
+            CRITERION_DEFINITION
         }
 
         public final EventTarget target;

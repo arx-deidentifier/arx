@@ -9,10 +9,6 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	private double dmin = 0.001d;
 	private double dmax = 0.001d;
 	
-	public ModelDPresenceCriterion(){
-		super.setActive(true);
-	}
-	
 	public double getDmin() {
 		return dmin;
 	}
