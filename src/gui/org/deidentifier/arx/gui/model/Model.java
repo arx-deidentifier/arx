@@ -476,7 +476,7 @@ public class Model implements Serializable {
 		}
 	}
 
-	public boolean validLatticeSize() {
-		return getInputConfig().validLatticeSize(maxNodesInLattice);
+	public boolean isValidLatticeSize() {
+		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
 	}
 }

@@ -167,7 +167,7 @@ public class Controller implements IView {
             return;
         }
 
-        if (!model.validLatticeSize()) {
+        if (!model.isValidLatticeSize()) {
             final String message = Resources.getMessage("Controller.7") + Resources.getMessage("Controller.8") //$NON-NLS-1$ //$NON-NLS-2$
                                    +
                                    Resources.getMessage("Controller.9") + Resources.getMessage("Controller.10"); //$NON-NLS-1$ //$NON-NLS-2$

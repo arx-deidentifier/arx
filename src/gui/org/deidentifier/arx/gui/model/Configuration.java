@@ -111,7 +111,7 @@ public class Configuration implements Serializable {
      * 
      * @return
      */
-    public boolean validLatticeSize(final int max) {
+    public boolean isValidLatticeSize(final int max) {
         int size = 1;
         for (final String attr : input.getDefinition()
                                       .getQuasiIdentifyingAttributes()) {
