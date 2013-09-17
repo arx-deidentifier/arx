@@ -115,7 +115,7 @@ public class AttributeDefinitionView implements IView {
         final Composite type = new Composite(group, SWT.NULL);
         type.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout typeInputGridLayout = new GridLayout();
-        typeInputGridLayout.numColumns = 2;
+        typeInputGridLayout.numColumns = 4;
         type.setLayout(typeInputGridLayout);
 
         final IView outer = this;
