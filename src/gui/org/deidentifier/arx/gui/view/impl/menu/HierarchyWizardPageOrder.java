@@ -151,7 +151,13 @@ public class HierarchyWizardPageOrder extends WizardPage {
             }
         });
 
-        sortDefault();
+        try {
+            sortDefault();
+        } catch (Exception e){
+            // TODO: This is an ugly fix for cases in which the data type is not correct,
+            // TODO: e.g., when specifying "numeric" for "strings" which will result in
+            // TODO: a NumberFormatException
+        }
 
         setControl(composite);
     }
