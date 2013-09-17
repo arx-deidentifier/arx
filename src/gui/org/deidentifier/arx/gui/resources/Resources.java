@@ -36,13 +36,51 @@ public class Resources {
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
     private static final ResourceBundle FORMATS_BUNDLE  = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.formats"); //$NON-NLS-1$
 
-    private static final String         VERSION         = Resources.getMessage("Resources.0"); //$NON-NLS-1$
+    private final String                VERSION         = Resources.getMessage("Resources.0"); //$NON-NLS-1$
 
-    private static final List<String>   DATE_FORMATS    = new ArrayList<String>();
+    private final List<String>          DATE_FORMATS    = new ArrayList<String>();
 
-    private static Logger               LOGGER          = Logger.getRootLogger();
+    private Logger                      LOGGER          = Logger.getRootLogger();
+    
+    public Resources(final Shell shell) {
 
-    public static String getFormat(String key) {
+        this.shell = shell;
+
+        DATE_FORMATS.add(this.getFormat("Formats.1")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.2")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.3")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.4")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.5")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.6")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.7")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.8")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.9")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.10")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.11")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.12")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.13")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.14")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.15")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.16")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.17")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.18")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.19")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.20")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.21")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.22")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.23")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.24")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.25")); //$NON-NLS-1$
+        DATE_FORMATS.add(this.getFormat("Formats.26")); //$NON-NLS-1$
+
+        // Release config
+        SimpleLayout layout = new SimpleLayout();
+        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+        LOGGER.addAppender(consoleAppender);
+        LOGGER.setLevel(Level.INFO);
+    }
+
+    private String getFormat(String key) {
         try {
             return FORMATS_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
@@ -50,6 +88,9 @@ public class Resources {
         }
     }
 
+    /*
+     * TODO: Make this method non-static
+     */
     public static String getMessage(String key) {
         try {
             return MESSAGES_BUNDLE.getString(key);
@@ -59,45 +100,6 @@ public class Resources {
     }
 
     private final Shell shell;
-
-    static {
-        DATE_FORMATS.add(Resources.getFormat("Formats.1")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.2")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.3")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.4")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.5")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.6")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.7")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.8")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.9")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.10")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.11")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.12")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.13")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.14")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.15")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.16")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.17")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.18")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.19")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.20")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.21")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.22")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.23")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.24")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.25")); //$NON-NLS-1$
-        DATE_FORMATS.add(Resources.getFormat("Formats.26")); //$NON-NLS-1$
-
-        // Release config
-        SimpleLayout layout = new SimpleLayout();
-        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-        LOGGER.addAppender(consoleAppender);
-        LOGGER.setLevel(Level.INFO);
-    }
-
-    public Resources(final Shell shell) {
-        this.shell = shell;
-    }
 
     public List<String> getDateFormats() {
         return DATE_FORMATS;

@@ -43,21 +43,25 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class CriterionDefinitionView implements IView {
 
     private static final int       SLIDER_MAX      = 1000;
     private static final int       LABEL_WIDTH     = 50;
     private static final int       LABEL_HEIGHT    = 20;
-    private static final String    LABELS_METRIC[] = { Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
+    private static final String    LABELS_METRIC[] = { 
+            Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.2"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.3"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.4"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.5"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.52"), //$NON-NLS-1$
-            };                                                                                                                                                 //$NON-NLS-1$
-    private static final Metric<?> ITEMS_METRIC[]  = { Metric.createHeightMetric(),
+    };
+    private static final Metric<?> ITEMS_METRIC[]  = { 
+            Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
             Metric.createDMMetric(),
             Metric.createEntropyMetric(),
@@ -101,7 +105,7 @@ public class CriterionDefinitionView implements IView {
         gd1.grabExcessVerticalSpace = false;
         gd1.grabExcessHorizontalSpace = true;
         gd1.horizontalSpan = 2;
-        CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        final CTabFolder folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
         folder.setUnselectedCloseVisible(false);
         folder.setSimple(true);
         folder.setTabHeight(25);
@@ -148,6 +152,31 @@ public class CriterionDefinitionView implements IView {
         TClosenessView view2 = new TClosenessView(folder, controller, model);
         tabTcloseness.setControl(view2.getControl());
 
+        // Create context menu
+        ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
+        
+        // Alternative: cross
+        ToolItem i = new ToolItem( toolbar, SWT.PUSH );
+        i.setImage(controller.getResources().getImage("tick.png"));  //$NON-NLS-1$
+        i.setToolTipText(Resources.getMessage("CriterionDefinitionView.59"));  //$NON-NLS-1$
+        
+        i = new ToolItem( toolbar, SWT.PUSH );
+        i.setImage(controller.getResources().getImage("bullet_arrow_up.png"));  //$NON-NLS-1$
+        i.setToolTipText(Resources.getMessage("CriterionDefinitionView.57"));  //$NON-NLS-1$
+        
+        i = new ToolItem( toolbar, SWT.PUSH );
+        i.setImage(controller.getResources().getImage("bullet_arrow_down.png"));  //$NON-NLS-1$
+        i.setToolTipText(Resources.getMessage("CriterionDefinitionView.58"));  //$NON-NLS-1$
+        
+        i = new ToolItem( toolbar, SWT.PUSH );
+        i.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
+        i.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+        folder.setTopRight( toolbar, SWT.RIGHT );
+        
+        // Fix bug when folder does not have enough space for toolbars
+        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+
         /*
          * Add general view
          */
@@ -159,6 +188,9 @@ public class CriterionDefinitionView implements IView {
         folder2.setSimple(true);
         folder2.setTabHeight(25);
         folder2.setLayoutData(gd1);
+        
+        // Create help button
+        SWTUtil.createHelpButton(controller, folder2, "id-2"); //$NON-NLS-1$
 
         // Prevent closing
         folder2.addCTabFolder2Listener(new CTabFolder2Adapter() {

@@ -1,7 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.define.criteria;
 
-import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;

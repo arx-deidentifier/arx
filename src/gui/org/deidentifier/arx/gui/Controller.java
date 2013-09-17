@@ -825,6 +825,7 @@ public class Controller implements IView {
         return main.getPopUp();
     }
 
+    // TODO: Move resources from controller to view?
     public Resources getResources() {
         return resources;
     }

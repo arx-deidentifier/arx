@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
@@ -37,11 +38,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class DataDefinitionView implements IView {
 
     private final Controller           controller;
-    private final CTabFolder           tabFolder;
+    private final CTabFolder           folder;
     private final Map<Integer, String> names = new HashMap<Integer, String>();
     private final Set<IView>           views = new HashSet<IView>();
     private Model                      model;
@@ -56,23 +59,26 @@ public class DataDefinitionView implements IView {
         this.controller.addListener(EventTarget.MODEL, this);
 
         // Create the tab folder
-        tabFolder = new CTabFolder(parent, SWT.TOP | SWT.BORDER | SWT.FLAT);
-        tabFolder.setUnselectedCloseVisible(false);
-        tabFolder.setSimple(true);
-        tabFolder.setTabHeight(25);
+        folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER | SWT.FLAT);
+        folder.setUnselectedCloseVisible(false);
+        folder.setSimple(true);
+        folder.setTabHeight(25);
         final GridData tabData = SWTUtil.createFillGridData();
         tabData.grabExcessVerticalSpace = true;
-        tabFolder.setLayoutData(tabData);
+        folder.setLayoutData(tabData);
+
+        // Create help button
+        SWTUtil.createHelpButton(controller, folder, "id-1"); //$NON-NLS-1$
 
         // Prevent closing
-        tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
             @Override
             public void close(final CTabFolderEvent event) {
                 event.doit = false;
             }
         });
 
-        tabFolder.addSelectionListener(new SelectionAdapter() {
+        folder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 selectionEvent();
@@ -87,8 +93,8 @@ public class DataDefinitionView implements IView {
 
     @Override
     public void reset() {
-        tabFolder.setRedraw(false);
-        for (final CTabItem tab : tabFolder.getItems()) {
+        folder.setRedraw(false);
+        for (final CTabItem tab : folder.getItems()) {
             tab.dispose();
         }
         // TODO: Is this enough cleanup?
@@ -97,12 +103,12 @@ public class DataDefinitionView implements IView {
         }
         names.clear();
         views.clear();
-        tabFolder.setRedraw(true);
-        tabFolder.redraw();
+        folder.setRedraw(true);
+        folder.redraw();
     }
 
     private void selectionEvent() {
-        int index = tabFolder.getSelectionIndex();
+        int index = folder.getSelectionIndex();
         if (index >= 0) {
             final String name = names.get(index);
             if (model != null) {
@@ -117,9 +123,9 @@ public class DataDefinitionView implements IView {
     @Override
     public void update(final ModelEvent event) {
         if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
-            for (final CTabItem item : tabFolder.getItems()) {
+            for (final CTabItem item : folder.getItems()) {
                 if (item.getText().equals(event.data)) {
-                    tabFolder.setSelection(item);
+                    folder.setSelection(item);
                     break;
                 }
             }
@@ -127,7 +133,7 @@ public class DataDefinitionView implements IView {
             model = (Model) event.data;
         } else if (event.target == EventTarget.INPUT) {
             reset();
-            tabFolder.setRedraw(false);
+            folder.setRedraw(false);
             for (int i = 0; i < model.getInputConfig()
                                      .getInput()
                                      .getHandle()
@@ -136,7 +142,7 @@ public class DataDefinitionView implements IView {
                                         .getInput()
                                         .getHandle()
                                         .getAttributeName(i);
-                final IView l = new AttributeDefinitionView(tabFolder,
+                final IView l = new AttributeDefinitionView(folder,
                                                             col,
                                                             controller);
                 l.update(new ModelEvent(this, EventTarget.MODEL, model));
@@ -144,8 +150,8 @@ public class DataDefinitionView implements IView {
                 names.put(i, col);
                 views.add(l);
             }
-            tabFolder.setRedraw(true);
-            tabFolder.redraw();
+            folder.setRedraw(true);
+            folder.redraw();
         }
     }
 }
