@@ -125,7 +125,7 @@ public class HierarchyWizardPageOrder extends WizardPage {
         combo.add(Resources.getMessage("HierarchyWizardPageOrder.9")); //$NON-NLS-1$
         combo.add(Resources.getMessage("HierarchyWizardPageOrder.10")); //$NON-NLS-1$
         combo.add(Resources.getMessage("HierarchyWizardPageOrder.11")); //$NON-NLS-1$
-        combo.select(1);
+        combo.select(0);
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -157,6 +157,7 @@ public class HierarchyWizardPageOrder extends WizardPage {
             // TODO: This is an ugly fix for cases in which the data type is not correct,
             // TODO: e.g., when specifying "numeric" for "strings" which will result in
             // TODO: a NumberFormatException
+            sortLexicographic();
         }
 
         setControl(composite);
@@ -200,7 +201,7 @@ public class HierarchyWizardPageOrder extends WizardPage {
 
     private void sortDefault() {
         list.removeAll();
-        final DataType type = model.getDataType();
+        final DataType<?> type = model.getDataType();
         Collections.sort(model.getItems(), new Comparator<String>() {
             @Override
             public int compare(final String arg0, final String arg1) {
