@@ -89,6 +89,9 @@ public class DataDefinitionView implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+        for (IView view : views){
+            view.dispose();
+        }
     }
 
     @Override

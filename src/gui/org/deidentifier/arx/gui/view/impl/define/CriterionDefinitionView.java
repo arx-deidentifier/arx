@@ -85,6 +85,8 @@ public class CriterionDefinitionView implements IView {
     private ToolItem               push;
     private ToolItem               pull;
     
+    private CriteriaListView       clv;
+    
     public CriterionDefinitionView(final Composite parent,
                                    final Controller controller) {
 
@@ -100,6 +102,7 @@ public class CriterionDefinitionView implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+        clv.dispose();
     }
     
     @Override
@@ -294,7 +297,6 @@ public class CriterionDefinitionView implements IView {
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
         tabGeneral.setControl(group);
-        folder2.setSelection(tabGeneral);
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
@@ -416,6 +418,14 @@ public class CriterionDefinitionView implements IView {
             }
         });
         
+        // Create overview tab
+        final CTabItem tabOverview = new CTabItem(folder2, SWT.NULL);
+        tabOverview.setText("Overview");
+        tabOverview.setShowClose(false);
+        clv = new CriteriaListView(folder2, controller, model);
+        tabOverview.setControl(clv.getControl());
+        
+        folder2.setSelection(tabGeneral);
         return group;
     }
 

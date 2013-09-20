@@ -20,9 +20,7 @@ package org.deidentifier.arx.gui.view.impl.define;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -35,17 +33,12 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
-import org.deidentifier.arx.gui.view.impl.define.criteria.LDiversityView;
-import org.deidentifier.arx.gui.view.impl.define.criteria.TClosenessView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -53,23 +46,32 @@ import org.eclipse.swt.widgets.Label;
 
 public class AttributeDefinitionView implements IView {
 
-    private final Image                  IMAGE_INSENSITIVE;
-    private final Image                  IMAGE_SENSITIVE;
-    private final Image                  IMAGE_QUASI_IDENTIFYING;
-    private final Image                  IMAGE_IDENTIFYING;
+    private final Image                 IMAGE_INSENSITIVE;
+    private final Image                 IMAGE_SENSITIVE;
+    private final Image                 IMAGE_QUASI_IDENTIFYING;
+    private final Image                 IMAGE_IDENTIFYING;
 
-    private static final String[]        COMBO1_VALUES = new String[] { Resources.getMessage("AttributeDefinitionView.0"), Resources.getMessage("AttributeDefinitionView.1"), Resources.getMessage("AttributeDefinitionView.2"), Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    private static final String[]       COMBO1_VALUES = new String[] { 
+                                        Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
+                                        Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
+                                        Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
+                                        Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$ 
 
-    private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] { AttributeType.INSENSITIVE_ATTRIBUTE,
-            AttributeType.SENSITIVE_ATTRIBUTE,
-            null,
-            AttributeType.IDENTIFYING_ATTRIBUTE       };
+    private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] { 
+                                        AttributeType.INSENSITIVE_ATTRIBUTE,
+                                        AttributeType.SENSITIVE_ATTRIBUTE,
+                                        null,
+                                        AttributeType.IDENTIFYING_ATTRIBUTE       };
 
-    private static final String[]        COMBO2_VALUES = new String[] { Resources.getMessage("AttributeDefinitionView.4"), Resources.getMessage("AttributeDefinitionView.5"), Resources.getMessage("AttributeDefinitionView.6") };                                                   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private static final String[]       COMBO2_VALUES = new String[] { 
+                                        Resources.getMessage("AttributeDefinitionView.4"), //$NON-NLS-1$ 
+                                        Resources.getMessage("AttributeDefinitionView.5"), //$NON-NLS-1$ 
+                                        Resources.getMessage("AttributeDefinitionView.6") };  //$NON-NLS-1$                                                  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    private static final DataType<?>[]      COMBO2_TYPES  = new DataType[] { DataType.STRING,
-            DataType.DECIMAL,
-            DataType.DATE                             };
+    private static final DataType<?>[]  COMBO2_TYPES  = new DataType[] { 
+                                        DataType.STRING,
+                                        DataType.DECIMAL,
+                                        DataType.DATE                };
 
     private final Combo                  typeCombo;
     private final Combo                  dataTypeCombo;
@@ -84,14 +86,10 @@ public class AttributeDefinitionView implements IView {
                                    final Controller controller) {
 
         // Load images
-        IMAGE_INSENSITIVE = controller.getResources()
-                                      .getImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE = controller.getResources()
-                                    .getImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources()
-                                            .getImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING = controller.getResources()
-                                      .getImage("bullet_red.png"); //$NON-NLS-1$
+        IMAGE_INSENSITIVE = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
+        IMAGE_SENSITIVE = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
+        IMAGE_IDENTIFYING = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
 
         // Register
         this.controller = controller;
@@ -207,13 +205,8 @@ public class AttributeDefinitionView implements IView {
                         }
 
                         // Set and update
-                        model.getInputConfig()
-                             .getInput()
-                             .getDefinition()
-                             .setDataType(attribute, type);
-                        controller.update(new ModelEvent(outer,
-                                                         EventTarget.DATA_TYPE,
-                                                         attribute));
+                        model.getInputConfig().getInput().getDefinition().setDataType(attribute, type);
+                        controller.update(new ModelEvent(outer, EventTarget.DATA_TYPE, attribute));
                     }
                 }
             }
@@ -228,8 +221,16 @@ public class AttributeDefinitionView implements IView {
 
     @Override
     public void dispose() {
+        
+        // Dispose views
         controller.removeListener(this);
         editor.dispose();
+
+        // Dispose images
+        IMAGE_INSENSITIVE.dispose();
+        IMAGE_SENSITIVE.dispose();
+        IMAGE_QUASI_IDENTIFYING.dispose();
+        IMAGE_IDENTIFYING.dispose();
     }
 
     /**
