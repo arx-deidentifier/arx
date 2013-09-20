@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.TableItem;
 public class CriteriaListView implements IView, IAttachable {
 
     private Controller  controller;
-    private Model       model;
+    private Model       model = null;
     private Table       table;
     private TableColumn column1;
     private TableColumn column2;
@@ -33,12 +33,12 @@ public class CriteriaListView implements IView, IAttachable {
     private Image       symbolK;
     private Image       symbolD;
 
-    public CriteriaListView(final Composite parent, final Controller controller, final Model model) {
+    public CriteriaListView(final Composite parent, final Controller controller) {
 
         // Register
         this.controller = controller;
         this.controller.addListener(EventTarget.CRITERION_DEFINITION, this);
-        this.model = model;
+        this.controller.addListener(EventTarget.MODEL, this);
         this.symbolL = controller.getResources().getImage("symbol_l.png"); //$NON-NLS-1$
         this.symbolT = controller.getResources().getImage("symbol_t.png"); //$NON-NLS-1$
         this.symbolK = controller.getResources().getImage("symbol_k.png"); //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class CriteriaListView implements IView, IAttachable {
         l.numColumns = 1;
         root.setLayout(l);
 
-        final Table table = new Table(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        table = new Table(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
         table.setHeaderVisible(true);
         final GridData d = SWTUtil.createFillGridData();
         table.setLayoutData(d);
@@ -92,9 +92,12 @@ public class CriteriaListView implements IView, IAttachable {
 
     @Override
     public void update(ModelEvent event) {
-        if (event.target == EventTarget.CRITERION_DEFINITION) {
+        if (event.target == EventTarget.MODEL) {
+            this.model = (Model)event.data;
+        } else if (event.target == EventTarget.CRITERION_DEFINITION) {
             if (model!=null) {
                 root.setRedraw(false);
+                table.removeAll();
                 if (model.getKAnonymityModel().isActive() && model.getKAnonymityModel().isEnabled()) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(new String[] { "", model.getKAnonymityModel().toString(), "" });
@@ -108,17 +111,19 @@ public class CriteriaListView implements IView, IAttachable {
                 }
     
                 for (ModelLDiversityCriterion c : model.getLDiversityModel().values()) {
-    
-                    TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[] { "", c.toString(), c.getAttribute() });
-                    item.setImage(0, symbolL);
+                    if (c.isActive() && c.isEnabled()) {
+                        TableItem item = new TableItem(table, SWT.NONE);
+                        item.setText(new String[] { "", c.toString(), c.getAttribute() });
+                        item.setImage(0, symbolL);
+                    }
                 }
     
                 for (ModelTClosenessCriterion c : model.getTClosenessModel().values()) {
-    
-                    TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[] { "", c.toString(), c.getAttribute() });
-                    item.setImage(0, symbolT);
+                    if (c.isActive() && c.isEnabled()) {
+                        TableItem item = new TableItem(table, SWT.NONE);
+                        item.setText(new String[] { "", c.toString(), c.getAttribute() });
+                        item.setImage(0, symbolT);
+                    }
                 }
                 column1.pack();
                 column2.pack();

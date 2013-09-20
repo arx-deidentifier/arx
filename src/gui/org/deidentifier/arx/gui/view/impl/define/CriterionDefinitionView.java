@@ -422,7 +422,7 @@ public class CriterionDefinitionView implements IView {
         final CTabItem tabOverview = new CTabItem(folder2, SWT.NULL);
         tabOverview.setText("Overview");
         tabOverview.setShowClose(false);
-        clv = new CriteriaListView(folder2, controller, model);
+        clv = new CriteriaListView(folder2, controller);
         tabOverview.setControl(clv.getControl());
         
         folder2.setSelection(tabGeneral);
