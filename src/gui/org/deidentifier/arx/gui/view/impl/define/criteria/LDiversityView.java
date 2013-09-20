@@ -5,6 +5,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -88,12 +89,14 @@ public class LDiversityView extends CriterionView{
         sliderL.setMaximum(SLIDER_MAX);
         sliderL.setMinimum(0);
         sliderL.setSelection(0);
+        final Object outer = this;
         sliderL.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
             	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
             	m.setL(sliderToInt(2, 100, sliderL.getSelection()));
                 labelL.setText(String.valueOf(m.getL()));
+                controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
             }
         });
 
@@ -134,6 +137,7 @@ public class LDiversityView extends CriterionView{
             	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
 				m.setC(sliderToDouble(0.001d, 100d, sliderC.getSelection()));
                 labelC.setText(String.valueOf(m.getC()));
+                controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
             }
         });
 
@@ -147,6 +151,7 @@ public class LDiversityView extends CriterionView{
             	} else {
             		sliderC.setEnabled(false);
             	}
+            	controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
             }
         });
 

@@ -5,6 +5,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -78,12 +79,14 @@ public class TClosenessView extends CriterionView {
 		comboVariant.setLayoutData(d32);
 		comboVariant.setItems(VARIANTS);
 		comboVariant.select(0);
+		final Object outer = this;
 		comboVariant.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent arg0) {
 				ModelTClosenessCriterion m = model.getTClosenessModel().get(
 						attribute);
 				m.setVariant(comboVariant.getSelectionIndex());
+				controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
 			}
 		});
 
@@ -112,6 +115,7 @@ public class TClosenessView extends CriterionView {
 						attribute);
 				m.setT(sliderToDouble(0.001d, 1d, sliderT.getSelection()));
 				labelT.setText(String.valueOf(m.getT()));
+				controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
 			}
 		});
 

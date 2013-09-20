@@ -52,7 +52,7 @@ public abstract class CriterionView implements IView, IAttachable {
 		} else if (event.target == EventTarget.INPUT) {
 			parse();
 		} else if (event.target == EventTarget.CRITERION_DEFINITION) {
-            parse();
+            if (event.source!=this) parse();
         }
 	}
 

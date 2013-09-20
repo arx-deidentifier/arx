@@ -5,7 +5,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
+import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -77,11 +77,13 @@ public class DPresenceView extends CriterionView{
         sliderDMin.setMaximum(SLIDER_MAX);
         sliderDMin.setMinimum(0);
         sliderDMin.setSelection(0);
+        final Object outer = this;
         sliderDMin.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getDPresenceModel().setDmin(sliderToDouble(0.001, 1, sliderDMin.getSelection()));
                 labelDMin.setText(String.valueOf(model.getDPresenceModel().getDmin()));
+                controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
 
@@ -109,6 +111,7 @@ public class DPresenceView extends CriterionView{
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getDPresenceModel().setDmax(sliderToDouble(0.001, 1, sliderDMax.getSelection()));
                 labelDMax.setText(String.valueOf(model.getDPresenceModel().getDmax()));
+                controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
 

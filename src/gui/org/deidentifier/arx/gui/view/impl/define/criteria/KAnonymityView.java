@@ -5,6 +5,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -70,6 +71,7 @@ public class KAnonymityView extends CriterionView {
 		sliderK.setMaximum(SLIDER_MAX);
 		sliderK.setMinimum(0);
 		sliderK.setSelection(0);
+		final Object outer = this;
 		sliderK.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent arg0) {
@@ -77,6 +79,7 @@ public class KAnonymityView extends CriterionView {
 						sliderToInt(2, 100, sliderK.getSelection()));
 				labelK.setText(String
 						.valueOf(model.getKAnonymityModel().getK()));
+				controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, model.getKAnonymityModel()));
 			}
 		});
 
