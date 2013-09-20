@@ -174,10 +174,10 @@ public class CriterionDefinitionView implements IView {
             }
             
         });
-        
+
         // Create k-anonymity tab
         final CTabItem tabKAnon = new CTabItem(folder, SWT.NULL);
-        tabKAnon.setText("- Anonymity");
+        tabKAnon.setText(Resources.getMessage("CriterionDefinitionView.19"));  //$NON-NLS-1$
         tabKAnon.setShowClose(false);
         KAnonymityView kanon = new KAnonymityView(folder, controller, model);
         tabKAnon.setControl(kanon.getControl());
@@ -186,7 +186,7 @@ public class CriterionDefinitionView implements IView {
 
         // Create d-presence tab
         final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
-        tabDPres.setText("- Presence");
+        tabDPres.setText(Resources.getMessage("CriterionDefinitionView.60"));  //$NON-NLS-1$
         tabDPres.setShowClose(false);
         tabDPres.setImage(controller.getResources().getImage("symbol_d.png")); //$NON-NLS-1$
         DPresenceView dpres = new DPresenceView(folder, controller, model);
@@ -194,7 +194,7 @@ public class CriterionDefinitionView implements IView {
         
         // Create l-diversity tab
         final CTabItem tabLDiversity = new CTabItem(folder, SWT.NULL);
-        tabLDiversity.setText("- Diversity");
+        tabLDiversity.setText(Resources.getMessage("CriterionDefinitionView.20"));  //$NON-NLS-1$
         tabLDiversity.setShowClose(false);
         tabLDiversity.setImage(controller.getResources().getImage("symbol_l.png")); //$NON-NLS-1$
         LDiversityView view = new LDiversityView(folder, controller, model);
@@ -202,7 +202,7 @@ public class CriterionDefinitionView implements IView {
 
         // Create t-closeness tab
         final CTabItem tabTcloseness = new CTabItem(folder, SWT.NULL);
-        tabTcloseness.setText("- Closeness");
+        tabTcloseness.setText(Resources.getMessage("CriterionDefinitionView.21"));  //$NON-NLS-1$
         tabTcloseness.setShowClose(false);
         tabTcloseness.setImage(controller.getResources().getImage("symbol_t.png")); //$NON-NLS-1$
         TClosenessView view2 = new TClosenessView(folder, controller, model);
