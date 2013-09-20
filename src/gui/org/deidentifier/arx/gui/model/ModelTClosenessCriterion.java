@@ -38,4 +38,24 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 		}
 	}
 
+    @Override
+    public void pull(ModelExplicitCriterion criterion) {
+        if (!(criterion instanceof ModelTClosenessCriterion)) {
+            throw new RuntimeException("Invalid type of criterion");
+        }
+        ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
+        this.variant = other.variant;
+        this.t = other.t;
+    }
+    @Override
+    public String toString() {
+        // TODO: Move to messages.properties
+        if (variant==0){
+            return String.valueOf(t)+"-Closeness with equal-distance EMD";
+        } else if (variant==1){
+            return String.valueOf(t)+"-Closeness with hierarchical-distance EMD";
+        } else {
+            throw new RuntimeException("Internal error: invalid variant of l-diversity");
+        }
+    }
 }

@@ -24,7 +24,6 @@ import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.gui.view.impl.define.criteria.DPresenceView;
 import org.deidentifier.arx.gui.view.impl.define.criteria.KAnonymityView;
@@ -38,7 +37,6 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -95,6 +93,7 @@ public class CriterionDefinitionView implements IView {
         this.controller.addListener(EventTarget.INPUT, this);
         this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
         this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(EventTarget.CRITERION_DEFINITION, this);
         this.root = build(parent);
     }
 
@@ -135,7 +134,8 @@ public class CriterionDefinitionView implements IView {
             SWTUtil.enable(root);
             updateControlls();
         } else if (event.target == EventTarget.SELECTED_ATTRIBUTE ||
-                   event.target == EventTarget.ATTRIBUTE_TYPE) {
+                   event.target == EventTarget.ATTRIBUTE_TYPE ||
+                   event.target == EventTarget.CRITERION_DEFINITION) {
             
             if (model != null){
                 updateControlls();
@@ -225,7 +225,7 @@ public class CriterionDefinitionView implements IView {
         enable.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                triggerEnableEvent();
+                controller.actionCriterionEnable(getSelectedCriterion());
             }
         });
         
@@ -233,11 +233,23 @@ public class CriterionDefinitionView implements IView {
         push.setImage(controller.getResources().getImage("bullet_arrow_up.png"));  //$NON-NLS-1$
         push.setToolTipText(Resources.getMessage("CriterionDefinitionView.57"));  //$NON-NLS-1$
         push.setEnabled(false);
+        push.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.actionCriterionPush(getSelectedCriterion());
+            }
+        });
         
         pull = new ToolItem( toolbar, SWT.PUSH );
         pull.setImage(controller.getResources().getImage("bullet_arrow_down.png"));  //$NON-NLS-1$
         pull.setToolTipText(Resources.getMessage("CriterionDefinitionView.58"));  //$NON-NLS-1$
         pull.setEnabled(false);
+        pull.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.actionCriterionPull(getSelectedCriterion());
+            }
+        });
         
         ToolItem help = new ToolItem( toolbar, SWT.PUSH );
         help.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
@@ -408,7 +420,7 @@ public class CriterionDefinitionView implements IView {
     }
 
     /**
-     * TODO: OK?
+     * Converts the double value to a slider selection
      */
     private int doubleToSlider(final double min,
                                final double max,
@@ -424,6 +436,10 @@ public class CriterionDefinitionView implements IView {
         return (int) val;
     }
 
+    /**
+     * Select metric action
+     * @param metric
+     */
     private void selectMetricAction(final Metric<?> metric) {
         if (model == null) { return; }
         if (metric != null) {
@@ -432,6 +448,13 @@ public class CriterionDefinitionView implements IView {
         }
     }
 
+    /**
+     * Converts the slider value to a double
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
     private double sliderToDouble(final double min,
                                   final double max,
                                   final int value) {
@@ -445,47 +468,23 @@ public class CriterionDefinitionView implements IView {
         }
         return val;
     }
-    
+
     /**
-     * Triggers an enable/disable event on the current criterion
+     * Returns the currently selected criterion
+     * @return
      */
-    private void triggerEnableEvent(){
-        
-        root.setRedraw(false);
+    private ModelCriterion getSelectedCriterion() {
         ModelCriterion mc = null;
-     
-        // K-Anonymity
         if (folder.getSelectionIndex()==0){
             mc = model.getKAnonymityModel();
-        // D-Presence
         } else if (folder.getSelectionIndex()==1){
             mc = model.getDPresenceModel();
-        // L-Diversity
         } else if (folder.getSelectionIndex()==2){
             mc = model.getLDiversityModel().get(model.getSelectedAttribute());
-        // T-Closeness
         } else if (folder.getSelectionIndex()==3){
             mc = model.getTClosenessModel().get(model.getSelectedAttribute());
         }
-        
-        if (mc == null){
-            root.setRedraw(true);
-            return;
-        }
-        
-        if (mc.isActive()) {
-            if (mc.isEnabled()) {
-                mc.setEnabled(false);
-                enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
-            } else {
-                mc.setEnabled(true);
-                enable.setImage(controller.getResources().getImage("tick.png")); //$NON-NLS-1
-            } 
-            controller.update(new ModelEvent(this,
-                                             EventTarget.CRITERION_DEFINITION,
-                                             mc));
-        } 
-        root.setRedraw(true);
+        return mc;
     }
     
     /**

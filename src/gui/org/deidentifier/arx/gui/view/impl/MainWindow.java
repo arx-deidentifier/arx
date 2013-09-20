@@ -23,9 +23,11 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
@@ -35,6 +37,7 @@ import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalyzeView;
 import org.deidentifier.arx.gui.view.impl.define.DefineView;
 import org.deidentifier.arx.gui.view.impl.explore.ExploreView;
+import org.deidentifier.arx.gui.view.impl.menu.CriterionSelectionDialog;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -42,6 +45,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -57,7 +61,6 @@ public class MainWindow implements IMainWindow, IView {
     private static final String TITLE                     = Resources.getMessage("MainWindow.0"); //$NON-NLS-1$
     private static final String TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1"); //$NON-NLS-1$
     private static final String TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2"); //$NON-NLS-1$
-
     private static final String TAB_EXPLORE_SEARCHSPACE   = Resources.getMessage("MainWindow.3"); //$NON-NLS-1$
 
     private final Display       display;
@@ -314,5 +317,15 @@ public class MainWindow implements IMainWindow, IView {
             shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
             root.setEnabled(true);
         }
+    }
+
+    @Override
+    public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others) {
+
+        // Dialog
+        final CriterionSelectionDialog dialog = new CriterionSelectionDialog(controller, shell, others);
+        dialog.create();
+        if (dialog.open() != Window.OK) { return null; }
+        else {return dialog.getCriterion();}
     }
 }

@@ -8,6 +8,7 @@ import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 
 	private static final long serialVersionUID = -9172448654255959945L;
+
 	public ModelLDiversityCriterion(String attribute) {
 		super(attribute);
 	}
@@ -46,5 +47,28 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 			throw new RuntimeException("Internal error: invalid variant of l-diversity");
 		}
 	}
-
+	
+    @Override
+    public void pull(ModelExplicitCriterion criterion) {
+        if (!(criterion instanceof ModelLDiversityCriterion)) {
+            throw new RuntimeException("Invalid type of criterion");
+        }
+        ModelLDiversityCriterion other = (ModelLDiversityCriterion)criterion;
+        this.variant = other.variant;
+        this.l = other.l;
+        this.c = other.c;
+    }
+    @Override
+    public String toString() {
+        // TODO: Move to messages.properties
+        if (variant==0){
+            return "Distinct-"+l+"-diversity";
+        } else if (variant==1){
+            return "Entropy-"+l+"-diversity";
+        } else if (variant==2){
+            return "Recursive-("+String.valueOf(c)+","+l+")-diversity";
+        } else {
+            throw new RuntimeException("Internal error: invalid variant of l-diversity");
+        }
+    }
 }

@@ -19,7 +19,9 @@
 package org.deidentifier.arx.gui.view.def;
 
 import java.util.Collection;
+import java.util.List;
 
+import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.worker.Worker;
@@ -58,4 +60,6 @@ public interface IMainWindow {
     boolean showQuestionDialog(String header, String text);
 
     String showSaveFileDialog(String filter);
+
+    ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others);
 }

@@ -1,5 +1,7 @@
 package org.deidentifier.arx.gui.model;
 
+import org.eclipse.swt.graphics.Image;
+
 public abstract class ModelExplicitCriterion extends ModelCriterion {
 
 	private static final long serialVersionUID = 2140859935908452477L;
@@ -13,4 +15,8 @@ public abstract class ModelExplicitCriterion extends ModelCriterion {
 	public String getAttribute() {
 		return attribute;
 	}
+	
+    public abstract void pull(ModelExplicitCriterion criterion);
+
+    public abstract String toString();
 }

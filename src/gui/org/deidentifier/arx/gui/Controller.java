@@ -23,23 +23,29 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelCriterion;
+import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
+import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
+import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -75,7 +81,7 @@ public class Controller implements IView {
 
     public Controller(final IMainWindow main) {
         this.main = main;
-        resources = new Resources(main.getShell());
+        this.resources = new Resources(main.getShell());
     }
 
     public void actionApplySelectedTransformation() {
@@ -142,6 +148,9 @@ public class Controller implements IView {
             update(new ModelEvent(this,
                                   EventTarget.SELECTED_ATTRIBUTE,
                                   data.getHandle().getAttributeName(0)));
+            update(new ModelEvent(this,
+                                  EventTarget.CRITERION_DEFINITION,
+                                  null));
         }
     }
 
@@ -859,5 +868,86 @@ public class Controller implements IView {
                 }
             }
         }
+    }
+
+    /**
+     * Pull settings into the criterion
+     * @param criterion
+     */
+    public void actionCriterionPull(ModelCriterion criterion) {
+        
+        // Collect all other criteria
+        List<ModelExplicitCriterion> others = new ArrayList<ModelExplicitCriterion>();
+        if (criterion instanceof ModelLDiversityCriterion){
+            for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
+                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion)other);
+                }
+            }
+        } else if (criterion instanceof ModelTClosenessCriterion){
+            for (ModelTClosenessCriterion other : model.getTClosenessModel().values()){
+                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion)other);
+                }
+            }
+        } else {
+            throw new RuntimeException("Invalid type of criterion");
+        }
+        
+        // Break if none found
+        if (others.isEmpty()) {
+            main.showErrorDialog(Resources.getMessage("Controller.95"), Resources.getMessage("Controller.96")); //$NON-NLS-1$ //$NON-NLS-1$
+            return;
+        }
+        
+        // Select criterion
+        ModelExplicitCriterion element = main.showSelectCriterionDialog(others);
+        
+        if (element == null){
+            return;
+        } else {
+            ((ModelExplicitCriterion)criterion).pull(element);
+            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
+        }
+    }
+
+    /**
+     * Pushes the settings of the criterion
+     * @param criterion
+     */
+    public void actionCriterionPush(ModelCriterion criterion) {
+        if (main.showQuestionDialog(Resources.getMessage("Controller.93"), Resources.getMessage("Controller.94"))){ //$NON-NLS-1$ //$NON-NLS-1$
+            
+            if (criterion instanceof ModelLDiversityCriterion){
+                for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
+                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion)criterion);
+                    }
+                }
+            } else if (criterion instanceof ModelTClosenessCriterion){
+                for (ModelTClosenessCriterion other : model.getTClosenessModel().values()){
+                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion)criterion);
+                    }
+                }
+            } else {
+                throw new RuntimeException("Invalid type of criterion");
+            }
+            
+            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
+        }
+    }
+
+    /**
+     * Enables and disables a criterion
+     * @param criterion
+     */
+    public void actionCriterionEnable(ModelCriterion criterion) {
+        if (criterion.isEnabled()) {
+            criterion.setEnabled(false);
+        } else {
+            criterion.setEnabled(true);
+        } 
+        update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
     }
 }
