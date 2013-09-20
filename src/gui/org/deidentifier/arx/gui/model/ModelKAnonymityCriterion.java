@@ -20,4 +20,11 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
 	public PrivacyCriterion getCriterion(Model model) {
 		return new KAnonymity(k);
 	}
+
+    @Override
+    public String toString() {
+        // TODO: Move to messages.properties
+        return k+"-Anonymity";
+    }
+	
 }

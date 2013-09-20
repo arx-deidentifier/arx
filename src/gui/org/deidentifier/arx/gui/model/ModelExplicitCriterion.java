@@ -1,6 +1,5 @@
 package org.deidentifier.arx.gui.model;
 
-import org.eclipse.swt.graphics.Image;
 
 public abstract class ModelExplicitCriterion extends ModelCriterion {
 
@@ -17,6 +16,4 @@ public abstract class ModelExplicitCriterion extends ModelCriterion {
 	}
 	
     public abstract void pull(ModelExplicitCriterion criterion);
-
-    public abstract String toString();
 }

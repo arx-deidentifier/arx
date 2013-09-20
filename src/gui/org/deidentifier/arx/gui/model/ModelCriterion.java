@@ -27,4 +27,5 @@ public abstract class ModelCriterion implements Serializable {
 	}
 
 	public abstract PrivacyCriterion getCriterion(Model model);
+    public abstract String toString();
 }

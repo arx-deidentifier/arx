@@ -27,4 +27,10 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 		return new DPresence(dmin, dmax, model.getInputConfig().getResearchSubset());
 	}
 
+    @Override
+    public String toString() {
+        // TODO: Move to messages.properties
+        return "("+String.valueOf(dmin)+","+String.valueOf(dmax)+")-Presence";
+    }
+
 }
