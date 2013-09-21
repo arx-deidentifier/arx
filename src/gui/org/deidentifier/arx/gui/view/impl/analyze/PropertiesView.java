@@ -37,7 +37,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Configuration;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -364,7 +364,7 @@ public class PropertiesView implements IView {
         if (model == null) { return; }
 
         // Obtain the right config
-        Configuration config = model.getOutputConfig();
+        ModelConfiguration config = model.getOutputConfig();
         if (config == null) {
             config = model.getInputConfig();
         }
@@ -399,7 +399,7 @@ public class PropertiesView implements IView {
         }
     }
 
-    private void redrawInput(final Configuration config, final DataHandle data) {
+    private void redrawInput(final ModelConfiguration config, final DataHandle data) {
 
         roots.clear();
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
@@ -486,7 +486,7 @@ public class PropertiesView implements IView {
 
     }
 
-    private void redrawOutput(final Configuration config,
+    private void redrawOutput(final ModelConfiguration config,
                               final ARXResult result,
                               final ARXNode node,
                               final DataHandle data) {

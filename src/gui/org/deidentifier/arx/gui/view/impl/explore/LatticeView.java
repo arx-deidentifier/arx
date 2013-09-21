@@ -53,6 +53,7 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
@@ -619,7 +620,7 @@ public class LatticeView extends Panel implements IView, IAttachable {
      * 
      * @param lattice
      */
-    private void initialize(final ARXResult r, final NodeFilter filter) {
+    private void initialize(final ARXResult r, final ModelNodeFilter filter) {
 
         if ((r == null) || (r.getLattice() == null) || (filter == null)) {
             reset();
@@ -994,7 +995,7 @@ public class LatticeView extends Panel implements IView, IAttachable {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        initialize(model.getResult(), (NodeFilter) event.data);
+                        initialize(model.getResult(), (ModelNodeFilter) event.data);
                         repaint();
                     }
                 });

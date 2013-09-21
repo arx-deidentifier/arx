@@ -44,7 +44,7 @@ import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
 import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Configuration;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVDataOutput;
@@ -176,7 +176,7 @@ public class WorkerSave extends Worker<Model> {
      * @param model
      * @return
      */
-    private String toXML(final Configuration config) {
+    private String toXML(final ModelConfiguration config) {
         final StringBuffer b = new StringBuffer();
         b.append("<config>\n"); //$NON-NLS-1$
         b.append("\t").append("<removeOutliers>").append(toXML(config.isRemoveOutliers())).append("</removeOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -439,7 +439,7 @@ public class WorkerSave extends Worker<Model> {
      * @throws IOException
      */
     private void
-            writeConfiguration(final Configuration config,
+            writeConfiguration(final ModelConfiguration config,
                                final String prefix,
                                final ZipOutputStream zip) throws IOException {
         zip.putNextEntry(new ZipEntry(prefix + "config.dat")); //$NON-NLS-1$
@@ -479,7 +479,7 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void writeDefinition(final Configuration config,
+    private void writeDefinition(final ModelConfiguration config,
                                  final String prefix,
                                  final ZipOutputStream zip) throws IOException {
         if (config.getInput() != null) {
@@ -514,7 +514,7 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void writeHierarchies(final Configuration config,
+    private void writeHierarchies(final ModelConfiguration config,
                                   final String prefix,
                                   final ZipOutputStream zip) throws IOException {
         if (config.getInput() != null) {

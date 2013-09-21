@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.explore;
 
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
@@ -40,7 +41,7 @@ import org.eclipse.swt.widgets.Listener;
 public class ExploreView implements IAttachable {
 
     private final Composite top;
-    private NodeFilter      filter;
+    private ModelNodeFilter      filter;
     private ARXResult     result;
 
     public ExploreView(final Composite parent, final Controller controller) {

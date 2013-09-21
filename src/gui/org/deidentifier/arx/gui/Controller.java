@@ -46,13 +46,13 @@ import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
-import org.deidentifier.arx.gui.view.impl.explore.NodeFilter;
 import org.deidentifier.arx.gui.view.impl.menu.AboutDialog;
 import org.deidentifier.arx.gui.view.impl.menu.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.menu.ProjectDialog;
@@ -645,7 +645,7 @@ public class Controller implements IView {
 
         // Temporary store parts of the model, because it might be overwritten
         // when updating the workbench
-        final NodeFilter tempNodeFilter = model.getNodeFilter();
+        final ModelNodeFilter tempNodeFilter = model.getNodeFilter();
         final String tempSelectedAttribute = model.getSelectedAttribute();
         final ARXNode tempSelectedNode = model.getSelectedNode();
         final Set<ARXNode> tempClipboard = new HashSet<ARXNode>();

@@ -31,7 +31,6 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.gui.view.impl.explore.NodeFilter;
 
 public class Model implements Serializable {
 
@@ -57,7 +56,7 @@ public class Model implements Serializable {
 	private int maxNodesInViewer = 700;
 
 	private String selectedAttribute = null;
-	private NodeFilter nodeFilter = null;
+	private ModelNodeFilter nodeFilter = null;
 	private boolean modified = false;
 	private long inputBytes = 0L;
 	private String[] pair = new String[] { null, null };
@@ -67,9 +66,9 @@ public class Model implements Serializable {
 
 	protected long time;
 
-	private Configuration inputConfig = new Configuration();
+	private ModelConfiguration inputConfig = new ModelConfiguration();
 
-	private Configuration outputConfig = null;
+	private ModelConfiguration outputConfig = null;
 
 	private String suppressionString = "*"; //$NON-NLS-1$
 
@@ -150,7 +149,7 @@ public class Model implements Serializable {
 		return inputBytes;
 	}
 
-	public Configuration getInputConfig() {
+	public ModelConfiguration getInputConfig() {
 		return inputConfig;
 	}
 
@@ -174,7 +173,7 @@ public class Model implements Serializable {
 		return name;
 	}
 
-	public NodeFilter getNodeFilter() {
+	public ModelNodeFilter getNodeFilter() {
 		return nodeFilter;
 	}
 
@@ -189,7 +188,7 @@ public class Model implements Serializable {
 		return output;
 	}
 
-	public Configuration getOutputConfig() {
+	public ModelConfiguration getOutputConfig() {
 		return outputConfig;
 	}
 
@@ -278,7 +277,7 @@ public class Model implements Serializable {
 	public void reset() {
 		// TODO: Need to reset more fields
 		resetCriteria();
-		inputConfig = new Configuration();
+		inputConfig = new ModelConfiguration();
 		outputConfig = null;
 		output = null;
 		result = null;
@@ -351,7 +350,7 @@ public class Model implements Serializable {
 		this.inputBytes = inputBytes;
 	}
 
-	public void setInputConfig(final Configuration config) {
+	public void setInputConfig(final ModelConfiguration config) {
 		inputConfig = config;
 	}
 
@@ -374,7 +373,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	public void setNodeFilter(final NodeFilter filter) {
+	public void setNodeFilter(final ModelNodeFilter filter) {
 		nodeFilter = filter;
 		setModified();
 	}
@@ -392,7 +391,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	public void setOutputConfig(final Configuration config) {
+	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
 

@@ -33,7 +33,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Configuration;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
@@ -96,7 +96,7 @@ public class DistributionView implements IView {
         final long time = System.currentTimeMillis();
 
         // Obtain the right config
-        Configuration config = model.getOutputConfig();
+        ModelConfiguration config = model.getOutputConfig();
         if (config == null) {
             config = model.getInputConfig();
         }

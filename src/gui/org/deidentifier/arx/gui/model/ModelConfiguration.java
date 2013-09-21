@@ -30,7 +30,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
-public class Configuration implements Serializable {
+public class ModelConfiguration implements Serializable {
 
     private static final long   serialVersionUID      = -2887699232096897527L;
 
@@ -41,9 +41,9 @@ public class Configuration implements Serializable {
     private Map<String, Hierarchy> hierarchies           = new HashMap<String, Hierarchy>();
 
     @Override
-    public Configuration clone() {
+    public ModelConfiguration clone() {
 
-        final Configuration c = new Configuration();
+        final ModelConfiguration c = new ModelConfiguration();
         c.removeOutliers = removeOutliers;
         c.input = input.clone();
         c.config = config.clone();

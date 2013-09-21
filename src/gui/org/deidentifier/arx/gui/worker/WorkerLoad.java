@@ -47,10 +47,10 @@ import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Configuration;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.impl.explore.NodeFilter;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -197,7 +197,7 @@ public class WorkerLoad extends Worker<Model> {
 
         // Read config
         final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
-        final Configuration config = (Configuration) oos.readObject();
+        final ModelConfiguration config = (ModelConfiguration) oos.readObject();
         oos.close();
 
         // Attach data
@@ -278,7 +278,7 @@ public class WorkerLoad extends Worker<Model> {
         }
     }
 
-    private void readDefinition(final Configuration config,
+    private void readDefinition(final ModelConfiguration config,
                                 final String prefix,
                                 final ZipFile zip) throws IOException,
                                                   SAXException {
@@ -434,7 +434,7 @@ public class WorkerLoad extends Worker<Model> {
         final ZipEntry entry = zip.getEntry("filter.dat"); //$NON-NLS-1$
         if (entry == null) { return; }
         final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
-        model.setNodeFilter((NodeFilter) oos.readObject());
+        model.setNodeFilter((ModelNodeFilter) oos.readObject());
         oos.close();
     }
 
@@ -462,7 +462,7 @@ public class WorkerLoad extends Worker<Model> {
      * @throws IOException
      */
     private void
-            readInput(final Configuration config, final ZipFile zip) throws IOException {
+            readInput(final ModelConfiguration config, final ZipFile zip) throws IOException {
 
         final ZipEntry entry = zip.getEntry("data/input.csv"); //$NON-NLS-1$
         if (entry == null) { return; }

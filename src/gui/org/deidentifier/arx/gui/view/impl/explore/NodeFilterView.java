@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -54,7 +55,7 @@ public class NodeFilterView implements IView {
     private final Image      IMG_ORANGE;
 
     private final Controller controller;
-    private NodeFilter       filter = null;
+    private ModelNodeFilter       filter = null;
     private int[]            maxlevels;
     private ARXResult      result;
     private Combo            attribute;
@@ -357,7 +358,7 @@ public class NodeFilterView implements IView {
     }
 
     private void initialize(final ARXResult result,
-                            final NodeFilter nodeFilter) {
+                            final ModelNodeFilter nodeFilter) {
 
         // Reset
         reset();
@@ -365,7 +366,7 @@ public class NodeFilterView implements IView {
         // Reset filter
         maxlevels = result.getLattice().getTop().getTransformation();
         if (nodeFilter == null) {
-            filter = new NodeFilter(maxlevels, model.getInitialNodesInViewer());
+            filter = new ModelNodeFilter(maxlevels, model.getInitialNodesInViewer());
             filter.initialize(result);
         } else {
             filter = nodeFilter;

@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.explore;
+package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 
-public class NodeFilter implements Serializable {
+public class ModelNodeFilter implements Serializable {
 
     private static final long    serialVersionUID   = 5451641489562102719L;
 
@@ -39,7 +39,7 @@ public class NodeFilter implements Serializable {
     private int                  maxNumNodesInitial = 0;
 
     @SuppressWarnings("unchecked")
-    public NodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
+    public ModelNodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
         this.maxNumNodesInitial = maxNumNodesInitial;
         generalizations = new Set[maxLevels.length];
         for (int i = 0; i < generalizations.length; i++) {
