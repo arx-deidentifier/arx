@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Rectangle;
 + * @author Dirk Fauth
 + *
  */
-public class CustomLineBorderDecorator extends CellPainterWrapper {
+public class DataTableBorderDecorator extends CellPainterWrapper {
 
    /**
 * Label for adding a border at the top of a cell.
@@ -58,7 +58,7 @@ public class CustomLineBorderDecorator extends CellPainterWrapper {
 * default border style.
 * @param interiorPainter The painter to be wrapped by this decorator.
 */
-   public CustomLineBorderDecorator(ICellPainter interiorPainter) {
+   public DataTableBorderDecorator(ICellPainter interiorPainter) {
    this(interiorPainter, null);
    }
    
@@ -69,7 +69,7 @@ public class CustomLineBorderDecorator extends CellPainterWrapper {
 * @param defaultBorderStyle The BorderStyle to use as default if there is no BorderStyle
 *          configured via cell styles. Can be <code>null</code>.
 */
-   public CustomLineBorderDecorator(ICellPainter interiorPainter, BorderStyle defaultBorderStyle) {
+   public DataTableBorderDecorator(ICellPainter interiorPainter, BorderStyle defaultBorderStyle) {
    super(interiorPainter);
    this.defaultBorderStyle = defaultBorderStyle;
    }

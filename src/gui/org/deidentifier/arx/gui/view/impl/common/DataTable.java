@@ -901,7 +901,7 @@ public class DataTable implements IDataTable {
         bodyLayer.registerPersistable(columnLabelAccumulator);
 
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, 
-                                                             new CustomLineBorderDecorator( new TextPainter(false, true, 0, true),
+                                                             new DataTableBorderDecorator( new TextPainter(false, true, 0, true),
                                                              new BorderStyle(2, GUIHelper.COLOR_BLACK, LineStyleEnum.SOLID)),
                                                                 DisplayMode.NORMAL,
                                                                 GridRegion.BODY);
@@ -949,7 +949,7 @@ public class DataTable implements IDataTable {
                 int row = table.getRowIndexByPosition(rowPosition+1);
                 configLabels.addLabel("background"+rowColors[row]); //$NON-NLS-1$
                 if (row<rowGroups.length-1 && rowGroups[row]!=rowGroups[row+1]){
-                    configLabels.addLabel(CustomLineBorderDecorator.BOTTOM_LINE_BORDER_LABEL);
+                    configLabels.addLabel(DataTableBorderDecorator.BOTTOM_LINE_BORDER_LABEL);
                 }
             } 
         }

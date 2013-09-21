@@ -77,7 +77,6 @@ public class DefineView implements IAttachable {
         compositeTopRight.setLayoutData(topRightLD);
         final GridLayout topRightLayout = new GridLayout();
         topRightLayout.numColumns = 1;
-//        topRightLayout.marginWidth = 0;
         topRightLayout.marginHeight = 0;
         compositeTopRight.setLayout(topRightLayout);
 
@@ -94,6 +93,7 @@ public class DefineView implements IAttachable {
 
         // Create views
         new DataView(compositeLeft, controller, EventTarget.INPUT, null);
+        new SubsetDefinitionView(compositeLeft, controller);
         new DataDefinitionView(compositeTopRight, controller);
         new CriterionDefinitionView(compositeBottomRight, controller);
     }

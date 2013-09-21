@@ -288,7 +288,7 @@ public class CriterionDefinitionView implements IView {
         
         // Create general tab
         final CTabItem tabGeneral = new CTabItem(folder2, SWT.NULL);
-        tabGeneral.setText("General settings");
+        tabGeneral.setText(Resources.getMessage("CriterionDefinitionView.61"));  //$NON-NLS-1$
         tabGeneral.setShowClose(false);
 
         group = new Composite(folder2, SWT.NONE);
@@ -420,7 +420,7 @@ public class CriterionDefinitionView implements IView {
         
         // Create overview tab
         final CTabItem tabOverview = new CTabItem(folder2, SWT.NULL);
-        tabOverview.setText("Overview");
+        tabOverview.setText(Resources.getMessage("CriterionDefinitionView.62"));  //$NON-NLS-1$
         tabOverview.setShowClose(false);
         clv = new CriteriaListView(folder2, controller);
         tabOverview.setControl(clv.getControl());
