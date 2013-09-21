@@ -18,8 +18,6 @@
 
 package org.deidentifier.arx.gui.view.def;
 
-import java.util.Map;
-
 import org.deidentifier.arx.DataHandle;
 import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
@@ -27,6 +25,8 @@ import org.eclipse.swt.widgets.Listener;
 
 public interface IDataTable {
 
+    public abstract void dispose();
+    
     public abstract void addSelectionListener(Listener listener);
 
     public abstract UiBindingRegistry getUiBindingRegistry();

@@ -77,6 +77,8 @@ public class ExploreView implements IAttachable {
                 event.doit = false;
             }
         });
+        
+        SWTUtil.createHelpButton(controller, folder, "id-30");
 
         // Lattice
         final IAttachable v1 = new LatticeView(folder, controller);

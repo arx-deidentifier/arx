@@ -22,6 +22,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IStatisticsView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -35,7 +36,7 @@ public class StatisticsView implements IStatisticsView {
     private static final String TAB_HEATMAP      = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
     private static final String TAB_PROPERTIES   = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
-    private final TabFolder     folder;
+    private final TitledFolder     folder;
 
     public StatisticsView(final Composite parent,
                           final Controller controller,
@@ -43,36 +44,19 @@ public class StatisticsView implements IStatisticsView {
                           final EventTarget reset) {
 
         // Create the tab folder
-        folder = new TabFolder(parent, SWT.NONE);
-
-        // Create the tabs
-        final TabItem tabDistribution = new TabItem(folder, SWT.NULL);
-        tabDistribution.setText(TAB_DISTRIBUTION);
-        final Composite tabDistributionComposite = new Composite(folder,
-                                                                 SWT.NONE);
-        tabDistributionComposite.setLayout(new FillLayout());
-        tabDistribution.setControl(tabDistributionComposite);
-
-        final TabItem tabHeatmap = new TabItem(folder, SWT.NULL);
-        tabHeatmap.setText(TAB_HEATMAP);
-        final Composite tabHeatmapComposite = new Composite(folder, SWT.NONE);
-        tabHeatmapComposite.setLayout(new FillLayout());
-        tabHeatmap.setControl(tabHeatmapComposite);
-
-        final TabItem tabProperties = new TabItem(folder, SWT.NULL);
-        tabProperties.setText(TAB_PROPERTIES);
-        final Composite tabPropertiesComposite = new Composite(folder, SWT.NONE);
-        tabPropertiesComposite.setLayout(new FillLayout());
-        tabProperties.setControl(tabPropertiesComposite);
+        folder = new TitledFolder(parent, controller, null, "id-50");
+        final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
+        item1.setLayout(new FillLayout());
+        final Composite item2 = folder.createItem(TAB_HEATMAP, null);
+        item2.setLayout(new FillLayout());
+        final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
+        item3.setLayout(new FillLayout());
+        folder.setSelection(0);
 
         // Create the views
-        new DistributionView(tabDistributionComposite,
-                             controller,
-                             target,
-                             reset);
-        new DensityView(tabHeatmapComposite, controller, target, reset);
-
-        new PropertiesView(tabPropertiesComposite, controller, target, reset);
+        new DistributionView(item1, controller, target, reset);
+        new DensityView(item2, controller, target, reset);
+        new PropertiesView(item3, controller, target, reset);
     }
 
     @Override

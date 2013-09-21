@@ -22,6 +22,8 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -122,13 +124,20 @@ public class SWTUtil {
         }
     }
 
-    public static void createHelpButton(Controller controller, CTabFolder tabFolder, String id) {
-        ToolBar toolbar2 = new ToolBar(tabFolder, SWT.FLAT);
-        tabFolder.setTopRight( toolbar2, SWT.RIGHT );
-        ToolItem i2 = new ToolItem( toolbar2, SWT.PUSH );
-        i2.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
-        i2.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
-        int height = toolbar2.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+    public static void createHelpButton(final Controller controller, final CTabFolder tabFolder, final String id) {
+        ToolBar toolbar = new ToolBar(tabFolder, SWT.FLAT);
+        tabFolder.setTopRight( toolbar, SWT.RIGHT );
+        ToolItem item = new ToolItem( toolbar, SWT.PUSH );
+        item.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
+        item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         tabFolder.setTabHeight(Math.max(height, tabFolder.getTabHeight()));
+        item.addSelectionListener(new SelectionAdapter(){
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.actionShowHelp(id);
+            }
+        });
     }
 }

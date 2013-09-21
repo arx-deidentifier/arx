@@ -19,9 +19,9 @@
 package org.deidentifier.arx.gui.view.impl.explore;
 
 import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -55,9 +56,9 @@ public class NodeFilterView implements IView {
     private final Image      IMG_ORANGE;
 
     private final Controller controller;
-    private ModelNodeFilter       filter = null;
+    private ModelNodeFilter  filter = null;
     private int[]            maxlevels;
-    private ARXResult      result;
+    private ARXResult        result;
     private Combo            attribute;
     private Combo            anonymous;
     private Combo            notanonymous;
@@ -67,7 +68,7 @@ public class NodeFilterView implements IView {
     private Table            generalization;
     private int              selectedDimension;
     private Model            model;
-    private final Group      root;
+    private final Composite  root;
 
     public NodeFilterView(final Composite parent, final Controller controller) {
 
@@ -82,10 +83,10 @@ public class NodeFilterView implements IView {
         IMG_ORANGE = controller.getResources().getImage("orange.gif"); //$NON-NLS-1$
 
         // Create group
-        root = new Group(parent, SWT.NULL);
-        root.setText(Resources.getMessage("NodeFilterView.3")); //$NON-NLS-1$
-        final GridData ldata = SWTUtil.createFillGridData();
-        root.setLayoutData(ldata);
+        TitledBorder border = new TitledBorder(parent, controller, Resources.getMessage("NodeFilterView.3"), "id-21"); //$NON-NLS-1$
+        root = new Composite(border.getControl(), SWT.NONE);
+        border.setChild(root);
+        border.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupLayout = new GridLayout();
         groupLayout.numColumns = 3;
         root.setLayout(groupLayout);

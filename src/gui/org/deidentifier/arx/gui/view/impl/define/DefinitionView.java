@@ -31,18 +31,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 
-public class DefineView implements IAttachable {
+public class DefinitionView implements IAttachable {
 
-    private static final String LEFT_TEXT  = Resources.getMessage("DefineView.0"); //$NON-NLS-1$
-    private static final String RIGHT_TEXT = Resources.getMessage("DefineView.1"); //$NON-NLS-1$
-    
     private final Composite center;
     
-    public DefineView(final Composite parent, final Controller controller) {
+    public DefinitionView(final Composite parent, final Controller controller) {
 
 		// Define
-		Group compositeLeft;
-		Group compositeRight;
+        Composite compositeLeft;
+		Composite compositeRight;
 		Composite compositeTopRight;
 		Composite compositeBottomRight;
 
@@ -55,16 +52,14 @@ public class DefineView implements IAttachable {
         center.setLayout(centerLayout);
 
         // Create left composite
-        compositeLeft = new Group(center, SWT.NONE);
-        compositeLeft.setText(LEFT_TEXT);
+        compositeLeft = new Composite(center, SWT.NONE);
         compositeLeft.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout leftLayout = new GridLayout();
         leftLayout.numColumns = 1;
         compositeLeft.setLayout(leftLayout);
 
         // Create right composite
-        compositeRight = new Group(center, SWT.NONE);
-        compositeRight.setText(RIGHT_TEXT);
+        compositeRight = new Composite(center, SWT.NONE);
         compositeRight.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout rightLayout = new GridLayout();
         rightLayout.numColumns = 1;
@@ -92,7 +87,7 @@ public class DefineView implements IAttachable {
         compositeBottomRight.setLayout(bottomRightLayout);
 
         // Create views
-        new DataView(compositeLeft, controller, EventTarget.INPUT, null);
+        new DataView(compositeLeft, controller, Resources.getMessage("AnalyzeView.1"), EventTarget.INPUT, null); //$NON-NLS-1$
         new SubsetDefinitionView(compositeLeft, controller);
         new DataDefinitionView(compositeTopRight, controller);
         new CriterionDefinitionView(compositeBottomRight, controller);

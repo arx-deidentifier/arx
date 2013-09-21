@@ -22,6 +22,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
@@ -34,6 +35,7 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
@@ -58,6 +60,7 @@ public class DataView implements IDataView, IView {
     /** Create */
     public DataView(final Composite parent,
                     final Controller controller,
+                    final String title,
                     final EventTarget target,
                     final EventTarget reset) {
 
@@ -72,17 +75,26 @@ public class DataView implements IDataView, IView {
         this.reset = reset;
         this.target = target;
 
-        IMAGE_INSENSITIVE = controller.getResources()
-                                      .getImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE = controller.getResources()
-                                    .getImage("bullet_purple.png"); //$NON-NLS-1$
+        IMAGE_INSENSITIVE       = controller.getResources()
+                                            .getImage("bullet_green.png"); //$NON-NLS-1$
+        IMAGE_SENSITIVE         = controller.getResources()
+                                            .getImage("bullet_purple.png"); //$NON-NLS-1$
         IMAGE_QUASI_IDENTIFYING = controller.getResources()
                                             .getImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING = controller.getResources()
-                                      .getImage("bullet_red.png"); //$NON-NLS-1$
+        IMAGE_IDENTIFYING       = controller.getResources()
+                                            .getImage("bullet_red.png"); //$NON-NLS-1$
 
         final IView outer = this;
-        table = new DataTable(controller, parent);
+        
+        TitledBorder border = new TitledBorder(parent, controller, title, "id-40");
+        border.setLayoutData(SWTUtil.createFillGridData());
+        Composite c = new Composite(border.getControl(), SWT.NONE);
+        border.setChild(c);
+        GridLayout l = new GridLayout();
+        l.numColumns = 1;
+        c.setLayout(l);
+        
+        table = new DataTable(controller, c);
         table.getUiBindingRegistry()
              .registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,
                                                              GridRegion.COLUMN_HEADER,
@@ -115,6 +127,11 @@ public class DataView implements IDataView, IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+        IMAGE_INSENSITIVE.dispose();
+        IMAGE_SENSITIVE.dispose();
+        IMAGE_QUASI_IDENTIFYING.dispose();
+        IMAGE_IDENTIFYING.dispose();
+        table.dispose();
     }
 
     @Override

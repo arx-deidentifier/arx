@@ -175,7 +175,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
             min.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent arg0) {
-                    if (min.getSelectionIndex() >= 0) {
+                    if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
                         if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
                             min.select(max.getSelectionIndex() + 1);
                         } else {
@@ -205,7 +205,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
             max.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent arg0) {
-                    if (max.getSelectionIndex() >= 0) {
+                    if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
                         if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
                             max.select(min.getSelectionIndex() - 1);
                         } else {

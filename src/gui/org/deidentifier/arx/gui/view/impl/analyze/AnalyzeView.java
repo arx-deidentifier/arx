@@ -104,24 +104,20 @@ public class AnalyzeView implements IAttachable {
         }
     }
 
-    private static final String   TEXT_CENTER_RIGHT = Resources.getMessage("AnalyzeView.0"); //$NON-NLS-1$
-    private static final String   TEXT_CENTER_LEFT  = Resources.getMessage("AnalyzeView.1"); //$NON-NLS-1$
     private static final int      WEIGHT_TOP        = 75;
-
     private static final int      WEIGHT_BOTTOM     = 25;
     private static final int      WEIGHT_LEFT       = 50;
-
     private static final int      WEIGHT_RIGHT      = 50;
-    private final Group           centerLeft;
-    private final Group           centerRight;
-    private final Composite           bottomLeft;
+    
+    private final Composite       centerLeft;
+    private final Composite       centerRight;
+    private final Composite       bottomLeft;
 
-    private final Composite           bottomRight;
+    private final Composite       bottomRight;
     private final IDataView       dataInputView;
     private final IDataView       dataOutputView;
 
     private final IStatisticsView statisticsInputView;
-
     private final IStatisticsView statisticsOutputView;
 
     private final SashForm        centerSash;
@@ -132,25 +128,24 @@ public class AnalyzeView implements IAttachable {
 
         // Create the SashForm with HORIZONTAL
         centerSash = new SashForm(parent, SWT.VERTICAL);
-
+        centerSash.setLayoutData(SWTUtil.createFillGridData());
+        
         // Create center composite
         final Composite center = new Composite(centerSash, SWT.NONE);
-        // center.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        center.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout centerLayout = new GridLayout();
         centerLayout.numColumns = 2;
         center.setLayout(centerLayout);
 
         // Create left composite
-        centerLeft = new Group(center, SWT.NONE);
-        centerLeft.setText(TEXT_CENTER_LEFT);
+        centerLeft = new Composite(center, SWT.NONE);
         centerLeft.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout leftLayout = new GridLayout();
         leftLayout.numColumns = 1;
         centerLeft.setLayout(leftLayout);
 
         // Create right composite
-        centerRight = new Group(center, SWT.NONE);
-        centerRight.setText(TEXT_CENTER_RIGHT);
+        centerRight = new Composite(center, SWT.NONE);
         centerRight.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout rightLayout = new GridLayout();
         rightLayout.numColumns = 1;
@@ -159,10 +154,12 @@ public class AnalyzeView implements IAttachable {
         // Create views
         dataInputView = new DataView(centerLeft,
                                      controller,
+                                     Resources.getMessage("AnalyzeView.1"), //$NON-NLS-1$
                                      EventTarget.INPUT,
                                      null);
         dataOutputView = new DataView(centerRight,
                                       controller,
+                                      Resources.getMessage("AnalyzeView.0"), //$NON-NLS-1$
                                       EventTarget.OUTPUT,
                                       EventTarget.INPUT);
 

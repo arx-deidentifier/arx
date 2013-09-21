@@ -25,6 +25,8 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.impl.common.TitleBar;
+import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.criteria.DPresenceView;
 import org.deidentifier.arx.gui.view.impl.define.criteria.KAnonymityView;
 import org.deidentifier.arx.gui.view.impl.define.criteria.LDiversityView;
@@ -32,11 +34,9 @@ import org.deidentifier.arx.gui.view.impl.define.criteria.TClosenessView;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 public class CriterionDefinitionView implements IView {
@@ -80,7 +79,7 @@ public class CriterionDefinitionView implements IView {
     private Combo                  comboMetric;
     private Composite			   root;
     
-    private CTabFolder             folder;
+    private TitledFolder           folder;
     private ToolItem               enable;
     private ToolItem               push;
     private ToolItem               pull;
@@ -163,53 +162,45 @@ public class CriterionDefinitionView implements IView {
         gd1.grabExcessVerticalSpace = false;
         gd1.grabExcessHorizontalSpace = true;
         gd1.horizontalSpan = 2;
-        folder = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
-        folder.setUnselectedCloseVisible(false);
-        folder.setSimple(true);
-        folder.setTabHeight(25);
-        folder.setLayoutData(gd1);
-
-        // Prevent closing
-        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-            @Override
-            public void close(final CTabFolderEvent event) {
-                event.doit = false;
-            }
-            
-        });
-
-        // Create k-anonymity tab
-        final CTabItem tabKAnon = new CTabItem(folder, SWT.NULL);
-        tabKAnon.setText(Resources.getMessage("CriterionDefinitionView.19"));  //$NON-NLS-1$
-        tabKAnon.setShowClose(false);
-        KAnonymityView kanon = new KAnonymityView(folder, controller, model);
-        tabKAnon.setControl(kanon.getControl());
-        tabKAnon.setImage(controller.getResources().getImage("symbol_k.png")); //$NON-NLS-1$
-        folder.setSelection(tabKAnon);
-
-        // Create d-presence tab
-        final CTabItem tabDPres = new CTabItem(folder, SWT.NULL);
-        tabDPres.setText(Resources.getMessage("CriterionDefinitionView.60"));  //$NON-NLS-1$
-        tabDPres.setShowClose(false);
-        tabDPres.setImage(controller.getResources().getImage("symbol_d.png")); //$NON-NLS-1$
-        DPresenceView dpres = new DPresenceView(folder, controller, model);
-        tabDPres.setControl(dpres.getControl());
         
-        // Create l-diversity tab
-        final CTabItem tabLDiversity = new CTabItem(folder, SWT.NULL);
-        tabLDiversity.setText(Resources.getMessage("CriterionDefinitionView.20"));  //$NON-NLS-1$
-        tabLDiversity.setShowClose(false);
-        tabLDiversity.setImage(controller.getResources().getImage("symbol_l.png")); //$NON-NLS-1$
-        LDiversityView view = new LDiversityView(folder, controller, model);
-        tabLDiversity.setControl(view.getControl());
+        TitleBar bar = new TitleBar("id-80");
+        bar.add(Resources.getMessage("CriterionDefinitionView.59"), 
+                controller.getResources().getImage("cross.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.actionCriterionEnable(getSelectedCriterion());
+                    }
+                });
+        bar.add(Resources.getMessage("CriterionDefinitionView.57"), 
+                controller.getResources().getImage("bullet_arrow_up.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.actionCriterionPush(getSelectedCriterion());
+                    }
+                });
+        
+        bar.add(Resources.getMessage("CriterionDefinitionView.58"), 
+                controller.getResources().getImage("bullet_arrow_down.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.actionCriterionPull(getSelectedCriterion());
+                    }
+                });
 
-        // Create t-closeness tab
-        final CTabItem tabTcloseness = new CTabItem(folder, SWT.NULL);
-        tabTcloseness.setText(Resources.getMessage("CriterionDefinitionView.21"));  //$NON-NLS-1$
-        tabTcloseness.setShowClose(false);
-        tabTcloseness.setImage(controller.getResources().getImage("symbol_t.png")); //$NON-NLS-1$
-        TClosenessView view2 = new TClosenessView(folder, controller, model);
-        tabTcloseness.setControl(view2.getControl());
+        folder = new TitledFolder(group, controller, bar, null);
+        folder.setLayoutData(gd1);
+        Composite item1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.19"), controller.getResources().getImage("symbol_k.png"));        
+        new KAnonymityView(item1, controller, model);
+        Composite item2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.60"), controller.getResources().getImage("symbol_d.png"));
+        new DPresenceView(item2, controller, model);
+        Composite item3 = folder.createItem(Resources.getMessage("CriterionDefinitionView.20"), controller.getResources().getImage("symbol_l.png"));
+        new LDiversityView(item3, controller, model);
+        Composite item4 = folder.createItem(Resources.getMessage("CriterionDefinitionView.21"), controller.getResources().getImage("symbol_t.png"));
+        new TClosenessView(item4, controller, model);
+        folder.setSelection(0);
         
         folder.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -218,86 +209,31 @@ public class CriterionDefinitionView implements IView {
             }
         });
         
-        // Create context menu
-        ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
+        enable = folder.getBarItem(Resources.getMessage("CriterionDefinitionView.59"));
+        push = folder.getBarItem(Resources.getMessage("CriterionDefinitionView.57"));
+        pull = folder.getBarItem(Resources.getMessage("CriterionDefinitionView.58"));
         
-        enable = new ToolItem( toolbar, SWT.PUSH );
-        enable.setImage(controller.getResources().getImage("cross.png"));  //$NON-NLS-1$
-        enable.setToolTipText(Resources.getMessage("CriterionDefinitionView.59"));  //$NON-NLS-1$
         enable.setEnabled(false);
-        enable.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                controller.actionCriterionEnable(getSelectedCriterion());
-            }
-        });
-        
-        push = new ToolItem( toolbar, SWT.PUSH );
-        push.setImage(controller.getResources().getImage("bullet_arrow_up.png"));  //$NON-NLS-1$
-        push.setToolTipText(Resources.getMessage("CriterionDefinitionView.57"));  //$NON-NLS-1$
         push.setEnabled(false);
-        push.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                controller.actionCriterionPush(getSelectedCriterion());
-            }
-        });
-        
-        pull = new ToolItem( toolbar, SWT.PUSH );
-        pull.setImage(controller.getResources().getImage("bullet_arrow_down.png"));  //$NON-NLS-1$
-        pull.setToolTipText(Resources.getMessage("CriterionDefinitionView.58"));  //$NON-NLS-1$
         pull.setEnabled(false);
-        pull.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                controller.actionCriterionPull(getSelectedCriterion());
-            }
-        });
-        
-        ToolItem help = new ToolItem( toolbar, SWT.PUSH );
-        help.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
-        help.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
-        folder.setTopRight( toolbar, SWT.RIGHT );
-        
-        // Fix bug when folder does not have enough space for toolbars
-        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
-
+      
         /*
          * Add general view
          */
         gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.horizontalSpan = 2;
-        CTabFolder folder2 = new CTabFolder(group, SWT.TOP | SWT.BORDER | SWT.FLAT);
-        folder2.setUnselectedCloseVisible(false);
-        folder2.setSimple(true);
-        folder2.setTabHeight(25);
+        TitledFolder folder2 = new TitledFolder(parent, controller, null, "id-60");
         folder2.setLayoutData(gd1);
         
-        // Create help button
-        SWTUtil.createHelpButton(controller, folder2, "id-2"); //$NON-NLS-1$
-
-        // Prevent closing
-        folder2.addCTabFolder2Listener(new CTabFolder2Adapter() {
-            @Override
-            public void close(final CTabFolderEvent event) {
-                event.doit = false;
-            }
-        });
-        
         // Create general tab
-        final CTabItem tabGeneral = new CTabItem(folder2, SWT.NULL);
-        tabGeneral.setText(Resources.getMessage("CriterionDefinitionView.61"));  //$NON-NLS-1$
-        tabGeneral.setShowClose(false);
-
-        group = new Composite(folder2, SWT.NONE);
+        group = folder2.createItem(Resources.getMessage("CriterionDefinitionView.61"), null);  //$NON-NLS-1$
         group.setLayoutData(SWTUtil.createFillGridData());
         groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
-        tabGeneral.setControl(group);
 
+        // TODO: Move general tabs content out into a separate view
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.11")); //$NON-NLS-1$
@@ -419,13 +355,12 @@ public class CriterionDefinitionView implements IView {
         });
         
         // Create overview tab
-        final CTabItem tabOverview = new CTabItem(folder2, SWT.NULL);
-        tabOverview.setText(Resources.getMessage("CriterionDefinitionView.62"));  //$NON-NLS-1$
-        tabOverview.setShowClose(false);
-        clv = new CriteriaListView(folder2, controller);
-        tabOverview.setControl(clv.getControl());
+        Composite c = folder2.createItem(Resources.getMessage("CriterionDefinitionView.62"), null);  //$NON-NLS-1$
+        c.setLayout(new FillLayout());
+        clv = new CriteriaListView(c, controller);
         
-        folder2.setSelection(tabGeneral);
+        folder2.setSelection(0);
+
         return group;
     }
 

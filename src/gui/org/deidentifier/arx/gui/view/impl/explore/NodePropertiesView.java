@@ -31,6 +31,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -43,13 +44,12 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class NodePropertiesView implements IView {
 
-    private static final String     TITLE   = Resources.getMessage("NodePropertiesView.0"); //$NON-NLS-1$
-    private ARXResult             result;
+    private ARXResult               result;
     private Table                   table;
     private final List<TableColumn> columns = new ArrayList<TableColumn>();
     private final List<TableItem>   items   = new ArrayList<TableItem>();
     private final NumberFormat      format  = new DecimalFormat("##0.000");                //$NON-NLS-1$
-    private final Group             root;
+    private final Composite         root;
     private final Controller        controller;
 
     public NodePropertiesView(final Composite parent,
@@ -60,9 +60,10 @@ public class NodePropertiesView implements IView {
         this.controller = controller;
 
         // Create group
-        root = new Group(parent, SWT.NULL);
-        root.setText(TITLE);
-        root.setLayoutData(SWTUtil.createFillGridData());
+        TitledBorder border = new TitledBorder(parent, controller, Resources.getMessage("NodePropertiesView.0"), "id-22"); //$NON-NLS-1$
+        root = new Composite(border.getControl(), SWT.NONE);
+        border.setChild(root);
+        border.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupNodeGridLayout = new GridLayout();
         groupNodeGridLayout.numColumns = 1;
         root.setLayout(groupNodeGridLayout);
@@ -87,7 +88,7 @@ public class NodePropertiesView implements IView {
                                                                   .getValue()) * 100d;
     }
 
-    private void createNodeGroup(final Group groupNode) {
+    private void createNodeGroup(final Composite groupNode) {
 
         table = new Table(groupNode, SWT.BORDER);
         table.setHeaderVisible(true);

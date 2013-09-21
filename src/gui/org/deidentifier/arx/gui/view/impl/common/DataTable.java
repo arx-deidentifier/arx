@@ -676,6 +676,13 @@ public class DataTable implements IDataTable {
         return natTable;
     }
 
+    public void dispose() {
+        IMAGE_COL_BACK.dispose();
+        IMAGE_ROW_BACK.dispose();
+        IMAGE_COL_SELECT.dispose();
+        IMAGE_ROW_SELECT.dispose();
+    }
+
     public List<Image> getHeaderImages() {
         return headerImages;
     }
@@ -901,7 +908,7 @@ public class DataTable implements IDataTable {
         bodyLayer.registerPersistable(columnLabelAccumulator);
 
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, 
-                                                             new DataTableBorderDecorator( new TextPainter(false, true, 0, true),
+                                                             new DataTableDecorator( new TextPainter(false, true, 0, true),
                                                              new BorderStyle(2, GUIHelper.COLOR_BLACK, LineStyleEnum.SOLID)),
                                                                 DisplayMode.NORMAL,
                                                                 GridRegion.BODY);
@@ -949,7 +956,7 @@ public class DataTable implements IDataTable {
                 int row = table.getRowIndexByPosition(rowPosition+1);
                 configLabels.addLabel("background"+rowColors[row]); //$NON-NLS-1$
                 if (row<rowGroups.length-1 && rowGroups[row]!=rowGroups[row+1]){
-                    configLabels.addLabel(DataTableBorderDecorator.BOTTOM_LINE_BORDER_LABEL);
+                    configLabels.addLabel(DataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
                 }
             } 
         }

@@ -61,7 +61,7 @@ public class DataDefinitionView implements IView {
         // Create the tab folder
         folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER | SWT.FLAT);
         folder.setUnselectedCloseVisible(false);
-        folder.setSimple(true);
+        folder.setSimple(false);
         folder.setTabHeight(25);
         final GridData tabData = SWTUtil.createFillGridData();
         tabData.grabExcessVerticalSpace = true;

@@ -950,4 +950,12 @@ public class Controller implements IView {
         } 
         update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
     }
+
+    /**
+     * Shows the help
+     * @param id
+     */
+    public void actionShowHelp(String id) {
+        main.showInfoDialog("Help", id);
+    }
 }
