@@ -44,10 +44,8 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
      * @param strategy
      *            The strategy
      */
-    public FLASHAlgorithmBinary(final Lattice lattice,
-                          final INodeChecker checker,
-                          final FLASHStrategy strategy) {
-        
+    public FLASHAlgorithmBinary(final Lattice lattice, final INodeChecker checker, final FLASHStrategy strategy) {
+
         super(lattice, checker, strategy);
         history.setPruningStrategy(PruningStrategy.ANONYMOUS);
     }
@@ -59,11 +57,11 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
      */
     @Override
     public void traverse() {
-        
+
         // Init
         pqueue.clear();
         stack.clear();
-        checkBottom();
+        // checkBottom();
 
         // For each node
         final int length = lattice.getLevels().length;
@@ -71,13 +69,13 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
             Node[] level;
             level = this.sort(i);
             for (final Node node : level) {
-                if (!node.isTagged()) { 
+                if (!node.isTagged()) {
                     pqueue.add(node);
                     while (!pqueue.isEmpty()) {
                         Node head = pqueue.poll();
                         // if anonymity is unknown
                         if (!head.isTagged()) {
-                        	findPath(head);
+                            findPath(head);
                             head = checkPathBinary(path);
                         }
                     }
@@ -85,7 +83,6 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
             }
         }
     }
-    
 
     /**
      * Checks a path binary.
@@ -103,12 +100,12 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
             final int mid = (low + high) >>> 1;
             final Node node = path.get(mid);
 
-            if (!node.isTagged()) { 
+            if (!node.isTagged()) {
                 checker.check(node);
                 lattice.tagAnonymous(node, node.isAnonymous());
                 if (!node.isAnonymous()) {
                     for (final Node up : node.getSuccessors()) {
-                        if (!up.isTagged()) { 
+                        if (!up.isTagged()) {
                             pqueue.add(up);
                         }
                     }
