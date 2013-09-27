@@ -40,6 +40,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.model.Model;
@@ -970,8 +971,37 @@ public class Controller implements IView {
     }
 
     public void actionSubsetFile() {
-        // TODO Auto-generated method stub
+
+        // Check
+        final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
+        if (path == null) { return; }
+
+        // Separator
+        final SeparatorDialog dialog = new SeparatorDialog(main.getShell(),
+                                                           this,
+                                                           path,
+                                                           true);
+        dialog.create();
+        if (dialog.open() == Window.CANCEL) {
+            return;
+        } 
+   
+        final WorkerImport worker = new WorkerImport(path, dialog.getSeparator());
+        main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
+        if (worker.getError() != null) {
+            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+
+        Data subsetData = worker.getResult();
+        Data data = model.getInputConfig().getInput();
         
+        DataSubset subset = DataSubset.create(data, subsetData);
+        model.getInputConfig().setResearchSubset(subset.getRowSet());
+        
+        update(new ModelEvent(this,
+                              EventTarget.RESEARCH_SUBSET,
+                              subset.getRowSet()));
     }
 
     public void actionSubsetAll() {
