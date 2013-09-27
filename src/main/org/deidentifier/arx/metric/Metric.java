@@ -157,7 +157,7 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
 
         // Store optimum
         // Store global optimum
-        if ((globalOptimum == null) || (node.getInformationLoss().compareTo(optimalInformationLoss) <= 0)) {
+        if ((globalOptimum == null) || (node.getInformationLoss().compareTo(optimalInformationLoss) < 0)) {
             this.globalOptimum = node;
             this.optimalInformationLoss = node.getInformationLoss();
         }
