@@ -183,7 +183,7 @@ public class DataSubset {
         return new DataSubset(bitset, array);
     }
 
-    public RowSet getBitSet() {
+    public RowSet getRowSet() {
         return bitSet;
     }
 

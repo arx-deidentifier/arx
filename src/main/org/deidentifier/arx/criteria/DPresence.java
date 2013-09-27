@@ -62,7 +62,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         this.dMin = dMin;
         this.dMax = dMax;
         this.subset = subset;
-        this.bitset = subset.getBitSet();
+        this.bitset = subset.getRowSet();
         this.array = subset.getArray();
     }
         
