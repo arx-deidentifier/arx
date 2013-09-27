@@ -43,15 +43,22 @@ public class RowSet {
         array = new long[chunks];
     }
 
-    public void add(int bit) {
-        int offset = bit >> ADDRESS_BITS_PER_UNIT;
+    public void add(int rowIndex) {
+        int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
-        array[offset] |= 1L << (bit & BIT_INDEX_MASK);
+        array[offset] |= 1L << (rowIndex & BIT_INDEX_MASK);
         size += array[offset] != temp ? 1 : 0; 
     }
+    
+    public void remove(int rowIndex){
+        int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
+        long temp = array[offset];
+        array[offset] &= ~(1L << (rowIndex & BIT_INDEX_MASK));
+        size -= array[offset] != temp ? 1 : 0; 
+    }
 
-    public boolean contains(int bit) {
-        return ((array[bit >> ADDRESS_BITS_PER_UNIT] & (1L << (bit & BIT_INDEX_MASK))) != 0);
+    public boolean contains(int rowIndex) {
+        return ((array[rowIndex >> ADDRESS_BITS_PER_UNIT] & (1L << (rowIndex & BIT_INDEX_MASK))) != 0);
     }
 
     public int length() {
