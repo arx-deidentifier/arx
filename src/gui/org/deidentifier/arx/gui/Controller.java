@@ -41,12 +41,13 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
-import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
+import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -139,6 +140,7 @@ public class Controller implements IView {
         }
         
         model.resetCriteria();
+        model.getInputConfig().setResearchSubset(new RowSet(data));
 
         // Display the changes
         update(new ModelEvent(this, EventTarget.MODEL, model));
@@ -150,6 +152,9 @@ public class Controller implements IView {
                                   data.getHandle().getAttributeName(0)));
             update(new ModelEvent(this,
                                   EventTarget.CRITERION_DEFINITION,
+                                  null));
+            update(new ModelEvent(this,
+                                  EventTarget.RESEARCH_SUBSET,
                                   null));
         }
     }
@@ -957,5 +962,25 @@ public class Controller implements IView {
      */
     public void actionShowHelp(String id) {
         main.showInfoDialog("Help", id);
+    }
+
+    public void actionSubsetQuery() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void actionSubsetFile() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void actionSubsetAll() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void actionSubsetNone() {
+        // TODO Auto-generated method stub
+        
     }
 }

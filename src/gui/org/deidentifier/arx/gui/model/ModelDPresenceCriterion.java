@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.model;
 
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 
@@ -24,7 +25,8 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
-		return new DPresence(dmin, dmax, model.getInputConfig().getResearchSubset());
+	    DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
+		return new DPresence(dmin, dmax, subset);
 	}
 
     @Override

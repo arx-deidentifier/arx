@@ -36,7 +36,8 @@ public interface IView {
             MODEL,
             CLIPBOARD,
             HIERARCHY,
-            CRITERION_DEFINITION
+            CRITERION_DEFINITION, 
+            RESEARCH_SUBSET
         }
 
         public final EventTarget target;
