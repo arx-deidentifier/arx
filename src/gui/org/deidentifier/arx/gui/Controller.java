@@ -140,7 +140,7 @@ public class Controller implements IView {
         }
         
         model.resetCriteria();
-        model.getInputConfig().setResearchSubset(new RowSet(data));
+        model.getInputConfig().setResearchSubset(RowSet.create(data));
 
         // Display the changes
         update(new ModelEvent(this, EventTarget.MODEL, model));
@@ -975,12 +975,22 @@ public class Controller implements IView {
     }
 
     public void actionSubsetAll() {
-        // TODO Auto-generated method stub
-        
+        Data data = model.getInputConfig().getInput();
+        RowSet set = model.getInputConfig().getResearchSubset();
+        for (int i = 0; i < data.getHandle().getNumRows(); i++) {
+            set.add(i);
+        }
+        update(new ModelEvent(this,
+                              EventTarget.RESEARCH_SUBSET,
+                              set));
     }
 
     public void actionSubsetNone() {
-        // TODO Auto-generated method stub
-        
+        Data data = model.getInputConfig().getInput();
+        RowSet empty = RowSet.create(data);
+        model.getInputConfig().setResearchSubset(empty);
+        update(new ModelEvent(this,
+                              EventTarget.RESEARCH_SUBSET,
+                              empty));
     }
 }
