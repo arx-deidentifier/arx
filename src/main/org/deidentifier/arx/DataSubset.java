@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.framework.CompressedBitSet;
 
 /**
  * This class represents a data subset as required for d-presence
@@ -45,19 +44,19 @@ public class DataSubset {
     }
     
     /** The subset as a bitset*/
-    private CompressedBitSet bitSet;
+    private RowSet bitSet;
     
     /** The subset as a sorted array of indices*/
-    private int[] sortedIndices;
+    private int[] array;
 
     /**
      * Creates a new instance
      * @param bitSet
      * @param sortedIndices
      */
-    private DataSubset(CompressedBitSet bitSet, int[] sortedIndices) {
+    private DataSubset(RowSet bitSet, int[] sortedIndices) {
         this.bitSet = bitSet;
-        this.sortedIndices = sortedIndices;
+        this.array = sortedIndices;
     }
 
     /**
@@ -89,7 +88,7 @@ public class DataSubset {
         }
         
         // Init
-        CompressedBitSet bitset = new CompressedBitSet(bHandle.getNumRows());
+        RowSet bitset = new RowSet(data);
         int[] array = new int[sHandle.getNumRows()];
         int idx = 0;
         
@@ -107,7 +106,7 @@ public class DataSubset {
             	throw new IllegalArgumentException("Too many matches found for: "+tuple);
             }
             int index = indices.remove(0);
-            bitset.set(index);
+            bitset.add(index);
             array[idx++] = index;
         }
         
@@ -126,13 +125,13 @@ public class DataSubset {
         
         // Init
         int rows = data.getHandle().getNumRows();
-        CompressedBitSet bitset = new CompressedBitSet(rows);
+        RowSet bitset = new RowSet(data);
         ArrayList<Integer> list = new ArrayList<Integer>();
         
         // Check
         for (int i=0; i<rows; i++){
             if (selector.selected(i)) {
-                bitset.set(i);
+                bitset.add(i);
                 list.add(i);
             }
         }
@@ -155,26 +154,40 @@ public class DataSubset {
      */
     public static DataSubset create(Data data, Set<Integer> subset){
         int rows = data.getHandle().getNumRows();
-        CompressedBitSet bitset = new CompressedBitSet(rows);
+        RowSet bitset = new RowSet(data);
         int[] array = new int[subset.size()];
         int idx = 0;
         for (Integer line : subset) {
             if (line < 0 || line >= rows) {
                 throw new IllegalArgumentException("Subset index out of range!");
             }
-            bitset.set(line);
+            bitset.add(line);
             array[idx++] = line;
         }
         Arrays.sort(array);
         return new DataSubset(bitset, array);
     }
 
-    public CompressedBitSet getBitSet() {
+    
+    public static DataSubset create(Data data, RowSet subset) {
+        int rows = data.getHandle().getNumRows();
+        RowSet bitset = new RowSet(data);
+        int[] array = new int[subset.size()];
+        int idx = 0;
+        for (int i=0; i<rows; i++){
+            if (subset.contains(i)) {
+                bitset.add(i);
+                array[idx++]=i;
+            }
+        }
+        return new DataSubset(bitset, array);
+    }
+
+    public RowSet getBitSet() {
         return bitSet;
     }
 
-    public int[] getSortedIndices() {
-        // TODO: What is this needed for?
-        return sortedIndices;
+    public int[] getArray() {
+        return array;
     }
 }

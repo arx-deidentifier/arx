@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.Dictionary;
@@ -117,12 +117,12 @@ public class MetricEntropy extends MetricDefault {
         final Dictionary dictionary = input.getDictionary();
 
         // Obtain research subset
-        CompressedBitSet rSubset = null;
+        RowSet rSubset = null;
         if (config.containsCriterion(DPresence.class)) {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
             for (DPresence dPresence : crits) {
-                rSubset = dPresence.getResearchSubset();
+                rSubset = dPresence.getBitSet();
             }
         }
 
@@ -143,7 +143,7 @@ public class MetricEntropy extends MetricDefault {
 
         if (rSubset != null) { // dpresence mode
             for (int i = 0; i < data.length; i++) { // only use the rows contained in the research subset
-                if (rSubset.get(i)) {
+                if (rSubset.contains(i)) {
                     final int[] row = data[i];
                     for (int column = 0; column < row.length; column++) {
                         cardinalities[column][row[column]][0]++;

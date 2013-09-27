@@ -20,7 +20,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.framework.CompressedBitSet;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
@@ -44,7 +44,9 @@ public class DPresence extends ImplicitPrivacyCriterion{
     /** The research subset, a set of tuple ids*/
     private DataSubset subset;
     /** A compressed representation of the research subset*/
-    private CompressedBitSet bitset;
+    private RowSet bitset;
+    /** A sorted array representation of the research subset*/
+    private int[] array;
     
     /**
      * Creates a new instance of the d-presence criterion as proposed in:
@@ -61,6 +63,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         this.dMax = dMax;
         this.subset = subset;
         this.bitset = subset.getBitSet();
+        this.array = subset.getArray();
     }
         
     @Override
@@ -90,7 +93,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
      * Returns the research subset
      * @return
      */
-    public CompressedBitSet getResearchSubset() {
+    public RowSet getBitSet() {
         return this.bitset;
     }
     
@@ -98,8 +101,17 @@ public class DPresence extends ImplicitPrivacyCriterion{
      * Returns the size of the research subset
      * @return
      */
-    public int getResearchSubsetSize() {
-        return this.subset.getSortedIndices().length;
+    public int getSize() {
+        return this.array.length;
+    }
+    
+
+    /**
+     * Returns the research subset
+     * @return
+     */
+    public int[] getArray() {
+        return this.array;
     }
 
     /**

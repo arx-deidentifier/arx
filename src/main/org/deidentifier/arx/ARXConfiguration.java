@@ -283,7 +283,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         int dataLength = 0;
         if (this.containsCriterion(DPresence.class)) {
-            dataLength = this.getCriterion(DPresence.class).getResearchSubsetSize();
+            dataLength = this.getCriterion(DPresence.class).getSize();
         } else {
             dataLength = manager.getDataQI().getDataLength();
         }

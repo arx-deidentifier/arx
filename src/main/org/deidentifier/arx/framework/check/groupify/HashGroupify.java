@@ -19,9 +19,9 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
 
@@ -64,7 +64,7 @@ public class HashGroupify implements IHashGroupify {
     private final int                k;
 
     /** The research subset, if d-presence is contained in the set of criteria */
-    private final CompressedBitSet   subset;
+    private final RowSet             subset;
 
     /** Criteria*/
     private final PrivacyCriterion[] criteria;
@@ -90,7 +90,7 @@ public class HashGroupify implements IHashGroupify {
 
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            subset = config.getCriterion(DPresence.class).getResearchSubset();
+            subset = config.getCriterion(DPresence.class).getBitSet();
         } else {
             subset = null;
         }
@@ -113,7 +113,7 @@ public class HashGroupify implements IHashGroupify {
                 entry.distribution = new Distribution();
             }
 
-            if (subset == null || subset.get(representant)) { // Only add sensitive value if in research subset
+            if (subset == null || subset.contains(representant)) { // Only add sensitive value if in research subset
                 entry.distribution.add(sensitive);
             }
         }
@@ -169,7 +169,7 @@ public class HashGroupify implements IHashGroupify {
     private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
 
         // Is the line contained in the research subset
-        if (subset != null && !subset.get(representant)) {
+        if (subset != null && !subset.contains(representant)) {
             count = 0;
         }
 

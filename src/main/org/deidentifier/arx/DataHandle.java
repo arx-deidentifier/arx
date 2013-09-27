@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.framework.CompressedBitSet;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.GenericSorting;
@@ -403,19 +402,14 @@ public abstract class DataHandle {
      */
     public DataHandle getView(ARXConfiguration config){
         if (config.containsCriterion(DPresence.class)) {
-            return getView(config.getCriterion(DPresence.class).getResearchSubset());
+            return getView(config.getCriterion(DPresence.class).getArray());
         } else {
             return this;
         }
     }
     
     /** The current research subset*/
-    private CompressedBitSet subset = null;
-    
-    /** The hashcode of the current research subset*/
-    private int subsetHash = 0;
-    
-    /** The view on the current research subset*/
+    private int[] subset = null;
     private DataHandleSubset subsetView = null;
     
     /**
@@ -423,27 +417,18 @@ public abstract class DataHandle {
      * @param subset
      * @return
      */
-    private DataHandle getView(CompressedBitSet subset) {
+    private DataHandle getView(int[] subset) {
      
         if (this.subsetView != null){
-            
             if (this.subset == subset){
                 return this.subsetView;
-            } else if (this.subsetHash == subset.hashCode() && this.subset.equals(subset)){
-                this.subset = subset;
-                return this.subsetView;
-            } else {
-                this.subsetView = new DataHandleSubset(this, subset);
-                this.subsetHash = subset.hashCode();
-                this.subset = subset;
+            } else if (Arrays.equals(this.subset, subset)){
                 return this.subsetView;
             }
-            
-        } else {
-            this.subsetView = new DataHandleSubset(this, subset);
-            this.subsetHash = subset.hashCode();
-            this.subset = subset;
-            return this.subsetView;
         }
+        
+        this.subsetView = new DataHandleSubset(this, subset);
+        this.subset = subset;
+        return this.subsetView;
     }
 }

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.deidentifier.arx.framework.CompressedBitSet;
 
 /**
  * This implementation of a data handle projects a given data handle onto a given research subset.
@@ -24,20 +23,13 @@ public class DataHandleSubset extends DataHandle {
      * @param source
      * @param subset
      */
-    public DataHandleSubset(DataHandle source, CompressedBitSet subset){
+    public DataHandleSubset(DataHandle source, int[] subset){
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
         this.header = source.header;
         this.other = source.other;
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        for (int i=0; i<subset.getSize(); i++){
-            if (subset.get(i)) list.add(i);
-        }
-        this.subset = new int[list.size()];
-        for (int i=0; i<list.size(); i++){
-            this.subset[i] = list.get(i);
-        }
+        this.subset = subset;
         createDataTypeArray();
     }
 

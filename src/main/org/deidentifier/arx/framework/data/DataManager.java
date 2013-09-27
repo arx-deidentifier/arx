@@ -26,10 +26,10 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.framework.CompressedBitSet;
 
 /**
  * Holds all data needed for the anonymization process.
@@ -69,7 +69,7 @@ public class DataManager {
     protected final String[]                             header;
 
     /** The research subset, if any*/
-    protected CompressedBitSet                           subset     = null;
+    protected RowSet                           subset     = null;
 
     /** The size of the research subset*/
     protected int                                        subsetSize = 0;
@@ -88,8 +88,8 @@ public class DataManager {
         // Store research subset
         for (PrivacyCriterion c : criteria) {
             if (c instanceof DPresence) {
-                subset = ((DPresence) c).getResearchSubset();
-                subsetSize = ((DPresence) c).getResearchSubsetSize();
+                subset = ((DPresence) c).getBitSet();
+                subsetSize = ((DPresence) c).getSize();
                 break;
             }
         }
@@ -351,7 +351,7 @@ public class DataManager {
         // Initialize counts: iterate over all rows or the subset
         final int[] cardinalities = new int[distinct];
         for (int i = 0; i < data.length; i++) {
-            if (subset == null || subset.get(i)) {
+            if (subset == null || subset.contains(i)) {
                 cardinalities[data[i][index]]++;
             }
         }
@@ -442,7 +442,7 @@ public class DataManager {
         // count frequnecies
         final int offsetLeafs = 3;
         for (int i = 0; i < data.length; i++) {
-            if (subset == null || subset.get(i)) {
+            if (subset == null || subset.contains(i)) {
                 int previousFreq = treeList.get(data[i][index] + offsetLeafs);
                 previousFreq++;
                 treeList.set(data[i][index] + offsetLeafs, previousFreq);
