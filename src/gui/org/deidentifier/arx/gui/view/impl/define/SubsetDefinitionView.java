@@ -1,5 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
+import java.text.DecimalFormat;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -29,6 +31,8 @@ public class SubsetDefinitionView implements IView{
     private ToolItem none;
     private ToolItem file;
     private ToolItem filter;
+    
+    private DecimalFormat format = new DecimalFormat("##0.00");
     
     public SubsetDefinitionView(final Composite parent,
                                 final Controller controller) {
@@ -169,6 +173,12 @@ public class SubsetDefinitionView implements IView{
 
     private void update() {
         // TODO: Maybe make this a default for all views?
-        this.size = model.getInputConfig().getResearchSubset().length();
+        
+        int size = model.getInputConfig().getResearchSubset().size();
+        int total = model.getInputConfig().getInput().getHandle().getNumRows();
+        double percent = (double)size / (double)total * 100d;
+        this.size.setText(String.valueOf(size));
+        this.total.setText(String.valueOf(total));
+        this.percent.setText(format.format(percent));
     }
 }
