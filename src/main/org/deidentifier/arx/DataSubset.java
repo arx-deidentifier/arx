@@ -88,7 +88,7 @@ public class DataSubset {
         }
         
         // Init
-        RowSet bitset = new RowSet(data);
+        RowSet bitset = RowSet.create(data);
         int[] array = new int[sHandle.getNumRows()];
         int idx = 0;
         
@@ -125,7 +125,7 @@ public class DataSubset {
         
         // Init
         int rows = data.getHandle().getNumRows();
-        RowSet bitset = new RowSet(data);
+        RowSet bitset = RowSet.create(data);
         ArrayList<Integer> list = new ArrayList<Integer>();
         
         // Check
@@ -154,7 +154,7 @@ public class DataSubset {
      */
     public static DataSubset create(Data data, Set<Integer> subset){
         int rows = data.getHandle().getNumRows();
-        RowSet bitset = new RowSet(data);
+        RowSet bitset = RowSet.create(data);
         int[] array = new int[subset.size()];
         int idx = 0;
         for (Integer line : subset) {
@@ -171,7 +171,7 @@ public class DataSubset {
     
     public static DataSubset create(Data data, RowSet subset) {
         int rows = data.getHandle().getNumRows();
-        RowSet bitset = new RowSet(data);
+        RowSet bitset = RowSet.create(data);
         int[] array = new int[subset.size()];
         int idx = 0;
         for (int i=0; i<rows; i++){

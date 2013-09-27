@@ -33,7 +33,11 @@ public class RowSet {
     private static final int   BIT_INDEX_MASK        = 63;
     private int size;
 
-    public RowSet(Data data) {
+    public static RowSet create(Data data){
+        return new RowSet(data);
+    }
+    
+    private RowSet(Data data) {
         this.length = data.getHandle().getNumRows();
         int chunks = (int) (Math.ceil((double) this.length / 64d));
         array = new long[chunks];
