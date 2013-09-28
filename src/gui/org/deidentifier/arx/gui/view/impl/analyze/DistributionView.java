@@ -41,6 +41,8 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.swtchart.Chart;
@@ -305,8 +307,13 @@ public class DistributionView implements IView {
         	r = r>0 ? r : 0;
         	r = g>0 ? g : 0;
         	r = b>0 ? b : 0;
-        	org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
+        	final org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
         	chart.setBackground(c2);
+        	chart.addDisposeListener(new DisposeListener(){
+                public void widgetDisposed(DisposeEvent arg0) {
+                    c2.dispose();
+                } 
+            });
         }
 
         final IAxisSet axisSet = chart.getAxisSet();

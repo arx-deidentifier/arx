@@ -32,18 +32,19 @@ import org.csstudio.swt.widgets.datadefinition.ColorMap.PredefinedColorMap;
 import org.csstudio.swt.widgets.figures.IntensityGraphFigure;
 import org.csstudio.swt.xygraph.linearscale.Range;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
 import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
@@ -96,8 +97,13 @@ public class DensityView implements IView {
         	r = r>0 ? r : 0;
         	r = g>0 ? g : 0;
         	r = b>0 ? b : 0;
-        	org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
+        	final org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
         	canvas.setBackground(c2);
+        	canvas.addDisposeListener(new DisposeListener(){
+                public void widgetDisposed(DisposeEvent arg0) {
+                    c2.dispose();
+                } 
+        	});
         }
         
         // Reset

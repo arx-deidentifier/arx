@@ -592,7 +592,7 @@ public class DataTable implements IDataTable {
     private final Image        IMAGE_ROW_SELECT;
     private List<Image>        headerImages = new ArrayList<Image>();
     
-    private final Color[]      GRADIENT;
+    private final Color[]      gradient;
     private final NatTable     table;
     
     private int[]              rowColors = null;
@@ -611,7 +611,7 @@ public class DataTable implements IDataTable {
         IMAGE_ROW_BACK = controller.getResources().getImage("row_header_bg.png"); //$NON-NLS-1$
         IMAGE_COL_SELECT = controller.getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
         IMAGE_ROW_SELECT = controller.getResources().getImage("selected_row_header_bg.png"); //$NON-NLS-1$
-        GRADIENT = createGradient(controller, controller.getResources().getGradientLength());
+        gradient = createGradient(controller, controller.getResources().getGradientLength());
         table = createControl(parent);
         table.setVisible(false);
     }
@@ -634,6 +634,9 @@ public class DataTable implements IDataTable {
         IMAGE_ROW_BACK.dispose();
         IMAGE_COL_SELECT.dispose();
         IMAGE_ROW_SELECT.dispose();
+        for (Color c : gradient){
+            c.dispose();
+        }
     }
 
     public List<Image> getHeaderImages() {
@@ -931,10 +934,10 @@ public class DataTable implements IDataTable {
                                                                 GridRegion.BODY);
         
         // Register gradient painters for groups
-        for (int i=0; i<GRADIENT.length; i++){
+        for (int i=0; i<gradient.length; i++){
             Style style = new Style();
             style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR,
-                                                       GRADIENT[i]);
+                                                       gradient[i]);
             natTable.getConfigRegistry()
                     .registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
                                              style,
