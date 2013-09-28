@@ -100,7 +100,7 @@ public class DataSubset {
             }
             List<Integer> indices = background.get(new Entry(tuple));
             if (indices == null) {
-                throw new IllegalArgumentException("No match found for: "+tuple);
+                throw new IllegalArgumentException("No match found for: "+Arrays.toString(tuple));
             }
             if (indices.isEmpty()) {
             	throw new IllegalArgumentException("Too many matches found for: "+tuple);

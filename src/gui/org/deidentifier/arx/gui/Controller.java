@@ -123,6 +123,13 @@ public class Controller implements IView {
 
         final Data data = worker.getResult();
         model.reset();
+        
+        // Create a research subset containing all rows
+        RowSet subset = RowSet.create(data);
+        for (int i=0; i<subset.length(); i++){
+            subset.add(i);
+        }
+        model.getInputConfig().setResearchSubset(subset);
         model.getInputConfig().setInput(data);
         model.setInputBytes(new File(path).length());
 
@@ -141,7 +148,6 @@ public class Controller implements IView {
         }
         
         model.resetCriteria();
-        model.getInputConfig().setResearchSubset(RowSet.create(data));
 
         // Display the changes
         update(new ModelEvent(this, EventTarget.MODEL, model));
@@ -156,7 +162,7 @@ public class Controller implements IView {
                                   null));
             update(new ModelEvent(this,
                                   EventTarget.RESEARCH_SUBSET,
-                                  null));
+                                  subset));
         }
     }
 
@@ -996,12 +1002,15 @@ public class Controller implements IView {
         Data subsetData = worker.getResult();
         Data data = model.getInputConfig().getInput();
         
-        DataSubset subset = DataSubset.create(data, subsetData);
-        model.getInputConfig().setResearchSubset(subset.getRowSet());
-        
-        update(new ModelEvent(this,
-                              EventTarget.RESEARCH_SUBSET,
-                              subset.getRowSet()));
+        try {
+            DataSubset subset = DataSubset.create(data, subsetData);
+            model.getInputConfig().setResearchSubset(subset.getRowSet());
+            update(new ModelEvent(this,
+                                  EventTarget.RESEARCH_SUBSET,
+                                  subset.getRowSet()));
+        } catch (IllegalArgumentException e){
+            main.showErrorDialog("Error!", e.getMessage());
+        }
     }
 
     public void actionSubsetAll() {

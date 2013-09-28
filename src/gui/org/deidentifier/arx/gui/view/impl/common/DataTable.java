@@ -213,11 +213,9 @@ public class DataTable implements IDataTable {
     private class ArrayDataProvider implements IDataProvider {
 
         private final String[][] data;
-        private final RowSet     rows;
 
-        public ArrayDataProvider(final String[][] data, final RowSet rows) {
+        public ArrayDataProvider(final String[][] data) {
             this.data = data;
-            this.rows = rows;
         }
 
         @Override
@@ -255,11 +253,9 @@ public class DataTable implements IDataTable {
     private class HandleDataProvider implements IDataProvider {
 
         private final DataHandle data;
-        private final RowSet     rows;
 
-        public HandleDataProvider(final DataHandle data, final RowSet rows) {
+        public HandleDataProvider(final DataHandle data) {
             this.data = data;
-            this.rows = rows;
         }
 
         @Override
@@ -674,7 +670,7 @@ public class DataTable implements IDataTable {
     public void reset() {
         this.table.setRedraw(false);
         this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(null, null));
+        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(null));
         this.handle = null;
         this.data = null;
         this.rows = null;
@@ -704,7 +700,7 @@ public class DataTable implements IDataTable {
         this.rows = rows;
         this.data = null;
         this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle, rows));
+        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
         this.headerImages = new ArrayList<Image>();
         this.table.setLayer(gridLayer);
         this.table.refresh();
@@ -733,7 +729,7 @@ public class DataTable implements IDataTable {
         this.rows = rows;
         this.data = null;
         this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle, rows));
+        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
         this.headerImages = new ArrayList<Image>();
         this.table.setLayer(gridLayer);
         this.table.refresh();
@@ -766,7 +762,7 @@ public class DataTable implements IDataTable {
         this.data = data;
         this.rows = rows;
         this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data, rows));
+        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -794,7 +790,7 @@ public class DataTable implements IDataTable {
         this.data = data;
         this.rows = rows;
         this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data, rows));
+        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -898,7 +894,7 @@ public class DataTable implements IDataTable {
     }
     
     private NatTable createTable(final Composite parent) {
-        final IDataProvider provider = new HandleDataProvider(null, null);
+        final IDataProvider provider = new HandleDataProvider(null);
         gridLayer = new TableGridLayerStack(provider);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
