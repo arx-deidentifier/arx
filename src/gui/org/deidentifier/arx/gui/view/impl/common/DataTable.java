@@ -30,11 +30,8 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
-import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
 import org.eclipse.nebula.widgets.nattable.copy.command.CopyDataCommandHandler;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
-import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
-import org.eclipse.nebula.widgets.nattable.edit.editor.CheckBoxCellEditor;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultBodyDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
@@ -50,6 +47,7 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.config.DefaultRowStyleConf
 import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
+import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.cell.AggregrateConfigLabelAccumulator;
@@ -572,6 +570,11 @@ public class DataTable implements IDataTable {
             ILayer cornerLayer = new CornerLayer(cornerDataLayer,
                                                  rowHeaderLayer,
                                                  columnHeaderLayer);
+            
+            // Attach the listeners
+            for (ILayerListener listener : selectionLayerListeners) {
+                selectionLayer.addLayerListener(listener);
+            }
 
             setBodyLayer(bodyLayer);
             setColumnHeaderLayer(columnHeaderLayer);
@@ -606,6 +609,7 @@ public class DataTable implements IDataTable {
 
     private DataBodyLayerStack bodyLayer;
     private DataGridLayer      gridLayer;
+    private List<ILayerListener>  selectionLayerListeners = new ArrayList<ILayerListener>();
     
     public DataTable(final Controller controller, final Composite parent) {
         IMAGE_COL_BACK = controller.getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
@@ -621,11 +625,11 @@ public class DataTable implements IDataTable {
      * (non-Javadoc)
      * 
      * @see
-     * org.deidentifier.ARX.gui.view.impl.common.IDataTable#addSelectionListener
+     * org.deidentifier.ARX.gui.view.impl.common.IDataTable#addScrollBarListener
      * ( org.eclipse.swt.widgets.Listener)
      */
     @Override
-    public void addSelectionListener(final Listener listener) {
+    public void addScrollBarListener(final Listener listener) {
         table.getVerticalBar().addListener(SWT.Selection, listener);
         table.getHorizontalBar().addListener(SWT.Selection, listener);
     }
@@ -639,18 +643,6 @@ public class DataTable implements IDataTable {
 
     public List<Image> getHeaderImages() {
         return headerImages;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.gui.view.impl.common.IDataTable#getUiBindingRegistry
-     * ()
-     */
-    @Override
-    public UiBindingRegistry getUiBindingRegistry() {
-        return table.getUiBindingRegistry();
     }
 
     /*
@@ -963,5 +955,10 @@ public class DataTable implements IDataTable {
                                                               "checkbox");
         
         return natTable;
+    }
+    
+    @Override
+    public void addSelectionLayerListener(ILayerListener listener){
+        selectionLayerListeners.add(listener);
     }
 }

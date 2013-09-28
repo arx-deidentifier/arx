@@ -20,17 +20,17 @@ package org.deidentifier.arx.gui.view.def;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
-import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Listener;
 
 public interface IDataTable {
 
-    public abstract void dispose();
+    public abstract void addScrollBarListener(Listener listener);
     
-    public abstract void addSelectionListener(Listener listener);
+    public abstract void addSelectionLayerListener(ILayerListener listener);
 
-    public abstract UiBindingRegistry getUiBindingRegistry();
+    public abstract void dispose();
 
     public abstract ViewportLayer getViewportLayer();
 
@@ -40,9 +40,9 @@ public interface IDataTable {
 
     public abstract void setData(DataHandle handle, RowSet rows);
 
-    public abstract void setData(String[][] data, RowSet rows);
-
     public abstract void setData(DataHandle handle, RowSet rows, int[] colors, int[] groups);
+
+    public abstract void setData(String[][] data, RowSet rows);
 
     public abstract void setData(String[][] data, RowSet rows, int[] colors, int[] groups);
 
