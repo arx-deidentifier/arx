@@ -37,51 +37,49 @@ public class Model implements Serializable {
 	private static final long serialVersionUID = -7669920657919151279L;
 
 	// TODO: Check if all initial values are ok
-	private transient Set<ARXNode> clipboard = new HashSet<ARXNode>();
-	private transient DataHandle output = null;
-	private transient ARXNode outputNode = null;
-	private transient ARXResult result = null;
-	private transient ARXNode selectedNode = null;
-	private transient ARXAnonymizer anonymizer = null;
-	private transient String path = null;
+    private transient Set<ARXNode>                clipboard            = new HashSet<ARXNode>();
+    private transient DataHandle                  output               = null;
+    private transient ARXNode                     outputNode           = null;
+    private transient ARXResult                   result               = null;
+    private transient ARXNode                     selectedNode         = null;
+    private transient ARXAnonymizer               anonymizer           = null;
+    private transient String                      path                 = null;
 
-	private String name = null;
-	private char separator = ';';
-	private String description;
-	private int historySize = 200;
-	private double snapshotSizeDataset = 0.2d;
-	private double snapshotSizeSnapshot = 0.8d;
-	private int initialNodesInViewer = 100;
-	private int maxNodesInLattice = 100000;
-	private int maxNodesInViewer = 700;
+    private String                                name                 = null;
+    private char                                  separator            = ';';
+    private String                                description;
+    private int                                   historySize          = 200;
+    private double                                snapshotSizeDataset  = 0.2d;
+    private double                                snapshotSizeSnapshot = 0.8d;
+    private int                                   initialNodesInViewer = 100;
+    private int                                   maxNodesInLattice    = 100000;
+    private int                                   maxNodesInViewer     = 700;
 
-	private String selectedAttribute = null;
-	private ModelNodeFilter nodeFilter = null;
-	private boolean modified = false;
-	private long inputBytes = 0L;
-	private String[] pair = new String[] { null, null };
+    private String                                selectedAttribute    = null;
+    private ModelNodeFilter                       nodeFilter           = null;
+    private boolean                               modified             = false;
+    private long                                  inputBytes           = 0L;
+    private String[]                              pair                 = new String[] { null, null };
 
-	protected String optimalNodeAsString;
-	protected String outputNodeAsString;
+    protected String                              optimalNodeAsString;
+    protected String                              outputNodeAsString;
 
-	protected long time;
+    protected long                                time;
+    
+    private ModelConfiguration                    inputConfig          = new ModelConfiguration();
+    private ModelConfiguration                    outputConfig         = null;
+    
+    private String                                suppressionString    = "*";                                            //$NON-NLS-1$
 
-	private ModelConfiguration inputConfig = new ModelConfiguration();
+    private int[]                                 colors;
+    private int[]                                 groups;
 
-	private ModelConfiguration outputConfig = null;
+    private ModelKAnonymityCriterion              kAnonymityModel      = new ModelKAnonymityCriterion();
+    private ModelDPresenceCriterion               dPresenceModel       = new ModelDPresenceCriterion();
+    private Map<String, ModelLDiversityCriterion> lDiversityModel      = new HashMap<String, ModelLDiversityCriterion>();
+    private Map<String, ModelTClosenessCriterion> tClosenessModel      = new HashMap<String, ModelTClosenessCriterion>();
 
-	private String suppressionString = "*"; //$NON-NLS-1$
-
-	private int[] colors;
-	private int[] groups;
-
-	private ModelKAnonymityCriterion kAnonymityModel = new ModelKAnonymityCriterion();
-
-	private ModelDPresenceCriterion dPresenceModel = new ModelDPresenceCriterion();
-
-	private Map<String, ModelLDiversityCriterion> lDiversityModel = new HashMap<String, ModelLDiversityCriterion>();
-
-	private Map<String, ModelTClosenessCriterion> tClosenessModel = new HashMap<String, ModelTClosenessCriterion>();
+    private String                                query = "";
 
 	public Model(final String name, final String description) {
 		this.name = name;
@@ -478,4 +476,12 @@ public class Model implements Serializable {
 	public boolean isValidLatticeSize() {
 		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
 	}
+
+    public String getQuery() {
+        return query;
+    }
+    
+    public void setQuery(String query){
+        this.query = query;
+    }
 }

@@ -972,8 +972,8 @@ public class Controller implements IView {
     }
 
     public void actionSubsetQuery() {
-        // TODO Auto-generated method stub
-        
+        String query = main.showQueryDialog(model.getQuery());
+        if (query == null) return;
     }
 
     public void actionSubsetFile() {

@@ -30,7 +30,6 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
@@ -39,6 +38,7 @@ import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.DefinitionView;
 import org.deidentifier.arx.gui.view.impl.explore.ExploreView;
 import org.deidentifier.arx.gui.view.impl.menu.CriterionSelectionDialog;
+import org.deidentifier.arx.gui.view.impl.menu.QueryDialog;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -299,5 +299,15 @@ public class MainWindow implements IMainWindow, IView {
         dialog.create();
         if (dialog.open() != Window.OK) { return null; }
         else {return dialog.getCriterion();}
+    }
+
+    @Override
+    public String showQueryDialog(String query) {
+
+        // Dialog
+        final QueryDialog dialog = new QueryDialog(controller, shell, query);
+        dialog.create();
+        if (dialog.open() != Window.OK) { return null; }
+        else {return dialog.getQuery();}
     }
 }

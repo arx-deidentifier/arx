@@ -62,4 +62,6 @@ public interface IMainWindow {
     String showSaveFileDialog(String filter);
 
     ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others);
+
+    String showQueryDialog(String query);
 }
