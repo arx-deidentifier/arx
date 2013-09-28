@@ -70,6 +70,7 @@ public class DataView implements IDataView, IView {
                     final EventTarget reset) {
 
         // Register
+        controller.addListener(EventTarget.RESEARCH_SUBSET, this);
         controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
         controller.addListener(EventTarget.MODEL, this);
         controller.addListener(target, this);
@@ -80,14 +81,10 @@ public class DataView implements IDataView, IView {
         this.reset = reset;
         this.target = target;
 
-        IMAGE_INSENSITIVE       = controller.getResources()
-                                            .getImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE         = controller.getResources()
-                                            .getImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources()
-                                            .getImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING       = controller.getResources()
-                                            .getImage("bullet_red.png"); //$NON-NLS-1$
+        IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
+        IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
+        IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
 
         TitledBorder border = new TitledBorder(parent, controller, title, "id-40");
         border.setLayoutData(SWTUtil.createFillGridData());
@@ -190,7 +187,9 @@ public class DataView implements IDataView, IView {
                 reset();
             } else {
                 handle = (DataHandle) event.data;
-                table.setData(handle, model.getInputConfig().getResearchSubset(), model.getColors(), model.getGroups());
+                table.setData(handle, 
+                              model.getInputConfig().getResearchSubset(), 
+                              model.getColors(), model.getGroups());
                 table.getHeaderImages().clear();
                 for (int i = 0; i < handle.getNumColumns(); i++) {
                     // TODO: Hmm.. Seems ok to use input config here
@@ -222,6 +221,9 @@ public class DataView implements IDataView, IView {
                 }
                 table.redraw();
             }
+        } else if (event.target == EventTarget.RESEARCH_SUBSET) {
+            table.setResearchSubset((RowSet)event.data);
+            table.redraw();
         }
     }
 
@@ -229,6 +231,7 @@ public class DataView implements IDataView, IView {
         if (table.getHeaderImages().size() <= i) {
             table.getHeaderImages().add(null);
         }
+        
         if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
             table.getHeaderImages().set(i, IMAGE_INSENSITIVE);
         } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {

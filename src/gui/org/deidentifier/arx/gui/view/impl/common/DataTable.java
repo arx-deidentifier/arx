@@ -74,7 +74,6 @@ import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.editor.command.DisplayColumnStyleEditorCommandHandler;
-import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
 import org.eclipse.nebula.widgets.nattable.ui.util.CellEdgeEnum;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.util.IClientAreaProvider;
@@ -960,5 +959,13 @@ public class DataTable implements IDataTable {
     @Override
     public void addSelectionLayerListener(ILayerListener listener){
         selectionLayerListeners.add(listener);
+    }
+
+    /**
+     * Sets the research subset
+     * @param researchSubset
+     */
+    public void setResearchSubset(RowSet researchSubset) {
+        this.rows = researchSubset;
     }
 }
