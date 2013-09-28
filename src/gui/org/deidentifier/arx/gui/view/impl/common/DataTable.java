@@ -19,19 +19,22 @@
 package org.deidentifier.arx.gui.view.impl.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IDataTable;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
+import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
 import org.eclipse.nebula.widgets.nattable.copy.command.CopyDataCommandHandler;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
+import org.eclipse.nebula.widgets.nattable.edit.editor.CheckBoxCellEditor;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultBodyDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
@@ -57,6 +60,7 @@ import org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderStyle
 import org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundPainter;
+import org.eclipse.nebula.widgets.nattable.painter.cell.CheckBoxPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.CellPainterDecorator;
@@ -88,24 +92,153 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
 public class DataTable implements IDataTable {
+    /**
+     * Paints an image. If no image is provided, it will attempt to look up an
+     * image from the cell style.
+     */
+    public class ImagePainter extends BackgroundPainter {
+
+        @Override
+        public void paintCell(final ILayerCell cell,
+                              final GC gc,
+                              final Rectangle bounds,
+                              final IConfigRegistry configRegistry) {
+            if ((headerImages != null) && (headerImages.size() > 0)) {
+                final int index = cell.getColumnIndex() - (rows != null ? 1 : 0);
+                if (index >= 0){
+                    final Image image = headerImages.get(index);
+                    if (image != null) {
+                        gc.drawImage(image, bounds.x + 3, bounds.y - 8);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public class StyledColumnHeaderConfiguration extends
+            DefaultColumnHeaderStyleConfiguration {
+
+        public StyledColumnHeaderConfiguration() {
+            font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        }
+
+        @Override
+        public void configureRegistry(final IConfigRegistry configRegistry) {
+            super.configureRegistry(configRegistry);
+            addNormalModeStyling(configRegistry);
+            addSelectedModeStyling(configRegistry);
+        }
+
+        private void addNormalModeStyling(final IConfigRegistry configRegistry) {
+
+            final TextPainter txtPainter = new TextPainter(false, false);
+            final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
+                                                                           IMAGE_COL_BACK,
+                                                                           GUIHelper.getColor(192,
+                                                                                              192,
+                                                                                              192));
+            final SortableHeaderTextPainter headerBasePainter = new SortableHeaderTextPainter(bgImagePainter,
+                                                                                              false,
+                                                                                              true);
+
+            final CellPainterDecorator headerPainter = new CellPainterDecorator(headerBasePainter,
+                                                                                CellEdgeEnum.LEFT,
+                                                                                new ImagePainter());
+
+            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
+                                                   headerPainter,
+                                                   DisplayMode.NORMAL,
+                                                   GridRegion.COLUMN_HEADER);
+            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
+                                                   headerBasePainter,
+                                                   DisplayMode.NORMAL,
+                                                   GridRegion.CORNER);
+        }
+
+        private void
+                addSelectedModeStyling(final IConfigRegistry configRegistry) {
+
+            final TextPainter txtPainter = new TextPainter(false, false);
+            final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
+                                                                                IMAGE_COL_SELECT,
+                                                                                GUIHelper.getColor(192,
+                                                                                                   192,
+                                                                                                   192));
+
+            final CellPainterDecorator selectedHeaderPainter = new CellPainterDecorator(selectedCellPainter,
+                                                                                        CellEdgeEnum.LEFT,
+                                                                                        new ImagePainter());
+
+            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
+                                                   selectedHeaderPainter,
+                                                   DisplayMode.SELECT,
+                                                   GridRegion.COLUMN_HEADER);
+        }
+    }
+
+    public class StyledRowHeaderConfiguration extends
+            DefaultRowHeaderStyleConfiguration {
+
+        public StyledRowHeaderConfiguration() {
+            font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+
+            final TextPainter txtPainter = new TextPainter(false, false);
+            final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
+                                                                           IMAGE_ROW_BACK,
+                                                                           null);
+            cellPainter = bgImagePainter;
+        }
+
+        @Override
+        public void configureRegistry(final IConfigRegistry configRegistry) {
+            super.configureRegistry(configRegistry);
+            addSelectedModeStyling(configRegistry);
+        }
+
+        private void
+                addSelectedModeStyling(final IConfigRegistry configRegistry) {
+
+            final TextPainter txtPainter = new TextPainter(false, false);
+            final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
+                                                                                IMAGE_ROW_SELECT,
+                                                                                GUIHelper.getColor(192,
+                                                                                                   192,
+                                                                                                   192));
+
+            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
+                                                   selectedCellPainter,
+                                                   DisplayMode.SELECT,
+                                                   GridRegion.ROW_HEADER);
+        }
+    }
+
     private class ArrayDataProvider implements IDataProvider {
 
         private final String[][] data;
+        private final RowSet     rows;
 
-        public ArrayDataProvider(final String[][] data) {
+        public ArrayDataProvider(final String[][] data, final RowSet rows) {
             this.data = data;
+            this.rows = rows;
         }
 
         @Override
         public int getColumnCount() {
             if (data == null) { return 0; }
-            return data[0].length;
+            return data[0].length + (rows != null ? 1 : 0);
         }
 
         @Override
         public Object getDataValue(final int arg0, final int arg1) {
             if (data == null) { return null; }
-            return data[arg1][arg0];
+            if (rows == null) {
+                return data[arg1][arg0];
+            } else if (arg0 == 0){
+                return rows.contains(arg1);
+            } else {
+                return data[arg1][arg0 - 1];
+            }
         }
 
         @Override
@@ -122,17 +255,114 @@ public class DataTable implements IDataTable {
         }
     }
 
+    private class HandleDataProvider implements IDataProvider {
+
+        private final DataHandle data;
+        private final RowSet     rows;
+
+        public HandleDataProvider(final DataHandle data, final RowSet rows) {
+            this.data = data;
+            this.rows = rows;
+        }
+
+        @Override
+        public int getColumnCount() {
+            if (data == null) { return 0; }
+            return data.getNumColumns() + (rows != null ? 1 : 0);
+        }
+
+        @Override
+        public Object getDataValue(final int arg0, final int arg1) {
+            if (data == null) { return null; }
+            if (rows == null) {
+                return  data.getValue(arg1, arg0);
+            } else if (arg0 == 0){
+                return rows.contains(arg1);
+            } else {
+                return  data.getValue(arg1, arg0 - 1);
+            }
+        }
+
+        @Override
+        public int getRowCount() {
+            if (data == null) { return 0; }
+            return data.getNumRows();
+        }
+
+        @Override
+        public void setDataValue(final int arg0,
+                                 final int arg1,
+                                 final Object arg2) {
+            return;
+        }
+    }
+
+    private class DataConfigLabelAccumulator implements IConfigLabelAccumulator {
+        
+        @Override
+        public void accumulateConfigLabels(LabelStack configLabels,
+                                           int columnPosition,
+                                           int rowPosition) {
+            
+            if (table!=null && rowColors!=null){
+                int row = table.getRowIndexByPosition(rowPosition+1);
+                configLabels.addLabel("background"+rowColors[row]); //$NON-NLS-1$
+                if (row<rowGroups.length-1 && rowGroups[row]!=rowGroups[row+1]){
+                    configLabels.addLabel(DataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
+                }
+            } 
+            
+            if (table!=null && rows != null){
+                int column = table.getColumnIndexByPosition(columnPosition+1);
+                if (column == 0) {
+                    configLabels.addLabel("checkbox"); //$NON-NLS-1$
+                }
+            }
+        }
+    }
+
+    private class TableGridLayerStack extends DataGridLayer {
+
+        public TableGridLayerStack(final IDataProvider bodyDataProvider) {
+            super(true);
+            List<String> lcolumns = new ArrayList<String>();
+            if (bodyDataProvider.getColumnCount() != 0) {
+                if (rows != null){
+                    lcolumns.add("");
+                }
+                if (handle != null) {
+                    for (int i = 0; i < handle.getNumColumns(); i++) {
+                        lcolumns.add(handle.getAttributeName(i));
+                    }
+                } else if (data != null) {
+                    for (int i = 0; i < data[0].length; i++) {
+                        lcolumns.add(data[0][i]);
+                    }
+                }
+            }
+            String[] columns = lcolumns.toArray(new String[]{});
+            final IDataProvider columnHeaderDataProvider = new DefaultColumnHeaderDataProvider(columns);
+            final IDataProvider rowHeaderDataProvider = new DefaultRowHeaderDataProvider(bodyDataProvider);
+            final IDataProvider cornerDataProvider = new DefaultCornerDataProvider(columnHeaderDataProvider,
+                                                                                   rowHeaderDataProvider);
+            init(bodyDataProvider,
+                 columnHeaderDataProvider,
+                 rowHeaderDataProvider,
+                 cornerDataProvider);
+        }
+    }
+
     class DataBodyLayerStack extends AbstractLayerTransform {
 
         private final SelectionLayer selectionLayer;
         private final ViewportLayer  viewportLayer;
 
         public DataBodyLayerStack(IUniqueIndexLayer underlyingLayer) {
-            selectionLayer = new SelectionLayer(underlyingLayer);
-            viewportLayer = new ViewportLayer(selectionLayer);
-            setUnderlyingLayer(viewportLayer);
-           this.setConfigLabelAccumulator(new RowColorConfigLabelAccumulator());
-            registerCommandHandler(new CopyDataCommandHandler(selectionLayer));
+            this.selectionLayer = new SelectionLayer(underlyingLayer);
+            this.viewportLayer = new ViewportLayer(selectionLayer);
+            this.setUnderlyingLayer(viewportLayer);
+            this.setConfigLabelAccumulator(new DataConfigLabelAccumulator());
+            this.registerCommandHandler(new CopyDataCommandHandler(selectionLayer));
         }
 
         public SelectionLayer getSelectionLayer() {
@@ -156,10 +386,6 @@ public class DataTable implements IDataTable {
         protected IUniqueIndexLayer columnHeaderDataLayer;
         protected IUniqueIndexLayer rowHeaderDataLayer;
         protected IUniqueIndexLayer cornerDataLayer;
-
-        protected DataGridLayer(boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-        }
 
         public DataGridLayer(IDataProvider bodyDataProvider,
                              IDataProvider columnHeaderDataProvider) {
@@ -250,6 +476,10 @@ public class DataTable implements IDataTable {
                                  boolean useDefaultConfiguration) {
             super(useDefaultConfiguration);
             init(rowData, propertyNames, propertyToLabelMap);
+        }
+
+        protected DataGridLayer(boolean useDefaultConfiguration) {
+            super(useDefaultConfiguration);
         }
 
         public IUniqueIndexLayer getBodyDataLayer() {
@@ -358,244 +588,33 @@ public class DataTable implements IDataTable {
         }
 
     }
-
-    private class HandleDataProvider implements IDataProvider {
-
-        private final DataHandle data;
-
-        public HandleDataProvider(final DataHandle data) {
-            this.data = data;
-        }
-
-        @Override
-        public int getColumnCount() {
-            if (data == null) { return 0; }
-            return data.getNumColumns();
-        }
-
-        @Override
-        public Object getDataValue(final int arg0, final int arg1) {
-            if (data == null) { return null; }
-            return data.getValue(arg1, arg0);
-        }
-
-        @Override
-        public int getRowCount() {
-            if (data == null) { return 0; }
-            return data.getNumRows();
-        }
-
-        @Override
-        public void setDataValue(final int arg0,
-                                 final int arg1,
-                                 final Object arg2) {
-            return;
-        }
-    }
-
-    /**
-     * Paints an image. If no image is provided, it will attempt to look up an
-     * image from the cell style.
-     */
-    public class ImagePainter extends BackgroundPainter {
-
-        @Override
-        public void paintCell(final ILayerCell cell,
-                              final GC gc,
-                              final Rectangle bounds,
-                              final IConfigRegistry configRegistry) {
-            //
-            // Rectangle imageBounds = image.getBounds();
-            // IStyle cellStyle = CellStyleUtil.getCellStyle(cell,
-            // configRegistry);
-            if ((headerImages != null) && (headerImages.size() > 0)) {
-                final Image image = headerImages.get(cell.getColumnIndex());
-                if (image != null) {
-                    gc.drawImage(image, bounds.x + 3, bounds.y - 8);
-                }
-            }
-        }
-
-    }
-
-    public class StyledColumnHeaderConfiguration extends
-            DefaultColumnHeaderStyleConfiguration {
-
-        public StyledColumnHeaderConfiguration() {
-            font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-        }
-
-        private void addNormalModeStyling(final IConfigRegistry configRegistry) {
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
-                                                                           IMAGE_COL_BACK,
-                                                                           GUIHelper.getColor(192,
-                                                                                              192,
-                                                                                              192));
-            final SortableHeaderTextPainter headerBasePainter = new SortableHeaderTextPainter(bgImagePainter,
-                                                                                              false,
-                                                                                              true);
-
-            final CellPainterDecorator headerPainter = new CellPainterDecorator(headerBasePainter,
-                                                                                CellEdgeEnum.LEFT,
-                                                                                new ImagePainter());
-
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   headerPainter,
-                                                   DisplayMode.NORMAL,
-                                                   GridRegion.COLUMN_HEADER);
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   headerBasePainter,
-                                                   DisplayMode.NORMAL,
-                                                   GridRegion.CORNER);
-        }
-
-        private void
-                addSelectedModeStyling(final IConfigRegistry configRegistry) {
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                                IMAGE_COL_SELECT,
-                                                                                GUIHelper.getColor(192,
-                                                                                                   192,
-                                                                                                   192));
-
-            final CellPainterDecorator selectedHeaderPainter = new CellPainterDecorator(selectedCellPainter,
-                                                                                        CellEdgeEnum.LEFT,
-                                                                                        new ImagePainter());
-
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   selectedHeaderPainter,
-                                                   DisplayMode.SELECT,
-                                                   GridRegion.COLUMN_HEADER);
-        }
-
-        @Override
-        public void configureRegistry(final IConfigRegistry configRegistry) {
-            super.configureRegistry(configRegistry);
-            addNormalModeStyling(configRegistry);
-            addSelectedModeStyling(configRegistry);
-        }
-    }
-
-    public class StyledRowHeaderConfiguration extends
-            DefaultRowHeaderStyleConfiguration {
-
-        public StyledRowHeaderConfiguration() {
-            font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
-                                                                           IMAGE_ROW_BACK,
-                                                                           null);
-            cellPainter = bgImagePainter;
-        }
-
-        private void
-                addSelectedModeStyling(final IConfigRegistry configRegistry) {
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                                IMAGE_ROW_SELECT,
-                                                                                GUIHelper.getColor(192,
-                                                                                                   192,
-                                                                                                   192));
-
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   selectedCellPainter,
-                                                   DisplayMode.SELECT,
-                                                   GridRegion.ROW_HEADER);
-        }
-
-        @Override
-        public void configureRegistry(final IConfigRegistry configRegistry) {
-            super.configureRegistry(configRegistry);
-            addSelectedModeStyling(configRegistry);
-        }
-    }
-
-    private class TableGridLayerStack extends DataGridLayer {
-
-        public TableGridLayerStack(final IDataProvider bodyDataProvider) {
-            super(true);
-            String[] columns = {};
-            if (bodyDataProvider.getColumnCount() != 0) {
-                if (handle != null) {
-                    columns = new String[handle.getNumColumns()];
-                    for (int i = 0; i < columns.length; i++) {
-                        columns[i] = handle.getAttributeName(i);
-                    }
-                } else if (data != null) {
-                    columns = data[0];
-                }
-            }
-            final IDataProvider columnHeaderDataProvider = new DefaultColumnHeaderDataProvider(columns);
-            final IDataProvider rowHeaderDataProvider = new DefaultRowHeaderDataProvider(bodyDataProvider);
-            final IDataProvider cornerDataProvider = new DefaultCornerDataProvider(columnHeaderDataProvider,
-                                                                                   rowHeaderDataProvider);
-            init(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider,
-                 cornerDataProvider);
-        }
-    }
-
     private final Image        IMAGE_COL_BACK;
     private final Image        IMAGE_ROW_BACK;
-
     private final Image        IMAGE_COL_SELECT;
-
     private final Image        IMAGE_ROW_SELECT;
+    private List<Image>        headerImages = new ArrayList<Image>();
+    
     private final Color[]      GRADIENT;
     private final NatTable     table;
-    private int[]            rowColors = null;
-    private int[]            rowGroups = null;
+    
+    private int[]              rowColors = null;
+    private int[]              rowGroups = null;
 
     private DataHandle         handle;
-
     private String[][]         data;
+    private RowSet             rows;
 
     private DataBodyLayerStack bodyLayer;
-
     private DataGridLayer      gridLayer;
-
-    private List<Image>        headerImages = new ArrayList<Image>();
-
+    
     public DataTable(final Controller controller, final Composite parent) {
-        IMAGE_COL_BACK = controller.getResources()
-                                   .getImage("column_header_bg.png"); //$NON-NLS-1$
-        IMAGE_ROW_BACK = controller.getResources()
-                                   .getImage("row_header_bg.png"); //$NON-NLS-1$
-        IMAGE_COL_SELECT = controller.getResources()
-                                     .getImage("selected_column_header_bg.png"); //$NON-NLS-1$
-        IMAGE_ROW_SELECT = controller.getResources()
-                                     .getImage("selected_row_header_bg.png"); //$NON-NLS-1$
+        IMAGE_COL_BACK = controller.getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
+        IMAGE_ROW_BACK = controller.getResources().getImage("row_header_bg.png"); //$NON-NLS-1$
+        IMAGE_COL_SELECT = controller.getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
+        IMAGE_ROW_SELECT = controller.getResources().getImage("selected_row_header_bg.png"); //$NON-NLS-1$
         GRADIENT = createGradient(controller, controller.getResources().getGradientLength());
         table = createControl(parent);
         table.setVisible(false);
-    }
-
-    /**
-     * Register an attribute to be applied to all cells with the highlight
-     * label. A similar approach can be used to bind styling to an arbitrary
-     * group of cells
-     */
-    private void addCellStyling(final IConfigRegistry configRegistry) {
-        final Style style = new Style();
-        style.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR,
-                                GUIHelper.COLOR_BLUE);
-        style.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT,
-                                HorizontalAlignmentEnum.RIGHT);
-        style.setAttributeValue(CellStyleAttributes.FONT,
-                                GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL))); //$NON-NLS-1$
-
-        // configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
-        // // attribute to apply
-        // style, // value of the attribute
-        // DisplayMode.NORMAL, // apply during normal rendering i.e not during
-        // selection or edit
-        // COLUMN_LABEL_1); // apply the above for all cells with this label
     }
 
     /*
@@ -609,71 +628,6 @@ public class DataTable implements IDataTable {
     public void addSelectionListener(final Listener listener) {
         table.getVerticalBar().addListener(SWT.Selection, listener);
         table.getHorizontalBar().addListener(SWT.Selection, listener);
-    }
-
-    private void addTableStyling(final NatTable natTable) {
-        // Setup NatTable default styling
-
-        // NOTE: Getting the colors and fonts from the GUIHelper ensures that
-        // they are disposed properly (required by SWT)
-        final DefaultNatTableStyleConfiguration natTableConfiguration = new DefaultNatTableStyleConfiguration();
-        natTableConfiguration.bgColor = GUIHelper.getColor(249, 172, 7);
-        natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
-        natTableConfiguration.hAlign = HorizontalAlignmentEnum.LEFT;
-        natTableConfiguration.vAlign = VerticalAlignmentEnum.TOP;
-        natTableConfiguration.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-        // A custom painter can be plugged in to paint the cells differently
-        natTableConfiguration.cellPainter = new PaddingDecorator(new TextPainter(),
-                                                                 1);
-
-        // Setup even odd row colors - row colors override the NatTable default
-        // colors
-        final DefaultRowStyleConfiguration rowStyleConfiguration = new DefaultRowStyleConfiguration();
-        rowStyleConfiguration.oddRowBgColor = GUIHelper.getColor(254, 251, 243);
-        rowStyleConfiguration.evenRowBgColor = GUIHelper.COLOR_WHITE;
-
-        // Setup selection styling
-        final DefaultSelectionStyleConfiguration selectionStyle = new DefaultSelectionStyleConfiguration();
-        selectionStyle.selectionFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-        selectionStyle.selectionBgColor = GUIHelper.getColor(220, 220, 220);
-        selectionStyle.selectionFgColor = GUIHelper.COLOR_BLACK;
-        selectionStyle.anchorBorderStyle = new BorderStyle(1,
-                                                           GUIHelper.COLOR_DARK_GRAY,
-                                                           LineStyleEnum.SOLID);
-        selectionStyle.anchorBgColor = GUIHelper.getColor(220, 220, 220);
-        selectionStyle.anchorFgColor = GUIHelper.getColor(0, 0, 0);
-        selectionStyle.selectedHeaderBgColor = GUIHelper.getColor(156, 209, 103);
-        selectionStyle.selectedHeaderFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-        // Add all style configurations to NatTable
-        natTable.addConfiguration(natTableConfiguration);
-        natTable.addConfiguration(rowStyleConfiguration);
-        natTable.addConfiguration(selectionStyle);
-
-        // Column/Row header style and custom painters
-        natTable.addConfiguration(new StyledRowHeaderConfiguration());
-        natTable.addConfiguration(new StyledColumnHeaderConfiguration());
-
-        // Dont show a popup menu on the header
-        // natTable.addConfiguration(new HeaderMenuConfiguration(natTable));
-    }
-
-    public NatTable createControl(final Composite parent) {
-        final NatTable natTable = setup(parent);
-
-        addTableStyling(natTable);
-        addCellStyling(natTable.getConfigRegistry());
-
-        natTable.configure();
-
-        final GridData tableLayoutData = new GridData();
-        tableLayoutData.horizontalAlignment = SWT.FILL;
-        tableLayoutData.verticalAlignment = SWT.FILL;
-        tableLayoutData.grabExcessHorizontalSpace = true;
-        tableLayoutData.grabExcessVerticalSpace = true;
-        natTable.setLayoutData(tableLayoutData);
-        return natTable;
     }
 
     public void dispose() {
@@ -727,22 +681,53 @@ public class DataTable implements IDataTable {
      */
     @Override
     public void reset() {
-        table.setRedraw(false);
-        headerImages.clear();
-        gridLayer = new TableGridLayerStack(new HandleDataProvider(null));
-        handle = null;
-        data = null;
-        table.setLayer(gridLayer);
-        table.refresh();
-        gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        table.getVerticalBar().setVisible(false);
-        table.getHorizontalBar().setVisible(false);
-        table.setRedraw(true);
-        table.redraw();
-        table.setVisible(false);
-        table.getVerticalBar().setVisible(true);
-        table.getHorizontalBar().setVisible(true);
-        table.setVisible(false);
+        this.table.setRedraw(false);
+        this.headerImages.clear();
+        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(null, null));
+        this.handle = null;
+        this.data = null;
+        this.rows = null;
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(false);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(false);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#setData(org.
+     * deidentifier.ARX .DataHandle)
+     */
+    @Override
+    public void setData(final DataHandle handle, final RowSet rows) {
+        this.table.setRedraw(false);
+        this.handle = handle;
+        this.rows = rows;
+        this.data = null;
+        this.headerImages.clear();
+        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle, rows));
+        this.headerImages = new ArrayList<Image>();
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
+        this.rowColors = null;
+        this.rowGroups = null;
     }
 
     /*
@@ -750,27 +735,60 @@ public class DataTable implements IDataTable {
      * @see org.deidentifier.ARX.gui.view.def.IDataTable#setData(org.deidentifier.ARX.DataHandle, int[])
      */
     @Override
-    public void setData(final DataHandle handle, int[] colors, int[] groups) {
+    public void setData(final DataHandle handle, final RowSet rows, int[] colors, int[] groups) {
         // TODO: Refactor to colors[groups[row]]
-        table.setRedraw(false);
+        this.table.setRedraw(false);
         this.handle = handle;
-        data = null;
-        headerImages.clear();
-        gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
-        headerImages = new ArrayList<Image>();
-        table.setLayer(gridLayer);
-        table.refresh();
-        gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        table.getVerticalBar().setVisible(false);
-        table.getHorizontalBar().setVisible(false);
-        table.setRedraw(true);
-        table.redraw();
-        table.setVisible(true);
-        table.getVerticalBar().setVisible(true);
-        table.getHorizontalBar().setVisible(true);
-        table.setVisible(true);
+        this.rows = rows;
+        this.data = null;
+        this.headerImages.clear();
+        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle, rows));
+        this.headerImages = new ArrayList<Image>();
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
+        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
+          
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
         this.rowColors = colors;
         this.rowGroups = groups;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#setData(org.
+     * deidentifier.ARX .DataHandle)
+     */
+    @Override
+    public void setData(final String[][] data, final RowSet rows) {
+        this.table.setRedraw(false);
+        this.handle = null;
+        this.data = data;
+        this.rows = rows;
+        this.headerImages.clear();
+        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data, rows));
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
+        this.rowColors = null;
+        this.rowGroups = null;
     }
 
     /*
@@ -778,83 +796,27 @@ public class DataTable implements IDataTable {
      * @see org.deidentifier.ARX.gui.view.def.IDataTable#setData(java.lang.String[][], int[])
      */
     @Override
-    public void setData(final String[][] data, int[] colors, int[] groups) {
+    public void setData(final String[][] data, final RowSet rows, int[] colors, int[] groups) {
         // TODO: Refactor to colors[groups[row]]
-        table.setRedraw(false);
-        handle = null;
+        this.table.setRedraw(false);
+        this.handle = null;
         this.data = data;
-        headerImages.clear();
-        gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
-        table.setLayer(gridLayer);
-        table.refresh();
-        gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        table.getVerticalBar().setVisible(false);
-        table.getHorizontalBar().setVisible(false);
-        table.setRedraw(true);
-        table.redraw();
-        table.setVisible(true);
-        table.getVerticalBar().setVisible(true);
-        table.getHorizontalBar().setVisible(true);
-        table.setVisible(true);
+        this.rows = rows;
+        this.headerImages.clear();
+        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data, rows));
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
         this.rowColors = colors;
         this.rowGroups = groups;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#setData(org.
-     * deidentifier.ARX .DataHandle)
-     */
-    @Override
-    public void setData(final DataHandle handle) {
-        table.setRedraw(false);
-        this.handle = handle;
-        data = null;
-        headerImages.clear();
-        gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
-        headerImages = new ArrayList<Image>();
-        table.setLayer(gridLayer);
-        table.refresh();
-        gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        table.getVerticalBar().setVisible(false);
-        table.getHorizontalBar().setVisible(false);
-        table.setRedraw(true);
-        table.redraw();
-        table.setVisible(true);
-        table.getVerticalBar().setVisible(true);
-        table.getHorizontalBar().setVisible(true);
-        table.setVisible(true);
-        this.rowColors = null;
-        this.rowGroups = null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#setData(org.
-     * deidentifier.ARX .DataHandle)
-     */
-    @Override
-    public void setData(final String[][] data) {
-        table.setRedraw(false);
-        handle = null;
-        this.data = data;
-        headerImages.clear();
-        gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
-        table.setLayer(gridLayer);
-        table.refresh();
-        gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        table.getVerticalBar().setVisible(false);
-        table.getHorizontalBar().setVisible(false);
-        table.setRedraw(true);
-        table.redraw();
-        table.setVisible(true);
-        table.getVerticalBar().setVisible(true);
-        table.getHorizontalBar().setVisible(true);
-        table.setVisible(true);
-        this.rowColors = null;
-        this.rowGroups = null;
     }
 
     public void setEnabled(final boolean val) {
@@ -875,8 +837,77 @@ public class DataTable implements IDataTable {
         table.setLayoutData(data);
     }
 
-    private NatTable setup(final Composite parent) {
-        final IDataProvider provider = new HandleDataProvider(null);
+    private void createTableStyling(final NatTable natTable) {
+
+        // NOTE: Getting the colors and fonts from the GUIHelper ensures that
+        // they are disposed properly (required by SWT)
+        final DefaultNatTableStyleConfiguration natTableConfiguration = new DefaultNatTableStyleConfiguration();
+        natTableConfiguration.bgColor = GUIHelper.getColor(249, 172, 7);
+        natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
+        natTableConfiguration.hAlign = HorizontalAlignmentEnum.LEFT;
+        natTableConfiguration.vAlign = VerticalAlignmentEnum.TOP;
+        natTableConfiguration.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+
+        // A custom painter can be plugged in to paint the cells differently
+        natTableConfiguration.cellPainter = new PaddingDecorator(new TextPainter(), 1);
+
+        // Setup even odd row colors - row colors override the NatTable default colors
+        final DefaultRowStyleConfiguration rowStyleConfiguration = new DefaultRowStyleConfiguration();
+        rowStyleConfiguration.oddRowBgColor = GUIHelper.getColor(254, 251, 243);
+        rowStyleConfiguration.evenRowBgColor = GUIHelper.COLOR_WHITE;
+
+        // Setup selection styling
+        final DefaultSelectionStyleConfiguration selectionStyle = new DefaultSelectionStyleConfiguration();
+        selectionStyle.selectionFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        selectionStyle.selectionBgColor = GUIHelper.getColor(220, 220, 220);
+        selectionStyle.selectionFgColor = GUIHelper.COLOR_BLACK;
+        selectionStyle.anchorBorderStyle = new BorderStyle(1, GUIHelper.COLOR_DARK_GRAY, LineStyleEnum.SOLID);
+        selectionStyle.anchorBgColor = GUIHelper.getColor(220, 220, 220);
+        selectionStyle.anchorFgColor = GUIHelper.getColor(0, 0, 0);
+        selectionStyle.selectedHeaderBgColor = GUIHelper.getColor(156, 209, 103);
+        selectionStyle.selectedHeaderFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+
+        // Add all style configurations to NatTable
+        natTable.addConfiguration(natTableConfiguration);
+        natTable.addConfiguration(rowStyleConfiguration);
+        natTable.addConfiguration(selectionStyle);
+
+        // Column/Row header style and custom painters
+        natTable.addConfiguration(new StyledRowHeaderConfiguration());
+        natTable.addConfiguration(new StyledColumnHeaderConfiguration());
+    }
+
+    private NatTable createControl(final Composite parent) {
+        final NatTable natTable = createTable(parent);
+        createTableStyling(natTable);
+        natTable.configure();
+        final GridData tableLayoutData = new GridData();
+        tableLayoutData.horizontalAlignment = SWT.FILL;
+        tableLayoutData.verticalAlignment = SWT.FILL;
+        tableLayoutData.grabExcessHorizontalSpace = true;
+        tableLayoutData.grabExcessVerticalSpace = true;
+        natTable.setLayoutData(tableLayoutData);
+        return natTable;
+    }
+    
+    /**
+     * Creates a red to green gradient
+     * @param controller
+     * @param length
+     * @return
+     */
+    private Color[] createGradient(final Controller controller, int length){
+        Color[] colors = new Color[length];
+        for (int i=0; i<length; i++){
+            double hue = (double)i / (double)length * 0.4d;
+            java.awt.Color c = java.awt.Color.getHSBColor((float)hue, 0.9f, 0.9f); 
+            colors[i] = new Color(controller.getResources().getDisplay(), c.getRed(), c.getGreen(), c.getBlue());
+        }
+        return colors;
+    }
+    
+    private NatTable createTable(final Composite parent) {
+        final IDataProvider provider = new HandleDataProvider(null, null);
         gridLayer = new TableGridLayerStack(provider);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
@@ -902,17 +933,17 @@ public class DataTable implements IDataTable {
         bodyLayer.registerCommandHandler(styleChooserCommandHandler);
 
         // Register the style editor as persistable
-        // This will persist the style applied to the columns when
-        // NatTable#saveState is invoked
         bodyLayer.registerPersistable(styleChooserCommandHandler);
         bodyLayer.registerPersistable(columnLabelAccumulator);
 
+        // Register default cell painter
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, 
                                                              new DataTableDecorator( new TextPainter(false, true, 0, true),
                                                              new BorderStyle(2, GUIHelper.COLOR_BLACK, LineStyleEnum.SOLID)),
                                                                 DisplayMode.NORMAL,
                                                                 GridRegion.BODY);
         
+        // Register gradient painters for groups
         for (int i=0; i<GRADIENT.length; i++){
             Style style = new Style();
             style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR,
@@ -925,40 +956,12 @@ public class DataTable implements IDataTable {
           
         }
         
-        return natTable;
-       
-    }
-    
-    /**
-     * Creates a red to green gradient
-     * @param controller
-     * @param length
-     * @return
-     */
-    private Color[] createGradient(final Controller controller, int length){
-        Color[] colors = new Color[length];
-        for (int i=0; i<length; i++){
-            double hue = (double)i / (double)length * 0.4d;
-            java.awt.Color c = java.awt.Color.getHSBColor((float)hue, 0.9f, 0.9f); 
-            colors[i] = new Color(controller.getResources().getDisplay(), c.getRed(), c.getGreen(), c.getBlue());
-        }
-        return colors;
-    }
-    
-    private class RowColorConfigLabelAccumulator implements IConfigLabelAccumulator {
+        // Register checkbox painter for subset
+        natTable.getConfigRegistry().registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, 
+                                                              new CheckBoxPainter(), 
+                                                              DisplayMode.NORMAL, 
+                                                              "checkbox");
         
-        @Override
-        public void accumulateConfigLabels(LabelStack configLabels,
-                                           int columnPosition,
-                                           int rowPosition) {
-            
-            if (table!=null && rowColors!=null){
-                int row = table.getRowIndexByPosition(rowPosition+1);
-                configLabels.addLabel("background"+rowColors[row]); //$NON-NLS-1$
-                if (row<rowGroups.length-1 && rowGroups[row]!=rowGroups[row+1]){
-                    configLabels.addLabel(DataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
-                }
-            } 
-        }
+        return natTable;
     }
 }

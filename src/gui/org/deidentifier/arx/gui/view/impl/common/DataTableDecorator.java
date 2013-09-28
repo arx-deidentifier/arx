@@ -75,20 +75,6 @@ public class DataTableDecorator extends CellPainterWrapper {
    }
 
    @Override
-   public int getPreferredWidth(ILayerCell cell, GC gc, IConfigRegistry configRegistry) {
-   BorderStyle borderStyle = getBorderStyle(cell, configRegistry);
-   int borderThickness = borderStyle != null ? borderStyle.getThickness() : 0;
-   
-   int borderLineCount = 0;
-   //check how many border lines are configured for that cell
-   List<String> labels = cell.getConfigLabels().getLabels();
-   if (labels.contains(RIGHT_LINE_BORDER_LABEL)) borderLineCount++;
-   if (labels.contains(LEFT_LINE_BORDER_LABEL)) borderLineCount++;
-   
-   return super.getPreferredWidth(cell, gc, configRegistry) + (borderThickness * borderLineCount);
-   }
-   
-   @Override
    public int getPreferredHeight(ILayerCell cell, GC gc, IConfigRegistry configRegistry) {
    BorderStyle borderStyle = getBorderStyle(cell, configRegistry);
    int borderThickness = borderStyle != null ? borderStyle.getThickness() : 0;
@@ -101,14 +87,19 @@ public class DataTableDecorator extends CellPainterWrapper {
    
    return super.getPreferredHeight(cell, gc, configRegistry) + (borderThickness * borderLineCount);
    }
-
-   private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
-   IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
-   BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
-   if (borderStyle == null) {
-       borderStyle = this.defaultBorderStyle;
-   }
-   return borderStyle;
+   
+   @Override
+   public int getPreferredWidth(ILayerCell cell, GC gc, IConfigRegistry configRegistry) {
+   BorderStyle borderStyle = getBorderStyle(cell, configRegistry);
+   int borderThickness = borderStyle != null ? borderStyle.getThickness() : 0;
+   
+   int borderLineCount = 0;
+   //check how many border lines are configured for that cell
+   List<String> labels = cell.getConfigLabels().getLabels();
+   if (labels.contains(RIGHT_LINE_BORDER_LABEL)) borderLineCount++;
+   if (labels.contains(LEFT_LINE_BORDER_LABEL)) borderLineCount++;
+   
+   return super.getPreferredWidth(cell, gc, configRegistry) + (borderThickness * borderLineCount);
    }
 
    @Override
@@ -215,6 +206,15 @@ public class DataTableDecorator extends CellPainterWrapper {
    gc.setForeground(originalForeground);
    gc.setLineWidth(originalLineWidth);
    gc.setLineStyle(originalLineStyle);
+   }
+
+   private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
+   IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
+   BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
+   if (borderStyle == null) {
+       borderStyle = this.defaultBorderStyle;
+   }
+   return borderStyle;
    }
    
 }

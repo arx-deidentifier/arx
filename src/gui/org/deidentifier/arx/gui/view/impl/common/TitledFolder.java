@@ -41,6 +41,51 @@ public class TitledFolder {
         });
     }
     
+    public void addSelectionListener(SelectionListener listener) {
+        folder.addSelectionListener(listener);
+    }
+    
+    public Composite createItem(String title, Image image){
+
+        Composite composite = new Composite(folder, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        
+        CTabItem item = new CTabItem(folder, SWT.NULL);
+        item.setText(title);
+        if (image!=null) item.setImage(image);
+        item.setShowClose(false);
+        item.setControl(composite);
+        
+        return composite;
+    }
+
+    public ToolItem getBarItem(String text) {
+        Control c = folder.getTopRight();
+        if (c == null) return null;
+        if (!(c instanceof ToolBar)) return null;
+        ToolBar t = (ToolBar)c;
+        for (ToolItem i : t.getItems()){
+            if (i.getToolTipText().equals(text)) return i;
+        }
+        return null;
+    }
+
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    public void setEnabled(boolean b) {
+        folder.setEnabled(b);
+    }
+
+    public void setLayoutData(Object data){
+        folder.setLayoutData(data);
+    }
+
+    public void setSelection(int index) {
+        folder.setSelection(index);
+    }
+
     private void createBar(final Controller controller, final CTabFolder folder, final TitleBar bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
@@ -71,50 +116,5 @@ public class TitledFolder {
         
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
-    }
-    
-    public Composite createItem(String title, Image image){
-
-        Composite composite = new Composite(folder, SWT.NONE);
-        composite.setLayout(new GridLayout());
-        
-        CTabItem item = new CTabItem(folder, SWT.NULL);
-        item.setText(title);
-        if (image!=null) item.setImage(image);
-        item.setShowClose(false);
-        item.setControl(composite);
-        
-        return composite;
-    }
-
-    public void setLayoutData(Object data){
-        folder.setLayoutData(data);
-    }
-
-    public void addSelectionListener(SelectionListener listener) {
-        folder.addSelectionListener(listener);
-    }
-
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    public void setSelection(int index) {
-        folder.setSelection(index);
-    }
-
-    public void setEnabled(boolean b) {
-        folder.setEnabled(b);
-    }
-
-    public ToolItem getBarItem(String text) {
-        Control c = folder.getTopRight();
-        if (c == null) return null;
-        if (!(c instanceof ToolBar)) return null;
-        ToolBar t = (ToolBar)c;
-        for (ToolItem i : t.getItems()){
-            if (i.getToolTipText().equals(text)) return i;
-        }
-        return null;
     }
 }

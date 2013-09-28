@@ -41,15 +41,15 @@ public class TitledBorder {
         folder.setSelection(tab);
     }
     
-    public void setLayoutData(Object data){
-        folder.setLayoutData(data);
-    }
-    
     public Composite getControl(){
         return folder;
     }
     
     public void setChild(Control child){
         this.tab.setControl(child);
+    }
+    
+    public void setLayoutData(Object data){
+        folder.setLayoutData(data);
     }
 }

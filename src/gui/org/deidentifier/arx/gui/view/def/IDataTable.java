@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.def;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.RowSet;
 import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Listener;
@@ -37,13 +38,13 @@ public interface IDataTable {
 
     public abstract void reset();
 
-    public abstract void setData(DataHandle handle);
+    public abstract void setData(DataHandle handle, RowSet rows);
 
-    public abstract void setData(String[][] data);
+    public abstract void setData(String[][] data, RowSet rows);
 
-    public abstract void setData(DataHandle handle, int[] colors, int[] groups);
+    public abstract void setData(DataHandle handle, RowSet rows, int[] colors, int[] groups);
 
-    public abstract void setData(String[][] data, int[] colors, int[] groups);
+    public abstract void setData(String[][] data, RowSet rows, int[] colors, int[] groups);
 
     public abstract void setLayoutData(Object data);
 }

@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -30,6 +31,7 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
 import org.eclipse.nebula.widgets.nattable.ui.action.IMouseAction;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.CellPainterMouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
@@ -38,6 +40,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
+
+import com.sun.java.swing.plaf.nimbus.CheckBoxPainter;
 
 public class DataView implements IDataView, IView {
 
@@ -84,8 +88,6 @@ public class DataView implements IDataView, IView {
         IMAGE_IDENTIFYING       = controller.getResources()
                                             .getImage("bullet_red.png"); //$NON-NLS-1$
 
-        final IView outer = this;
-        
         TitledBorder border = new TitledBorder(parent, controller, title, "id-40");
         border.setLayoutData(SWTUtil.createFillGridData());
         Composite c = new Composite(border.getControl(), SWT.NONE);
@@ -95,28 +97,69 @@ public class DataView implements IDataView, IView {
         c.setLayout(l);
         
         table = new DataTable(controller, c);
-        table.getUiBindingRegistry()
-             .registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,
-                                                             GridRegion.COLUMN_HEADER,
-                                                             MouseEventMatcher.LEFT_BUTTON),
-                                       new IMouseAction() {
-                                           @Override
-                                           public void
-                                                   run(final NatTable arg0,
-                                                       final MouseEvent arg1) {
-                                               if (!(arg1.data instanceof NatEventData)) { return; }
-                                               if (model != null) {
-                                                   int i = ((NatEventData) arg1.data).getColumnPosition() - 1;
-                                                   i += table.getViewportLayer()
-                                                             .getOriginColumnPosition();
-                                                   final String attr = handle.getAttributeName(i);
-                                                   model.setSelectedAttribute(attr);
-                                                   controller.update(new ModelEvent(outer,
-                                                                                    EventTarget.SELECTED_ATTRIBUTE,
-                                                                                    attr));
-                                               }
-                                           }
-                                       });
+        table.getUiBindingRegistry().registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,
+                                                                                    GridRegion.COLUMN_HEADER,
+                                                                                    MouseEventMatcher.LEFT_BUTTON),
+                                                              new IMouseAction() {
+                                                                  public void run(final NatTable arg0,
+                                                                                  final MouseEvent arg1) {
+                                                                      actionHeaderClicked(arg1);
+                                                                  }
+                                                              });
+        
+
+        table.getUiBindingRegistry().registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,
+                                                                                    GridRegion.BODY,
+                                                                                    MouseEventMatcher.LEFT_BUTTON),
+                                                              new IMouseAction() {
+                                                                  public void run(final NatTable arg0,
+                                                                                  final MouseEvent arg1) {
+                                                                      actionBodyClicked(arg1);
+                                                                  }
+                                                              });
+    }
+    
+    private void actionHeaderClicked(MouseEvent arg1) {
+        if (!(arg1.data instanceof NatEventData)) { return; }
+        if (model != null) {
+            int i = ((NatEventData) arg1.data).getColumnPosition() - 2;
+            i += table.getViewportLayer().getOriginColumnPosition();
+            if (i>=0){
+                final String attr = handle.getAttributeName(i);
+                model.setSelectedAttribute(attr);
+                controller.update(new ModelEvent(this,
+                                                 EventTarget.SELECTED_ATTRIBUTE,
+                                                 attr));
+            }
+        }
+    }
+    
+
+    private void actionBodyClicked(MouseEvent arg1) {
+
+        System.out.println("CLICKED!");
+        
+        if (!(arg1.data instanceof NatEventData)) { return; }
+        if (model != null) {
+            int column = ((NatEventData) arg1.data).getColumnPosition() - 2;
+            column += table.getViewportLayer().getOriginColumnPosition();
+            
+            if (column==0){
+                int row = ((NatEventData) arg1.data).getRowPosition() - 1;
+                row += table.getViewportLayer().getOriginRowPosition();
+                if (row>=0){
+                    RowSet subset = model.getInputConfig().getResearchSubset();
+                    if (subset.contains(row)) {
+                        subset.remove(row);
+                    } else {
+                        subset.add(row);
+                    }
+                    controller.update(new ModelEvent(this,
+                                                     EventTarget.RESEARCH_SUBSET,
+                                                     subset));
+                }
+            }
+        }
     }
 
     @Override
@@ -145,21 +188,6 @@ public class DataView implements IDataView, IView {
         handle = null;
     }
 
-    private void setAttributeType(final int i, final AttributeType type) {
-        if (table.getHeaderImages().size() <= i) {
-            table.getHeaderImages().add(null);
-        }
-        if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(i, IMAGE_INSENSITIVE);
-        } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            table.getHeaderImages().set(i, IMAGE_IDENTIFYING);
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(i, IMAGE_SENSITIVE);
-        } else {
-            table.getHeaderImages().set(i, IMAGE_QUASI_IDENTIFYING);
-        }
-    }
-
     @Override
     public void update(final ModelEvent event) {
 
@@ -178,7 +206,7 @@ public class DataView implements IDataView, IView {
                 reset();
             } else {
                 handle = (DataHandle) event.data;
-                table.setData(handle, model.getColors(), model.getGroups());
+                table.setData(handle, model.getInputConfig().getResearchSubset(), model.getColors(), model.getGroups());
                 table.getHeaderImages().clear();
                 for (int i = 0; i < handle.getNumColumns(); i++) {
                     // TODO: Hmm.. Seems ok to use input config here
@@ -210,6 +238,21 @@ public class DataView implements IDataView, IView {
                 }
                 table.redraw();
             }
+        }
+    }
+
+    private void setAttributeType(final int i, final AttributeType type) {
+        if (table.getHeaderImages().size() <= i) {
+            table.getHeaderImages().add(null);
+        }
+        if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
+            table.getHeaderImages().set(i, IMAGE_INSENSITIVE);
+        } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
+            table.getHeaderImages().set(i, IMAGE_IDENTIFYING);
+        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
+            table.getHeaderImages().set(i, IMAGE_SENSITIVE);
+        } else {
+            table.getHeaderImages().set(i, IMAGE_QUASI_IDENTIFYING);
         }
     }
 }
