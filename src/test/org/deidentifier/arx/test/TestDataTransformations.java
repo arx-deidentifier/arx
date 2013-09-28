@@ -300,13 +300,13 @@ public class TestDataTransformations extends AbstractTest {
                 { "<50", "*", "819**" } };
 
         final String[][] expected2 = { { "age", "gender", "zipcode" },
-                { "*", "male", "*****" },
-                { "*", "female", "*****" },
-                { "*", "male", "*****" },
-                { "*", "female", "*****" },
-                { "*", "female", "*****" },
-                { "*", "male", "*****" },
-                { "*", "male", "*****" } };
+                { "*", "male", "81***" },
+                { "*", "female", "81***" },
+                { "*", "male", "81***" },
+                { "*", "female", "81***" },
+                { "*", "female", "81***" },
+                { "*", "male", "81***" },
+                { "*", "male", "81***" } };
 
         assertTrue(Arrays.deepEquals(result, expected));
         assertTrue(Arrays.deepEquals(result3, expected2));
