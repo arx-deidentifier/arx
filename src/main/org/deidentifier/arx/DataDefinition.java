@@ -236,13 +236,6 @@ public class DataDefinition {
                                  final AttributeType type) {
     	
         if (type == null) { throw new NullPointerException("Type must not be null"); }
-
-        // Clear if new hierarchy is set
-        // TODO: Good idea?
-        if (type instanceof Hierarchy) {
-            minGeneralization.remove(attribute);
-            maxGeneralization.remove(attribute);
-        }
         attributeTypes.put(attribute, type);
     }
 
