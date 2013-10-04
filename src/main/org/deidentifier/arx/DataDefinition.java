@@ -53,7 +53,6 @@ public class DataDefinition {
         for (final String attr : attributeTypes.keySet()) {
             d.attributeTypes.put(attr, attributeTypes.get(attr).clone());
         }
-
         for (final String attr : dataTypes.keySet()) {
             d.dataTypes.put(attr, dataTypes.get(attr).clone());
         }
@@ -63,6 +62,7 @@ public class DataDefinition {
         for (final String attr : maxGeneralization.keySet()) {
             d.maxGeneralization.put(attr, maxGeneralization.get(attr));
         }
+        
         return d;
     }
 
