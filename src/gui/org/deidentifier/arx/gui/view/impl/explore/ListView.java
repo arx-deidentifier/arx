@@ -253,5 +253,4 @@ public class ListView implements IView, IAttachable {
             }
         });
     }
-
 }
