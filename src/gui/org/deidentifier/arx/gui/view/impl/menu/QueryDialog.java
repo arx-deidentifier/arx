@@ -62,13 +62,13 @@ public class QueryDialog extends TitleAreaDialog {
     private StyledText       text        = null;
     private Label            error       = null;
     private Data             data        = null;
-    private String           initial     = null;
+    private String           queryString = null;
     private QueryTokenizer   highlighter = null;
     private List<StyleRange> styles      = new ArrayList<StyleRange>();
 
     public QueryDialog(final Data data, final Shell parent, String initial) {
         super(parent);
-        this.initial = initial;
+        this.queryString = initial;
         this.data = data;
     }
 
@@ -78,7 +78,7 @@ public class QueryDialog extends TitleAreaDialog {
     }
 
     public String getQuery() {
-        return text.getText();
+        return queryString;
     }
 
     @Override
@@ -121,12 +121,9 @@ public class QueryDialog extends TitleAreaDialog {
 
         parent.setLayout(new GridLayout());
 
-        text = new StyledText(parent, SWT.BORDER);
-        final GridData d = SWTUtil.createFillGridData();
-        d.grabExcessHorizontalSpace = true;
-        d.grabExcessVerticalSpace = true;
-        text.setLayoutData(d);
-        text.setText(this.initial);
+        text = new StyledText(parent, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+        text.setLayoutData(SWTUtil.createFillGridData());
+        text.setText(this.queryString);
         text.addModifyListener(new ModifyListener(){
             @Override
             public void modifyText(ModifyEvent arg0) {
@@ -137,9 +134,7 @@ public class QueryDialog extends TitleAreaDialog {
         
 
         error = new Label(parent, SWT.NONE);
-        final GridData d2 = SWTUtil.createFillGridData();
-        d2.grabExcessHorizontalSpace = true;
-        error.setLayoutData(d2);
+        error.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         error.setText("");
         
         return parent;
@@ -277,6 +272,11 @@ public class QueryDialog extends TitleAreaDialog {
                 public void equals(int start) {
                     setCurrent(Operator.EQUALS);
                 }
+
+                @Override
+                public void invalid(int start) {
+                    throw new RuntimeException("Syntax error at: "+start);
+                }
             });
         
         try {
@@ -284,10 +284,12 @@ public class QueryDialog extends TitleAreaDialog {
             selector.compile();
         } catch (Exception e){
             error.setText(e.getMessage());
-            e.printStackTrace();
+            ok.setEnabled(false);
             return;
         }
-        error.setText("OK");
+        error.setText("");
+        queryString = text.getText();
+        ok.setEnabled(true);
     }
 
     private void highlight() {
@@ -403,6 +405,11 @@ public class QueryDialog extends TitleAreaDialog {
                     style.fontStyle = SWT.BOLD;
                     style.foreground = GUIHelper.COLOR_BLUE;
                     styles.add(style);
+                }
+                
+                @Override
+                public void invalid(int start) {
+                    // ignore
                 }
             });
         }

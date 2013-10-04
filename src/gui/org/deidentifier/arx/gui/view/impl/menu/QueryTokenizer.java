@@ -38,18 +38,24 @@ public class QueryTokenizer {
                 listener.end(i);
             } else if (quote == -1 && i<data.length-2 && data[i]=='a' && data[i+1]=='n' && data[i+2]=='d') {
                 listener.and(i, 3);
+                i+=2;
             } else if (quote == -1 && i<data.length-1 && data[i]=='o' && data[i+1]=='r') {
-               listener.or(i, 2);
+                listener.or(i, 2);
+                i++;
             } else if ((quote == -1 && i<data.length-1 && data[i]=='<' && data[i+1]=='=')) {
-                listener.leq(i,2);
+                listener.leq(i, 2);
+                i++;
             } else if ((quote == -1 && i<data.length-1 && data[i]=='>' && data[i+1]=='=')) {
-                listener.geq(i,2);
+                listener.geq(i, 2);
+                i++;
             } else if (quote == -1 && data[i]=='=') {
                 listener.equals(i);
             } else if (quote == -1 && data[i]=='<') {
                 listener.less(i);
             } else if (quote == -1 && data[i]=='>') {
                 listener.greater(i);
+            } else if (quote == -1 && (data[i]!=' ' && data[i]!='\t' && data[i]!='\n')){
+                listener.invalid(i);
             }
             
             if (i>=data.length) break;
@@ -59,6 +65,7 @@ public class QueryTokenizer {
     public static interface QueryTokenizerListener {
 
         void geq(int start, int length);
+        void invalid(int start);
         void value(int start, int length);
         void field(int start, int length);
         void begin(int start);
