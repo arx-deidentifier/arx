@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
@@ -302,10 +303,10 @@ public class MainWindow implements IMainWindow, IView {
     }
 
     @Override
-    public String showQueryDialog(String query) {
+    public String showQueryDialog(String query, Data data) {
 
         // Dialog
-        final QueryDialog dialog = new QueryDialog(controller, shell, query);
+        final QueryDialog dialog = new QueryDialog(data, shell, query);
         dialog.create();
         if (dialog.open() != Window.OK) { return null; }
         else {return dialog.getQuery();}

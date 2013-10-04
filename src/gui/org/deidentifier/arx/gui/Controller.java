@@ -972,7 +972,7 @@ public class Controller implements IView {
     }
 
     public void actionSubsetQuery() {
-        String query = main.showQueryDialog(model.getQuery());
+        String query = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
         if (query == null) return;
     }
 

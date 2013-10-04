@@ -19,11 +19,15 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataSelector;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.menu.QueryTokenizer.QueryTokenizerListener;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -40,20 +44,32 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class QueryDialog extends TitleAreaDialog {
 
-    private Button           ok         = null;
-    private Button           cancel     = null;
-    private StyledText       text       = null;
-    private Controller       controller = null;
-    private String           initial    = null;
+    private static enum Operator{
+        EQUALS,
+        GEQ,
+        LEQ,
+        LESS,
+        GREATER
+    }
+    
+    private Button           ok          = null;
+    private Button           cancel      = null;
+    private StyledText       text        = null;
+    private Label            error       = null;
+    private Data             data        = null;
+    private String           initial     = null;
+    private QueryTokenizer   highlighter = null;
+    private List<StyleRange> styles      = new ArrayList<StyleRange>();
 
-    public QueryDialog(final Controller controller, final Shell parent, String initial) {
+    public QueryDialog(final Data data, final Shell parent, String initial) {
         super(parent);
         this.initial = initial;
-        this.controller = controller;
+        this.data = data;
     }
 
     @Override
@@ -107,95 +123,295 @@ public class QueryDialog extends TitleAreaDialog {
 
         text = new StyledText(parent, SWT.BORDER);
         final GridData d = SWTUtil.createFillGridData();
-        d.heightHint = 100;
+        d.grabExcessHorizontalSpace = true;
+        d.grabExcessVerticalSpace = true;
         text.setLayoutData(d);
         text.setText(this.initial);
         text.addModifyListener(new ModifyListener(){
             @Override
             public void modifyText(ModifyEvent arg0) {
+                highlight();
                 parse();
             }
         });
+        
 
+        error = new Label(parent, SWT.NONE);
+        final GridData d2 = SWTUtil.createFillGridData();
+        d2.grabExcessHorizontalSpace = true;
+        error.setLayoutData(d2);
+        error.setText("");
+        
         return parent;
     }
-    
+
     private void parse() {
-        
-        text.setRedraw(false);
+        final String query = text.getText();
+        final DataSelector selector = DataSelector.create(data);
+        QueryTokenizer parser = new QueryTokenizer(new QueryTokenizerListener(){
 
-        List<StyleRange> styles = new ArrayList<StyleRange>();
-
-        int quote = -1;
-        boolean first = true;
-        char[] data = text.getText().toCharArray();
-        for (int i=0; i<data.length; i++){
-            if (data[i]=='\\'){
-             // Skip next
-                i++; 
-            } else if (data[i]=='"'){
-                // Start quote
-                if (quote == -1){
-                    quote = i; 
-                // End quote
-                } else {
-                    StyleRange style = new StyleRange();
-                    style.start = quote;
-                    style.length = i-quote+1;
-                    style.fontStyle = SWT.BOLD;
-                    style.foreground = first ? GUIHelper.COLOR_RED : GUIHelper.COLOR_DARK_GRAY;
-                    styles.add(style);
-                    quote = -1;
-                    first = !first;
+                private Operator current = null;
+                private DataType<?> type = null;
+                
+                private void setCurrent(Operator operator){
+                    if (current != null) {
+                        throw new RuntimeException("Syntax error near: "+operator);
+                    } else {
+                        current = operator;
+                    }
                 }
-            // Brackets
-            } else if (quote == -1 && (data[i]=='(' || data[i]==')')) {
-                StyleRange style = new StyleRange();
-                style.start = i;
-                style.length = 1;
-                style.fontStyle = SWT.BOLD;
-                style.foreground = GUIHelper.COLOR_GREEN;
-                styles.add(style);
-            // And
-           }else if (quote == -1 && i<data.length-3 && data[i]=='a' && data[i+1]=='n' && data[i+2]=='d') {
-                StyleRange style = new StyleRange();
-                style.start = i;
-                style.length = 3;
-                style.fontStyle = SWT.BOLD;
-                style.foreground = GUIHelper.COLOR_GRAY;
-                styles.add(style);
-           // Or
-           }else if (quote == -1 && i<data.length-2 && data[i+1]=='o' && data[i+2]=='r') {
-                StyleRange style = new StyleRange();
-                style.start = i;
-                style.length = 2;
-                style.fontStyle = SWT.BOLD;
-                style.foreground = GUIHelper.COLOR_GRAY;
-                styles.add(style);
-            // Equals, Less, Greater
-            } else if (quote == -1 && (data[i]=='=' || data[i]=='<' || data[i]=='>')) {
-                StyleRange style = new StyleRange();
-                style.start = i;
-                style.length = 1;
-                style.fontStyle = SWT.BOLD;
-                style.foreground = GUIHelper.COLOR_BLUE;
-                styles.add(style);
-            // LEQ or GEQ
-            } else if ((quote == -1 && i<data.length-1 && data[i]=='<' && data[i+1]=='=') ||
-                       (quote == -1 && i<data.length-1 && data[i]=='>' && data[i+1]=='=')) {
-                StyleRange style = new StyleRange();
-                style.start = i;
-                style.length = 2;
-                style.fontStyle = SWT.BOLD;
-                style.foreground = GUIHelper.COLOR_BLUE;
-                styles.add(style);
-                i++;
-            }
-            if (i>=data.length) break;
+            
+                @Override
+                public void geq(int start, int length) {
+                    setCurrent(Operator.GEQ);
+                }
+
+                @Override
+                public void value(int start, int length) {
+                    if (current == null){
+                        throw new RuntimeException("Missing operator near: "+query.substring(start+1, start+length-1));
+                    }
+                    if (type == null){
+                        throw new RuntimeException("Missing field for value: "+query.substring(start+1, start+length-1));
+                    }
+                    Object value = type.fromString(query.substring(start+1, start+length-1));
+                    switch(current){
+                    case EQUALS:
+                        if (value instanceof Date){
+                            selector.equals((Date)value);
+                        } else if (value instanceof String){
+                            selector.equals((String)value);
+                        } else if (value instanceof Double){
+                            selector.equals((Double)value);
+                        }
+                        break;
+                    case GEQ:
+                        if (value instanceof Date){
+                            selector.geq((Date)value);
+                        } else if (value instanceof String){
+                            selector.geq((String)value);
+                        } else if (value instanceof Double){
+                            selector.geq((Double)value);
+                        }
+                        break;
+                    case GREATER:
+                        if (value instanceof Date){
+                            selector.greater((Date)value);
+                        } else if (value instanceof String){
+                            selector.greater((String)value);
+                        } else if (value instanceof Double){
+                            selector.greater((Double)value);
+                        }
+                        break;
+                    case LEQ:
+                        if (value instanceof Date){
+                            selector.leq((Date)value);
+                        } else if (value instanceof String){
+                            selector.leq((String)value);
+                        } else if (value instanceof Double){
+                            selector.leq((Double)value);
+                        }
+                        break;
+                    case LESS:
+                        if (value instanceof Date){
+                            selector.less((Date)value);
+                        } else if (value instanceof String){
+                            selector.less((String)value);
+                        } else if (value instanceof Double){
+                            selector.less((Double)value);
+                        }
+                        break;
+                    }
+                    current = null;
+                    type = null;
+                }
+
+                @Override
+                public void field(int start, int length) {
+                    String field = query.substring(start+1, start+length-1);
+                    int index = data.getHandle().getColumnIndexOf(field);
+                    if (index==-1){
+                        throw new RuntimeException("Unknown field: "+field);
+                    } else {
+                        type = data.getHandle().getDataType(field);
+                        selector.field(field);
+                    }
+                }
+
+                @Override
+                public void begin(int start) {
+                    selector.begin();
+                }
+
+                @Override
+                public void end(int start) {
+                    selector.end();
+                }
+
+                @Override
+                public void and(int start, int length) {
+                    selector.and();
+                }
+
+                @Override
+                public void or(int start, int length) {
+                    selector.or();
+                }
+
+                @Override
+                public void less(int start) {
+                    setCurrent(Operator.LESS);
+                }
+
+                @Override
+                public void greater(int start) {
+                    setCurrent(Operator.GREATER);
+                }
+
+                @Override
+                public void leq(int start, int length) {
+                    setCurrent(Operator.LEQ);
+                }
+
+                @Override
+                public void equals(int start) {
+                    setCurrent(Operator.EQUALS);
+                }
+            });
+        
+        try {
+            parser.tokenize(query);
+            selector.compile();
+        } catch (Exception e){
+            error.setText(e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+        error.setText("OK");
+    }
+
+    private void highlight() {
+        
+        if (highlighter==null){
+            highlighter = new QueryTokenizer(new QueryTokenizerListener(){
+
+                @Override
+                public void geq(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
+
+                @Override
+                public void value(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_DARK_GRAY;
+                    styles.add(style);
+                }
+
+                @Override
+                public void field(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_RED;
+                    styles.add(style);
+                }
+
+                @Override
+                public void begin(int start) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = 1;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_GREEN;
+                    styles.add(style);
+                }
+
+                @Override
+                public void end(int start) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = 1;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_GREEN;
+                    styles.add(style);
+                }
+
+                @Override
+                public void and(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_GRAY;
+                    styles.add(style);
+                }
+
+                @Override
+                public void or(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_GRAY;
+                    styles.add(style);
+                }
+
+                @Override
+                public void less(int start) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = 1;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
+
+                @Override
+                public void greater(int start) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = 1;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
+
+                @Override
+                public void leq(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
+
+                @Override
+                public void equals(int start) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = 1;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
+            });
         }
         
-        text.setStyleRanges(styles.toArray(new StyleRange[styles.size()]));
-        
+        styles.clear();
+        highlighter.tokenize(text.getText());
+
+        text.setRedraw(false);
+        text.setStyleRanges(styles.toArray(new StyleRange[styles.size()]));        
         text.setRedraw(true);
     }
 

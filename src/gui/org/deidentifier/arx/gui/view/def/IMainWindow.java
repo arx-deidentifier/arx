@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.def;
 import java.util.Collection;
 import java.util.List;
 
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
@@ -63,5 +64,5 @@ public interface IMainWindow {
 
     ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others);
 
-    String showQueryDialog(String query);
+    String showQueryDialog(String query, Data data);
 }

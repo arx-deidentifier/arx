@@ -288,7 +288,10 @@ public class DataSelector {
     /* **************************************
      * Compile
      * **************************************/
-    protected void compile(){
+    public void compile(){
+        if (operators.isEmpty()) {
+            throw new RuntimeException("Empty expression");
+        }
         this.root = compile(operators, 0, operators.size());
         if (this.root == null) {
             throw new RuntimeException("Cannot parse expression");
@@ -351,6 +354,10 @@ public class DataSelector {
      */
     private int findExpression(List<Operator> ops, int offset, int length) {
         
+        if (offset>=ops.size()) {
+            throw new RuntimeException("Missing expression");
+        }
+        
         Operator op = ops.get(offset);
         if (op instanceof BinaryOperator) {
             
@@ -385,7 +392,7 @@ public class DataSelector {
                     }
                 }
                 // Invalid
-                throw new RuntimeException("Missing closing paranthesis");
+                throw new RuntimeException("Missing closing parantheses ("+open+") at "+length);
             }
         } else {
             
