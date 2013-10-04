@@ -739,7 +739,6 @@ public class DataTable implements IDataTable {
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
         ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
         ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
-          
         this.table.getVerticalBar().setVisible(false);
         this.table.getHorizontalBar().setVisible(false);
         this.table.setRedraw(true);

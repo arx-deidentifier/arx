@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.common;
 
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
@@ -27,23 +28,21 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
-import org.eclipse.nebula.widgets.nattable.NatTable;
-import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
-import org.eclipse.nebula.widgets.nattable.ui.NatEventData;
-import org.eclipse.nebula.widgets.nattable.ui.action.IMouseAction;
-import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * A view on a <code>Data</code> object
+ * @author Prasser, Kohlmayer
+ */
 public class DataView implements IDataView, IView {
 
     private final Image       IMAGE_INSENSITIVE;
@@ -52,17 +51,22 @@ public class DataView implements IDataView, IView {
     private final Image       IMAGE_IDENTIFYING;
 
     private final DataTable   table;
-
-    /** The handle */
-    private DataHandle        handle = null;
-
-    /** The attrs */
     private final EventTarget target;
     private final EventTarget reset;
-    private Model             model;
     private final Controller  controller;
+    
+    private DataHandle        handle = null;
+    private Model             model;
 
-    /** Create */
+    /** 
+     * Creates a new data view
+     * 
+     * @param parent
+     * @param controller
+     * @param title
+     * @param target
+     * @param reset
+     */
     public DataView(final Composite parent,
                     final Controller controller,
                     final String title,
@@ -81,11 +85,13 @@ public class DataView implements IDataView, IView {
         this.reset = reset;
         this.target = target;
 
+        // Load images
         IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
         IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
         IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
         IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
 
+        // Build border
         TitledBorder border = new TitledBorder(parent, controller, title, "id-40");
         border.setLayoutData(SWTUtil.createFillGridData());
         Composite c = new Composite(border.getControl(), SWT.NONE);
@@ -94,8 +100,8 @@ public class DataView implements IDataView, IView {
         l.numColumns = 1;
         c.setLayout(l);
         
+        // Build table
         table = new DataTable(controller, c);
-       
         table.addSelectionLayerListener(new ILayerListener(){
             @Override
             public void handleLayerEvent(ILayerEvent arg0) {
@@ -108,6 +114,10 @@ public class DataView implements IDataView, IView {
         });
     }
     
+    /**
+     * Column selection event
+     * @param arg1
+     */
     private void actionColumnSelected(ColumnSelectionEvent arg1) {
         if (model != null) {
             int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
@@ -121,7 +131,10 @@ public class DataView implements IDataView, IView {
         }
     }
     
-
+    /**
+     * Cell selection event
+     * @param arg1
+     */
     private void actionCellSelected(CellSelectionEvent arg1) {
 
         if (model != null) {
@@ -144,7 +157,7 @@ public class DataView implements IDataView, IView {
     }
 
     @Override
-    public void addSelectionListener(final Listener listener) {
+    public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
 
@@ -172,74 +185,89 @@ public class DataView implements IDataView, IView {
     @Override
     public void update(final ModelEvent event) {
 
-        // Handle reset target, i.e., e.g. input has changed
         if (event.target == reset) {
             reset();
-            // Handle project
+
         } else if (event.target == EventTarget.MODEL) {
             model = (Model) event.data;
             reset();
-            // Handle new data
+
         } else if (event.target == target) {
 
             // No result avail
             if (event.data == null) {
                 reset();
-            } else {
-                handle = (DataHandle) event.data;
-                table.setData(handle, 
-                              model.getInputConfig().getResearchSubset(), 
-                              model.getColors(), model.getGroups());
-                table.getHeaderImages().clear();
-                for (int i = 0; i < handle.getNumColumns(); i++) {
-                    // TODO: Hmm.. Seems ok to use input config here
-                    final AttributeType type = model.getInputConfig()
-                                                    .getInput()
-                                                    .getDefinition()
-                                                    .getAttributeType(handle.getAttributeName(i));
-                    setAttributeType(i, type);
-                }
-                if (table != null) {
-                    table.setEnabled(true);
-                }
-                table.redraw();
+                return;
             }
-            // Handle attribute type change
+            
+            // Obtain data definition
+            DataDefinition definition = model.getInputConfig().getInput().getDefinition();
+            if (target == EventTarget.OUTPUT) {
+                definition = model.getOutputConfig().getInput().getDefinition();
+            }
+
+            // Update the table
+            handle = (DataHandle) event.data;
+            table.setData(handle, 
+                          model.getInputConfig().getResearchSubset(), 
+                          target == EventTarget.OUTPUT ? model.getColors() : null, 
+                          target == EventTarget.OUTPUT ? model.getGroups() : null);
+            
+            // Update the attribute types
+            table.getHeaderImages().clear();
+            for (int i = 0; i < handle.getNumColumns(); i++) {
+                updateHeaderImage(i, definition.getAttributeType(handle.getAttributeName(i)));
+            }
+            
+            // Redraw
+            table.setEnabled(true);
+            table.redraw();
+
         } else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+            
             if ((model != null) && (handle != null)) {
+                
                 final String attr = (String) event.data;
 
-                // TODO: Hmm.. Seems ok to use input config here
-                final AttributeType type = model.getInputConfig()
-                                                .getInput()
-                                                .getDefinition()
-                                                .getAttributeType(attr);
-                final int index = handle.getColumnIndexOf(attr);
-                setAttributeType(index, type);
-                if (table != null) {
-                    table.setEnabled(true);
+
+                // Obtain data definition
+                DataDefinition definition = model.getInputConfig().getInput().getDefinition();
+                if (target == EventTarget.OUTPUT) {
+                    definition = model.getOutputConfig().getInput().getDefinition();
                 }
+
+                // Update the attribute types
+                final int index = handle.getColumnIndexOf(attr);
+                updateHeaderImage(index, definition.getAttributeType(attr));
+                
+                // Redraw
+                table.setEnabled(true);
                 table.redraw();
             }
+            
         } else if (event.target == EventTarget.RESEARCH_SUBSET) {
             table.setResearchSubset((RowSet)event.data);
             table.redraw();
         }
     }
 
-    private void setAttributeType(final int i, final AttributeType type) {
-        if (table.getHeaderImages().size() <= i) {
+    /**
+     * Updates the header image in the table
+     * @param index
+     * @param type
+     */
+    private void updateHeaderImage(final int index, final AttributeType type) {
+        if (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
-        
         if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(i, IMAGE_INSENSITIVE);
+            table.getHeaderImages().set(index, IMAGE_INSENSITIVE);
         } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            table.getHeaderImages().set(i, IMAGE_IDENTIFYING);
+            table.getHeaderImages().set(index, IMAGE_IDENTIFYING);
         } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(i, IMAGE_SENSITIVE);
+            table.getHeaderImages().set(index, IMAGE_SENSITIVE);
         } else {
-            table.getHeaderImages().set(i, IMAGE_QUASI_IDENTIFYING);
+            table.getHeaderImages().set(index, IMAGE_QUASI_IDENTIFYING);
         }
     }
 }

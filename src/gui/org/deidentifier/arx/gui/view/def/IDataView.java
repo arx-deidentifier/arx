@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Listener;
 
 public interface IDataView {
 
-    void addSelectionListener(Listener listener);
+    void addScrollBarListener(Listener listener);
 
     ViewportLayer getViewportLayer();
 

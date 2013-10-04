@@ -164,7 +164,7 @@ public class AnalyzeView implements IAttachable {
                                       EventTarget.INPUT);
 
         // Sync tables
-        dataInputView.addSelectionListener(new Listener() {
+        dataInputView.addScrollBarListener(new Listener() {
             @Override
             public void handleEvent(final Event arg0) {
                 final int row = dataInputView.getViewportLayer()
@@ -179,7 +179,7 @@ public class AnalyzeView implements IAttachable {
                 }
             }
         });
-        dataOutputView.addSelectionListener(new Listener() {
+        dataOutputView.addScrollBarListener(new Listener() {
             @Override
             public void handleEvent(final Event arg0) {
                 final int row = dataOutputView.getViewportLayer()

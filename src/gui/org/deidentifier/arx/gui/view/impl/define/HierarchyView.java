@@ -141,6 +141,103 @@ public class HierarchyView implements IHierarchyEditorView, IView {
         create(parent);
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        setHierarchy(Hierarchy.create());
+        base.redraw();
+    }
+
+    @Override
+    public void setHierarchy(final AttributeType.Hierarchy type) {
+
+        hierarchy = type.getHierarchy();
+        table.setRedraw(false);
+
+        for (final TableColumn t : table.getColumns()) {
+            t.dispose();
+        }
+        for (final TableItem i : table.getItems()) {
+            i.dispose();
+        }
+
+        if ((type == null) || (type.getHierarchy() == null) ||
+            (type.getHierarchy().length == 0)) {
+            table.setRedraw(true);
+            table.redraw();
+            return;
+        }
+
+        final TableColumn[] column = new TableColumn[type.getHierarchy()[0].length];
+        for (int i = 0; i < column.length; i++) {
+            column[i] = new TableColumn(table, SWT.NONE);
+            column[i].setText(Resources.getMessage("HierarchyView.1") + (i + 1)); //$NON-NLS-1$
+            column[i].pack();
+        }
+
+        for (int i = 0; i < type.getHierarchy().length; i++) {
+            final TableItem item = new TableItem(table, SWT.NONE);
+            item.setBackground(Display.getCurrent()
+                                      .getSystemColor(SWT.COLOR_GRAY));
+            for (int j = 0; j < type.getHierarchy()[i].length; j++) {
+                item.setText(j, type.getHierarchy()[i][j]);
+            }
+        }
+
+        for (final TableColumn t : table.getColumns()) {
+            t.pack();
+        }
+
+        table.setRedraw(true);
+        table.redraw();
+
+        pushHierarchy();
+    }
+
+    @Override
+    public void setLayoutData(final Object d) {
+        base.setLayoutData(d);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.target == EventTarget.HIERARCHY) {
+            if (attribute.equals(model.getSelectedAttribute())) {
+                setHierarchy((Hierarchy) event.data);
+                base.setEnabled(true);
+                base.redraw();
+            }
+        } else if (event.target == EventTarget.MODEL) {
+            model = (Model) event.data;
+        } else if (event.target == EventTarget.INPUT) {
+            final DataDefinition d = model.getInputConfig()
+                                          .getInput()
+                                          .getDefinition();
+            final AttributeType type = d.getAttributeType(attribute);
+            if (type instanceof Hierarchy) {
+                setHierarchy((Hierarchy) type);
+                base.setEnabled(true);
+                base.redraw();
+            } else if ((type == AttributeType.SENSITIVE_ATTRIBUTE) &&
+                       (model.getInputConfig().getHierarchy(model.getSelectedAttribute()) != null)) {
+                setHierarchy(model.getInputConfig().getHierarchy(model.getSelectedAttribute()));
+                base.setEnabled(true);
+                base.redraw();
+            } else {
+                reset();
+            }
+        } else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+            if (event.data.equals(this.attribute)) {
+                pushHierarchy();
+            }
+        }
+    }
+
     private void create(final Composite parent) {
 
         base = new Composite(parent, SWT.NONE);
@@ -230,11 +327,6 @@ public class HierarchyView implements IHierarchyEditorView, IView {
         }
 
         init();
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
     }
 
     private void init() {
@@ -549,6 +641,11 @@ public class HierarchyView implements IHierarchyEditorView, IView {
         }
     }
 
+    /**
+     * This is a dirty hack to push the hierarchies into
+     * the definition. It is triggered by a change event on the
+     * attribute type 
+     */
     private void pushHierarchy() {
 
         updateMinAndMax();
@@ -560,6 +657,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
                                                .getDefinition();
 
         final Hierarchy h = Hierarchy.create(hierarchy);
+        
         // If current attribute is quasi-identifying
         if (definition.getAttributeType(attribute) instanceof Hierarchy) {
             model.getInputConfig()
@@ -577,98 +675,6 @@ public class HierarchyView implements IHierarchyEditorView, IView {
             controller.update(new ModelEvent(this,
                                              EventTarget.ATTRIBUTE_TYPE,
                                              attribute));
-        }
-    }
-
-    @Override
-    public void reset() {
-        setHierarchy(Hierarchy.create());
-        base.redraw();
-    }
-
-    @Override
-    public void setHierarchy(final AttributeType.Hierarchy type) {
-
-        hierarchy = type.getHierarchy();
-        table.setRedraw(false);
-
-        for (final TableColumn t : table.getColumns()) {
-            t.dispose();
-        }
-        for (final TableItem i : table.getItems()) {
-            i.dispose();
-        }
-
-        if ((type == null) || (type.getHierarchy() == null) ||
-            (type.getHierarchy().length == 0)) {
-            table.setRedraw(true);
-            table.redraw();
-            return;
-        }
-
-        final TableColumn[] column = new TableColumn[type.getHierarchy()[0].length];
-        for (int i = 0; i < column.length; i++) {
-            column[i] = new TableColumn(table, SWT.NONE);
-            column[i].setText(Resources.getMessage("HierarchyView.1") + (i + 1)); //$NON-NLS-1$
-            column[i].pack();
-        }
-
-        for (int i = 0; i < type.getHierarchy().length; i++) {
-            final TableItem item = new TableItem(table, SWT.NONE);
-            item.setBackground(Display.getCurrent()
-                                      .getSystemColor(SWT.COLOR_GRAY));
-            for (int j = 0; j < type.getHierarchy()[i].length; j++) {
-                item.setText(j, type.getHierarchy()[i][j]);
-            }
-        }
-
-        for (final TableColumn t : table.getColumns()) {
-            t.pack();
-        }
-
-        table.setRedraw(true);
-        table.redraw();
-
-        pushHierarchy();
-    }
-
-    @Override
-    public void setLayoutData(final Object d) {
-        base.setLayoutData(d);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.target == EventTarget.HIERARCHY) {
-            if (attribute.equals(model.getSelectedAttribute())) {
-                setHierarchy((Hierarchy) event.data);
-                base.setEnabled(true);
-                base.redraw();
-            }
-        } else if (event.target == EventTarget.MODEL) {
-            model = (Model) event.data;
-        } else if (event.target == EventTarget.INPUT) {
-            final DataDefinition d = model.getInputConfig()
-                                          .getInput()
-                                          .getDefinition();
-            final AttributeType type = d.getAttributeType(attribute);
-            if (type instanceof Hierarchy) {
-                setHierarchy((Hierarchy) type);
-                base.setEnabled(true);
-                base.redraw();
-            } else if ((type == AttributeType.SENSITIVE_ATTRIBUTE) &&
-                       (model.getInputConfig().getHierarchy(model.getSelectedAttribute()) != null)) {
-                setHierarchy(model.getInputConfig().getHierarchy(model.getSelectedAttribute()));
-                base.setEnabled(true);
-                base.redraw();
-            } else {
-                reset();
-            }
-        } else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
-            if (event.data.equals(this.attribute)) {
-                pushHierarchy();
-            }
         }
     }
 
