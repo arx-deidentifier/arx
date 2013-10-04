@@ -111,71 +111,85 @@ public class Controller implements IView {
         }
     }
 
-    private void actionImportData(final String path, final char separator) {
+    /**
+     * Enables and disables a criterion
+     * @param criterion
+     */
+    public void actionCriterionEnable(ModelCriterion criterion) {
+        if (criterion.isEnabled()) {
+            criterion.setEnabled(false);
+        } else {
+            criterion.setEnabled(true);
+        } 
+        update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
+    }
 
-        final WorkerImport worker = new WorkerImport(path, separator);
-        main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
-        if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+    /**
+     * Pull settings into the criterion
+     * @param criterion
+     */
+    public void actionCriterionPull(ModelCriterion criterion) {
+        
+        // Collect all other criteria
+        List<ModelExplicitCriterion> others = new ArrayList<ModelExplicitCriterion>();
+        if (criterion instanceof ModelLDiversityCriterion){
+            for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
+                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion)other);
+                }
+            }
+        } else if (criterion instanceof ModelTClosenessCriterion){
+            for (ModelTClosenessCriterion other : model.getTClosenessModel().values()){
+                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion)other);
+                }
+            }
+        } else {
+            throw new RuntimeException("Invalid type of criterion");
+        }
+        
+        // Break if none found
+        if (others.isEmpty()) {
+            main.showErrorDialog(Resources.getMessage("Controller.95"), Resources.getMessage("Controller.96")); //$NON-NLS-1$ //$NON-NLS-1$
             return;
         }
-
-        // Reset
-        reset();
-
-        final Data data = worker.getResult();
-        model.reset();
         
-        // Create a research subset containing all rows
-        RowSet subset = RowSet.create(data);
-        for (int i=0; i<subset.length(); i++){
-            subset.add(i);
-        }
-        model.getInputConfig().setResearchSubset(subset);
-        model.getInputConfig().setInput(data);
-        model.setInputBytes(new File(path).length());
-
-        // Create definition
-        final DataDefinition definition = data.getDefinition();
-        for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
-            definition.setAttributeType(model.getInputConfig()
-                                             .getInput()
-                                             .getHandle()
-                                             .getAttributeName(i),
-                                        AttributeType.INSENSITIVE_ATTRIBUTE);
-            definition.setDataType(model.getInputConfig()
-                                        .getInput()
-                                        .getHandle()
-                                        .getAttributeName(i), DataType.STRING);
-        }
+        // Select criterion
+        ModelExplicitCriterion element = main.showSelectCriterionDialog(others);
         
-        model.resetCriteria();
-
-        // Display the changes
-        update(new ModelEvent(this, EventTarget.MODEL, model));
-        update(new ModelEvent(this, EventTarget.INPUT, data.getHandle()));
-        if (data.getHandle().getNumColumns() > 0) {
-            model.setSelectedAttribute(data.getHandle().getAttributeName(0));
-            update(new ModelEvent(this,
-                                  EventTarget.SELECTED_ATTRIBUTE,
-                                  data.getHandle().getAttributeName(0)));
-            update(new ModelEvent(this,
-                                  EventTarget.CRITERION_DEFINITION,
-                                  null));
-            update(new ModelEvent(this,
-                                  EventTarget.RESEARCH_SUBSET,
-                                  subset));
+        if (element == null){
+            return;
+        } else {
+            ((ModelExplicitCriterion)criterion).pull(element);
+            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
         }
     }
 
-    private AttributeType actionImportHierarchy(final String path,
-                                                final char separator) {
-        try {
-            return Hierarchy.create(path, separator);
-        } catch (final IOException e) {
-            main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+    /**
+     * Pushes the settings of the criterion
+     * @param criterion
+     */
+    public void actionCriterionPush(ModelCriterion criterion) {
+        if (main.showQuestionDialog(Resources.getMessage("Controller.93"), Resources.getMessage("Controller.94"))){ //$NON-NLS-1$ //$NON-NLS-1$
+            
+            if (criterion instanceof ModelLDiversityCriterion){
+                for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
+                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion)criterion);
+                    }
+                }
+            } else if (criterion instanceof ModelTClosenessCriterion){
+                for (ModelTClosenessCriterion other : model.getTClosenessModel().values()){
+                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion)criterion);
+                    }
+                }
+            } else {
+                throw new RuntimeException("Invalid type of criterion");
+            }
+            
+            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
         }
-        return null;
     }
 
     public void actionMenuEditAnonymize() {
@@ -262,108 +276,6 @@ public class Controller implements IView {
                                   EventTarget.SELECTED_ATTRIBUTE,
                                   model.getSelectedAttribute()));
         }
-    }
-
-    private int[][] analyze(DataDefinition definition, DataHandle handle) {
-
-        int max = 0;
-        int min = 0;
-        
-        // Iterate over all equivalence classes and compute min and max
-        int[] groups = new int[handle.getNumRows()];
-        int size = 0;
-        int groupIdx = 0;
-        for (int row = 0; row < handle.getNumRows(); row++) {
-
-            boolean newClass = false;
-            if (row > 0) {
-                // TODO: Create array similar to sorting
-                for (String attribute : definition.getQuasiIdentifyingAttributes()) {
-                    int column = handle.getColumnIndexOf(attribute);
-                    if (!handle.getValue(row,
-                            column).equals(handle.getValue(row - 1, column))) {
-                        newClass = true;
-                        break;
-                    }
-                }
-            } else {
-                newClass = true;
-            }
-
-            if (newClass) {
-                groupIdx++;
-                if (row != 0) {
-                    max = Math.max(max, size);
-                    min = Math.min(min, size);
-                }
-                size = 1;
-            } else {
-                size++;
-            }
-            
-            groups[row] = groupIdx;
-
-        }
-        if (handle.getNumRows() > 1) {
-            max = Math.max(max, size);
-            min = Math.min(min, size);
-        }
-        
-
-        
-        // Iterate over all equivalence classes and create color array
-        int[] colors = new int[handle.getNumRows()];
-        size = 0;
-        for (int row = 0; row < handle.getNumRows(); row++) {
-
-            boolean newClass = false;
-            if (row > 0) {
-                // TODO: Create array similar to sorting
-                for (String attribute : definition.getQuasiIdentifyingAttributes()) {
-                    int column = handle.getColumnIndexOf(attribute);
-                    if (!handle.getValue(row,
-                            column).equals(handle.getValue(row - 1, column))) {
-                        newClass = true;
-                        break;
-                    }
-                }
-            } else {
-                newClass = true;
-            }
-
-            if (newClass) {
-                if (row != 0) {
-                    
-                    int val = (int)(((double)(size-min) / (double)max) * ((double)getResources().getGradientLength()-1));
-                    for (int i=1; i<=size; i++){
-                        colors[row-i] = val;
-                    }
-                }
-                size = 1;
-            } else {
-                size++;
-            }
-        }
-        if (handle.getNumRows() > 1) {
-            int val = (int)(((double)(size-min) / (double)max) * ((double)getResources().getGradientLength()-1));
-            for (int i=1; i<=size; i++){
-                colors[handle.getNumRows()-i] = val;
-            }
-        }
-        
-        return new int[][]{colors, groups};
-    }
-
-    private void sort(DataDefinition definition, DataHandle handle) {
-
-        // Sort by quasi-identifiers
-        int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
-        int index = 0;
-        for (String attribute :
-            definition.getQuasiIdentifyingAttributes()) {
-            indices[index++] = handle.getColumnIndexOf(attribute);
-        }
-        handle.sort(true, indices);
     }
 
     public void actionMenuEditCreateHierarchy() {
@@ -630,6 +542,242 @@ public class Controller implements IView {
         Program.launch(Resources.getMessage("Controller.73")); //$NON-NLS-1$
     }
 
+    public String
+            actionShowDateFormatInputDialog(final String header,
+                                            final String text,
+                                            final Collection<String> values) {
+        return main.showDateFormatInputDialog(header, text, values);
+    }
+
+    public void actionShowErrorDialog(final String header, final String text) {
+        main.showErrorDialog(header, text);
+    }
+
+    /**
+     * Shows the help
+     * @param id
+     */
+    public void actionShowHelp(String id) {
+        main.showInfoDialog("Help", id);
+    }
+
+    public void actionShowInfoDialog(final String header, final String text) {
+        main.showInfoDialog(header, text);
+    }
+
+    public String actionShowInputDialog(final String header,
+                                        final String text,
+                                        final String initial) {
+        return main.showInputDialog(header, text, initial);
+    }
+
+    public String actionShowOpenFileDialog(String filter) {
+        return main.showOpenFileDialog(filter);
+    }
+
+    public void actionShowProgressDialog(final String text,
+                                         final Worker<?> worker) {
+        main.showProgressDialog(text, worker);
+    }
+
+    public boolean actionShowQuestionDialog(final String header,
+                                            final String text) {
+        return main.showQuestionDialog(header, text);
+    }
+
+    public void actionSubsetAll() {
+        Data data = model.getInputConfig().getInput();
+        RowSet set = model.getInputConfig().getResearchSubset();
+        for (int i = 0; i < data.getHandle().getNumRows(); i++) {
+            set.add(i);
+        }
+        update(new ModelEvent(this,
+                              EventTarget.RESEARCH_SUBSET,
+                              set));
+    }
+
+    public void actionSubsetFile() {
+
+        // Check
+        final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
+        if (path == null) { return; }
+
+        // Separator
+        final SeparatorDialog dialog = new SeparatorDialog(main.getShell(),
+                                                           this,
+                                                           path,
+                                                           true);
+        dialog.create();
+        if (dialog.open() == Window.CANCEL) {
+            return;
+        } 
+   
+        final WorkerImport worker = new WorkerImport(path, dialog.getSeparator());
+        main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
+        if (worker.getError() != null) {
+            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+
+        Data subsetData = worker.getResult();
+        Data data = model.getInputConfig().getInput();
+        
+        try {
+            DataSubset subset = DataSubset.create(data, subsetData);
+            model.getInputConfig().setResearchSubset(subset.getRowSet());
+            update(new ModelEvent(this,
+                                  EventTarget.RESEARCH_SUBSET,
+                                  subset.getRowSet()));
+        } catch (IllegalArgumentException e){
+            main.showErrorDialog("Error!", e.getMessage());
+        }
+    }
+
+    public void actionSubsetNone() {
+        Data data = model.getInputConfig().getInput();
+        RowSet empty = RowSet.create(data);
+        model.getInputConfig().setResearchSubset(empty);
+        update(new ModelEvent(this,
+                              EventTarget.RESEARCH_SUBSET,
+                              empty));
+    }
+
+    public void actionSubsetQuery() {
+        QueryDialogResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
+        if (result == null) return;
+        
+        Data data = model.getInputConfig().getInput();
+        DataSelector selector = result.selector;
+        DataSubset subset = DataSubset.create(data, selector);
+        
+        this.model.getInputConfig().setResearchSubset(subset.getRowSet());
+        this.model.setQuery(result.query);
+        update(new ModelEvent(this, EventTarget.RESEARCH_SUBSET, subset.getRowSet()));
+    }
+
+    public void addListener(final EventTarget target, final IView listener) {
+        if (!listeners.containsKey(target)) {
+            listeners.put(target, new HashSet<IView>());
+        }
+        listeners.get(target).add(listener);
+    }
+
+    @Override
+    public void dispose() {
+        for (final Set<IView> listeners : getListeners().values()) {
+            for (final IView listener : listeners) {
+                listener.dispose();
+            }
+        }
+    }
+
+    public MainPopUp getPopup() {
+        return main.getPopUp();
+    }
+
+    // TODO: Move resources from controller to view?
+    public Resources getResources() {
+        return resources;
+    }
+
+    public MainToolTip getToolTip() {
+        return main.getToolTip();
+    }
+
+    public void removeListener(final IView listener) {
+        for (final Set<IView> listeners : this.listeners.values()) {
+            listeners.remove(listener);
+        }
+    }
+
+    @Override
+    public void reset() {
+        for (final Set<IView> listeners : getListeners().values()) {
+            for (final IView listener : listeners) {
+                listener.reset();
+            }
+        }
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        final Map<EventTarget, Set<IView>> dlisteners = getListeners();
+        if (dlisteners.get(event.target) != null) {
+            for (final IView listener : dlisteners.get(event.target)) {
+                if (listener != event.source) {
+                    listener.update(event);
+                }
+            }
+        }
+    }
+
+    private void actionImportData(final String path, final char separator) {
+
+        final WorkerImport worker = new WorkerImport(path, separator);
+        main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
+        if (worker.getError() != null) {
+            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+
+        // Reset
+        reset();
+
+        final Data data = worker.getResult();
+        model.reset();
+        
+        // Create a research subset containing all rows
+        RowSet subset = RowSet.create(data);
+        for (int i=0; i<subset.length(); i++){
+            subset.add(i);
+        }
+        model.getInputConfig().setResearchSubset(subset);
+        model.getInputConfig().setInput(data);
+        model.setInputBytes(new File(path).length());
+
+        // Create definition
+        final DataDefinition definition = data.getDefinition();
+        for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
+            definition.setAttributeType(model.getInputConfig()
+                                             .getInput()
+                                             .getHandle()
+                                             .getAttributeName(i),
+                                        AttributeType.INSENSITIVE_ATTRIBUTE);
+            definition.setDataType(model.getInputConfig()
+                                        .getInput()
+                                        .getHandle()
+                                        .getAttributeName(i), DataType.STRING);
+        }
+        
+        model.resetCriteria();
+
+        // Display the changes
+        update(new ModelEvent(this, EventTarget.MODEL, model));
+        update(new ModelEvent(this, EventTarget.INPUT, data.getHandle()));
+        if (data.getHandle().getNumColumns() > 0) {
+            model.setSelectedAttribute(data.getHandle().getAttributeName(0));
+            update(new ModelEvent(this,
+                                  EventTarget.SELECTED_ATTRIBUTE,
+                                  data.getHandle().getAttributeName(0)));
+            update(new ModelEvent(this,
+                                  EventTarget.CRITERION_DEFINITION,
+                                  null));
+            update(new ModelEvent(this,
+                                  EventTarget.RESEARCH_SUBSET,
+                                  subset));
+        }
+    }
+
+    private AttributeType actionImportHierarchy(final String path,
+                                                final char separator) {
+        try {
+            return Hierarchy.create(path, separator);
+        } catch (final IOException e) {
+            main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return null;
+    }
+
     private void actionOpenProject(String path) {
         if (!path.endsWith(".deid")) { //$NON-NLS-1$
             path += ".deid"; //$NON-NLS-1$
@@ -774,59 +922,98 @@ public class Controller implements IView {
         }
     }
 
-    public String
-            actionShowDateFormatInputDialog(final String header,
-                                            final String text,
-                                            final Collection<String> values) {
-        return main.showDateFormatInputDialog(header, text, values);
-    }
-
-    public void actionShowErrorDialog(final String header, final String text) {
-        main.showErrorDialog(header, text);
-    }
-
-    public void actionShowInfoDialog(final String header, final String text) {
-        main.showInfoDialog(header, text);
-    }
-
-    public String actionShowInputDialog(final String header,
-                                        final String text,
-                                        final String initial) {
-        return main.showInputDialog(header, text, initial);
-    }
-
-    public String actionShowOpenFileDialog(String filter) {
-        return main.showOpenFileDialog(filter);
-    }
-
-    public void actionShowProgressDialog(final String text,
-                                         final Worker<?> worker) {
-        main.showProgressDialog(text, worker);
-    }
-
-    public boolean actionShowQuestionDialog(final String header,
-                                            final String text) {
-        return main.showQuestionDialog(header, text);
-    }
-
     private String actionShowSaveFileDialog(String filter) {
         return main.showSaveFileDialog(filter);
     }
 
-    public void addListener(final EventTarget target, final IView listener) {
-        if (!listeners.containsKey(target)) {
-            listeners.put(target, new HashSet<IView>());
-        }
-        listeners.get(target).add(listener);
-    }
+    private int[][] analyze(DataDefinition definition, DataHandle handle) {
 
-    @Override
-    public void dispose() {
-        for (final Set<IView> listeners : getListeners().values()) {
-            for (final IView listener : listeners) {
-                listener.dispose();
+        int max = 0;
+        int min = 0;
+        
+        // Iterate over all equivalence classes and compute min and max
+        int[] groups = new int[handle.getNumRows()];
+        int size = 0;
+        int groupIdx = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+
+            boolean newClass = false;
+            if (row > 0) {
+                // TODO: Create array similar to sorting
+                for (String attribute : definition.getQuasiIdentifyingAttributes()) {
+                    int column = handle.getColumnIndexOf(attribute);
+                    if (!handle.getValue(row,
+                            column).equals(handle.getValue(row - 1, column))) {
+                        newClass = true;
+                        break;
+                    }
+                }
+            } else {
+                newClass = true;
+            }
+
+            if (newClass) {
+                groupIdx++;
+                if (row != 0) {
+                    max = Math.max(max, size);
+                    min = Math.min(min, size);
+                }
+                size = 1;
+            } else {
+                size++;
+            }
+            
+            groups[row] = groupIdx;
+
+        }
+        if (handle.getNumRows() > 1) {
+            max = Math.max(max, size);
+            min = Math.min(min, size);
+        }
+        
+
+        
+        // Iterate over all equivalence classes and create color array
+        int[] colors = new int[handle.getNumRows()];
+        size = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+
+            boolean newClass = false;
+            if (row > 0) {
+                // TODO: Create array similar to sorting
+                for (String attribute : definition.getQuasiIdentifyingAttributes()) {
+                    int column = handle.getColumnIndexOf(attribute);
+                    if (!handle.getValue(row,
+                            column).equals(handle.getValue(row - 1, column))) {
+                        newClass = true;
+                        break;
+                    }
+                }
+            } else {
+                newClass = true;
+            }
+
+            if (newClass) {
+                if (row != 0) {
+                    
+                    int val = (int)(((double)(size-min) / (double)max) * ((double)getResources().getGradientLength()-1));
+                    for (int i=1; i<=size; i++){
+                        colors[row-i] = val;
+                    }
+                }
+                size = 1;
+            } else {
+                size++;
             }
         }
+        if (handle.getNumRows() > 1) {
+            int val = (int)(((double)(size-min) / (double)max) * ((double)getResources().getGradientLength()-1));
+            for (int i=1; i<=size; i++){
+                colors[handle.getNumRows()-i] = val;
+            }
+        }
+        
+        return new int[][]{colors, groups};
     }
 
     /**
@@ -844,202 +1031,15 @@ public class Controller implements IView {
         return result;
     }
 
-    public MainPopUp getPopup() {
-        return main.getPopUp();
-    }
+    private void sort(DataDefinition definition, DataHandle handle) {
 
-    // TODO: Move resources from controller to view?
-    public Resources getResources() {
-        return resources;
-    }
-
-    public MainToolTip getToolTip() {
-        return main.getToolTip();
-    }
-
-    public void removeListener(final IView listener) {
-        for (final Set<IView> listeners : this.listeners.values()) {
-            listeners.remove(listener);
+        // Sort by quasi-identifiers
+        int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
+        int index = 0;
+        for (String attribute :
+            definition.getQuasiIdentifyingAttributes()) {
+            indices[index++] = handle.getColumnIndexOf(attribute);
         }
-    }
-
-    @Override
-    public void reset() {
-        for (final Set<IView> listeners : getListeners().values()) {
-            for (final IView listener : listeners) {
-                listener.reset();
-            }
-        }
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-        final Map<EventTarget, Set<IView>> dlisteners = getListeners();
-        if (dlisteners.get(event.target) != null) {
-            for (final IView listener : dlisteners.get(event.target)) {
-                if (listener != event.source) {
-                    listener.update(event);
-                }
-            }
-        }
-    }
-
-    /**
-     * Pull settings into the criterion
-     * @param criterion
-     */
-    public void actionCriterionPull(ModelCriterion criterion) {
-        
-        // Collect all other criteria
-        List<ModelExplicitCriterion> others = new ArrayList<ModelExplicitCriterion>();
-        if (criterion instanceof ModelLDiversityCriterion){
-            for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
-                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
-                    others.add((ModelExplicitCriterion)other);
-                }
-            }
-        } else if (criterion instanceof ModelTClosenessCriterion){
-            for (ModelTClosenessCriterion other : model.getTClosenessModel().values()){
-                if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
-                    others.add((ModelExplicitCriterion)other);
-                }
-            }
-        } else {
-            throw new RuntimeException("Invalid type of criterion");
-        }
-        
-        // Break if none found
-        if (others.isEmpty()) {
-            main.showErrorDialog(Resources.getMessage("Controller.95"), Resources.getMessage("Controller.96")); //$NON-NLS-1$ //$NON-NLS-1$
-            return;
-        }
-        
-        // Select criterion
-        ModelExplicitCriterion element = main.showSelectCriterionDialog(others);
-        
-        if (element == null){
-            return;
-        } else {
-            ((ModelExplicitCriterion)criterion).pull(element);
-            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
-        }
-    }
-
-    /**
-     * Pushes the settings of the criterion
-     * @param criterion
-     */
-    public void actionCriterionPush(ModelCriterion criterion) {
-        if (main.showQuestionDialog(Resources.getMessage("Controller.93"), Resources.getMessage("Controller.94"))){ //$NON-NLS-1$ //$NON-NLS-1$
-            
-            if (criterion instanceof ModelLDiversityCriterion){
-                for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
-                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
-                        other.pull((ModelExplicitCriterion)criterion);
-                    }
-                }
-            } else if (criterion instanceof ModelTClosenessCriterion){
-                for (ModelTClosenessCriterion other : model.getTClosenessModel().values()){
-                    if (!other.equals(criterion) && other.isActive() && other.isEnabled()) {
-                        other.pull((ModelExplicitCriterion)criterion);
-                    }
-                }
-            } else {
-                throw new RuntimeException("Invalid type of criterion");
-            }
-            
-            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
-        }
-    }
-
-    /**
-     * Enables and disables a criterion
-     * @param criterion
-     */
-    public void actionCriterionEnable(ModelCriterion criterion) {
-        if (criterion.isEnabled()) {
-            criterion.setEnabled(false);
-        } else {
-            criterion.setEnabled(true);
-        } 
-        update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
-    }
-
-    /**
-     * Shows the help
-     * @param id
-     */
-    public void actionShowHelp(String id) {
-        main.showInfoDialog("Help", id);
-    }
-
-    public void actionSubsetQuery() {
-        QueryDialogResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
-        if (result == null) return;
-        
-        Data data = model.getInputConfig().getInput();
-        DataSelector selector = result.selector;
-        DataSubset subset = DataSubset.create(data, selector);
-        
-        this.model.getInputConfig().setResearchSubset(subset.getRowSet());
-        this.model.setQuery(result.query);
-        update(new ModelEvent(this, EventTarget.RESEARCH_SUBSET, subset.getRowSet()));
-    }
-
-    public void actionSubsetFile() {
-
-        // Check
-        final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
-        if (path == null) { return; }
-
-        // Separator
-        final SeparatorDialog dialog = new SeparatorDialog(main.getShell(),
-                                                           this,
-                                                           path,
-                                                           true);
-        dialog.create();
-        if (dialog.open() == Window.CANCEL) {
-            return;
-        } 
-   
-        final WorkerImport worker = new WorkerImport(path, dialog.getSeparator());
-        main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
-        if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
-        }
-
-        Data subsetData = worker.getResult();
-        Data data = model.getInputConfig().getInput();
-        
-        try {
-            DataSubset subset = DataSubset.create(data, subsetData);
-            model.getInputConfig().setResearchSubset(subset.getRowSet());
-            update(new ModelEvent(this,
-                                  EventTarget.RESEARCH_SUBSET,
-                                  subset.getRowSet()));
-        } catch (IllegalArgumentException e){
-            main.showErrorDialog("Error!", e.getMessage());
-        }
-    }
-
-    public void actionSubsetAll() {
-        Data data = model.getInputConfig().getInput();
-        RowSet set = model.getInputConfig().getResearchSubset();
-        for (int i = 0; i < data.getHandle().getNumRows(); i++) {
-            set.add(i);
-        }
-        update(new ModelEvent(this,
-                              EventTarget.RESEARCH_SUBSET,
-                              set));
-    }
-
-    public void actionSubsetNone() {
-        Data data = model.getInputConfig().getInput();
-        RowSet empty = RowSet.create(data);
-        model.getInputConfig().setResearchSubset(empty);
-        update(new ModelEvent(this,
-                              EventTarget.RESEARCH_SUBSET,
-                              empty));
+        handle.sort(true, indices);
     }
 }

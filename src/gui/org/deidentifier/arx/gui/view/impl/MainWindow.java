@@ -269,6 +269,16 @@ public class MainWindow implements IMainWindow, IView {
     }
 
     @Override
+    public QueryDialogResult showQueryDialog(String query, Data data) {
+
+        // Dialog
+        final QueryDialog dialog = new QueryDialog(data, shell, query);
+        dialog.create();
+        if (dialog.open() != Window.OK) { return null; }
+        else {return dialog.getResult();}
+    }
+
+    @Override
     public boolean showQuestionDialog(final String header, final String text) {
         return MessageDialog.openQuestion(getShell(), header, text);
     }
@@ -282,18 +292,6 @@ public class MainWindow implements IMainWindow, IView {
     }
 
     @Override
-    public void update(final ModelEvent event) {
-
-        // Careful! In the main window, this is also called after editing the
-        // project properties
-        if (event.target == EventTarget.MODEL) {
-            final Model model = (Model) event.data;
-            shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
-            root.setEnabled(true);
-        }
-    }
-
-    @Override
     public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others) {
 
         // Dialog
@@ -304,12 +302,14 @@ public class MainWindow implements IMainWindow, IView {
     }
 
     @Override
-    public QueryDialogResult showQueryDialog(String query, Data data) {
+    public void update(final ModelEvent event) {
 
-        // Dialog
-        final QueryDialog dialog = new QueryDialog(data, shell, query);
-        dialog.create();
-        if (dialog.open() != Window.OK) { return null; }
-        else {return dialog.getResult();}
+        // Careful! In the main window, this is also called after editing the
+        // project properties
+        if (event.target == EventTarget.MODEL) {
+            final Model model = (Model) event.data;
+            shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
+            root.setEnabled(true);
+        }
     }
 }

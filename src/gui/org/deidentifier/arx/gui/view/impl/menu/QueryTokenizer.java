@@ -3,12 +3,28 @@ package org.deidentifier.arx.gui.view.impl.menu;
 
 public class QueryTokenizer {
     
+    public static interface QueryTokenizerListener {
+
+        void and(int start, int length);
+        void begin(int start);
+        void end(int start);
+        void equals(int start);
+        void field(int start, int length);
+        void geq(int start, int length);
+        void greater(int start);
+        void invalid(int start);
+        void leq(int start, int length);
+        void less(int start);
+        void or(int start, int length);
+        void value(int start, int length);
+    }
+    
     private QueryTokenizerListener listener;
     
     public QueryTokenizer(QueryTokenizerListener listener){
         this.listener = listener;
     }
-    
+
     public void tokenize(String query){
 
         int quote = -1;
@@ -60,21 +76,5 @@ public class QueryTokenizer {
             
             if (i>=data.length) break;
         }
-    }
-
-    public static interface QueryTokenizerListener {
-
-        void geq(int start, int length);
-        void invalid(int start);
-        void value(int start, int length);
-        void field(int start, int length);
-        void begin(int start);
-        void end(int start);
-        void and(int start, int length);
-        void or(int start, int length);
-        void less(int start);
-        void greater(int start);
-        void leq(int start, int length);
-        void equals(int start);
     }
 }
