@@ -284,10 +284,11 @@ public class PropertiesView implements IView {
     @Override
     public void reset() {
 
+        root.setRedraw(false);
         roots.clear();
         treeViewer.refresh();
-
         SWTUtil.disable(root);
+        root.setRedraw(true);
     }
 
     @Override
@@ -413,6 +414,7 @@ public class PropertiesView implements IView {
             return;
         }
 
+        root.setRedraw(false);
         if (target == EventTarget.INPUT) {
             redrawInput(config, 
                         data);
@@ -422,6 +424,7 @@ public class PropertiesView implements IView {
                          model.getSelectedNode(),
                          data);
         }
+        root.setRedraw(true);
     }
 
     private void redrawInput(final ModelConfiguration config, final DataHandle data) {

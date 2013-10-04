@@ -18,8 +18,6 @@
 
 package org.deidentifier.arx.gui.view.impl.explore;
 
-import java.awt.Graphics;
-import java.awt.Panel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -27,11 +25,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -58,12 +54,7 @@ import cern.colt.Arrays;
  * 
  * @author prasser
  */
-public class ListView extends Panel implements IView, IAttachable {
-
-    /**
-     * 
-     */
-    private static final long     serialVersionUID = -2861279505485910857L;
+public class ListView implements IView, IAttachable {
 
     /** The optimum */
     private ARXNode             optimum;
@@ -72,22 +63,22 @@ public class ListView extends Panel implements IView, IAttachable {
     private ARXNode             selectedNode;
 
     /** The controller */
-    private final Controller      controller;
+    private final Controller    controller;
 
     /** The format */
-    private final NumberFormat    format           = new DecimalFormat("##0.000"); //$NON-NLS-1$
+    private final NumberFormat  format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /** The table */
-    private final Table           table;
+    private final Table         table;
 
     /** The model */
-    private Model                 model;
+    private Model               model;
 
     /** The list */
-    private final List<ARXNode> list             = new ArrayList<ARXNode>();
+    private final List<ARXNode> list   = new ArrayList<ARXNode>();
 
     /** The listener */
-    private Listener              listener;
+    private Listener            listener;
 
     /**
      * Init
@@ -126,6 +117,42 @@ public class ListView extends Panel implements IView, IAttachable {
         table.setLayoutData(SWTUtil.createGridData());
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public Control getControl() {
+        return table;
+    }
+
+    /**
+     * Resets the view
+     */
+    @Override
+    public void reset() {
+        optimum = null;
+        selectedNode = null;
+        table.setRedraw(false);
+        table.clearAll();
+        table.setRedraw(true);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.target == EventTarget.SELECTED_NODE) {
+            selectedNode = (ARXNode) event.data;
+        } else if (event.target == EventTarget.MODEL) {
+            model = (Model) event.data;
+        } else if (event.target == EventTarget.FILTER) {
+            if (model != null) {
+                initialize(model.getResult(), (ModelNodeFilter) event.data);
+            }
+        }
+    }
+
     /**
      * Converts an information loss into a relative value in percent
      * 
@@ -142,17 +169,6 @@ public class ListView extends Panel implements IView, IAttachable {
                                                                 .getTop()
                                                                 .getMaximumInformationLoss()
                                                                 .getValue()) * 100d;
-    }
-
-    /**
-     * Converts a generalization to a relative value
-     * 
-     * @param generalization
-     * @param max
-     * @return
-     */
-    private double asRelativeValue(final int generalization, final int max) {
-        return ((double) generalization / (double) max) * 100d;
     }
 
     private void createItem(final TableItem item, final int index) {
@@ -182,16 +198,6 @@ public class ListView extends Panel implements IView, IAttachable {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
         item.setText(3, max);
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    @Override
-    public Control getControl() {
-        return table;
     }
 
     private void initialize(final ARXResult result, final ModelNodeFilter filter) {
@@ -246,45 +252,6 @@ public class ListView extends Panel implements IView, IAttachable {
                 table.setRedraw(true);
             }
         });
-    }
-
-    /**
-     * Resets the view
-     */
-    @Override
-    public void reset() {
-        optimum = null;
-        selectedNode = null;
-        table.setRedraw(false);
-        table.clearAll();
-        table.setRedraw(true);
-    }
-
-    @Override
-    public void update(final Graphics g) {
-        paint(g);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.target == EventTarget.SELECTED_NODE) {
-            selectedNode = (ARXNode) event.data;
-            this.repaint();
-        } else if (event.target == EventTarget.MODEL) {
-            model = (Model) event.data;
-        } else if (event.target == EventTarget.FILTER) {
-            if (model != null) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        initialize(model.getResult(), (ModelNodeFilter) event.data);
-                        repaint();
-                    }
-
-                });
-            }
-        }
     }
 
 }
