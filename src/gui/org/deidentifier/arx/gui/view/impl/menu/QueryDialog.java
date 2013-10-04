@@ -39,16 +39,47 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class QueryDialog extends TitleAreaDialog {
 
+    private Runnable updater = new Runnable(){
+        
+        private DataSelector previous = null; 
+        
+        @Override
+        public void run() {
+            while (!stop){
+                try {
+                    Thread.sleep(INTERVAL);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                if (selector != null && selector != previous){
+                    previous = selector;
+                    int count = 0;
+                    for (int i=0; i<data.getHandle().getNumRows(); i++){
+                        count += selector.selected(i) ? 1 : 0;
+                    }
+                    final int fcount = count;
+                    if (cardinality!=null && !cardinality.isDisposed()){
+                        Display.getDefault().asyncExec(new Runnable() {
+                            public void run() {
+                                cardinality.setText("Matching items: "+fcount);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    };
+    
     private static enum Operator{
         EQUALS,
         GEQ,
@@ -57,14 +88,19 @@ public class QueryDialog extends TitleAreaDialog {
         GREATER
     }
     
+    private static final int INTERVAL = 500;
+    
     private Button           ok          = null;
     private Button           cancel      = null;
     private StyledText       text        = null;
     private Label            error       = null;
+    private Label            cardinality = null;
     private Data             data        = null;
     private String           queryString = null;
+    private DataSelector     selector    = null;
     private QueryTokenizer   highlighter = null;
     private List<StyleRange> styles      = new ArrayList<StyleRange>();
+    private boolean          stop        = false;
 
     public QueryDialog(final Data data, final Shell parent, String initial) {
         super(parent);
@@ -80,6 +116,10 @@ public class QueryDialog extends TitleAreaDialog {
     public String getQuery() {
         return queryString;
     }
+    
+    public DataSelector getSelector() {
+        return selector;
+    }
 
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
@@ -92,6 +132,7 @@ public class QueryDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 setReturnCode(Window.OK);
+                stop = true;
                 close();
             }
         });
@@ -103,6 +144,7 @@ public class QueryDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 setReturnCode(Window.CANCEL);
+                stop = true;
                 close();
             }
         });
@@ -131,11 +173,16 @@ public class QueryDialog extends TitleAreaDialog {
                 parse();
             }
         });
-        
 
         error = new Label(parent, SWT.NONE);
         error.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         error.setText("");
+        
+        cardinality = new Label(parent, SWT.NONE);
+        cardinality.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        cardinality.setText("");
+        
+        new Thread(updater).start();
         
         return parent;
     }
@@ -283,13 +330,16 @@ public class QueryDialog extends TitleAreaDialog {
             parser.tokenize(query);
             selector.compile();
         } catch (Exception e){
-            error.setText(e.getMessage());
-            ok.setEnabled(false);
+            this.error.setText(e.getMessage());
+            this.ok.setEnabled(false);
+            this.selector = null;
+            this.cardinality.setText("Matching items: 0");
             return;
         }
-        error.setText("");
-        queryString = text.getText();
-        ok.setEnabled(true);
+        this.error.setText("");
+        this.queryString = text.getText();
+        this.selector = selector;
+        this.ok.setEnabled(true);
     }
 
     private void highlight() {
