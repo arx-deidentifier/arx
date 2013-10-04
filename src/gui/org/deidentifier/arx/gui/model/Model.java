@@ -23,14 +23,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.DPresence;
 
 public class Model implements Serializable {
 
@@ -88,15 +91,55 @@ public class Model implements Serializable {
 	}
 
 	public ARXAnonymizer createAnonymizer() {
+	    
 		outputConfig = inputConfig.clone();
+		
 		// Initialize anonymizer
 		this.anonymizer = new ARXAnonymizer();
 		this.anonymizer.setHistorySize(getHistorySize());
 		this.anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
 		this.anonymizer.setSuppressionString(getSuppressionString());
-		this.anonymizer
-				.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
+		this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
 		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
+		
+		// Initialize the config
+		inputConfig.removeAllCriteria();
+		
+		if (this.kAnonymityModel != null &&
+		    this.kAnonymityModel.isActive() &&
+		    this.kAnonymityModel.isEnabled()) {
+		    inputConfig.addCriterion(this.kAnonymityModel.getCriterion(this));
+		}
+
+        if (this.dPresenceModel != null && 
+            this.dPresenceModel.isActive() && 
+            this.dPresenceModel.isEnabled()) {
+            inputConfig.addCriterion(this.dPresenceModel.getCriterion(this));
+        }
+		
+		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
+	        if (entry.getValue() != null &&
+	            entry.getValue().isActive() &&
+	            entry.getValue().isEnabled()) {
+	            inputConfig.addCriterion(entry.getValue().getCriterion(this));
+	        }
+		}
+        
+        for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isActive() &&
+                entry.getValue().isEnabled()) {
+                inputConfig.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
+
+        // Allow adding removing tuples
+        if (!inputConfig.containsCriterion(DPresence.class)){
+            DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
+                                                  getInputConfig().getResearchSubset());
+            inputConfig.addCriterion(new DPresence(0d, 1d, subset));
+        }
+        
 		return anonymizer;
 	}
 

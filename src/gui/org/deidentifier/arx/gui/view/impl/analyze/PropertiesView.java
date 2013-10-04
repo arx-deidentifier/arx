@@ -245,13 +245,9 @@ public class PropertiesView implements IView {
     private TreeViewer           treeViewer;
     private final List<Property> roots  = new ArrayList<Property>();
     private final Composite      root;
-
     private final Controller     controller;
-
     private final EventTarget    target;
-
     private final EventTarget    reset;
-
     private Model                model;
 
     private final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
@@ -278,6 +274,39 @@ public class PropertiesView implements IView {
         root = parent;
         create(parent);
         reset();
+    }
+
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+
+        roots.clear();
+        treeViewer.refresh();
+
+        SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        SWTUtil.enable(root);
+        redraw();
+
+        // Handle reset target, i.e., e.g. input has changed
+        if (event.target == reset) {
+            reset();
+        } else if (event.target == target) {
+            SWTUtil.enable(root);
+            redraw();
+        } else if (event.target == EventTarget.MODEL) {
+            model = (Model) event.data;
+            reset();
+            // Handle selected attribute
+        }
     }
 
     /**
@@ -354,11 +383,6 @@ public class PropertiesView implements IView {
         treeViewer.expandAll();
     }
 
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
     private void redraw() {
 
         if (model == null) { return; }
@@ -390,7 +414,8 @@ public class PropertiesView implements IView {
         }
 
         if (target == EventTarget.INPUT) {
-            redrawInput(config, data);
+            redrawInput(config, 
+                        data);
         } else {
             redrawOutput(config,
                          model.getResult(),
@@ -415,8 +440,7 @@ public class PropertiesView implements IView {
                 final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 values[0] = s;
                 values[1] = data.getDefinition().getDataType(s).toString();
-                new Property(identifying,
-                             Resources.getMessage("PropertiesView.19") + (index++), values); //$NON-NLS-1$
+                new Property(identifying, Resources.getMessage("PropertiesView.19") + (index++), values); //$NON-NLS-1$
             }
         }
 
@@ -491,15 +515,19 @@ public class PropertiesView implements IView {
                               final ARXNode node,
                               final DataHandle data) {
 
+        // Clear
         roots.clear();
+        
+        // Print basic info on outliers
         new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(result.getGroupOutliersCount()) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(result.getGroupCount()) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(result.getGroupOutliersCount()) }); //$NON-NLS-1$
 
-        if (node.getMaximumInformationLoss().getValue() == node.getMinimumInformationLoss()
-                                                               .getValue()) {
-            final String infoloss = String.valueOf(node.getMinimumInformationLoss()
-                                                       .getValue()) +
+        // Print information loss
+        if (node.getMaximumInformationLoss().getValue() == 
+            node.getMinimumInformationLoss().getValue()) {
+            
+            final String infoloss = String.valueOf(node.getMinimumInformationLoss().getValue()) +
                                     " [" + format.format(asRelativeValue(node.getMinimumInformationLoss(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
             new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
 
@@ -508,51 +536,61 @@ public class PropertiesView implements IView {
                       .getLogger()
                       .warn("Differing minimum and maximum information loss"); //$NON-NLS-1$
         }
+        
+        // Print basic info on neighbouring nodes
         new Property(Resources.getMessage("PropertiesView.48"), new String[] { String.valueOf(node.getSuccessors().length) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.49"), new String[] { String.valueOf(node.getPredecessors().length) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.50"), new String[] { Arrays.toString(node.getTransformation()) }); //$NON-NLS-1$
 
+        // If the node is anonymous
         if (node.isAnonymous() == Anonymity.ANONYMOUS) {
 
-            // First d-presence
+            // Print info about d-presence
             if (config.containsCriterion(DPresence.class)) {
                 DPresence criterion = config.getCriterion(DPresence.class);
-                Property n = new Property(Resources.getMessage("PropertiesView.92"), new String[] { Resources.getMessage("PropertiesView.93") }); //$NON-NLS-1$ //$NON-NLS-2$
-                new Property(n, Resources.getMessage("PropertiesView.94"), new String[] { String.valueOf(criterion.getDMin())}); //$NON-NLS-1$
-                new Property(n, Resources.getMessage("PropertiesView.95"), new String[] { String.valueOf(criterion.getDMax())}); //$NON-NLS-1$
+                // only if its not an auto-generated criterion
+                if (!(criterion.getDMin()==0d && criterion.getDMax()==1d)){
+                    Property n = new Property(Resources.getMessage("PropertiesView.92"), new String[] { Resources.getMessage("PropertiesView.93") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.94"), new String[] { String.valueOf(criterion.getDMin())}); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.95"), new String[] { String.valueOf(criterion.getDMax())}); //$NON-NLS-1$
+                }
             }
-            // Then k-anonymity
+            // Print info about k-anonymity
             if (config.containsCriterion(KAnonymity.class)) {
                 KAnonymity criterion = config.getCriterion(KAnonymity.class);
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.52") }); //$NON-NLS-1$ //$NON-NLS-2$
                 new Property(n, Resources.getMessage("PropertiesView.53"), new String[] { String.valueOf(criterion.getK())}); //$NON-NLS-1$
             }
             
-            // Then l-diversity or t-closeness
+            // Print info about l-diversity or t-closeness
             int index = 0;
             for (PrivacyCriterion c : config.getCriteria()) {
                 if (c instanceof DistinctLDiversity){
                     DistinctLDiversity criterion = (DistinctLDiversity)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.57"), new String[] { Resources.getMessage("PropertiesView.58") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.59"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof EntropyLDiversity){
                     EntropyLDiversity criterion = (EntropyLDiversity)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.63"), new String[] { Resources.getMessage("PropertiesView.64") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.65"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof RecursiveCLDiversity){
                     RecursiveCLDiversity criterion = (RecursiveCLDiversity)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.69"), new String[] { Resources.getMessage("PropertiesView.70") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.71"), new String[] { String.valueOf(criterion.getC()) }); //$NON-NLS-1$
-                    new Property(n, Resources.getMessage("PropertiesView.72"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$                    
+                    new Property(n, Resources.getMessage("PropertiesView.72"), new String[] { String.valueOf(criterion.getL()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof EqualDistanceTCloseness){
                     EqualDistanceTCloseness criterion = (EqualDistanceTCloseness)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.77"), new String[] { Resources.getMessage("PropertiesView.78") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.79"), new String[] { String.valueOf(criterion.getT()) }); //$NON-NLS-1$
-                    break;
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 } else if (c instanceof HierarchicalDistanceTCloseness){
                     HierarchicalDistanceTCloseness criterion = (HierarchicalDistanceTCloseness)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.84") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.85"), new String[] { String.valueOf(criterion.getT()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                     final int height = config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
                     new Property(n, "SE-"+(index++), new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
                 }
@@ -564,33 +602,5 @@ public class PropertiesView implements IView {
         treeViewer.refresh();
         treeViewer.expandAll();
 
-    }
-
-    @Override
-    public void reset() {
-
-        roots.clear();
-        treeViewer.refresh();
-
-        SWTUtil.disable(root);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        SWTUtil.enable(root);
-        redraw();
-
-        // Handle reset target, i.e., e.g. input has changed
-        if (event.target == reset) {
-            reset();
-        } else if (event.target == target) {
-            SWTUtil.enable(root);
-            redraw();
-        } else if (event.target == EventTarget.MODEL) {
-            model = (Model) event.data;
-            reset();
-            // Handle selected attribute
-        }
     }
 }

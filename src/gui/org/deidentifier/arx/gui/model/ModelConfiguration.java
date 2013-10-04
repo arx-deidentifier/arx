@@ -39,7 +39,7 @@ public class ModelConfiguration implements Serializable {
     private boolean                removeOutliers        = true;
     private boolean                modified              = false;
     private Map<String, Hierarchy> hierarchies           = new HashMap<String, Hierarchy>();
-    private RowSet       researchSubset        = null;
+    private RowSet                 researchSubset        = null;
 
     /**
      * Delegates to an instance of ARXConfiguration
@@ -59,6 +59,7 @@ public class ModelConfiguration implements Serializable {
         c.input = input.clone();
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
+        c.researchSubset = researchSubset;
         return c;
     }
 
@@ -221,6 +222,13 @@ public class ModelConfiguration implements Serializable {
     }
 
     /**
+     * Removes all criteria
+     */
+    public void removeAllCriteria() {
+        this.getCriteria().clear();
+    }
+    
+    /**
      * Delegates to an instance of ARXConfiguration
      * @param supp
      */
@@ -304,4 +312,5 @@ public class ModelConfiguration implements Serializable {
     private void setModified() {
         modified = true;
     }
+
 }
