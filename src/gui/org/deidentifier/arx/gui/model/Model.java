@@ -92,8 +92,6 @@ public class Model implements Serializable {
 
 	public ARXAnonymizer createAnonymizer() {
 	    
-		outputConfig = inputConfig.clone();
-		
 		// Initialize anonymizer
 		this.anonymizer = new ARXAnonymizer();
 		this.anonymizer.setHistorySize(getHistorySize());
@@ -139,7 +137,11 @@ public class Model implements Serializable {
                                                   getInputConfig().getResearchSubset());
             inputConfig.addCriterion(new DPresence(0d, 1d, subset));
         }
+
+        // Clone the config
+        outputConfig = inputConfig.clone();
         
+        // Return the anonymizer
 		return anonymizer;
 	}
 
