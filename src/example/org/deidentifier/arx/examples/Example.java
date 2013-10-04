@@ -41,8 +41,7 @@ public abstract class Example {
      * @param result
      * @param data
      */
-    protected static void
-            printResult(final ARXResult result, final Data data) {
+    protected static void printResult(final ARXResult result, final Data data) {
 
         // Print time
         final DecimalFormat df1 = new DecimalFormat("#####0.00");
@@ -51,10 +50,9 @@ public abstract class Example {
 
         // Extract
         final ARXNode optimum = result.getGlobalOptimum();
-        final List<String> qis = new ArrayList<String>(data.getDefinition()
-                                                           .getQuasiIdentifyingAttributes());
-        
-        if (optimum == null){
+        final List<String> qis = new ArrayList<String>(data.getDefinition().getQuasiIdentifyingAttributes());
+
+        if (optimum == null) {
             System.out.println(" - Criteria cannot be enforced!");
             return;
         }
@@ -70,8 +68,7 @@ public abstract class Example {
             identifiers[i].append(qis.get(i));
             generalizations[i].append(optimum.getGeneralization(qis.get(i)))
                               .append("/")
-                              .append(data.getDefinition()
-                                          .getHierarchyHeight(qis.get(i)) - 1);
+                              .append(data.getDefinition().getHierarchyHeight(qis.get(i)) - 1);
             lengthI = Math.max(lengthI, identifiers[i].length());
             lengthG = Math.max(lengthG, generalizations[i].length());
         }
@@ -87,19 +84,14 @@ public abstract class Example {
         }
 
         // Print
-        System.out.println(" - Information loss: " +
-                           result.getGlobalOptimum()
-                                 .getMaximumInformationLoss()
-                                 .getValue());
+        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMaximumInformationLoss().getValue());
         System.out.println(" - Optimal generalization");
         for (int i = 0; i < qis.size(); i++) {
-            System.out.println("   * " + identifiers[i] + ": " +
-                               generalizations[i]);
+            System.out.println("   * " + identifiers[i] + ": " + generalizations[i]);
         }
     }
-    
 
-    protected static void print(Iterator<String[]> iterator){
+    protected static void print(Iterator<String[]> iterator) {
         while (iterator.hasNext()) {
             System.out.print("   ");
             System.out.println(Arrays.toString(iterator.next()));
