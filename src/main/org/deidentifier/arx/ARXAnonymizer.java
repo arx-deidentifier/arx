@@ -625,34 +625,6 @@ public class ARXAnonymizer {
         return manager;
     }
 
-    private void printLattice(String tag, Lattice lattice) {
-        if (lattice==null){
-            System.out.println(tag + " Empty lattice");
-            return;
-        }
-        int total = 0;
-        int tagged = 0;
-        int checked = 0;
-        int kanonymous = 0;
-        int anonymous = 0;
-        
-        for (Node[] level : lattice.getLevels()){
-            for (Node n : level){
-                if (n.isAnonymous()) anonymous++;
-                if (n.isChecked()) checked++;
-                if (n.isKAnonymous()) kanonymous++;
-                if (n.isTagged()) tagged++;
-                total++;
-            }
-        }
-        
-        System.out.println(tag + " Lattice statistics:");
-        System.out.println(" - Tagged    : "+tagged+"/"+total);
-        System.out.println(" - Checked   : "+checked+"/"+total);
-        System.out.println(" - kAnonymous: "+kanonymous+"/"+total);
-        System.out.println(" - Anonymous : "+anonymous+"/"+total);
-    }
-
     /**
      * Removes the element at index 'from' and shifts all other elements to the left.
      * Then inserts the original value from index 'from' into the new position at index 'to'.
@@ -723,8 +695,7 @@ public class ARXAnonymizer {
         if (lattice==null){
         	lattice = new LatticeBuilder(manager.getMaxLevels(), manager.getMinLevels(), manager.getHierachyHeights()).build();
         } 
-        printLattice("[BEFORE]", lattice);
-
+ 
         // Attach the listener
         lattice.setListener(listener);
         lattice.setMultiplier(multiplier);
@@ -745,8 +716,6 @@ public class ARXAnonymizer {
         
         // Execute
         algorithm.traverse();
-        
-        printLattice("[AFTER]", lattice);
         
         // Return the result
         return new Result(config.getMetric(), checker, lattice, manager, algorithm);

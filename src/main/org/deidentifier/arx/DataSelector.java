@@ -335,7 +335,6 @@ public class DataSelector {
                 // Invalid
                 throw new RuntimeException("Expecting EXPR <OP> EXPR");
             } else {
-                
                 // Binary operator
                 BinaryOperator bop = (BinaryOperator)ops.get(offset + lLength);
                 bop.left = compile(ops, offset, lLength);
@@ -381,7 +380,7 @@ public class DataSelector {
                 
                 // Find closing bracket
                 int open = 1;
-                for (int i=offset+1; i<length; i++){
+                for (int i=offset+1; i<offset+length; i++){
                     if (ops.get(i) instanceof PrecedenceOperator){
                         pop = (PrecedenceOperator)ops.get(i);
                         if (pop.begin) open++;
@@ -389,6 +388,7 @@ public class DataSelector {
                         if (open == 0){
                             return i-offset+1;
                         }
+                    } else {
                     }
                 }
                 // Invalid
