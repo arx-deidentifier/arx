@@ -37,7 +37,7 @@ public class DataDefinition {
     private final Map<String, AttributeType> attributeTypes    = new HashMap<String, AttributeType>();
 
     /** The mapped data types */
-    private final Map<String, DataType<?>>      dataTypes         = new HashMap<String, DataType<?>>();
+    private final Map<String, DataType<?>>   dataTypes         = new HashMap<String, DataType<?>>();
 
     /** The mapped minimum generalization */
     private final Map<String, Integer>       minGeneralization = new HashMap<String, Integer>();
@@ -166,26 +166,6 @@ public class DataDefinition {
     }
 
     /**
-     * Returns the maximal generalization
-     * 
-     * @param attribute
-     * @return
-     */
-    protected int getMaximalGeneralization(final String attribute) {
-        return maxGeneralization.get(attribute);
-    }
-
-    /**
-     * Returns the maximal generalization
-     * 
-     * @param attribute
-     * @return
-     */
-    protected Map<String, Integer> getMaximalGeneralizations() {
-        return maxGeneralization;
-    }
-
-    /**
      * Returns the maximum generalization for the attribute
      * 
      * @return
@@ -201,26 +181,6 @@ public class DataDefinition {
         } else {
             return maxGeneralization.get(attribute);
         }
-    }
-
-    /**
-     * Returns the minimal generalization
-     * 
-     * @param attribute
-     * @return
-     */
-    protected int getMinimalGeneralization(final String attribute) {
-        return minGeneralization.get(attribute);
-    }
-
-    /**
-     * Returns the minimal generalization
-     * 
-     * @param attribute
-     * @return
-     */
-    protected Map<String, Integer> getMinimalGeneralizations() {
-        return minGeneralization;
     }
 
     /**
