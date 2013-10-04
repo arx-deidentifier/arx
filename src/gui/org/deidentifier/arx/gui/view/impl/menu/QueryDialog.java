@@ -113,14 +113,10 @@ public class QueryDialog extends TitleAreaDialog {
         return super.close();
     }
 
-    public String getQuery() {
-        return queryString;
+    public QueryDialogResult getResult() {
+        return new QueryDialogResult(queryString, selector);
     }
     
-    public DataSelector getSelector() {
-        return selector;
-    }
-
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 

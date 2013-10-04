@@ -25,6 +25,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
+import org.deidentifier.arx.gui.view.impl.menu.QueryDialogResult;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
@@ -64,5 +65,5 @@ public interface IMainWindow {
 
     ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others);
 
-    String showQueryDialog(String query, Data data);
+    QueryDialogResult showQueryDialog(String query, Data data);
 }

@@ -40,6 +40,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.RowSet;
@@ -59,6 +60,7 @@ import org.deidentifier.arx.gui.view.impl.menu.AboutDialog;
 import org.deidentifier.arx.gui.view.impl.menu.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.menu.ProjectDialog;
 import org.deidentifier.arx.gui.view.impl.menu.PropertyDialog;
+import org.deidentifier.arx.gui.view.impl.menu.QueryDialogResult;
 import org.deidentifier.arx.gui.view.impl.menu.SeparatorDialog;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
@@ -972,8 +974,16 @@ public class Controller implements IView {
     }
 
     public void actionSubsetQuery() {
-        String query = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
-        if (query == null) return;
+        QueryDialogResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
+        if (result == null) return;
+        
+        Data data = model.getInputConfig().getInput();
+        DataSelector selector = result.selector;
+        DataSubset subset = DataSubset.create(data, selector);
+        
+        this.model.getInputConfig().setResearchSubset(subset.getRowSet());
+        this.model.setQuery(result.query);
+        update(new ModelEvent(this, EventTarget.RESEARCH_SUBSET, subset.getRowSet()));
     }
 
     public void actionSubsetFile() {

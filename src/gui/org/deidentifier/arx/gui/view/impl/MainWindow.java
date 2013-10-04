@@ -40,6 +40,7 @@ import org.deidentifier.arx.gui.view.impl.define.DefinitionView;
 import org.deidentifier.arx.gui.view.impl.explore.ExploreView;
 import org.deidentifier.arx.gui.view.impl.menu.CriterionSelectionDialog;
 import org.deidentifier.arx.gui.view.impl.menu.QueryDialog;
+import org.deidentifier.arx.gui.view.impl.menu.QueryDialogResult;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -303,12 +304,12 @@ public class MainWindow implements IMainWindow, IView {
     }
 
     @Override
-    public String showQueryDialog(String query, Data data) {
+    public QueryDialogResult showQueryDialog(String query, Data data) {
 
         // Dialog
         final QueryDialog dialog = new QueryDialog(data, shell, query);
         dialog.create();
         if (dialog.open() != Window.OK) { return null; }
-        else {return dialog.getQuery();}
+        else {return dialog.getResult();}
     }
 }
