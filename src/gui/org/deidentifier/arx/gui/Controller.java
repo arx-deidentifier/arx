@@ -263,6 +263,8 @@ public class Controller implements IView {
                 // Select bottom node
                 model.setOutput(null, null);
                 model.setSelectedNode(null);
+                model.setColors(null);
+                model.setGroups(null);
                 update(new ModelEvent(this, EventTarget.OUTPUT, null));
                 update(new ModelEvent(this, EventTarget.SELECTED_NODE, null));
             }
@@ -750,6 +752,8 @@ public class Controller implements IView {
         }
         
         model.resetCriteria();
+        model.setColors(null);
+        model.setGroups(null);
 
         // Display the changes
         update(new ModelEvent(this, EventTarget.MODEL, model));
