@@ -19,44 +19,37 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IPropertyEditor;
+import org.deidentifier.arx.gui.view.def.IEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class SelectionEditor implements IPropertyEditor<String> {
+public abstract class EditorBoolean implements IEditor<Boolean> {
 
-    private final String   category;
-    private final String   label;
-    private final String[] elems;
+    private final String category;
+    private final String label;
 
-    public SelectionEditor(final String category,
-                           final String label,
-                           final String[] elems) {
+    public EditorBoolean(final String category, final String label) {
         this.category = category;
         this.label = label;
-        this.elems = elems;
     }
 
     @Override
-    public boolean accepts(final String s) {
+    public boolean accepts(final Boolean t) {
         return true;
     }
 
     @Override
     public void createControl(final Composite parent) {
-        final Combo result = new Combo(parent, SWT.NONE);
-        result.setItems(elems);
-        result.select(indexOf(getValue()));
+        final Button result = new Button(parent, SWT.CHECK);
+        result.setSelection(getValue());
         result.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         result.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (result.getSelectionIndex() != -1) {
-                    setValue(elems[result.getSelectionIndex()]);
-                }
+                setValue(result.getSelection());
             }
         });
     }
@@ -69,12 +62,5 @@ public abstract class SelectionEditor implements IPropertyEditor<String> {
     @Override
     public String getLabel() {
         return label;
-    }
-
-    private int indexOf(final String value) {
-        for (int i = 0; i < elems.length; i++) {
-            if (elems[i].equals(value)) { return i; }
-        }
-        return -1;
     }
 }

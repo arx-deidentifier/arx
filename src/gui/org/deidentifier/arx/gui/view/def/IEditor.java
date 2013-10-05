@@ -20,7 +20,7 @@ package org.deidentifier.arx.gui.view.def;
 
 import org.eclipse.swt.widgets.Composite;
 
-public interface IPropertyEditor<T> {
+public interface IEditor<T> {
 
     public boolean accepts(T t);
 

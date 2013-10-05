@@ -1,7 +1,9 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import org.deidentifier.arx.gui.view.def.IDialog;
 
-public class QueryTokenizer {
+
+public class DialogQueryTokenizer implements IDialog {
     
     public static interface QueryTokenizerListener {
 
@@ -21,7 +23,7 @@ public class QueryTokenizer {
     
     private QueryTokenizerListener listener;
     
-    public QueryTokenizer(QueryTokenizerListener listener){
+    public DialogQueryTokenizer(QueryTokenizerListener listener){
         this.listener = listener;
     }
 

@@ -39,9 +39,9 @@ import org.deidentifier.arx.gui.view.impl.analyze.LayoutAnalyze;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
-import org.deidentifier.arx.gui.view.impl.menu.CriterionSelectionDialog;
-import org.deidentifier.arx.gui.view.impl.menu.QueryDialog;
-import org.deidentifier.arx.gui.view.impl.menu.QueryDialogResult;
+import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
+import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
+import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -268,10 +268,10 @@ public class MainWindow implements IMainWindow, IView {
     }
 
     @Override
-    public QueryDialogResult showQueryDialog(String query, Data data) {
+    public DialogQueryResult showQueryDialog(String query, Data data) {
 
         // Dialog
-        final QueryDialog dialog = new QueryDialog(data, shell, query);
+        final DialogQuery dialog = new DialogQuery(data, shell, query);
         dialog.create();
         if (dialog.open() != Window.OK) { return null; }
         else {return dialog.getResult();}
@@ -294,7 +294,7 @@ public class MainWindow implements IMainWindow, IView {
     public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others) {
 
         // Dialog
-        final CriterionSelectionDialog dialog = new CriterionSelectionDialog(controller, shell, others);
+        final DialogCriterionSelection dialog = new DialogCriterionSelection(controller, shell, others);
         dialog.create();
         if (dialog.open() != Window.OK) { return null; }
         else {return dialog.getCriterion();}

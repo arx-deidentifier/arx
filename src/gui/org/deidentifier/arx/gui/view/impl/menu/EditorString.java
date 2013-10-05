@@ -19,7 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IPropertyEditor;
+import org.deidentifier.arx.gui.view.def.IEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,14 +28,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class StringEditor implements IPropertyEditor<String> {
+public abstract class EditorString implements IEditor<String> {
 
     private final String  category;
     private final String  label;
     private final boolean multi;
     private final Button  ok;
 
-    public StringEditor(final String category,
+    public EditorString(final String category,
                         final String label,
                         final Button ok,
                         final boolean multi) {

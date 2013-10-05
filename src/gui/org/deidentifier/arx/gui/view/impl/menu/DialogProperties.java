@@ -24,7 +24,8 @@ import java.util.List;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IPropertyEditor;
+import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.gui.view.def.IEditor;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -43,7 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-public class PropertyDialog extends TitleAreaDialog {
+public class DialogProperties extends TitleAreaDialog implements IDialog {
 
     /**
      * Validates double input
@@ -98,7 +99,7 @@ public class PropertyDialog extends TitleAreaDialog {
 
     private TabFolder   folder;
 
-    public PropertyDialog(final Shell parent, final Model model) {
+    public DialogProperties(final Shell parent, final Model model) {
         super(parent);
         this.model = model;
     }
@@ -113,10 +114,10 @@ public class PropertyDialog extends TitleAreaDialog {
      */
     private Composite buildCategory(final TabFolder folder,
                                     final String category,
-                                    final List<IPropertyEditor<?>> editors) {
+                                    final List<IEditor<?>> editors) {
         final Composite c = new Composite(folder, SWT.NONE);
         c.setLayout(new GridLayout(2, false));
-        for (final IPropertyEditor<?> e : editors) {
+        for (final IEditor<?> e : editors) {
             if (e.getCategory().equals(category)) {
                 final Label l = new Label(c, SWT.NONE);
                 l.setText(e.getLabel() + ":"); //$NON-NLS-1$
@@ -133,9 +134,9 @@ public class PropertyDialog extends TitleAreaDialog {
         setMessage(Resources.getMessage("PropertyDialog.1"), IMessageProvider.NONE); //$NON-NLS-1$
 
         // Obtain editors and categories
-        final List<IPropertyEditor<?>> editors = getEditors(model);
+        final List<IEditor<?>> editors = getEditors(model);
         final List<String> categories = new ArrayList<String>();
-        for (final IPropertyEditor<?> e : editors) {
+        for (final IEditor<?> e : editors) {
             if (!categories.contains(e.getCategory())) {
                 categories.add(e.getCategory());
             }
@@ -188,13 +189,13 @@ public class PropertyDialog extends TitleAreaDialog {
      * @param model
      * @return
      */
-    private List<IPropertyEditor<?>> getEditors(final Model model) {
+    private List<IEditor<?>> getEditors(final Model model) {
 
         // Init
-        final List<IPropertyEditor<?>> result = new ArrayList<IPropertyEditor<?>>();
+        final List<IEditor<?>> result = new ArrayList<IEditor<?>>();
 
         // Project category
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.3"), Resources.getMessage("PropertyDialog.4"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.3"), Resources.getMessage("PropertyDialog.4"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 if (s.equals("")) { //$NON-NLS-1$
@@ -215,7 +216,7 @@ public class PropertyDialog extends TitleAreaDialog {
             }
         });
 
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.6"), Resources.getMessage("PropertyDialog.7"), ok, true) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.6"), Resources.getMessage("PropertyDialog.7"), ok, true) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return true;
@@ -232,7 +233,7 @@ public class PropertyDialog extends TitleAreaDialog {
             }
         });
 
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.8"), Resources.getMessage("PropertyDialog.9"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.8"), Resources.getMessage("PropertyDialog.9"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 if (s.length() == 1) {
@@ -254,7 +255,7 @@ public class PropertyDialog extends TitleAreaDialog {
         });
 
         // Transformation category
-        result.add(new BooleanEditor(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public Boolean getValue() {
                 return model.getInputConfig().isRemoveOutliers();
@@ -265,7 +266,7 @@ public class PropertyDialog extends TitleAreaDialog {
                 model.getInputConfig().setRemoveOutliers(t);
             }
         });
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.12"), Resources.getMessage("PropertyDialog.13"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.12"), Resources.getMessage("PropertyDialog.13"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return true;
@@ -282,7 +283,7 @@ public class PropertyDialog extends TitleAreaDialog {
             }
         });
         final IntegerValidator v = new IntegerValidator(0, 1000001);
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.14"), Resources.getMessage("PropertyDialog.15"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.14"), Resources.getMessage("PropertyDialog.15"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return v.validate(s);
@@ -301,7 +302,7 @@ public class PropertyDialog extends TitleAreaDialog {
 
         // Internals category
         final IntegerValidator v2 = new IntegerValidator(-1, 1001);
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.16"), Resources.getMessage("PropertyDialog.17"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.16"), Resources.getMessage("PropertyDialog.17"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return v2.validate(s);
@@ -318,7 +319,7 @@ public class PropertyDialog extends TitleAreaDialog {
             }
         });
         final DoubleValidator v3 = new DoubleValidator(0d, 1d);
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.18"), Resources.getMessage("PropertyDialog.19"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.18"), Resources.getMessage("PropertyDialog.19"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return v3.validate(s);
@@ -334,7 +335,7 @@ public class PropertyDialog extends TitleAreaDialog {
                 model.setSnapshotSizeDataset(Double.valueOf(s));
             }
         });
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.21"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.21"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return v3.validate(s);
@@ -353,7 +354,7 @@ public class PropertyDialog extends TitleAreaDialog {
 
         // Viewer category
         final IntegerValidator v4 = new IntegerValidator(0, 10000);
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.22"), Resources.getMessage("PropertyDialog.23"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.22"), Resources.getMessage("PropertyDialog.23"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return v4.validate(s);
@@ -369,7 +370,7 @@ public class PropertyDialog extends TitleAreaDialog {
                 model.setInitialNodesInViewer(Integer.valueOf(s));
             }
         });
-        result.add(new StringEditor(Resources.getMessage("PropertyDialog.24"), Resources.getMessage("PropertyDialog.25"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.24"), Resources.getMessage("PropertyDialog.25"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
                 return v4.validate(s);

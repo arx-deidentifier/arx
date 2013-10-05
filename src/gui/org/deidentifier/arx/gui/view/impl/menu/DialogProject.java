@@ -41,14 +41,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class ProjectDialog extends TitleAreaDialog {
+public class DialogProject extends TitleAreaDialog implements IDialog {
 
     private Text   name        = null;
     private Text   description = null;
     private Button ok          = null;
     private Model  model       = null;
 
-    public ProjectDialog(final Shell parent) {
+    public DialogProject(final Shell parent) {
         super(parent);
     }
 

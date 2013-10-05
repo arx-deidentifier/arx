@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -43,7 +44,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class CriterionSelectionDialog extends TitleAreaDialog {
+public class DialogCriterionSelection extends TitleAreaDialog implements IDialog {
 
     private Button                       ok         = null;
     private Button                       cancel     = null;
@@ -53,7 +54,7 @@ public class CriterionSelectionDialog extends TitleAreaDialog {
     private Image                        symbolT    = null;
     private Controller                   controller = null;
 
-    public CriterionSelectionDialog(final Controller controller,
+    public DialogCriterionSelection(final Controller controller,
                                     final Shell parent,
                                     List<ModelExplicitCriterion> elements) {
         super(parent);

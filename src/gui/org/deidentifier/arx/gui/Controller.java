@@ -57,12 +57,12 @@ import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
-import org.deidentifier.arx.gui.view.impl.menu.AboutDialog;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.HierarchyWizard;
-import org.deidentifier.arx.gui.view.impl.menu.ProjectDialog;
-import org.deidentifier.arx.gui.view.impl.menu.PropertyDialog;
-import org.deidentifier.arx.gui.view.impl.menu.QueryDialogResult;
-import org.deidentifier.arx.gui.view.impl.menu.SeparatorDialog;
+import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
+import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
+import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
+import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -324,7 +324,7 @@ public class Controller implements IView {
             return;
         }
         try {
-            final PropertyDialog dialog = new PropertyDialog(main.getShell(),
+            final DialogProperties dialog = new DialogProperties(main.getShell(),
                                                              model);
             dialog.create();
             dialog.open();
@@ -429,7 +429,7 @@ public class Controller implements IView {
         if (path == null) { return; }
 
         // Separator
-        final SeparatorDialog dialog = new SeparatorDialog(main.getShell(),
+        final DialogSeparator dialog = new DialogSeparator(main.getShell(),
                                                            this,
                                                            path,
                                                            true);
@@ -457,7 +457,7 @@ public class Controller implements IView {
         if (path != null) {
 
             // Separator
-            final SeparatorDialog dialog = new SeparatorDialog(main.getShell(),
+            final DialogSeparator dialog = new DialogSeparator(main.getShell(),
                                                                this,
                                                                path,
                                                                false);
@@ -481,7 +481,7 @@ public class Controller implements IView {
         }
 
         // Separator
-        final ProjectDialog dialog = new ProjectDialog(main.getShell());
+        final DialogProject dialog = new DialogProject(main.getShell());
         dialog.create();
         if (dialog.open() != Window.OK) { return; }
 
@@ -540,7 +540,7 @@ public class Controller implements IView {
     }
 
     public void actionMenuHelpAbout() {
-        final AboutDialog dialog = new AboutDialog(main.getShell(), this);
+        final DialogAbout dialog = new DialogAbout(main.getShell(), this);
         dialog.create();
         dialog.open();
     }
@@ -611,7 +611,7 @@ public class Controller implements IView {
         if (path == null) { return; }
 
         // Separator
-        final SeparatorDialog dialog = new SeparatorDialog(main.getShell(),
+        final DialogSeparator dialog = new DialogSeparator(main.getShell(),
                                                            this,
                                                            path,
                                                            true);
@@ -653,7 +653,7 @@ public class Controller implements IView {
     }
 
     public void actionSubsetQuery() {
-        QueryDialogResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
+        DialogQueryResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
         if (result == null) return;
         
         Data data = model.getInputConfig().getInput();

@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class AboutDialog extends TitleAreaDialog {
+public class DialogAbout extends TitleAreaDialog implements IDialog {
 
     private static final String LICENSE = Resources.getMessage("AboutDialog.0") + Resources.getMessage("AboutDialog.1") //$NON-NLS-1$ //$NON-NLS-2$
                                           +
@@ -51,7 +51,7 @@ public class AboutDialog extends TitleAreaDialog {
     private final Controller    controller;
     private Image image;
 
-    public AboutDialog(final Shell parentShell, final Controller controller) {
+    public DialogAbout(final Shell parentShell, final Controller controller) {
         super(parentShell);
         this.controller = controller;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$

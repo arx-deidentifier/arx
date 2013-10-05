@@ -31,6 +31,7 @@ import java.util.Map;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IDialog;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -52,7 +53,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class SeparatorDialog extends TitleAreaDialog {
+public class DialogSeparator extends TitleAreaDialog implements IDialog {
 
     private static final int        LINES      = 5;
     private int                     selection;
@@ -64,7 +65,7 @@ public class SeparatorDialog extends TitleAreaDialog {
     private final String            file;
     private final boolean           data;
 
-    public SeparatorDialog(final Shell parent,
+    public DialogSeparator(final Shell parent,
                            final Controller controller,
                            final String file,
                            boolean data) {

@@ -27,7 +27,8 @@ import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.menu.QueryTokenizer.QueryTokenizerListener;
+import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.gui.view.impl.menu.DialogQueryTokenizer.QueryTokenizerListener;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -47,7 +48,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class QueryDialog extends TitleAreaDialog {
+public class DialogQuery extends TitleAreaDialog implements IDialog {
 
     private static enum Operator{
         EQUALS,
@@ -97,11 +98,11 @@ public class QueryDialog extends TitleAreaDialog {
     private Data             data        = null;
     private String           queryString = null;
     private DataSelector     selector    = null;
-    private QueryTokenizer   highlighter = null;
+    private DialogQueryTokenizer   highlighter = null;
     private List<StyleRange> styles      = new ArrayList<StyleRange>();
     private boolean          stop        = false;
 
-    public QueryDialog(final Data data, final Shell parent, String initial) {
+    public DialogQuery(final Data data, final Shell parent, String initial) {
         super(parent);
         this.queryString = initial;
         this.data = data;
@@ -112,14 +113,14 @@ public class QueryDialog extends TitleAreaDialog {
         return super.close();
     }
 
-    public QueryDialogResult getResult() {
-        return new QueryDialogResult(queryString, selector);
+    public DialogQueryResult getResult() {
+        return new DialogQueryResult(queryString, selector);
     }
     
     private void highlight() {
         
         if (highlighter==null){
-            highlighter = new QueryTokenizer(new QueryTokenizerListener(){
+            highlighter = new DialogQueryTokenizer(new QueryTokenizerListener(){
 
                 @Override
                 public void and(int start, int length) {
@@ -249,7 +250,7 @@ public class QueryDialog extends TitleAreaDialog {
     private void parse() {
         final String query = text.getText();
         final DataSelector selector = DataSelector.create(data);
-        QueryTokenizer parser = new QueryTokenizer(new QueryTokenizerListener(){
+        DialogQueryTokenizer parser = new DialogQueryTokenizer(new QueryTokenizerListener(){
 
                 private Operator current = null;
                 private DataType<?> type = null;

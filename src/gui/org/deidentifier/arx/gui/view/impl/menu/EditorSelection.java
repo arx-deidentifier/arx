@@ -19,37 +19,44 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IPropertyEditor;
+import org.deidentifier.arx.gui.view.def.IEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class BooleanEditor implements IPropertyEditor<Boolean> {
+public abstract class EditorSelection implements IEditor<String> {
 
-    private final String category;
-    private final String label;
+    private final String   category;
+    private final String   label;
+    private final String[] elems;
 
-    public BooleanEditor(final String category, final String label) {
+    public EditorSelection(final String category,
+                           final String label,
+                           final String[] elems) {
         this.category = category;
         this.label = label;
+        this.elems = elems;
     }
 
     @Override
-    public boolean accepts(final Boolean t) {
+    public boolean accepts(final String s) {
         return true;
     }
 
     @Override
     public void createControl(final Composite parent) {
-        final Button result = new Button(parent, SWT.CHECK);
-        result.setSelection(getValue());
+        final Combo result = new Combo(parent, SWT.NONE);
+        result.setItems(elems);
+        result.select(indexOf(getValue()));
         result.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         result.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                setValue(result.getSelection());
+                if (result.getSelectionIndex() != -1) {
+                    setValue(elems[result.getSelectionIndex()]);
+                }
             }
         });
     }
@@ -62,5 +69,12 @@ public abstract class BooleanEditor implements IPropertyEditor<Boolean> {
     @Override
     public String getLabel() {
         return label;
+    }
+
+    private int indexOf(final String value) {
+        for (int i = 0; i < elems.length; i++) {
+            if (elems[i].equals(value)) { return i; }
+        }
+        return -1;
     }
 }
