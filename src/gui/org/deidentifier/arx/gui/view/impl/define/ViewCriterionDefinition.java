@@ -26,12 +26,12 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.TitleBar;
-import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
-import org.deidentifier.arx.gui.view.impl.define.criteria.DPresenceView;
-import org.deidentifier.arx.gui.view.impl.define.criteria.KAnonymityView;
-import org.deidentifier.arx.gui.view.impl.define.criteria.LDiversityView;
-import org.deidentifier.arx.gui.view.impl.define.criteria.TClosenessView;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.define.criteria.ViewDPresence;
+import org.deidentifier.arx.gui.view.impl.define.criteria.ViewKAnonymity;
+import org.deidentifier.arx.gui.view.impl.define.criteria.ViewLDiversity;
+import org.deidentifier.arx.gui.view.impl.define.criteria.ViewTCloseness;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class CriterionDefinitionView implements IView {
+public class ViewCriterionDefinition implements IView {
 
     private static final int       SLIDER_MAX      = 1000;
     private static final int       LABEL_WIDTH     = 50;
@@ -79,14 +79,14 @@ public class CriterionDefinitionView implements IView {
     private Combo                  comboMetric;
     private Composite			   root;
     
-    private TitledFolder           folder;
+    private ComponentTitledFolder           folder;
     private ToolItem               enable;
     private ToolItem               push;
     private ToolItem               pull;
     
-    private CriteriaListView       clv;
+    private ViewCriteriaList       clv;
     
-    public CriterionDefinitionView(final Composite parent,
+    public ViewCriterionDefinition(final Composite parent,
                                    final Controller controller) {
 
         this.controller = controller;
@@ -161,7 +161,7 @@ public class CriterionDefinitionView implements IView {
         gd1.grabExcessHorizontalSpace = true;
         gd1.horizontalSpan = 2;
         
-        TitleBar bar = new TitleBar("id-80");
+        ComponentTitleBar bar = new ComponentTitleBar("id-80");
         bar.add(Resources.getMessage("CriterionDefinitionView.59"), 
                 controller.getResources().getImage("cross.png"),
                 new Runnable() {
@@ -188,16 +188,16 @@ public class CriterionDefinitionView implements IView {
                     }
                 });
 
-        folder = new TitledFolder(group, controller, bar, null);
+        folder = new ComponentTitledFolder(group, controller, bar, null);
         folder.setLayoutData(gd1);
         Composite item1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.19"), controller.getResources().getImage("symbol_k.png"));        
-        new KAnonymityView(item1, controller, model);
+        new ViewKAnonymity(item1, controller, model);
         Composite item2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.60"), controller.getResources().getImage("symbol_d.png"));
-        new DPresenceView(item2, controller, model);
+        new ViewDPresence(item2, controller, model);
         Composite item3 = folder.createItem(Resources.getMessage("CriterionDefinitionView.20"), controller.getResources().getImage("symbol_l.png"));
-        new LDiversityView(item3, controller, model);
+        new ViewLDiversity(item3, controller, model);
         Composite item4 = folder.createItem(Resources.getMessage("CriterionDefinitionView.21"), controller.getResources().getImage("symbol_t.png"));
-        new TClosenessView(item4, controller, model);
+        new ViewTCloseness(item4, controller, model);
         folder.setSelection(0);
         
         folder.addSelectionListener(new SelectionAdapter() {
@@ -221,7 +221,7 @@ public class CriterionDefinitionView implements IView {
         gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.horizontalSpan = 2;
-        TitledFolder folder2 = new TitledFolder(parent, controller, null, "id-60");
+        ComponentTitledFolder folder2 = new ComponentTitledFolder(parent, controller, null, "id-60");
         folder2.setLayoutData(gd1);
         
         // Create general tab
@@ -353,7 +353,7 @@ public class CriterionDefinitionView implements IView {
         // Create overview tab
         Composite c = folder2.createItem(Resources.getMessage("CriterionDefinitionView.62"), null);  //$NON-NLS-1$
         c.setLayout(new FillLayout());
-        clv = new CriteriaListView(c, controller);
+        clv = new ViewCriteriaList(c, controller);
         
         folder2.setSelection(0);
 

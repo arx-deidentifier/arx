@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-public class TClosenessView extends CriterionView {
+public class ViewTCloseness extends ViewCriterion {
 
 	private static final String VARIANTS[] = {
 			Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -46,7 +46,7 @@ public class TClosenessView extends CriterionView {
 
 	private String attribute;
 
-	public TClosenessView(final Composite parent, final Controller controller,
+	public ViewTCloseness(final Composite parent, final Controller controller,
 			final Model model) {
 
 		super(parent, controller, model);

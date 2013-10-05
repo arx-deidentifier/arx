@@ -24,8 +24,8 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IHierarchyEditorView;
-import org.deidentifier.arx.gui.view.impl.define.HierarchyView;
+import org.deidentifier.arx.gui.view.def.IViewHierarchy;
+import org.deidentifier.arx.gui.view.impl.define.ViewHierarchy;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,7 +50,7 @@ public class HierarchyWizardPageLabels extends WizardPage {
     }
 
     private final HierarchyWizardModel model;
-    private IHierarchyEditorView       editor;
+    private IViewHierarchy       editor;
     private static final String[]      COMBO_LABELS = { Resources.getMessage("HierarchyWizardPageLabels.0"), Resources.getMessage("HierarchyWizardPageLabels.1"), Resources.getMessage("HierarchyWizardPageLabels.2"), Resources.getMessage("HierarchyWizardPageLabels.3"), Resources.getMessage("HierarchyWizardPageLabels.4"), Resources.getMessage("HierarchyWizardPageLabels.5") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     private static final LabelType[]   COMBO_VALUES = { LabelType.INTERVAL,
             LabelType.SET,
@@ -80,7 +80,7 @@ public class HierarchyWizardPageLabels extends WizardPage {
         compositeL.numColumns = 2;
         composite.setLayout(compositeL);
 
-        editor = new HierarchyView(composite, model.getAttribute());
+        editor = new ViewHierarchy(composite, model.getAttribute());
         final GridData d = SWTUtil.createFillGridData();
         d.horizontalSpan = 2;
         editor.setLayoutData(d);

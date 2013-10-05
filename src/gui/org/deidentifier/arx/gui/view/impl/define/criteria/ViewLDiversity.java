@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-public class LDiversityView extends CriterionView{
+public class ViewLDiversity extends ViewCriterion{
 
 	private static final String    VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -46,7 +46,7 @@ public class LDiversityView extends CriterionView{
     private Label                  labelL;
     private String 				   attribute;
 
-    public LDiversityView(final Composite parent,
+    public ViewLDiversity(final Composite parent,
                           final Controller controller,
                           final Model model) {
     	

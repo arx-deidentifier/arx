@@ -52,7 +52,7 @@ import cern.colt.Arrays;
  * 
  * @author prasser
  */
-public class ListView implements IView {
+public class ViewList implements IView {
 
     /** The optimum */
     private ARXNode             optimum;
@@ -84,7 +84,7 @@ public class ListView implements IView {
      * @param parent
      * @param controller
      */
-    public ListView(final Composite parent, final Controller controller) {
+    public ViewList(final Composite parent, final Controller controller) {
 
         // Listen
         controller.addListener(ModelPart.SELECTED_NODE, this);

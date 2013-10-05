@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-public class PropertiesView implements IView {
+public class ViewProperties implements IView {
 
     private class InputContentProvider implements ITreeContentProvider {
 
@@ -253,7 +253,7 @@ public class PropertiesView implements IView {
 
     private final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
-    public PropertiesView(final Composite parent,
+    public ViewProperties(final Composite parent,
                           final Controller controller,
                           final ModelPart target,
                           final ModelPart reset) {

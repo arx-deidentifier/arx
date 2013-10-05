@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class CriteriaListView implements IView {
+public class ViewCriteriaList implements IView {
 
     private Controller  controller;
     private Model       model = null;
@@ -50,7 +50,7 @@ public class CriteriaListView implements IView {
     private Image       symbolK;
     private Image       symbolD;
 
-    public CriteriaListView(final Composite parent, final Controller controller) {
+    public ViewCriteriaList(final Composite parent, final Controller controller) {
 
         // Register
         this.controller = controller;

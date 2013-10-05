@@ -28,7 +28,6 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
@@ -45,14 +44,14 @@ import org.eclipse.swt.widgets.ToolItem;
  * A view on a <code>Data</code> object
  * @author Prasser, Kohlmayer
  */
-public class DataView implements IDataView, IView {
+public class ViewData implements IView {
 
     private final Image       IMAGE_INSENSITIVE;
     private final Image       IMAGE_SENSITIVE;
     private final Image       IMAGE_QUASI_IDENTIFYING;
     private final Image       IMAGE_IDENTIFYING;
 
-    private final DataTable   table;
+    private final ComponentDataTable   table;
     private final ModelPart target;
     private final ModelPart reset;
     private final Controller  controller;
@@ -70,7 +69,7 @@ public class DataView implements IDataView, IView {
      * @param target
      * @param reset
      */
-    public DataView(final Composite parent,
+    public ViewData(final Composite parent,
                     final Controller controller,
                     final String title,
                     final ModelPart target,
@@ -96,7 +95,7 @@ public class DataView implements IDataView, IView {
         IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
 
         // Create title bar
-        TitleBar bar = new TitleBar("id-140");
+        ComponentTitleBar bar = new ComponentTitleBar("id-140");
         bar.add(Resources.getMessage("DataView.0"), //$NON-NLS-1$
                 controller.getResources().getImage("sort_none.png"),
                 new Runnable() {
@@ -131,7 +130,7 @@ public class DataView implements IDataView, IView {
                 });
         
         // Build border
-        TitledFolder folder = new TitledFolder(parent, controller, bar, null);
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillGridData());
         Composite c = folder.createItem(title, null);
         folder.setSelection(0);
@@ -140,7 +139,7 @@ public class DataView implements IDataView, IView {
         c.setLayout(l);
         
         // Build table
-        table = new DataTable(controller, c);
+        table = new ComponentDataTable(controller, c);
         table.addSelectionLayerListener(new ILayerListener(){
             @Override
             public void handleLayerEvent(ILayerEvent arg0) {
@@ -199,7 +198,6 @@ public class DataView implements IDataView, IView {
         }
     }
 
-    @Override
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
@@ -214,7 +212,6 @@ public class DataView implements IDataView, IView {
         table.dispose();
     }
 
-    @Override
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }

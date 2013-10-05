@@ -26,7 +26,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class CriterionView implements IView {
+public abstract class ViewCriterion implements IView {
 
 	protected static final int SLIDER_MAX = 1000;
 	protected static final int LABEL_WIDTH = 50;
@@ -35,7 +35,7 @@ public abstract class CriterionView implements IView {
 	protected Model model;
 	protected Composite root;
 
-	public CriterionView(final Composite parent, final Controller controller,
+	public ViewCriterion(final Composite parent, final Controller controller,
 			final Model model) {
 		this.controller = controller;
 		this.controller.addListener(ModelPart.MODEL, this);

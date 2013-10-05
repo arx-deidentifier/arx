@@ -25,20 +25,21 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
+import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class ExploreView {
+public class LayoutExplore implements ILayout {
 
     private final Composite root;
     private ModelNodeFilter filter;
     private ARXResult       result;
 
-    public ExploreView(final Composite parent, final Controller controller) {
+    public LayoutExplore(final Composite parent, final Controller controller) {
 
         // Create top composite
         root = new Composite(parent, SWT.NONE);
@@ -56,7 +57,7 @@ public class ExploreView {
         });
 
         // Create top composite
-        TitledFolder folder = new TitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
+        ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
         
         // Lattice
@@ -64,14 +65,14 @@ public class ExploreView {
                                             controller.getResources().getImage("explore_lattice.png")); //$NON-NLS-1$
         
         item1.setLayoutData(SWTUtil.createFillGridData());
-        new LatticeView(item1, controller);
+        new ViewLattice(item1, controller);
         
         // List
         Composite item2 = folder.createItem(Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ 
                                             controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
         
         item2.setLayoutData(SWTUtil.createFillGridData());
-        new ListView(item2, controller);
+        new ViewList(item2, controller);
         
         // Select
         folder.setSelection(0);
@@ -84,9 +85,9 @@ public class ExploreView {
         bottom.setLayout(bottomLayout);
 
         // Create viewers
-        new NodeFilterView(bottom, controller);
-        new NodeClipboardView(bottom, controller);
-        new NodePropertiesView(bottom, controller);
+        new ViewFilter(bottom, controller);
+        new ViewClipboard(bottom, controller);
+        new ViewProperties(bottom, controller);
 
     }
 }

@@ -22,9 +22,8 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IDataView;
-import org.deidentifier.arx.gui.view.def.IStatisticsView;
-import org.deidentifier.arx.gui.view.impl.common.DataView;
+import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.impl.common.ViewData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,15 +34,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class AnalyzeView {
+public class LayoutAnalyze implements ILayout {
 
     private class Synchronizer implements Runnable {
-        final IDataView in;
-        final IDataView out;
+        final ViewData in;
+        final ViewData out;
         Boolean         stop     = false;
         Runnable        runnable = null;
 
-        public Synchronizer(final IDataView in, final IDataView out) {
+        public Synchronizer(final ViewData in, final ViewData out) {
             this.in = in;
             this.out = out;
             runnable = new Runnable() {
@@ -60,7 +59,7 @@ public class AnalyzeView {
             new Thread(this).start();
         }
 
-        public IDataView getIn() {
+        public ViewData getIn() {
             return in;
         }
 
@@ -110,17 +109,17 @@ public class AnalyzeView {
     private final Composite       bottomLeft;
 
     private final Composite       bottomRight;
-    private final IDataView       dataInputView;
-    private final IDataView       dataOutputView;
+    private final ViewData        dataInputView;
+    private final ViewData        dataOutputView;
 
-    private final IStatisticsView statisticsInputView;
-    private final IStatisticsView statisticsOutputView;
+    private final LayoutStatistics statisticsInputLayout;
+    private final LayoutStatistics statisticsOutputLayout;
 
     private final SashForm        centerSash;
 
     private Synchronizer          synchronizer      = null;
 
-    public AnalyzeView(final Composite parent, final Controller controller) {
+    public LayoutAnalyze(final Composite parent, final Controller controller) {
 
         // Create the SashForm with HORIZONTAL
         centerSash = new SashForm(parent, SWT.VERTICAL);
@@ -142,12 +141,12 @@ public class AnalyzeView {
         centerRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        dataInputView = new DataView(centerLeft,
+        dataInputView = new ViewData(centerLeft,
                                      controller,
                                      Resources.getMessage("AnalyzeView.1"), //$NON-NLS-1$
                                      ModelPart.INPUT,
                                      null);
-        dataOutputView = new DataView(centerRight,
+        dataOutputView = new ViewData(centerRight,
                                       controller,
                                       Resources.getMessage("AnalyzeView.0"), //$NON-NLS-1$
                                       ModelPart.OUTPUT,
@@ -197,26 +196,26 @@ public class AnalyzeView {
         bottomRight = new Composite(bottomSash, SWT.NONE);
         bottomRight.setLayout(new FillLayout());
 
-        statisticsInputView = new StatisticsView(bottomLeft,
+        statisticsInputLayout = new LayoutStatistics(bottomLeft,
                                                  controller,
                                                  ModelPart.INPUT,
                                                  null);
-        statisticsOutputView = new StatisticsView(bottomRight,
+        statisticsOutputLayout = new LayoutStatistics(bottomRight,
                                                   controller,
                                                   ModelPart.OUTPUT,
                                                   ModelPart.INPUT);
 
         // Sync folders
-        statisticsInputView.addSelectionListener(new SelectionAdapter() {
+        statisticsInputLayout.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                statisticsOutputView.setSelectionIdex(statisticsInputView.getSelectionIndex());
+                statisticsOutputLayout.setSelectionIdex(statisticsInputLayout.getSelectionIndex());
             }
         });
-        statisticsOutputView.addSelectionListener(new SelectionAdapter() {
+        statisticsOutputLayout.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                statisticsInputView.setSelectionIdex(statisticsOutputView.getSelectionIndex());
+                statisticsInputLayout.setSelectionIdex(statisticsOutputLayout.getSelectionIndex());
             }
         });
 
@@ -231,7 +230,7 @@ public class AnalyzeView {
      * @param in
      * @param out
      */
-    protected void synchronize(final IDataView in, final IDataView out) {
+    protected void synchronize(final ViewData in, final ViewData out) {
 
         synchronized (this) {
             if ((synchronizer != null) && (synchronizer.getIn() != in)) {

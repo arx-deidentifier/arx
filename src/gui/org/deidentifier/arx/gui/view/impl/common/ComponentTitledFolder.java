@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -36,15 +37,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class TitledFolder {
+public class ComponentTitledFolder implements IComponent {
     
     private final CTabFolder folder;
 
-    public TitledFolder(Composite parent, Controller controller, TitleBar bar, String id){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id){
         this(parent, controller, bar, id, false);
     }
 
-    public TitledFolder(Composite parent, Controller controller, TitleBar bar, String id, boolean bottom){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id, boolean bottom){
 
         int flags = SWT.BORDER | SWT.FLAT;
         if (bottom) flags |= SWT.BOTTOM;
@@ -112,7 +113,7 @@ public class TitledFolder {
         folder.setSelection(index);
     }
 
-    private void createBar(final Controller controller, final CTabFolder folder, final TitleBar bar) {
+    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitleBar bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
         

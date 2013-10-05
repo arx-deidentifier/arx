@@ -24,7 +24,7 @@ import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Listener;
 
-public interface IDataTable {
+public interface IComponentDataTable {
 
     public abstract void addScrollBarListener(Listener listener);
     

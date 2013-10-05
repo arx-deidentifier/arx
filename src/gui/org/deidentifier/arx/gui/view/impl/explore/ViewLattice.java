@@ -75,7 +75,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author prasser
  */
-public class LatticeView extends Panel implements IView {
+public class ViewLattice extends Panel implements IView {
 
     private static class Bounds implements Serializable {
         private static final long serialVersionUID = -7472570696920782588L;
@@ -230,7 +230,7 @@ public class LatticeView extends Panel implements IView {
      * @param parent
      * @param controller
      */
-    public LatticeView(final Composite parent, final Controller controller) {
+    public ViewLattice(final Composite parent, final Controller controller) {
 
         // Listen
         controller.addListener(ModelPart.SELECTED_NODE, this);

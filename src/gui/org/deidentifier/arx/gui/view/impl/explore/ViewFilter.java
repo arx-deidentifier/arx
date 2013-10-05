@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class NodeFilterView implements IView {
+public class ViewFilter implements IView {
 
     private static final int SCALE_MAX_VALUE = 1000;
     
@@ -70,7 +70,7 @@ public class NodeFilterView implements IView {
     private Model            model;
     private final Composite  root;
 
-    public NodeFilterView(final Composite parent, final Controller controller) {
+    public ViewFilter(final Composite parent, final Controller controller) {
 
         this.controller = controller;
         this.controller.addListener(ModelPart.RESULT, this);
@@ -83,7 +83,7 @@ public class NodeFilterView implements IView {
         IMG_ORANGE = controller.getResources().getImage("orange.gif"); //$NON-NLS-1$
 
         // Create group
-        TitledBorder border = new TitledBorder(parent, controller, Resources.getMessage("NodeFilterView.3"), "id-21"); //$NON-NLS-1$
+        ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, Resources.getMessage("NodeFilterView.3"), "id-21"); //$NON-NLS-1$
         root = new Composite(border.getControl(), SWT.NONE);
         border.setChild(root);
         border.setLayoutData(SWTUtil.createFillGridData());

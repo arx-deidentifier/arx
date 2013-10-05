@@ -23,16 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.swt.graphics.Image;
 
-public class TitleBar {
+public class ComponentTitleBar implements IComponent{
     
     private List<String> titles = new ArrayList<String>();
     private Map<String, Image> images = new HashMap<String, Image>();
     private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
     private String id;
     
-    public TitleBar(String id) {    
+    public ComponentTitleBar(String id) {    
         this.id = id;
     }
 

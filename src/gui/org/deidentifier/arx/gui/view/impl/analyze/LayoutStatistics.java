@@ -21,27 +21,27 @@ package org.deidentifier.arx.gui.view.impl.analyze;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.def.IStatisticsView;
-import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
+import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class StatisticsView implements IStatisticsView {
+public class LayoutStatistics implements ILayout {
 
     private static final String TAB_DISTRIBUTION = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
     private static final String TAB_HEATMAP      = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
     private static final String TAB_PROPERTIES   = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
-    private final TitledFolder     folder;
+    private final ComponentTitledFolder     folder;
 
-    public StatisticsView(final Composite parent,
+    public LayoutStatistics(final Composite parent,
                           final Controller controller,
                           final ModelPart target,
                           final ModelPart reset) {
 
         // Create the tab folder
-        folder = new TitledFolder(parent, controller, null, "id-50");
+        folder = new ComponentTitledFolder(parent, controller, null, "id-50");
         final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
         item1.setLayout(new FillLayout());
         final Composite item2 = folder.createItem(TAB_HEATMAP, null);
@@ -51,22 +51,19 @@ public class StatisticsView implements IStatisticsView {
         folder.setSelection(0);
 
         // Create the views
-        new DistributionView(item1, controller, target, reset);
-        new DensityView(item2, controller, target, reset);
-        new PropertiesView(item3, controller, target, reset);
+        new ViewDistribution(item1, controller, target, reset);
+        new ViewDensity(item2, controller, target, reset);
+        new ViewProperties(item3, controller, target, reset);
     }
 
-    @Override
     public void addSelectionListener(final SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
 
-    @Override
     public int getSelectionIndex() {
         return folder.getSelectionIndex();
     }
 
-    @Override
     public void setSelectionIdex(final int index) {
         folder.setSelection(index);
     }

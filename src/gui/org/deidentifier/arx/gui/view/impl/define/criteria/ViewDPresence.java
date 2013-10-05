@@ -34,14 +34,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-public class DPresenceView extends CriterionView{
+public class ViewDPresence extends ViewCriterion{
 
     private Scale                  sliderDMin;
     private Scale                  sliderDMax;
     private Label                  labelDMin;
     private Label                  labelDMax;
 
-    public DPresenceView(final Composite parent,
+    public ViewDPresence(final Composite parent,
                          final Controller controller,
                          final Model model) {
 

@@ -53,7 +53,7 @@ import org.swtchart.ISeriesSet;
 import org.swtchart.ITitle;
 import org.swtchart.Range;
 
-public class DistributionView implements IView {
+public class ViewDistribution implements IView {
 
     private static final int            MAX_DIMENSION = 500;
 
@@ -66,7 +66,7 @@ public class DistributionView implements IView {
     private final Map<String, double[]> cachedCounts  = new HashMap<String, double[]>();
     private Model                       model;
 
-    public DistributionView(final Composite parent,
+    public ViewDistribution(final Composite parent,
                             final Controller controller,
                             final ModelPart target,
                             final ModelPart reset) {

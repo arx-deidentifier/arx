@@ -31,7 +31,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import cern.colt.Arrays;
 
-public class NodeClipboardView implements IView {
+public class ViewClipboard implements IView {
 
     private static final int        NODE_COMMENT = 111;
     private final Table             table;
@@ -58,7 +58,7 @@ public class NodeClipboardView implements IView {
     private final Composite         root;
     private final Controller        controller;
 
-    public NodeClipboardView(final Composite parent, final Controller controller) {
+    public ViewClipboard(final Composite parent, final Controller controller) {
 
         // Listen
         controller.addListener(ModelPart.CLIPBOARD, this);
@@ -67,7 +67,7 @@ public class NodeClipboardView implements IView {
         this.controller = controller;
 
         // Create group
-        TitledBorder border = new TitledBorder(parent, controller, Resources.getMessage("NodeClipboardView.0"), "id-23"); //$NON-NLS-1$
+        ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, Resources.getMessage("NodeClipboardView.0"), "id-23"); //$NON-NLS-1$
         root = new Composite(border.getControl(), SWT.NONE);
         border.setChild(root);
         border.setLayoutData(SWTUtil.createFillGridData());

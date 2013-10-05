@@ -49,7 +49,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-public class DensityView implements IView {
+public class ViewDensity implements IView {
 
     private static final int           MAX_DIMENSION = 500;
 
@@ -61,7 +61,7 @@ public class DensityView implements IView {
     private final Controller           controller;
     private Model                      model;
 
-    public DensityView(final Composite parent,
+    public ViewDensity(final Composite parent,
                        final Controller controller,
                        final ModelPart target,
                        final ModelPart reset) {

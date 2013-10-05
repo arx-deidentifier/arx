@@ -34,12 +34,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-public class KAnonymityView extends CriterionView {
+public class ViewKAnonymity extends ViewCriterion {
 
 	private Label labelK;
 	private Scale sliderK;
 
-	public KAnonymityView(final Composite parent, final Controller controller,
+	public ViewKAnonymity(final Composite parent, final Controller controller,
 			final Model model) {
 
 		super(parent, controller, model);

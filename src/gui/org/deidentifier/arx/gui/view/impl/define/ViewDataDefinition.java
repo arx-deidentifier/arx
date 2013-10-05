@@ -39,7 +39,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class DataDefinitionView implements IView {
+public class ViewDataDefinition implements IView {
 
     private final Controller           controller;
     private final CTabFolder           folder;
@@ -47,7 +47,7 @@ public class DataDefinitionView implements IView {
     private final Set<IView>           views = new HashSet<IView>();
     private Model                      model;
 
-    public DataDefinitionView(final Composite parent,
+    public ViewDataDefinition(final Composite parent,
                               final Controller controller) {
 
         // Register
@@ -143,7 +143,7 @@ public class DataDefinitionView implements IView {
                                         .getInput()
                                         .getHandle()
                                         .getAttributeName(i);
-                final IView l = new AttributeDefinitionView(folder,
+                final IView l = new ViewAttributeDefinition(folder,
                                                             col,
                                                             controller);
                 l.update(new ModelEvent(this, ModelPart.MODEL, model));

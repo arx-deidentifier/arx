@@ -27,15 +27,15 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.TitleBar;
-import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class SubsetDefinitionView implements IView{
+public class ViewSubsetDefinition implements IView{
 
     private Controller controller;
     private Composite root;
@@ -53,7 +53,7 @@ public class SubsetDefinitionView implements IView{
     
     private DecimalFormat format = new DecimalFormat("##0.00");
     
-    public SubsetDefinitionView(final Composite parent,
+    public ViewSubsetDefinition(final Composite parent,
                                 final Controller controller) {
 
         this.controller = controller;
@@ -65,7 +65,7 @@ public class SubsetDefinitionView implements IView{
 
     private Composite build(Composite parent) {
 
-        TitleBar bar = new TitleBar("id-40");
+        ComponentTitleBar bar = new ComponentTitleBar("id-40");
         bar.add(Resources.getMessage("SubsetDefinitionView.1"), 
                 controller.getResources().getImage("page_white.png"),
                 new Runnable() {
@@ -99,7 +99,7 @@ public class SubsetDefinitionView implements IView{
                     }
                 });
         
-        TitledFolder folder = new TitledFolder(parent, controller, bar, null);
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Composite group = folder.createItem(Resources.getMessage("SubsetDefinitionView.0"), null);
         folder.setSelection(0);

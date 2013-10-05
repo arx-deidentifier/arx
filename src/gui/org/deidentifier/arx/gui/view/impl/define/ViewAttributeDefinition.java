@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-public class AttributeDefinitionView implements IView {
+public class ViewAttributeDefinition implements IView {
 
     private final Image                 IMAGE_INSENSITIVE;
     private final Image                 IMAGE_SENSITIVE;
@@ -79,10 +79,10 @@ public class AttributeDefinitionView implements IView {
     private String                       attribute     = null;
     private final CTabItem               tab;
     private Model                        model;
-    private final HierarchyView          editor;
+    private final ViewHierarchy          editor;
     private final Controller             controller;
 
-    public AttributeDefinitionView(final CTabFolder parent,
+    public ViewAttributeDefinition(final CTabFolder parent,
                                    final String attribute,
                                    final Controller controller) {
 
@@ -214,7 +214,7 @@ public class AttributeDefinitionView implements IView {
         });
 
         // Editor hierarchy
-        editor = new HierarchyView(group, attribute, controller);
+        editor = new ViewHierarchy(group, attribute, controller);
 
         // Attach to tab
         tab.setControl(group);

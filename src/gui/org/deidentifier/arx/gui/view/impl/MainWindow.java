@@ -35,10 +35,10 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.analyze.AnalyzeView;
-import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
-import org.deidentifier.arx.gui.view.impl.define.DefinitionView;
-import org.deidentifier.arx.gui.view.impl.explore.ExploreView;
+import org.deidentifier.arx.gui.view.impl.analyze.LayoutAnalyze;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
+import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.CriterionSelectionDialog;
 import org.deidentifier.arx.gui.view.impl.menu.QueryDialog;
 import org.deidentifier.arx.gui.view.impl.menu.QueryDialogResult;
@@ -72,7 +72,7 @@ public class MainWindow implements IMainWindow, IView {
     private final MainToolTip   tooltip;
     private final MainPopUp     popup;
 
-    private final TitledFolder  root;
+    private final ComponentTitledFolder  root;
 
     public MainWindow() {
 
@@ -110,7 +110,7 @@ public class MainWindow implements IMainWindow, IView {
         shell.setLayout(SWTUtil.createGridLayout(1));
 
         // Create the tab folder
-        root = new TitledFolder(shell, controller, null, "id-70");
+        root = new ComponentTitledFolder(shell, controller, null, "id-70");
         root.setLayoutData(SWTUtil.createFillGridData());
         
         // TODO: Remove? Fixes an SWT Bug!
@@ -118,11 +118,11 @@ public class MainWindow implements IMainWindow, IView {
 
         // Create the subviews
         Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png"));  //$NON-NLS-1$
-        new DefinitionView(item1, controller);
+        new LayoutDefinition(item1, controller);
         Composite item2 = root.createItem(TAB_EXPLORE_SEARCHSPACE, controller.getResources().getImage("perspective_explore.png"));  //$NON-NLS-1$
-        new ExploreView(item2, controller);
+        new LayoutExplore(item2, controller);
         Composite item3 = root.createItem(TAB_ANALYZE_DATA, controller.getResources().getImage("perspective_analyze.png"));  //$NON-NLS-1$
-        new AnalyzeView(item3, controller);
+        new LayoutAnalyze(item3, controller);
         
         // Now reset and disable
         controller.reset();

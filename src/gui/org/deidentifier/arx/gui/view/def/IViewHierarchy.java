@@ -18,13 +18,12 @@
 
 package org.deidentifier.arx.gui.view.def;
 
-import org.eclipse.swt.events.SelectionListener;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 
-public interface IStatisticsView {
+public interface IViewHierarchy {
 
-    void addSelectionListener(SelectionListener listener);
+    void setHierarchy(Hierarchy hierarchy);
 
-    int getSelectionIndex();
+    void setLayoutData(Object d);
 
-    void setSelectionIdex(int index);
 }

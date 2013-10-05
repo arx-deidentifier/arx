@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IHierarchyEditorView;
+import org.deidentifier.arx.gui.view.def.IViewHierarchy;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Prasser, Kohlmayer, Xhani, Dshevlekov
  * 
  */
-public class HierarchyView implements IHierarchyEditorView, IView {
+public class ViewHierarchy implements IViewHierarchy, IView {
 
     private static final String ITEM_ALL  = Resources.getMessage("HierarchyView.0"); //$NON-NLS-1$
 
@@ -110,7 +110,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
      * @param parent
      * @param attribute
      */
-    public HierarchyView(final Composite parent, final String attribute) {
+    public ViewHierarchy(final Composite parent, final String attribute) {
 
         this.attribute = attribute;
         editable = false;
@@ -125,7 +125,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
      * @param attribute
      * @param controller
      */
-    public HierarchyView(final Composite parent,
+    public ViewHierarchy(final Composite parent,
                          final String attribute,
                          final Controller controller) {
 

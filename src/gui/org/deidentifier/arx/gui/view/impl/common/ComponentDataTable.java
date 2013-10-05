@@ -25,7 +25,8 @@ import java.util.Map;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.view.def.IDataTable;
+import org.deidentifier.arx.gui.view.def.IComponent;
+import org.deidentifier.arx.gui.view.def.IComponentDataTable;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
@@ -88,7 +89,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
-public class DataTable implements IDataTable {
+public class ComponentDataTable implements IComponentDataTable, IComponent {
     /**
      * Paints an image. If no image is provided, it will attempt to look up an
      * image from the cell style.
@@ -606,7 +607,7 @@ public class DataTable implements IDataTable {
     private DataGridLayer      gridLayer;
     private List<ILayerListener>  selectionLayerListeners = new ArrayList<ILayerListener>();
     
-    public DataTable(final Controller controller, final Composite parent) {
+    public ComponentDataTable(final Controller controller, final Composite parent) {
         IMAGE_COL_BACK = controller.getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
         IMAGE_ROW_BACK = controller.getResources().getImage("row_header_bg.png"); //$NON-NLS-1$
         IMAGE_COL_SELECT = controller.getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$

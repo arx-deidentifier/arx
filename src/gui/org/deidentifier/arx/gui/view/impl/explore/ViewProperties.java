@@ -32,7 +32,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class NodePropertiesView implements IView {
+public class ViewProperties implements IView {
 
     private ARXResult               result;
     private Table                   table;
@@ -52,7 +52,7 @@ public class NodePropertiesView implements IView {
     private final Composite         root;
     private final Controller        controller;
 
-    public NodePropertiesView(final Composite parent,
+    public ViewProperties(final Composite parent,
                               final Controller controller) {
 
         controller.addListener(ModelPart.RESULT, this);
@@ -60,7 +60,7 @@ public class NodePropertiesView implements IView {
         this.controller = controller;
 
         // Create group
-        TitledBorder border = new TitledBorder(parent, controller, Resources.getMessage("NodePropertiesView.0"), "id-22"); //$NON-NLS-1$
+        ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, Resources.getMessage("NodePropertiesView.0"), "id-22"); //$NON-NLS-1$
         root = new Composite(border.getControl(), SWT.NONE);
         border.setChild(root);
         border.setLayoutData(SWTUtil.createFillGridData());
