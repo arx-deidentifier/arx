@@ -96,14 +96,6 @@ public class ViewData implements IView {
 
         // Create title bar
         ComponentTitleBar bar = new ComponentTitleBar("id-140");
-        bar.add(Resources.getMessage("DataView.0"), //$NON-NLS-1$
-                controller.getResources().getImage("sort_none.png"),
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        
-                    }
-                });
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
                 controller.getResources().getImage("sort_column.png"),
                 new Runnable() {
