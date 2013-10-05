@@ -24,7 +24,7 @@ import java.util.List;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
-public class HierarchyWizardModel {
+public class WizardHierarchyModel {
 
     private final int          rows;
     private List<Integer>      fanout;
@@ -34,7 +34,7 @@ public class HierarchyWizardModel {
     private final DataType     datatype;
     private final String       suppressionString;
 
-    public HierarchyWizardModel(final String attribute,
+    public WizardHierarchyModel(final String attribute,
                                 final DataType datatype,
                                 final String suppressionString,
                                 final String[] items) {

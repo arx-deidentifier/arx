@@ -27,19 +27,19 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class HierarchyWizard extends Wizard implements IWizard {
+public class WizardHierarchy extends Wizard implements IWizard {
 
-    private final HierarchyWizardModel model;
+    private final WizardHierarchyModel model;
     private WizardDialog               dialog;
     private final Controller           controller;
 
-    public HierarchyWizard(final Controller controller,
+    public WizardHierarchy(final Controller controller,
                            final String attribute,
                            final DataType datatype,
                            final String suppressionString,
                            final String[] items) {
         super();
-        model = new HierarchyWizardModel(attribute,
+        model = new WizardHierarchyModel(attribute,
                                          datatype,
                                          suppressionString,
                                          items);
@@ -51,9 +51,9 @@ public class HierarchyWizard extends Wizard implements IWizard {
 
     @Override
     public void addPages() {
-        final HierarchyWizardPageLabels check = new HierarchyWizardPageLabels(model);
-        addPage(new HierarchyWizardPageOrder(controller, model));
-        addPage(new HierarchyWizardPageFanout(model));
+        final WizardHierarchyPageLabels check = new WizardHierarchyPageLabels(model);
+        addPage(new WizardHierarchyPageOrder(controller, model));
+        addPage(new WizardHierarchyPageFanout(model));
         addPage(check);
     }
 
@@ -63,7 +63,7 @@ public class HierarchyWizard extends Wizard implements IWizard {
                (dialog.getCurrentPage() == getPages()[2]);
     }
 
-    public HierarchyWizardModel getModel() {
+    public WizardHierarchyModel getModel() {
         return model;
     }
 

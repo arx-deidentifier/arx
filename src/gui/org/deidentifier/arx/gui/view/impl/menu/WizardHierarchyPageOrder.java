@@ -42,16 +42,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 
-public class HierarchyWizardPageOrder extends WizardPage {
+public class WizardHierarchyPageOrder extends WizardPage {
 
-    private final HierarchyWizardModel model;
+    private final WizardHierarchyModel model;
     private List                       list;
     private final int                  order = 1;
     private final Controller           controller;
     private String                     format;
 
-    public HierarchyWizardPageOrder(final Controller controller,
-                                    final HierarchyWizardModel model) {
+    public WizardHierarchyPageOrder(final Controller controller,
+                                    final WizardHierarchyModel model) {
         super(""); //$NON-NLS-1$
         this.model = model;
         this.controller = controller;

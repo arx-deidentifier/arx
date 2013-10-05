@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-public class HierarchyWizardPageLabels extends WizardPage {
+public class WizardHierarchyPageLabels extends WizardPage {
 
     private static enum LabelType {
         INTERVAL,
@@ -49,7 +49,7 @@ public class HierarchyWizardPageLabels extends WizardPage {
         PREFIXES4
     }
 
-    private final HierarchyWizardModel model;
+    private final WizardHierarchyModel model;
     private IViewHierarchy       editor;
     private static final String[]      COMBO_LABELS = { Resources.getMessage("HierarchyWizardPageLabels.0"), Resources.getMessage("HierarchyWizardPageLabels.1"), Resources.getMessage("HierarchyWizardPageLabels.2"), Resources.getMessage("HierarchyWizardPageLabels.3"), Resources.getMessage("HierarchyWizardPageLabels.4"), Resources.getMessage("HierarchyWizardPageLabels.5") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     private static final LabelType[]   COMBO_VALUES = { LabelType.INTERVAL,
@@ -60,7 +60,7 @@ public class HierarchyWizardPageLabels extends WizardPage {
             LabelType.PREFIXES4                    };
     private LabelType                  labelType    = LabelType.INTERVAL;
 
-    public HierarchyWizardPageLabels(final HierarchyWizardModel model) {
+    public WizardHierarchyPageLabels(final WizardHierarchyModel model) {
         super(""); //$NON-NLS-1$
         this.model = model;
         setTitle(Resources.getMessage("HierarchyWizardPageLabels.7")); //$NON-NLS-1$

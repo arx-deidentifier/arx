@@ -58,7 +58,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
-import org.deidentifier.arx.gui.view.impl.menu.HierarchyWizard;
+import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
@@ -301,7 +301,7 @@ public class Controller implements IView {
                                .getInput()
                                .getHandle()
                                .getColumnIndexOf(attr);
-        final HierarchyWizard i = new HierarchyWizard(this,
+        final WizardHierarchy i = new WizardHierarchy(this,
                                                       attr,
                                                       model.getInputConfig()
                                                            .getInput()

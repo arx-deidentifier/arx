@@ -42,17 +42,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-public class HierarchyWizardPageFanout extends WizardPage{
+public class WizardHierarchyPageFanout extends WizardPage{
 
     private static final int                LABEL_WIDTH = 35;
     private int                             max         = 15;
     private final Combo[]                   combos      = new Combo[max - 1];
     private final Label[]                   labels1     = new Label[max];
     private final Label[]                   labels3     = new Label[max];
-    private final HierarchyWizardModel      model;
+    private final WizardHierarchyModel      model;
     private Text                            field;
 
-    public HierarchyWizardPageFanout(final HierarchyWizardModel model) {
+    public WizardHierarchyPageFanout(final WizardHierarchyModel model) {
         super(""); //$NON-NLS-1$
         this.model = model;
         setTitle(Resources.getMessage("HierarchyWizardPageFanout.1")); //$NON-NLS-1$
