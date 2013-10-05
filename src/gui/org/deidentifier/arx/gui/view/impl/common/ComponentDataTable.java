@@ -302,7 +302,7 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
                 int row = table.getRowIndexByPosition(rowPosition+1);
                 configLabels.addLabel("background"+rowColors[row]); //$NON-NLS-1$
                 if (row<rowGroups.length-1 && rowGroups[row]!=rowGroups[row+1]){
-                    configLabels.addLabel(DataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
+                    configLabels.addLabel(ComponentDataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
                 }
             } 
             
@@ -928,7 +928,7 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
 
         // Register default cell painter
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, 
-                                                             new DataTableDecorator( new TextPainter(false, true, 0, true),
+                                                             new ComponentDataTableDecorator( new TextPainter(false, true, 0, true),
                                                              new BorderStyle(2, GUIHelper.COLOR_BLACK, LineStyleEnum.SOLID)),
                                                                 DisplayMode.NORMAL,
                                                                 GridRegion.BODY);
