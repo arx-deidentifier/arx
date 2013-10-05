@@ -190,6 +190,7 @@ public class DataView implements IDataView, IView {
                     } else {
                         subset.add(row);
                     }
+                    model.setSubsetManual();
                     controller.update(new ModelEvent(this,
                                                      ModelPart.RESEARCH_SUBSET,
                                                      subset));

@@ -598,6 +598,7 @@ public class Controller implements IView {
         for (int i = 0; i < data.getHandle().getNumRows(); i++) {
             set.add(i);
         }
+        model.setSubsetOrigin("All");
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               set));
@@ -632,6 +633,7 @@ public class Controller implements IView {
         try {
             DataSubset subset = DataSubset.create(data, subsetData);
             model.getInputConfig().setResearchSubset(subset.getRowSet());
+            model.setSubsetOrigin("File");
             update(new ModelEvent(this,
                                   ModelPart.RESEARCH_SUBSET,
                                   subset.getRowSet()));
@@ -644,6 +646,7 @@ public class Controller implements IView {
         Data data = model.getInputConfig().getInput();
         RowSet empty = RowSet.create(data);
         model.getInputConfig().setResearchSubset(empty);
+        model.setSubsetOrigin("None");
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               empty));
@@ -659,6 +662,7 @@ public class Controller implements IView {
         
         this.model.getInputConfig().setResearchSubset(subset.getRowSet());
         this.model.setQuery(result.query);
+        model.setSubsetOrigin("Query");
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getRowSet()));
     }
 

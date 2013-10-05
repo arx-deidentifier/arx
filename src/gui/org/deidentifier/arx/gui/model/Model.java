@@ -83,6 +83,7 @@ public class Model implements Serializable {
     private Map<String, ModelTClosenessCriterion> tClosenessModel      = new HashMap<String, ModelTClosenessCriterion>();
 
     private String                                query = "";
+    private String                                subsetOrigin = "All";
 
 	public Model(final String name, final String description) {
 		this.name = name;
@@ -528,5 +529,19 @@ public class Model implements Serializable {
     
     public void setQuery(String query){
         this.query = query;
+    }
+    
+    public void setSubsetOrigin(String origin){
+        this.subsetOrigin = origin;
+    }
+    
+    public void setSubsetManual(){
+        if (!this.subsetOrigin.endsWith("manual")) {
+            this.subsetOrigin += " + manual";
+        }
+    }
+    
+    public String getSubsetOrigin(){
+        return this.subsetOrigin;
     }
 }

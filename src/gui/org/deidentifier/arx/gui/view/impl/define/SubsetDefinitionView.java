@@ -24,7 +24,7 @@ public class SubsetDefinitionView implements IView{
     private Model model;
     
     private Label size;
-    private Label mode;
+    private Label origin;
     private Label total;
     private Label percent;
 
@@ -110,9 +110,9 @@ public class SubsetDefinitionView implements IView{
         l.setText("%");
         l = new Label(group, SWT.NONE);
         l.setText(Resources.getMessage("SubsetDefinitionView.5"));
-        mode = new Label(group, SWT.BORDER);
-        mode.setText("All + Manual");
-        mode.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        origin = new Label(group, SWT.BORDER);
+        origin.setText("");
+        origin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         all = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.1"));
         none = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.2"));
@@ -174,12 +174,14 @@ public class SubsetDefinitionView implements IView{
 
     private void update() {
         // TODO: Maybe make this a default for all views?
-        
         int size = model.getInputConfig().getResearchSubset().size();
         int total = model.getInputConfig().getInput().getHandle().getNumRows();
         double percent = (double)size / (double)total * 100d;
         this.size.setText(String.valueOf(size));
         this.total.setText(String.valueOf(total));
         this.percent.setText(format.format(percent));
+        if (this.model != null) {
+            this.origin.setText(model.getSubsetOrigin());
+        }
     }
 }
