@@ -427,7 +427,7 @@ public class Model implements Serializable {
 	 */
 	public void setOutput(final DataHandle output, final ARXNode node) {
 		this.output = output;
-		outputNode = node;
+		this.outputNode = node;
 		if (node != null) {
 			outputNodeAsString = Arrays.toString(node.getTransformation());
 		}

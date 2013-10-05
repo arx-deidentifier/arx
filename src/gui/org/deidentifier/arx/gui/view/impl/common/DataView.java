@@ -24,6 +24,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -33,11 +34,11 @@ import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A view on a <code>Data</code> object
@@ -54,6 +55,7 @@ public class DataView implements IDataView, IView {
     private final EventTarget target;
     private final EventTarget reset;
     private final Controller  controller;
+    private final ToolItem    sortButton;
     
     private DataHandle        handle = null;
     private Model             model;
@@ -92,11 +94,46 @@ public class DataView implements IDataView, IView {
         IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
         IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
 
+        // Create title bar
+        TitleBar bar = new TitleBar("id-140");
+        bar.add(Resources.getMessage("DataView.0"), //$NON-NLS-1$
+                controller.getResources().getImage("sort_none.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        
+                    }
+                });
+        bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
+                controller.getResources().getImage("sort_column.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        
+                    }
+                });
+        bar.add(Resources.getMessage("DataView.2"), //$NON-NLS-1$ 
+                controller.getResources().getImage("sort_groups.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        
+                    }
+                });
+        bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
+                controller.getResources().getImage("sort_subset.png"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        
+                    }
+                });
+        
         // Build border
-        TitledBorder border = new TitledBorder(parent, controller, title, "id-40");
-        border.setLayoutData(SWTUtil.createFillGridData());
-        Composite c = new Composite(border.getControl(), SWT.NONE);
-        border.setChild(c);
+        TitledFolder folder = new TitledFolder(parent, controller, bar, null);
+        folder.setLayoutData(SWTUtil.createFillGridData());
+        Composite c = folder.createItem(title, null);
+        folder.setSelection(0);
         GridLayout l = new GridLayout();
         l.numColumns = 1;
         c.setLayout(l);
@@ -113,6 +150,9 @@ public class DataView implements IDataView, IView {
                 }
             }
         });
+        
+        this.sortButton = folder.getBarItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
+        this.sortButton.setEnabled(false);
     }
     
     /**
@@ -258,6 +298,16 @@ public class DataView implements IDataView, IView {
         } else if (event.target == EventTarget.SORT_ORDER) {
             
             table.redraw();
+        }
+        
+        // Enable/Disable sort button
+        if (event.target == EventTarget.OUTPUT ||
+            event.target == EventTarget.INPUT) {
+            if (model != null && model.getOutput()!=null){
+                sortButton.setEnabled(true);
+            } else {
+                sortButton.setEnabled(false);
+            }
         }
     }
 

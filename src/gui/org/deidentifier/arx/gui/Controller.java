@@ -758,6 +758,7 @@ public class Controller implements IView {
         model.resetCriteria();
         model.setColors(null);
         model.setGroups(null);
+        model.setOutput(null, null);
 
         // Display the changes
         update(new ModelEvent(this, EventTarget.MODEL, model));
