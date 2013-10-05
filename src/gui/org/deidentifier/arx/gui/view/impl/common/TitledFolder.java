@@ -101,7 +101,7 @@ public class TitledFolder {
         for (String title : bar.getTitles()){
             
             final String key = title;
-            ToolItem item = new ToolItem( toolbar, SWT.PUSH );
+            ToolItem item = new ToolItem( toolbar, SWT.PUSH);
             item.setImage(bar.getImage(key));
             item.setToolTipText(title);
             item.addSelectionListener(new SelectionAdapter(){

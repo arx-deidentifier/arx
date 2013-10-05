@@ -26,12 +26,8 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent;
 import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,17 +36,17 @@ import org.eclipse.swt.widgets.Listener;
 
 public class ExploreView implements IAttachable {
 
-    private final Composite top;
-    private ModelNodeFilter      filter;
-    private ARXResult     result;
+    private final Composite root;
+    private ModelNodeFilter filter;
+    private ARXResult       result;
 
     public ExploreView(final Composite parent, final Controller controller) {
 
         // Create top composite
-        top = new Composite(parent, SWT.NONE);
-        top.setLayoutData(SWTUtil.createFillGridData());
-        top.setLayout(SWTUtil.createGridLayout(1));
-        top.addListener(SWT.Show, new Listener() {
+        root = new Composite(parent, SWT.NONE);
+        root.setLayoutData(SWTUtil.createFillGridData());
+        root.setLayout(SWTUtil.createGridLayout(1));
+        root.addListener(SWT.Show, new Listener() {
             @Override
             public void handleEvent(final Event arg0) {
                 if ((result != null) && (filter != null)) {
@@ -62,44 +58,28 @@ public class ExploreView implements IAttachable {
         });
 
         // Create top composite
-        final CTabFolder folder = new CTabFolder(top, SWT.BOTTOM | SWT.BORDER);
+        TitledFolder folder = new TitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
-        folder.setUnselectedCloseVisible(false);
-        folder.setSimple(false);
-        folder.setTabHeight(25);
-
-        // Prevent closing
-        folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-            @Override
-            public void close(final CTabFolderEvent event) {
-                event.doit = false;
-            }
-        });
         
-        SWTUtil.createHelpButton(controller, folder, "id-30");
-
         // Lattice
-        final IAttachable v1 = new LatticeView(folder, controller);
-        final CTabItem item1 = new CTabItem(folder, SWT.NONE);
-        item1.setText(Resources.getMessage("ExploreView.0")); //$NON-NLS-1$
-        item1.setControl(v1.getControl());
-        item1.setShowClose(false);
-        item1.setImage(controller.getResources()
-                                 .getImage("explore_lattice.png")); //$NON-NLS-1$
-
+        Composite item1 = folder.createItem(Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ 
+                                            controller.getResources().getImage("explore_lattice.png")); //$NON-NLS-1$
+        
+        item1.setLayoutData(SWTUtil.createFillGridData());
+        new LatticeView(item1, controller);
+        
         // List
-        final IAttachable v2 = new ListView(folder, controller);
-        final CTabItem item2 = new CTabItem(folder, SWT.NONE);
-        item2.setText(Resources.getMessage("ExploreView.2")); //$NON-NLS-1$
-        item2.setControl(v2.getControl());
-        item2.setShowClose(false);
-        item2.setImage(controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
-
+        Composite item2 = folder.createItem(Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ 
+                                            controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
+        
+        item2.setLayoutData(SWTUtil.createFillGridData());
+        new ListView(item2, controller);
+        
         // Select
         folder.setSelection(0);
 
         // Create bottom composite
-        final Composite bottom = new Composite(top, SWT.NONE);
+        final Composite bottom = new Composite(root, SWT.NONE);
         bottom.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout bottomLayout = SWTUtil.createGridLayout(3);
         bottomLayout.makeColumnsEqualWidth = true;
@@ -114,6 +94,6 @@ public class ExploreView implements IAttachable {
 
     @Override
     public Control getControl() {
-        return top;
+        return root;
     }
 }

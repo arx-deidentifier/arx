@@ -94,11 +94,11 @@ public class ListView implements IView, IAttachable {
         controller.addListener(EventTarget.MODEL, this);
 
         this.controller = controller;
-        parent.setLayout(new GridLayout());
 
-        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER |
-                                  SWT.V_SCROLL);
+        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL);
+        table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
+        
         final TableColumn column1 = new TableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
         final TableColumn column4 = new TableColumn(table, SWT.LEFT);
@@ -109,12 +109,11 @@ public class ListView implements IView, IAttachable {
         column3.setText(Resources.getMessage("ListView.4")); //$NON-NLS-1$
 
         table.setItemCount(0);
+        
         column1.pack();
         column2.pack();
         column3.pack();
         column4.pack();
-
-        table.setLayoutData(SWTUtil.createGridData());
     }
 
     @Override
