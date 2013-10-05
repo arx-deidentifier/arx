@@ -79,7 +79,7 @@ public class QueryDialog extends TitleAreaDialog {
                     if (status!=null && !status.isDisposed()){
                         Display.getDefault().asyncExec(new Runnable() {
                             public void run() {
-                                status.setText("Matching items: "+fcount);
+                                status.setText(Resources.getMessage("QueryDialog.8")+fcount); //$NON-NLS-1$
                             }
                         });
                     }
@@ -279,7 +279,7 @@ public class QueryDialog extends TitleAreaDialog {
                     String field = query.substring(start+1, start+length-1);
                     int index = data.getHandle().getColumnIndexOf(field);
                     if (index==-1){
-                        throw new RuntimeException("Unknown field: "+field);
+                        throw new RuntimeException(Resources.getMessage("QueryDialog.7")+field); //$NON-NLS-1$
                     } else {
                         type = data.getHandle().getDataType(field);
                         selector.field(field);
@@ -298,7 +298,7 @@ public class QueryDialog extends TitleAreaDialog {
 
                 @Override
                 public void invalid(int start) {
-                    throw new RuntimeException("Syntax error at: "+start);
+                    throw new RuntimeException(Resources.getMessage("QueryDialog.6")+start); //$NON-NLS-1$
                 }
 
                 @Override
@@ -319,10 +319,10 @@ public class QueryDialog extends TitleAreaDialog {
                 @Override
                 public void value(int start, int length) {
                     if (current == null){
-                        throw new RuntimeException("Missing operator near: "+query.substring(start+1, start+length-1));
+                        throw new RuntimeException(Resources.getMessage("QueryDialog.5")+query.substring(start+1, start+length-1)); //$NON-NLS-1$
                     }
                     if (type == null){
-                        throw new RuntimeException("Missing field for value: "+query.substring(start+1, start+length-1));
+                        throw new RuntimeException(Resources.getMessage("QueryDialog.4")+query.substring(start+1, start+length-1)); //$NON-NLS-1$
                     }
                     Object value = type.fromString(query.substring(start+1, start+length-1));
                     switch(current){
@@ -378,7 +378,7 @@ public class QueryDialog extends TitleAreaDialog {
 
                 private void setCurrent(Operator operator){
                     if (current != null) {
-                        throw new RuntimeException("Syntax error near: "+operator);
+                        throw new RuntimeException(Resources.getMessage("QueryDialog.3")+operator); //$NON-NLS-1$
                     } else {
                         current = operator;
                     }
