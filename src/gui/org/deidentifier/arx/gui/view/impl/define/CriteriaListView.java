@@ -9,7 +9,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -38,8 +38,8 @@ public class CriteriaListView implements IView, IAttachable {
 
         // Register
         this.controller = controller;
-        this.controller.addListener(EventTarget.CRITERION_DEFINITION, this);
-        this.controller.addListener(EventTarget.MODEL, this);
+        this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
+        this.controller.addListener(ModelPart.MODEL, this);
         this.symbolL = controller.getResources().getImage("symbol_l.png"); //$NON-NLS-1$
         this.symbolT = controller.getResources().getImage("symbol_t.png"); //$NON-NLS-1$
         this.symbolK = controller.getResources().getImage("symbol_k.png"); //$NON-NLS-1$
@@ -93,9 +93,9 @@ public class CriteriaListView implements IView, IAttachable {
 
     @Override
     public void update(ModelEvent event) {
-        if (event.target == EventTarget.MODEL) {
+        if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
-        } else if (event.target == EventTarget.CRITERION_DEFINITION) {
+        } else if (event.part == ModelPart.CRITERION_DEFINITION) {
             if (model!=null) {
                 root.setRedraw(false);
                 table.removeAll();

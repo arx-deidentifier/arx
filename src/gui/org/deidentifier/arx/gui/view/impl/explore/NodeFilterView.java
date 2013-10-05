@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -73,10 +73,10 @@ public class NodeFilterView implements IView {
     public NodeFilterView(final Composite parent, final Controller controller) {
 
         this.controller = controller;
-        this.controller.addListener(EventTarget.RESULT, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.controller.addListener(EventTarget.MODEL, this);
-        this.controller.addListener(EventTarget.FILTER, this);
+        this.controller.addListener(ModelPart.RESULT, this);
+        this.controller.addListener(ModelPart.INPUT, this);
+        this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.FILTER, this);
 
         IMG_RED = controller.getResources().getImage("red.gif"); //$NON-NLS-1$
         IMG_GREEN = controller.getResources().getImage("green.gif"); //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class NodeFilterView implements IView {
                         }
                     }
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }
@@ -170,7 +170,7 @@ public class NodeFilterView implements IView {
                         filter.disallowAnonymous();
                     }
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }
@@ -193,7 +193,7 @@ public class NodeFilterView implements IView {
                         filter.disallowNonAnonymous();
                     }
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }
@@ -216,7 +216,7 @@ public class NodeFilterView implements IView {
                         filter.disallowUnknown();
                     }
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }
@@ -235,7 +235,7 @@ public class NodeFilterView implements IView {
                     filter.allowInformationLoss(intToInformationLoss(min.getSelection()),
                                                 filter.getAllowedMaxInformationLoss());
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }
@@ -254,7 +254,7 @@ public class NodeFilterView implements IView {
                     filter.allowInformationLoss(filter.getAllowedMinInformationLoss(),
                                                 intToInformationLoss(max.getSelection()));
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }
@@ -429,7 +429,7 @@ public class NodeFilterView implements IView {
 
         if (model != null) {
             model.setNodeFilter(filter);
-            controller.update(new ModelEvent(this, EventTarget.FILTER, filter));
+            controller.update(new ModelEvent(this, ModelPart.FILTER, filter));
         }
     }
 
@@ -500,15 +500,15 @@ public class NodeFilterView implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.INPUT) {
+        if (event.part == ModelPart.INPUT) {
             reset();
-        } else if (event.target == EventTarget.RESULT) {
+        } else if (event.part == ModelPart.RESULT) {
             initialize(model.getResult(), null);
             SWTUtil.enable(root);
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             reset();
-        } else if (event.target == EventTarget.FILTER) {
+        } else if (event.part == ModelPart.FILTER) {
             // Only update if we receive a new filter
             if ((filter == null) || (model.getNodeFilter() != filter)) {
                 initialize(model.getResult(), model.getNodeFilter());

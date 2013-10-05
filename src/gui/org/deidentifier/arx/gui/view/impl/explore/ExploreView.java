@@ -25,7 +25,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -51,7 +51,7 @@ public class ExploreView implements IAttachable {
             public void handleEvent(final Event arg0) {
                 if ((result != null) && (filter != null)) {
                     controller.update(new ModelEvent(this,
-                                                     EventTarget.FILTER,
+                                                     ModelPart.FILTER,
                                                      filter));
                 }
             }

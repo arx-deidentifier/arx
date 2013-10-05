@@ -1,7 +1,8 @@
 package org.deidentifier.arx.gui.view.def;
 
 public class ModelEvent {
-    public static enum EventTarget {
+    
+    public static enum ModelPart {
         SELECTED_ATTRIBUTE,
         INPUT,
         OUTPUT,
@@ -16,19 +17,19 @@ public class ModelEvent {
         MODEL,
         CLIPBOARD,
         HIERARCHY,
-        CRITERION_DEFINITION, 
-        RESEARCH_SUBSET, 
+        CRITERION_DEFINITION,
+        RESEARCH_SUBSET,
         SORT_ORDER
     }
 
-    public final ModelEvent.EventTarget target;
+    public final ModelPart   part;
     public final Object      data;
     public final Object      source;
 
     public ModelEvent(final Object source,
-                      final ModelEvent.EventTarget target,
+                      final ModelPart target,
                       final Object data) {
-        this.target = target;
+        this.part = target;
         this.data = data;
         this.source = source;
     }

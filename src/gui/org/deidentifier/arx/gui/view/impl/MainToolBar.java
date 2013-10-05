@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -61,10 +61,10 @@ public class MainToolBar implements IView {
         toolBar = new ToolBar(parent, SWT.FLAT);
         toolBar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.controller = controller;
-        controller.addListener(EventTarget.MODEL, this);
-        controller.addListener(EventTarget.SELECTED_NODE, this);
-        controller.addListener(EventTarget.OUTPUT, this);
-        controller.addListener(EventTarget.RESULT, this);
+        controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.SELECTED_NODE, this);
+        controller.addListener(ModelPart.OUTPUT, this);
+        controller.addListener(ModelPart.RESULT, this);
         build();
         toolBar.pack();
     }
@@ -306,7 +306,7 @@ public class MainToolBar implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.SELECTED_NODE) {
+        if (event.part == ModelPart.SELECTED_NODE) {
             if (model.getSelectedNode() != null) {
                 toolBar.setRedraw(false);
                 selectedLabel.setText(Resources.getMessage("MainToolBar.3") + Arrays.toString(model.getSelectedNode().getTransformation())); //$NON-NLS-1$
@@ -314,7 +314,7 @@ public class MainToolBar implements IView {
                 labelLayout();
                 toolBar.setRedraw(true);
             }
-        } else if (event.target == EventTarget.OUTPUT) {
+        } else if (event.part == ModelPart.OUTPUT) {
             if (model.getOutputNode() != null) {
                 toolBar.setRedraw(false);
                 appliedLabel.setText(Resources.getMessage("MainToolBar.4") + Arrays.toString(model.getOutputNode().getTransformation())); //$NON-NLS-1$
@@ -322,7 +322,7 @@ public class MainToolBar implements IView {
                 labelLayout();
                 toolBar.setRedraw(true);
             }
-        } else if (event.target == EventTarget.RESULT) {
+        } else if (event.part == ModelPart.RESULT) {
             if (model.getResult() != null) {
                 toolBar.setRedraw(false);
                 latticeLabel.setText(Resources.getMessage("MainToolBar.5") + String.valueOf(getAnonymousCount(model.getResult().getLattice())) + Resources.getMessage("MainToolBar.6") + String.valueOf(model.getResult().getLattice().getSize())); //$NON-NLS-1$ //$NON-NLS-2$
@@ -336,7 +336,7 @@ public class MainToolBar implements IView {
                 labelLayout();
                 toolBar.setRedraw(true);
             }
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
         }
     }

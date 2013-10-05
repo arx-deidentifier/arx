@@ -54,7 +54,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.menu.AboutDialog;
@@ -82,7 +82,7 @@ public class Controller implements IView {
 
     private final Resources                    resources;
 
-    private final Map<EventTarget, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<EventTarget, Set<IView>>());
+    private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
 
     public Controller(final IMainWindow main) {
         this.main = main;
@@ -108,8 +108,8 @@ public class Controller implements IView {
             int[][] analysis = analyze(model.getOutputConfig().getInput().getDefinition(), worker.getResult());
             model.setColors(analysis[0]);
             model.setGroups(analysis[1]);
-            update(new ModelEvent(this, EventTarget.OUTPUT, worker.getResult()));
-            update(new ModelEvent(this, EventTarget.SORT_ORDER, worker.getResult()));
+            update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
+            update(new ModelEvent(this, ModelPart.SORT_ORDER, worker.getResult()));
         }
     }
 
@@ -123,7 +123,7 @@ public class Controller implements IView {
         } else {
             criterion.setEnabled(true);
         } 
-        update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
+        update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
     }
 
     /**
@@ -163,7 +163,7 @@ public class Controller implements IView {
             return;
         } else {
             ((ModelExplicitCriterion)criterion).pull(element);
-            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
+            update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
         }
     }
 
@@ -190,7 +190,7 @@ public class Controller implements IView {
                 throw new RuntimeException("Invalid type of criterion");
             }
             
-            update(new ModelEvent(this, EventTarget.CRITERION_DEFINITION, criterion));
+            update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
         }
     }
 
@@ -246,8 +246,8 @@ public class Controller implements IView {
             model.getClipboard().clear();
 
             // Update view
-            update(new ModelEvent(this, EventTarget.RESULT, result));
-            update(new ModelEvent(this, EventTarget.CLIPBOARD, null));
+            update(new ModelEvent(this, ModelPart.RESULT, result));
+            update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
                 sort(model.getOutputConfig().getInput().getDefinition(), result.getHandle());
                 int[][] analysis = analyze(model.getOutputConfig().getInput().getDefinition(), result.getHandle());
@@ -256,13 +256,13 @@ public class Controller implements IView {
                 model.setOutput(result.getHandle(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
-                                      EventTarget.OUTPUT,
+                                      ModelPart.OUTPUT,
                                       result.getHandle()));
                 update(new ModelEvent(this,
-                                      EventTarget.SELECTED_NODE,
+                                      ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
                 update(new ModelEvent(this,
-                                      EventTarget.SORT_ORDER,
+                                      ModelPart.SORT_ORDER,
                                       result.getHandle()));
             } else {
                 // Select bottom node
@@ -270,17 +270,17 @@ public class Controller implements IView {
                 model.setSelectedNode(null);
                 model.setColors(null);
                 model.setGroups(null);
-                update(new ModelEvent(this, EventTarget.OUTPUT, null));
-                update(new ModelEvent(this, EventTarget.SELECTED_NODE, null));
+                update(new ModelEvent(this, ModelPart.OUTPUT, null));
+                update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
             }
 
             // TODO: This is an ugly hack to synchronize the analysis views
             // Update selected attribute twice
             update(new ModelEvent(this,
-                                  EventTarget.SELECTED_ATTRIBUTE,
+                                  ModelPart.SELECTED_ATTRIBUTE,
                                   model.getSelectedAttribute()));
             update(new ModelEvent(this,
-                                  EventTarget.SELECTED_ATTRIBUTE,
+                                  ModelPart.SELECTED_ATTRIBUTE,
                                   model.getSelectedAttribute()));
         }
     }
@@ -313,7 +313,7 @@ public class Controller implements IView {
                                                            .getHandle()
                                                            .getDistinctValues(index));
         if (i.open(main.getShell())) {
-            update(new ModelEvent(this, EventTarget.HIERARCHY, i.getModel()
+            update(new ModelEvent(this, ModelPart.HIERARCHY, i.getModel()
                                                                 .getHierarchy()));
         }
     }
@@ -330,7 +330,7 @@ public class Controller implements IView {
             dialog.open();
 
             // Update the title
-            ((IView) main).update(new ModelEvent(this, EventTarget.MODEL, model));
+            ((IView) main).update(new ModelEvent(this, ModelPart.MODEL, model));
         } catch (final Exception e) {
             main.showErrorDialog(Resources.getMessage("Controller.24"), Resources.getMessage("Controller.25")); //$NON-NLS-1$ //$NON-NLS-2$
             getResources().getLogger().info(e);
@@ -467,7 +467,7 @@ public class Controller implements IView {
             } else {
                 final char separator = dialog.getSeparator();
                 final AttributeType h = actionImportHierarchy(path, separator);
-                update(new ModelEvent(this, EventTarget.HIERARCHY, h));
+                update(new ModelEvent(this, ModelPart.HIERARCHY, h));
             }
         }
     }
@@ -488,7 +488,7 @@ public class Controller implements IView {
         // Set project
         reset();
         model = dialog.getProject();
-        update(new ModelEvent(this, EventTarget.MODEL, model));
+        update(new ModelEvent(this, ModelPart.MODEL, model));
     }
 
     public void actionMenuFileOpen() {
@@ -599,7 +599,7 @@ public class Controller implements IView {
             set.add(i);
         }
         update(new ModelEvent(this,
-                              EventTarget.RESEARCH_SUBSET,
+                              ModelPart.RESEARCH_SUBSET,
                               set));
     }
 
@@ -633,7 +633,7 @@ public class Controller implements IView {
             DataSubset subset = DataSubset.create(data, subsetData);
             model.getInputConfig().setResearchSubset(subset.getRowSet());
             update(new ModelEvent(this,
-                                  EventTarget.RESEARCH_SUBSET,
+                                  ModelPart.RESEARCH_SUBSET,
                                   subset.getRowSet()));
         } catch (IllegalArgumentException e){
             main.showErrorDialog("Error!", e.getMessage());
@@ -645,7 +645,7 @@ public class Controller implements IView {
         RowSet empty = RowSet.create(data);
         model.getInputConfig().setResearchSubset(empty);
         update(new ModelEvent(this,
-                              EventTarget.RESEARCH_SUBSET,
+                              ModelPart.RESEARCH_SUBSET,
                               empty));
     }
 
@@ -659,10 +659,10 @@ public class Controller implements IView {
         
         this.model.getInputConfig().setResearchSubset(subset.getRowSet());
         this.model.setQuery(result.query);
-        update(new ModelEvent(this, EventTarget.RESEARCH_SUBSET, subset.getRowSet()));
+        update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getRowSet()));
     }
 
-    public void addListener(final EventTarget target, final IView listener) {
+    public void addListener(final ModelPart target, final IView listener) {
         if (!listeners.containsKey(target)) {
             listeners.put(target, new HashSet<IView>());
         }
@@ -708,9 +708,9 @@ public class Controller implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        final Map<EventTarget, Set<IView>> dlisteners = getListeners();
-        if (dlisteners.get(event.target) != null) {
-            for (final IView listener : dlisteners.get(event.target)) {
+        final Map<ModelPart, Set<IView>> dlisteners = getListeners();
+        if (dlisteners.get(event.part) != null) {
+            for (final IView listener : dlisteners.get(event.part)) {
                 if (listener != event.source) {
                     listener.update(event);
                 }
@@ -762,18 +762,18 @@ public class Controller implements IView {
         model.setOutput(null, null);
 
         // Display the changes
-        update(new ModelEvent(this, EventTarget.MODEL, model));
-        update(new ModelEvent(this, EventTarget.INPUT, data.getHandle()));
+        update(new ModelEvent(this, ModelPart.MODEL, model));
+        update(new ModelEvent(this, ModelPart.INPUT, data.getHandle()));
         if (data.getHandle().getNumColumns() > 0) {
             model.setSelectedAttribute(data.getHandle().getAttributeName(0));
             update(new ModelEvent(this,
-                                  EventTarget.SELECTED_ATTRIBUTE,
+                                  ModelPart.SELECTED_ATTRIBUTE,
                                   data.getHandle().getAttributeName(0)));
             update(new ModelEvent(this,
-                                  EventTarget.CRITERION_DEFINITION,
+                                  ModelPart.CRITERION_DEFINITION,
                                   null));
             update(new ModelEvent(this,
-                                  EventTarget.RESEARCH_SUBSET,
+                                  ModelPart.RESEARCH_SUBSET,
                                   subset));
         }
     }
@@ -828,36 +828,36 @@ public class Controller implements IView {
         }
 
         // Update the model
-        update(new ModelEvent(this, EventTarget.MODEL, model));
+        update(new ModelEvent(this, ModelPart.MODEL, model));
 
         // Update subsets of the model
         if (model.getInputConfig().getInput() != null) {
             update(new ModelEvent(this,
-                                  EventTarget.INPUT,
+                                  ModelPart.INPUT,
                                   model.getInputConfig().getInput().getHandle()));
         }
 
         // Update subsets of the model
         if (model.getResult() != null) {
-            update(new ModelEvent(this, EventTarget.RESULT, model.getResult()));
+            update(new ModelEvent(this, ModelPart.RESULT, model.getResult()));
         }
 
         // Update subsets of the model
         if (tempSelectedNode != null) {
             model.setSelectedNode(tempSelectedNode);
             update(new ModelEvent(this,
-                                  EventTarget.SELECTED_NODE,
+                                  ModelPart.SELECTED_NODE,
                                   model.getSelectedNode()));
             final DataHandle handle = model.getResult()
                                            .getHandle(tempSelectedNode);
             model.setOutput(handle, tempSelectedNode);
-            update(new ModelEvent(this, EventTarget.OUTPUT, handle));
+            update(new ModelEvent(this, ModelPart.OUTPUT, handle));
         }
 
         // Update subsets of the model
         if (tempNodeFilter != null) {
             model.setNodeFilter(tempNodeFilter);
-            update(new ModelEvent(this, EventTarget.FILTER, tempNodeFilter));
+            update(new ModelEvent(this, ModelPart.FILTER, tempNodeFilter));
         }
 
         // Try to trigger some events under MS Windows
@@ -872,13 +872,13 @@ public class Controller implements IView {
                     // Fire once
                     model.setSelectedAttribute(a);
                     update(new ModelEvent(this,
-                                          EventTarget.SELECTED_ATTRIBUTE,
+                                          ModelPart.SELECTED_ATTRIBUTE,
                                           a));
 
                     // Fire twice
                     model.setSelectedAttribute(a);
                     update(new ModelEvent(this,
-                                          EventTarget.SELECTED_ATTRIBUTE,
+                                          ModelPart.SELECTED_ATTRIBUTE,
                                           a));
                 }
             }
@@ -888,7 +888,7 @@ public class Controller implements IView {
         if (tempSelectedAttribute != null) {
             model.setSelectedAttribute(tempSelectedAttribute);
             update(new ModelEvent(this,
-                                  EventTarget.SELECTED_ATTRIBUTE,
+                                  ModelPart.SELECTED_ATTRIBUTE,
                                   tempSelectedAttribute));
         }
 
@@ -897,7 +897,7 @@ public class Controller implements IView {
             model.getClipboard().clear();
             model.getClipboard().addAll(tempClipboard);
             update(new ModelEvent(this,
-                                  EventTarget.CLIPBOARD,
+                                  ModelPart.CLIPBOARD,
                                   model.getClipboard()));
         }
 
@@ -908,7 +908,7 @@ public class Controller implements IView {
                                            .getHandle();
             for (int i = 0; i < handle.getNumColumns(); i++) {
                 update(new ModelEvent(this,
-                                      EventTarget.ATTRIBUTE_TYPE,
+                                      ModelPart.ATTRIBUTE_TYPE,
                                       handle.getAttributeName(i)));
             }
         }
@@ -1032,9 +1032,9 @@ public class Controller implements IView {
      * 
      * @return
      */
-    private Map<EventTarget, Set<IView>> getListeners() {
-        final Map<EventTarget, Set<IView>> result = new HashMap<EventTarget, Set<IView>>();
-        for (final EventTarget key : listeners.keySet()) {
+    private Map<ModelPart, Set<IView>> getListeners() {
+        final Map<ModelPart, Set<IView>> result = new HashMap<ModelPart, Set<IView>>();
+        for (final ModelPart key : listeners.keySet()) {
             result.put(key, new HashSet<IView>());
             result.get(key).addAll(listeners.get(key));
         }

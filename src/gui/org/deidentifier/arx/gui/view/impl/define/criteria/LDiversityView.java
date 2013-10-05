@@ -6,7 +6,7 @@ import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,9 +33,9 @@ public class LDiversityView extends CriterionView{
                           final Model model) {
     	
     	super(parent, controller, model);
-    	this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-    	this.controller.addListener(EventTarget.INPUT, this);
-    	this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
+    	this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+    	this.controller.addListener(ModelPart.INPUT, this);
+    	this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
     @Override
@@ -50,10 +50,10 @@ public class LDiversityView extends CriterionView{
 
 	@Override
 	public void update(ModelEvent event) {
-		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+		if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
 			this.attribute = (String)event.data;
 			this.parse();
-		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+		} else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 			if (event.data.equals(this.attribute)) {
 				this.parse();
 			}
@@ -96,7 +96,7 @@ public class LDiversityView extends CriterionView{
             	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
             	m.setL(sliderToInt(2, 100, sliderL.getSelection()));
                 labelL.setText(String.valueOf(m.getL()));
-                controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
+                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
         });
 
@@ -137,7 +137,7 @@ public class LDiversityView extends CriterionView{
             	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
 				m.setC(sliderToDouble(0.001d, 100d, sliderC.getSelection()));
                 labelC.setText(String.valueOf(m.getC()));
-                controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
+                controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
         });
 
@@ -151,7 +151,7 @@ public class LDiversityView extends CriterionView{
             	} else {
             		sliderC.setEnabled(false);
             	}
-            	controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
+            	controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
         });
 

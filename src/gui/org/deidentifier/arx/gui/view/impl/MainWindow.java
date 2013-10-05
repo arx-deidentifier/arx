@@ -34,7 +34,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalyzeView;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.DefinitionView;
@@ -82,7 +82,7 @@ public class MainWindow implements IMainWindow, IView {
 
         // Build controller
         controller = new Controller(this);
-        controller.addListener(EventTarget.MODEL, this);
+        controller.addListener(ModelPart.MODEL, this);
 
         // Style
         shell.setImage(controller.getResources().getImage("logo.png")); //$NON-NLS-1$
@@ -305,7 +305,7 @@ public class MainWindow implements IMainWindow, IView {
 
         // Careful! In the main window, this is also called after editing the
         // project properties
-        if (event.target == EventTarget.MODEL) {
+        if (event.part == ModelPart.MODEL) {
             final Model model = (Model) event.data;
             shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
             root.setEnabled(true);

@@ -6,7 +6,7 @@ import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,9 +32,9 @@ public class TClosenessView extends CriterionView {
 			final Model model) {
 
 		super(parent, controller, model);
-		this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-    	this.controller.addListener(EventTarget.INPUT, this);
-    	this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
+		this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+    	this.controller.addListener(ModelPart.INPUT, this);
+    	this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 	}
 
 	@Override
@@ -47,10 +47,10 @@ public class TClosenessView extends CriterionView {
 
 	@Override
 	public void update(ModelEvent event) {
-		if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+		if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
 			this.attribute = (String)event.data;
 			this.parse();
-		} else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+		} else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 			if (event.data.equals(this.attribute)) {
 				this.parse();
 			}
@@ -86,7 +86,7 @@ public class TClosenessView extends CriterionView {
 				ModelTClosenessCriterion m = model.getTClosenessModel().get(
 						attribute);
 				m.setVariant(comboVariant.getSelectionIndex());
-				controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
+				controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
 			}
 		});
 
@@ -115,7 +115,7 @@ public class TClosenessView extends CriterionView {
 						attribute);
 				m.setT(sliderToDouble(0.001d, 1d, sliderT.getSelection()));
 				labelT.setText(String.valueOf(m.getT()));
-				controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, m));
+				controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
 			}
 		});
 

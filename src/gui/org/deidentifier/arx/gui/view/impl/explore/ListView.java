@@ -36,7 +36,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -89,9 +89,9 @@ public class ListView implements IView, IAttachable {
     public ListView(final Composite parent, final Controller controller) {
 
         // Listen
-        controller.addListener(EventTarget.SELECTED_NODE, this);
-        controller.addListener(EventTarget.FILTER, this);
-        controller.addListener(EventTarget.MODEL, this);
+        controller.addListener(ModelPart.SELECTED_NODE, this);
+        controller.addListener(ModelPart.FILTER, this);
+        controller.addListener(ModelPart.MODEL, this);
 
         this.controller = controller;
 
@@ -141,11 +141,11 @@ public class ListView implements IView, IAttachable {
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.target == EventTarget.SELECTED_NODE) {
+        if (event.part == ModelPart.SELECTED_NODE) {
             selectedNode = (ARXNode) event.data;
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
-        } else if (event.target == EventTarget.FILTER) {
+        } else if (event.part == ModelPart.FILTER) {
             if (model != null) {
                 initialize(model.getResult(), (ModelNodeFilter) event.data);
             }

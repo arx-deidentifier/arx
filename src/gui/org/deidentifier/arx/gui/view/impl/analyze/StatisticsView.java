@@ -21,7 +21,7 @@ package org.deidentifier.arx.gui.view.impl.analyze;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IStatisticsView;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -37,8 +37,8 @@ public class StatisticsView implements IStatisticsView {
 
     public StatisticsView(final Composite parent,
                           final Controller controller,
-                          final EventTarget target,
-                          final EventTarget reset) {
+                          final ModelPart target,
+                          final ModelPart reset) {
 
         // Create the tab folder
         folder = new TitledFolder(parent, controller, null, "id-50");

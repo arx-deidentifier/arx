@@ -41,7 +41,7 @@ import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -56,19 +56,19 @@ public class DensityView implements IView {
     private Canvas                     canvas        = null;
     private final LightweightSystem    lws;
     private final IntensityGraphFigure intensityGraph;
-    private final EventTarget          target;
-    private final EventTarget          reset;
+    private final ModelPart          target;
+    private final ModelPart          reset;
     private final Controller           controller;
     private Model                      model;
 
     public DensityView(final Composite parent,
                        final Controller controller,
-                       final EventTarget target,
-                       final EventTarget reset) {
+                       final ModelPart target,
+                       final ModelPart reset) {
 
         // Register
-        controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-        controller.addListener(EventTarget.MODEL, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -125,7 +125,7 @@ public class DensityView implements IView {
 
         // Obtain the right handle
         final DataHandle data;
-        if (target == EventTarget.INPUT) {
+        if (target == ModelPart.INPUT) {
             data = config.getInput().getHandle();
         } else {
             data = model.getOutput();
@@ -155,7 +155,7 @@ public class DensityView implements IView {
 
         // Obtain the right handle
         final DataHandle data;
-        if (target == EventTarget.INPUT) {
+        if (target == ModelPart.INPUT) {
             data = config.getInput().getHandle();
         } else {
             data = model.getOutput();
@@ -358,24 +358,24 @@ public class DensityView implements IView {
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.target == EventTarget.OUTPUT) {
+        if (event.part == ModelPart.OUTPUT) {
             canvas.setEnabled(true);
             redraw();
         }
 
         // Handle reset target, i.e., e.g. input has changed
-        if (event.target == reset) {
+        if (event.part == reset) {
             reset();
             // Handle new project
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             reset();
             model = (Model) event.data;
             // Handle new data
-        } else if (event.target == target) {
+        } else if (event.part == target) {
             canvas.setEnabled(true);
             redraw();
             // Handle selected attribute
-        } else if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             if (model.getAttributePair()[0] != null &&
                 model.getAttributePair()[1] != null) {
                 canvas.setEnabled(true);

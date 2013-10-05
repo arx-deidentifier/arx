@@ -38,7 +38,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -59,8 +59,8 @@ public class DistributionView implements IView {
 
     private Chart                       chart;
     private final Composite             parent;
-    private final EventTarget           target;
-    private final EventTarget           reset;
+    private final ModelPart           target;
+    private final ModelPart           reset;
     private String                      attribute;
     private final Controller            controller;
     private final Map<String, double[]> cachedCounts  = new HashMap<String, double[]>();
@@ -68,12 +68,12 @@ public class DistributionView implements IView {
 
     public DistributionView(final Composite parent,
                             final Controller controller,
-                            final EventTarget target,
-                            final EventTarget reset) {
+                            final ModelPart target,
+                            final ModelPart reset) {
 
         // Register
-        controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-        controller.addListener(EventTarget.MODEL, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -104,7 +104,7 @@ public class DistributionView implements IView {
 
         // Obtain the right handle
         final DataHandle data;
-        if (target == EventTarget.INPUT) {
+        if (target == ModelPart.INPUT) {
             data = config.getInput().getHandle();
         } else {
             data = model.getOutput();
@@ -335,7 +335,7 @@ public class DistributionView implements IView {
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.target == EventTarget.OUTPUT) {
+        if (event.part == ModelPart.OUTPUT) {
             if (chart != null) {
                 chart.setEnabled(true);
             }
@@ -344,21 +344,21 @@ public class DistributionView implements IView {
         }
 
         // Handle reset target, i.e., e.g. input has changed
-        if (event.target == reset) {
+        if (event.part == reset) {
             clear();
             reset();
-        } else if (event.target == target) {
+        } else if (event.part == target) {
             if (chart != null) {
                 chart.setEnabled(true);
             }
             clear();
             redraw();
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             clear();
             reset();
             // Handle selected attribute
-        } else if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
 
             attribute = (String) event.data;
 

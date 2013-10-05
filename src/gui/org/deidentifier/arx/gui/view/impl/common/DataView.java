@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
@@ -53,8 +53,8 @@ public class DataView implements IDataView, IView {
     private final Image       IMAGE_IDENTIFYING;
 
     private final DataTable   table;
-    private final EventTarget target;
-    private final EventTarget reset;
+    private final ModelPart target;
+    private final ModelPart reset;
     private final Controller  controller;
     private final ToolItem    sortButton;
     
@@ -73,14 +73,14 @@ public class DataView implements IDataView, IView {
     public DataView(final Composite parent,
                     final Controller controller,
                     final String title,
-                    final EventTarget target,
-                    final EventTarget reset) {
+                    final ModelPart target,
+                    final ModelPart reset) {
 
         // Register
-        controller.addListener(EventTarget.RESEARCH_SUBSET, this);
-        controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
-        controller.addListener(EventTarget.MODEL, this);
-        controller.addListener(EventTarget.SORT_ORDER, this);
+        controller.addListener(ModelPart.RESEARCH_SUBSET, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.SORT_ORDER, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -167,7 +167,7 @@ public class DataView implements IDataView, IView {
                 final String attr = handle.getAttributeName(column);
                 model.setSelectedAttribute(attr);
                 controller.update(new ModelEvent(this,
-                                                 EventTarget.SELECTED_ATTRIBUTE,
+                                                 ModelPart.SELECTED_ATTRIBUTE,
                                                  attr));
             }
         }
@@ -191,7 +191,7 @@ public class DataView implements IDataView, IView {
                         subset.add(row);
                     }
                     controller.update(new ModelEvent(this,
-                                                     EventTarget.RESEARCH_SUBSET,
+                                                     ModelPart.RESEARCH_SUBSET,
                                                      subset));
                 }
             }
@@ -227,17 +227,17 @@ public class DataView implements IDataView, IView {
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.target == reset) {
+        if (event.part == reset) {
             
             reset();
 
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             
             // Store and reset
             model = (Model) event.data;
             reset();
 
-        } else if (event.target == target) {
+        } else if (event.part == target) {
 
             // No result avail
             if (event.data == null) {
@@ -247,7 +247,7 @@ public class DataView implements IDataView, IView {
             
             // Obtain data definition
             DataDefinition definition = model.getInputConfig().getInput().getDefinition();
-            if (target == EventTarget.OUTPUT) {
+            if (target == ModelPart.OUTPUT) {
                 definition = model.getOutputConfig().getInput().getDefinition();
             }
 
@@ -255,8 +255,8 @@ public class DataView implements IDataView, IView {
             handle = (DataHandle) event.data;
             table.setData(handle, 
                           model.getInputConfig().getResearchSubset(), 
-                          target == EventTarget.OUTPUT ? model.getColors() : null, 
-                          target == EventTarget.OUTPUT ? model.getGroups() : null);
+                          target == ModelPart.OUTPUT ? model.getColors() : null, 
+                          target == ModelPart.OUTPUT ? model.getGroups() : null);
             
             // Update the attribute types
             table.getHeaderImages().clear();
@@ -268,7 +268,7 @@ public class DataView implements IDataView, IView {
             table.setEnabled(true);
             table.redraw();
 
-        } else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             
             if ((model != null) && (handle != null)) {
                 
@@ -277,7 +277,7 @@ public class DataView implements IDataView, IView {
 
                 // Obtain data definition
                 DataDefinition definition = model.getInputConfig().getInput().getDefinition();
-                if (target == EventTarget.OUTPUT) {
+                if (target == ModelPart.OUTPUT) {
                     definition = model.getOutputConfig().getInput().getDefinition();
                 }
 
@@ -290,20 +290,20 @@ public class DataView implements IDataView, IView {
                 table.redraw();
             }
             
-        } else if (event.target == EventTarget.RESEARCH_SUBSET) {
+        } else if (event.part == ModelPart.RESEARCH_SUBSET) {
             
             // Update research subset
             table.setResearchSubset((RowSet)event.data);
             table.redraw();
             
-        } else if (event.target == EventTarget.SORT_ORDER) {
+        } else if (event.part == ModelPart.SORT_ORDER) {
             
             table.redraw();
         }
         
         // Enable/Disable sort button
-        if (event.target == EventTarget.OUTPUT ||
-            event.target == EventTarget.INPUT) {
+        if (event.part == ModelPart.OUTPUT ||
+            event.part == ModelPart.INPUT) {
             if (model != null && model.getOutput()!=null){
                 sortButton.setEnabled(true);
             } else {

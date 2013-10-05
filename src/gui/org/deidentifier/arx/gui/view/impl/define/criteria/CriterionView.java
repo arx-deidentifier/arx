@@ -6,7 +6,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -22,9 +22,9 @@ public abstract class CriterionView implements IView, IAttachable {
 	public CriterionView(final Composite parent, final Controller controller,
 			final Model model) {
 		this.controller = controller;
-		this.controller.addListener(EventTarget.MODEL, this);
-		this.controller.addListener(EventTarget.INPUT, this);
-		this.controller.addListener(EventTarget.CRITERION_DEFINITION, this);
+		this.controller.addListener(ModelPart.MODEL, this);
+		this.controller.addListener(ModelPart.INPUT, this);
+		this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
 		this.model = model;
 		this.root = build(parent);
 		SWTUtil.disable(root);
@@ -47,12 +47,12 @@ public abstract class CriterionView implements IView, IAttachable {
 
 	@Override
 	public void update(ModelEvent event) {
-		if (event.target == EventTarget.MODEL) {
+		if (event.part == ModelPart.MODEL) {
 			this.model = (Model) event.data;
 			parse();
-		} else if (event.target == EventTarget.INPUT) {
+		} else if (event.part == ModelPart.INPUT) {
 			parse();
-		} else if (event.target == EventTarget.CRITERION_DEFINITION) {
+		} else if (event.part == ModelPart.CRITERION_DEFINITION) {
             if (event.source!=this) parse();
         }
 	}

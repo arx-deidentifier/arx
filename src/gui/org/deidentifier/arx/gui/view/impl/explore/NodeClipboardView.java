@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,9 +61,9 @@ public class NodeClipboardView implements IView {
     public NodeClipboardView(final Composite parent, final Controller controller) {
 
         // Listen
-        controller.addListener(EventTarget.CLIPBOARD, this);
-        controller.addListener(EventTarget.MODEL, this);
-        controller.addListener(EventTarget.SELECTED_NODE, this);
+        controller.addListener(ModelPart.CLIPBOARD, this);
+        controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.SELECTED_NODE, this);
         this.controller = controller;
 
         // Create group
@@ -90,7 +90,7 @@ public class NodeClipboardView implements IView {
                     final ARXNode node = (ARXNode) s[0].getData();
                     model.setSelectedNode(node);
                     controller.update(new ModelEvent(outer,
-                                                     EventTarget.SELECTED_NODE,
+                                                     ModelPart.SELECTED_NODE,
                                                      node));
                 }
             }
@@ -117,7 +117,7 @@ public class NodeClipboardView implements IView {
                                                                final ARXNode node = (ARXNode) i.getData();
                                                                model.setSelectedNode(node);
                                                                controller.update(new ModelEvent(outer,
-                                                                                                EventTarget.SELECTED_NODE,
+                                                                                                ModelPart.SELECTED_NODE,
                                                                                                 node));
                                                                if (arg0.data.equals(item1)) {
                                                                    final String label = Arrays.toString(node.getTransformation());
@@ -135,7 +135,7 @@ public class NodeClipboardView implements IView {
                                                                         .remove(node);
                                                                    removeItem(i);
                                                                    controller.update(new ModelEvent(outer,
-                                                                                                    EventTarget.CLIPBOARD,
+                                                                                                    ModelPart.CLIPBOARD,
                                                                                                     null));
                                                                } else if (arg0.data.equals(item3)) {
                                                                    controller.actionApplySelectedTransformation();
@@ -211,9 +211,9 @@ public class NodeClipboardView implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.MODEL) {
+        if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
-        } else if (event.target == EventTarget.SELECTED_NODE) {
+        } else if (event.part == ModelPart.SELECTED_NODE) {
             final ARXNode selected = (ARXNode) event.data;
 
             // No result available
@@ -228,7 +228,7 @@ public class NodeClipboardView implements IView {
                 }
                 SWTUtil.enable(root);
             }
-        } else if (event.target == EventTarget.CLIPBOARD) {
+        } else if (event.part == ModelPart.CLIPBOARD) {
             table.setRedraw(false);
             table.removeAll();
             for (final TableItem i : items) {

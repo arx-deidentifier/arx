@@ -6,7 +6,7 @@ import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,12 +25,12 @@ public class KAnonymityView extends CriterionView {
 			final Model model) {
 
 		super(parent, controller, model);
-		this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
+		this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 	}
 
     @Override
     public void update(ModelEvent event) {
-        if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             this.parse();
         }
         super.update(event);
@@ -77,7 +77,7 @@ public class KAnonymityView extends CriterionView {
 						sliderToInt(2, 100, sliderK.getSelection()));
 				labelK.setText(String
 						.valueOf(model.getKAnonymityModel().getK()));
-				controller.update(new ModelEvent(outer, EventTarget.CRITERION_DEFINITION, model.getKAnonymityModel()));
+				controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getKAnonymityModel()));
 			}
 		});
 

@@ -24,7 +24,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IStatisticsView;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.DataView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -147,13 +147,13 @@ public class AnalyzeView implements IAttachable {
         dataInputView = new DataView(centerLeft,
                                      controller,
                                      Resources.getMessage("AnalyzeView.1"), //$NON-NLS-1$
-                                     EventTarget.INPUT,
+                                     ModelPart.INPUT,
                                      null);
         dataOutputView = new DataView(centerRight,
                                       controller,
                                       Resources.getMessage("AnalyzeView.0"), //$NON-NLS-1$
-                                      EventTarget.OUTPUT,
-                                      EventTarget.INPUT);
+                                      ModelPart.OUTPUT,
+                                      ModelPart.INPUT);
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {
@@ -201,12 +201,12 @@ public class AnalyzeView implements IAttachable {
 
         statisticsInputView = new StatisticsView(bottomLeft,
                                                  controller,
-                                                 EventTarget.INPUT,
+                                                 ModelPart.INPUT,
                                                  null);
         statisticsOutputView = new StatisticsView(bottomRight,
                                                   controller,
-                                                  EventTarget.OUTPUT,
-                                                  EventTarget.INPUT);
+                                                  ModelPart.OUTPUT,
+                                                  ModelPart.INPUT);
 
         // Sync folders
         statisticsInputView.addSelectionListener(new SelectionAdapter() {

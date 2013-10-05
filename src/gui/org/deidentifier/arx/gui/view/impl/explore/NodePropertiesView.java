@@ -31,7 +31,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
@@ -55,8 +55,8 @@ public class NodePropertiesView implements IView {
     public NodePropertiesView(final Composite parent,
                               final Controller controller) {
 
-        controller.addListener(EventTarget.RESULT, this);
-        controller.addListener(EventTarget.SELECTED_NODE, this);
+        controller.addListener(ModelPart.RESULT, this);
+        controller.addListener(ModelPart.SELECTED_NODE, this);
         this.controller = controller;
 
         // Create group
@@ -216,10 +216,10 @@ public class NodePropertiesView implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.RESULT) {
+        if (event.part == ModelPart.RESULT) {
             result = (ARXResult) event.data;
             reset();
-        } else if (event.target == EventTarget.SELECTED_NODE) {
+        } else if (event.part == ModelPart.SELECTED_NODE) {
 
             // No result available
             if (event.data == null) {

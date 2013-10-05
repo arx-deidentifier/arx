@@ -33,7 +33,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -95,9 +95,9 @@ public class AttributeDefinitionView implements IView {
         // Register
         this.controller = controller;
         this.attribute = attribute;
-        this.controller.addListener(EventTarget.MODEL, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.INPUT, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 
         // Create input group
         tab = new CTabItem(parent, SWT.NULL);
@@ -170,7 +170,7 @@ public class AttributeDefinitionView implements IView {
 
                         // Update the views
                         controller.update(new ModelEvent(outer,
-                                                         EventTarget.ATTRIBUTE_TYPE,
+                                                         ModelPart.ATTRIBUTE_TYPE,
                                                          attribute));
                     }
                 }
@@ -207,7 +207,7 @@ public class AttributeDefinitionView implements IView {
 
                         // Set and update
                         model.getInputConfig().getInput().getDefinition().setDataType(attribute, type);
-                        controller.update(new ModelEvent(outer, EventTarget.DATA_TYPE, attribute));
+                        controller.update(new ModelEvent(outer, ModelPart.DATA_TYPE, attribute));
                     }
                 }
             }
@@ -256,16 +256,16 @@ public class AttributeDefinitionView implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.MODEL) {
+        if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             editor.update(event);
-        } else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             final String attr = (String) event.data;
             if (attr.equals(attribute)) {
                 updateAttributeType();
                 updateIcon();
             }
-        } else if (event.target == EventTarget.INPUT) {
+        } else if (event.part == ModelPart.INPUT) {
 
             updateAttributeType();
             updateDataType();

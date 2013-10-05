@@ -28,7 +28,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -52,9 +52,9 @@ public class DataDefinitionView implements IView {
 
         // Register
         this.controller = controller;
-        this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.controller.addListener(EventTarget.MODEL, this);
+        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        this.controller.addListener(ModelPart.INPUT, this);
+        this.controller.addListener(ModelPart.MODEL, this);
 
         // Create the tab folder
         folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER | SWT.FLAT);
@@ -115,7 +115,7 @@ public class DataDefinitionView implements IView {
             if (model != null) {
                 model.setSelectedAttribute(name);
                 controller.update(new ModelEvent(this,
-                                                 EventTarget.SELECTED_ATTRIBUTE,
+                                                 ModelPart.SELECTED_ATTRIBUTE,
                                                  name));
             }
         }
@@ -123,16 +123,16 @@ public class DataDefinitionView implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.SELECTED_ATTRIBUTE) {
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             for (final CTabItem item : folder.getItems()) {
                 if (item.getText().equals(event.data)) {
                     folder.setSelection(item);
                     break;
                 }
             }
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
-        } else if (event.target == EventTarget.INPUT) {
+        } else if (event.part == ModelPart.INPUT) {
             reset();
             folder.setRedraw(false);
             for (int i = 0; i < model.getInputConfig()
@@ -146,8 +146,8 @@ public class DataDefinitionView implements IView {
                 final IView l = new AttributeDefinitionView(folder,
                                                             col,
                                                             controller);
-                l.update(new ModelEvent(this, EventTarget.MODEL, model));
-                l.update(new ModelEvent(this, EventTarget.INPUT, event.data));
+                l.update(new ModelEvent(this, ModelPart.MODEL, model));
+                l.update(new ModelEvent(this, ModelPart.INPUT, event.data));
                 names.put(i, col);
                 views.add(l);
             }

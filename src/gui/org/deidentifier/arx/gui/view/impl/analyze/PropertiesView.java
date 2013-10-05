@@ -43,7 +43,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -247,24 +247,24 @@ public class PropertiesView implements IView {
     private final List<Property> roots  = new ArrayList<Property>();
     private final Composite      root;
     private final Controller     controller;
-    private final EventTarget    target;
-    private final EventTarget    reset;
+    private final ModelPart    target;
+    private final ModelPart    reset;
     private Model                model;
 
     private final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     public PropertiesView(final Composite parent,
                           final Controller controller,
-                          final EventTarget target,
-                          final EventTarget reset) {
+                          final ModelPart target,
+                          final ModelPart reset) {
 
         // Register
-        controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-        controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
-        controller.addListener(EventTarget.METRIC, this);
-        controller.addListener(EventTarget.MAX_OUTLIERS, this);
-        controller.addListener(EventTarget.DATA_TYPE, this);
-        controller.addListener(EventTarget.MODEL, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.METRIC, this);
+        controller.addListener(ModelPart.MAX_OUTLIERS, this);
+        controller.addListener(ModelPart.DATA_TYPE, this);
+        controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -299,12 +299,12 @@ public class PropertiesView implements IView {
         redraw();
 
         // Handle reset target, i.e., e.g. input has changed
-        if (event.target == reset) {
+        if (event.part == reset) {
             reset();
-        } else if (event.target == target) {
+        } else if (event.part == target) {
             SWTUtil.enable(root);
             redraw();
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             reset();
             // Handle selected attribute
@@ -336,7 +336,7 @@ public class PropertiesView implements IView {
         tree.setHeaderVisible(true);
         treeViewer = new TreeViewer(tree);
 
-        if (target == EventTarget.OUTPUT) {
+        if (target == ModelPart.OUTPUT) {
 
             final TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
             tree.setLinesVisible(true);
@@ -397,7 +397,7 @@ public class PropertiesView implements IView {
 
         // Obtain the right handle
         final DataHandle data;
-        if (target == EventTarget.INPUT) {
+        if (target == ModelPart.INPUT) {
 
             if (config.getInput() == null) {
                 reset();
@@ -416,7 +416,7 @@ public class PropertiesView implements IView {
         }
 
         root.setRedraw(false);
-        if (target == EventTarget.INPUT) {
+        if (target == ModelPart.INPUT) {
             redrawInput(config, 
                         data);
         } else {

@@ -31,7 +31,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IHierarchyEditorView;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
@@ -130,9 +130,9 @@ public class HierarchyView implements IHierarchyEditorView, IView {
                          final Controller controller) {
 
         // Register
-        controller.addListener(EventTarget.HIERARCHY, this);
-        controller.addListener(EventTarget.MODEL, this);
-        controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.HIERARCHY, this);
+        controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 
         this.controller = controller;
         this.attribute = attribute;
@@ -207,15 +207,15 @@ public class HierarchyView implements IHierarchyEditorView, IView {
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.target == EventTarget.HIERARCHY) {
+        if (event.part == ModelPart.HIERARCHY) {
             if (attribute.equals(model.getSelectedAttribute())) {
                 setHierarchy((Hierarchy) event.data);
                 base.setEnabled(true);
                 base.redraw();
             }
-        } else if (event.target == EventTarget.MODEL) {
+        } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
-        } else if (event.target == EventTarget.INPUT) {
+        } else if (event.part == ModelPart.INPUT) {
             final DataDefinition d = model.getInputConfig()
                                           .getInput()
                                           .getDefinition();
@@ -232,7 +232,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
             } else {
                 reset();
             }
-        } else if (event.target == EventTarget.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             if (event.data.equals(this.attribute)) {
                 pushHierarchy();
             }
@@ -288,7 +288,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
                                      .setMinimumGeneralization(attribute,
                                                                Integer.valueOf(val) - 1);
                                 controller.update(new ModelEvent(this,
-                                                                 EventTarget.ATTRIBUTE_TYPE,
+                                                                 ModelPart.ATTRIBUTE_TYPE,
                                                                  attribute));
                             }
                         }
@@ -318,7 +318,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
                                      .setMaximumGeneralization(attribute,
                                                                Integer.valueOf(val) - 1);
                                 controller.update(new ModelEvent(this,
-                                                                 EventTarget.ATTRIBUTE_TYPE,
+                                                                 ModelPart.ATTRIBUTE_TYPE,
                                                                  attribute));
                             }
                         }
@@ -666,7 +666,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
                  .getDefinition()
                  .setAttributeType(attribute, h);
             controller.update(new ModelEvent(this,
-                                             EventTarget.ATTRIBUTE_TYPE,
+                                             ModelPart.ATTRIBUTE_TYPE,
                                              attribute));
         }
 
@@ -674,7 +674,7 @@ public class HierarchyView implements IHierarchyEditorView, IView {
         if (definition.getAttributeType(attribute) == AttributeType.SENSITIVE_ATTRIBUTE) {
             model.getInputConfig().setHierarchy(attribute, h);
             controller.update(new ModelEvent(this,
-                                             EventTarget.ATTRIBUTE_TYPE,
+                                             ModelPart.ATTRIBUTE_TYPE,
                                              attribute));
         }
     }

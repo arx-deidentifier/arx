@@ -25,7 +25,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitleBar;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.criteria.DPresenceView;
@@ -90,11 +90,11 @@ public class CriterionDefinitionView implements IView {
                                    final Controller controller) {
 
         this.controller = controller;
-        this.controller.addListener(EventTarget.MODEL, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.controller.addListener(EventTarget.SELECTED_ATTRIBUTE, this);
-        this.controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
-        this.controller.addListener(EventTarget.CRITERION_DEFINITION, this);
+        this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.INPUT, this);
+        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.root = build(parent);
     }
 
@@ -116,7 +116,7 @@ public class CriterionDefinitionView implements IView {
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.MODEL) {
+        if (event.part == ModelPart.MODEL) {
             
             model = (Model) event.data;
             root.setRedraw(false);
@@ -132,12 +132,12 @@ public class CriterionDefinitionView implements IView {
             }
             updateControlls();
             root.setRedraw(true);
-        } else if (event.target == EventTarget.INPUT) {
+        } else if (event.part == ModelPart.INPUT) {
             SWTUtil.enable(root);
             updateControlls();
-        } else if (event.target == EventTarget.SELECTED_ATTRIBUTE ||
-                   event.target == EventTarget.ATTRIBUTE_TYPE ||
-                   event.target == EventTarget.CRITERION_DEFINITION) {
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE ||
+                   event.part == ModelPart.CRITERION_DEFINITION) {
             
             if (model != null){
                 updateControlls();
@@ -385,7 +385,7 @@ public class CriterionDefinitionView implements IView {
         if (model == null) { return; }
         if (metric != null) {
             model.getInputConfig().setMetric(metric);
-            controller.update(new ModelEvent(this, EventTarget.METRIC, metric));
+            controller.update(new ModelEvent(this, ModelPart.METRIC, metric));
         }
     }
 

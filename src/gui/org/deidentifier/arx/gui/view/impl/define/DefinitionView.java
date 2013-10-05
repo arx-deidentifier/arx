@@ -22,7 +22,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.DataView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -69,7 +69,7 @@ public class DefinitionView implements IAttachable {
         compositeBottomRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        new DataView(compositeLeft, controller, Resources.getMessage("AnalyzeView.1"), EventTarget.INPUT, null); //$NON-NLS-1$
+        new DataView(compositeLeft, controller, Resources.getMessage("AnalyzeView.1"), ModelPart.INPUT, null); //$NON-NLS-1$
         new SubsetDefinitionView(compositeLeft, controller);
         new DataDefinitionView(compositeTopRight, controller);
         new CriterionDefinitionView(compositeBottomRight, controller);

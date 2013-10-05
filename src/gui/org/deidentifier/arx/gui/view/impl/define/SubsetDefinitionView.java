@@ -8,7 +8,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitleBar;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.SWT;
@@ -39,9 +39,9 @@ public class SubsetDefinitionView implements IView{
                                 final Controller controller) {
 
         this.controller = controller;
-        this.controller.addListener(EventTarget.MODEL, this);
-        this.controller.addListener(EventTarget.INPUT, this);
-        this.controller.addListener(EventTarget.RESEARCH_SUBSET, this);
+        this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.INPUT, this);
+        this.controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         this.root = build(parent);
     }
 
@@ -153,7 +153,7 @@ public class SubsetDefinitionView implements IView{
 
     @Override
     public void update(final ModelEvent event) {
-        if (event.target == EventTarget.MODEL) {
+        if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             if (model.getInputConfig().getInput()!=null){
                 root.setRedraw(false);
@@ -161,11 +161,11 @@ public class SubsetDefinitionView implements IView{
                 enable();
                 root.setRedraw(true);
             }
-        } else if (event.target == EventTarget.INPUT) {
+        } else if (event.part == ModelPart.INPUT) {
             if (model.getInputConfig().getInput()!=null){
                 enable();
             }
-        } else if (event.target == EventTarget.RESEARCH_SUBSET) {
+        } else if (event.part == ModelPart.RESEARCH_SUBSET) {
             if (model!=null){
                 update();
             }
