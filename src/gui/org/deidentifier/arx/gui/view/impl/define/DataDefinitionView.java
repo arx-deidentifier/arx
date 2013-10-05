@@ -25,10 +25,10 @@ import java.util.Set;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelEvent;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;

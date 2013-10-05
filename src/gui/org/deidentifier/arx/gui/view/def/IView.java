@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.gui.view.def;
 
+import org.deidentifier.arx.gui.model.ModelEvent;
+
 public interface IView {
 
     public void dispose();

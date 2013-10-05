@@ -19,9 +19,9 @@
 package org.deidentifier.arx.gui.view.impl.analyze;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IStatisticsView;
-import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;

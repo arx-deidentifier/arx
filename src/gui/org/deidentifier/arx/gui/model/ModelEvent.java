@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.def;
+package org.deidentifier.arx.gui.model;
 
 public class ModelEvent {
     

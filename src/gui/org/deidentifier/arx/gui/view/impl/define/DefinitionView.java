@@ -19,10 +19,10 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
-import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.DataView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;

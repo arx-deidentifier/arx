@@ -2,14 +2,14 @@ package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;

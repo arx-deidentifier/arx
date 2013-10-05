@@ -20,12 +20,12 @@ package org.deidentifier.arx.gui.view.impl.explore;
 
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IAttachable;
-import org.deidentifier.arx.gui.view.def.ModelEvent;
-import org.deidentifier.arx.gui.view.def.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
