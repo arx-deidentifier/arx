@@ -427,6 +427,8 @@ public class QueryDialog extends TitleAreaDialog {
                 close();
             }
         });
+        
+        parse();
     }
 
     @Override
@@ -457,8 +459,7 @@ public class QueryDialog extends TitleAreaDialog {
         status.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         status.setText("");
         
-        parse();
-        
+        highlight();
         new Thread(updater).start();
         
         return parent;
