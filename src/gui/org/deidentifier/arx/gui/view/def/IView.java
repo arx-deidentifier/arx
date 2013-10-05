@@ -20,40 +20,6 @@ package org.deidentifier.arx.gui.view.def;
 
 public interface IView {
 
-    public static class ModelEvent {
-        public static enum EventTarget {
-            SELECTED_ATTRIBUTE,
-            INPUT,
-            OUTPUT,
-            ATTRIBUTE_TYPE,
-            RESULT,
-            DATA_TYPE,
-            ALGORITHM,
-            METRIC,
-            MAX_OUTLIERS,
-            FILTER,
-            SELECTED_NODE,
-            MODEL,
-            CLIPBOARD,
-            HIERARCHY,
-            CRITERION_DEFINITION, 
-            RESEARCH_SUBSET, 
-            SORT_ORDER
-        }
-
-        public final EventTarget target;
-        public final Object      data;
-        public final Object      source;
-
-        public ModelEvent(final Object source,
-                          final EventTarget target,
-                          final Object data) {
-            this.target = target;
-            this.data = data;
-            this.source = source;
-        }
-    }
-
     public void dispose();
 
     public void reset();

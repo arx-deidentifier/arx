@@ -37,33 +37,31 @@ public interface IMainWindow {
 
     public static final Font FONT = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
 
-    MainPopUp getPopUp();
+    public MainPopUp getPopUp();
 
-    Shell getShell();
+    public Shell getShell();
 
-    MainToolTip getToolTip();
+    public MainToolTip getToolTip();
 
-    void show();
+    public void show();
 
-    String showDateFormatInputDialog(String header,
-                                     String text,
-                                     Collection<String> dates);
+    public String showDateFormatInputDialog(String header, String text, Collection<String> dates);
 
-    void showErrorDialog(String header, String text);
+    public void showErrorDialog(String header, String text);
 
-    void showInfoDialog(String header, String text);
+    public void showInfoDialog(String header, String text);
 
-    String showInputDialog(String header, String text, String initial);
+    public String showInputDialog(String header, String text, String initial);
 
-    String showOpenFileDialog(String filter);
+    public String showOpenFileDialog(String filter);
 
-    void showProgressDialog(String text, Worker<?> worker);
+    public void showProgressDialog(String text, Worker<?> worker);
 
-    boolean showQuestionDialog(String header, String text);
+    public boolean showQuestionDialog(String header, String text);
 
-    String showSaveFileDialog(String filter);
+    public String showSaveFileDialog(String filter);
 
-    ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others);
+    public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others);
 
-    QueryDialogResult showQueryDialog(String query, Data data);
+    public QueryDialogResult showQueryDialog(String query, Data data);
 }

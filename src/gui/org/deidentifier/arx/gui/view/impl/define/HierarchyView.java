@@ -22,15 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IHierarchyEditorView;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
+import org.deidentifier.arx.gui.view.def.ModelEvent;
+import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;

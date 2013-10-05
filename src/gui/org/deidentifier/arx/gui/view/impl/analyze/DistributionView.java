@@ -18,7 +18,6 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,17 +28,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.def.IView.ModelEvent.EventTarget;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.deidentifier.arx.gui.view.def.ModelEvent;
+import org.deidentifier.arx.gui.view.def.ModelEvent.EventTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
