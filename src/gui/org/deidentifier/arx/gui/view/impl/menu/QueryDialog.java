@@ -76,10 +76,10 @@ public class QueryDialog extends TitleAreaDialog {
                         count += selector.selected(i) ? 1 : 0;
                     }
                     final int fcount = count;
-                    if (cardinality!=null && !cardinality.isDisposed()){
+                    if (status!=null && !status.isDisposed()){
                         Display.getDefault().asyncExec(new Runnable() {
                             public void run() {
-                                cardinality.setText("Matching items: "+fcount);
+                                status.setText("Matching items: "+fcount);
                             }
                         });
                     }
@@ -93,8 +93,7 @@ public class QueryDialog extends TitleAreaDialog {
     private Button           ok          = null;
     private Button           cancel      = null;
     private StyledText       text        = null;
-    private Label            error       = null;
-    private Label            cardinality = null;
+    private Label            status       = null;
     private Data             data        = null;
     private String           queryString = null;
     private DataSelector     selector    = null;
@@ -390,13 +389,12 @@ public class QueryDialog extends TitleAreaDialog {
             parser.tokenize(query);
             selector.compile();
         } catch (Exception e){
-            this.error.setText(e.getMessage());
+            this.status.setText(e.getMessage());
             this.ok.setEnabled(false);
             this.selector = null;
-            this.cardinality.setText("Matching items: 0");
             return;
         }
-        this.error.setText("");
+        this.status.setText("OK");
         this.queryString = text.getText();
         this.selector = selector;
         this.ok.setEnabled(true);
@@ -455,13 +453,11 @@ public class QueryDialog extends TitleAreaDialog {
             }
         });
 
-        error = new Label(parent, SWT.NONE);
-        error.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        error.setText("");
+        status = new Label(parent, SWT.NONE);
+        status.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        status.setText("");
         
-        cardinality = new Label(parent, SWT.NONE);
-        cardinality.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        cardinality.setText("");
+        parse();
         
         new Thread(updater).start();
         
