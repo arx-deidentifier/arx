@@ -22,7 +22,6 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IDataView;
 import org.deidentifier.arx.gui.view.def.IStatisticsView;
 import org.deidentifier.arx.gui.view.impl.common.DataView;
@@ -32,12 +31,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class AnalyzeView implements IAttachable {
+public class AnalyzeView {
 
     private class Synchronizer implements Runnable {
         final IDataView in;
@@ -225,11 +223,6 @@ public class AnalyzeView implements IAttachable {
         // Set sash weights
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });
         bottomSash.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
-    }
-
-    @Override
-    public Control getControl() {
-        return centerSash;
     }
 
     /**

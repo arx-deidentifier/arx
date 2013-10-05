@@ -5,12 +5,10 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
-public abstract class CriterionView implements IView, IAttachable {
+public abstract class CriterionView implements IView {
 
 	protected static final int SLIDER_MAX = 1000;
 	protected static final int LABEL_WIDTH = 50;
@@ -33,11 +31,6 @@ public abstract class CriterionView implements IView, IAttachable {
 	@Override
 	public void dispose() {
 		controller.removeListener(this);
-	}
-
-	@Override
-	public Control getControl() {
-		return root;
 	}
 
 	@Override

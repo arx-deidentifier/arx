@@ -54,11 +54,10 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -69,7 +68,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -77,7 +75,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author prasser
  */
-public class LatticeView extends Panel implements IView, IAttachable {
+public class LatticeView extends Panel implements IView {
 
     private static class Bounds implements Serializable {
         private static final long serialVersionUID = -7472570696920782588L;
@@ -534,11 +532,6 @@ public class LatticeView extends Panel implements IView, IAttachable {
             }
         }
         return true;
-    }
-
-    @Override
-    public Control getControl() {
-        return bridge;
     }
 
     /**

@@ -31,16 +31,14 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -54,7 +52,7 @@ import cern.colt.Arrays;
  * 
  * @author prasser
  */
-public class ListView implements IView, IAttachable {
+public class ListView implements IView {
 
     /** The optimum */
     private ARXNode             optimum;
@@ -119,11 +117,6 @@ public class ListView implements IView, IAttachable {
     @Override
     public void dispose() {
         controller.removeListener(this);
-    }
-
-    @Override
-    public Control getControl() {
-        return table;
     }
 
     /**

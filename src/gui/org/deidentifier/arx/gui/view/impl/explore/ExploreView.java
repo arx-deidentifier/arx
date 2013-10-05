@@ -21,20 +21,18 @@ package org.deidentifier.arx.gui.view.impl.explore;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.impl.common.TitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class ExploreView implements IAttachable {
+public class ExploreView {
 
     private final Composite root;
     private ModelNodeFilter filter;
@@ -90,10 +88,5 @@ public class ExploreView implements IAttachable {
         new NodeClipboardView(bottom, controller);
         new NodePropertiesView(bottom, controller);
 
-    }
-
-    @Override
-    public Control getControl() {
-        return root;
     }
 }

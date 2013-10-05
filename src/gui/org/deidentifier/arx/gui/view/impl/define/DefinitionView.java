@@ -22,14 +22,12 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IAttachable;
 import org.deidentifier.arx.gui.view.impl.common.DataView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
-public class DefinitionView implements IAttachable {
+public class DefinitionView {
 
     private final Composite center;
     
@@ -73,10 +71,5 @@ public class DefinitionView implements IAttachable {
         new SubsetDefinitionView(compositeLeft, controller);
         new DataDefinitionView(compositeTopRight, controller);
         new CriterionDefinitionView(compositeBottomRight, controller);
-    }
-
-    @Override
-    public Control getControl() {
-        return center;
     }
 }
