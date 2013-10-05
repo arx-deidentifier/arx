@@ -48,9 +48,8 @@ public class ExploreView implements IAttachable {
 
         // Create top composite
         top = new Composite(parent, SWT.NONE);
-        final GridData topLayoutData = SWTUtil.createFillGridData();
-        top.setLayoutData(topLayoutData);
-        top.setLayout(new GridLayout());
+        top.setLayoutData(SWTUtil.createFillGridData());
+        top.setLayout(SWTUtil.createGridLayout(1));
         top.addListener(SWT.Show, new Listener() {
             @Override
             public void handleEvent(final Event arg0) {
@@ -64,8 +63,7 @@ public class ExploreView implements IAttachable {
 
         // Create top composite
         final CTabFolder folder = new CTabFolder(top, SWT.BOTTOM | SWT.BORDER);
-        final GridData g = SWTUtil.createFillGridData();
-        folder.setLayoutData(g);
+        folder.setLayoutData(SWTUtil.createFillGridData());
         folder.setUnselectedCloseVisible(false);
         folder.setSimple(false);
         folder.setTabHeight(25);
@@ -102,14 +100,9 @@ public class ExploreView implements IAttachable {
 
         // Create bottom composite
         final Composite bottom = new Composite(top, SWT.NONE);
-        final GridData bottomLayoutData = SWTUtil.createFillHorizontallyGridData();
-        bottom.setLayoutData(bottomLayoutData);
-        final GridLayout bottomLayout = new GridLayout();
-        bottomLayout.numColumns = 3;
+        bottom.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        final GridLayout bottomLayout = SWTUtil.createGridLayout(3);
         bottomLayout.makeColumnsEqualWidth = true;
-        bottomLayout.marginLeft = 0;
-        bottomLayout.marginRight = 0;
-        bottomLayout.marginWidth = 0;
         bottom.setLayout(bottomLayout);
 
         // Create viewers

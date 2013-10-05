@@ -23,8 +23,16 @@ public class TitledFolder {
     private final CTabFolder folder;
 
     public TitledFolder(Composite parent, Controller controller, TitleBar bar, String id){
+        this(parent, controller, bar, id, false);
+    }
 
-        folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER | SWT.FLAT);
+    public TitledFolder(Composite parent, Controller controller, TitleBar bar, String id, boolean bottom){
+
+        int flags = SWT.BORDER | SWT.FLAT;
+        if (bottom) flags |= SWT.BOTTOM;
+        else flags |= SWT.TOP;
+        
+        folder = new CTabFolder(parent, flags);
         folder.setUnselectedCloseVisible(false);
         folder.setSimple(false);
         

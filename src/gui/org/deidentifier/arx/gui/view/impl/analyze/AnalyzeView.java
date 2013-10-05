@@ -133,23 +133,17 @@ public class AnalyzeView implements IAttachable {
         // Create center composite
         final Composite center = new Composite(centerSash, SWT.NONE);
         center.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout centerLayout = new GridLayout();
-        centerLayout.numColumns = 2;
-        center.setLayout(centerLayout);
+        center.setLayout(SWTUtil.createGridLayout(2));
 
         // Create left composite
         centerLeft = new Composite(center, SWT.NONE);
         centerLeft.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout leftLayout = new GridLayout();
-        leftLayout.numColumns = 1;
-        centerLeft.setLayout(leftLayout);
+        centerLeft.setLayout(SWTUtil.createGridLayout(1));
 
         // Create right composite
         centerRight = new Composite(center, SWT.NONE);
         centerRight.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout rightLayout = new GridLayout();
-        rightLayout.numColumns = 1;
-        centerRight.setLayout(rightLayout);
+        centerRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
         dataInputView = new DataView(centerLeft,

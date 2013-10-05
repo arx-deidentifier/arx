@@ -107,15 +107,14 @@ public class MainWindow implements IMainWindow, IView {
         new MainToolBar(shell, controller);
 
         // Create shell
-        final GridLayout shellLayout = new GridLayout();
-        shellLayout.numColumns = 1;
-        shell.setLayout(shellLayout);
+        shell.setLayout(SWTUtil.createGridLayout(1));
 
         // Create the tab folder
         root = new TitledFolder(shell, controller, null, "id-70");
         root.setLayoutData(SWTUtil.createFillGridData());
+        
         // TODO: Remove? Fixes an SWT Bug!
-        //root.setBackground(shell.getBackground());
+        // root.setBackground(shell.getBackground());
 
         // Create the subviews
         Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png"));  //$NON-NLS-1$

@@ -46,45 +46,29 @@ public class DefinitionView implements IAttachable {
         // Create center composite
         center = new Composite(parent, SWT.NONE);
         center.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout centerLayout = new GridLayout();
-        centerLayout.numColumns = 2;
+        final GridLayout centerLayout = SWTUtil.createGridLayout(2);
         centerLayout.makeColumnsEqualWidth = true;
         center.setLayout(centerLayout);
 
         // Create left composite
         compositeLeft = new Composite(center, SWT.NONE);
         compositeLeft.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout leftLayout = new GridLayout();
-        leftLayout.numColumns = 1;
-        compositeLeft.setLayout(leftLayout);
+        compositeLeft.setLayout(SWTUtil.createGridLayout(1));
 
         // Create right composite
         compositeRight = new Composite(center, SWT.NONE);
         compositeRight.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout rightLayout = new GridLayout();
-        rightLayout.numColumns = 1;
-        compositeRight.setLayout(rightLayout);
+        compositeRight.setLayout(SWTUtil.createGridLayout(1));
         
         // Create top-right composite
-        GridData topRightLD = SWTUtil.createFillGridData();
-        topRightLD.grabExcessVerticalSpace = true;
         compositeTopRight = new Composite(compositeRight, SWT.NONE);
-        compositeTopRight.setLayoutData(topRightLD);
-        final GridLayout topRightLayout = new GridLayout();
-        topRightLayout.numColumns = 1;
-        topRightLayout.marginHeight = 0;
-        compositeTopRight.setLayout(topRightLayout);
+        compositeTopRight.setLayoutData(SWTUtil.createFillGridData());
+        compositeTopRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create bottom-right composite
-        GridData bottomRightLD = SWTUtil.createFillGridData();
-        bottomRightLD.grabExcessVerticalSpace = false;
         compositeBottomRight = new Composite(compositeRight, SWT.NONE);
-        compositeBottomRight.setLayoutData(bottomRightLD);
-        final GridLayout bottomRightLayout = new GridLayout();
-        bottomRightLayout.numColumns = 1;
-        bottomRightLayout.marginWidth = 0;
-        bottomRightLayout.marginHeight = 0;
-        compositeBottomRight.setLayout(bottomRightLayout);
+        compositeBottomRight.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        compositeBottomRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
         new DataView(compositeLeft, controller, Resources.getMessage("AnalyzeView.1"), EventTarget.INPUT, null); //$NON-NLS-1$

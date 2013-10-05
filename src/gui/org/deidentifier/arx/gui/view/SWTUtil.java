@@ -27,8 +27,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -50,6 +52,8 @@ public class SWTUtil {
         data.verticalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = true;
+        data.horizontalIndent=0;
+        data.verticalIndent=0;
         return data;
     }
 
@@ -59,6 +63,8 @@ public class SWTUtil {
         data.verticalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = false;
+        data.horizontalIndent=0;
+        data.verticalIndent=0;
         return data;
     }
 
@@ -68,6 +74,8 @@ public class SWTUtil {
         data.verticalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = false;
         data.grabExcessVerticalSpace = true;
+        data.horizontalIndent=0;
+        data.verticalIndent=0;
         return data;
     }
 
@@ -139,5 +147,24 @@ public class SWTUtil {
                 controller.actionShowHelp(id);
             }
         });
+    }
+
+    public static GridLayout createGridLayout(int columns) {
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = columns;
+        layout.marginBottom = 0;
+        layout.marginHeight = 0;
+        layout.marginLeft = 0;
+        layout.marginRight = 0;
+        layout.marginTop = 0;
+        layout.marginWidth = 0;
+        return layout;
+    }
+
+    public static GridLayout createGridLayout(int columns, boolean compact) {
+        if (compact) return createGridLayout(columns);
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = columns;
+        return layout;
     }
 }

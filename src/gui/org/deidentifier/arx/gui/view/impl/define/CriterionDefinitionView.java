@@ -151,9 +151,7 @@ public class CriterionDefinitionView implements IView {
         // Create input group
         Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillGridData());
-        GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 2;
-        group.setLayout(groupInputGridLayout);
+        group.setLayout(SWTUtil.createGridLayout(2));
 
         /*
          *  Add tab folder for criteria
@@ -229,9 +227,7 @@ public class CriterionDefinitionView implements IView {
         // Create general tab
         group = folder2.createItem(Resources.getMessage("CriterionDefinitionView.61"), null);  //$NON-NLS-1$
         group.setLayoutData(SWTUtil.createFillGridData());
-        groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 3;
-        group.setLayout(groupInputGridLayout);
+        group.setLayout(SWTUtil.createGridLayout(3, false));
 
         // TODO: Move general tabs content out into a separate view
         // Create outliers slider
