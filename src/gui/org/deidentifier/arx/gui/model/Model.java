@@ -68,10 +68,10 @@ public class Model implements Serializable {
     protected String                              outputNodeAsString;
 
     protected long                                time;
-    
+
     private ModelConfiguration                    inputConfig          = new ModelConfiguration();
     private ModelConfiguration                    outputConfig         = null;
-    
+
     private String                                suppressionString    = "*";                                            //$NON-NLS-1$
 
     private int[]                                 colors;
@@ -82,8 +82,8 @@ public class Model implements Serializable {
     private Map<String, ModelLDiversityCriterion> lDiversityModel      = new HashMap<String, ModelLDiversityCriterion>();
     private Map<String, ModelTClosenessCriterion> tClosenessModel      = new HashMap<String, ModelTClosenessCriterion>();
 
-    private String                                query = "";
-    private String                                subsetOrigin = "All";
+    private String                                query                = "";
+    private String                                subsetOrigin         = "All";
 
 	public Model(final String name, final String description) {
 		this.name = name;
