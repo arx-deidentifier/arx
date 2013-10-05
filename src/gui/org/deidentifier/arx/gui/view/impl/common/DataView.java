@@ -77,7 +77,7 @@ public class DataView implements IDataView, IView {
         controller.addListener(EventTarget.RESEARCH_SUBSET, this);
         controller.addListener(EventTarget.ATTRIBUTE_TYPE, this);
         controller.addListener(EventTarget.MODEL, this);
-        controller.addListener(EventTarget.SELECTED_NODE, this);
+        controller.addListener(EventTarget.SORT_ORDER, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -255,12 +255,9 @@ public class DataView implements IDataView, IView {
             table.setResearchSubset((RowSet)event.data);
             table.redraw();
             
-        } else if (event.target == EventTarget.SELECTED_NODE) {
+        } else if (event.target == EventTarget.SORT_ORDER) {
             
-            // Adjust to reflect new sort order
-            if (this.target != EventTarget.OUTPUT) {
-                table.redraw();
-            }
+            table.redraw();
         }
     }
 

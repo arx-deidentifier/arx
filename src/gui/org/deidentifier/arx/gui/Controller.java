@@ -108,6 +108,7 @@ public class Controller implements IView {
             model.setColors(analysis[0]);
             model.setGroups(analysis[1]);
             update(new ModelEvent(this, EventTarget.OUTPUT, worker.getResult()));
+            update(new ModelEvent(this, EventTarget.SORT_ORDER, worker.getResult()));
         }
     }
 
@@ -259,6 +260,9 @@ public class Controller implements IView {
                 update(new ModelEvent(this,
                                       EventTarget.SELECTED_NODE,
                                       result.getGlobalOptimum()));
+                update(new ModelEvent(this,
+                                      EventTarget.SORT_ORDER,
+                                      result.getHandle()));
             } else {
                 // Select bottom node
                 model.setOutput(null, null);

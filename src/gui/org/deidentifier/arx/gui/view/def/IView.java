@@ -37,7 +37,8 @@ public interface IView {
             CLIPBOARD,
             HIERARCHY,
             CRITERION_DEFINITION, 
-            RESEARCH_SUBSET
+            RESEARCH_SUBSET, 
+            SORT_ORDER
         }
 
         public final EventTarget target;
