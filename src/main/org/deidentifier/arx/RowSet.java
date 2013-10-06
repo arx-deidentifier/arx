@@ -18,20 +18,23 @@
 
 package org.deidentifier.arx;
 
+import java.io.Serializable;
+
 
 /**
  * A set of rows
  * 
  * @author Prasser, Kohlmayer
  */
-public class RowSet {
+public class RowSet implements Serializable {
 
+    private static final int   ADDRESS_BITS_PER_UNIT = 6;
+    private static final int   BITS_PER_UNIT         = 64;
+    private static final int   BIT_INDEX_MASK        = 63;
+    
     private final long[]       array;
     private final int          length;
-    private static final int   ADDRESS_BITS_PER_UNIT = 6;
-    protected static final int BITS_PER_UNIT         = 64;
-    private static final int   BIT_INDEX_MASK        = 63;
-    private int size;
+    private int                size;
 
     public static RowSet create(Data data){
         return new RowSet(data);
