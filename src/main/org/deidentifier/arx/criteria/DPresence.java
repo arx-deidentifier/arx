@@ -41,8 +41,6 @@ public class DPresence extends ImplicitPrivacyCriterion{
     private final double dMin;
     /** Delta max*/
     private final double dMax;
-    /** The research subset, a set of tuple ids*/
-    private DataSubset subset;
     /** A compressed representation of the research subset*/
     private RowSet bitset;
     /** A sorted array representation of the research subset*/
@@ -61,7 +59,6 @@ public class DPresence extends ImplicitPrivacyCriterion{
         super(false);
         this.dMin = dMin;
         this.dMax = dMax;
-        this.subset = subset;
         this.bitset = subset.getRowSet();
         this.array = subset.getArray();
     }
