@@ -5,8 +5,11 @@ import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 
 public class DataTableSelectionLayer extends SelectionLayer {
 
-    public DataTableSelectionLayer(IUniqueIndexLayer underlyingLayer) {
+    private DataTableContext context;
+    
+    public DataTableSelectionLayer(IUniqueIndexLayer underlyingLayer, DataTableContext context) {
         super(underlyingLayer);
+        this.context = context;
     }
 
     @Override
@@ -21,7 +24,7 @@ public class DataTableSelectionLayer extends SelectionLayer {
 
     @Override
     public boolean isColumnPositionSelected(int columnPosition) {
-        return false;
+        return columnPosition-1==context.getSelectedIndex();
     }
 
     @Override

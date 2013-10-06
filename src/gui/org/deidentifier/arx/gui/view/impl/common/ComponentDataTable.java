@@ -123,6 +123,14 @@ public class ComponentDataTable implements IComponent {
         this.table.setVisible(false);
     }
 
+    public void setAttribute(String attribute) {
+        int index = -1;
+        if (context.getHandle()!=null) {
+            index = context.getHandle().getColumnIndexOf(attribute);
+        }
+        this.context.setSelectedIndex(index);
+    }
+    
     public void setData(final String[][] data) {
         this.table.setRedraw(false);
         this.context.setHandle(null);

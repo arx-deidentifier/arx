@@ -80,6 +80,7 @@ public class ViewData implements IView {
         // Register
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(target, this);
@@ -154,61 +155,10 @@ public class ViewData implements IView {
         this.subsetButton.setEnabled(false);
     }
     
-    /**
-     * Column selection event
-     * @param arg1
-     */
-    private void actionColumnSelected(ColumnSelectionEvent arg1) {
-        if (model != null) {
-            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
-            if (column>=0){
-                final String attr = handle.getAttributeName(column);
-                model.setSelectedAttribute(attr);
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.SELECTED_ATTRIBUTE,
-                                                 attr));
-            }
-        }
-    }
-    
-    /**
-     * Cell selection event
-     * @param arg1
-     */
-    private void actionCellSelected(CellSelectionEvent arg1) {
-
-        if (model == null) return;
-        
-        int column = arg1.getColumnPosition();
-        int row = arg1.getRowPosition();
-        if (column == 0 && row >= 0) {
-
-            // Remap row index if showing the subset
-            if (table.getData() instanceof DataHandleSubset) {
-                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
-                row = subset[row];
-            }
-
-            // Perform change
-            RowSet subset = model.getInputConfig().getResearchSubset();
-            if (subset.contains(row)) {
-                subset.remove(row);
-            } else {
-                subset.add(row);
-            }
-            
-            // Fire event
-            model.setSubsetManual();
-            controller.update(new ModelEvent(this, 
-                                             ModelPart.RESEARCH_SUBSET, 
-                                             subset));
-        }
-    }
-
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
-
+    
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -247,8 +197,13 @@ public class ViewData implements IView {
                 subsetButton.setEnabled(false);
             }
         }
-        
-        if (event.part == reset) {
+
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE){
+            
+            table.setAttribute(model.getSelectedAttribute());
+            table.redraw();
+            
+        } else if (event.part == reset) {
             
             reset();
 
@@ -337,6 +292,60 @@ public class ViewData implements IView {
             table.redraw();
             
             subsetButton.setSelection(model.getViewConfig().isSubset());
+        }
+    }
+
+    /**
+     * Cell selection event
+     * @param arg1
+     */
+    private void actionCellSelected(CellSelectionEvent arg1) {
+
+        if (model == null) return;
+        
+        int column = arg1.getColumnPosition();
+        int row = arg1.getRowPosition();
+        if (column == 0 && row >= 0) {
+
+            // Remap row index if showing the subset
+            if (table.getData() instanceof DataHandleSubset) {
+                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
+                row = subset[row];
+            }
+
+            // Perform change
+            RowSet subset = model.getInputConfig().getResearchSubset();
+            if (subset.contains(row)) {
+                subset.remove(row);
+            } else {
+                subset.add(row);
+            }
+            
+            // Fire event
+            model.setSubsetManual();
+            controller.update(new ModelEvent(this, 
+                                             ModelPart.RESEARCH_SUBSET, 
+                                             subset));
+        }
+    }
+
+    /**
+     * Column selection event
+     * @param arg1
+     */
+    private void actionColumnSelected(ColumnSelectionEvent arg1) {
+        if (model != null) {
+            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
+            if (column>=0){
+                final String attr = handle.getAttributeName(column);
+                table.setAttribute(attr);
+                table.redraw();
+                
+                model.setSelectedAttribute(attr);
+                controller.update(new ModelEvent(this,
+                                                 ModelPart.SELECTED_ATTRIBUTE,
+                                                 attr));
+            }
         }
     }
 
