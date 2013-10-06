@@ -59,11 +59,11 @@ public class ViewDistribution implements IView {
 
     private Chart                       chart;
     private final Composite             parent;
-    private final ModelPart           target;
-    private final ModelPart           reset;
+    private final ModelPart             target;
+    private final ModelPart             reset;
     private String                      attribute;
     private final Controller            controller;
-    private final Map<String, double[]> cachedCounts  = new HashMap<String, double[]>();
+    private final Map<String, double[]> cache  = new HashMap<String, double[]>();
     private Model                       model;
 
     public ViewDistribution(final Composite parent,
@@ -72,6 +72,7 @@ public class ViewDistribution implements IView {
                             final ModelPart reset) {
 
         // Register
+        controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
@@ -88,7 +89,7 @@ public class ViewDistribution implements IView {
 
     @Override
     public void dispose() {
-        clear();
+        clearCache();
         controller.removeListener(this);
     }
 
@@ -99,14 +100,13 @@ public class ViewDistribution implements IView {
         }
         chart = new Chart(parent, SWT.NONE);
         chart.setOrientation(SWT.HORIZONTAL);
-        // chart.setForeground(new Color(null, 0,0,0));
         final ITitle graphTitle = chart.getTitle();
         graphTitle.setText(""); //$NON-NLS-1$
         graphTitle.setFont(MainWindow.FONT);
         
         chart.setBackground(parent.getBackground());
         
-        // TODO: OSX workaround
+        // OSX workaround
         if (System.getProperty("os.name").toLowerCase().contains("mac")){
         	int r = chart.getBackground().getRed()-13;
         	int g = chart.getBackground().getGreen()-13;
@@ -144,44 +144,43 @@ public class ViewDistribution implements IView {
     public void update(final ModelEvent event) {
 
         if (event.part == ModelPart.OUTPUT) {
-            if (chart != null) {
-                chart.setEnabled(true);
-            }
-            clear();
+            if (chart != null) chart.setEnabled(true);
+            clearCache();
             redraw();
         }
 
-        // Handle reset target, i.e., e.g. input has changed
         if (event.part == reset) {
-            clear();
+            
+            clearCache();
             reset();
+            
         } else if (event.part == target) {
-            if (chart != null) {
-                chart.setEnabled(true);
-            }
-            clear();
+            
+            if (chart != null) chart.setEnabled(true);
+            clearCache();
             redraw();
+            
         } else if (event.part == ModelPart.MODEL) {
+            
             model = (Model) event.data;
-            clear();
+            clearCache();
             reset();
-            // Handle selected attribute
+
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
 
             attribute = (String) event.data;
-
-            if (chart != null) {
-                chart.setEnabled(true);
-            }
+            if (chart != null) chart.setEnabled(true);
+            redraw();
+            
+        } else if (event.part == ModelPart.VIEW_CONFIG) {
+            
+            if (chart != null) chart.setEnabled(true);
+            clearCache();
             redraw();
         }
     }
 
-    private void clear() {
-        cachedCounts.clear();
-    }
-
-    private void compute() {
+    private void analyze() {
 
         if (model == null) { return; }
 
@@ -210,12 +209,12 @@ public class ViewDistribution implements IView {
         final int index = data.getColumnIndexOf(attribute);
 
         if (index == -1) {
-            clear();
+            clearCache();
             reset();
             return;
         }
 
-        if (cachedCounts.containsKey(attribute)) { return; }
+        if (cache.containsKey(attribute)) { return; }
 
         // Check if there is a hierarchy
         final AttributeType type = config.getInput()
@@ -330,17 +329,22 @@ public class ViewDistribution implements IView {
         }
 
         // Cache
-        cachedCounts.put(attribute, distribution);
+        cache.put(attribute, distribution);
 
         controller.getResources()
                   .getLogger()
                   .info("Computed distribution in: " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
     }
 
+    private void clearCache() {
+        cache.clear();
+    }
+
     private void redraw() {
 
-        compute();
-        if (cachedCounts.isEmpty() || (cachedCounts.get(attribute) == null)) { return; }
+        analyze();
+        
+        if (cache.isEmpty() || (cache.get(attribute) == null)) { return; }
 
         chart.setRedraw(false);
 
@@ -350,7 +354,7 @@ public class ViewDistribution implements IView {
         series.getLabel().setVisible(false);
         series.getLabel().setFont(MainWindow.FONT);
         series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-        series.setYSeries(cachedCounts.get(attribute));
+        series.setYSeries(cache.get(attribute));
 
         final IAxisSet axisSet = chart.getAxisSet();
 
@@ -359,8 +363,6 @@ public class ViewDistribution implements IView {
         yAxis.adjustRange();
 
         final IAxis xAxis = axisSet.getXAxis(0);
-        // xAxis.setCategorySeries(cachedLabels.get(attribute));
-        // xAxis.enableCategory(true);
         xAxis.adjustRange();
 
         chart.updateLayout();
