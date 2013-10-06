@@ -108,19 +108,6 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected void createDataTypeArray() {
-        dataTypes = new DataType[1][header.length];
-        for (int i = 0; i < header.length; i++) {
-            final DataType<?> type = definition.getDataType(header[i]);
-            if (type != null) {
-                dataTypes[0][i] = type;
-            } else {
-                dataTypes[0][i] = DataType.STRING;
-            }
-        }
-    }
-
-    @Override
     public String getAttributeName(final int column) {
         checkColumn(column);
         return header[column];
@@ -150,26 +137,18 @@ public class DataHandleInput extends DataHandle {
         return data.length;
     }
 
+    /**
+     * Returns the associated research subset
+     */
+    public RowSet getSubset() {
+        return this.subsetBitset;
+    }
+
     @Override
     public String getValue(final int row, final int column) {
         checkColumn(column);
         checkRow(row, data.length);
         return getValueInternal(row, column);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXDataHandle#getValueInternal(int, int)
-     */
-    @Override
-    protected String getValueInternal(final int row, final int column) {
-        return dictionary.getMapping()[column][data[row][column]];
-    }
-
-    @Override
-    protected boolean isOutlierInternal(final int row) {
-        return false;
     }
 
     @Override
@@ -205,6 +184,16 @@ public class DataHandleInput extends DataHandle {
         };
     }
 
+    /**
+     * Sets the research subset
+     * @param bitset
+     * @param array
+     */
+    public void setSubset(RowSet bitset, int[] array) {
+        this.subsetBitset = bitset;
+        this.subsetArray = array;
+    }
+
     @Override
     public void swap(final int row1, final int row2) {
 
@@ -235,6 +224,49 @@ public class DataHandleInput extends DataHandle {
         }
     }
 
+    @Override
+    protected void afterSorting() {
+
+        // Rebuild array representation of subset
+        if (this.subsetBitset != null){
+         
+            int index = 0;
+            for (int i = 0; i < data.length; i++){
+                if (this.subsetBitset.contains(i)){
+                    this.subsetArray[index++] = i;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void createDataTypeArray() {
+        dataTypes = new DataType[1][header.length];
+        for (int i = 0; i < header.length; i++) {
+            final DataType<?> type = definition.getDataType(header[i]);
+            if (type != null) {
+                dataTypes[0][i] = type;
+            } else {
+                dataTypes[0][i] = DataType.STRING;
+            }
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.ARX.ARXDataHandle#getValueInternal(int, int)
+     */
+    @Override
+    protected String getValueInternal(final int row, final int column) {
+        return dictionary.getMapping()[column][data[row][column]];
+    }
+    
+    @Override
+    protected boolean isOutlierInternal(final int row) {
+        return false;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -249,22 +281,5 @@ public class DataHandleInput extends DataHandle {
         if (this.subsetBitset != null){
             this.subsetBitset.swap(row1, row2);
         }
-    }
-    
-    /**
-     * Sets the research subset
-     * @param bitset
-     * @param array
-     */
-    public void setSubset(RowSet bitset, int[] array) {
-        this.subsetBitset = bitset;
-        this.subsetArray = array;
-    }
-    
-    /**
-     * Returns the associated research subset
-     */
-    public RowSet getSubset() {
-        return this.subsetBitset;
     }
 }

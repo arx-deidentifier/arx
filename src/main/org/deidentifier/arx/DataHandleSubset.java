@@ -1,6 +1,5 @@
 package org.deidentifier.arx;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -31,11 +30,6 @@ public class DataHandleSubset extends DataHandle {
         this.other = source.other;
         this.subset = subset;
         createDataTypeArray();
-    }
-
-    @Override
-    protected void createDataTypeArray() {
-        this.dataTypes = source.dataTypes;
     }
 
     @Override
@@ -72,24 +66,18 @@ public class DataHandleSubset extends DataHandle {
         return this.subset.length;
     }
 
+    public int[] getSubset() {
+        return this.subset;
+    }
+
     @Override
     public String getValue(int row, int col) {
         return source.getValue(this.subset[row], col);
     }
 
     @Override
-    protected String getValueInternal(int row, int col) {
-        return source.getValueInternal(this.subset[row], col);
-    }
-
-    @Override
-    protected boolean isOutlierInternal(int row) {
-        return source.isOutlierInternal(this.subset[row]);
-    }
-
-    @Override
-    protected int compare(int row1, int row2, int[] columns, boolean ascending) {
-        return source.compare(this.subset[row1], this.subset[row2], columns, ascending);
+    public DataHandle getView(ARXConfiguration config){
+        return this;
     }
 
     @Override
@@ -131,16 +119,32 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected void swapInternal(int row1, int row2) {
-        this.source.swapInternal(subset[row1], subset[row2]);
+    protected void afterSorting() {
+        this.source.afterSorting();
     }
 
     @Override
-    public DataHandle getView(ARXConfiguration config){
-        return this;
+    protected int compare(int row1, int row2, int[] columns, boolean ascending) {
+        return source.compare(this.subset[row1], this.subset[row2], columns, ascending);
     }
 
-    public int[] getSubset() {
-        return this.subset;
+    @Override
+    protected void createDataTypeArray() {
+        this.dataTypes = source.dataTypes;
+    }
+
+    @Override
+    protected String getValueInternal(int row, int col) {
+        return source.getValueInternal(this.subset[row], col);
+    }
+
+    @Override
+    protected boolean isOutlierInternal(int row) {
+        return source.isOutlierInternal(this.subset[row]);
+    }
+
+    @Override
+    protected void swapInternal(int row1, int row2) {
+        this.source.swapInternal(subset[row1], subset[row2]);
     }
 }

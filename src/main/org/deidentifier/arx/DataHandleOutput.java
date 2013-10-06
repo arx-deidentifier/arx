@@ -242,103 +242,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     /**
-     * Associates this handle with an input data handle.
-     * 
-     * @param inHandle
-     *            the in handle
-     */
-    protected void associate(final DataHandleInput inHandle) {
-        other = inHandle;
-    }
-
-    /**
-     * A negative integer, zero, or a positive integer as the first argument is
-     * less than, equal to, or greater than the second. It uses the specified
-     * data types for comparison if no generalization was applied, otherwise it
-     * uses string comparison.
-     * 
-     * @param row1
-     *            the row1
-     * @param row2
-     *            the row2
-     * @param columns
-     *            the columns
-     * @param ascending
-     *            the ascending
-     * @return the int
-     */
-    @Override
-    protected int compare(final int row1,
-                          final int row2,
-                          final int[] columns,
-                          final boolean ascending) {
-        getHandle(currentNode);
-        for (final int index : columns) {
-
-            final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
-            final int indexMap = inverseMap[index] & AttributeType.MASK;
-            if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
-            
-            int cmp = 0;
-            try {
-                cmp = dataTypes[attributeType][indexMap].compare(getValueInternal(row1,
-                                                                                  index),
-                                                                 getValueInternal(row2,
-                                                                                  index));
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            if (cmp != 0) {
-                if (ascending) {
-                    return -cmp;
-                } else {
-                    return cmp;
-                }
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Creates the data type array.
-     */
-    @Override
-    protected void createDataTypeArray() {
-
-        dataTypes = new DataType[3][];
-        dataTypes[AttributeType.ATTR_TYPE_IS] = new DataType[dataIS.getHeader().length];
-        dataTypes[AttributeType.ATTR_TYPE_SE] = new DataType[dataSE.getHeader().length];
-        dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataQI.getHeader().length];
-
-        for (int i = 0; i < dataTypes.length; i++) {
-            final DataType<?>[] type = dataTypes[i];
-
-            String[] headers = null;
-
-            switch (i) {
-            case AttributeType.ATTR_TYPE_IS:
-                headers = dataIS.getHeader();
-                break;
-            case AttributeType.ATTR_TYPE_QI:
-                headers = dataQI.getHeader();
-                break;
-            case AttributeType.ATTR_TYPE_SE:
-                headers = dataSE.getHeader();
-                break;
-            }
-
-            for (int j = 0; j < type.length; j++) {
-                dataTypes[i][j] = definition.getDataType(headers[j]);
-                if ((i == AttributeType.ATTR_TYPE_QI) &&
-                    (currentNode.getTransformation()[j] > 0)) {
-                    dataTypes[i][j] = DataType.STRING;
-                }
-            }
-        }
-    }
-
-    /**
      * Gets the attribute name.
      * 
      * @param col
@@ -544,33 +447,48 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     /**
-     * Gets the value internal.
+     * Checks if is result available.
      * 
-     * @param row
-     *            the row
-     * @param col
-     *            the col
-     * @return the value internal
+     * @return true, if is result available
      */
     @Override
-    protected String getValueInternal(final int row, final int col) {
+    public boolean isResultAvailable() {
+        return optimalNode != null;
+    }
 
-        // Return the according values
-        final int type = inverseMap[col] >>> AttributeType.SHIFT;
-        switch (type) {
-        case AttributeType.ATTR_TYPE_ID:
-            return suppressionString;
-        default:
-            final int index = inverseMap[col] & AttributeType.MASK;
-            final int[][] data = inverseData[type];
+    /**
+     * Iterator.
+     * 
+     * @return the iterator
+     */
+    @Override
+    public Iterator<String[]> iterator() {
+        getHandle(currentNode);
+        return new ResultIterator();
+    }
 
-            if (removeOutliers &&
-                ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) { return suppressionString; }
+    /**
+     * Swap.
+     * 
+     * @param row1
+     *            the row1
+     * @param row2
+     *            the row2
+     */
+    @Override
+    public void swap(final int row1, final int row2) {
 
-            final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
-            final String[][] dictionary = inverseDictionaries[type].getMapping();
-            return dictionary[index][value];
+        // Check
+        checkRow(row1, dataQI.getDataLength());
+        checkRow(row2, dataQI.getDataLength());
+
+        // Swap input data
+        if (other != null) {
+            other.swapInternal(row1, row2);
         }
+
+        // Swap
+        swapInternal(row1, row2);
     }
 
     private void init(final DataManager manager,
@@ -640,53 +558,140 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     @Override
-    protected boolean isOutlierInternal(final int row) {
-        return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
+    protected void afterSorting() {
+        // Empty by design
     }
 
     /**
-     * Checks if is result available.
+     * Associates this handle with an input data handle.
      * 
-     * @return true, if is result available
+     * @param inHandle
+     *            the in handle
      */
-    @Override
-    public boolean isResultAvailable() {
-        return optimalNode != null;
+    protected void associate(final DataHandleInput inHandle) {
+        other = inHandle;
     }
 
     /**
-     * Iterator.
-     * 
-     * @return the iterator
-     */
-    @Override
-    public Iterator<String[]> iterator() {
-        getHandle(currentNode);
-        return new ResultIterator();
-    }
-
-    /**
-     * Swap.
+     * A negative integer, zero, or a positive integer as the first argument is
+     * less than, equal to, or greater than the second. It uses the specified
+     * data types for comparison if no generalization was applied, otherwise it
+     * uses string comparison.
      * 
      * @param row1
      *            the row1
      * @param row2
      *            the row2
+     * @param columns
+     *            the columns
+     * @param ascending
+     *            the ascending
+     * @return the int
      */
     @Override
-    public void swap(final int row1, final int row2) {
+    protected int compare(final int row1,
+                          final int row2,
+                          final int[] columns,
+                          final boolean ascending) {
+        getHandle(currentNode);
+        for (final int index : columns) {
 
-        // Check
-        checkRow(row1, dataQI.getDataLength());
-        checkRow(row2, dataQI.getDataLength());
+            final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
+            final int indexMap = inverseMap[index] & AttributeType.MASK;
+            if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
+            
+            int cmp = 0;
+            try {
+                cmp = dataTypes[attributeType][indexMap].compare(getValueInternal(row1,
+                                                                                  index),
+                                                                 getValueInternal(row2,
+                                                                                  index));
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
 
-        // Swap input data
-        if (other != null) {
-            other.swapInternal(row1, row2);
+            if (cmp != 0) {
+                if (ascending) {
+                    return -cmp;
+                } else {
+                    return cmp;
+                }
+            }
         }
+        return 0;
+    }
 
-        // Swap
-        swapInternal(row1, row2);
+    /**
+     * Creates the data type array.
+     */
+    @Override
+    protected void createDataTypeArray() {
+
+        dataTypes = new DataType[3][];
+        dataTypes[AttributeType.ATTR_TYPE_IS] = new DataType[dataIS.getHeader().length];
+        dataTypes[AttributeType.ATTR_TYPE_SE] = new DataType[dataSE.getHeader().length];
+        dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataQI.getHeader().length];
+
+        for (int i = 0; i < dataTypes.length; i++) {
+            final DataType<?>[] type = dataTypes[i];
+
+            String[] headers = null;
+
+            switch (i) {
+            case AttributeType.ATTR_TYPE_IS:
+                headers = dataIS.getHeader();
+                break;
+            case AttributeType.ATTR_TYPE_QI:
+                headers = dataQI.getHeader();
+                break;
+            case AttributeType.ATTR_TYPE_SE:
+                headers = dataSE.getHeader();
+                break;
+            }
+
+            for (int j = 0; j < type.length; j++) {
+                dataTypes[i][j] = definition.getDataType(headers[j]);
+                if ((i == AttributeType.ATTR_TYPE_QI) &&
+                    (currentNode.getTransformation()[j] > 0)) {
+                    dataTypes[i][j] = DataType.STRING;
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets the value internal.
+     * 
+     * @param row
+     *            the row
+     * @param col
+     *            the col
+     * @return the value internal
+     */
+    @Override
+    protected String getValueInternal(final int row, final int col) {
+
+        // Return the according values
+        final int type = inverseMap[col] >>> AttributeType.SHIFT;
+        switch (type) {
+        case AttributeType.ATTR_TYPE_ID:
+            return suppressionString;
+        default:
+            final int index = inverseMap[col] & AttributeType.MASK;
+            final int[][] data = inverseData[type];
+
+            if (removeOutliers &&
+                ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) { return suppressionString; }
+
+            final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
+            final String[][] dictionary = inverseDictionaries[type].getMapping();
+            return dictionary[index][value];
+        }
+    }
+
+    @Override
+    protected boolean isOutlierInternal(final int row) {
+        return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
     }
 
     /**

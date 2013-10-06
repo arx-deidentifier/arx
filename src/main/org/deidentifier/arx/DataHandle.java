@@ -57,6 +57,260 @@ public abstract class DataHandle {
     /** The data types */
     protected DataType<?>[][]   dataTypes  = null;
 
+    /** The current research subset*/
+    private int[] subset = null;
+
+    private DataHandleSubset subsetView = null;
+    
+    /**
+     * Returns the name of the specified column
+     * 
+     * @param col
+     *            The column index
+     * @return
+     */
+    public abstract String getAttributeName(int col);
+
+    /**
+     * Returns the index of the given attribute, -1 if it is not in the header
+     * 
+     * @param attribute
+     * @return
+     */
+    public int getColumnIndexOf(final String attribute) {
+        for (int i = 0; i < header.length; i++) {
+            if (header[i].equals(attribute)) { return i; }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the according datatype
+     * 
+     * @param attribute
+     * @return
+     */
+    public DataType<?> getDataType(final String attribute) {
+        return definition.getDataType(attribute);
+    }
+
+    public DataDefinition getDefinition() {
+        return definition;
+    }
+
+    /**
+     * Returns an array containing the distinct values in the given column
+     * 
+     * @param column
+     *            The column to process
+     * @return
+     */
+    public abstract String[] getDistinctValues(int column);
+
+    /**
+     * Returns the generalization level for the attribute
+     * 
+     * @param attribute
+     * @return
+     */
+    public abstract int getGeneralization(String attribute);
+
+    /** Returns the number of columns in the dataset */
+    public abstract int getNumColumns();
+
+    /** Returns the number of rows in the dataset */
+    public abstract int getNumRows();
+
+    /**
+     * Returns the value in the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     */
+    public abstract String getValue(int row, int col);
+
+    /**
+     * Returns a new data handle that represents a context specific view on the dataset
+     * @return
+     */
+    public DataHandle getView(ARXConfiguration config){
+        if (config.containsCriterion(DPresence.class)) {
+            return getView(config.getCriterion(DPresence.class).getArray());
+        } else {
+            return this;
+        }
+    }
+
+    /**
+     * Determines whether a given row is an outlier in the currently associated
+     * data transformation
+     * 
+     * @param row
+     */
+    public boolean isOutlier(final int row) {
+        boolean result = isOutlierInternal(row);
+        if (other != null) {
+            result |= other.isOutlierInternal(row);
+        }
+        return result;
+    }
+
+    /**
+     * Returns an iterator over the data
+     * 
+     * @return
+     */
+    public abstract Iterator<String[]> iterator();
+
+    /**
+     * Writes the data to a CSV file
+     * 
+     * @param file
+     *            A file
+     * @param separator
+     *            The utilized separator character
+     * @throws IOException
+     */
+    public void save(final File file, final char separator) throws IOException {
+        final CSVDataOutput output = new CSVDataOutput(file, separator);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file
+     * 
+     * @param out
+     *            Output stream
+     * @param separator
+     *            The utilized separator character
+     * @throws IOException
+     */
+    public void
+            save(final OutputStream out, final char separator) throws IOException {
+        final CSVDataOutput output = new CSVDataOutput(out, separator);
+        output.write(iterator());
+    }
+
+    /**
+     * Writes the data to a CSV file
+     * 
+     * @param path
+     *            A path
+     * @param separator
+     *            The utilized separator character
+     * @throws IOException
+     */
+    public void
+            save(final String path, final char separator) throws IOException {
+        final CSVDataOutput output = new CSVDataOutput(path, separator);
+        output.write(iterator());
+    }
+
+    /**
+     * Sorts the dataset according to the given columns. Will sort input and
+     * output analogously.
+     * 
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(final boolean ascending, final int... columns) {
+        sort(0, getNumRows(), ascending, columns);
+    }
+
+    /**
+     * Sorts the dataset according to the given columns and the given range.
+     * Will sort input and output analogously.
+     * 
+     * @param from
+     *            The lower bound
+     * @param to
+     *            The upper bound
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(final int from,
+                     final int to,
+                     final boolean ascending,
+                     final int... columns) {
+        checkColumns(columns);
+        checkRow(from, getNumRows());
+        checkRow(to, getNumRows());
+
+        final DataHandle outer = this;
+        final IntComparator c = new IntComparator() {
+            @Override
+            public int compare(final int arg0, final int arg1) {
+                return outer.compare(arg0, arg1, columns, ascending);
+            }
+        };
+        final Swapper s = new Swapper() {
+            @Override
+            public void swap(final int arg0, final int arg1) {
+                outer.swapBoth(arg0, arg1);
+            }
+        };
+        GenericSorting.mergeSort(from, to, c, s);
+        afterSorting();
+        if (other != null) {
+            other.afterSorting();
+        }
+    }
+
+    /**
+     * Swaps the data in the provided rows
+     * 
+     * @param row1
+     *            The first row to swap
+     * @param row2
+     *            The second row to swap
+     */
+    public abstract void swap(int row1, int row2);
+
+    /**
+     * Creates and caches a context specific view for a given research subset
+     * @param subset
+     * @return
+     */
+    private DataHandle getView(int[] subset) {
+     
+        if (this.subsetView != null){
+            if (this.subset == subset){
+                return this.subsetView;
+            } else if (Arrays.equals(this.subset, subset)){
+                return this.subsetView;
+            }
+        }
+        
+        this.subsetView = new DataHandleSubset(this, subset);
+        this.subset = subset;
+        return this.subsetView;
+    }
+
+    /**
+     * Swaps both representations
+     * 
+     * @param row1
+     * @param row2
+     */
+    private void swapBoth(final int row1, final int row2) {
+        swapInternal(row1, row2);
+        if (other != null) {
+            other.swapInternal(row1, row2);
+        }
+    }
+
+    /**
+     * Called after sorting
+     */
+    protected abstract void afterSorting();
+
     /**
      * Associates this handle to another handle
      * 
@@ -158,81 +412,11 @@ public abstract class DataHandle {
      * @return
      */
     protected abstract void createDataTypeArray();
-
-    /**
-     * Returns the name of the specified column
-     * 
-     * @param col
-     *            The column index
-     * @return
-     */
-    public abstract String getAttributeName(int col);
-
-    /**
-     * Returns the index of the given attribute, -1 if it is not in the header
-     * 
-     * @param attribute
-     * @return
-     */
-    public int getColumnIndexOf(final String attribute) {
-        for (int i = 0; i < header.length; i++) {
-            if (header[i].equals(attribute)) { return i; }
-        }
-        return -1;
-    }
-
-    /**
-     * Returns the according datatype
-     * 
-     * @param attribute
-     * @return
-     */
-    public DataType<?> getDataType(final String attribute) {
-        return definition.getDataType(attribute);
-    }
-
+    
     protected Map<String, DataType<?>> getDataTypes() {
         return definition.getDataTypes();
     }
-
-    public DataDefinition getDefinition() {
-        return definition;
-    }
-
-    /**
-     * Returns an array containing the distinct values in the given column
-     * 
-     * @param column
-     *            The column to process
-     * @return
-     */
-    public abstract String[] getDistinctValues(int column);
-
-    /**
-     * Returns the generalization level for the attribute
-     * 
-     * @param attribute
-     * @return
-     */
-    public abstract int getGeneralization(String attribute);
-
-    /** Returns the number of columns in the dataset */
-    public abstract int getNumColumns();
-
-    /** Returns the number of rows in the dataset */
-    public abstract int getNumRows();
-
-    /**
-     * Returns the value in the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
-     * @return
-     */
-    public abstract String getValue(int row, int col);
-
+    
     /**
      * Internal representation of get value
      * 
@@ -241,21 +425,6 @@ public abstract class DataHandle {
      * @return
      */
     protected abstract String getValueInternal(int row, int col);
-
-    /**
-     * Determines whether a given row is an outlier in the currently associated
-     * data transformation
-     * 
-     * @param row
-     */
-    public boolean isOutlier(final int row) {
-        boolean result = isOutlierInternal(row);
-        if (other != null) {
-            result |= other.isOutlierInternal(row);
-        }
-        return result;
-    }
-
     /**
      * Internal method for determining whether a row is an outlier
      * 
@@ -263,131 +432,7 @@ public abstract class DataHandle {
      * @return
      */
     protected abstract boolean isOutlierInternal(int row);
-
-    /**
-     * Returns an iterator over the data
-     * 
-     * @return
-     */
-    public abstract Iterator<String[]> iterator();
-
-    /**
-     * Writes the data to a CSV file
-     * 
-     * @param file
-     *            A file
-     * @param separator
-     *            The utilized separator character
-     * @throws IOException
-     */
-    public void save(final File file, final char separator) throws IOException {
-        final CSVDataOutput output = new CSVDataOutput(file, separator);
-        output.write(iterator());
-    }
-
-    /**
-     * Writes the data to a CSV file
-     * 
-     * @param out
-     *            Output stream
-     * @param separator
-     *            The utilized separator character
-     * @throws IOException
-     */
-    public void
-            save(final OutputStream out, final char separator) throws IOException {
-        final CSVDataOutput output = new CSVDataOutput(out, separator);
-        output.write(iterator());
-    }
-
-    /**
-     * Writes the data to a CSV file
-     * 
-     * @param path
-     *            A path
-     * @param separator
-     *            The utilized separator character
-     * @throws IOException
-     */
-    public void
-            save(final String path, final char separator) throws IOException {
-        final CSVDataOutput output = new CSVDataOutput(path, separator);
-        output.write(iterator());
-    }
-
-    /**
-     * Sorts the dataset according to the given columns. Will sort input and
-     * output analogously.
-     * 
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
-     */
-    public void sort(final boolean ascending, final int... columns) {
-        sort(0, getNumRows(), ascending, columns);
-    }
-
-    /**
-     * Sorts the dataset according to the given columns and the given range.
-     * Will sort input and output analogously.
-     * 
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
-     */
-    public void sort(final int from,
-                     final int to,
-                     final boolean ascending,
-                     final int... columns) {
-        checkColumns(columns);
-        checkRow(from, getNumRows());
-        checkRow(to, getNumRows());
-
-        final DataHandle outer = this;
-        final IntComparator c = new IntComparator() {
-            @Override
-            public int compare(final int arg0, final int arg1) {
-                return outer.compare(arg0, arg1, columns, ascending);
-            }
-        };
-        final Swapper s = new Swapper() {
-            @Override
-            public void swap(final int arg0, final int arg1) {
-                outer.swapBoth(arg0, arg1);
-            }
-        };
-        GenericSorting.mergeSort(from, to, c, s);
-    }
-
-    /**
-     * Swaps the data in the provided rows
-     * 
-     * @param row1
-     *            The first row to swap
-     * @param row2
-     *            The second row to swap
-     */
-    public abstract void swap(int row1, int row2);
-
-    /**
-     * Swaps both representations
-     * 
-     * @param row1
-     * @param row2
-     */
-    private void swapBoth(final int row1, final int row2) {
-        swapInternal(row1, row2);
-        if (other != null) {
-            other.swapInternal(row1, row2);
-        }
-    }
-
+    
     /**
      * Internal representation of the swap method
      * 
@@ -395,40 +440,4 @@ public abstract class DataHandle {
      * @param row2
      */
     protected abstract void swapInternal(int row1, int row2);
-    
-    /**
-     * Returns a new data handle that represents a context specific view on the dataset
-     * @return
-     */
-    public DataHandle getView(ARXConfiguration config){
-        if (config.containsCriterion(DPresence.class)) {
-            return getView(config.getCriterion(DPresence.class).getArray());
-        } else {
-            return this;
-        }
-    }
-    
-    /** The current research subset*/
-    private int[] subset = null;
-    private DataHandleSubset subsetView = null;
-    
-    /**
-     * Creates and caches a context specific view for a given research subset
-     * @param subset
-     * @return
-     */
-    private DataHandle getView(int[] subset) {
-     
-        if (this.subsetView != null){
-            if (this.subset == subset){
-                return this.subsetView;
-            } else if (Arrays.equals(this.subset, subset)){
-                return this.subsetView;
-            }
-        }
-        
-        this.subsetView = new DataHandleSubset(this, subset);
-        this.subset = subset;
-        return this.subsetView;
-    }
 }
