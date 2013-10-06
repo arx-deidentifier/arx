@@ -117,6 +117,43 @@ public class ViewDensity implements IView {
         controller.removeListener(this);
     }
 
+    @Override
+    public void reset() {
+
+        intensityGraph.setDataArray(new short[0]);
+        if (model != null) model.resetAttributePair();
+        canvas.setEnabled(false);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.part == ModelPart.OUTPUT) {
+            canvas.setEnabled(true);
+            redraw();
+        }
+
+        // Handle reset target, i.e., e.g. input has changed
+        if (event.part == reset) {
+            reset();
+            // Handle new project
+        } else if (event.part == ModelPart.MODEL) {
+            reset();
+            model = (Model) event.data;
+            // Handle new data
+        } else if (event.part == target) {
+            canvas.setEnabled(true);
+            redraw();
+            // Handle selected attribute
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            if (model.getAttributePair()[0] != null &&
+                model.getAttributePair()[1] != null) {
+                canvas.setEnabled(true);
+                redraw();
+            }
+        }
+    }
+
     private DataHandle getData() {
         // Obtain the right config
         ModelConfiguration config = model.getOutputConfig();
@@ -345,43 +382,6 @@ public class ViewDensity implements IView {
             canvas.redraw();
             // }
             // });
-        }
-    }
-
-    @Override
-    public void reset() {
-
-        intensityGraph.setDataArray(new short[0]);
-        if (model != null) model.resetAttributePair();
-        canvas.setEnabled(false);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.OUTPUT) {
-            canvas.setEnabled(true);
-            redraw();
-        }
-
-        // Handle reset target, i.e., e.g. input has changed
-        if (event.part == reset) {
-            reset();
-            // Handle new project
-        } else if (event.part == ModelPart.MODEL) {
-            reset();
-            model = (Model) event.data;
-            // Handle new data
-        } else if (event.part == target) {
-            canvas.setEnabled(true);
-            redraw();
-            // Handle selected attribute
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            if (model.getAttributePair()[0] != null &&
-                model.getAttributePair()[1] != null) {
-                canvas.setEnabled(true);
-                redraw();
-            }
         }
     }
 }
