@@ -20,52 +20,34 @@ package org.deidentifier.arx.gui.view.impl.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableArrayDataProvider;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayer;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableContext;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableDecorator;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableHandleDataProvider;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableRowHeaderConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayerStack;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
-import org.eclipse.nebula.widgets.nattable.copy.command.CopyDataCommandHandler;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultBodyDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultRowHeaderDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
-import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
-import org.eclipse.nebula.widgets.nattable.grid.layer.DefaultColumnHeaderDataLayer;
-import org.eclipse.nebula.widgets.nattable.grid.layer.DefaultRowHeaderDataLayer;
-import org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer;
-import org.eclipse.nebula.widgets.nattable.grid.layer.RowHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.config.DefaultRowStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
-import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
-import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.cell.AggregrateConfigLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnOverrideLabelAccumulator;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
-import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
-import org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundImagePainter;
-import org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.CheckBoxPainter;
-import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
-import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.CellPainterDecorator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PaddingDecorator;
-import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.selection.config.DefaultSelectionStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.sort.painter.SortableHeaderTextPainter;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle.LineStyleEnum;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
@@ -74,581 +56,60 @@ import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.editor.command.DisplayColumnStyleEditorCommandHandler;
-import org.eclipse.nebula.widgets.nattable.ui.util.CellEdgeEnum;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
-import org.eclipse.nebula.widgets.nattable.util.IClientAreaProvider;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
 public class ComponentDataTable implements IComponent {
-    /**
-     * Paints an image. If no image is provided, it will attempt to look up an
-     * image from the cell style.
-     */
-    public class ImagePainter extends BackgroundPainter {
 
-        @Override
-        public void paintCell(final ILayerCell cell,
-                              final GC gc,
-                              final Rectangle bounds,
-                              final IConfigRegistry configRegistry) {
-            if ((headerImages != null) && (headerImages.size() > 0)) {
-                final int index = cell.getColumnIndex() - (rows != null ? 1 : 0);
-                if (index >= 0){
-                    final Image image = headerImages.get(index);
-                    if (image != null) {
-                        gc.drawImage(image, bounds.x + 3, bounds.y - 8);
-                    }
-                }
-            }
-        }
+    private NatTable             table;
+    private DataTableContext     context;
+    private DataTableBodyLayerStack   bodyLayer;
+    private DataTableGridLayer        gridLayer;
 
-    }
-
-    public class StyledColumnHeaderConfiguration extends
-            DefaultColumnHeaderStyleConfiguration {
-
-        public StyledColumnHeaderConfiguration() {
-            font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-        }
-
-        @Override
-        public void configureRegistry(final IConfigRegistry configRegistry) {
-            super.configureRegistry(configRegistry);
-            addNormalModeStyling(configRegistry);
-            addSelectedModeStyling(configRegistry);
-        }
-
-        private void addNormalModeStyling(final IConfigRegistry configRegistry) {
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
-                                                                           IMAGE_COL_BACK,
-                                                                           GUIHelper.getColor(192,
-                                                                                              192,
-                                                                                              192));
-            final SortableHeaderTextPainter headerBasePainter = new SortableHeaderTextPainter(bgImagePainter,
-                                                                                              false,
-                                                                                              true);
-
-            final CellPainterDecorator headerPainter = new CellPainterDecorator(headerBasePainter,
-                                                                                CellEdgeEnum.LEFT,
-                                                                                new ImagePainter());
-
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   headerPainter,
-                                                   DisplayMode.NORMAL,
-                                                   GridRegion.COLUMN_HEADER);
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   headerBasePainter,
-                                                   DisplayMode.NORMAL,
-                                                   GridRegion.CORNER);
-        }
-
-        private void
-                addSelectedModeStyling(final IConfigRegistry configRegistry) {
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                                IMAGE_COL_SELECT,
-                                                                                GUIHelper.getColor(192,
-                                                                                                   192,
-                                                                                                   192));
-
-            final CellPainterDecorator selectedHeaderPainter = new CellPainterDecorator(selectedCellPainter,
-                                                                                        CellEdgeEnum.LEFT,
-                                                                                        new ImagePainter());
-
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   selectedHeaderPainter,
-                                                   DisplayMode.SELECT,
-                                                   GridRegion.COLUMN_HEADER);
-        }
-    }
-
-    public class StyledRowHeaderConfiguration extends
-            DefaultRowHeaderStyleConfiguration {
-
-        public StyledRowHeaderConfiguration() {
-            font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
-                                                                           IMAGE_ROW_BACK,
-                                                                           null);
-            cellPainter = bgImagePainter;
-        }
-
-        @Override
-        public void configureRegistry(final IConfigRegistry configRegistry) {
-            super.configureRegistry(configRegistry);
-            addSelectedModeStyling(configRegistry);
-        }
-
-        private void
-                addSelectedModeStyling(final IConfigRegistry configRegistry) {
-
-            final TextPainter txtPainter = new TextPainter(false, false);
-            final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                                IMAGE_ROW_SELECT,
-                                                                                GUIHelper.getColor(192,
-                                                                                                   192,
-                                                                                                   192));
-
-            configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
-                                                   selectedCellPainter,
-                                                   DisplayMode.SELECT,
-                                                   GridRegion.ROW_HEADER);
-        }
-    }
-
-    private class ArrayDataProvider implements IDataProvider {
-
-        private final String[][] data;
-
-        public ArrayDataProvider(final String[][] data) {
-            this.data = data;
-        }
-
-        @Override
-        public int getColumnCount() {
-            if (data == null) { return 0; }
-            return data[0].length + (rows != null ? 1 : 0);
-        }
-
-        @Override
-        public Object getDataValue(final int arg0, final int arg1) {
-            if (data == null) { return null; }
-            if (rows == null) {
-                return data[arg1][arg0];
-            } else if (arg0 == 0){
-                return rows.contains(arg1);
-            } else {
-                return data[arg1][arg0 - 1];
-            }
-        }
-
-        @Override
-        public int getRowCount() {
-            if (data == null) { return 0; }
-            return data.length;
-        }
-
-        @Override
-        public void setDataValue(final int arg0,
-                                 final int arg1,
-                                 final Object arg2) {
-            return;
-        }
-    }
-
-    private class DataConfigLabelAccumulator implements IConfigLabelAccumulator {
-        
-        @Override
-        public void accumulateConfigLabels(LabelStack configLabels,
-                                           int columnPosition,
-                                           int rowPosition) {
-            
-            if (table!=null && groups!=null){
-                int row = table.getRowIndexByPosition(rowPosition+1);
-                configLabels.addLabel("background"+(groups[row]%2)); //$NON-NLS-1$
-                if (row<groups.length-1 && groups[row]!=groups[row+1]){
-                    configLabels.addLabel(ComponentDataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
-                }
-            } 
-            
-            if (table!=null && rows != null){
-                int column = table.getColumnIndexByPosition(columnPosition+1);
-                if (column == 0) {
-                    configLabels.addLabel("checkbox"); //$NON-NLS-1$
-                }
-            }
-        }
-    }
-
-    private class HandleDataProvider implements IDataProvider {
-
-        private final DataHandle data;
-
-        public HandleDataProvider(final DataHandle data) {
-            this.data = data;
-        }
-
-        @Override
-        public int getColumnCount() {
-            if (data == null) { return 0; }
-            return data.getNumColumns() + (rows != null ? 1 : 0);
-        }
-
-        @Override
-        public Object getDataValue(final int arg0, final int arg1) {
-            if (data == null) { return null; }
-            if (rows == null) {
-                return  data.getValue(arg1, arg0);
-            } else if (arg0 == 0){
-                return rows.contains(arg1);
-            } else {
-                return  data.getValue(arg1, arg0 - 1);
-            }
-        }
-
-        @Override
-        public int getRowCount() {
-            if (data == null) { return 0; }
-            return data.getNumRows();
-        }
-
-        @Override
-        public void setDataValue(final int arg0,
-                                 final int arg1,
-                                 final Object arg2) {
-            return;
-        }
-    }
-
-    private class TableGridLayerStack extends DataGridLayer {
-
-        public TableGridLayerStack(final IDataProvider bodyDataProvider) {
-            super(true);
-            List<String> lcolumns = new ArrayList<String>();
-            if (bodyDataProvider.getColumnCount() != 0) {
-                if (rows != null){
-                    lcolumns.add("");
-                }
-                if (handle != null) {
-                    for (int i = 0; i < handle.getNumColumns(); i++) {
-                        lcolumns.add(handle.getAttributeName(i));
-                    }
-                } else if (data != null) {
-                    for (int i = 0; i < data[0].length; i++) {
-                        lcolumns.add(data[0][i]);
-                    }
-                }
-            }
-            String[] columns = lcolumns.toArray(new String[]{});
-            final IDataProvider columnHeaderDataProvider = new DefaultColumnHeaderDataProvider(columns);
-            final IDataProvider rowHeaderDataProvider = new DefaultRowHeaderDataProvider(bodyDataProvider);
-            final IDataProvider cornerDataProvider = new DefaultCornerDataProvider(columnHeaderDataProvider,
-                                                                                   rowHeaderDataProvider);
-            init(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider,
-                 cornerDataProvider);
-        }
-    }
-
-    class DataBodyLayerStack extends AbstractLayerTransform {
-
-        private final SelectionLayer selectionLayer;
-        private final ViewportLayer  viewportLayer;
-
-        public DataBodyLayerStack(IUniqueIndexLayer underlyingLayer) {
-            this.selectionLayer = new SelectionLayer(underlyingLayer);
-            this.viewportLayer = new ViewportLayer(selectionLayer);
-            this.setUnderlyingLayer(viewportLayer);
-            this.setConfigLabelAccumulator(new DataConfigLabelAccumulator());
-            this.registerCommandHandler(new CopyDataCommandHandler(selectionLayer));
-        }
-
-        public SelectionLayer getSelectionLayer() {
-            return selectionLayer;
-        }
-
-        public ViewportLayer getViewportLayer() {
-            return viewportLayer;
-        }
-
-        @Override
-        public void
-                setClientAreaProvider(IClientAreaProvider clientAreaProvider) {
-            super.setClientAreaProvider(clientAreaProvider);
-        }
-    }
-
-    class DataGridLayer extends GridLayer {
-
-        protected IUniqueIndexLayer bodyDataLayer;
-        protected IUniqueIndexLayer columnHeaderDataLayer;
-        protected IUniqueIndexLayer rowHeaderDataLayer;
-        protected IUniqueIndexLayer cornerDataLayer;
-
-        public DataGridLayer(IDataProvider bodyDataProvider,
-                             IDataProvider columnHeaderDataProvider) {
-            this(bodyDataProvider, columnHeaderDataProvider, true);
-        }
-
-        public DataGridLayer(IDataProvider bodyDataProvider,
-                             IDataProvider columnHeaderDataProvider,
-                             boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-            init(bodyDataProvider, columnHeaderDataProvider);
-        }
-
-        public DataGridLayer(IDataProvider bodyDataProvider,
-                             IDataProvider columnHeaderDataProvider,
-                             IDataProvider rowHeaderDataProvider) {
-            this(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider,
-                 true);
-        }
-
-        public DataGridLayer(IDataProvider bodyDataProvider,
-                             IDataProvider columnHeaderDataProvider,
-                             IDataProvider rowHeaderDataProvider,
-                             boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-            init(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider);
-        }
-
-        public DataGridLayer(IDataProvider bodyDataProvider,
-                             IDataProvider columnHeaderDataProvider,
-                             IDataProvider rowHeaderDataProvider,
-                             IDataProvider cornerDataProvider) {
-            this(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider,
-                 cornerDataProvider,
-                 true);
-        }
-
-        public DataGridLayer(IDataProvider bodyDataProvider,
-                             IDataProvider columnHeaderDataProvider,
-                             IDataProvider rowHeaderDataProvider,
-                             IDataProvider cornerDataProvider,
-                             boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-            init(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider,
-                 cornerDataProvider);
-        }
-
-        public DataGridLayer(IUniqueIndexLayer bodyDataLayer,
-                             IUniqueIndexLayer columnHeaderDataLayer,
-                             IUniqueIndexLayer rowHeaderDataLayer,
-                             IUniqueIndexLayer cornerDataLayer) {
-            this(bodyDataLayer,
-                 columnHeaderDataLayer,
-                 rowHeaderDataLayer,
-                 cornerDataLayer,
-                 true);
-        }
-
-        public DataGridLayer(IUniqueIndexLayer bodyDataLayer,
-                             IUniqueIndexLayer columnHeaderDataLayer,
-                             IUniqueIndexLayer rowHeaderDataLayer,
-                             IUniqueIndexLayer cornerDataLayer,
-                             boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-            init(bodyDataLayer,
-                 columnHeaderDataLayer,
-                 rowHeaderDataLayer,
-                 cornerDataLayer);
-        }
-
-        public <T> DataGridLayer(List<T> rowData,
-                                 String[] propertyNames,
-                                 Map<String, String> propertyToLabelMap) {
-            this(rowData, propertyNames, propertyToLabelMap, true);
-        }
-
-        public <T> DataGridLayer(List<T> rowData,
-                                 String[] propertyNames,
-                                 Map<String, String> propertyToLabelMap,
-                                 boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-            init(rowData, propertyNames, propertyToLabelMap);
-        }
-
-        protected DataGridLayer(boolean useDefaultConfiguration) {
-            super(useDefaultConfiguration);
-        }
-
-        public IUniqueIndexLayer getBodyDataLayer() {
-            return bodyDataLayer;
-        }
-
-        @Override
-        public DataBodyLayerStack getBodyLayer() {
-            return (DataBodyLayerStack) super.getBodyLayer();
-        }
-
-        public IUniqueIndexLayer getColumnHeaderDataLayer() {
-            return columnHeaderDataLayer;
-        }
-
-        @Override
-        public ColumnHeaderLayer getColumnHeaderLayer() {
-            return (ColumnHeaderLayer) super.getColumnHeaderLayer();
-        }
-
-        public IUniqueIndexLayer getCornerDataLayer() {
-            return cornerDataLayer;
-        }
-
-        @Override
-        public CornerLayer getCornerLayer() {
-            return (CornerLayer) super.getCornerLayer();
-        }
-
-        public IUniqueIndexLayer getRowHeaderDataLayer() {
-            return rowHeaderDataLayer;
-        }
-
-        @Override
-        public RowHeaderLayer getRowHeaderLayer() {
-            return (RowHeaderLayer) super.getRowHeaderLayer();
-        }
-
-        protected void init(IDataProvider bodyDataProvider,
-                            IDataProvider columnHeaderDataProvider) {
-            init(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 new DefaultRowHeaderDataProvider(bodyDataProvider));
-        }
-
-        protected void init(IDataProvider bodyDataProvider,
-                            IDataProvider columnHeaderDataProvider,
-                            IDataProvider rowHeaderDataProvider) {
-            init(bodyDataProvider,
-                 columnHeaderDataProvider,
-                 rowHeaderDataProvider,
-                 new DefaultCornerDataProvider(columnHeaderDataProvider,
-                                               rowHeaderDataProvider));
-        }
-
-        protected void init(IDataProvider bodyDataProvider,
-                            IDataProvider columnHeaderDataProvider,
-                            IDataProvider rowHeaderDataProvider,
-                            IDataProvider cornerDataProvider) {
-            init(new DataLayer(bodyDataProvider),
-                 new DefaultColumnHeaderDataLayer(columnHeaderDataProvider),
-                 new DefaultRowHeaderDataLayer(rowHeaderDataProvider),
-                 new DataLayer(cornerDataProvider));
-        }
-
-        protected void init(IUniqueIndexLayer bodyDataLayer,
-                            IUniqueIndexLayer columnHeaderDataLayer,
-                            IUniqueIndexLayer rowHeaderDataLayer,
-                            IUniqueIndexLayer cornerDataLayer) {
-            // Body
-            this.bodyDataLayer = bodyDataLayer;
-            DataBodyLayerStack bodyLayer = new DataBodyLayerStack(bodyDataLayer);
-
-            SelectionLayer selectionLayer = bodyLayer.getSelectionLayer();
-
-            // Column header
-            this.columnHeaderDataLayer = columnHeaderDataLayer;
-            ILayer columnHeaderLayer = new ColumnHeaderLayer(columnHeaderDataLayer,
-                                                             bodyLayer,
-                                                             selectionLayer);
-
-            // Row header
-            this.rowHeaderDataLayer = rowHeaderDataLayer;
-            ILayer rowHeaderLayer = new RowHeaderLayer(rowHeaderDataLayer,
-                                                       bodyLayer,
-                                                       selectionLayer);
-
-            // Corner
-            this.cornerDataLayer = cornerDataLayer;
-            ILayer cornerLayer = new CornerLayer(cornerDataLayer,
-                                                 rowHeaderLayer,
-                                                 columnHeaderLayer);
-            
-            // Attach the listeners
-            for (ILayerListener listener : selectionLayerListeners) {
-                selectionLayer.addLayerListener(listener);
-            }
-
-            setBodyLayer(bodyLayer);
-            setColumnHeaderLayer(columnHeaderLayer);
-            setRowHeaderLayer(rowHeaderLayer);
-            setCornerLayer(cornerLayer);
-        }
-
-        protected <T> void init(List<T> rowData,
-                                String[] propertyNames,
-                                Map<String, String> propertyToLabelMap) {
-            init(new DefaultBodyDataProvider<T>(rowData, propertyNames),
-                 new DefaultColumnHeaderDataProvider(propertyNames,
-                                                     propertyToLabelMap));
-        }
-
-    }
-    private final Image        IMAGE_COL_BACK;
-    private final Image        IMAGE_ROW_BACK;
-    private final Image        IMAGE_COL_SELECT;
-    private final Image        IMAGE_ROW_SELECT;
-    private List<Image>        headerImages = new ArrayList<Image>();
-    
-    private final NatTable     table;
-    
-    private int[]              groups = null;
-
-    private DataHandle         handle;
-    private String[][]         data;
-    private RowSet             rows;
-
-    private DataBodyLayerStack bodyLayer;
-    private DataGridLayer      gridLayer;
-    private List<ILayerListener>  selectionLayerListeners = new ArrayList<ILayerListener>();
-    
     public ComponentDataTable(final Controller controller, final Composite parent) {
-        IMAGE_COL_BACK = controller.getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
-        IMAGE_ROW_BACK = controller.getResources().getImage("row_header_bg.png"); //$NON-NLS-1$
-        IMAGE_COL_SELECT = controller.getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
-        IMAGE_ROW_SELECT = controller.getResources().getImage("selected_row_header_bg.png"); //$NON-NLS-1$
-        table = createControl(parent);
-        table.setVisible(false);
+        
+        this.table = createControl(parent); 
+        this.context = new DataTableContext(this.table);
+        this.table.setVisible(false);
     }
 
     public void addScrollBarListener(final Listener listener) {
-        table.getVerticalBar().addListener(SWT.Selection, listener);
-        table.getHorizontalBar().addListener(SWT.Selection, listener);
+        this.table.getVerticalBar().addListener(SWT.Selection, listener);
+        this.table.getHorizontalBar().addListener(SWT.Selection, listener);
     }
 
     public void addSelectionLayerListener(ILayerListener listener){
-        selectionLayerListeners.add(listener);
+        this.context.getListeners().add(listener);
     }
 
     public void dispose() {
-        IMAGE_COL_BACK.dispose();
-        IMAGE_ROW_BACK.dispose();
-        IMAGE_COL_SELECT.dispose();
-        IMAGE_ROW_SELECT.dispose();
+        // Nothing to dispose
     }
 
     public List<Image> getHeaderImages() {
-        return headerImages;
+        return this.context.getImages();
     }
 
     public ViewportLayer getViewportLayer() {
-        return gridLayer.getBodyLayer().getViewportLayer();
+        return this.gridLayer.getBodyLayer().getViewportLayer();
     }
 
     public void redraw() {
-        table.redraw();
+        this.table.redraw();
     }
 
     public void reset() {
         this.table.setRedraw(false);
-        this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(null));
-        this.handle = null;
-        this.data = null;
-        this.rows = null;
-        this.groups = null;
+        this.context.getImages().clear();
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(null, context), context);
+        this.context.reset();
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -664,10 +125,9 @@ public class ComponentDataTable implements IComponent {
 
     public void setData(final String[][] data) {
         this.table.setRedraw(false);
-        this.handle = null;
-        this.data = data;
-        this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
+        this.context.reset();
+        this.context.setArray(data);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -683,11 +143,9 @@ public class ComponentDataTable implements IComponent {
 
     public void setData(final DataHandle handle) {
         this.table.setRedraw(false);
-        this.handle = handle;
-        this.data = null;
-        this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
-        this.headerImages = new ArrayList<Image>();
+        this.context.reset();
+        this.context.setHandle(handle);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(handle, context), context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -702,7 +160,6 @@ public class ComponentDataTable implements IComponent {
         this.table.getHorizontalBar().setVisible(true);
         this.table.setVisible(true);
     }
-
   
     public void setEnabled(final boolean val) {
         if (table != null) {
@@ -715,11 +172,11 @@ public class ComponentDataTable implements IComponent {
     }
 
     public void setResearchSubset(RowSet researchSubset) {
-        this.rows = researchSubset;
+        this.context.setRows(researchSubset);
     }
     
     public void setGroups(int[] groups) {
-        this.groups = groups;
+        this.context.setGroups(groups);
     }
     
     private NatTable createControl(final Composite parent) {
@@ -736,13 +193,12 @@ public class ComponentDataTable implements IComponent {
     }
     
     private NatTable createTable(final Composite parent) {
-        final IDataProvider provider = new HandleDataProvider(null);
-        gridLayer = new TableGridLayerStack(provider);
+        final IDataProvider provider = new DataTableHandleDataProvider(null, context);
+        gridLayer = new DataTableGridLayerStack(provider, context);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
 
-        // Add an AggregrateConfigLabelAccumulator - we can add other
-        // accumulators to this as required
+        // Add an AggregrateConfigLabelAccumulator 
         final AggregrateConfigLabelAccumulator aggregrateConfigLabelAccumulator = new AggregrateConfigLabelAccumulator();
         bodyDataLayer.setConfigLabelAccumulator(aggregrateConfigLabelAccumulator);
 
@@ -767,7 +223,7 @@ public class ComponentDataTable implements IComponent {
 
         // Register default cell painter
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, 
-                                                             new ComponentDataTableDecorator( new TextPainter(false, true, 0, true),
+                                                             new DataTableDecorator( new TextPainter(false, true, 0, true),
                                                              new BorderStyle(2, GUIHelper.COLOR_BLACK, LineStyleEnum.SOLID)),
                                                                 DisplayMode.NORMAL,
                                                                 GridRegion.BODY);
@@ -834,11 +290,11 @@ public class ComponentDataTable implements IComponent {
         natTable.addConfiguration(selectionStyle);
 
         // Column/Row header style and custom painters
-        natTable.addConfiguration(new StyledRowHeaderConfiguration());
-        natTable.addConfiguration(new StyledColumnHeaderConfiguration());
+        natTable.addConfiguration(new DataTableRowHeaderConfiguration());
+        natTable.addConfiguration(new DataTableColumnHeaderConfiguration(context));
     }
 
     public DataHandle getData() {
-        return this.handle;
+        return this.context.getHandle();
     }
 }

@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * </p>
  * + * + * @author Dirk Fauth + *
  */
-public class ComponentDataTableDecorator extends CellPainterWrapper {
+public class DataTableDecorator extends CellPainterWrapper {
 
     /**
      * Label for adding a border at the top of a cell.
@@ -60,7 +60,7 @@ public class ComponentDataTableDecorator extends CellPainterWrapper {
      * @param interiorPainter
      *            The painter to be wrapped by this decorator.
      */
-    public ComponentDataTableDecorator(ICellPainter interiorPainter) {
+    public DataTableDecorator(ICellPainter interiorPainter) {
         this(interiorPainter, null);
     }
 
@@ -74,7 +74,7 @@ public class ComponentDataTableDecorator extends CellPainterWrapper {
      *            The BorderStyle to use as default if there is no BorderStyle
      *            configured via cell styles. Can be <code>null</code>.
      */
-    public ComponentDataTableDecorator(ICellPainter interiorPainter, BorderStyle defaultBorderStyle) {
+    public DataTableDecorator(ICellPainter interiorPainter, BorderStyle defaultBorderStyle) {
         super(interiorPainter);
         this.defaultBorderStyle = defaultBorderStyle;
     }
