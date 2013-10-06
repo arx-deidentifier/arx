@@ -484,7 +484,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         // Swap input data
         if (other != null) {
-            other.swapInternal(row1, row2);
+            other.swap(row1, row2);
         }
 
         // Swap
