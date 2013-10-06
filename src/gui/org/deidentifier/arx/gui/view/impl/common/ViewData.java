@@ -288,6 +288,7 @@ public class ViewData implements IView {
                 data = handle.getView(model.getOutputConfig().getConfig());
             }
             table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
+            table.setResearchSubset(model.getInputConfig().getResearchSubset());
             if (table.getData() != data) table.setData(data);
             table.redraw();
             

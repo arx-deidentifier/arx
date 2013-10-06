@@ -40,6 +40,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleInput;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
@@ -1016,6 +1017,10 @@ public class Controller implements IView {
             handle.sort(true, handle.getColumnIndexOf(config.getAttribute()));
             model.setGroups(null);
             
+            // Update subset as it might have changed
+            DataHandleInput inHandle = (DataHandleInput)model.getInputConfig().getInput().getHandle();
+            model.getInputConfig().setResearchSubset(inHandle.getSubset().clone());
+            
         } else {
             
             // Groups
@@ -1053,6 +1058,10 @@ public class Controller implements IView {
 
             // Update
             model.setGroups(groups);
+            
+            // Update subset as it might have changed
+            DataHandleInput inHandle = (DataHandleInput)model.getInputConfig().getInput().getHandle();
+            model.getInputConfig().setResearchSubset(inHandle.getSubset().clone());
         }
     }
 }
