@@ -70,6 +70,7 @@ public class ViewDensity implements IView {
         // Register
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -145,13 +146,14 @@ public class ViewDensity implements IView {
             canvas.setEnabled(true);
             redraw();
             // Handle selected attribute
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE ||
+                   event.part == ModelPart.VIEW_CONFIG) {
             if (model.getAttributePair()[0] != null &&
                 model.getAttributePair()[1] != null) {
                 canvas.setEnabled(true);
                 redraw();
             }
-        }
+        } 
     }
 
     private DataHandle getData() {
@@ -171,7 +173,9 @@ public class ViewDensity implements IView {
         }
         
         // Project onto subset, if possible
-        if (data != null) data = data.getView(config.getConfig());
+        if (data != null && model.getViewConfig().isSubset()){
+            data = data.getView(config.getConfig());
+        }
 
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {

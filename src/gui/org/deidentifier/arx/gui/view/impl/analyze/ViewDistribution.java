@@ -207,7 +207,9 @@ public class ViewDistribution implements IView {
         }
 
         // Project onto subset, if possible
-        if (data != null) data = data.getView(config.getConfig());
+        if (data != null && model.getViewConfig().isSubset()){
+            data = data.getView(config.getConfig());
+        }
 
         final int index = data.getColumnIndexOf(attribute);
 
