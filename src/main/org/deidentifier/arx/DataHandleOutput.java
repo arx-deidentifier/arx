@@ -277,7 +277,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
             final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
             final int indexMap = inverseMap[index] & AttributeType.MASK;
-
+            if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
+            
             int cmp = 0;
             try {
                 cmp = dataTypes[attributeType][indexMap].compare(getValueInternal(row1,
