@@ -30,10 +30,11 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.Enclosure;
 
 public class Model implements Serializable {
 
@@ -137,7 +138,7 @@ public class Model implements Serializable {
         if (!inputConfig.containsCriterion(DPresence.class)){
             DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
                                                   getInputConfig().getResearchSubset());
-            inputConfig.addCriterion(new DPresence(0d, 1d, subset));
+            inputConfig.addCriterion(new Enclosure(subset));
         }
 
         // Clone the config
