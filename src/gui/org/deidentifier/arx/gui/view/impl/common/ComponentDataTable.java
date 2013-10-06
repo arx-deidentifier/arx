@@ -125,7 +125,7 @@ public class ComponentDataTable implements IComponent {
 
     public void setData(final String[][] data) {
         this.table.setRedraw(false);
-        this.context.reset();
+        this.context.setHandle(null);
         this.context.setArray(data);
         this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), table, context);
         this.table.setLayer(gridLayer);
@@ -143,8 +143,8 @@ public class ComponentDataTable implements IComponent {
 
     public void setData(final DataHandle handle) {
         this.table.setRedraw(false);
-        this.context.reset();
         this.context.setHandle(handle);
+        this.context.setArray(null);
         this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(handle, context), table, context);
         this.table.setLayer(gridLayer);
         this.table.refresh();

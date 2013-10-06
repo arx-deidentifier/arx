@@ -6,7 +6,6 @@ import java.util.List;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
-import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.swt.graphics.Image;
 
@@ -65,6 +64,7 @@ public class DataTableContext {
     }
 
     public void setRows(RowSet rows) {
+        System.out.println("Research subset: "+rows);
         this.rows = rows;
     }
 
