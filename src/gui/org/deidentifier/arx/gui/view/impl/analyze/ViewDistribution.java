@@ -193,11 +193,11 @@ public class ViewDistribution implements IView {
         }
 
         // Obtain the right handle
-        final DataHandle data;
+        DataHandle data;
         if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle().getView(config.getConfig());
+            data = config.getInput().getHandle();
         } else {
-            data = model.getOutput().getView(config.getConfig());
+            data = model.getOutput();
         }
 
         // Clear if nothing to draw
@@ -205,6 +205,9 @@ public class ViewDistribution implements IView {
             reset();
             return;
         }
+
+        // Project onto subset, if possible
+        if (data != null) data = data.getView(config.getConfig());
 
         final int index = data.getColumnIndexOf(attribute);
 

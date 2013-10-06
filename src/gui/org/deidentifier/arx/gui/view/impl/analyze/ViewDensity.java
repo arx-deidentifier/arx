@@ -163,12 +163,15 @@ public class ViewDensity implements IView {
         }
 
         // Obtain the right handle
-        final DataHandle data;
+        DataHandle data;
         if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle().getView(config.getConfig());
+            data = config.getInput().getHandle();
         } else {
-            data = model.getOutput().getView(config.getConfig());
+            data = model.getOutput();
         }
+        
+        // Project onto subset, if possible
+        if (data != null) data = data.getView(config.getConfig());
 
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
