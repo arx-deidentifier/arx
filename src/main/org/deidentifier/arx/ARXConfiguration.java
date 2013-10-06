@@ -139,6 +139,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param c
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
+        if ((c instanceof DPresence) && 
+            this.containsCriterion(DPresence.class)) {
+            throw new RuntimeException("Must not add more than one d-presence criterion");
+        } else if ((c instanceof KAnonymity) && 
+               this.containsCriterion(KAnonymity.class)) { 
+               throw new RuntimeException("Must not add more than one k-anonymity criterion"); 
+        }
         criteria.add(c);
         return this;
     }
