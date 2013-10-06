@@ -29,7 +29,7 @@ import org.deidentifier.arx.framework.data.Dictionary;
  * 
  * @author Prasser, Kohlmayer
  */
-class DataHandleInput extends DataHandle {
+public class DataHandleInput extends DataHandle {
 
     /** The data */
     protected int[][]    data         = null;
@@ -259,5 +259,12 @@ class DataHandleInput extends DataHandle {
     public void setSubset(RowSet bitset, int[] array) {
         this.subsetBitset = bitset;
         this.subsetArray = array;
+    }
+    
+    /**
+     * Returns the associated research subset
+     */
+    public RowSet getSubset() {
+        return this.subsetBitset;
     }
 }
