@@ -3,6 +3,7 @@ package org.deidentifier.arx.gui.view.impl.common.datatable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultBodyDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
@@ -27,10 +28,12 @@ public class DataTableGridLayer extends GridLayer {
     protected IUniqueIndexLayer rowHeaderDataLayer;
     protected IUniqueIndexLayer cornerDataLayer;
     private DataTableContext    context;
+    private NatTable            table;
 
-    protected DataTableGridLayer(boolean useDefaultConfiguration, DataTableContext context) {
+    protected DataTableGridLayer(boolean useDefaultConfiguration, NatTable table, DataTableContext context) {
         super(useDefaultConfiguration);
         this.context = context;
+        this.table = table;
     }
 
     public IUniqueIndexLayer getBodyDataLayer() {
@@ -98,7 +101,7 @@ public class DataTableGridLayer extends GridLayer {
                         IUniqueIndexLayer cornerDataLayer) {
         // Body
         this.bodyDataLayer = bodyDataLayer;
-        DataTableBodyLayerStack bodyLayer = new DataTableBodyLayerStack(bodyDataLayer, context);
+        DataTableBodyLayerStack bodyLayer = new DataTableBodyLayerStack(bodyDataLayer, table, context);
 
         SelectionLayer selectionLayer = bodyLayer.getSelectionLayer();
 

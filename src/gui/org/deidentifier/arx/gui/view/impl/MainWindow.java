@@ -59,29 +59,27 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class MainWindow implements IView {
-    
-    public static final Font FONT = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-    
-    private static final String TITLE                     = Resources.getMessage("MainWindow.0"); //$NON-NLS-1$
-    private static final String TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1"); //$NON-NLS-1$
-    private static final String TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2"); //$NON-NLS-1$
-    private static final String TAB_EXPLORE_SEARCHSPACE   = Resources.getMessage("MainWindow.3"); //$NON-NLS-1$
 
-    private final Display       display;
+    public static final Font            FONT                      = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
 
-    private final Shell         shell;
+    private static final String         TITLE                     = Resources.getMessage("MainWindow.0");                     //$NON-NLS-1$
+    private static final String         TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1");                     //$NON-NLS-1$
+    private static final String         TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2");                     //$NON-NLS-1$
+    private static final String         TAB_EXPLORE_SEARCHSPACE   = Resources.getMessage("MainWindow.3");                     //$NON-NLS-1$
 
-    private final Controller    controller;
+    private final Display               display;
+    private final Shell                 shell;
+    private final Controller            controller;
+    private final MainToolTip           tooltip;
+    private final MainPopUp             popup;
 
-    private final MainToolTip   tooltip;
-    private final MainPopUp     popup;
-
-    private final ComponentTitledFolder  root;
+    private final ComponentTitledFolder root;
 
     public MainWindow() {
 
         // Init
-        display = new Display();
+        Display current = Display.getCurrent();
+        display = current != null ? current : new Display();
         shell = new Shell(display);
 
         // Build controller

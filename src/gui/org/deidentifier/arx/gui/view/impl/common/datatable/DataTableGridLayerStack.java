@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
+import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
@@ -12,8 +13,8 @@ import org.eclipse.nebula.widgets.nattable.grid.data.DefaultRowHeaderDataProvide
 
 public class DataTableGridLayerStack extends DataTableGridLayer {
 
-    public DataTableGridLayerStack(final IDataProvider bodyDataProvider, DataTableContext context) {
-        super(true, context);
+    public DataTableGridLayerStack(final IDataProvider bodyDataProvider, NatTable table, DataTableContext context) {
+        super(true, table, context);
         List<String> lcolumns = new ArrayList<String>();
         RowSet rows = context.getRows();
         DataHandle handle = context.getHandle();

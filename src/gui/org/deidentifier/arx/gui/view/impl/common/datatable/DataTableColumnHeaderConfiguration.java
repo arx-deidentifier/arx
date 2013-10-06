@@ -1,6 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.common.datatable;
 
-import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
@@ -19,14 +18,17 @@ import org.eclipse.swt.graphics.Image;
 
 public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyleConfiguration {
 
-    private static final Image     IMAGE_COL_BACK   = Resources.getImageStatic("column_header_bg.png");         //$NON-NLS-1$
-    private static final Image     IMAGE_COL_SELECT = Resources.getImageStatic("selected_column_header_bg.png"); //$NON-NLS-1$
+    private final Image     IMAGE_COL_BACK;
+    private final Image     IMAGE_COL_SELECT;
 
     private final DataTableContext context;
 
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
         this.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
         this.context = context;
+        IMAGE_COL_BACK   = context.getController().getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
+        IMAGE_COL_SELECT = context.getController().getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
+
     }
 
     @Override

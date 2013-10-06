@@ -68,15 +68,15 @@ import org.eclipse.swt.widgets.Listener;
 
 public class ComponentDataTable implements IComponent {
 
-    private NatTable             table;
-    private DataTableContext     context;
-    private DataTableBodyLayerStack   bodyLayer;
-    private DataTableGridLayer        gridLayer;
+    private NatTable                table;
+    private DataTableContext        context;
+    private DataTableBodyLayerStack bodyLayer;
+    private DataTableGridLayer      gridLayer;
 
     public ComponentDataTable(final Controller controller, final Composite parent) {
         
+        this.context = new DataTableContext(controller);
         this.table = createControl(parent); 
-        this.context = new DataTableContext(this.table);
         this.table.setVisible(false);
     }
 
@@ -108,7 +108,7 @@ public class ComponentDataTable implements IComponent {
     public void reset() {
         this.table.setRedraw(false);
         this.context.getImages().clear();
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(null, context), context);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(null, context), table, context);
         this.context.reset();
         this.table.setLayer(gridLayer);
         this.table.refresh();
@@ -127,7 +127,7 @@ public class ComponentDataTable implements IComponent {
         this.table.setRedraw(false);
         this.context.reset();
         this.context.setArray(data);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), context);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), table, context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -145,7 +145,7 @@ public class ComponentDataTable implements IComponent {
         this.table.setRedraw(false);
         this.context.reset();
         this.context.setHandle(handle);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(handle, context), context);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(handle, context), table, context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -194,7 +194,7 @@ public class ComponentDataTable implements IComponent {
     
     private NatTable createTable(final Composite parent) {
         final IDataProvider provider = new DataTableHandleDataProvider(null, context);
-        gridLayer = new DataTableGridLayerStack(provider, context);
+        gridLayer = new DataTableGridLayerStack(provider, table, context);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
 
@@ -290,7 +290,7 @@ public class ComponentDataTable implements IComponent {
         natTable.addConfiguration(selectionStyle);
 
         // Column/Row header style and custom painters
-        natTable.addConfiguration(new DataTableRowHeaderConfiguration());
+        natTable.addConfiguration(new DataTableRowHeaderConfiguration(context));
         natTable.addConfiguration(new DataTableColumnHeaderConfiguration(context));
     }
 

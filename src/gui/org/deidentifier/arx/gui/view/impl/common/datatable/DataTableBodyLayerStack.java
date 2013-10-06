@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.common.datatable;
 
+import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.copy.command.CopyDataCommandHandler;
 import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
@@ -12,11 +13,11 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
     private final SelectionLayer selectionLayer;
     private final ViewportLayer  viewportLayer;
 
-    public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, DataTableContext context) {
+    public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, NatTable table, DataTableContext context) {
         this.selectionLayer = new SelectionLayer(underlyingLayer);
         this.viewportLayer = new ViewportLayer(selectionLayer);
         this.setUnderlyingLayer(viewportLayer);
-        this.setConfigLabelAccumulator(new DataTableConfigLabelAccumulator(context));
+        this.setConfigLabelAccumulator(new DataTableConfigLabelAccumulator(table, context));
         this.registerCommandHandler(new CopyDataCommandHandler(selectionLayer));
     }
 

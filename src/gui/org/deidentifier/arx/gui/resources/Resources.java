@@ -114,11 +114,6 @@ public class Resources {
                                                  .getResourceAsStream(name));
     }
 
-    public static Image getImageStatic(final String name) {
-        // TODO: Get rid of this?
-        return new Image(Display.getCurrent(), Resources.class.getResourceAsStream(name));
-    }
-
     public Logger getLogger() {
         return LOGGER;
     }

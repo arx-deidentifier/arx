@@ -8,15 +8,16 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 public class DataTableConfigLabelAccumulator implements IConfigLabelAccumulator {
 
     private final DataTableContext context;
+    private final NatTable         table;
 
-    public DataTableConfigLabelAccumulator(DataTableContext context) {
+    public DataTableConfigLabelAccumulator(NatTable table, DataTableContext context) {
         this.context = context;
+        this.table = table;
     }
 
     @Override
     public void accumulateConfigLabels(LabelStack configLabels, int columnPosition, int rowPosition) {
 
-        NatTable table = context.getTable();
         int[] groups = context.getGroups();
         RowSet rows = context.getRows();
 

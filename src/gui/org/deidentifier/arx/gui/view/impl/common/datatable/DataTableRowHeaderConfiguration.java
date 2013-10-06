@@ -1,6 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.common.datatable;
 
-import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
@@ -16,12 +15,13 @@ import org.eclipse.swt.graphics.Image;
 
 public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfiguration {
 
-    private static final Image IMAGE_ROW_BACK   = Resources.getImageStatic("row_header_bg.png");         //$NON-NLS-1$
-    private static final Image IMAGE_ROW_SELECT = Resources.getImageStatic("selected_row_header_bg.png"); //$NON-NLS-1$
+    private final Image IMAGE_ROW_BACK; //$NON-NLS-1$
+    private final Image IMAGE_ROW_SELECT; //$NON-NLS-1$
 
-    public DataTableRowHeaderConfiguration() {
+    public DataTableRowHeaderConfiguration(DataTableContext context) {
         font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
+        IMAGE_ROW_BACK   = context.getController().getResources().getImage("row_header_bg.png");         //$NON-NLS-1$
+        IMAGE_ROW_SELECT = context.getController().getResources().getImage("selected_row_header_bg.png"); //$NON-NLS-1$
         final TextPainter txtPainter = new TextPainter(false, false);
         final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter, IMAGE_ROW_BACK, null);
         cellPainter = bgImagePainter;

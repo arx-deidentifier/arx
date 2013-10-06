@@ -5,27 +5,31 @@ import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.gui.Controller;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.swt.graphics.Image;
 
 public class DataTableContext {
 
-    private List<Image>          images    = new ArrayList<Image>();
-    private List<ILayerListener> listeners = new ArrayList<ILayerListener>();
-    private RowSet               rows      = null;
-    private int[]                groups    = null;
-    private DataHandle           handle    = null;
-    private String[][]           array     = null;
-    
-    private final NatTable       table;
-    
-    public DataTableContext(NatTable table) {
-        this.table = table;
+    private List<Image>          images     = new ArrayList<Image>();
+    private List<ILayerListener> listeners  = new ArrayList<ILayerListener>();
+    private RowSet               rows       = null;
+    private int[]                groups     = null;
+    private DataHandle           handle     = null;
+    private String[][]           array      = null;
+    private Controller           controller = null;
+
+    public DataTableContext(Controller controller) {
+        this.controller = controller;
     }
 
     public String[][] getArray() {
         return array;
+    }
+    
+    public Controller getController() {
+        return controller;
     }
 
     public int[] getGroups() {
@@ -47,10 +51,10 @@ public class DataTableContext {
     public List<ILayerListener> getListeners() {
         return listeners;
     }
-
-    public NatTable getTable() {
-        return table;
-    }
+//
+//    public NatTable getTable() {
+//        return table;
+//    }
 
     public void setImages(List<Image> images) {
         this.images = images;
@@ -75,7 +79,7 @@ public class DataTableContext {
     public void setArray(String[][] array) {
         this.array = array;
     }
-
+    
     public void reset() {
         this.handle = null;
         this.array = null;
