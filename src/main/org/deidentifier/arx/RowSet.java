@@ -28,8 +28,9 @@ import java.io.Serializable;
  */
 public class RowSet implements Serializable {
 
+    private static final long serialVersionUID = 1492499772279795327L;
+    
     private static final int   ADDRESS_BITS_PER_UNIT = 6;
-    private static final int   BITS_PER_UNIT         = 64;
     private static final int   BIT_INDEX_MASK        = 63;
     
     private final long[]       array;
@@ -70,5 +71,22 @@ public class RowSet implements Serializable {
     
     public int size() {
         return this.size;
+    }
+
+    public void swap(int rowIndex1, int rowIndex2) {
+        
+        final boolean temp1 = contains(rowIndex1);
+        final boolean temp2 = contains(rowIndex2);
+        
+        if (temp2) {
+            add(rowIndex1);
+        } else {
+            remove(rowIndex1);
+        }
+        if (temp1) {
+            add(rowIndex2);
+        } else {
+            remove(rowIndex2);
+        }
     }
 }
