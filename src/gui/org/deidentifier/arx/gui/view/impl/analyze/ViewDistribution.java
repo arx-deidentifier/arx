@@ -37,8 +37,8 @@ import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -263,7 +263,7 @@ public class ViewDistribution implements IView {
         final IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR,
                                                                       Resources.getMessage("DistributionView.9")); //$NON-NLS-1$
         series.getLabel().setVisible(false);
-        series.getLabel().setFont(IMainWindow.FONT);
+        series.getLabel().setFont(MainWindow.FONT);
         series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         series.setYSeries(cachedCounts.get(attribute));
 
@@ -294,7 +294,7 @@ public class ViewDistribution implements IView {
         // chart.setForeground(new Color(null, 0,0,0));
         final ITitle graphTitle = chart.getTitle();
         graphTitle.setText(""); //$NON-NLS-1$
-        graphTitle.setFont(IMainWindow.FONT);
+        graphTitle.setFont(MainWindow.FONT);
         
         chart.setBackground(parent.getBackground());
         
@@ -320,10 +320,10 @@ public class ViewDistribution implements IView {
         final IAxis xAxis = axisSet.getXAxis(0);
         final ITitle xAxisTitle = xAxis.getTitle();
         xAxisTitle.setText(""); //$NON-NLS-1$
-        xAxis.getTitle().setFont(IMainWindow.FONT);
-        yAxis.getTitle().setFont(IMainWindow.FONT);
-        xAxis.getTick().setFont(IMainWindow.FONT);
-        yAxis.getTick().setFont(IMainWindow.FONT);
+        xAxis.getTitle().setFont(MainWindow.FONT);
+        yAxis.getTitle().setFont(MainWindow.FONT);
+        xAxis.getTick().setFont(MainWindow.FONT);
+        yAxis.getTick().setFont(MainWindow.FONT);
 
         final ITitle yAxisTitle = yAxis.getTitle();
         yAxisTitle.setText(""); //$NON-NLS-1$

@@ -30,7 +30,6 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IViewHierarchy;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -63,7 +62,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Prasser, Kohlmayer, Xhani, Dshevlekov
  * 
  */
-public class ViewHierarchy implements IViewHierarchy, IView {
+public class ViewHierarchy implements IView {
 
     private static final String ITEM_ALL  = Resources.getMessage("HierarchyView.0"); //$NON-NLS-1$
 
@@ -153,7 +152,6 @@ public class ViewHierarchy implements IViewHierarchy, IView {
         base.redraw();
     }
 
-    @Override
     public void setHierarchy(final AttributeType.Hierarchy type) {
 
         hierarchy = type.getHierarchy();
@@ -199,7 +197,6 @@ public class ViewHierarchy implements IViewHierarchy, IView {
         pushHierarchy();
     }
 
-    @Override
     public void setLayoutData(final Object d) {
         base.setLayoutData(d);
     }

@@ -55,10 +55,10 @@ import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.model.ModelViewConfig;
 import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
+import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
@@ -78,7 +78,7 @@ import org.eclipse.swt.program.Program;
 
 public class Controller implements IView {
 
-    private final IMainWindow                  main;
+    private final MainWindow                  main;
 
     private Model                              model     = null;
 
@@ -86,7 +86,7 @@ public class Controller implements IView {
 
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
 
-    public Controller(final IMainWindow main) {
+    public Controller(final MainWindow main) {
         this.main = main;
         this.resources = new Resources(main.getShell());
     }

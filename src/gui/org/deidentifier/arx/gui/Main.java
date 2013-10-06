@@ -18,14 +18,12 @@
 
 package org.deidentifier.arx.gui;
 
-import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 
 public class Main {
 
     public static void main(final String[] args) {
         System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-        final IMainWindow main = new MainWindow();
-        main.show();
+        new MainWindow().show();
     }
 }

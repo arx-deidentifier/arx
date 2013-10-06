@@ -26,7 +26,6 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
-import org.deidentifier.arx.gui.view.def.IComponentDataTable;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
@@ -89,7 +88,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
-public class ComponentDataTable implements IComponentDataTable, IComponent {
+public class ComponentDataTable implements IComponent {
     /**
      * Paints an image. If no image is provided, it will attempt to look up an
      * image from the cell style.
@@ -614,20 +613,11 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         table.setVisible(false);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.gui.view.impl.common.IDataTable#addScrollBarListener
-     * ( org.eclipse.swt.widgets.Listener)
-     */
-    @Override
     public void addScrollBarListener(final Listener listener) {
         table.getVerticalBar().addListener(SWT.Selection, listener);
         table.getHorizontalBar().addListener(SWT.Selection, listener);
     }
 
-    @Override
     public void addSelectionLayerListener(ILayerListener listener){
         selectionLayerListeners.add(listener);
     }
@@ -643,33 +633,14 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         return headerImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.gui.view.impl.common.IDataTable#getViewportLayer()
-     */
-    @Override
     public ViewportLayer getViewportLayer() {
         return gridLayer.getBodyLayer().getViewportLayer();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#redraw()
-     */
-    @Override
     public void redraw() {
         table.redraw();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#reset()
-     */
-    @Override
     public void reset() {
         this.table.setRedraw(false);
         this.headerImages.clear();
@@ -691,7 +662,6 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         this.table.setVisible(false);
     }
 
-    @Override
     public void setData(final String[][] data) {
         this.table.setRedraw(false);
         this.handle = null;
@@ -711,7 +681,6 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         this.table.setVisible(true);
     }
 
-    @Override
     public void setData(final DataHandle handle) {
         this.table.setRedraw(false);
         this.handle = handle;
@@ -735,24 +704,20 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
     }
 
   
-    @Override
     public void setEnabled(final boolean val) {
         if (table != null) {
             table.setEnabled(val);
         }
     }
 
-    @Override
     public void setLayoutData(final Object data) {
         table.setLayoutData(data);
     }
 
-    @Override
     public void setResearchSubset(RowSet researchSubset) {
         this.rows = researchSubset;
     }
     
-    @Override
     public void setGroups(int[] groups) {
         this.groups = groups;
     }
@@ -873,7 +838,6 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         natTable.addConfiguration(new StyledColumnHeaderConfiguration());
     }
 
-    @Override
     public DataHandle getData() {
         return this.handle;
     }

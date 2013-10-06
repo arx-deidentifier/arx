@@ -24,7 +24,6 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IViewHierarchy;
 import org.deidentifier.arx.gui.view.impl.define.ViewHierarchy;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -50,7 +49,7 @@ public class WizardHierarchyPageLabels extends WizardPage {
     }
 
     private final WizardHierarchyModel model;
-    private IViewHierarchy       editor;
+    private ViewHierarchy              editor;
     private static final String[]      COMBO_LABELS = { Resources.getMessage("HierarchyWizardPageLabels.0"), Resources.getMessage("HierarchyWizardPageLabels.1"), Resources.getMessage("HierarchyWizardPageLabels.2"), Resources.getMessage("HierarchyWizardPageLabels.3"), Resources.getMessage("HierarchyWizardPageLabels.4"), Resources.getMessage("HierarchyWizardPageLabels.5") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     private static final LabelType[]   COMBO_VALUES = { LabelType.INTERVAL,
             LabelType.SET,

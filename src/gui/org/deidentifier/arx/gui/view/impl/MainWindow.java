@@ -29,11 +29,10 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.analyze.LayoutAnalyze;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
@@ -48,7 +47,10 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -56,8 +58,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class MainWindow implements IMainWindow, IView {
-
+public class MainWindow implements IView {
+    
+    public static final Font FONT = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+    
     private static final String TITLE                     = Resources.getMessage("MainWindow.0"); //$NON-NLS-1$
     private static final String TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1"); //$NON-NLS-1$
     private static final String TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2"); //$NON-NLS-1$
@@ -133,28 +137,23 @@ public class MainWindow implements IMainWindow, IView {
         controller.removeListener(this);
     }
 
-    @Override
     public MainPopUp getPopUp() {
         return popup;
     }
 
-    @Override
     public Shell getShell() {
         return shell;
     }
 
-    @Override
     public MainToolTip getToolTip() {
         return tooltip;
     }
 
-    @Override
     public void reset() {
         root.setSelection(0);
         root.setEnabled(false);
     }
 
-    @Override
     public void show() {
         shell.open();
         while (!shell.isDisposed()) {
@@ -173,7 +172,6 @@ public class MainWindow implements IMainWindow, IView {
         display.dispose();
     }
 
-    @Override
     public String showDateFormatInputDialog(final String header,
                                             final String text,
                                             final Collection<String> dates) {
@@ -223,17 +221,14 @@ public class MainWindow implements IMainWindow, IView {
         }
     }
 
-    @Override
     public void showErrorDialog(final String header, final String text) {
         MessageDialog.openError(getShell(), header, text);
     }
 
-    @Override
     public void showInfoDialog(final String header, final String text) {
         MessageDialog.openInformation(getShell(), header, text);
     }
 
-    @Override
     public String showInputDialog(final String header,
                                   final String text,
                                   final String initial) {
@@ -250,7 +245,6 @@ public class MainWindow implements IMainWindow, IView {
         }
     }
 
-    @Override
     public String showOpenFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFilterExtensions(new String[] { filter });
@@ -258,7 +252,6 @@ public class MainWindow implements IMainWindow, IView {
         return dialog.open();
     }
 
-    @Override
     public void showProgressDialog(final String text, final Worker<?> worker) {
         try {
             new ProgressMonitorDialog(shell).run(true, true, worker);
@@ -267,7 +260,6 @@ public class MainWindow implements IMainWindow, IView {
         }
     }
 
-    @Override
     public DialogQueryResult showQueryDialog(String query, Data data) {
 
         // Dialog
@@ -277,12 +269,10 @@ public class MainWindow implements IMainWindow, IView {
         else {return dialog.getResult();}
     }
 
-    @Override
     public boolean showQuestionDialog(final String header, final String text) {
         return MessageDialog.openQuestion(getShell(), header, text);
     }
 
-    @Override
     public String showSaveFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         dialog.setFilterExtensions(new String[] { filter });
@@ -290,7 +280,6 @@ public class MainWindow implements IMainWindow, IView {
         return dialog.open();
     }
 
-    @Override
     public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others) {
 
         // Dialog

@@ -40,8 +40,8 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -82,11 +82,11 @@ public class ViewDensity implements IView {
         lws = new LightweightSystem(canvas);
         intensityGraph = new IntensityGraphFigure();
         lws.setContents(intensityGraph);
-        intensityGraph.getXAxis().setTitleFont(IMainWindow.FONT);
-        intensityGraph.getYAxis().setTitleFont(IMainWindow.FONT);
-        intensityGraph.getXAxis().setFont(IMainWindow.FONT);
-        intensityGraph.getYAxis().setFont(IMainWindow.FONT);
-        intensityGraph.setFont(IMainWindow.FONT);
+        intensityGraph.getXAxis().setTitleFont(MainWindow.FONT);
+        intensityGraph.getYAxis().setTitleFont(MainWindow.FONT);
+        intensityGraph.getXAxis().setFont(MainWindow.FONT);
+        intensityGraph.getYAxis().setFont(MainWindow.FONT);
+        intensityGraph.setFont(MainWindow.FONT);
 
         canvas.setBackground(parent.getBackground());
         
