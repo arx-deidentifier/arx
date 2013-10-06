@@ -37,7 +37,7 @@ public class ModelEvent {
         HIERARCHY,
         CRITERION_DEFINITION,
         RESEARCH_SUBSET,
-        SORT_ORDER
+        VIEW_CONFIG
     }
 
     public final ModelPart   part;

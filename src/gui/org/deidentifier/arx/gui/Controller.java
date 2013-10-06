@@ -47,22 +47,24 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
-import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelViewConfig;
+import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IMainWindow;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
-import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
+import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -188,6 +190,51 @@ public class Controller implements IView {
             
             update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, criterion));
         }
+    }
+
+    public void actionDataShowGroups() {
+        
+        // Break if no output
+        if (model.getOutput() == null) return;
+
+        this.model.getViewConfig().setMode(Mode.GROUPED);
+        this.updateViewConfig();
+        
+        // Update
+        this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+    }
+
+    public void actionDataSort(boolean input) {
+        
+        // Break if no output
+        if (model.getOutput() == null) return;
+        if (model.getSelectedAttribute() == null) return;
+        
+        if (input){
+            this.model.getViewConfig().setMode(Mode.SORTED_INPUT);
+        } else {
+            this.model.getViewConfig().setMode(Mode.SORTED_OUTPUT);
+        }
+        
+        this.model.getViewConfig().setAttribute(model.getSelectedAttribute());
+        this.updateViewConfig();
+        
+        // Update
+        this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+    }
+
+    public void actionDataToggleSubset() {
+
+        // Break if no output
+        if (model.getOutput() == null) return;
+
+        // TODO: Make sure that statistics are updated as well
+        
+        // Update
+        boolean val = !model.getViewConfig().isSubset();
+        this.model.getViewConfig().setSubset(val);
+        this.updateViewConfig();
+        this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
     }
 
     public void actionMenuEditAnonymize() {
@@ -752,6 +799,7 @@ public class Controller implements IView {
         model.resetCriteria();
         model.setGroups(null);
         model.setOutput(null, null);
+        model.setViewConfig(new ModelViewConfig());
 
         // Display the changes
         update(new ModelEvent(this, ModelPart.MODEL, model));
@@ -943,76 +991,66 @@ public class Controller implements IView {
         return result;
     }
 
-    public void actionDataSort() {
+    private void updateViewConfig() {
         
-        // Break if no output
-        if (model.getOutput() == null) return;
-        if (model.getSelectedAttribute() == null) return;
+        if (!model.isViewConfigChanged()) return;
         
-        // Prepare
-        DataHandle handle = model.getOutput();
-        model.getOutput().sort(true, handle.getColumnIndexOf(model.getSelectedAttribute()));
-
-        // Update
-        model.setGroups(null);
-        update(new ModelEvent(this, ModelPart.SORT_ORDER, handle));
-    }
-
-    public void actionDataShowGroups() {
+        ModelViewConfig config = model.getViewConfig();
         
-        // Break if no output
-        if (model.getOutput() == null) return;
+        DataHandle handle = (config.getMode() == Mode.SORTED_INPUT) ? 
+                            model.getInputConfig().getInput().getHandle() : 
+                            model.getOutput();
         
-        // Prepare
-        DataDefinition definition = model.getOutputConfig().getInput().getDefinition();
-        DataHandle handle = model.getOutput();
+        handle = config.isSubset() ? 
+                 handle.getView(model.getOutputConfig().getConfig()) :
+                 handle;
+                 
+        DataDefinition definition = handle.getDefinition();
         
-        // Create array with indices of all QIs
-        int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
-        int index = 0;
-        for (String attribute : definition.getQuasiIdentifyingAttributes()) {
-            indices[index++] = handle.getColumnIndexOf(attribute);
-        }
-        
-        // Sort by all QIs
-        model.getOutput().sort(true, indices);
-
-        // Identify groups
-        int[] groups = new int[model.getOutput().getNumRows()];
-        int groupIdx = 0;
-        groups[0] = 0;
-        
-        // For each row
-        for (int row = 1; row < model.getOutput().getNumRows(); row++) {
+        if (config.getMode() == Mode.SORTED_INPUT ||
+            config.getMode() == Mode.SORTED_OUTPUT) {
             
-            // Check if different from previous
-            boolean newClass = false;
-            for (int column : indices) {
-                if (!handle.getValue(row, column).equals(handle.getValue(row - 1, column))) {
-                    newClass = true;
-                    break;
-                }
+            // Sort
+            handle.sort(true, handle.getColumnIndexOf(config.getAttribute()));
+            model.setGroups(null);
+            
+        } else {
+            
+            // Groups
+            // Create array with indices of all QIs
+            int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
+            int index = 0;
+            for (String attribute : definition.getQuasiIdentifyingAttributes()) {
+                indices[index++] = handle.getColumnIndexOf(attribute);
             }
             
-            // Store group
-            groupIdx += newClass ? 1 : 0;
-            groups[row] = groupIdx;
+            // Sort by all QIs
+            handle.sort(true, indices);
+
+            // Identify groups
+            int[] groups = new int[handle.getNumRows()];
+            int groupIdx = 0;
+            groups[0] = 0;
+            
+            // For each row
+            for (int row = 1; row < handle.getNumRows(); row++) {
+                
+                // Check if different from previous
+                boolean newClass = false;
+                for (int column : indices) {
+                    if (!handle.getValue(row, column).equals(handle.getValue(row - 1, column))) {
+                        newClass = true;
+                        break;
+                    }
+                }
+                
+                // Store group
+                groupIdx += newClass ? 1 : 0;
+                groups[row] = groupIdx;
+            }
+
+            // Update
+            model.setGroups(groups);
         }
-
-        // Update
-        model.setGroups(groups);
-        update(new ModelEvent(this, ModelPart.SORT_ORDER, handle));
-    }
-
-    public void actionDataToggleSubset() {
-
-        // Break if no output
-        if (model.getOutput() == null) return;
-        
-        // Update
-        model.setViewSubset(!model.getViewSubset());
-        update(new ModelEvent(this, ModelPart.SORT_ORDER, model.getOutput()));
-        
-        // TODO: Make sure that statistics are updated as well
     }
 }

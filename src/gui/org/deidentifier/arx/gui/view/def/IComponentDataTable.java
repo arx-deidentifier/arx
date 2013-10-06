@@ -32,6 +32,8 @@ public interface IComponentDataTable {
 
     public abstract void dispose();
 
+    public abstract DataHandle getData();
+
     public abstract ViewportLayer getViewportLayer();
 
     public abstract void redraw();
@@ -42,11 +44,11 @@ public interface IComponentDataTable {
 
     public abstract void setData(String[][] data);
 
+    public abstract void setEnabled(boolean val);
+
+    public abstract void setGroups(int[] groups);
+
     public abstract void setLayoutData(Object data);
 
-    void setEnabled(boolean val);
-
-    void setResearchSubset(RowSet researchSubset);
-
-    void setGroups(int[] groups);
+    public abstract void setResearchSubset(RowSet researchSubset);
 }

@@ -79,7 +79,7 @@ public class ViewData implements IView {
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.SORT_ORDER, this);
+        controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -101,7 +101,7 @@ public class ViewData implements IView {
                 new Runnable() {
                     @Override
                     public void run() {
-                        controller.actionDataSort();
+                        controller.actionDataSort(target == ModelPart.INPUT);
                     }
                 });
         bar.add(Resources.getMessage("DataView.2"), //$NON-NLS-1$ 
@@ -243,13 +243,18 @@ public class ViewData implements IView {
 
             // Update the table
             handle = (DataHandle) event.data;
+            DataHandle data = handle;
+            if (model.getViewConfig().isSubset() && 
+                model.getOutputConfig() != null &&
+                model.getOutputConfig().getConfig() != null) {
+                data = handle.getView(model.getOutputConfig().getConfig());
+            }
             
-            // TODO: Should we not clone this and
-            // TODO: use getOutputConfig().getResearchSubset()
-            // TODO: in analysis view?
+            // Its probably ok to use the subset from the input config here,
+            // because the d-presence criterion clones the subset
             table.setResearchSubset(model.getInputConfig().getResearchSubset());
             table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
-            table.setData(handle);
+            table.setData(data);
             
             // Update the attribute types
             table.getHeaderImages().clear();
@@ -288,9 +293,16 @@ public class ViewData implements IView {
             table.setResearchSubset((RowSet)event.data);
             table.redraw();
             
-        } else if (event.part == ModelPart.SORT_ORDER) {
+        } else if (event.part == ModelPart.VIEW_CONFIG) {
             
+            DataHandle data = handle;
+            if (model.getViewConfig().isSubset() && 
+                model.getOutputConfig() != null &&
+                model.getOutputConfig().getConfig() != null) {
+                data = handle.getView(model.getOutputConfig().getConfig());
+            }
             table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
+            if (table.getData() != data) table.setData(data);
             table.redraw();
         }
         

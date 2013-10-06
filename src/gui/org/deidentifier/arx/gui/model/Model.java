@@ -83,8 +83,9 @@ public class Model implements Serializable {
 
     private String                                query                = "";
     private String                                subsetOrigin         = "All";
-    private boolean                               viewSubset           = false;
-
+    private ModelViewConfig                       viewConfig           = new ModelViewConfig();
+    private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
+    
 	public Model(final String name, final String description) {
 		this.name = name;
 		this.description = description;
@@ -536,11 +537,16 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-    public boolean getViewSubset() {
-        return this.viewSubset;
+    public ModelViewConfig getViewConfig() {
+        oldViewConfig = viewConfig.clone();
+        return this.viewConfig;
     }
     
-    public void setViewSubset(boolean view){
-        this.viewSubset = view;
+    public boolean isViewConfigChanged(){
+        return (!oldViewConfig.equals(viewConfig));
+    }
+
+    public void setViewConfig(ModelViewConfig viewConfig) {
+        this.viewConfig = viewConfig;
     }
 }

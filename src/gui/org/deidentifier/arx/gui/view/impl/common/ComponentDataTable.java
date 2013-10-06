@@ -872,4 +872,9 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         natTable.addConfiguration(new StyledRowHeaderConfiguration());
         natTable.addConfiguration(new StyledColumnHeaderConfiguration());
     }
+
+    @Override
+    public DataHandle getData() {
+        return this.handle;
+    }
 }
