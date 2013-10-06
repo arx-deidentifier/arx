@@ -113,7 +113,8 @@ public class HashGroupify implements IHashGroupify {
                 entry.distribution = new Distribution();
             }
 
-            if (subset == null || subset.contains(representant)) { // Only add sensitive value if in research subset
+            // Only add sensitive value if in research subset
+            if (subset == null || subset.contains(representant)) { 
                 entry.distribution.add(sensitive);
             }
         }

@@ -62,6 +62,18 @@ public class DPresence extends ImplicitPrivacyCriterion{
         this.bitset = subset.getRowSet();
         this.array = subset.getArray();
     }
+    
+    /**
+     * For building the enclosure criterion
+     * @param subset
+     */
+    protected DPresence(DataSubset subset) {
+        super(true);
+        this.dMin = 0d;
+        this.dMax = 1d;
+        this.bitset = subset.getRowSet();
+        this.array = subset.getArray();
+    }
         
     @Override
     public void initialize(DataManager manager) {
