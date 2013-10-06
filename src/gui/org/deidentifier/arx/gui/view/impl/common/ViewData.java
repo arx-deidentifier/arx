@@ -217,6 +217,8 @@ public class ViewData implements IView {
     @Override
     public void reset() {
         table.reset();
+        groupsButton.setEnabled(false);
+        subsetButton.setEnabled(false);
         handle = null;
     }
 
@@ -225,7 +227,8 @@ public class ViewData implements IView {
 
         // Enable/Disable sort button
         if (event.part == ModelPart.OUTPUT ||
-            event.part == ModelPart.INPUT) {
+            event.part == ModelPart.INPUT ||
+            event.part == ModelPart.VIEW_CONFIG) {
             
             if (model != null && model.getOutput() != null){
                 groupsButton.setEnabled(true);
