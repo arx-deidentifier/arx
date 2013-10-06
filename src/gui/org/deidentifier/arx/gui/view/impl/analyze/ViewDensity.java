@@ -54,12 +54,13 @@ public class ViewDensity implements IView {
     private static final int           MAX_DIMENSION = 500;
 
     private Canvas                     canvas        = null;
+    private Model                      model;
+
     private final LightweightSystem    lws;
     private final IntensityGraphFigure intensityGraph;
-    private final ModelPart          target;
-    private final ModelPart          reset;
+    private final ModelPart            target;
+    private final ModelPart            reset;
     private final Controller           controller;
-    private Model                      model;
 
     public ViewDensity(final Composite parent,
                        final Controller controller,
@@ -211,7 +212,7 @@ public class ViewDensity implements IView {
 
             // Else sort per data type
         } else {
-            final DataType dtype = data.getDataType(attribute);
+            final DataType<?> dtype = data.getDataType(attribute);
             final String[] v = new String[elems.size()];
             int i = 0;
             for (final String s : elems) {
