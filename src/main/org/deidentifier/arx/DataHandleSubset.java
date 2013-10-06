@@ -139,4 +139,8 @@ public class DataHandleSubset extends DataHandle {
     public DataHandle getView(ARXConfiguration config){
         return this;
     }
+
+    public int[] getSubset() {
+        return this.subset;
+    }
 }
