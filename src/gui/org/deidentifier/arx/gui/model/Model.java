@@ -64,17 +64,16 @@ public class Model implements Serializable {
     private long                                  inputBytes           = 0L;
     private String[]                              pair                 = new String[] { null, null };
 
-    protected String                              optimalNodeAsString;
-    protected String                              outputNodeAsString;
+    private String                              optimalNodeAsString;
+    private String                              outputNodeAsString;
 
-    protected long                                time;
+    private long                                time;
 
     private ModelConfiguration                    inputConfig          = new ModelConfiguration();
     private ModelConfiguration                    outputConfig         = null;
 
     private String                                suppressionString    = "*";                                            //$NON-NLS-1$
 
-    private int[]                                 colors;
     private int[]                                 groups;
 
     private ModelKAnonymityCriterion              kAnonymityModel      = new ModelKAnonymityCriterion();
@@ -84,6 +83,7 @@ public class Model implements Serializable {
 
     private String                                query                = "";
     private String                                subsetOrigin         = "All";
+    private boolean                               viewSubset           = false;
 
 	public Model(final String name, final String description) {
 		this.name = name;
@@ -158,11 +158,6 @@ public class Model implements Serializable {
 
 	public Set<ARXNode> getClipboard() {
 		return clipboard;
-	}
-
-	public int[] getColors() {
-		// TODO: Refactor to colors[groups[row]]
-		return this.colors;
 	}
 
 	public String getDescription() {
@@ -362,10 +357,6 @@ public class Model implements Serializable {
 		clipboard = set;
 	}
 
-	public void setColors(int[] colors) {
-		this.colors = colors;
-	}
-
 	public void setDescription(final String description) {
 		this.description = description;
 		setModified();
@@ -543,5 +534,13 @@ public class Model implements Serializable {
     
     public String getSubsetOrigin(){
         return this.subsetOrigin;
+    }
+
+    public boolean getViewSubset() {
+        return this.viewSubset;
+    }
+    
+    public void setViewSubset(boolean view){
+        this.viewSubset = view;
     }
 }

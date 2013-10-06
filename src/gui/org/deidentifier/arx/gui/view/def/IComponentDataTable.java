@@ -38,13 +38,15 @@ public interface IComponentDataTable {
 
     public abstract void reset();
 
-    public abstract void setData(DataHandle handle, RowSet rows);
+    public abstract void setData(DataHandle handle);
 
-    public abstract void setData(DataHandle handle, RowSet rows, int[] colors, int[] groups);
-
-    public abstract void setData(String[][] data, RowSet rows);
-
-    public abstract void setData(String[][] data, RowSet rows, int[] colors, int[] groups);
+    public abstract void setData(String[][] data);
 
     public abstract void setLayoutData(Object data);
+
+    void setEnabled(boolean val);
+
+    void setResearchSubset(RowSet researchSubset);
+
+    void setGroups(int[] groups);
 }

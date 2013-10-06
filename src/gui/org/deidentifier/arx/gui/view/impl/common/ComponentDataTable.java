@@ -251,6 +251,30 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         }
     }
 
+    private class DataConfigLabelAccumulator implements IConfigLabelAccumulator {
+        
+        @Override
+        public void accumulateConfigLabels(LabelStack configLabels,
+                                           int columnPosition,
+                                           int rowPosition) {
+            
+            if (table!=null && groups!=null){
+                int row = table.getRowIndexByPosition(rowPosition+1);
+                configLabels.addLabel("background"+(groups[row]%2)); //$NON-NLS-1$
+                if (row<groups.length-1 && groups[row]!=groups[row+1]){
+                    configLabels.addLabel(ComponentDataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
+                }
+            } 
+            
+            if (table!=null && rows != null){
+                int column = table.getColumnIndexByPosition(columnPosition+1);
+                if (column == 0) {
+                    configLabels.addLabel("checkbox"); //$NON-NLS-1$
+                }
+            }
+        }
+    }
+
     private class HandleDataProvider implements IDataProvider {
 
         private final DataHandle data;
@@ -288,30 +312,6 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
                                  final int arg1,
                                  final Object arg2) {
             return;
-        }
-    }
-
-    private class DataConfigLabelAccumulator implements IConfigLabelAccumulator {
-        
-        @Override
-        public void accumulateConfigLabels(LabelStack configLabels,
-                                           int columnPosition,
-                                           int rowPosition) {
-            
-            if (table!=null && rowColors!=null){
-                int row = table.getRowIndexByPosition(rowPosition+1);
-                configLabels.addLabel("background"+rowColors[row]); //$NON-NLS-1$
-                if (row<rowGroups.length-1 && rowGroups[row]!=rowGroups[row+1]){
-                    configLabels.addLabel(ComponentDataTableDecorator.BOTTOM_LINE_BORDER_LABEL);
-                }
-            } 
-            
-            if (table!=null && rows != null){
-                int column = table.getColumnIndexByPosition(columnPosition+1);
-                if (column == 0) {
-                    configLabels.addLabel("checkbox"); //$NON-NLS-1$
-                }
-            }
         }
     }
 
@@ -593,11 +593,9 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
     private final Image        IMAGE_ROW_SELECT;
     private List<Image>        headerImages = new ArrayList<Image>();
     
-    private final Color[]      gradient;
     private final NatTable     table;
     
-    private int[]              rowColors = null;
-    private int[]              rowGroups = null;
+    private int[]              groups = null;
 
     private DataHandle         handle;
     private String[][]         data;
@@ -612,7 +610,6 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         IMAGE_ROW_BACK = controller.getResources().getImage("row_header_bg.png"); //$NON-NLS-1$
         IMAGE_COL_SELECT = controller.getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
         IMAGE_ROW_SELECT = controller.getResources().getImage("selected_row_header_bg.png"); //$NON-NLS-1$
-        gradient = createGradient(controller, controller.getResources().getGradientLength());
         table = createControl(parent);
         table.setVisible(false);
     }
@@ -630,14 +627,16 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         table.getHorizontalBar().addListener(SWT.Selection, listener);
     }
 
+    @Override
+    public void addSelectionLayerListener(ILayerListener listener){
+        selectionLayerListeners.add(listener);
+    }
+
     public void dispose() {
         IMAGE_COL_BACK.dispose();
         IMAGE_ROW_BACK.dispose();
         IMAGE_COL_SELECT.dispose();
         IMAGE_ROW_SELECT.dispose();
-        for (Color c : gradient){
-            c.dispose();
-        }
     }
 
     public List<Image> getHeaderImages() {
@@ -678,6 +677,7 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         this.handle = null;
         this.data = null;
         this.rows = null;
+        this.groups = null;
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -691,21 +691,13 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         this.table.setVisible(false);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#setData(org.
-     * deidentifier.ARX .DataHandle)
-     */
     @Override
-    public void setData(final DataHandle handle, final RowSet rows) {
+    public void setData(final String[][] data) {
         this.table.setRedraw(false);
-        this.handle = handle;
-        this.rows = rows;
-        this.data = null;
+        this.handle = null;
+        this.data = data;
         this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
-        this.headerImages = new ArrayList<Image>();
+        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -717,20 +709,12 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         this.table.getVerticalBar().setVisible(true);
         this.table.getHorizontalBar().setVisible(true);
         this.table.setVisible(true);
-        this.rowColors = null;
-        this.rowGroups = null;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.deidentifier.ARX.gui.view.def.IDataTable#setData(org.deidentifier.ARX.DataHandle, int[])
-     */
     @Override
-    public void setData(final DataHandle handle, final RowSet rows, int[] colors, int[] groups) {
-        // TODO: Refactor to colors[groups[row]]
+    public void setData(final DataHandle handle) {
         this.table.setRedraw(false);
         this.handle = handle;
-        this.rows = rows;
         this.data = null;
         this.headerImages.clear();
         this.gridLayer = new TableGridLayerStack(new HandleDataProvider(handle));
@@ -748,125 +732,31 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         this.table.getVerticalBar().setVisible(true);
         this.table.getHorizontalBar().setVisible(true);
         this.table.setVisible(true);
-        this.rowColors = colors;
-        this.rowGroups = groups;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.gui.view.impl.common.IDataTable#setData(org.
-     * deidentifier.ARX .DataHandle)
-     */
+  
     @Override
-    public void setData(final String[][] data, final RowSet rows) {
-        this.table.setRedraw(false);
-        this.handle = null;
-        this.data = data;
-        this.rows = rows;
-        this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-        this.rowColors = null;
-        this.rowGroups = null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.deidentifier.ARX.gui.view.def.IDataTable#setData(java.lang.String[][], int[])
-     */
-    @Override
-    public void setData(final String[][] data, final RowSet rows, int[] colors, int[] groups) {
-        // TODO: Refactor to colors[groups[row]]
-        this.table.setRedraw(false);
-        this.handle = null;
-        this.data = data;
-        this.rows = rows;
-        this.headerImages.clear();
-        this.gridLayer = new TableGridLayerStack(new ArrayDataProvider(data));
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-        this.rowColors = colors;
-        this.rowGroups = groups;
-    }
-
     public void setEnabled(final boolean val) {
         if (table != null) {
             table.setEnabled(val);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.gui.view.impl.common.IDataTable#setLayoutData(
-     * java.lang .Object)
-     */
     @Override
     public void setLayoutData(final Object data) {
         table.setLayoutData(data);
     }
 
-    private void createTableStyling(final NatTable natTable) {
-
-        // NOTE: Getting the colors and fonts from the GUIHelper ensures that
-        // they are disposed properly (required by SWT)
-        final DefaultNatTableStyleConfiguration natTableConfiguration = new DefaultNatTableStyleConfiguration();
-        natTableConfiguration.bgColor = GUIHelper.getColor(249, 172, 7);
-        natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
-        natTableConfiguration.hAlign = HorizontalAlignmentEnum.LEFT;
-        natTableConfiguration.vAlign = VerticalAlignmentEnum.TOP;
-        natTableConfiguration.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-        // A custom painter can be plugged in to paint the cells differently
-        natTableConfiguration.cellPainter = new PaddingDecorator(new TextPainter(), 1);
-
-        // Setup even odd row colors - row colors override the NatTable default colors
-        final DefaultRowStyleConfiguration rowStyleConfiguration = new DefaultRowStyleConfiguration();
-        rowStyleConfiguration.oddRowBgColor = GUIHelper.getColor(254, 251, 243);
-        rowStyleConfiguration.evenRowBgColor = GUIHelper.COLOR_WHITE;
-
-        // Setup selection styling
-        final DefaultSelectionStyleConfiguration selectionStyle = new DefaultSelectionStyleConfiguration();
-        selectionStyle.selectionFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-        selectionStyle.selectionBgColor = GUIHelper.getColor(220, 220, 220);
-        selectionStyle.selectionFgColor = GUIHelper.COLOR_BLACK;
-        selectionStyle.anchorBorderStyle = new BorderStyle(1, GUIHelper.COLOR_DARK_GRAY, LineStyleEnum.SOLID);
-        selectionStyle.anchorBgColor = GUIHelper.getColor(220, 220, 220);
-        selectionStyle.anchorFgColor = GUIHelper.getColor(0, 0, 0);
-        selectionStyle.selectedHeaderBgColor = GUIHelper.getColor(156, 209, 103);
-        selectionStyle.selectedHeaderFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
-
-        // Add all style configurations to NatTable
-        natTable.addConfiguration(natTableConfiguration);
-        natTable.addConfiguration(rowStyleConfiguration);
-        natTable.addConfiguration(selectionStyle);
-
-        // Column/Row header style and custom painters
-        natTable.addConfiguration(new StyledRowHeaderConfiguration());
-        natTable.addConfiguration(new StyledColumnHeaderConfiguration());
+    @Override
+    public void setResearchSubset(RowSet researchSubset) {
+        this.rows = researchSubset;
     }
-
+    
+    @Override
+    public void setGroups(int[] groups) {
+        this.groups = groups;
+    }
+    
     private NatTable createControl(final Composite parent) {
         final NatTable natTable = createTable(parent);
         createTableStyling(natTable);
@@ -878,22 +768,6 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         tableLayoutData.grabExcessVerticalSpace = true;
         natTable.setLayoutData(tableLayoutData);
         return natTable;
-    }
-    
-    /**
-     * Creates a red to green gradient
-     * @param controller
-     * @param length
-     * @return
-     */
-    private Color[] createGradient(final Controller controller, int length){
-        Color[] colors = new Color[length];
-        for (int i=0; i<length; i++){
-            double hue = (double)i / (double)length * 0.4d;
-            java.awt.Color c = java.awt.Color.getHSBColor((float)hue, 0.9f, 0.9f); 
-            colors[i] = new Color(controller.getResources().getDisplay(), c.getRed(), c.getGreen(), c.getBlue());
-        }
-        return colors;
     }
     
     private NatTable createTable(final Composite parent) {
@@ -934,17 +808,21 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
                                                                 GridRegion.BODY);
         
         // Register gradient painters for groups
-        for (int i=0; i<gradient.length; i++){
-            Style style = new Style();
-            style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR,
-                                                       gradient[i]);
-            natTable.getConfigRegistry()
-                    .registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
+        Color light = GUIHelper.getColor(240, 240, 240);
+        Color dark = GUIHelper.getColor(180, 180, 180);
+        Style style = new Style();
+        style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, light);
+        natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
                                              style,
                                              DisplayMode.NORMAL,
-                                             "background"+i);
-          
-        }
+                                             "background0");
+        
+        style = new Style();
+        style.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, dark);
+        natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_STYLE,
+                                             style,
+                                             DisplayMode.NORMAL,
+                                             "background1");
         
         // Register checkbox painter for subset
         natTable.getConfigRegistry().registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, 
@@ -954,17 +832,44 @@ public class ComponentDataTable implements IComponentDataTable, IComponent {
         
         return natTable;
     }
-    
-    @Override
-    public void addSelectionLayerListener(ILayerListener listener){
-        selectionLayerListeners.add(listener);
-    }
 
-    /**
-     * Sets the research subset
-     * @param researchSubset
-     */
-    public void setResearchSubset(RowSet researchSubset) {
-        this.rows = researchSubset;
+    private void createTableStyling(final NatTable natTable) {
+
+        // NOTE: Getting the colors and fonts from the GUIHelper ensures that
+        // they are disposed properly (required by SWT)
+        final DefaultNatTableStyleConfiguration natTableConfiguration = new DefaultNatTableStyleConfiguration();
+        natTableConfiguration.bgColor = GUIHelper.getColor(249, 172, 7);
+        natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
+        natTableConfiguration.hAlign = HorizontalAlignmentEnum.LEFT;
+        natTableConfiguration.vAlign = VerticalAlignmentEnum.TOP;
+        natTableConfiguration.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+
+        // A custom painter can be plugged in to paint the cells differently
+        natTableConfiguration.cellPainter = new PaddingDecorator(new TextPainter(), 1);
+
+        // Setup even odd row colors - row colors override the NatTable default colors
+        final DefaultRowStyleConfiguration rowStyleConfiguration = new DefaultRowStyleConfiguration();
+        rowStyleConfiguration.oddRowBgColor = GUIHelper.getColor(254, 251, 243);
+        rowStyleConfiguration.evenRowBgColor = GUIHelper.COLOR_WHITE;
+
+        // Setup selection styling
+        final DefaultSelectionStyleConfiguration selectionStyle = new DefaultSelectionStyleConfiguration();
+        selectionStyle.selectionFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        selectionStyle.selectionBgColor = GUIHelper.getColor(220, 220, 220);
+        selectionStyle.selectionFgColor = GUIHelper.COLOR_BLACK;
+        selectionStyle.anchorBorderStyle = new BorderStyle(1, GUIHelper.COLOR_DARK_GRAY, LineStyleEnum.SOLID);
+        selectionStyle.anchorBgColor = GUIHelper.getColor(220, 220, 220);
+        selectionStyle.anchorFgColor = GUIHelper.getColor(0, 0, 0);
+        selectionStyle.selectedHeaderBgColor = GUIHelper.getColor(156, 209, 103);
+        selectionStyle.selectedHeaderFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+
+        // Add all style configurations to NatTable
+        natTable.addConfiguration(natTableConfiguration);
+        natTable.addConfiguration(rowStyleConfiguration);
+        natTable.addConfiguration(selectionStyle);
+
+        // Column/Row header style and custom painters
+        natTable.addConfiguration(new StyledRowHeaderConfiguration());
+        natTable.addConfiguration(new StyledColumnHeaderConfiguration());
     }
 }

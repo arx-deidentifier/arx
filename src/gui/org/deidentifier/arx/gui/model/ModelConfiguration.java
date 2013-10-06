@@ -59,6 +59,8 @@ public class ModelConfiguration implements Serializable {
         c.input = input.clone();
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
+        
+        // TODO: Should we not clone this here?
         c.researchSubset = researchSubset;
         return c;
     }

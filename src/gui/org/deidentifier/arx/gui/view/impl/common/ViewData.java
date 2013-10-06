@@ -101,7 +101,7 @@ public class ViewData implements IView {
                 new Runnable() {
                     @Override
                     public void run() {
-                        
+                        controller.actionDataSort();
                     }
                 });
         bar.add(Resources.getMessage("DataView.2"), //$NON-NLS-1$ 
@@ -109,7 +109,7 @@ public class ViewData implements IView {
                 new Runnable() {
                     @Override
                     public void run() {
-                        
+                        controller.actionDataShowGroups();
                     }
                 });
         bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
@@ -117,7 +117,7 @@ public class ViewData implements IView {
                 new Runnable() {
                     @Override
                     public void run() {
-                        
+                        controller.actionDataToggleSubset();
                     }
                 });
         
@@ -243,10 +243,13 @@ public class ViewData implements IView {
 
             // Update the table
             handle = (DataHandle) event.data;
-            table.setData(handle, 
-                          model.getInputConfig().getResearchSubset(), 
-                          target == ModelPart.OUTPUT ? model.getColors() : null, 
-                          target == ModelPart.OUTPUT ? model.getGroups() : null);
+            
+            // TODO: Should we not clone this and
+            // TODO: use getOutputConfig().getResearchSubset()
+            // TODO: in analysis view?
+            table.setResearchSubset(model.getInputConfig().getResearchSubset());
+            table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
+            table.setData(handle);
             
             // Update the attribute types
             table.getHeaderImages().clear();
@@ -263,7 +266,6 @@ public class ViewData implements IView {
             if ((model != null) && (handle != null)) {
                 
                 final String attr = (String) event.data;
-
 
                 // Obtain data definition
                 DataDefinition definition = model.getInputConfig().getInput().getDefinition();
@@ -288,6 +290,7 @@ public class ViewData implements IView {
             
         } else if (event.part == ModelPart.SORT_ORDER) {
             
+            table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
             table.redraw();
         }
         

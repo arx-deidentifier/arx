@@ -103,13 +103,9 @@ public class Controller implements IView {
 
         // Distribute results
         if (worker.getResult() != null) {
-            sort(model.getOutputConfig().getInput().getDefinition(), worker.getResult());
             model.setOutput(worker.getResult(), model.getSelectedNode());
-            int[][] analysis = analyze(model.getOutputConfig().getInput().getDefinition(), worker.getResult());
-            model.setColors(analysis[0]);
-            model.setGroups(analysis[1]);
             update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
-            update(new ModelEvent(this, ModelPart.SORT_ORDER, worker.getResult()));
+            this.actionDataShowGroups();
         }
     }
 
@@ -207,9 +203,9 @@ public class Controller implements IView {
         }
 
         if (!model.isValidLatticeSize()) {
-            final String message = Resources.getMessage("Controller.7") + Resources.getMessage("Controller.8") //$NON-NLS-1$ //$NON-NLS-2$
-                                   +
+            final String message = Resources.getMessage("Controller.7") + Resources.getMessage("Controller.8") + //$NON-NLS-1$ //$NON-NLS-2$
                                    Resources.getMessage("Controller.9") + Resources.getMessage("Controller.10"); //$NON-NLS-1$ //$NON-NLS-2$
+            
             main.showInfoDialog(Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
             return;
         }
@@ -249,10 +245,6 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.RESULT, result));
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
-                sort(model.getOutputConfig().getInput().getDefinition(), result.getHandle());
-                int[][] analysis = analyze(model.getOutputConfig().getInput().getDefinition(), result.getHandle());
-                model.setColors(analysis[0]);
-                model.setGroups(analysis[1]);
                 model.setOutput(result.getHandle(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
@@ -261,14 +253,11 @@ public class Controller implements IView {
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
-                update(new ModelEvent(this,
-                                      ModelPart.SORT_ORDER,
-                                      result.getHandle()));
+                this.actionDataShowGroups();
             } else {
                 // Select bottom node
                 model.setOutput(null, null);
                 model.setSelectedNode(null);
-                model.setColors(null);
                 model.setGroups(null);
                 update(new ModelEvent(this, ModelPart.OUTPUT, null));
                 update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
@@ -761,7 +750,6 @@ public class Controller implements IView {
         }
         
         model.resetCriteria();
-        model.setColors(null);
         model.setGroups(null);
         model.setOutput(null, null);
 
@@ -940,96 +928,6 @@ public class Controller implements IView {
         return main.showSaveFileDialog(filter);
     }
 
-    private int[][] analyze(DataDefinition definition, DataHandle handle) {
-
-        int max = 0;
-        int min = 0;
-        
-        // Iterate over all equivalence classes and compute min and max
-        int[] groups = new int[handle.getNumRows()];
-        int size = 0;
-        int groupIdx = 0;
-        for (int row = 0; row < handle.getNumRows(); row++) {
-
-            boolean newClass = false;
-            if (row > 0) {
-                // TODO: Create array similar to sorting
-                for (String attribute : definition.getQuasiIdentifyingAttributes()) {
-                    int column = handle.getColumnIndexOf(attribute);
-                    if (!handle.getValue(row,
-                            column).equals(handle.getValue(row - 1, column))) {
-                        newClass = true;
-                        break;
-                    }
-                }
-            } else {
-                newClass = true;
-            }
-
-            if (newClass) {
-                groupIdx++;
-                if (row != 0) {
-                    max = Math.max(max, size);
-                    min = Math.min(min, size);
-                }
-                size = 1;
-            } else {
-                size++;
-            }
-            
-            groups[row] = groupIdx;
-
-        }
-        if (handle.getNumRows() > 1) {
-            max = Math.max(max, size);
-            min = Math.min(min, size);
-        }
-        
-
-        
-        // Iterate over all equivalence classes and create color array
-        int[] colors = new int[handle.getNumRows()];
-        size = 0;
-        for (int row = 0; row < handle.getNumRows(); row++) {
-
-            boolean newClass = false;
-            if (row > 0) {
-                // TODO: Create array similar to sorting
-                for (String attribute : definition.getQuasiIdentifyingAttributes()) {
-                    int column = handle.getColumnIndexOf(attribute);
-                    if (!handle.getValue(row,
-                            column).equals(handle.getValue(row - 1, column))) {
-                        newClass = true;
-                        break;
-                    }
-                }
-            } else {
-                newClass = true;
-            }
-
-            if (newClass) {
-                if (row != 0) {
-                    
-                    int val = (int)(((double)(size-min) / (double)max) * ((double)getResources().getGradientLength()-1));
-                    for (int i=1; i<=size; i++){
-                        colors[row-i] = val;
-                    }
-                }
-                size = 1;
-            } else {
-                size++;
-            }
-        }
-        if (handle.getNumRows() > 1) {
-            int val = (int)(((double)(size-min) / (double)max) * ((double)getResources().getGradientLength()-1));
-            for (int i=1; i<=size; i++){
-                colors[handle.getNumRows()-i] = val;
-            }
-        }
-        
-        return new int[][]{colors, groups};
-    }
-
     /**
      * Creates a deep copy of the listeners, to avoid concurrent modification
      * issues during updates of the model
@@ -1045,15 +943,76 @@ public class Controller implements IView {
         return result;
     }
 
-    private void sort(DataDefinition definition, DataHandle handle) {
+    public void actionDataSort() {
+        
+        // Break if no output
+        if (model.getOutput() == null) return;
+        if (model.getSelectedAttribute() == null) return;
+        
+        // Prepare
+        DataHandle handle = model.getOutput();
+        model.getOutput().sort(true, handle.getColumnIndexOf(model.getSelectedAttribute()));
 
-        // Sort by quasi-identifiers
+        // Update
+        model.setGroups(null);
+        update(new ModelEvent(this, ModelPart.SORT_ORDER, handle));
+    }
+
+    public void actionDataShowGroups() {
+        
+        // Break if no output
+        if (model.getOutput() == null) return;
+        
+        // Prepare
+        DataDefinition definition = model.getOutputConfig().getInput().getDefinition();
+        DataHandle handle = model.getOutput();
+        
+        // Create array with indices of all QIs
         int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
         int index = 0;
-        for (String attribute :
-            definition.getQuasiIdentifyingAttributes()) {
+        for (String attribute : definition.getQuasiIdentifyingAttributes()) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
-        handle.sort(true, indices);
+        
+        // Sort by all QIs
+        model.getOutput().sort(true, indices);
+
+        // Identify groups
+        int[] groups = new int[model.getOutput().getNumRows()];
+        int groupIdx = 0;
+        groups[0] = 0;
+        
+        // For each row
+        for (int row = 1; row < model.getOutput().getNumRows(); row++) {
+            
+            // Check if different from previous
+            boolean newClass = false;
+            for (int column : indices) {
+                if (!handle.getValue(row, column).equals(handle.getValue(row - 1, column))) {
+                    newClass = true;
+                    break;
+                }
+            }
+            
+            // Store group
+            groupIdx += newClass ? 1 : 0;
+            groups[row] = groupIdx;
+        }
+
+        // Update
+        model.setGroups(groups);
+        update(new ModelEvent(this, ModelPart.SORT_ORDER, handle));
+    }
+
+    public void actionDataToggleSubset() {
+
+        // Break if no output
+        if (model.getOutput() == null) return;
+        
+        // Update
+        model.setViewSubset(!model.getViewSubset());
+        update(new ModelEvent(this, ModelPart.SORT_ORDER, model.getOutput()));
+        
+        // TODO: Make sure that statistics are updated as well
     }
 }
