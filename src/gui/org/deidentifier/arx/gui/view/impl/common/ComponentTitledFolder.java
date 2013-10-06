@@ -120,7 +120,9 @@ public class ComponentTitledFolder implements IComponent {
         for (String title : bar.getTitles()){
             
             final String key = title;
-            ToolItem item = new ToolItem( toolbar, SWT.PUSH);
+            ToolItem item = null;
+            if (bar.isToggle(title)) item = new ToolItem( toolbar, SWT.CHECK);
+            else item = new ToolItem( toolbar, SWT.PUSH);
             item.setImage(bar.getImage(key));
             item.setToolTipText(title);
             item.addSelectionListener(new SelectionAdapter(){

@@ -30,6 +30,7 @@ public class ComponentTitleBar implements IComponent{
     
     private List<String> titles = new ArrayList<String>();
     private Map<String, Image> images = new HashMap<String, Image>();
+    private Map<String, Boolean> toggle = new HashMap<String, Boolean>();
     private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
     private String id;
     
@@ -38,7 +39,12 @@ public class ComponentTitleBar implements IComponent{
     }
 
     public void add(String title, Image image, Runnable runnable){
+        add(title, image, false, runnable);
+    }
+
+    public void add(String title, Image image, boolean toggle, Runnable runnable) {
         this.titles.add(title);
+        this.toggle.put(title, toggle);
         this.images.put(title, image);
         this.runnables.put(title, runnable);
     }
@@ -53,6 +59,10 @@ public class ComponentTitleBar implements IComponent{
 
     public Runnable getRunnable(String title) {
         return runnables.get(title);
+    }
+    
+    public Boolean isToggle(String title) {
+        return toggle.get(title);
     }
 
     public String getId(){

@@ -46,19 +46,20 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class ViewData implements IView {
 
-    private final Image       IMAGE_INSENSITIVE;
-    private final Image       IMAGE_SENSITIVE;
-    private final Image       IMAGE_QUASI_IDENTIFYING;
-    private final Image       IMAGE_IDENTIFYING;
+    private final Image              IMAGE_INSENSITIVE;
+    private final Image              IMAGE_SENSITIVE;
+    private final Image              IMAGE_QUASI_IDENTIFYING;
+    private final Image              IMAGE_IDENTIFYING;
 
-    private final ComponentDataTable   table;
-    private final ModelPart target;
-    private final ModelPart reset;
-    private final Controller  controller;
-    private final ToolItem    sortButton;
-    
-    private DataHandle        handle = null;
-    private Model             model;
+    private final ComponentDataTable table;
+    private final ModelPart          target;
+    private final ModelPart          reset;
+    private final Controller         controller;
+    private final ToolItem           groupsButton;
+    private final ToolItem           subsetButton;
+
+    private DataHandle               handle = null;
+    private Model                    model;
 
     /** 
      * Creates a new data view
@@ -81,10 +82,12 @@ public class ViewData implements IView {
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(target, this);
-        this.controller = controller;
         if (reset != null) {
             controller.addListener(reset, this);
         }
+        
+        // Store
+        this.controller = controller;
         this.reset = reset;
         this.target = target;
 
@@ -114,6 +117,7 @@ public class ViewData implements IView {
                 });
         bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
                 controller.getResources().getImage("sort_subset.png"),
+                true,
                 new Runnable() {
                     @Override
                     public void run() {
@@ -143,8 +147,10 @@ public class ViewData implements IView {
             }
         });
         
-        this.sortButton = folder.getBarItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
-        this.sortButton.setEnabled(false);
+        this.groupsButton = folder.getBarItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
+        this.groupsButton.setEnabled(false);
+        this.subsetButton = folder.getBarItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
+        this.subsetButton.setEnabled(false);
     }
     
     /**
@@ -217,6 +223,19 @@ public class ViewData implements IView {
     @Override
     public void update(final ModelEvent event) {
 
+        // Enable/Disable sort button
+        if (event.part == ModelPart.OUTPUT ||
+            event.part == ModelPart.INPUT) {
+            
+            if (model != null && model.getOutput() != null){
+                groupsButton.setEnabled(true);
+                subsetButton.setEnabled(true);
+            } else {
+                groupsButton.setEnabled(false);
+                subsetButton.setEnabled(false);
+            }
+        }
+        
         if (event.part == reset) {
             
             reset();
@@ -233,7 +252,7 @@ public class ViewData implements IView {
             if (event.data == null) {
                 reset();
                 return;
-            }
+            } 
             
             // Obtain data definition
             DataDefinition definition = model.getInputConfig().getInput().getDefinition();
@@ -304,16 +323,8 @@ public class ViewData implements IView {
             table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
             if (table.getData() != data) table.setData(data);
             table.redraw();
-        }
-        
-        // Enable/Disable sort button
-        if (event.part == ModelPart.OUTPUT ||
-            event.part == ModelPart.INPUT) {
-            if (model != null && model.getOutput()!=null){
-                sortButton.setEnabled(true);
-            } else {
-                sortButton.setEnabled(false);
-            }
+            
+            subsetButton.setSelection(model.getViewConfig().isSubset());
         }
     }
 
