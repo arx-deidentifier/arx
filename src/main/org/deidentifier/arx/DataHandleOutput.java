@@ -285,7 +285,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                                  getValueInternal(row2,
                                                                                   index));
             } catch (final Exception e) {
-                e.printStackTrace();
                 throw new RuntimeException(e);
             }
 

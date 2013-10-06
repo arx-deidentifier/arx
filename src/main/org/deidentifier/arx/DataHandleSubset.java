@@ -88,6 +88,11 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    protected int compare(int row1, int row2, int[] columns, boolean ascending) {
+        return source.compare(this.subset[row1], this.subset[row2], columns, ascending);
+    }
+
+    @Override
     public Iterator<String[]> iterator() {
         return new Iterator<String[]>() {
 
