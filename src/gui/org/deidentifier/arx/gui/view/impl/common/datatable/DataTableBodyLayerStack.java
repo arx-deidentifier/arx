@@ -32,7 +32,7 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
     private final ViewportLayer  viewportLayer;
 
     public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, NatTable table, DataTableContext context) {
-        this.selectionLayer = new SelectionLayer(underlyingLayer);
+        this.selectionLayer = new DataTableSelectionLayer(underlyingLayer);
         this.viewportLayer = new ViewportLayer(selectionLayer);
         this.setUnderlyingLayer(viewportLayer);
         this.setConfigLabelAccumulator(new DataTableConfigLabelAccumulator(table, context));
