@@ -155,6 +155,7 @@ public class ViewDensity implements IView {
     }
 
     private DataHandle getData() {
+        
         // Obtain the right config
         ModelConfiguration config = model.getOutputConfig();
         if (config == null) {
@@ -164,9 +165,9 @@ public class ViewDensity implements IView {
         // Obtain the right handle
         final DataHandle data;
         if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
+            data = config.getInput().getHandle().getView(config.getConfig());
         } else {
-            data = model.getOutput();
+            data = model.getOutput().getView(config.getConfig());
         }
 
         // Clear if nothing to draw
@@ -358,13 +359,9 @@ public class ViewDensity implements IView {
                       .info("Density computed in " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
 
             final int fMax = max;
-            // controller.getResources().getDisplay().asyncExec(new Runnable() {
-            // @Override
-            // public void run() {
 
             // Dont run this asynchronously, because it seems to cause problems
             // on MS Windows
-            // Configure
             intensityGraph.setMax(fMax);
             intensityGraph.setMin(0);
             intensityGraph.setDataHeight(size2);
@@ -380,8 +377,6 @@ public class ViewDensity implements IView {
             intensityGraph.setDataArray(heat);
             canvas.setRedraw(true);
             canvas.redraw();
-            // }
-            // });
         }
     }
 }

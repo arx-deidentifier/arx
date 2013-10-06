@@ -32,14 +32,14 @@ import org.deidentifier.arx.metric.Metric;
 
 public class ModelConfiguration implements Serializable {
 
-    private static final long   serialVersionUID      = -2887699232096897527L;
+    private static final long      serialVersionUID = -2887699232096897527L;
 
-    private transient Data         input                 = null;
-    private ARXConfiguration       config                = new ARXConfiguration();
-    private boolean                removeOutliers        = true;
-    private boolean                modified              = false;
-    private Map<String, Hierarchy> hierarchies           = new HashMap<String, Hierarchy>();
-    private RowSet                 researchSubset        = null;
+    private transient Data         input            = null;
+    private ARXConfiguration       config           = new ARXConfiguration();
+    private boolean                removeOutliers   = true;
+    private boolean                modified         = false;
+    private Map<String, Hierarchy> hierarchies      = new HashMap<String, Hierarchy>();
+    private RowSet                 researchSubset   = null;
 
     /**
      * Delegates to an instance of ARXConfiguration
@@ -78,7 +78,7 @@ public class ModelConfiguration implements Serializable {
      * Delegates to an instance of ARXConfiguration
      * @return
      */
-    public final double getAllowedOutliers() {
+    public double getAllowedOutliers() {
         return config.getMaxOutliers();
     }
 
@@ -159,7 +159,7 @@ public class ModelConfiguration implements Serializable {
      * Delegates to an instance of ARXConfiguration
      * @return
      */
-    public final boolean isCriterionMonotonic() {
+    public boolean isCriterionMonotonic() {
         return config.isCriterionMonotonic();
     }
 
