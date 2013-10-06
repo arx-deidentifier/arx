@@ -3,11 +3,9 @@ package org.deidentifier.arx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * This class represents a data subset as required for d-presence
@@ -112,6 +110,7 @@ public class DataSubset {
         
         // Return
         Arrays.sort(array);
+        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
     
@@ -143,6 +142,7 @@ public class DataSubset {
         }
         
         // Return
+        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
     
@@ -165,6 +165,7 @@ public class DataSubset {
             array[idx++] = line;
         }
         Arrays.sort(array);
+        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
 
@@ -180,6 +181,7 @@ public class DataSubset {
                 array[idx++]=i;
             }
         }
+        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
 

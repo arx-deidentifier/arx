@@ -32,11 +32,17 @@ import org.deidentifier.arx.framework.data.Dictionary;
 class DataHandleInput extends DataHandle {
 
     /** The data */
-    protected int[][]    data       = null;
+    protected int[][]    data         = null;
 
     /** The dictionary */
-    protected Dictionary dictionary = null;
-    
+    protected Dictionary dictionary   = null;
+
+    /** The data subset */
+    private RowSet       subsetBitset = null;
+
+    /** The data subset */
+    private int[]        subsetArray  = null;
+
     /**
      * Creates a new data handle
      * 
@@ -213,6 +219,20 @@ class DataHandleInput extends DataHandle {
 
         // Swap
         swapInternal(row1, row2);
+        
+        // Swap subset
+        if (this.subsetBitset != null){
+            
+            this.subsetBitset.swap(row1, row2);
+            
+            // TODO: Super inefficient
+            int index = 0;
+            for (int i = 0; i < data.length; i++){
+                if (this.subsetBitset.contains(i)){
+                    this.subsetArray[index++] = i;
+                }
+            }
+        }
     }
 
     /*
@@ -225,5 +245,19 @@ class DataHandleInput extends DataHandle {
         final int[] temp = data[row1];
         data[row1] = data[row2];
         data[row2] = temp;
+        
+        if (this.subsetBitset != null){
+            this.subsetBitset.swap(row1, row2);
+        }
+    }
+    
+    /**
+     * Sets the research subset
+     * @param bitset
+     * @param array
+     */
+    public void setSubset(RowSet bitset, int[] array) {
+        this.subsetBitset = bitset;
+        this.subsetArray = array;
     }
 }
