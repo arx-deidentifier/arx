@@ -38,7 +38,7 @@ public class Enclosure extends DPresence {
      * @param subset Research subset
      */
     public Enclosure(DataSubset subset) {
-        super(0d, 1d, subset);
+        super(subset);
     }
         
     @Override
