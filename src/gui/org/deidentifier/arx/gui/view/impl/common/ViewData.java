@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.common;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -176,23 +177,31 @@ public class ViewData implements IView {
      */
     private void actionCellSelected(CellSelectionEvent arg1) {
 
-        if (model != null) {
-            int column = arg1.getColumnPosition();
-            if (column==0){
-                int row = arg1.getRowPosition();
-                if (row>=0){
-                    RowSet subset = model.getInputConfig().getResearchSubset();
-                    if (subset.contains(row)) {
-                        subset.remove(row);
-                    } else {
-                        subset.add(row);
-                    }
-                    model.setSubsetManual();
-                    controller.update(new ModelEvent(this,
-                                                     ModelPart.RESEARCH_SUBSET,
-                                                     subset));
-                }
+        if (model == null) return;
+        
+        int column = arg1.getColumnPosition();
+        int row = arg1.getRowPosition();
+        if (column == 0 && row >= 0) {
+
+            // Remap row index if showing the subset
+            if (table.getData() instanceof DataHandleSubset) {
+                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
+                row = subset[row];
             }
+
+            // Perform change
+            RowSet subset = model.getInputConfig().getResearchSubset();
+            if (subset.contains(row)) {
+                subset.remove(row);
+            } else {
+                subset.add(row);
+            }
+            
+            // Fire event
+            model.setSubsetManual();
+            controller.update(new ModelEvent(this, 
+                                             ModelPart.RESEARCH_SUBSET, 
+                                             subset));
         }
     }
 

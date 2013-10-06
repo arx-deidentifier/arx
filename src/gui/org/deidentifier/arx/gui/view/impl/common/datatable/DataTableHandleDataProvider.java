@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.RowSet;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
@@ -39,12 +40,17 @@ public class DataTableHandleDataProvider implements IDataProvider {
     }
 
     @Override
-    public Object getDataValue(final int arg0, final int arg1) {
+    public Object getDataValue(int arg0, int arg1) {
         if (data == null) { return null; }
         RowSet rows = context.getRows();
         if (rows == null) {
             return data.getValue(arg1, arg0);
         } else if (arg0 == 0) {
+            // Remap row index for subset if in subset view
+            if (data instanceof DataHandleSubset){
+                int[] subset = ((DataHandleSubset)data).getSubset();
+                arg1 = subset[arg1];
+            }
             return rows.contains(arg1);
         } else {
             return data.getValue(arg1, arg0 - 1);
