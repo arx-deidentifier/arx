@@ -64,7 +64,6 @@ public class DataTableContext {
     }
 
     public void setRows(RowSet rows) {
-        System.out.println("Research subset: "+rows);
         this.rows = rows;
     }
 
