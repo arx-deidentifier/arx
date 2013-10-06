@@ -78,12 +78,10 @@ import org.eclipse.swt.program.Program;
 
 public class Controller implements IView {
 
-    private final MainWindow                  main;
+    private Model                            model;
 
-    private Model                              model     = null;
-
-    private final Resources                    resources;
-
+    private final MainWindow                 main;
+    private final Resources                  resources;
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
 
     public Controller(final MainWindow main) {
@@ -107,7 +105,9 @@ public class Controller implements IView {
         if (worker.getResult() != null) {
             model.setOutput(worker.getResult(), model.getSelectedNode());
             update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
-            this.actionDataShowGroups();
+            this.model.getViewConfig().setMode(Mode.GROUPED);
+            this.updateViewConfig(true);
+            this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
         }
     }
 
@@ -198,7 +198,7 @@ public class Controller implements IView {
         if (model.getOutput() == null) return;
 
         this.model.getViewConfig().setMode(Mode.GROUPED);
-        this.updateViewConfig();
+        this.updateViewConfig(false);
         
         // Update
         this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
@@ -217,7 +217,7 @@ public class Controller implements IView {
         }
         
         this.model.getViewConfig().setAttribute(model.getSelectedAttribute());
-        this.updateViewConfig();
+        this.updateViewConfig(false);
         
         // Update
         this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
@@ -233,7 +233,7 @@ public class Controller implements IView {
         // Update
         boolean val = !model.getViewConfig().isSubset();
         this.model.getViewConfig().setSubset(val);
-        this.updateViewConfig();
+        this.updateViewConfig(false);
         this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
     }
 
@@ -300,7 +300,9 @@ public class Controller implements IView {
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
-                this.actionDataShowGroups();
+                this.model.getViewConfig().setMode(Mode.GROUPED);
+                this.updateViewConfig(true);
+                this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
             } else {
                 // Select bottom node
                 model.setOutput(null, null);
@@ -991,9 +993,9 @@ public class Controller implements IView {
         return result;
     }
 
-    private void updateViewConfig() {
+    private void updateViewConfig(boolean force) {
         
-        if (!model.isViewConfigChanged()) return;
+        if (!force && !model.isViewConfigChanged()) return;
         
         ModelViewConfig config = model.getViewConfig();
         
