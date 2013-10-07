@@ -190,13 +190,13 @@ public class WorkerSave extends Worker<Model> {
         b.append("\t").append("<protectSensitiveAssociations>").append(toXML(config.isProtectSensitiveAssociations())).append("</protectSensitiveAssociations>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<relativeMaxOutliers>").append(toXML(config.getAllowedOutliers())).append("</relativeMaxOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<metric>").append(toXML(config.getMetric().getClass().getSimpleName())).append("</metric>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<criteria>");
+        b.append("\t").append("<criteria>\n");
         for (PrivacyCriterion c : config.getCriteria()) {
         	if (!(c instanceof Enclosure)) {
         		b.append("\t\t").append("<criterion>").append(toXML(c)).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         	}
         }
-        b.append("\t").append("</criteria>");
+        b.append("\t").append("</criteria>\n");
         b.append("</config>\n"); //$NON-NLS-1$
         return b.toString();
     }
