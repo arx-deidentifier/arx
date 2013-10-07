@@ -143,7 +143,7 @@ public class SWTUtil {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                controller.actionShowHelp(id);
+                controller.actionShowHelpDialog(id);
             }
         });
     }

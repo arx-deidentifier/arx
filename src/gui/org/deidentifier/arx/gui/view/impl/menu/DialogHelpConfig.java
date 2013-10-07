@@ -20,28 +20,88 @@ public class DialogHelpConfig {
     private List<Entry> entries = new ArrayList<Entry>();
     
     public DialogHelpConfig(){
-        entries.add(new Entry("id-1", "1. Introduction", "http://arx.deidentifier.org/?page_id=1049&content-only=1&css=1"));
-        entries.add(new Entry("id-2", "1.1. Viewing data", "http://arx.deidentifier.org/?page_id=1049&content-only=1&css=1"));
-        entries.add(new Entry("id-3", "1.2. Defining privacy guarantees", "http://arx.deidentifier.org/?page_id=1049&content-only=1&css=1"));
-        entries.add(new Entry("id-4", "2. Introduction", "http://arx.deidentifier.org/?page_id=1049&content-only=1&css=1"));
-        entries.add(new Entry("id-5", "2.1. Viewing data", "http://arx.deidentifier.org/?page_id=1049&content-only=1&css=1"));
-        entries.add(new Entry("id-6", "2.2. Defining privacy guarantees", "http://arx.deidentifier.org/?page_id=1049&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-70",
+                              "1. Perspectives",
+                              "http://arx.deidentifier.org/?page_id=1082&content-only=1&css=1"));
+
+        entries.add(new Entry("id-140",
+                              "1.1. Viewing and Manipulating Data",
+                              "http://arx.deidentifier.org/?page_id=1055&content-only=1&css=1"));
+
+        entries.add(new Entry("id-3",
+                              "2. Defining the transformation",
+                              "http://arx.deidentifier.org/?page_id=1076&content-only=1&css=1"));
+
+        entries.add(new Entry("id-1",
+                              "2.1. Defining attribute properties",
+                              "http://arx.deidentifier.org/?page_id=1074&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-80",
+                              "2.2. Defining privacy criteria",
+                              "http://arx.deidentifier.org/?page_id=1059&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-60",
+                              // TODO: Change title
+                              "2.3. Defining general properties",
+                              "http://arx.deidentifier.org/?page_id=1061&content-only=1&css=1"));
+
+        entries.add(new Entry("id-40",
+                              "2.4. Defining a research subset",
+                              "http://arx.deidentifier.org/?page_id=1057&content-only=1&css=1"));
+
+        entries.add(new Entry("id-4",
+                              "3. Exploring the solution space",
+                              "http://arx.deidentifier.org/?page_id=1078&content-only=1&css=1"));
+
+        entries.add(new Entry("id-30",
+                              "3.1. Exploring the lattice",
+                              "http://arx.deidentifier.org/?page_id=1063&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-21",
+                              "3.2. Filtering the lattice",
+                              "http://arx.deidentifier.org/?page_id=1065&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-23",
+                              "3.3. Using the clipboard",
+                              "http://arx.deidentifier.org/?page_id=1067&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-22",
+                              "3.4. Properties of transformations",
+                              "http://arx.deidentifier.org/?page_id=1069&content-only=1&css=1"));
+
+        entries.add(new Entry("id-5",
+                              "4. Analyzing transformed datasets",
+                              "http://arx.deidentifier.org/?page_id=1080&content-only=1&css=1"));
+        
+        entries.add(new Entry("id-50",
+                              "4.1. Visualizations and properties",
+                              "http://arx.deidentifier.org/?page_id=1071&content-only=1&css=1"));
     }
     
     public List<Entry> getEntries(){
         return this.entries;
     }
 
-    public String getUrlOf(int index) {
+    public String getUrlForIndex(int index) {
         return entries.get(index).url;
     }
 
-    public int getIndexOf(String url) {
+    public int getIndexForUrl(String url) {
         for (int i = 0; i < entries.size(); i++){
             if (entries.get(i).url.equals(url)) {
                 return i;
             }
         }
         return -1;
+    }
+
+    public int getIndexForId(String id) {
+        for (int i = 0; i < entries.size(); i++){
+            if (entries.get(i).id.equals(id)) {
+                return i;
+            }
+        }
+        return 0;
     }
 }

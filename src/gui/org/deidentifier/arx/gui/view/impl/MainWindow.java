@@ -272,8 +272,8 @@ public class MainWindow implements IView {
         return MessageDialog.openQuestion(getShell(), header, text);
     }
 
-	public void showHelpDialog() {
-        final DialogHelp dialog = new DialogHelp(shell, controller);
+	public void showHelpDialog(String id) {
+        final DialogHelp dialog = new DialogHelp(shell, controller, id);
         dialog.create();
         dialog.open();
 	}

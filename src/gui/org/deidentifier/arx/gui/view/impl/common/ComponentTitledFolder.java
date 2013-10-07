@@ -139,7 +139,7 @@ public class ComponentTitledFolder implements IComponent {
         item.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                controller.actionShowHelp(bar.getId());
+                controller.actionShowHelpDialog(bar.getId());
             }
         });
         

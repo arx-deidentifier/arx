@@ -51,17 +51,19 @@ import org.eclipse.swt.widgets.ToolItem;
 
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
+    private String           id;
     private Controller       controller;
     private Browser          browser;
     private List             list;
     private Image            image;
-    private String[]         urls   = {};
     private DialogHelpConfig config = new DialogHelpConfig();
 
-    public DialogHelp(final Shell parentShell, final Controller controller) {
+    public DialogHelp(final Shell parentShell, final Controller controller, final String id) {
         super(parentShell);
         this.controller = controller;
+        this.id = id;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
+        System.out.println(id);
     }
 
     @Override
@@ -150,18 +152,18 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
             }
         });
         
-        list.select(0);
-        browser.setUrl(getUrlOf(0));
-        
+        int index = id == null ? 0 : config.getIndexForId(id);
+        list.select(index);
+        browser.setUrl(getUrlOf(index));
         return parent;
     }
 
     protected String getUrlOf(int index) {
-        return config.getUrlOf(index);
+        return config.getUrlForIndex(index);
     }
 
     private int getIndexOf(String location) {
-        return config.getIndexOf(location);
+        return config.getIndexForUrl(location);
     }
 
     @Override
