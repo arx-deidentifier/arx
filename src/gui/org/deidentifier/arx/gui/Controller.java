@@ -957,6 +957,18 @@ public class Controller implements IView {
                                       handle.getAttributeName(i)));
             }
         }
+        
+        // Update research subset
+        update(new ModelEvent(this,
+                              ModelPart.RESEARCH_SUBSET,
+                              model.getInputConfig().getResearchSubset()));
+        
+        // Update view config
+        if (model.getOutput() != null){
+	        update(new ModelEvent(this,
+	                              ModelPart.VIEW_CONFIG,
+	                              model.getOutput()));
+        }
 
         // We just loaded the model, so there are no changes
         model.setUnmodified();
