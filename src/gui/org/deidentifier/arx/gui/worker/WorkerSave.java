@@ -428,8 +428,8 @@ public class WorkerSave extends Worker<Model> {
      * @throws IOException
      */
     private void writeConfiguration(final ModelConfiguration config,
-                               final String prefix,
-                               final ZipOutputStream zip) throws IOException {
+                                    final String prefix,
+                                    final ZipOutputStream zip) throws IOException {
         zip.putNextEntry(new ZipEntry(prefix + "config.dat")); //$NON-NLS-1$
         final ObjectOutputStream oos = new ObjectOutputStream(zip);
         oos.writeObject(config);
