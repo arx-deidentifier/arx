@@ -20,6 +20,11 @@ package org.deidentifier.arx.gui;
 
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 
+/**
+ * Main entry point
+ * 
+ * @author Prasser, Kohlmayer
+ */
 public class Main {
 
     public static void main(final String[] args) {
