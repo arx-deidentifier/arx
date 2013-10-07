@@ -63,7 +63,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         this.controller = controller;
         this.id = id;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
-        System.out.println(id);
     }
 
     @Override
