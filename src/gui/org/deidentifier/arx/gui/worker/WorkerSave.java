@@ -27,25 +27,27 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLattice;
+import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXConfiguration.Criterion;
-import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
-import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.criteria.Enclosure;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -104,11 +106,10 @@ public class WorkerSave extends Worker<Model> {
     }
 
     @Override
-    public void
-            run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                            InterruptedException {
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
+                                                        InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 8); //$NON-NLS-1$
+        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 10); //$NON-NLS-1$
 
         try {
             final FileOutputStream f = new FileOutputStream(path);
@@ -119,17 +120,21 @@ public class WorkerSave extends Worker<Model> {
             arg0.worked(2);
             writeInput(model, zip);
             arg0.worked(3);
-            writeOutput(model, zip);
+            writeInputSubset(model, zip);
             arg0.worked(4);
-            writeConfiguration(model, zip);
+            writeOutput(model, zip);
             arg0.worked(5);
-            final Map<String, Integer> map = writeLattice(model, zip);
+            writeOutputSubset(model, zip);
             arg0.worked(6);
-            writeClipboard(model, map, zip);
+            writeConfiguration(model, zip);
             arg0.worked(7);
+            final Map<String, Integer> map = writeLattice(model, zip);
+            arg0.worked(8);
+            writeClipboard(model, map, zip);
+            arg0.worked(9);
             writeFilter(model, zip);
             zip.close();
-            arg0.worked(8);
+            arg0.worked(10);
         } catch (final Exception e) {
             error = e;
             arg0.done();
@@ -179,22 +184,23 @@ public class WorkerSave extends Worker<Model> {
     private String toXML(final ModelConfiguration config) {
         final StringBuffer b = new StringBuffer();
         b.append("<config>\n"); //$NON-NLS-1$
+        
         b.append("\t").append("<removeOutliers>").append(toXML(config.isRemoveOutliers())).append("</removeOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        b.append("\t").append("<k>").append(toXML(config.getK())).append("</k>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        b.append("\t").append("<practicalMonotonicity>").append(toXML(config.isPracticalMonotonicity())).append("</practicalMonotonicity>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        b.append("\t").append("<protectSensitiveAssociations>").append(toXML(config.isProtectSensitiveAssociations())).append("</protectSensitiveAssociations>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<relativeMaxOutliers>").append(toXML(config.getAllowedOutliers())).append("</relativeMaxOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        b.append("\t").append("<criterion>").append(toXML(config.getCriterion())).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<metric>").append(toXML(config.getMetric().getClass().getSimpleName())).append("</metric>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<tClosenessCriterion>").append(toXML(config.getTClosenessCriterion())).append("</tClosenessCriterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<lDiversityCriterion>").append(toXML(config.getLDiversityCriterion())).append("</lDiversityCriterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<l>").append(toXML(config.getL())).append("</l>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<c>").append(toXML(config.getC())).append("</c>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<practicalMonotonicity>").append(toXML(config.getPracticalMonotonicity())).append("</practicalMonotonicity>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<t>").append(toXML(config.getT())).append("</t>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        b.append("\t").append("<criteria>");
+        for (PrivacyCriterion c : config.getCriteria()) {
+        	if (!(c instanceof Enclosure)) {
+        		b.append("\t\t").append("<criterion>").append(toXML(c)).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	}
+        }
+        b.append("\t").append("</criteria>");
         b.append("</config>\n"); //$NON-NLS-1$
         return b.toString();
     }
+    
 
     /**
      * Escape XML
@@ -202,9 +208,14 @@ public class WorkerSave extends Worker<Model> {
      * @param a
      * @return
      */
-    private String toXML(final Criterion a) {
-        return StringEscapeUtils.escapeXml(String.valueOf(a));
+    private String toXML(final PrivacyCriterion c) {
+        if (c == null) {
+            return ""; //$NON-NLS-1$
+        } else {
+            return toXML(c.toString());
+        }
     }
+
 
     /**
      * Returns an XML representation of the data definition
@@ -220,7 +231,7 @@ public class WorkerSave extends Worker<Model> {
         for (int i = 0; i < handle.getNumColumns(); i++) {
             final String attr = handle.getAttributeName(i);
             AttributeType t = definition.getAttributeType(attr);
-            DataType dt = definition.getDataType(attr);
+            DataType<?> dt = definition.getDataType(attr);
             if (t == null) {
                 t = AttributeType.IDENTIFYING_ATTRIBUTE;
             }
@@ -251,14 +262,6 @@ public class WorkerSave extends Worker<Model> {
      */
     private String toXML(final double a) {
         return StringEscapeUtils.escapeXml(String.valueOf(a));
-    }
-
-    private String toXML(final LDiversityCriterion a) {
-        if (a == null) {
-            return ""; //$NON-NLS-1$
-        } else {
-            return toXML(a.toString());
-        }
     }
 
     /**
@@ -399,20 +402,6 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final EqualDistanceTCloseness a) {
-        if (a == null) {
-            return ""; //$NON-NLS-1$
-        } else {
-            return toXML(a.toString());
-        }
-    }
-
-    /**
      * Writes the clipboard to the file
      * 
      * @param map
@@ -438,8 +427,7 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void
-            writeConfiguration(final ModelConfiguration config,
+    private void writeConfiguration(final ModelConfiguration config,
                                final String prefix,
                                final ZipOutputStream zip) throws IOException {
         zip.putNextEntry(new ZipEntry(prefix + "config.dat")); //$NON-NLS-1$
@@ -462,8 +450,7 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void
-            writeConfiguration(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeConfiguration(final Model model, final ZipOutputStream zip) throws IOException {
 
         if (model.getInputConfig() != null) {
             writeConfiguration(model.getInputConfig(), "input/", zip); //$NON-NLS-1$
@@ -499,15 +486,14 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void
-            writeFilter(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeFilter(final Model model, final ZipOutputStream zip) throws IOException {
         if ((model.getAnonymizer() == null) || (model.getResult() == null)) { return; }
         zip.putNextEntry(new ZipEntry("filter.dat")); //$NON-NLS-1$
         final ObjectOutputStream oos = new ObjectOutputStream(zip);
         oos.writeObject(model.getNodeFilter());
         oos.flush();
     }
-
+    
     /**
      * Writes the hierarchies to the file
      * 
@@ -517,6 +503,8 @@ public class WorkerSave extends Worker<Model> {
     private void writeHierarchies(final ModelConfiguration config,
                                   final String prefix,
                                   final ZipOutputStream zip) throws IOException {
+    	
+    	// Write hierarchies of QIs
         if (config.getInput() != null) {
             if (config.getInput().getDefinition() != null) {
                 for (final String a : config.getInput()
@@ -535,12 +523,18 @@ public class WorkerSave extends Worker<Model> {
                 }
             }
         }
-
-        if (config.getSensitiveHierarchy() != null) {
-            zip.putNextEntry(new ZipEntry(prefix + "hierarchies/sensitive.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip,
-                                                        model.getSeparator());
-            out.write(config.getSensitiveHierarchy().getHierarchy());
+        
+        // Write hierarchies of sensitive attributes
+        Set<String> additional = new HashSet<String>();
+        for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)) {
+        	additional.add(c.getAttribute());
+        }
+        
+        for (String attribute : additional){
+        	Hierarchy h = model.getOutputConfig().getHierarchy(attribute);
+            zip.putNextEntry(new ZipEntry(prefix +"hierarchies/" + toFileName(attribute) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            out.write(h.getHierarchy());
         }
     }
 
@@ -550,8 +544,7 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void
-            writeInput(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeInput(final Model model, final ZipOutputStream zip) throws IOException {
         if (model.getInputConfig().getInput() != null) {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input.csv")); //$NON-NLS-1$
@@ -565,6 +558,27 @@ public class WorkerSave extends Worker<Model> {
         }
     }
 
+    /**
+     * Writes the input to the file
+     * 
+     * @param zip
+     * @throws IOException
+     */
+    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
+        if (model.getInputConfig().getInput() != null) {
+            if (model.getInputConfig().getInput().getHandle() != null) {
+                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                final ARXConfiguration config = model.getSubsetConfig();
+                out.write(model.getInputConfig()
+                               .getInput()
+                               .getHandle()
+                               .getView(config)
+                               .iterator());
+            }
+        }
+    }
+    
     /**
      * Writes the lattice to the file
      * 
@@ -656,8 +670,7 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void
-            writeModel(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeModel(final Model model, final ZipOutputStream zip) throws IOException {
         zip.putNextEntry(new ZipEntry("project.dat")); //$NON-NLS-1$
         final ObjectOutputStream oos = new ObjectOutputStream(zip);
         oos.writeObject(model);
@@ -669,19 +682,31 @@ public class WorkerSave extends Worker<Model> {
         w.flush();
     }
 
+	/**
+	 * Writes the output to the file
+	 * 
+	 * @param zip
+	 * @throws IOException
+	 */
+	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
+		if (model.getOutput() != null) {
+			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
+			final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+			out.write(model.getOutput().iterator());
+		}
+	}
+
     /**
      * Writes the output to the file
      * 
      * @param zip
      * @throws IOException
      */
-    private void
-            writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
         if (model.getOutput() != null) {
-            zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip,
-                                                        model.getSeparator());
-            out.write(model.getOutput().iterator());
+            zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            out.write(model.getOutput().getView(model.getOutputConfig().getConfig()).iterator());
         }
     }
 }

@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
@@ -146,6 +147,20 @@ public class Model implements Serializable {
         
         // Return the anonymizer
 		return anonymizer;
+	}
+
+	public ARXConfiguration getSubsetConfig() {
+
+		// Create a temporary config
+		ARXConfiguration config = new ARXConfiguration();
+
+        // Add an enclosure criterion
+        DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
+                                              getInputConfig().getResearchSubset());
+		config.addCriterion(new Enclosure(subset));
+
+        // Return the config
+		return config;
 	}
 
 	public ARXAnonymizer getAnonymizer() {
