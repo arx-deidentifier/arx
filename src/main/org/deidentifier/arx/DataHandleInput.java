@@ -213,7 +213,7 @@ public class DataHandleInput extends DataHandle {
         if (this.subsetBitset != null){
             
             this.subsetBitset.swap(row1, row2);
-            
+
             // TODO: Super inefficient
             int index = 0;
             for (int i = 0; i < data.length; i++){
@@ -229,7 +229,7 @@ public class DataHandleInput extends DataHandle {
 
         // Rebuild array representation of subset
         if (this.subsetBitset != null){
-         
+        	
             int index = 0;
             for (int i = 0; i < data.length; i++){
                 if (this.subsetBitset.contains(i)){

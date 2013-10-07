@@ -212,6 +212,20 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
+     * @param swapper
+     *            A swapper
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(final Swapper swapper, final boolean ascending, final int... columns) {
+        sort(swapper, 0, getNumRows(), ascending, columns);
+    }
+
+    /**
+     * Sorts the dataset according to the given columns. Will sort input and
+     * output analogously.
      * 
      * @param columns
      *            An integer array containing column indicides
@@ -239,6 +253,28 @@ public abstract class DataHandle {
                      final int to,
                      final boolean ascending,
                      final int... columns) {
+    	this.sort(null, from, to, ascending, columns);
+    }
+    /**
+     * Sorts the dataset according to the given columns and the given range.
+     * Will sort input and output analogously.
+     * 
+     * @param swapper
+     *            A swapper
+     * @param from
+     *            The lower bound
+     * @param to
+     *            The upper bound
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(final Swapper swapper, 
+    				 final int from,
+                     final int to,
+                     final boolean ascending,
+                     final int... columns) {
         checkColumns(columns);
         checkRow(from, getNumRows());
         checkRow(to, getNumRows());
@@ -254,6 +290,7 @@ public abstract class DataHandle {
             @Override
             public void swap(final int arg0, final int arg1) {
                 outer.swapBoth(arg0, arg1);
+                if (swapper != null) swapper.swap(arg0, arg1);
             }
         };
         GenericSorting.mergeSort(from, to, c, s);

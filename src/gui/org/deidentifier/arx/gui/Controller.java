@@ -77,6 +77,8 @@ import org.deidentifier.arx.io.CSVDataOutput;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.program.Program;
 
+import cern.colt.Swapper;
+
 public class Controller implements IView {
 
     private Model                            model;
@@ -1027,12 +1029,14 @@ public class Controller implements IView {
             config.getMode() == Mode.SORTED_OUTPUT) {
             
             // Sort
-            handle.sort(true, handle.getColumnIndexOf(config.getAttribute()));
+        	Swapper swapper = new Swapper(){
+				@Override
+				public void swap(int arg0, int arg1) {
+					model.getInputConfig().getResearchSubset().swap(arg0, arg1);
+				}
+        	};
+            handle.sort(swapper, true, handle.getColumnIndexOf(config.getAttribute()));
             model.setGroups(null);
-            
-            // Update subset as it might have changed
-            DataHandleInput inHandle = (DataHandleInput)model.getInputConfig().getInput().getHandle();
-            model.getInputConfig().setResearchSubset(inHandle.getSubset().clone());
             
         } else {
             
@@ -1045,7 +1049,13 @@ public class Controller implements IView {
             }
             
             // Sort by all QIs
-            handle.sort(true, indices);
+           	Swapper swapper = new Swapper(){
+    				@Override
+    				public void swap(int arg0, int arg1) {
+    					model.getInputConfig().getResearchSubset().swap(arg0, arg1);
+    				}
+            	};
+            handle.sort(swapper, true, indices);
 
             // Identify groups
             int[] groups = new int[handle.getNumRows()];
@@ -1071,10 +1081,6 @@ public class Controller implements IView {
 
             // Update
             model.setGroups(groups);
-            
-            // Update subset as it might have changed
-            DataHandleInput inHandle = (DataHandleInput)model.getInputConfig().getInput().getHandle();
-            model.getInputConfig().setResearchSubset(inHandle.getSubset().clone());
         }
     }
 }
