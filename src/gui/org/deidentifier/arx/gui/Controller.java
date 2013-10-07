@@ -595,7 +595,8 @@ public class Controller implements IView {
     }
 
     public void actionMenuHelpHelp() {
-        Program.launch(Resources.getMessage("Controller.73")); //$NON-NLS-1$
+        // Program.launch(Resources.getMessage("Controller.73")); //$NON-NLS-1$
+    	actionShowHelpDialog();
     }
 
     public String
@@ -619,6 +620,10 @@ public class Controller implements IView {
 
     public void actionShowInfoDialog(final String header, final String text) {
         main.showInfoDialog(header, text);
+    }
+
+    public void actionShowHelpDialog() {
+        main.showHelpDialog();
     }
 
     public String actionShowInputDialog(final String header,

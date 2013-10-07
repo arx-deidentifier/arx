@@ -39,6 +39,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
+import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.worker.Worker;
@@ -271,6 +272,11 @@ public class MainWindow implements IView {
         return MessageDialog.openQuestion(getShell(), header, text);
     }
 
+	public void showHelpDialog() {
+        final DialogHelp dialog = new DialogHelp(shell, controller);
+        dialog.create();
+        dialog.open();
+	}
     public String showSaveFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         dialog.setFilterExtensions(new String[] { filter });
@@ -298,4 +304,5 @@ public class MainWindow implements IView {
             root.setEnabled(true);
         }
     }
+
 }
