@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.io.output.CountingOutputStream;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVDataOutput;
@@ -31,20 +32,25 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class WorkerExport extends Worker<DataHandle> {
 
-    private final String     path;
-    private final char       separator;
-    private volatile boolean stop = false;
-    private final long       bytes;
-    private final DataHandle handle;
+	private volatile boolean stop = false;
+
+	private final String path;
+	private final char separator;
+	private final long bytes;
+	private final DataHandle handle;
+	private final ARXConfiguration config;
 
     public WorkerExport(final String path,
                         final char separator,
                         final DataHandle handle,
+                        final ARXConfiguration config,
                         final long bytes) {
+    	
         this.path = path;
         this.bytes = bytes;
         this.separator = separator;
         this.handle = handle;
+        this.config = config;
     }
 
     @Override
@@ -86,7 +92,7 @@ public class WorkerExport extends Worker<DataHandle> {
         // Load the data
         try {
             final CSVDataOutput csvout = new CSVDataOutput(cout, separator);
-            csvout.write(handle.iterator());
+            csvout.write(handle.getView(config).iterator());
             result = handle;
             stop = true;
             arg0.worked(100);

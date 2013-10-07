@@ -413,7 +413,9 @@ public class Controller implements IView {
         final WorkerExport worker = new WorkerExport(file,
                                                      model.getSeparator(),
                                                      model.getOutput(),
+                                                     model.getOutputConfig().getConfig(),
                                                      model.getInputBytes());
+        
         main.showProgressDialog(Resources.getMessage("Controller.39"), worker); //$NON-NLS-1$
 
         if (worker.getError() != null) {
