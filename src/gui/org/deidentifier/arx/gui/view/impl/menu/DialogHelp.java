@@ -28,9 +28,16 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationAdapter;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -38,11 +45,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
     private Controller    controller;
     private Browser		  browser;
+    private List          list;
     private Image         image;
     private String[]      urls = {};
 
@@ -80,26 +90,74 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
 
     @Override
     protected Control createDialogArea(final Composite parent) {
-        parent.setLayout(SWTUtil.createGridLayout(2));
         
-        final List list = new List(parent, SWT.SIMPLE | SWT.BORDER);
-        list.setLayoutData(SWTUtil.createFillVerticallyGridData());
-        list.addListener(SWT.Selection, new Listener() {
-           public void handleEvent(Event e) {
-              int index = list.getSelectionIndex();
-              browser.setUrl(urls[index]);
-           }
+        Composite compTools = new Composite(parent, SWT.NONE);
+        compTools.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        compTools.setLayout(new GridLayout(1, false));
+        ToolBar navBar = new ToolBar(compTools, SWT.NONE);
+        navBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+        final ToolItem back = new ToolItem(navBar, SWT.PUSH);
+        back.setText("Back");
+        back.setEnabled(false);
+        final ToolItem forward = new ToolItem(navBar, SWT.PUSH);
+        forward.setText("Forward");
+        forward.setEnabled(false);
+        
+        Composite comp = new Composite(parent, SWT.NONE);
+        comp.setLayoutData(SWTUtil.createFillGridData());
+        comp.setLayout(new FillLayout());
+        
+        final SashForm form = new SashForm(comp, SWT.HORIZONTAL);
+        form.setLayout(new FillLayout());
+
+        list = new List(form, SWT.SINGLE);
+        try {
+            browser = new Browser(form, SWT.NONE);
+        } catch (SWTError e) {
+            controller.actionShowErrorDialog("Error", "Could not open browser");
+            this.close();
+        }
+        
+        form.setWeights(new int[]{25,75});
+        
+        back.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+                browser.back();
+            }
         });
-        
-		try {
-			browser = new Browser(parent, SWT.NONE | SWT.BORDER);
-			browser.setLayoutData(SWTUtil.createFillGridData());
-		} catch (SWTError e) {
-			controller.actionShowErrorDialog("Error", "Browser cannot be initialized.");
-			this.close();
-		}
+        forward.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+                browser.forward();
+            }
+        });
+        browser.addLocationListener(new LocationAdapter() {
+            public void changed(LocationEvent event) {
+                Browser browser = (Browser) event.widget;
+                back.setEnabled(browser.isBackEnabled());
+                forward.setEnabled(browser.isForwardEnabled());
+                list.select(getIndexOf(event.location));
+            }
+        });
+        list.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent arg0) {
+                browser.setUrl(getUrlOf(list.getSelectionIndex()));
+            }
+        });
 
         return parent;
+    }
+
+    protected String getUrlOf(int selectionIndex) {
+        return "";
+    }
+
+    private int getIndexOf(String location) {
+        return 0;
+    }
+
+    @Override
+    protected Point getInitialSize() {
+        return new Point(800,600);
     }
 
     @Override
