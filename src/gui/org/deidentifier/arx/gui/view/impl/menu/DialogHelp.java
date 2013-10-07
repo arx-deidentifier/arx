@@ -22,6 +22,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
+import org.deidentifier.arx.gui.view.impl.menu.DialogHelpConfig.Entry;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -50,11 +51,12 @@ import org.eclipse.swt.widgets.ToolItem;
 
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
-    private Controller    controller;
-    private Browser		  browser;
-    private List          list;
-    private Image         image;
-    private String[]      urls = {};
+    private Controller       controller;
+    private Browser          browser;
+    private List             list;
+    private Image            image;
+    private String[]         urls   = {};
+    private DialogHelpConfig config = new DialogHelpConfig();
 
     public DialogHelp(final Shell parentShell, final Controller controller) {
         super(parentShell);
@@ -118,6 +120,10 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
             this.close();
         }
         
+        for (Entry entry : config.getEntries()) {
+            list.add(entry.title);
+        }
+        
         form.setWeights(new int[]{25,75});
         
         back.addListener(SWT.Selection, new Listener() {
@@ -143,16 +149,19 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
                 browser.setUrl(getUrlOf(list.getSelectionIndex()));
             }
         });
-
+        
+        list.select(0);
+        browser.setUrl(getUrlOf(0));
+        
         return parent;
     }
 
-    protected String getUrlOf(int selectionIndex) {
-        return "";
+    protected String getUrlOf(int index) {
+        return config.getUrlOf(index);
     }
 
     private int getIndexOf(String location) {
-        return 0;
+        return config.getIndexOf(location);
     }
 
     @Override
