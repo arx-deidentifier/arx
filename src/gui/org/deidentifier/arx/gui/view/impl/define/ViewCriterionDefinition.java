@@ -123,7 +123,8 @@ public class ViewCriterionDefinition implements IView {
             sliderOutliers.setSelection(doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
             labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
             buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
-
+            buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
+            
             for (int i = 0; i < ITEMS_METRIC.length; i++) {
                 if (ITEMS_METRIC[i].getClass().equals(model.getInputConfig().getMetric().getClass())) {
                     comboMetric.select(i);

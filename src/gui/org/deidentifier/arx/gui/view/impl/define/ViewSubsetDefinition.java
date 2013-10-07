@@ -148,6 +148,10 @@ public class ViewSubsetDefinition implements IView{
     
     @Override
     public void reset() {
+        size.setText("0");
+        total.setText("0");
+        percent.setText("0");
+        origin.setText("");
         disable();
     }
     
@@ -192,6 +196,10 @@ public class ViewSubsetDefinition implements IView{
 
     private void update() {
         // TODO: Maybe make this a default for all views?
+    	if (model.getInputConfig().getResearchSubset()==null){
+    		reset();
+    		return;
+    	}
         int size = model.getInputConfig().getResearchSubset().size();
         int total = model.getInputConfig().getInput().getHandle().getNumRows();
         double percent = (double)size / (double)total * 100d;
