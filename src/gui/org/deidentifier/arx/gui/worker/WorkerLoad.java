@@ -34,21 +34,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXLattice;
+import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXConfiguration.Criterion;
-import org.deidentifier.arx.ARXConfiguration.LDiversityCriterion;
-import org.deidentifier.arx.ARXConfiguration.TClosenessCriterion;
-import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -107,12 +104,10 @@ public class WorkerLoad extends Worker<Model> {
         }
     }
 
-    private final ZipFile    zipfile;
-
-    private final Controller controller;
-    private ARXLattice     lattice;
-
-    private Model            model;
+	private final ZipFile    zipfile;
+	private final Controller controller;
+	private ARXLattice       lattice;
+	private Model            model;
 
     public WorkerLoad(final File file, final Controller controller) throws ZipException,
                                                                    IOException {
@@ -213,56 +208,41 @@ public class WorkerLoad extends Worker<Model> {
         readDefinition(config, prefix, zip);
 
         if (output) {
+        	
             // Parse
-            final boolean removeOutliers = config.getRemoveOutliers();
             final String suppressionString = model.getSuppressionString();
             final int historySize = model.getHistorySize();
             final double snapshotSizeSnapshot = model.getSnapshotSizeSnapshot();
             final double snapshotSizeDataset = model.getSnapshotSizeDataset();
-            final int k = config.getK();
-            final double relativeMaxOutliers = config.getAllowedOutliers();
-            final LDiversityCriterion criterionL = config.getLDiversityCriterion();
-            final EqualDistanceTCloseness criterionT = config.getTClosenessCriterion();
-            final Criterion algorithm = config.getCriterion();
+            final boolean removeOutliers = model.getOutputConfig().isRemoveOutliers();
             final Metric<?> metric = config.getMetric();
-            final int l = config.getL();
-            final double c = config.getC();
-            final boolean practicalMonotonicity = config.getPracticalMonotonicity();
-            final double t = config.getT();
             final long time = model.getTime();
-            ARXNode optimalNode = null;
-            ARXNode outputNode = null;
+            final ARXNode optimalNode;
+            final ARXNode outputNode;
 
             if (model.getOptimalNodeAsString() != null) {
                 optimalNode = map.get(model.getOptimalNodeAsString());
+            } else {
+            	optimalNode = null;
             }
             if (model.getOutputNodeAsString() != null) {
                 outputNode = map.get(model.getOutputNodeAsString());
+            } else {
+            	outputNode = null;
             }
             model.setSelectedNode(outputNode);
 
             // Update model
-
             model.setResult(new DataHandleOutput(config.getInput().getHandle(),
-                                                 config.getInput()
-                                                       .getDefinition(),
-                                                 config.getSensitiveHierarchy(),
+                                                 config.getInput().getDefinition(),
                                                  lattice,
                                                  removeOutliers,
                                                  suppressionString,
                                                  historySize,
                                                  snapshotSizeSnapshot,
                                                  snapshotSizeDataset,
-                                                 k,
-                                                 relativeMaxOutliers,
-                                                 criterionL,
-                                                 criterionT,
                                                  metric,
-                                                 algorithm,
-                                                 l,
-                                                 c,
-                                                 practicalMonotonicity,
-                                                 t,
+                                                 model.getOutputConfig().getConfig(),
                                                  optimalNode,
                                                  time));
 
@@ -274,7 +254,6 @@ public class WorkerLoad extends Worker<Model> {
             f.setHistorySize(historySize);
             f.setMaximumSnapshotSizeSnapshot(snapshotSizeSnapshot);
             f.setMaximumSnapshotSizeDataset(snapshotSizeDataset);
-            f.setPracticalMonotonicity(practicalMonotonicity);
         }
     }
 
@@ -416,15 +395,6 @@ public class WorkerLoad extends Worker<Model> {
             }
         });
         xmlReader.parse(inputSource);
-
-        // Read sensitive hierarchy
-        final ZipEntry entry2 = zip.getEntry(prefix +
-                                             "hierarchies/sensitive.csv"); //$NON-NLS-1$
-        if (entry2 == null) { return; }
-
-        // Read
-        config.setSensitiveHierarchy(Hierarchy.create(zip.getInputStream(entry2),
-                                                      model.getSeparator()));
     }
 
     private void readFilter(final ZipFile zip) throws SAXException,

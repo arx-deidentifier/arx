@@ -35,6 +35,7 @@ public class ModelConfiguration implements Serializable {
     private static final long      serialVersionUID = -2887699232096897527L;
 
     private transient Data         input            = null;
+    
     private ARXConfiguration       config           = new ARXConfiguration();
     private boolean                removeOutliers   = true;
     private boolean                modified         = false;

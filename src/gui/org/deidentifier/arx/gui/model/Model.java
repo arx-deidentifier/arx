@@ -51,7 +51,7 @@ public class Model implements Serializable {
     private transient String                      path                 = null;
 
     private String                                name                 = null;
-    private char                                  separator            = ';';
+    private char                                  separator            = ';'; //$NON-NLS-1$
     private String                                description;
     private int                                   historySize          = 200;
     private double                                snapshotSizeDataset  = 0.2d;
@@ -66,15 +66,15 @@ public class Model implements Serializable {
     private long                                  inputBytes           = 0L;
     private String[]                              pair                 = new String[] { null, null };
 
-    private String                              optimalNodeAsString;
-    private String                              outputNodeAsString;
+    private String                                optimalNodeAsString;
+    private String                                outputNodeAsString;
 
-    private long                                time;
+    private long                                  time;
 
     private ModelConfiguration                    inputConfig          = new ModelConfiguration();
     private ModelConfiguration                    outputConfig         = null;
 
-    private String                                suppressionString    = "*";                                            //$NON-NLS-1$
+    private String                                suppressionString    = "*"; //$NON-NLS-1$
 
     private int[]                                 groups;
 
@@ -83,8 +83,8 @@ public class Model implements Serializable {
     private Map<String, ModelLDiversityCriterion> lDiversityModel      = new HashMap<String, ModelLDiversityCriterion>();
     private Map<String, ModelTClosenessCriterion> tClosenessModel      = new HashMap<String, ModelTClosenessCriterion>();
 
-    private String                                query                = "";
-    private String                                subsetOrigin         = "All";
+    private String                                query                = ""; //$NON-NLS-1$
+    private String                                subsetOrigin         = "All"; //$NON-NLS-1$
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
     private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
     
@@ -104,43 +104,8 @@ public class Model implements Serializable {
 		this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
 		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
 		
-		// Initialize the config
-		inputConfig.removeAllCriteria();
-		
-		if (this.kAnonymityModel != null &&
-		    this.kAnonymityModel.isActive() &&
-		    this.kAnonymityModel.isEnabled()) {
-		    inputConfig.addCriterion(this.kAnonymityModel.getCriterion(this));
-		}
-
-        if (this.dPresenceModel != null && 
-            this.dPresenceModel.isActive() && 
-            this.dPresenceModel.isEnabled()) {
-            inputConfig.addCriterion(this.dPresenceModel.getCriterion(this));
-        }
-		
-		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
-	        if (entry.getValue() != null &&
-	            entry.getValue().isActive() &&
-	            entry.getValue().isEnabled()) {
-	            inputConfig.addCriterion(entry.getValue().getCriterion(this));
-	        }
-		}
-        
-        for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
-            if (entry.getValue() != null &&
-                entry.getValue().isActive() &&
-                entry.getValue().isEnabled()) {
-                inputConfig.addCriterion(entry.getValue().getCriterion(this));
-            }
-        }
-
-        // Allow adding removing tuples
-        if (!inputConfig.containsCriterion(DPresence.class)){
-            DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                                  getInputConfig().getResearchSubset());
-            inputConfig.addCriterion(new Enclosure(subset));
-        }
+		// Add all criteria
+		this.createCriteria(inputConfig);
 
         // Clone the config
         outputConfig = inputConfig.clone();
@@ -149,7 +114,48 @@ public class Model implements Serializable {
 		return anonymizer;
 	}
 
-	public ARXConfiguration getSubsetConfig() {
+	public void createCriteria(ModelConfiguration config) {
+
+		// Initialize the config
+		config.removeAllCriteria();
+		
+		if (this.kAnonymityModel != null &&
+		    this.kAnonymityModel.isActive() &&
+		    this.kAnonymityModel.isEnabled()) {
+		    config.addCriterion(this.kAnonymityModel.getCriterion(this));
+		}
+
+        if (this.dPresenceModel != null && 
+            this.dPresenceModel.isActive() && 
+            this.dPresenceModel.isEnabled()) {
+            config.addCriterion(this.dPresenceModel.getCriterion(this));
+        }
+		
+		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
+	        if (entry.getValue() != null &&
+	            entry.getValue().isActive() &&
+	            entry.getValue().isEnabled()) {
+	            config.addCriterion(entry.getValue().getCriterion(this));
+	        }
+		}
+        
+        for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isActive() &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
+
+        // Allow adding removing tuples
+        if (!config.containsCriterion(DPresence.class)){
+            DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
+                                                  getInputConfig().getResearchSubset());
+            config.addCriterion(new Enclosure(subset));
+        }
+	}
+
+	public ARXConfiguration createSubsetConfig() {
 
 		// Create a temporary config
 		ARXConfiguration config = new ARXConfiguration();
@@ -260,6 +266,10 @@ public class Model implements Serializable {
 		return path;
 	}
 
+	public String getQuery() {
+        return query;
+    }
+
 	/**
 	 * @return the result
 	 */
@@ -295,6 +305,10 @@ public class Model implements Serializable {
 		return snapshotSizeSnapshot;
 	}
 
+	public String getSubsetOrigin(){
+        return this.subsetOrigin;
+    }
+
 	/**
 	 * @return the suppressionString
 	 */
@@ -309,6 +323,11 @@ public class Model implements Serializable {
 	public long getTime() {
 		return time;
 	}
+
+	public ModelViewConfig getViewConfig() {
+        oldViewConfig = viewConfig.clone();
+        return this.viewConfig;
+    }
 
 	public boolean isModified() {
 		if (inputConfig.isModified()) {
@@ -329,6 +348,14 @@ public class Model implements Serializable {
 		return (getInputConfig().getInput().getDefinition()
 				.getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
+
+	public boolean isValidLatticeSize() {
+		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
+	}
+
+	public boolean isViewConfigChanged(){
+        return (!oldViewConfig.equals(viewConfig));
+    }
 
 	public void reset() {
 		// TODO: Need to reset more fields
@@ -442,14 +469,15 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
-
 	public void setPath(final String path) {
 		this.path = path;
 	}
+	public void setQuery(String query){
+        this.query = query;
+    }
 
 	/**
 	 * @param result
@@ -485,14 +513,17 @@ public class Model implements Serializable {
 
 		setModified();
 	}
+
 	public void setSelectedNode(final ARXNode node) {
 		selectedNode = node;
 		setModified();
 	}
+
 	public void setSeparator(final char separator) {
 		this.separator = separator;
 	}
-	/**
+
+    /**
 	 * @param snapshotSizeDataset
 	 *            the snapshotSizeDataset to set
 	 */
@@ -500,13 +531,23 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-
-	public void setSnapshotSizeSnapshot(final double snapshotSize) {
+    
+    public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-
-	/**
+    
+    public void setSubsetManual(){
+        if (!this.subsetOrigin.endsWith("manual")) {
+            this.subsetOrigin += " + manual";
+        }
+    }
+    
+    public void setSubsetOrigin(String origin){
+        this.subsetOrigin = origin;
+    }
+    
+    /**
 	 * @param suppressionString
 	 *            the suppressionString to set
 	 */
@@ -515,52 +556,17 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	public void setTime(final long time) {
+    public void setTime(final long time) {
 		this.time = time;
 	}
-
-	public void setUnmodified() {
+    
+    public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
 		if (outputConfig != null) {
 			outputConfig.setUnmodified();
 		}
 	}
-
-	public boolean isValidLatticeSize() {
-		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
-	}
-
-    public String getQuery() {
-        return query;
-    }
-    
-    public void setQuery(String query){
-        this.query = query;
-    }
-    
-    public void setSubsetOrigin(String origin){
-        this.subsetOrigin = origin;
-    }
-    
-    public void setSubsetManual(){
-        if (!this.subsetOrigin.endsWith("manual")) {
-            this.subsetOrigin += " + manual";
-        }
-    }
-    
-    public String getSubsetOrigin(){
-        return this.subsetOrigin;
-    }
-
-    public ModelViewConfig getViewConfig() {
-        oldViewConfig = viewConfig.clone();
-        return this.viewConfig;
-    }
-    
-    public boolean isViewConfigChanged(){
-        return (!oldViewConfig.equals(viewConfig));
-    }
 
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;

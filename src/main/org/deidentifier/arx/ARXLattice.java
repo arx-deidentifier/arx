@@ -248,6 +248,13 @@ public class ARXLattice implements Serializable {
         private final Access         access     = new Access(this);
 
         /**
+         * Internal constructor for deserialization
+         */
+        public ARXNode() {
+        	// Empty by design
+        }
+        
+        /**
          * Constructor
          * 
          * @param node

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,16 +42,20 @@ public class AttributeType {
      * 
      * @author Prasser, Kohlmayer
      */
-    public static abstract class Hierarchy extends AttributeType {
+    public static abstract class Hierarchy extends AttributeType implements Serializable {
 
-        /**
+		private static final long serialVersionUID = -4721439386792383385L;
+
+		/**
          * The implementation for arrays
          * 
          * @author Prasser, Kohlmayer
          */
         static class ArrayHierarchy extends Hierarchy {
 
-            private final String[][] hierarchy;
+			private static final long serialVersionUID = 8966189950800782892L;
+			
+			private final String[][] hierarchy;
 
             private ArrayHierarchy(final String[][] hierarchy) {
                 this.hierarchy = hierarchy;
@@ -75,7 +80,9 @@ public class AttributeType {
          */
         public static class DefaultHierarchy extends Hierarchy {
 
-            /** The raw data */
+			private static final long serialVersionUID = 7493568420925738049L;
+
+			/** The raw data */
             private final List<String[]> hierarchy;
 
             /** The array */
@@ -128,7 +135,9 @@ public class AttributeType {
          */
         static class IterableHierarchy extends Hierarchy {
 
-            private Iterator<String[]> iterator;
+			private static final long serialVersionUID = 5734204406574324342L;
+
+			private Iterator<String[]> iterator;
 
             /** The array */
             private String[][]         array = null;

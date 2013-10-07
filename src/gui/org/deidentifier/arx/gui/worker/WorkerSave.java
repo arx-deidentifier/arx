@@ -569,7 +569,7 @@ public class WorkerSave extends Worker<Model> {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
                 final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-                final ARXConfiguration config = model.getSubsetConfig();
+                final ARXConfiguration config = model.createSubsetConfig();
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
