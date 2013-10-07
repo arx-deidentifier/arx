@@ -167,6 +167,11 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                             final ARXNode optimum,
                             final long time) {
 
+
+        // Associate
+        this.associate(handle);
+        handle.associate(this);
+    	
         // Set optimum in lattice
         lattice.access().setOptimum(optimum);
 
