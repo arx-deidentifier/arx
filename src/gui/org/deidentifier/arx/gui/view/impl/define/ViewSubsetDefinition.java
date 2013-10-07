@@ -196,7 +196,7 @@ public class ViewSubsetDefinition implements IView{
 
     private void update() {
         // TODO: Maybe make this a default for all views?
-    	if (model.getInputConfig().getResearchSubset()==null){
+    	if (model.getInputConfig()==null || model.getInputConfig().getResearchSubset()==null){
     		reset();
     		return;
     	}

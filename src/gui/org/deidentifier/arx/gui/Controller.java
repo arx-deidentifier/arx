@@ -266,7 +266,8 @@ public class Controller implements IView {
         // Run the worker
         final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
-
+        model.createClonedConfig();
+        
         // Show errors
         if (worker.getError() != null) {
             String message = worker.getError().getMessage();

@@ -229,7 +229,7 @@ public class WorkerLoad extends Worker<Model> {
             	outputNode = null;
             }
             model.setSelectedNode(outputNode);
-
+            
             // Update model
             model.setResult(new DataHandleOutput(config.getInput().getHandle(),
                                                  config.getInput().getDefinition(),

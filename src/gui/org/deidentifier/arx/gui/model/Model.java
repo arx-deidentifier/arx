@@ -107,9 +107,6 @@ public class Model implements Serializable {
 		// Add all criteria
 		this.createCriteria(inputConfig);
 
-        // Clone the config
-        outputConfig = inputConfig.clone();
-        
         // Return the anonymizer
 		return anonymizer;
 	}
@@ -167,6 +164,13 @@ public class Model implements Serializable {
 
         // Return the config
 		return config;
+	}
+	
+	public void createClonedConfig() {
+
+        // Clone the config
+        outputConfig = inputConfig.clone();
+        
 	}
 
 	public ARXAnonymizer getAnonymizer() {

@@ -357,7 +357,8 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
             delegate = new GroupifyDistribution();
             break;
         default:
-            throw new RuntimeException("Invalid requirements: " + config.getRequirements());
+            RuntimeException e = new RuntimeException("Invalid requirements: " + config.getRequirements());
+            throw(e);
         }
     }
 
