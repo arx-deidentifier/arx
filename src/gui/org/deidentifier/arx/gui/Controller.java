@@ -258,6 +258,11 @@ public class Controller implements IView {
             return;
         }
 
+        if (model.getInputConfig().getResearchSubset().size()==0) {
+            final String message = Resources.getMessage("Controller.100"); //$NON-NLS-1$
+            main.showInfoDialog(Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
+            return;
+        }
         // Free resources before anonymizing again
         // TODO: Is this enough?
         model.setResult(null);
