@@ -55,71 +55,49 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 public class WorkerLoad extends Worker<Model> {
-
-    /**
-     * The default XML handler
-     * 
-     * @author Prasser, Kohlmayer
-     */
-    private static abstract class XMLHandler extends DefaultHandler {
-
-        protected String payload;
-
-        @Override
-        public void characters(final char[] ch,
-                               final int start,
-                               final int length) throws SAXException {
-            // Directly unescape stuff
-            payload = new String(ch, start, length);
-        }
-
-        protected abstract boolean end(String uri,
-                                       String localName,
-                                       String qName) throws SAXException;
-
-        @Override
-        public void endElement(final String uri,
-                               final String localName,
-                               final String qName) throws SAXException {
-            if (!end(uri, localName, qName)) { throw new SAXException(Resources.getMessage("WorkerLoad.0") + localName); } //$NON-NLS-1$
-        }
-
-        protected abstract boolean
-                start(String uri,
-                      String localName,
-                      String qName,
-                      Attributes attributes) throws SAXException;
-
-        @Override
-        public void
-                startElement(final String uri,
-                             final String localName,
-                             final String qName,
-                             final Attributes attributes) throws SAXException {
-            if (!start(uri, localName, qName, attributes)) { throw new SAXException(Resources.getMessage("WorkerLoad.1") + localName); } //$NON-NLS-1$
-        }
-    }
 
 	private final ZipFile    zipfile;
 	private final Controller controller;
 	private ARXLattice       lattice;
 	private Model            model;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param file
+	 * @param controller
+	 * @throws ZipException
+	 * @throws IOException
+	 */
     public WorkerLoad(final File file, final Controller controller) throws ZipException,
                                                                    IOException {
         zipfile = new ZipFile(file);
         this.controller = controller;
     }
 
+    /**
+     * Constructor
+     * 
+     * @param path
+     * @param controller
+     * @throws IOException
+     */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
         zipfile = new ZipFile(path);
         this.controller = controller;
     }
 
+    /**
+     * Reads the clipboard from the file
+     * 
+     * @param map
+     * @param zip
+     * @throws SAXException
+     * @throws IOException
+     */
     private void readClipboard(final Map<String, ARXNode> map,
                                final ZipFile zip) throws SAXException,
                                                  IOException {
@@ -135,7 +113,7 @@ public class WorkerLoad extends Worker<Model> {
         // Parse
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new XMLHandler() {
+        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
             @Override
             protected boolean end(final String uri,
                                   final String localName,
@@ -169,6 +147,15 @@ public class WorkerLoad extends Worker<Model> {
         xmlReader.parse(inputSource);
     }
 
+    /**
+     * Reads the configuration from the file
+     * 
+     * @param map
+     * @param zip
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws SAXException
+     */
     private void readConfiguration(final Map<String, ARXNode> map,
                                    final ZipFile zip) throws IOException,
                                                      ClassNotFoundException,
@@ -179,6 +166,17 @@ public class WorkerLoad extends Worker<Model> {
 
     }
 
+    /**
+     * Reads the configuration from the file
+     * 
+     * @param prefix
+     * @param output
+     * @param map
+     * @param zip
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws SAXException
+     */
     private void readConfiguration(final String prefix,
                                    final boolean output,
                                    final Map<String, ARXNode> map,
@@ -257,22 +255,36 @@ public class WorkerLoad extends Worker<Model> {
         }
     }
 
+    /**
+     * Reads the data definition from the file
+     * 
+     * @param config
+     * @param prefix
+     * @param zip
+     * @throws IOException
+     * @throws SAXException
+     */
     private void readDefinition(final ModelConfiguration config,
                                 final String prefix,
                                 final ZipFile zip) throws IOException,
-                                                  SAXException {
+                                                          SAXException {
+    	
+    	// Obtain entry
         final ZipEntry entry = zip.getEntry(prefix + "definition.xml"); //$NON-NLS-1$
         if (entry == null) { return; }
 
+        // Read xml
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new XMLHandler() {
+        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        	
             String attr, dtype, atype, ref, min, max;
 
             @Override
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
+            	
                 if (localName.equals("definition")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("assigment")) { //$NON-NLS-1$
@@ -299,39 +311,29 @@ public class WorkerLoad extends Worker<Model> {
                     if (atype.equals(AttributeType.IDENTIFYING_ATTRIBUTE.toString())) {
                         config.getInput()
                               .getDefinition()
-                              .setAttributeType(attr,
-                                                AttributeType.IDENTIFYING_ATTRIBUTE);
+                              .setAttributeType(attr, AttributeType.IDENTIFYING_ATTRIBUTE);
                     } else if (atype.equals(AttributeType.SENSITIVE_ATTRIBUTE.toString())) {
                         config.getInput()
                               .getDefinition()
-                              .setAttributeType(attr,
-                                                AttributeType.SENSITIVE_ATTRIBUTE);
+                              .setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
                         config.getInput()
                               .getDefinition()
-                              .setAttributeType(attr,
-                                                AttributeType.INSENSITIVE_ATTRIBUTE);
+                              .setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(Hierarchy.create().toString())) {
                         try {
                             config.getInput()
                                   .getDefinition()
-                                  .setAttributeType(attr,
-                                                    readHierarchy(zip,
-                                                                  prefix,
-                                                                  ref));
+                                  .setAttributeType(attr, readHierarchy(zip, prefix, ref));
                         } catch (final IOException e) {
                             throw new SAXException(e);
                         }
                         config.getInput()
                               .getDefinition()
-                              .setMinimumGeneralization(attr,
-                                                        Double.valueOf(min)
-                                                              .intValue());
+                              .setMinimumGeneralization(attr,Double.valueOf(min).intValue());
                         config.getInput()
                               .getDefinition()
-                              .setMaximumGeneralization(attr,
-                                                        Double.valueOf(max)
-                                                              .intValue());
+                              .setMaximumGeneralization(attr,Double.valueOf(max).intValue());
                     } else {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }
@@ -362,11 +364,11 @@ public class WorkerLoad extends Worker<Model> {
             }
 
             @Override
-            protected boolean
-                    start(final String uri,
-                          final String localName,
-                          final String qName,
-                          final Attributes attributes) throws SAXException {
+            protected boolean start(final String uri,
+                                    final String localName,
+                                    final String qName,
+                                    final Attributes attributes) throws SAXException {
+            	
                 if (localName.equals("definition")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("assigment")) { //$NON-NLS-1$
@@ -397,6 +399,14 @@ public class WorkerLoad extends Worker<Model> {
         xmlReader.parse(inputSource);
     }
 
+    /**
+     * Reads the filter from the file
+     * 
+     * @param zip
+     * @throws SAXException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void readFilter(final ZipFile zip) throws SAXException,
                                               IOException,
                                               ClassNotFoundException {
@@ -419,6 +429,7 @@ public class WorkerLoad extends Worker<Model> {
     private Hierarchy readHierarchy(final ZipFile zip,
                                     final String prefix,
                                     final String ref) throws IOException {
+    	
         final ZipEntry entry = zip.getEntry(prefix + ref);
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.5")); } //$NON-NLS-1$
         final InputStream is = zip.getInputStream(entry);
@@ -431,8 +442,7 @@ public class WorkerLoad extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void
-            readInput(final ModelConfiguration config, final ZipFile zip) throws IOException {
+    private void readInput(final ModelConfiguration config, final ZipFile zip) throws IOException {
 
         final ZipEntry entry = zip.getEntry("data/input.csv"); //$NON-NLS-1$
         if (entry == null) { return; }
@@ -445,11 +455,19 @@ public class WorkerLoad extends Worker<Model> {
         config.getInput().getHandle();
     }
 
+    /**
+     * Reads the lattice from several files
+     * 
+     * @param zip
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws SAXException
+     */
     @SuppressWarnings({ "unchecked" })
-    private Map<String, ARXNode>
-            readLattice(final ZipFile zip) throws IOException,
-                                          ClassNotFoundException,
-                                          SAXException {
+    private Map<String, ARXNode> readLattice(final ZipFile zip) throws IOException,
+                                                                       ClassNotFoundException,
+                                                                       SAXException {
 
         ZipEntry entry = zip.getEntry("infoloss.dat"); //$NON-NLS-1$
         if (entry == null) { return null; }
@@ -488,7 +506,7 @@ public class WorkerLoad extends Worker<Model> {
         final Map<Integer, ARXNode> map = new HashMap<Integer, ARXNode>();
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new XMLHandler() {
+        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
 
             private int       level = 0;
             private int       id    = 0;
@@ -500,6 +518,7 @@ public class WorkerLoad extends Worker<Model> {
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
+            	
                 if (localName.equals("lattice")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("level")) { //$NON-NLS-1$
@@ -541,11 +560,10 @@ public class WorkerLoad extends Worker<Model> {
             }
 
             @Override
-            protected boolean
-                    start(final String uri,
-                          final String localName,
-                          final String qName,
-                          final Attributes attributes) throws SAXException {
+            protected boolean start(final String uri,
+                                    final String localName,
+                                    final String qName,
+                                    final Attributes attributes) throws SAXException {
 
                 if (localName.equals("lattice")) { //$NON-NLS-1$
                     return true;
@@ -585,7 +603,8 @@ public class WorkerLoad extends Worker<Model> {
         entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
         xmlReader = XMLReaderFactory.createXMLReader();
         inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new XMLHandler() {
+        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        	
             private int                   id;
             private final List<ARXNode> predecessors = new ArrayList<ARXNode>();
             private final List<ARXNode> successors   = new ArrayList<ARXNode>();
@@ -645,11 +664,10 @@ public class WorkerLoad extends Worker<Model> {
             }
 
             @Override
-            protected boolean
-                    start(final String uri,
-                          final String localName,
-                          final String qName,
-                          final Attributes attributes) throws SAXException {
+            protected boolean start(final String uri,
+                                    final String localName,
+                                    final String qName,
+                                    final Attributes attributes) throws SAXException {
 
                 if (localName.equals("lattice")) { //$NON-NLS-1$
                     return true;
@@ -720,11 +738,12 @@ public class WorkerLoad extends Worker<Model> {
 
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new XMLHandler() {
+        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
             @Override
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
+            	
                 if (localName.equals("metadata")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("version")) { //$NON-NLS-1$
@@ -736,11 +755,11 @@ public class WorkerLoad extends Worker<Model> {
             }
 
             @Override
-            protected boolean
-                    start(final String uri,
-                          final String localName,
-                          final String qName,
-                          final Attributes attributes) throws SAXException {
+            protected boolean start(final String uri,
+                                    final String localName,
+                                    final String qName,
+                                    final Attributes attributes) throws SAXException {
+            	
                 if (localName.equals("metadata")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("version")) { //$NON-NLS-1$
@@ -762,6 +781,7 @@ public class WorkerLoad extends Worker<Model> {
      */
     private void readModel(final ZipFile zip) throws IOException,
                                              ClassNotFoundException {
+    	
         final ZipEntry entry = zip.getEntry("project.dat"); //$NON-NLS-1$
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
 
@@ -771,7 +791,14 @@ public class WorkerLoad extends Worker<Model> {
         oos.close();
     }
 
+    /**
+     * Reads a transformation from the serialized array representation
+     * 
+     * @param payload
+     * @return
+     */
     private int[] readTransformation(final String payload) {
+    	
         final String[] a = payload.split("\\[|,|\\]"); //$NON-NLS-1$
         final int[] r = new int[a.length - 1];
         for (int i = 1; i < a.length; i++) {
@@ -781,9 +808,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     @Override
-    public void
-            run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                            InterruptedException {
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
+                                                        InterruptedException {
 
         arg0.beginTask(Resources.getMessage("WorkerLoad.2"), 8); //$NON-NLS-1$
 
