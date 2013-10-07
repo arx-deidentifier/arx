@@ -41,8 +41,10 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandleInput;
 import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
@@ -195,11 +197,19 @@ public class WorkerLoad extends Worker<Model> {
 
         // Attach data
         if (!output) {
-            readInput(config, zip);
+            
+        	readInput(config, zip);
             model.setInputConfig(config);
+            
         } else {
+        	
             config.setInput(model.getInputConfig().getInput().clone(false));
             model.setOutputConfig(config);
+            
+            // Associate input with output research subset
+            DataHandleInput inHandle = ((DataHandleInput)model.getInputConfig().getInput().getHandle());
+            DPresence criterion = model.getOutputConfig().getCriterion(DPresence.class);
+            inHandle.setSubset(criterion.getBitSet(), criterion.getArray());
         }
 
         // Attach definition
