@@ -73,4 +73,9 @@ public class EqualDistanceTCloseness extends TCloseness {
         // check
         return val <= t;
     }
+
+	@Override
+	public String toString() {
+		return t+"-closeness with equal distance for attribute '"+attribute+"'";
+	}
 }

@@ -86,4 +86,9 @@ public class RecursiveCLDiversity extends LDiversity{
     public double getC() {
         return c;
     }
+    
+	@Override
+	public String toString() {
+		return "recursive-("+c+","+l+")-diversity for attribute '"+attribute+"'";
+	}
 }

@@ -43,4 +43,9 @@ public class DistinctLDiversity extends LDiversity{
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return entry.distribution.size() >= l;
     }
+
+	@Override
+	public String toString() {
+		return "distinct-"+l+"-diversity for attribute '"+attribute+"'";
+	}
 }

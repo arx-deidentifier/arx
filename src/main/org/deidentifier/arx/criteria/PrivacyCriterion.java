@@ -71,4 +71,9 @@ public abstract class PrivacyCriterion implements Serializable{
     public boolean isMonotonic() {
         return this.monotonic;
     }
+    
+    /**
+     * Returns a string representation
+     */
+    public abstract String toString();
 }

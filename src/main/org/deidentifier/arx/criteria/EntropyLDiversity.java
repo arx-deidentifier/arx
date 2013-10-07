@@ -82,4 +82,9 @@ public class EntropyLDiversity extends LDiversity {
     private final double log2(final double num) {
         return Math.log(num) / log2;
     }
+    
+	@Override
+	public String toString() {
+		return "entropy-"+l+"-diversity for attribute '"+attribute+"'";
+	}
 }

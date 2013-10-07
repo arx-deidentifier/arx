@@ -66,4 +66,9 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
     public int getK() {
         return k;
     }
+    
+	@Override
+	public String toString() {
+		return k+"-anonymity";
+	}
 }

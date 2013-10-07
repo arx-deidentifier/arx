@@ -153,4 +153,9 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     public Hierarchy getHierarchy() {
         return hierarchy;
     }
+    
+	@Override
+	public String toString() {
+		return t+"-closeness with hierarchical distance for attribute '"+attribute+"'";
+	}
 }
