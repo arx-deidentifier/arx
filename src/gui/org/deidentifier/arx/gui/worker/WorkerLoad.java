@@ -207,9 +207,13 @@ public class WorkerLoad extends Worker<Model> {
             model.setOutputConfig(config);
             
             // Associate input with output research subset
-            DataHandleInput inHandle = ((DataHandleInput)model.getInputConfig().getInput().getHandle());
-            DPresence criterion = model.getOutputConfig().getCriterion(DPresence.class);
-            inHandle.setSubset(criterion.getBitSet(), criterion.getArray());
+            if (model.getOutputConfig() != null){
+	            DataHandleInput inHandle = ((DataHandleInput)model.getInputConfig().getInput().getHandle());
+	            DPresence criterion = model.getOutputConfig().getCriterion(DPresence.class);
+	            if (criterion != null) {
+	            	inHandle.setSubset(criterion.getBitSet(), criterion.getArray());
+	            }
+            }
         }
 
         // Attach definition

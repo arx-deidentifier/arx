@@ -357,10 +357,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
             } else {
                 currentNode.access().setNotAnonymous();
             }
-            currentNode.access()
-                       .setMaximumInformationLoss(node.getInformationLoss());
-            currentNode.access()
-                       .setMinimumInformationLoss(node.getInformationLoss());
+            currentNode.access().setMaximumInformationLoss(node.getInformationLoss());
+            currentNode.access().setMinimumInformationLoss(node.getInformationLoss());
             lattice.estimateInformationLoss();
         }
 

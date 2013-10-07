@@ -104,8 +104,8 @@ public class Controller implements IView {
 
         // Distribute results
         if (worker.getResult() != null) {
-            model.setOutput(worker.getResult(), model.getSelectedNode());
-            update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
+        	this.model.setOutput(worker.getResult(), model.getSelectedNode());
+            this.update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
             this.model.getViewConfig().setMode(Mode.GROUPED);
             this.updateViewConfig(true);
             this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
@@ -891,11 +891,8 @@ public class Controller implements IView {
         // Update subsets of the model
         if (tempSelectedNode != null) {
             model.setSelectedNode(tempSelectedNode);
-            update(new ModelEvent(this,
-                                  ModelPart.SELECTED_NODE,
-                                  model.getSelectedNode()));
-            final DataHandle handle = model.getResult()
-                                           .getHandle(tempSelectedNode);
+            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
+            final DataHandle handle = model.getResult().getHandle(tempSelectedNode);
             model.setOutput(handle, tempSelectedNode);
             update(new ModelEvent(this, ModelPart.OUTPUT, handle));
         }
@@ -917,15 +914,11 @@ public class Controller implements IView {
 
                     // Fire once
                     model.setSelectedAttribute(a);
-                    update(new ModelEvent(this,
-                                          ModelPart.SELECTED_ATTRIBUTE,
-                                          a));
+                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, a));
 
                     // Fire twice
                     model.setSelectedAttribute(a);
-                    update(new ModelEvent(this,
-                                          ModelPart.SELECTED_ATTRIBUTE,
-                                          a));
+                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, a));
                 }
             }
         }
