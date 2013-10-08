@@ -408,7 +408,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         if (this.containsCriterion(LDiversity.class)) {
             for (LDiversity c : this.getCriteria(LDiversity.class)) {
-                l = Math.max(l, c.getL());
+                l = Math.max(l, c.getMinimalGroupSize());
             }
         }
 

@@ -29,25 +29,27 @@ import org.deidentifier.arx.ARXConfiguration;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class LDiversity extends ExplicitPrivacyCriterion{
+public abstract class LDiversity extends ExplicitPrivacyCriterion {
 
     private static final long serialVersionUID = 6429149925699964530L;
-    
+
     /** The parameter l*/
-    protected final int l;
+    protected final double    l;
+    protected final int       minSize;
 
     /** 
      * Creates a new instance
      * @param l
      */
-    public LDiversity(String attribute, int l){
+    public LDiversity(String attribute, double l) {
         super(attribute, false);
-        this.l = l;    
-    } 
+        this.l = l;
+        this.minSize = (int) Math.ceil(l);
+    }
 
     @Override
-    public int getRequirements(){
-        
+    public int getRequirements() {
+
         // Requires a distribution, but nothing else
         return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
     }
@@ -56,7 +58,15 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion{
      * Returns the parameter l
      * @return
      */
-    public int getL() {
+    public double getL() {
         return l;
+    }
+    
+    /**
+     * Returns the minimal group size required to fulfill this criterion
+     * @return
+     */
+    public int getMinimalGroupSize(){
+        return minSize;
     }
 }

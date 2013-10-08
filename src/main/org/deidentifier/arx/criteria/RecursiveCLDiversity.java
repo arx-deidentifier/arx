@@ -53,7 +53,7 @@ public class RecursiveCLDiversity extends LDiversity{
         Distribution d = entry.distribution;
         
         // if less than l values are present skip
-        if (d.size() < l) { return false; }
+        if (d.size() < minSize) { return false; }
 
         // Copy and pack
         int[] buckets = d.getBuckets();
@@ -70,7 +70,7 @@ public class RecursiveCLDiversity extends LDiversity{
         
         // Compute threshold
         double threshold = 0;
-        for (int i = frequencyCopy.length - l; i >= 0; i--) {
+        for (int i = frequencyCopy.length - minSize; i >= 0; i--) { // minSize=(int)l;
             threshold += frequencyCopy[i];
         }
         threshold *= c;
@@ -89,6 +89,6 @@ public class RecursiveCLDiversity extends LDiversity{
     
 	@Override
 	public String toString() {
-		return "recursive-("+c+","+l+")-diversity for attribute '"+attribute+"'";
+		return "recursive-("+c+","+minSize+")-diversity for attribute '"+attribute+"'";
 	}
 }

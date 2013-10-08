@@ -41,7 +41,7 @@ public class EntropyLDiversity extends LDiversity {
      * Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3.
      * @param l
      */
-    public EntropyLDiversity(String attribute, int l){
+    public EntropyLDiversity(String attribute, double l){
         super(attribute, l);
         logL = Math.log(l) / Math.log(2d);
     }
@@ -52,7 +52,7 @@ public class EntropyLDiversity extends LDiversity {
         Distribution d = entry.distribution;
 
         // If less than l values are present skip
-        if (d.size() < l) { return false; }
+        if (d.size() < minSize) { return false; }
 
         // Sum of the frequencies in distribution (=number of elements)
         double total = 0;
