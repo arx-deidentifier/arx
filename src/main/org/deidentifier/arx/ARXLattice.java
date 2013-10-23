@@ -573,7 +573,6 @@ public class ARXLattice implements Serializable {
         } else {
 
             // TODO: Fix this! We currently assume monotonicity for all metrics!
-            System.out.println("[WARNING] Assuming monotonicity for non-monotonic metric!");
             estimateMinLoss();
             estimateMaxLoss();
         }
