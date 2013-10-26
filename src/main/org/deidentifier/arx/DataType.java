@@ -45,7 +45,7 @@ public abstract class DataType<T> {
 
         private ARXDate(final String format) {
             this.format = new SimpleDateFormat(format);
-            string = format;
+            this.string = format;
         }
 
         @Override
@@ -88,6 +88,14 @@ public abstract class DataType<T> {
         @Override
         public String toString(Date s){
         	return format.format(s);
+        }
+
+        /**
+         * Returns the format
+         * @return
+         */
+        public String getFormat() {
+            return string;
         }
     }
 
