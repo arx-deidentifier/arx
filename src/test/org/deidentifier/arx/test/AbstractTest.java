@@ -24,11 +24,12 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
 
 public abstract class AbstractTest extends TestCase {
 
-    public static enum Metric {
+    public static enum TestMetric {
         DMSTAR,
         DM,
         HEIGHT,
@@ -39,24 +40,24 @@ public abstract class AbstractTest extends TestCase {
 
     protected DataProvider provider = null;
 
-    protected org.deidentifier.arx.metric.Metric<?> createMetric(final Metric metricType) {
+    protected Metric<?> createMetric(final TestMetric metricType) {
         // create metric
-        org.deidentifier.arx.metric.Metric<?> metric = null;
+        Metric<?> metric = null;
         switch (metricType) {
         case PREC:
-            metric = org.deidentifier.arx.metric.Metric.createPrecisionMetric();
+            metric = Metric.createPrecisionMetric();
             break;
         case HEIGHT:
-            metric = org.deidentifier.arx.metric.Metric.createHeightMetric();
+            metric = Metric.createHeightMetric();
             break;
         case DMSTAR:
-            metric = org.deidentifier.arx.metric.Metric.createDMStarMetric();
+            metric = Metric.createDMStarMetric();
             break;
         case DM:
-            metric = org.deidentifier.arx.metric.Metric.createDMMetric();
+            metric = Metric.createDMMetric();
             break;
         case ENTROPY:
-            metric = org.deidentifier.arx.metric.Metric.createEntropyMetric();
+            metric = Metric.createEntropyMetric();
             break;
         default:
             break;

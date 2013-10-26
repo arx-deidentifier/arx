@@ -71,16 +71,16 @@ public class MetricEntropy extends MetricDefault {
     /** Column -> Id -> Level -> Output */
     private int[][][]  hierarchies;
 
-    public MetricEntropy() {
+    protected MetricEntropy() {
         super(true, true);
     }
 
-    public MetricEntropy(final boolean monotonic, final boolean independent) {
+    protected MetricEntropy(final boolean monotonic, final boolean independent) {
         super(monotonic, independent);
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Init
         double result = 0;
@@ -111,7 +111,7 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
 
         // Obtain dictionary
         final Dictionary dictionary = input.getDictionary();

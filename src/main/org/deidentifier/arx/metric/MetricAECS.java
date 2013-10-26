@@ -41,12 +41,12 @@ public class MetricAECS extends MetricDefault {
     private double            total  = 0d;
     private boolean           dPresence        = false;
 
-    public MetricAECS() {
+    protected MetricAECS() {
         super(true, false);
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         int size = 0;
         // When enforcing d-presence, use only ECs which contain at least one tuple from the research subset
@@ -67,7 +67,7 @@ public class MetricAECS extends MetricDefault {
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
 
         if (config.containsCriterion(DPresence.class)) {
             dPresence = true;

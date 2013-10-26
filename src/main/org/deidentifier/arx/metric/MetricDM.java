@@ -40,12 +40,12 @@ public class MetricDM extends MetricDefault {
     private static final long serialVersionUID = 4886262855672670521L;
     private int               rowCount;
 
-    public MetricDM() {
+    protected MetricDM() {
         super(false, false);
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
@@ -60,7 +60,7 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
         if (config.containsCriterion(DPresence.class)) {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }

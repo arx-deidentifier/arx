@@ -33,12 +33,12 @@ public class MetricHeight extends MetricDefault {
      */
     private static final long serialVersionUID = 5911337622032778562L;
 
-    public MetricHeight() {
+    protected MetricHeight() {
         super(true, true);
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         return new InformationLossDefault(node.getLevel());
     }
 }

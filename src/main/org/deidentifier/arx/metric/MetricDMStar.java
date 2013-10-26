@@ -35,12 +35,12 @@ public class MetricDMStar extends MetricDefault {
      */
     private static final long serialVersionUID = -3324788439890959974L;
 
-    public MetricDMStar() {
+    protected MetricDMStar() {
         super(true, false);
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {

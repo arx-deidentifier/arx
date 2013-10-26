@@ -47,13 +47,13 @@ public class MetricNMEntropy extends MetricEntropy {
      */
     private static final long serialVersionUID = 5789738609326541247L;
 
-    public MetricNMEntropy() {
+    protected MetricNMEntropy() {
         super(false, false);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
         final double originalInfoLoss = super.evaluateInternal(node, g).getValue();
@@ -100,7 +100,7 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
         super.initializeInternal(input, ahierarchies, config);
     }
 }

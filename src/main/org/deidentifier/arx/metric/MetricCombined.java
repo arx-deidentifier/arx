@@ -65,7 +65,7 @@ public class MetricCombined extends Metric<InformationLossCombined> {
      * 
      * @param main
      */
-    public MetricCombined(final Metric<?> main, final Set<Metric<?>> metrics) {
+    protected MetricCombined(final Metric<?> main, final Set<Metric<?>> metrics) {
         super(main.isMonotonic(), isIndependent(main, metrics));
     }
 

@@ -75,7 +75,7 @@ public class MetricWeighted extends Metric<InformationLossCombined> {
      * 
      * @param main
      */
-    public MetricWeighted(final Map<Metric<?>, Double> weights) {
+    protected MetricWeighted(final Map<Metric<?>, Double> weights) {
         super(isMonotonic(weights), isIndependent(weights));
         this.weights = weights;
     }

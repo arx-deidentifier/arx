@@ -136,7 +136,7 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @param monotonic
      * @param independent
      */
-    public Metric(final boolean monotonic, final boolean independent) {
+    protected Metric(final boolean monotonic, final boolean independent) {
         this.monotonic = monotonic;
         this.independent = independent;
     }

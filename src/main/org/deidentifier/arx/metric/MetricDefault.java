@@ -39,7 +39,7 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         // Empty by design
     }
 

@@ -38,12 +38,12 @@ public class MetricPrecision extends MetricDefault {
     /** The maximum levels */
     private int[]             maxLevels;
 
-    public MetricPrecision() {
+    protected MetricPrecision() {
         super(true, true);
     }
 
     @Override
-    public InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
         double divisor = 0;
@@ -56,7 +56,7 @@ public class MetricPrecision extends MetricDefault {
     }
 
     @Override
-    public void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
 
         // Initialize maximum levels
         maxLevels = new int[hierarchies.length];
