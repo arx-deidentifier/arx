@@ -129,7 +129,7 @@ public class DataSubset {
         
         // Check
         for (int i=0; i<rows; i++){
-            if (selector.selected(i)) {
+            if (selector.isSelected(i)) {
                 bitset.add(i);
                 list.add(i);
             }

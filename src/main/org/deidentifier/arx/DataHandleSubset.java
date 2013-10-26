@@ -22,7 +22,7 @@ public class DataHandleSubset extends DataHandle {
      * @param source
      * @param subset
      */
-    public DataHandleSubset(DataHandle source, int[] subset){
+    protected DataHandleSubset(DataHandle source, int[] subset){
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;

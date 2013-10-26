@@ -19,16 +19,13 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSelector;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.gui.view.impl.menu.DialogQueryTokenizer.QueryTokenizerListener;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -47,6 +44,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import de.linearbits.objectselector.ICallback;
+import de.linearbits.objectselector.SelectorTokenizer;
 
 public class DialogQuery extends TitleAreaDialog implements IDialog {
 
@@ -74,7 +74,7 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                     previous = selector;
                     int count = 0;
                     for (int i=0; i<data.getHandle().getNumRows(); i++){
-                        count += selector.selected(i) ? 1 : 0;
+                        count += selector.isSelected(i) ? 1 : 0;
                     }
                     final int fcount = count;
                     if (status!=null && !status.isDisposed()){
@@ -98,7 +98,7 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
     private Data             data        = null;
     private String           queryString = null;
     private DataSelector     selector    = null;
-    private DialogQueryTokenizer   highlighter = null;
+    private ICallback        highlighter = null;
     private List<StyleRange> styles      = new ArrayList<StyleRange>();
     private boolean          stop        = false;
 
@@ -120,7 +120,8 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
     private void highlight() {
         
         if (highlighter==null){
-            highlighter = new DialogQueryTokenizer(new QueryTokenizerListener(){
+            
+            highlighter = new ICallback(){
 
                 @Override
                 public void and(int start, int length) {
@@ -236,11 +237,12 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                     style.foreground = GUIHelper.COLOR_DARK_GRAY;
                     styles.add(style);
                 }
-            });
+            };
         }
         
         styles.clear();
-        highlighter.tokenize(text.getText());
+        SelectorTokenizer<Integer> tokenizer = new SelectorTokenizer<Integer>(highlighter);
+        tokenizer.tokenize(text.getText());
 
         text.setRedraw(false);
         text.setStyleRanges(styles.toArray(new StyleRange[styles.size()]));        
@@ -249,146 +251,10 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
 
     private void parse() {
         final String query = text.getText();
-        final DataSelector selector = DataSelector.create(data);
-        DialogQueryTokenizer parser = new DialogQueryTokenizer(new QueryTokenizerListener(){
-
-                private Operator current = null;
-                private DataType<?> type = null;
-                
-                @Override
-                public void and(int start, int length) {
-                    selector.and();
-                }
-            
-                @Override
-                public void begin(int start) {
-                    selector.begin();
-                }
-
-                @Override
-                public void end(int start) {
-                    selector.end();
-                }
-
-                @Override
-                public void equals(int start) {
-                    setCurrent(Operator.EQUALS);
-                }
-
-                @Override
-                public void field(int start, int length) {
-                    String field = query.substring(start+1, start+length-1);
-                    int index = data.getHandle().getColumnIndexOf(field);
-                    if (index==-1){
-                        throw new RuntimeException(Resources.getMessage("QueryDialog.7")+field); //$NON-NLS-1$
-                    } else {
-                        type = data.getHandle().getDataType(field);
-                        selector.field(field);
-                    }
-                }
-
-                @Override
-                public void geq(int start, int length) {
-                    setCurrent(Operator.GEQ);
-                }
-
-                @Override
-                public void greater(int start) {
-                    setCurrent(Operator.GREATER);
-                }
-
-                @Override
-                public void invalid(int start) {
-                    throw new RuntimeException(Resources.getMessage("QueryDialog.6")+start); //$NON-NLS-1$
-                }
-
-                @Override
-                public void leq(int start, int length) {
-                    setCurrent(Operator.LEQ);
-                }
-
-                @Override
-                public void less(int start) {
-                    setCurrent(Operator.LESS);
-                }
-
-                @Override
-                public void or(int start, int length) {
-                    selector.or();
-                }
-
-                @Override
-                public void value(int start, int length) {
-                    if (current == null){
-                        throw new RuntimeException(Resources.getMessage("QueryDialog.5")+query.substring(start+1, start+length-1)); //$NON-NLS-1$
-                    }
-                    if (type == null){
-                        throw new RuntimeException(Resources.getMessage("QueryDialog.4")+query.substring(start+1, start+length-1)); //$NON-NLS-1$
-                    }
-                    Object value = type.fromString(query.substring(start+1, start+length-1));
-                    switch(current){
-                    case EQUALS:
-                        if (value instanceof Date){
-                            selector.equals((Date)value);
-                        } else if (value instanceof String){
-                            selector.equals((String)value);
-                        } else if (value instanceof Double){
-                            selector.equals((Double)value);
-                        }
-                        break;
-                    case GEQ:
-                        if (value instanceof Date){
-                            selector.geq((Date)value);
-                        } else if (value instanceof String){
-                            selector.geq((String)value);
-                        } else if (value instanceof Double){
-                            selector.geq((Double)value);
-                        }
-                        break;
-                    case GREATER:
-                        if (value instanceof Date){
-                            selector.greater((Date)value);
-                        } else if (value instanceof String){
-                            selector.greater((String)value);
-                        } else if (value instanceof Double){
-                            selector.greater((Double)value);
-                        }
-                        break;
-                    case LEQ:
-                        if (value instanceof Date){
-                            selector.leq((Date)value);
-                        } else if (value instanceof String){
-                            selector.leq((String)value);
-                        } else if (value instanceof Double){
-                            selector.leq((Double)value);
-                        }
-                        break;
-                    case LESS:
-                        if (value instanceof Date){
-                            selector.less((Date)value);
-                        } else if (value instanceof String){
-                            selector.less((String)value);
-                        } else if (value instanceof Double){
-                            selector.less((Double)value);
-                        }
-                        break;
-                    }
-                    current = null;
-                    type = null;
-                }
-
-                private void setCurrent(Operator operator){
-                    if (current != null) {
-                        throw new RuntimeException(Resources.getMessage("QueryDialog.3")+operator); //$NON-NLS-1$
-                    } else {
-                        current = operator;
-                    }
-                }
-            });
-        
+        final DataSelector selector;
         try {
-            parser.tokenize(query);
-            selector.compile();
+            selector = DataSelector.create(data, query);
+            selector.build();
         } catch (Exception e){
             this.status.setText(e.getMessage());
             this.ok.setEnabled(false);

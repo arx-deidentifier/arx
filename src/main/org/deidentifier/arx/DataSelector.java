@@ -1,8 +1,15 @@
 package org.deidentifier.arx;
 
-import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+
+import de.linearbits.objectselector.IAccessor;
+import de.linearbits.objectselector.Selector;
+import de.linearbits.objectselector.SelectorBuilder;
+import de.linearbits.objectselector.datatypes.DataType;
+import de.linearbits.objectselector.ops.BinaryOperator;
+import de.linearbits.objectselector.ops.UnaryOperator;
 
 /**
  * A selector for tuples
@@ -11,118 +18,91 @@ import java.util.List;
  */
 public class DataSelector {
     
-    /* **************************************
-     * Operators
-     * **************************************/
-    private abstract class Operator {
-        protected final int params;
-        private Operator(int params){
-            this.params = params;
+    private class DataAccessor implements IAccessor<Integer>{
+        
+        protected DataAccessor(Data data){
+            
         }
         
-        abstract boolean eval(int row);
-    }
-    
-    private class PrecedenceOperator extends Operator{
-        protected final boolean begin;
-        private PrecedenceOperator(boolean begin) {
-            super(0);
-            this.begin = begin;
-        }
         @Override
-        boolean eval(int row) {
-            throw new RuntimeException("Cannot be evaluated");
-        }
-    }
-    
-    private abstract class UnaryOperator extends Operator{
-        private int column;
-        private DataType<?> type;
-        private UnaryOperator(String context) {
-            super(1);
-            if (context == null){
-                throw new IllegalArgumentException("No context specified");
-            }
-            column = handle.getColumnIndexOf(context);
-            type = handle.getDataType(context);
-        }
-        
-        protected double getDouble(int row){
-            return (Double)type.fromString(handle.getValue(row, column));
-        }
-        
-        protected String getString(int row){
-            return handle.getValue(row, column);
+        public boolean exists(String arg0) {
+            // TODO Auto-generated method stub
+            return false;
         }
 
-        protected Date getDate(int row){
-            return (Date)type.fromString(handle.getValue(row, column));
+        @Override
+        public DataType<?> getType(String arg0) {
+            // TODO Auto-generated method stub
+            return null;
         }
-    }
-    
-    private abstract class BinaryOperator extends Operator{
-        protected Operator left;
-        protected Operator right;
-        private BinaryOperator() {
-            super(2);
+
+        @Override
+        public Object getValue(Integer arg0, String arg1) {
+            // TODO Auto-generated method stub
+            return null;
         }
+
+        @Override
+        public boolean isDataTypesSupported() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isExistanceSupported() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+        
     }
-   
-    
-    /* **************************************
-     * Class
-     * **************************************/
     
     /** The data handle*/
     private final DataHandle handle;
-    /** The list of operators defined via the builder pattern*/
-    private final List<Operator> operators;
-    /** The current context (field)*/
-    private String context = null;
-    /** The root operator after compilation*/
-    private Operator root = null;
-    
+    /** The builder*/
+    private final SelectorBuilder<Integer> builder;
+    /** The selector*/
+    private Selector<Integer> selector = null;
+   
     private DataSelector(Data data){
         this.handle = data.getHandle();
-        this.operators = new ArrayList<Operator>();
+        this.builder = new SelectorBuilder<Integer>(new DataAccessor(data)); 
     }
-    
+
+    private DataSelector(Data data, String query) throws ParseException {
+        this.handle = data.getHandle();
+        this.builder = new SelectorBuilder<Integer>(new DataAccessor(data), query);
+    }
+
     public static DataSelector create(Data data){
         return new DataSelector(data);
     }
+
+    public static DataSelector create(Data data, String query) throws ParseException{
+        return new DataSelector(data, query);
+    }
     
     public DataSelector field(String name){
-        this.context = name;
+        this.builder.field(name);
         return this;
     }
     
     public DataSelector and(){
-        operators.add(new BinaryOperator(){
-            @Override
-            boolean eval(int row) {
-                return left.eval(row) && right.eval(row);
-            }
-        });
+        this.builder.and();
         return this;
     }
     
     public DataSelector or(){
-        operators.add(new BinaryOperator(){
-            @Override
-            boolean eval(int row) {
-                return left.eval(row) || right.eval(row);
-            }
-        });
+        this.builder.or();
         return this;
     }
     
     public DataSelector begin(){
-        operators.add(new PrecedenceOperator(true));
+        this.builder.begin();
         return this;
     }
     
     public DataSelector end(){
-        operators.add(new PrecedenceOperator(false));
+        this.builder.end();
         return this;
     }
     
@@ -130,52 +110,27 @@ public class DataSelector {
      * NUMERIC
      */
     public DataSelector leq(final double val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDouble(row) <= val;
-            }
-        });
+        this.builder.leq(val);
         return this;
     }
     
     public DataSelector geq(final double val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDouble(row) >= val;
-            }
-        });
+        this.builder.geq(val);
         return this;
     }
     
     public DataSelector less(final double val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDouble(row) < val;
-            }
-        });
+        this.builder.less(val);
         return this;
     }
     
     public DataSelector greater(final double val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDouble(row) > val;
-            }
-        });
+        this.builder.greater(val);
         return this;
     }
     
     public DataSelector equals(final double val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDouble(row) == val;
-            }
-        });
+        this.builder.equals(val);
         return this;
     }
     
@@ -183,52 +138,27 @@ public class DataSelector {
      * STRING
      * **************************************/
     public DataSelector leq(final String val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getString(row).compareTo(val) <= 0;
-            }
-        });
+        this.builder.leq(val);
         return this;
     }
     
     public DataSelector geq(final String val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getString(row).compareTo(val) >= 0;
-            }
-        });
+        this.builder.geq(val);
         return this;
     }
     
     public DataSelector less(final String val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getString(row).compareTo(val) < 0;
-            }
-        });
+        this.builder.less(val);
         return this;
     }
     
     public DataSelector greater(final String val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getString(row).compareTo(val) > 0;
-            }
-        });
+        this.builder.greater(val);
         return this;
     }
     
     public DataSelector equals(final String val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getString(row).compareTo(val) == 0;
-            }
-        });
+        this.builder.equals(val);
         return this;
     }
 
@@ -236,180 +166,47 @@ public class DataSelector {
      * Datetime
      * **************************************/
     public DataSelector leq(final Date val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDate(row).compareTo(val) <= 0;
-            }
-        });
+        this.builder.leq(val);
         return this;
     }
     
     public DataSelector geq(final Date val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDate(row).compareTo(val) >= 0;
-            }
-        });
+        this.builder.geq(val);
         return this;
     }
     
     public DataSelector less(final Date val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDate(row).compareTo(val) < 0;
-            }
-        });
+        this.builder.less(val);
         return this;
     }
     
     public DataSelector greater(final Date val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDate(row).compareTo(val) > 0;
-            }
-        });
+        this.builder.greater(val);
         return this;
     }
     
     public DataSelector equals(final Date val){
-        operators.add(new UnaryOperator(context){
-            @Override
-            boolean eval(int row) {
-                return getDate(row).compareTo(val) == 0;
-            }
-        });
+        this.builder.equals(val);
         return this;
     }
     
-    /* **************************************
-     * Compile
-     * **************************************/
-    public void compile(){
-        if (operators.isEmpty()) {
-            throw new RuntimeException("Empty expression");
-        }
-        this.root = compile(operators, 0, operators.size());
-        if (this.root == null) {
-            throw new RuntimeException("Cannot parse expression");
-        } 
+    public void build() throws ParseException{
+        this.selector = this.builder.build();
     }
 
-    /**
-     * Parses the list of operators within the given range
-     * @param ops
-     * @param offset
-     * @param length
-     * @return
-     */
-    private Operator compile(List<Operator> ops, int offset, int length) {
-        
-        int lLength = findExpression(ops, offset, length);
-        
-        if (lLength == length){
-            
-            // Case 1: EXPR
-            if (length == 1){
-                
-                // Return single operator
-                return ops.get(offset);
-                
-            } else if ((ops.get(offset) instanceof PrecedenceOperator) &&
-                       (ops.get(offset + length - 1) instanceof PrecedenceOperator)){
-                
-                // Remove brackets
-                return compile(ops, offset+1, length-2);
-                
-            } else {
-                throw new RuntimeException("Invalid expression");
-            }
-            
-        } else {
-            
-            // Case 2: EXPR <OP> EXPR
-            if (!(ops.get(offset + lLength) instanceof BinaryOperator)){
-                
-                // Invalid
-                throw new RuntimeException("Expecting EXPR <OP> EXPR");
-            } else {
-                // Binary operator
-                BinaryOperator bop = (BinaryOperator)ops.get(offset + lLength);
-                bop.left = compile(ops, offset, lLength);
-                bop.right = compile(ops, offset + lLength + 1, length - lLength - 1);
-                return bop;
-            }
-        }
-    }
-
-    /**
-     * Finds an expression within the given range
-     * @param ops
-     * @param offset
-     * @param length
-     * @return
-     */
-    private int findExpression(List<Operator> ops, int offset, int length) {
-        
-        if (offset>=ops.size()) {
-            throw new RuntimeException("Missing expression");
-        }
-        
-        Operator op = ops.get(offset);
-        if (op instanceof BinaryOperator) {
-            
-            // Invalid
-            throw new RuntimeException("Expression must not start with binary operator");
-        } else if (op instanceof UnaryOperator) {
-            
-            // Just a unary operator
-            return 1;
-            
-        } else if (op instanceof PrecedenceOperator) {
-            
-            PrecedenceOperator pop = (PrecedenceOperator)op;
-            
-            if (!pop.begin) {
-                
-                // Invalid
-                throw new RuntimeException("Invalid paranthesis");
-                
-            } else {
-                
-                // Find closing bracket
-                int open = 1;
-                for (int i=offset+1; i<offset+length; i++){
-                    if (ops.get(i) instanceof PrecedenceOperator){
-                        pop = (PrecedenceOperator)ops.get(i);
-                        if (pop.begin) open++;
-                        else open--;
-                        if (open == 0){
-                            return i-offset+1;
-                        }
-                    } else {
-                    }
-                }
-                // Invalid
-                throw new RuntimeException("Missing closing parantheses ("+open+") at "+length);
-            }
-        } else {
-            
-            // Invalid
-            throw new RuntimeException("Unknown operator");
-        }
-    }
-    
     /**
      * Determines whether the given row is selected by the expression
      * @param row
      * @return
      */
-    public boolean selected(int row){
-        if (root == null) {
-            compile();
+    public boolean isSelected(int row){
+        if (selector == null) {
+            try {
+                build();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
         }
-        return root.eval(row);
+        return selector.isSelected(row);
     }
 }
