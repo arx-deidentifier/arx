@@ -63,7 +63,7 @@ public class Example14 extends Example {
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
         config.addCriterion(new DistinctLDiversity("gender", 2));

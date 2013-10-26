@@ -52,7 +52,7 @@ public class TestIllegalArguments extends AbstractTest {
 
             data.getDefinition()
                 .setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
             anonymizer.anonymize(provider.getData(), config);
@@ -71,7 +71,7 @@ public class TestIllegalArguments extends AbstractTest {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = Data.create();
 
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
             anonymizer.anonymize(data, config);
@@ -87,7 +87,7 @@ public class TestIllegalArguments extends AbstractTest {
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
             anonymizer.anonymize(provider.getData(), config);
@@ -105,7 +105,7 @@ public class TestIllegalArguments extends AbstractTest {
         final Data data = provider.getData();
         data.getDefinition().setAttributeType("age", Hierarchy.create());
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
             anonymizer.anonymize(provider.getData(), config);
@@ -136,7 +136,7 @@ public class TestIllegalArguments extends AbstractTest {
         anonymizer.setSuppressionString("*");
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -153,7 +153,7 @@ public class TestIllegalArguments extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(-1));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -170,7 +170,7 @@ public class TestIllegalArguments extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(8));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -186,7 +186,7 @@ public class TestIllegalArguments extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(0));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -202,7 +202,7 @@ public class TestIllegalArguments extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1d);
             anonymizer.anonymize(provider.getData(), config);
@@ -218,7 +218,7 @@ public class TestIllegalArguments extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(-0.2d);
             anonymizer.anonymize(provider.getData(), config);
@@ -234,7 +234,7 @@ public class TestIllegalArguments extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
             anonymizer.anonymize(provider.getData(), config);
@@ -249,7 +249,7 @@ public class TestIllegalArguments extends AbstractTest {
 
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.setMetric(null);
         } catch (final NullPointerException e) {
             return;
@@ -266,7 +266,7 @@ public class TestIllegalArguments extends AbstractTest {
         anonymizer.setSuppressionString("*");
 
         try {
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(data, config);
@@ -282,7 +282,7 @@ public class TestIllegalArguments extends AbstractTest {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = provider.getData();
             data.getDefinition().setAttributeType("age", null);
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);
             anonymizer.anonymize(data, config);

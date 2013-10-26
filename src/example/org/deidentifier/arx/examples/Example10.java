@@ -114,7 +114,7 @@ public class Example10 extends Example {
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
         config.setMaxOutliers(0d);

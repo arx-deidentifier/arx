@@ -98,7 +98,41 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /**
      * Creates a new config without tuple suppression
      */
-    public ARXConfiguration() {
+    public static ARXConfiguration create() {
+        return new ARXConfiguration();
+    }
+
+    /**
+     * Creates a new config that allows the given percentage of outliers and
+     * thus implements tuple suppression
+     * @param supp
+     */
+    public static ARXConfiguration create(double supp) {
+        return new ARXConfiguration(supp);
+    }
+
+    /**
+     * Creates a new config that allows the given percentage of outliers and
+     * thus implements tuple suppression. Defines the metric for measuring information loss.
+     * @param supp
+     * @param metric
+     */
+    public static ARXConfiguration create(double supp, Metric<?> metric) {
+        return new ARXConfiguration(supp, metric);
+    }
+
+    /**
+     * Creates a new config that allows to define the metric for measuring information loss.
+     * @param metric
+     */
+    public static ARXConfiguration create(Metric<?> metric) {
+        return new ARXConfiguration(metric);
+    }
+
+    /**
+     * Creates a new config without tuple suppression
+     */
+    private ARXConfiguration() {
         this.relMaxOutliers = 0d;
     }
 
@@ -107,7 +141,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * thus implements tuple suppression
      * @param supp
      */
-    public ARXConfiguration(double supp) {
+    private ARXConfiguration(double supp) {
         if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
@@ -118,7 +152,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param supp
      * @param metric
      */
-    public ARXConfiguration(double supp, Metric<?> metric) {
+    private ARXConfiguration(double supp, Metric<?> metric) {
         if (supp < 0d || supp > 1d) { throw new NullPointerException("Suppression must be >=0 and <=1"); }
         this.relMaxOutliers = supp;
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
@@ -129,7 +163,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Creates a new config that allows to define the metric for measuring information loss.
      * @param metric
      */
-    public ARXConfiguration(Metric<?> metric) {
+    private ARXConfiguration(Metric<?> metric) {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }

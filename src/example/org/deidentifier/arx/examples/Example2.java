@@ -66,7 +66,7 @@ public class Example2 extends Example {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
 
             // Execute the algorithm
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             final ARXResult result = anonymizer.anonymize(data, config);

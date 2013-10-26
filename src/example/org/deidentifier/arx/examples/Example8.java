@@ -136,7 +136,7 @@ public class Example8 extends Example {
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.6d, disease));
         config.setMaxOutliers(0d);

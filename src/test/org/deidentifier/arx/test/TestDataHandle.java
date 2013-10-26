@@ -54,7 +54,7 @@ public class TestDataHandle extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
         
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
 
@@ -104,7 +104,7 @@ public class TestDataHandle extends AbstractTest {
                 .getDefinition()
                 .setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
 
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
 

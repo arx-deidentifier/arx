@@ -155,7 +155,7 @@ public class Model implements Serializable {
 	public ARXConfiguration createSubsetConfig() {
 
 		// Create a temporary config
-		ARXConfiguration config = new ARXConfiguration();
+		ARXConfiguration config = ARXConfiguration.create();
 
         // Add an enclosure criterion
         DataSubset subset = DataSubset.create(getInputConfig().getInput(), 

@@ -67,7 +67,7 @@ public class TestDataTransformations extends AbstractTest {
 
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setSuppressionString("-");
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -89,7 +89,7 @@ public class TestDataTransformations extends AbstractTest {
             data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
 
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
@@ -112,7 +112,7 @@ public class TestDataTransformations extends AbstractTest {
             data.getDefinition().setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
             data.getDefinition().setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
 
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(-0.2d);
             anonymizer.anonymize(provider.getData(), config);
@@ -128,7 +128,7 @@ public class TestDataTransformations extends AbstractTest {
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -143,7 +143,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(provider.getData(), config));
@@ -170,7 +170,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new DistinctLDiversity("age", 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
@@ -198,7 +198,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new EntropyLDiversity("age", 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
@@ -226,7 +226,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new RecursiveCLDiversity("age", 3.0d, 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
@@ -255,7 +255,7 @@ public class TestDataTransformations extends AbstractTest {
             data.getDefinition().setAttributeType("gender", AttributeType.SENSITIVE_ATTRIBUTE);
             data.getDefinition().setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
 
-            final ARXConfiguration config = new ARXConfiguration();
+            final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(data, config);
@@ -275,17 +275,17 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        ARXConfiguration config = new ARXConfiguration();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
 
-        config = new ARXConfiguration();
+        config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
         final String[][] result3 = resultToArray(anonymizer.anonymize(data, config));
 
-        config = new ARXConfiguration();
+        config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result2 = resultToArray(anonymizer.anonymize(data, config));
@@ -374,7 +374,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        ARXConfiguration config = new ARXConfiguration();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new EqualDistanceTCloseness("disease", 0.6d));
         config.setMaxOutliers(0d);
@@ -455,7 +455,7 @@ public class TestDataTransformations extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
 
-        ARXConfiguration config = new ARXConfiguration();
+        ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
         config.setMaxOutliers(0d);
@@ -541,7 +541,7 @@ public class TestDataTransformations extends AbstractTest {
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXConfiguration config = new ARXConfiguration();
+        final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
         config.setMaxOutliers(0d);

@@ -36,7 +36,7 @@ public class ModelConfiguration implements Serializable {
 
     private transient Data         input            = null;
     
-    private ARXConfiguration       config           = new ARXConfiguration();
+    private ARXConfiguration       config           = ARXConfiguration.create();
     private boolean                removeOutliers   = true;
     private boolean                modified         = false;
     private Map<String, Hierarchy> hierarchies      = new HashMap<String, Hierarchy>();
