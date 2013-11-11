@@ -58,7 +58,7 @@ public class MetricCombined extends Metric<InformationLossCombined> {
     private Metric<?>            main;
 
     /** The metrics */
-    private final Set<Metric<?>> metrics = null;
+    private final Set<Metric<?>> metrics;
 
     /**
      * Creates a new combined metric
@@ -67,6 +67,8 @@ public class MetricCombined extends Metric<InformationLossCombined> {
      */
     protected MetricCombined(final Metric<?> main, final Set<Metric<?>> metrics) {
         super(main.isMonotonic(), isIndependent(main, metrics));
+        this.main = main;
+        this.metrics = metrics;
     }
 
     @Override
@@ -75,7 +77,8 @@ public class MetricCombined extends Metric<InformationLossCombined> {
         final double value = main.evaluateInternal(node, groupify).getValue();
         final InformationLossCombined result = new InformationLossCombined(value);
         for (final Metric<?> metric : metrics) {
-            result.setValue(metric, metric.evaluateInternal(node, groupify));
+            InformationLoss loss = metric.evaluateInternal(node, groupify);
+            result.setValue(metric, loss);
         }
         return result;
     }

@@ -346,7 +346,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         // Prepare
         lastNode = currentNode;
         final Node node = new Node(0);
-        node.setTransformation(fnode.getTransformation(), 0);
+        int level = 0; for (int i : fnode.getTransformation()) level+= i;
+        node.setTransformation(fnode.getTransformation(), level);
         if (currentNode.isChecked()) {
             node.setChecked();
         }

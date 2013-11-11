@@ -29,9 +29,6 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public abstract class MetricDefault extends Metric<InformationLossDefault> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 2672819203235170632L;
 
     public MetricDefault(final boolean monotonic, final boolean independent) {

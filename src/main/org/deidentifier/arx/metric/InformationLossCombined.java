@@ -27,7 +27,7 @@ import java.util.Map;
  * 
  * @author Prasser, Kohlmayer
  */
-class InformationLossCombined extends InformationLossDefault {
+public class InformationLossCombined extends InformationLossDefault {
 
     /**
      * 
