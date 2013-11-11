@@ -36,7 +36,7 @@ import org.deidentifier.arx.metric.InformationLossCombined;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to use the API for tools such as GUIs
+ * This class implements an example on how to pretty-print information loss
  * 
  * @author Prasser, Kohlmayer
  */
