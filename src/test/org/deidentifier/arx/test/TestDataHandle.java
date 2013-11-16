@@ -21,18 +21,138 @@ package org.deidentifier.arx.test;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.DataSelector;
+import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
 public class TestDataHandle extends AbstractTest {
 
     @Test
-    public void testgetters() throws IllegalArgumentException, IOException {
+    public void testSubset1() throws IllegalArgumentException, IOException {
+
+        provider.createDataDefinition();
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        anonymizer.setSuppressionString("*");
+
+        final DataHandle inHandle = provider.getData().getHandle();
+
+        // Alter the definition
+        provider.getData()
+                .getDefinition()
+                .setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
+
+        DataSelector selector = DataSelector.create(provider.getData()).
+                            field("age").equals("70").or().equals("34");
+                
+        DataSubset subset = DataSubset.create(provider.getData(), selector);
+        
+        final ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new KAnonymity(2));
+        config.addCriterion(new DPresence(0, 1, subset));
+        config.setMaxOutliers(0d);
+
+        final ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        final DataHandle outHandle = result.getHandle();
+        outHandle.sort(false, 2);
+
+        String[][] inArrayS = iteratorToArray(inHandle.getView(config).iterator());
+        String[][] outArrayS = iteratorToArray(outHandle.getView(config).iterator());
+
+
+        // TODO: Remove when fixed
+        // System.out.println("IN:");
+        // printArray(inArrayS);
+        // System.out.println("OUT:");
+        // printArray(outArrayS);
+        
+        outHandle.getView(config).sort(true, 0);
+        
+        inArrayS = iteratorToArray(inHandle.getView(config).iterator());
+        outArrayS = iteratorToArray(outHandle.getView(config).iterator());
+
+        // TODO: Remove when fixed
+        // System.out.println("IN:");
+        // printArray(inArrayS);
+        // System.out.println("OUT:");
+        // printArray(outArrayS);
+
+        String[][] expectedIn = { { "age", "gender", "zipcode" },
+                                  {"70","female","81931"},
+                                  {"70","male","81931"},
+                                  {"34","male","81667"},
+                                  {"34","female","81931"}};
+        
+        assertTrue(Arrays.deepEquals(inArrayS, expectedIn));
+        
+    }
+
+    @Test
+    public void testSubset2() throws IllegalArgumentException, IOException {
+
+        provider.createDataDefinition();
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        anonymizer.setSuppressionString("*");
+
+        final DataHandle inHandle = provider.getData().getHandle();
+
+        // Alter the definition
+        provider.getData()
+                .getDefinition()
+                .setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
+
+        DataSelector selector = DataSelector.create(provider.getData()).
+                            field("age").equals("70").or().equals("34");
+                
+        DataSubset subset = DataSubset.create(provider.getData(), selector);
+        
+        final ARXConfiguration config = ARXConfiguration.create();
+        config.addCriterion(new KAnonymity(2));
+        config.addCriterion(new DPresence(0, 1, subset));
+        config.setMaxOutliers(0d);
+
+        final ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        final DataHandle outHandle = result.getHandle();
+        outHandle.sort(false, 2);
+
+        String[][] inArrayS = iteratorToArray(inHandle.getView(config).iterator());
+        String[][] outArrayS = iteratorToArray(outHandle.getView(config).iterator());
+
+        // TODO: Remove when fixed
+        // System.out.println("IN:");
+        // printArray(inArrayS);
+        // System.out.println("OUT:");
+        // printArray(outArrayS);
+        
+        outHandle.getView(config).sort(true, 0);
+        
+        inArrayS = iteratorToArray(inHandle.getView(config).iterator());
+        outArrayS = iteratorToArray(outHandle.getView(config).iterator());
+
+        // TODO: Remove when fixed
+        // System.out.println("IN:");
+        // printArray(inArrayS);
+        // System.out.println("OUT:");
+        // printArray(outArrayS);
+
+        String[][] expectedOut = { { "age", "gender", "zipcode" },
+                                   {"70","*","81***"},
+                                   {"70","*","81***"},
+                                   {"34","*","81***"},
+                                   {"34","*","81***"}};
+
+        assertTrue(Arrays.deepEquals(outArrayS, expectedOut));
+        
+    }
+
+    @Test
+    public void testGetters() throws IllegalArgumentException, IOException {
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
