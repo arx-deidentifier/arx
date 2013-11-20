@@ -428,18 +428,18 @@ public class DataManager {
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
 
-        // size could be calculated?!
+        // TODO: Size could be calculated?!
         final ArrayList<Integer> treeList = new ArrayList<Integer>();
         treeList.add(totalElementsP);
         treeList.add(numLeafs);
         treeList.add(height);
 
-        // init all freq to 0
+        // Init all freq to 0
         for (int i = 0; i < numLeafs; i++) {
             treeList.add(0);
         }
 
-        // count frequnecies
+        // Count frequencies
         final int offsetLeafs = 3;
         for (int i = 0; i < data.length; i++) {
             if (subset == null || subset.contains(i)) {
@@ -449,11 +449,12 @@ public class DataManager {
             }
         }
 
-        // init extras
+        // Init extras
         for (int i = 0; i < numLeafs; i++) {
             treeList.add(-1);
         }
 
+        // Temporary class for nodes
         class TNode {
             HashSet<Integer> children = new HashSet<Integer>();
             int              offset   = 0;
@@ -461,15 +462,15 @@ public class DataManager {
         }
 
         final int offsetsExtras = offsetLeafs + numLeafs;
-
         final HashMap<Integer, TNode> nodes = new HashMap<Integer, TNode>();
         final ArrayList<ArrayList<TNode>> levels = new ArrayList<ArrayList<TNode>>();
-        // init levels
+        
+        // Init levels
         for (int i = 0; i < hierarchy[0].length; i++) {
             levels.add(new ArrayList<TNode>());
         }
 
-        // build nodes
+        // Build nodes
         for (int i = 0; i < hierarchy[0].length; i++) {
             for (int j = 0; j < hierarchy.length; j++) {
                 final int nodeID = hierarchy[j][i];
@@ -491,7 +492,7 @@ public class DataManager {
             }
         }
 
-        // for all nodes
+        // For all nodes
         for (final ArrayList<TNode> level : levels) {
             for (final TNode node : level) {
 
