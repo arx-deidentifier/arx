@@ -1,5 +1,6 @@
 package org.deidentifier.arx;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,15 +13,18 @@ import java.util.Set;
  * @author Prasser, Kohlmayer
  *
  */
-public class DataSubset {
+public class DataSubset implements Serializable {
     
+    private static final long serialVersionUID = 3945730896172205344L;
+
     /**
      * Wrapper around a string array
      * @author Prasser, Kohlmayer
      *
      */
-    private static class Entry{
+    private static class Entry implements Serializable {
         
+        private static final long serialVersionUID = 31695068160887476L;
         private String[] data;
         private int hashcode;
      

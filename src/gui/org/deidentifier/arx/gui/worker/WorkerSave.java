@@ -34,7 +34,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
@@ -136,6 +135,7 @@ public class WorkerSave extends Worker<Model> {
             zip.close();
             arg0.worked(10);
         } catch (final Exception e) {
+            e.printStackTrace();
             error = e;
             arg0.done();
             return;
