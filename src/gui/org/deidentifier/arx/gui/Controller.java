@@ -677,11 +677,11 @@ public class Controller implements IView {
         
         try {
             DataSubset subset = DataSubset.create(data, subsetData);
-            model.getInputConfig().setResearchSubset(subset.getRowSet());
+            model.getInputConfig().setResearchSubset(subset.getSet());
             model.setSubsetOrigin("File");
             update(new ModelEvent(this,
                                   ModelPart.RESEARCH_SUBSET,
-                                  subset.getRowSet()));
+                                  subset.getSet()));
         } catch (IllegalArgumentException e){
             main.showErrorDialog("Error!", e.getMessage());
         }
@@ -705,10 +705,10 @@ public class Controller implements IView {
         DataSelector selector = result.selector;
         DataSubset subset = DataSubset.create(data, selector);
         
-        this.model.getInputConfig().setResearchSubset(subset.getRowSet());
+        this.model.getInputConfig().setResearchSubset(subset.getSet());
         this.model.setQuery(result.query);
         model.setSubsetOrigin("Query");
-        update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getRowSet()));
+        update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
 
     public void addListener(final ModelPart target, final IView listener) {

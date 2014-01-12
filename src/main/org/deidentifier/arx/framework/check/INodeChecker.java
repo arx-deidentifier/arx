@@ -68,7 +68,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract int getGroupCount();
+    public abstract int getNumberOfGroups();
 
     /**
      * Returns the current hash groupify
@@ -82,7 +82,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract int getGroupOutliersCount();
+    public abstract int getNumberOfOutlyingGroups();
 
     @Deprecated
     public abstract double getInformationLoss(final Node node);
@@ -99,7 +99,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract int getTupleOutliersCount();
+    public abstract int getNumberOfOutlyingTuples();
 
     /**
      * Returns the data for a given state. Only used for NUMA.

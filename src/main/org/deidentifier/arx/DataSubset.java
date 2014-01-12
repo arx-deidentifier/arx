@@ -42,10 +42,10 @@ public class DataSubset {
     }
     
     /** The subset as a bitset*/
-    private RowSet bitSet;
+    protected RowSet set;
     
     /** The subset as a sorted array of indices*/
-    private int[] array;
+    protected int[] array;
 
     /**
      * Creates a new instance
@@ -53,7 +53,7 @@ public class DataSubset {
      * @param sortedIndices
      */
     private DataSubset(RowSet bitSet, int[] sortedIndices) {
-        this.bitSet = bitSet;
+        this.set = bitSet;
         this.array = sortedIndices;
     }
 
@@ -181,8 +181,8 @@ public class DataSubset {
         return new DataSubset(bitset, array);
     }
 
-    public RowSet getRowSet() {
-        return bitSet;
+    public RowSet getSet() {
+        return set;
     }
 
     public int[] getArray() {

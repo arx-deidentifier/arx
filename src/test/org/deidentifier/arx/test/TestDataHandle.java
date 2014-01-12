@@ -62,34 +62,16 @@ public class TestDataHandle extends AbstractTest {
         final DataHandle outHandle = result.getHandle();
         outHandle.sort(false, 2);
 
-        String[][] inArrayS = iteratorToArray(inHandle.getView(config).iterator());
-        String[][] outArrayS = iteratorToArray(outHandle.getView(config).iterator());
-
-
-        // TODO: Remove when fixed
-        // System.out.println("IN:");
-        // printArray(inArrayS);
-        // System.out.println("OUT:");
-        // printArray(outArrayS);
-        
         outHandle.getView(config).sort(true, 0);
         
-        inArrayS = iteratorToArray(inHandle.getView(config).iterator());
-        outArrayS = iteratorToArray(outHandle.getView(config).iterator());
-
-        // TODO: Remove when fixed
-        // System.out.println("IN:");
-        // printArray(inArrayS);
-        // System.out.println("OUT:");
-        // printArray(outArrayS);
-
-        String[][] expectedIn = { { "age", "gender", "zipcode" },
+        String[][] given = iteratorToArray(inHandle.getView(config).iterator());
+        String[][] expected = { { "age", "gender", "zipcode" },
                                   {"70","female","81931"},
                                   {"70","male","81931"},
                                   {"34","male","81667"},
                                   {"34","female","81931"}};
         
-        assertTrue(Arrays.deepEquals(inArrayS, expectedIn));
+        assertTrue(Arrays.deepEquals(given, expected));
         
     }
 
@@ -99,8 +81,6 @@ public class TestDataHandle extends AbstractTest {
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setSuppressionString("*");
-
-        final DataHandle inHandle = provider.getData().getHandle();
 
         // Alter the definition
         provider.getData()
@@ -121,33 +101,16 @@ public class TestDataHandle extends AbstractTest {
         final DataHandle outHandle = result.getHandle();
         outHandle.sort(false, 2);
 
-        String[][] inArrayS = iteratorToArray(inHandle.getView(config).iterator());
-        String[][] outArrayS = iteratorToArray(outHandle.getView(config).iterator());
-
-        // TODO: Remove when fixed
-        // System.out.println("IN:");
-        // printArray(inArrayS);
-        // System.out.println("OUT:");
-        // printArray(outArrayS);
-        
         outHandle.getView(config).sort(true, 0);
         
-        inArrayS = iteratorToArray(inHandle.getView(config).iterator());
-        outArrayS = iteratorToArray(outHandle.getView(config).iterator());
-
-        // TODO: Remove when fixed
-        // System.out.println("IN:");
-        // printArray(inArrayS);
-        // System.out.println("OUT:");
-        // printArray(outArrayS);
-
-        String[][] expectedOut = { { "age", "gender", "zipcode" },
+        String[][] given = iteratorToArray(outHandle.getView(config).iterator());
+        String[][] expected = { { "age", "gender", "zipcode" },
                                    {"70","*","81***"},
                                    {"70","*","81***"},
                                    {"34","*","81***"},
                                    {"34","*","81***"}};
 
-        assertTrue(Arrays.deepEquals(outArrayS, expectedOut));
+        assertTrue(Arrays.deepEquals(given, expected));
         
     }
 

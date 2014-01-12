@@ -65,7 +65,7 @@ public class MetricDM extends MetricDefault {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
             for (DPresence dPresence : crits) {
-                rowCount = dPresence.getSize();
+                rowCount = dPresence.getSubset().getArray().length;
             }
         } else {
             rowCount = input.getDataLength();

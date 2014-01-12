@@ -74,7 +74,7 @@ public class MetricAECS extends MetricDefault {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
             for (DPresence dPresence : crits) {
-                total = dPresence.getSize();
+                total = dPresence.getSubset().getArray().length;
             }
         } else {
             total = input.getDataLength();

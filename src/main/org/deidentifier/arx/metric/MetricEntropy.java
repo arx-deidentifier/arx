@@ -44,9 +44,7 @@ public class MetricEntropy extends MetricDefault {
     /** Value unknown */
     private static final double NA               = Double.POSITIVE_INFINITY;
 
-    /**
-     * 
-     */
+    /** */
     private static final long   serialVersionUID = -8618697919821588987L;
 
     /** Log 2 */
@@ -122,7 +120,7 @@ public class MetricEntropy extends MetricDefault {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
             for (DPresence dPresence : crits) {
-                rSubset = dPresence.getBitSet();
+                rSubset = dPresence.getSubset().getSet();
             }
         }
 

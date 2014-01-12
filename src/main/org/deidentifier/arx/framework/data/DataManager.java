@@ -88,8 +88,8 @@ public class DataManager {
         // Store research subset
         for (PrivacyCriterion c : criteria) {
             if (c instanceof DPresence) {
-                subset = ((DPresence) c).getBitSet();
-                subsetSize = ((DPresence) c).getSize();
+                subset = ((DPresence) c).getSubset().getSet();
+                subsetSize = ((DPresence) c).getSubset().getArray().length;
                 break;
             }
         }

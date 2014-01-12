@@ -167,7 +167,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getGroupCount() {
+    public int getNumberOfGroups() {
         return currentGroupify.size();
     }
 
@@ -177,7 +177,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getGroupOutliersCount() {
+    public int getNumberOfOutlyingGroups() {
         return currentGroupify.getGroupOutliersCount();
     }
 
@@ -204,7 +204,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getTupleOutliersCount() {
+    public int getNumberOfOutlyingTuples() {
         return currentGroupify.getTupleOutliersCount();
     }
 

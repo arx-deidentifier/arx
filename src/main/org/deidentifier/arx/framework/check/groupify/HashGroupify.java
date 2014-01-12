@@ -90,7 +90,7 @@ public class HashGroupify implements IHashGroupify {
 
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            subset = config.getCriterion(DPresence.class).getBitSet();
+            subset = config.getCriterion(DPresence.class).getSubset().getSet();
         } else {
             subset = null;
         }

@@ -44,7 +44,9 @@ public class DataHandleInput extends DataHandle {
      */
     protected DataHandleInput(final Data data) {
 
-        definition = data.getDefinition();
+        this.setRegistry(new DataRegistry());
+        this.getRegistry().updateInput(this);
+        this.definition = data.getDefinition();
 
         // Obtain iterator
         final Iterator<String[]> iterator = data.iterator();
@@ -86,10 +88,18 @@ public class DataHandleInput extends DataHandle {
         createDataTypeArray();
     }
 
+    /**
+     * Alternative constructor for deserialization
+     * @param other
+     * @param definition
+     */
     protected DataHandleInput(final DataHandleInput other,
                               final DataDefinition definition) {
 
+        // TODO: This is a clone constructor. Share or clone registry?
         this.definition = definition;
+        this.setRegistry(new DataRegistry(other.getRegistry()));
+        this.getRegistry().updateInput(this);
 
         // Obtain header
         super.header = other.header;
@@ -103,12 +113,14 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     public String getAttributeName(final int column) {
+        checkRegistry();
         checkColumn(column);
         return header[column];
     }
 
     @Override
     public String[] getDistinctValues(final int column) {
+        checkRegistry();
         checkColumn(column);
         final String[] dict = dictionary.getMapping()[column];
         final String[] vals = new String[dict.length];
@@ -118,28 +130,33 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     public int getGeneralization(final String attribute) {
+        checkRegistry();
         return 0;
     }
 
     @Override
     public int getNumColumns() {
+        checkRegistry();
         return header.length;
     }
 
     @Override
     public int getNumRows() {
+        checkRegistry();
         return data.length;
     }
 
     @Override
     public String getValue(final int row, final int column) {
+        checkRegistry();
         checkColumn(column);
         checkRow(row, data.length);
-        return getValueInternal(row, column);
+        return internalGetValue(row, column);
     }
 
     @Override
     public Iterator<String[]> iterator() {
+        checkRegistry();
         return new Iterator<String[]>() {
 
             int index = -1;
@@ -172,52 +189,8 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    public void swap(final int row1, final int row2) {
-
-        // Check
-        checkRow(row1, data.length);
-        checkRow(row2, data.length);
-
-        // Swap output data
-        if (other != null) {
-            other.swap(row1, row2);
-        }
-
-        // Swap
-        swapInternal(row1, row2);
-        
-        // Swap subset
-        if (this.subsetBitset != null){
-            
-            this.subsetBitset.swap(row1, row2);
-
-            // TODO: Super inefficient
-            int index = 0;
-            for (int i = 0; i < data.length; i++){
-                if (this.subsetBitset.contains(i)){
-                    this.subsetArray[index++] = i;
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void afterSorting() {
-
-        // Rebuild array representation of subset
-        if (this.subsetBitset != null){
-        	
-            int index = 0;
-            for (int i = 0; i < data.length; i++){
-                if (this.subsetBitset.contains(i)){
-                    this.subsetArray[index++] = i;
-                }
-            }
-        }
-    }
-
-    @Override
     protected void createDataTypeArray() {
+        checkRegistry();
         dataTypes = new DataType[1][header.length];
         for (int i = 0; i < header.length; i++) {
             final DataType<?> type = definition.getDataType(header[i]);
@@ -235,28 +208,24 @@ public class DataHandleInput extends DataHandle {
      * @see org.deidentifier.ARX.ARXDataHandle#getValueInternal(int, int)
      */
     @Override
-    protected String getValueInternal(final int row, final int column) {
+    protected String internalGetValue(final int row, final int column) {
         return dictionary.getMapping()[column][data[row][column]];
     }
-    
-    @Override
-    protected boolean isOutlierInternal(final int row) {
-        return false;
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXDataHandle#swapInternal(int, int)
+    /**
+     * Swaps the rows
+     * @param row1
+     * @param row2
      */
-    @Override
-    protected void swapInternal(final int row1, final int row2) {
+    protected void internalSwap(final int row1, final int row2) {
+
+        // Check
+        checkRow(row1, data.length);
+        checkRow(row2, data.length);
+
+        // Swap
         final int[] temp = data[row1];
         data[row1] = data[row2];
         data[row2] = temp;
-        
-        if (this.subsetBitset != null){
-            this.subsetBitset.swap(row1, row2);
-        }
     }
 }

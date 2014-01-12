@@ -107,14 +107,11 @@ public class ARXAnonymizer {
 
 			// Create outhandle
 			final DataHandleOutput outHandle = new DataHandleOutput(
+                    handle.getRegistry(),
 					this.manager, this.checker,
 					System.currentTimeMillis() - time, suppressionString,
 					handle.getDefinition(), this.lattice, removeOutliers,
 					config);
-			
-            // Pairing
-            outHandle.associate(handle);
-            handle.associate(outHandle);
 
             // Return
             return outHandle;
@@ -208,6 +205,7 @@ public class ARXAnonymizer {
         final long time = System.currentTimeMillis();
         checkBeforeEncoding(data, config);
         DataHandle handle = data.getHandle();
+        handle.getRegistry().reset();
 
         if (data.getDefinition().getSensitiveAttributes().size()>1) {
         	

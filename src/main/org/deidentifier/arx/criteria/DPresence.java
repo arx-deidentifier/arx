@@ -42,9 +42,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
     /** Delta max*/
     private final double dMax;
     /** A compressed representation of the research subset*/
-    private RowSet bitset;
-    /** A sorted array representation of the research subset*/
-    private int[] array;
+    private DataSubset subset;
     
     /**
      * Creates a new instance of the d-presence criterion as proposed in:
@@ -59,8 +57,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         super(false);
         this.dMin = dMin;
         this.dMax = dMax;
-        this.bitset = subset.getRowSet();
-        this.array = subset.getArray();
+        this.subset = subset;
     }
     
     /**
@@ -71,8 +68,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         super(true);
         this.dMin = 0d;
         this.dMax = 1d;
-        this.bitset = subset.getRowSet();
-        this.array = subset.getArray();
+        this.subset = subset;
     }
         
     @Override
@@ -102,25 +98,8 @@ public class DPresence extends ImplicitPrivacyCriterion{
      * Returns the research subset
      * @return
      */
-    public RowSet getBitSet() {
-        return this.bitset;
-    }
-    
-    /**
-     * Returns the size of the research subset
-     * @return
-     */
-    public int getSize() {
-        return this.array.length;
-    }
-    
-
-    /**
-     * Returns the research subset
-     * @return
-     */
-    public int[] getArray() {
-        return this.array;
+    public DataSubset getSubset() {
+        return this.subset;
     }
 
     /**

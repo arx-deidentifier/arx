@@ -47,7 +47,7 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract int getGroupCount();
+    public abstract int getNumberOfGroups();
 
     /**
      * Returns the number of outlying groups in the currently selected data
@@ -55,7 +55,7 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract int getGroupOutliersCount();
+    public abstract int getNumberOfOutlyingGroups();
 
     /**
      * Returns a handle to the data induced by the optimal transformation
@@ -94,7 +94,7 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract int getTupleOutliersCount();
+    public abstract int getNumberOfOutlyingTuples();
 
     /**
      * Indicates if a result is available

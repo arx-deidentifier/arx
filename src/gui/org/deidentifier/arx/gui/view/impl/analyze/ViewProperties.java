@@ -523,9 +523,9 @@ public class ViewProperties implements IView {
         roots.clear();
         
         // Print basic info on outliers
-        new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(result.getGroupOutliersCount()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(result.getGroupCount()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(result.getGroupOutliersCount()) }); //$NON-NLS-1$
+        new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(result.getNumberOfOutlyingGroups()) }); //$NON-NLS-1$
+        new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(result.getNumberOfGroups()) }); //$NON-NLS-1$
+        new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(result.getNumberOfOutlyingGroups()) }); //$NON-NLS-1$
 
         // Print information loss
         if (node.getMaximumInformationLoss().getValue() == 

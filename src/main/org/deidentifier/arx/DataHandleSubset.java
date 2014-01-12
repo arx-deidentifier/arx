@@ -15,25 +15,31 @@ public class DataHandleSubset extends DataHandle {
     private final DataHandle source;
     
     /** The research subset*/
-    private final int[] subset;
+    private final DataSubset subset;
     
     /**
      * Creates a new handle that represents the research subset
      * @param source
      * @param subset
      */
-    protected DataHandleSubset(DataHandle source, int[] subset){
+    protected DataHandleSubset(DataHandle source, DataSubset subset){
+        this.setRegistry(source.getRegistry());
+        if (source instanceof DataHandleInput) {
+            this.getRegistry().updateInputSubset(this);
+        } else {
+            this.getRegistry().updateOutputSubset(this);
+        }
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
         this.header = source.header;
-        this.other = source.other;
         this.subset = subset;
         createDataTypeArray();
     }
 
     @Override
     public String getAttributeName(int col) {
+        checkRegistry();
         return source.getAttributeName(col);
     }
 
@@ -41,6 +47,7 @@ public class DataHandleSubset extends DataHandle {
     public String[] getDistinctValues(int column) {
 
         // Check
+        checkRegistry();
         checkColumn(column);
 
         // TODO: Inefficient
@@ -53,42 +60,53 @@ public class DataHandleSubset extends DataHandle {
 
     @Override
     public int getGeneralization(String attribute) {
+        checkRegistry();
         return source.getGeneralization(attribute);
     }
 
     @Override
     public int getNumColumns() {
+        checkRegistry();
         return source.getNumColumns();
     }
 
     @Override
     public int getNumRows() {
-        return this.subset.length;
+        checkRegistry();
+        return this.subset.getArray().length;
     }
 
+    /**
+     * Returns the research subset
+     * @return
+     */
     public int[] getSubset() {
-        return this.subset;
+        checkRegistry();
+        return this.subset.getArray();
     }
 
     @Override
     public String getValue(int row, int col) {
-        return source.getValue(this.subset[row], col);
+        checkRegistry();
+        return source.getValue(this.subset.getArray()[row], col);
     }
 
     @Override
     public DataHandle getView(ARXConfiguration config){
+        checkRegistry();
         return this;
     }
 
     @Override
     public Iterator<String[]> iterator() {
+        checkRegistry();
         return new Iterator<String[]>() {
 
             int index = -1;
 
             @Override
             public boolean hasNext() {
-                return (index < subset.length);
+                return (index < subset.getArray().length);
             }
 
             @Override
@@ -114,18 +132,8 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    public void swap(int row1, int row2) {
-        this.source.swap(subset[row1], subset[row2]);
-    }
-
-    @Override
-    protected void afterSorting() {
-        this.source.afterSorting();
-    }
-
-    @Override
-    protected int compare(int row1, int row2, int[] columns, boolean ascending) {
-        return source.compare(this.subset[row1], this.subset[row2], columns, ascending);
+    protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
+        return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
 
     @Override
@@ -134,17 +142,37 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected String getValueInternal(int row, int col) {
-        return source.getValueInternal(this.subset[row], col);
+    protected String internalGetValue(int row, int col) {
+        return source.internalGetValue(this.subset.getArray()[row], col);
     }
 
-    @Override
-    protected boolean isOutlierInternal(int row) {
-        return source.isOutlierInternal(this.subset[row]);
+    /**
+     * Translates the row number
+     * @param row
+     * @return
+     */
+    protected int internalTranslate(int row) {
+        return this.subset.getArray()[row];
     }
 
-    @Override
-    protected void swapInternal(int row1, int row2) {
-        this.source.swapInternal(subset[row1], subset[row2]);
+    /**
+     * Swaps the bits in the set representation
+     * @param row1
+     * @param row2
+     */
+    protected void internalSwap(int row1, int row2) {
+        this.subset.getSet().swap(row1, row2);
+    }
+
+    /**
+     * Rebuild array representation of subset
+     */
+    protected void internalRebuild() {
+        int index = 0;
+        for (int i = 0; i < subset.getArray().length; i++) {
+            if (this.subset.getSet().contains(i)) {
+                this.subset.getArray()[index++] = i;
+            }
+        }
     }
 }
