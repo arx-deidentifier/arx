@@ -233,7 +233,7 @@ public class ViewData implements IView {
             if (model.getViewConfig().isSubset() && 
                 model.getOutputConfig() != null &&
                 model.getOutputConfig().getConfig() != null) {
-                data = handle.getView(model.getOutputConfig().getConfig());
+                data = handle.getView();
             }
             
             // Its probably ok to use the subset from the input config here,
@@ -285,7 +285,7 @@ public class ViewData implements IView {
             if (model.getViewConfig().isSubset() && 
                 model.getOutputConfig() != null &&
                 model.getOutputConfig().getConfig() != null) {
-                data = handle.getView(model.getOutputConfig().getConfig());
+                data = handle.getView();
             }
             table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
             table.setResearchSubset(model.getInputConfig().getResearchSubset());

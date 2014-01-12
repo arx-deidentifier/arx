@@ -1015,9 +1015,7 @@ public class Controller implements IView {
                             model.getInputConfig().getInput().getHandle() : 
                             model.getOutput();
         
-        handle = config.isSubset() ? 
-                 handle.getView(model.getOutputConfig().getConfig()) :
-                 handle;
+        handle = config.isSubset() ? handle.getView() : handle;
                  
         DataDefinition definition = handle.getDefinition();
         

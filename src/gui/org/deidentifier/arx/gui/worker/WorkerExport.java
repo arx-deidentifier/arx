@@ -38,7 +38,6 @@ public class WorkerExport extends Worker<DataHandle> {
 	private final char separator;
 	private final long bytes;
 	private final DataHandle handle;
-	private final ARXConfiguration config;
 
     public WorkerExport(final String path,
                         final char separator,
@@ -50,7 +49,6 @@ public class WorkerExport extends Worker<DataHandle> {
         this.bytes = bytes;
         this.separator = separator;
         this.handle = handle;
-        this.config = config;
     }
 
     @Override
@@ -89,10 +87,10 @@ public class WorkerExport extends Worker<DataHandle> {
         t.setDaemon(true);
         t.start();
 
-        // Load the data
+        // Export the data
         try {
             final CSVDataOutput csvout = new CSVDataOutput(cout, separator);
-            csvout.write(handle.getView(config).iterator());
+            csvout.write(handle.getView().iterator());
             result = handle;
             stop = true;
             arg0.worked(100);

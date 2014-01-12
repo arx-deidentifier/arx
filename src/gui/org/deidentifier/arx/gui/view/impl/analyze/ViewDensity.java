@@ -174,7 +174,7 @@ public class ViewDensity implements IView {
         
         // Project onto subset, if possible
         if (data != null && model.getViewConfig().isSubset()){
-            data = data.getView(config.getConfig());
+            data = data.getView();
         }
 
         // Clear if nothing to draw

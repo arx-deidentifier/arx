@@ -570,11 +570,10 @@ public class WorkerSave extends Worker<Model> {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
                 final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-                final ARXConfiguration config = model.createSubsetConfig();
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
-                               .getView(config)
+                               .getView()
                                .iterator());
             }
         }
@@ -707,7 +706,7 @@ public class WorkerSave extends Worker<Model> {
         if (model.getOutput() != null) {
             zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
             final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-            out.write(model.getOutput().getView(model.getOutputConfig().getConfig()).iterator());
+            out.write(model.getOutput().getView().iterator());
         }
     }
 }
