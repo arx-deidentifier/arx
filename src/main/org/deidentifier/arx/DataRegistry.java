@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx;
 
+import org.deidentifier.arx.criteria.DPresence;
+
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
@@ -55,6 +57,19 @@ class DataRegistry {
         this.outputSubset = other.outputSubset;
     }
 
+    /**
+     * Helper that creates a view on a research subset
+     * @param handle
+     * @param subset
+     * @return
+     */
+    private DataHandleSubset createSubset(DataHandle handle, DataSubset subset) {
+        
+        DataHandleSubset result = new DataHandleSubset(handle, subset);
+        result.setRegistry(this);
+        return result;
+    }
+    
     /**
      * Returns any of the registered subsets
      * @return
@@ -146,7 +161,7 @@ class DataRegistry {
         // No need to swap and rebuild the subset views
         GenericSorting.mergeSort(from, to, c, s);
     }
-    
+
     /**
      * Swap
      * @param handle
@@ -164,7 +179,7 @@ class DataRegistry {
             subset.internalRebuild();
         }
     }
-
+    
     /**
      * Swap
      * @param handle
@@ -182,6 +197,31 @@ class DataRegistry {
         // TODO: 
         // Do input and output share some data?
         // If yes, the shared part is swapped twice..
+    }
+    
+    /**
+     * Creates the views on the subset
+     */
+    protected void createInputSubset(ARXConfiguration config){
+        
+        if (config.containsCriterion(DPresence.class)) {
+            this.inputSubset = createSubset(this.input, config.getCriterion(DPresence.class).getSubset());
+        } else {
+            this.inputSubset = null;
+        }
+        this.input.setView(this.inputSubset);
+    }
+
+    /**
+     * Creates the views on the subset
+     */
+    protected void createOutputSubset(ARXConfiguration config){
+        if (config.containsCriterion(DPresence.class)) {
+            this.outputSubset = createSubset(this.output, config.getCriterion(DPresence.class).getSubset());
+        } else {
+            this.outputSubset = null;
+        }
+        this.output.setView(this.outputSubset);
     }
     
     /**

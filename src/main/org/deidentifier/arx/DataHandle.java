@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.Swapper;
@@ -44,22 +43,19 @@ import cern.colt.Swapper;
 public abstract class DataHandle{
 
     /** The current registry*/
-    private DataRegistry registry = null;
+    private DataRegistry      registry = null;
 
     /** The current research subset*/
-    private DataSubset subset = null;
-
-    /** The current research subset*/
-    private DataHandleSubset subsetView = null;
+    private DataHandle        subset = null;
 
     /** The data types */
-    protected DataType<?>[][]   dataTypes  = null;
+    protected DataType<?>[][] dataTypes  = null;
 
     /** The data defintion */
-    protected DataDefinition definition = null;
+    protected DataDefinition  definition = null;
     
     /** The header */
-    protected String[]       header     = null;
+    protected String[]        header     = null;
     
     /**
      * Returns the name of the specified column
@@ -142,13 +138,21 @@ public abstract class DataHandle{
      * Returns a new data handle that represents a context specific view on the dataset
      * @return
      */
-    public DataHandle getView(ARXConfiguration config){
+    public DataHandle getView(){
         checkRegistry();
-        if (config.containsCriterion(DPresence.class)) {
-            return getView(config.getCriterion(DPresence.class).getSubset());
-        } else {
+        if (this.subset == null){
             return this;
+        } else {
+            return this.subset;
         }
+    }
+    
+    /**
+     * Sets the subset
+     * @param handle
+     */
+    protected void setView(DataHandle handle){
+        this.subset = handle;
     }
 
     /**
@@ -201,23 +205,6 @@ public abstract class DataHandle{
         checkRegistry();
         final CSVDataOutput output = new CSVDataOutput(path, separator);
         output.write(iterator());
-    }
-
-    /**
-     * Creates and caches a context specific view for a given research subset
-     * @param subset
-     * @return
-     */
-    private DataHandle getView(DataSubset subset) {
-        checkRegistry();
-        if (this.subsetView != null && this.subset != subset){
-            this.subsetView.setRegistry(null);
-        }
-        if (this.subsetView == null || this.subset != subset){
-            this.subsetView = new DataHandleSubset(this, subset);
-            this.subset = subset;
-        }
-        return this.subsetView;
     }
 
     /**

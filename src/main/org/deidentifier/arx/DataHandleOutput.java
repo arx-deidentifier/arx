@@ -170,7 +170,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         // Set registry
         this.setRegistry(handle.getRegistry());
         this.getRegistry().updateOutput(this);
-        
+
         // Set optimum in lattice
         lattice.access().setOptimum(optimum);
 
@@ -234,7 +234,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         registry.updateOutput(this);
         this.setRegistry(registry);
-        
+
         final ARXLattice flattice = new ARXLattice(lattice,
                                                    manager.getDataQI().getHeader(),
                                                    config);
@@ -500,13 +500,13 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         this.config = config;
         this.removeOutliers = removeOutliers;
         this.lattice = lattice;
-        optimalNode = this.lattice.getOptimum();
-        duration = time;
-        currentNode = optimalNode;
-        lastNode = null;
+        this.optimalNode = this.lattice.getOptimum();
+        this.duration = time;
+        this.currentNode = optimalNode;
+        this.lastNode = null;
         this.suppressionString = suppressionString;
         this.checker = checker;
-        definition = defintion;
+        this.definition = defintion;
 
         // Extract data
         dataQI = checker.getBuffer();
@@ -552,6 +552,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         inverseDictionaries[AttributeType.ATTR_TYPE_IS] = dataIS.getDictionary();
         inverseDictionaries[AttributeType.ATTR_TYPE_SE] = dataSE.getDictionary();
         inverseDictionaries[AttributeType.ATTR_TYPE_QI] = dataQI.getDictionary();
+        
+        // Create view
+        this.getRegistry().createOutputSubset(config);
     }
 
     /**

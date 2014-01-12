@@ -23,12 +23,6 @@ public class DataHandleSubset extends DataHandle {
      * @param subset
      */
     protected DataHandleSubset(DataHandle source, DataSubset subset){
-        this.setRegistry(source.getRegistry());
-        if (source instanceof DataHandleInput) {
-            this.getRegistry().updateInputSubset(this);
-        } else {
-            this.getRegistry().updateOutputSubset(this);
-        }
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
@@ -92,7 +86,7 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    public DataHandle getView(ARXConfiguration config){
+    public DataHandle getView(){
         checkRegistry();
         return this;
     }

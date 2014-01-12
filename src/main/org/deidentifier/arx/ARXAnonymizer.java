@@ -206,6 +206,7 @@ public class ARXAnonymizer {
         checkBeforeEncoding(data, config);
         DataHandle handle = data.getHandle();
         handle.getRegistry().reset();
+        handle.getRegistry().createInputSubset(config);
 
         if (data.getDefinition().getSensitiveAttributes().size()>1) {
         	

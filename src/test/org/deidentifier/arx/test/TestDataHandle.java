@@ -62,9 +62,9 @@ public class TestDataHandle extends AbstractTest {
         final DataHandle outHandle = result.getHandle();
         outHandle.sort(false, 2);
 
-        outHandle.getView(config).sort(true, 0);
+        outHandle.getView().sort(true, 0);
         
-        String[][] given = iteratorToArray(inHandle.getView(config).iterator());
+        String[][] given = iteratorToArray(inHandle.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" },
                                   {"70","female","81931"},
                                   {"70","male","81931"},
@@ -101,9 +101,9 @@ public class TestDataHandle extends AbstractTest {
         final DataHandle outHandle = result.getHandle();
         outHandle.sort(false, 2);
 
-        outHandle.getView(config).sort(true, 0);
+        outHandle.getView().sort(true, 0);
         
-        String[][] given = iteratorToArray(outHandle.getView(config).iterator());
+        String[][] given = iteratorToArray(outHandle.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" },
                                    {"70","*","81***"},
                                    {"70","*","81***"},
