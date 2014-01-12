@@ -110,7 +110,6 @@ public class DataSubset {
         
         // Return
         Arrays.sort(array);
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
     
@@ -142,7 +141,6 @@ public class DataSubset {
         }
         
         // Return
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
     
@@ -165,7 +163,6 @@ public class DataSubset {
             array[idx++] = line;
         }
         Arrays.sort(array);
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
 
@@ -181,7 +178,6 @@ public class DataSubset {
                 array[idx++]=i;
             }
         }
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
 

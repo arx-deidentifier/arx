@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,6 @@ public class DataHandleInput extends DataHandle {
 
     /** The dictionary */
     protected Dictionary dictionary   = null;
-
-    /** The data subset */
-    private RowSet       subsetBitset = null;
-
-    /** The data subset */
-    private int[]        subsetArray  = null;
 
     /**
      * Creates a new data handle
@@ -137,13 +131,6 @@ public class DataHandleInput extends DataHandle {
         return data.length;
     }
 
-    /**
-     * Returns the associated research subset
-     */
-    public RowSet getSubset() {
-        return this.subsetBitset;
-    }
-
     @Override
     public String getValue(final int row, final int column) {
         checkColumn(column);
@@ -182,16 +169,6 @@ public class DataHandleInput extends DataHandle {
                 throw new UnsupportedOperationException("Remove is unsupported!");
             }
         };
-    }
-
-    /**
-     * Sets the research subset
-     * @param bitset
-     * @param array
-     */
-    public void setSubset(RowSet bitset, int[] array) {
-        this.subsetBitset = bitset;
-        this.subsetArray = array;
     }
 
     @Override

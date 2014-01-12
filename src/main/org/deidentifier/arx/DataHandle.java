@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ import cern.colt.function.IntComparator;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class DataHandle {
+public abstract class DataHandle implements DataModifiable {
 
     /** The header */
     protected String[]       header     = null;
