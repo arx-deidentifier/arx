@@ -135,7 +135,6 @@ public class WorkerSave extends Worker<Model> {
             zip.close();
             arg0.worked(10);
         } catch (final Exception e) {
-            e.printStackTrace();
             error = e;
             arg0.done();
             return;
