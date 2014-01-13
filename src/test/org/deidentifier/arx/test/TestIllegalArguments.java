@@ -247,7 +247,6 @@ public class TestIllegalArguments extends AbstractTest {
     public void testMetric() {
 
         try {
-            final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final ARXConfiguration config = ARXConfiguration.create();
             config.setMetric(null);
         } catch (final NullPointerException e) {
