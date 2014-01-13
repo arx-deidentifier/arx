@@ -22,11 +22,10 @@ import java.io.IOException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
