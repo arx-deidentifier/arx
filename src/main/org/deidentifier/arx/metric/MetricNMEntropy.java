@@ -73,7 +73,7 @@ public class MetricNMEntropy extends MetricEntropy {
         // No change for d-presence needed; m.count contains the research subset count already
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (!m.isNotOutlier) {
+            if (!m.isNotOutlier && m.count>0) {
                 suppressedTuples += m.count;
                 for (int i = 0; i < original.length; i++) {
                     key = m.key[i];
@@ -89,12 +89,15 @@ public class MetricNMEntropy extends MetricEntropy {
         }
 
         // Evaluate entropy for suppressed tuples
-        for (int i = 0; i < original.length; i++) {
-            for (final double count : original[i].values()) {
-                additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
-            }
+        // TODO: Skipping the whole computation in this case by accessing HashGroupify.currentOutliers possible?
+        if (suppressedTuples != 0){
+	        for (int i = 0; i < original.length; i++) {
+	            for (final double count : original[i].values()) {
+	                additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
+	            }
+	        }
         }
-
+        
         // Return sum of both values
         return new InformationLossDefault(originalInfoLoss - additionalInfoLoss);
     }
