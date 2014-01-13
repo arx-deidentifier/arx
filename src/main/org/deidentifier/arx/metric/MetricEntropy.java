@@ -139,23 +139,15 @@ public class MetricEntropy extends MetricDefault {
             // Column -> Id -> Level -> Count
         }
 
-        if (rSubset != null) { // dpresence mode
-            for (int i = 0; i < data.length; i++) { // only use the rows contained in the research subset
-                if (rSubset.contains(i)) {
-                    final int[] row = data[i];
-                    for (int column = 0; column < row.length; column++) {
-                        cardinalities[column][row[column]][0]++;
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < data.length; i++) {
-                final int[] row = data[i];
-                for (int column = 0; column < row.length; column++) {
-                    cardinalities[column][row[column]][0]++;
-                }
-            }
-        }
+		for (int i = 0; i < data.length; i++) { 
+			// only use the rows contained in the research subset
+			if (rSubset == null || rSubset.contains(i)) {
+				final int[] row = data[i];
+				for (int column = 0; column < row.length; column++) {
+					cardinalities[column][row[column]][0]++;
+				}
+			}
+		}
 
         // Create counts for other levels
         for (int column = 0; column < hierarchies.length; column++) {

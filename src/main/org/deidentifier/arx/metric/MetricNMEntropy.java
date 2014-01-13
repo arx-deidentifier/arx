@@ -59,7 +59,7 @@ public class MetricNMEntropy extends MetricEntropy {
         final double originalInfoLoss = super.evaluateInternal(node, g).getValue();
 
         // Compute loss induced by suppression
-        // Init TODO: Use lightweight alternative to Map<Integer, Integer>();
+        // TODO: Use lightweight alternative to Map<Integer, Integer>();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
         int key;
