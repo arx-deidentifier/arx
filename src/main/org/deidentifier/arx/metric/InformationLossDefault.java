@@ -20,7 +20,7 @@ package org.deidentifier.arx.metric;
 
 /**
  * This class implements a default information loss which represents one single
- * metric. Note: this class has a natural ordering that is inconsistent with equals.
+ * metric.
  * 
  * @author Prasser, Kohlmayer
  */
@@ -32,9 +32,7 @@ class InformationLossDefault extends InformationLoss {
     /** Min value */
     public static final InformationLoss MIN              = new InformationLossDefault(0);
 
-    /**
-     * 
-     */
+    /** serialVersionUID */
     private static final long           serialVersionUID = -4341081298410703417L;
 
     /** Current value */
@@ -79,5 +77,25 @@ class InformationLossDefault extends InformationLoss {
     @Override
     protected InformationLoss clone() {
         return new InformationLossDefault(value);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(value);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        InformationLossDefault other = (InformationLossDefault) obj;
+        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
+        return true;
     }
 }
