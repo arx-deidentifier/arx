@@ -64,8 +64,8 @@ public class TestMetrics extends AbstractTest {
         
         for (ARXNode[] level : lattice.getLevels()){
         	for (ARXNode node : level) {
-        		if (node.getMaximumInformationLoss().getValue()==Double.NaN ||
-        			node.getMinimumInformationLoss().getValue()==Double.NaN){
+        		if (String.valueOf(node.getMinimumInformationLoss().getValue()).equals("NaN") ||
+        			String.valueOf(node.getMaximumInformationLoss().getValue()).equals("NaN")){
         			fail();
         		}
         	}
