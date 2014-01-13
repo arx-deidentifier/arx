@@ -20,7 +20,7 @@ package org.deidentifier.arx.metric;
 
 /**
  * This class implements a default information loss which represents one single
- * metric
+ * metric. Note: this class has a natural ordering that is inconsistent with equals.
  * 
  * @author Prasser, Kohlmayer
  */
