@@ -55,9 +55,11 @@ import cern.colt.Arrays;
 public class ViewList implements IView {
 
     /** The optimum */
+	// TODO: Highlight in list
     private ARXNode             optimum;
 
     /** The selected node */
+	// TODO: Highlight in list
     private ARXNode             selectedNode;
 
     /** The controller */
