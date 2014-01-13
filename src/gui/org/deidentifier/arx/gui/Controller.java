@@ -40,7 +40,6 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleInput;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
@@ -75,23 +74,36 @@ import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.program.Program;
 
 import cern.colt.Swapper;
 
+/**
+ * The main controller for the whole tool
+ * @author Fabian Prasser
+ */
 public class Controller implements IView {
 
+    /** The model*/
     private Model                            model;
-
+    /** The main window*/
     private final MainWindow                 main;
+    /** The resources*/
     private final Resources                  resources;
+    /** Listeners registered by the views*/
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
 
+    /**
+     * Creates a new controller
+     * @param main
+     */
     public Controller(final MainWindow main) {
         this.main = main;
         this.resources = new Resources(main.getShell());
     }
 
+    /**
+     * Applies the selected transformation
+     */
     public void actionApplySelectedTransformation() {
 
         // Run the worker
@@ -195,6 +207,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Toggles the "show groups" option
+     */
     public void actionDataShowGroups() {
         
         // Break if no output
@@ -207,6 +222,10 @@ public class Controller implements IView {
         this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
     }
 
+    /**
+     * Sorts the data
+     * @param input
+     */
     public void actionDataSort(boolean input) {
         
         // Break if no output
@@ -226,6 +245,9 @@ public class Controller implements IView {
         this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
     }
 
+    /**
+     * Toggles the "subset" option
+     */
     public void actionDataToggleSubset() {
 
         // Break if no output
@@ -240,6 +262,9 @@ public class Controller implements IView {
         this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
     }
 
+    /**
+     * Starts the anonymization
+     */
     public void actionMenuEditAnonymize() {
 
         if (model == null) {
@@ -332,6 +357,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Starts the wizard
+     */
     public void actionMenuEditCreateHierarchy() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.16"), Resources.getMessage("Controller.17")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -365,6 +393,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Starts the "edit settings" dialog
+     */
     public void actionMenuEditSettings() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.22"), Resources.getMessage("Controller.23")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -384,6 +415,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->exit
+     */
     public void actionMenuFileExit() {
         if (main.showQuestionDialog(Resources.getMessage("Controller.26"), Resources.getMessage("Controller.27"))) { //$NON-NLS-1$ //$NON-NLS-2$
             if ((model != null) && model.isModified()) {
@@ -396,6 +430,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->export data
+     */
     public void actionMenuFileExportData() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.30"), Resources.getMessage("Controller.31")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -432,6 +469,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->Export hierarchy
+     */
     public void actionMenuFileExportHierarchy() {
 
         if (model == null) {
@@ -466,6 +506,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->Import data
+     */
     public void actionMenuFileImportData() {
 
         if (model == null) {
@@ -490,6 +533,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->Import hierarchy
+     */
     public void actionMenuFileImportHierarchy() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.54"), Resources.getMessage("Controller.55")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -521,6 +567,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->New project
+     */
     public void actionMenuFileNew() {
 
         if ((model != null) && model.isModified()) {
@@ -540,6 +589,9 @@ public class Controller implements IView {
         update(new ModelEvent(this, ModelPart.MODEL, model));
     }
 
+    /**
+     * File->Open project
+     */
     public void actionMenuFileOpen() {
 
         if ((model != null) && model.isModified()) {
@@ -559,6 +611,9 @@ public class Controller implements IView {
 
     }
 
+    /**
+     * File->Save project
+     */
     public void actionMenuFileSave() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.66"), Resources.getMessage("Controller.67")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -571,6 +626,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * File->Save project as
+     */
     public void actionMenuFileSaveAs() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.68"), Resources.getMessage("Controller.69")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -588,55 +646,107 @@ public class Controller implements IView {
         actionSaveProject();
     }
 
+    /**
+     * Shows the "about" dialog
+     */
     public void actionMenuHelpAbout() {
         final DialogAbout dialog = new DialogAbout(main.getShell(), this);
         dialog.create();
         dialog.open();
     }
 
+    /**
+     * Shows the "help" dialog
+     */
     public void actionMenuHelpHelp() {
     	actionShowHelpDialog(null);
     }
 
-    public String
-            actionShowDateFormatInputDialog(final String header,
-                                            final String text,
-                                            final Collection<String> values) {
+    /**
+     * Shows the date-format dialog
+     * @param header
+     * @param text
+     * @param values
+     * @return
+     */
+    public String actionShowDateFormatInputDialog(final String header,
+                                                 final String text,
+                                                 final Collection<String> values) {
         return main.showDateFormatInputDialog(header, text, values);
     }
 
+    /**
+     * Shows an error dialog
+     * @param header
+     * @param text
+     */
     public void actionShowErrorDialog(final String header, final String text) {
         main.showErrorDialog(header, text);
     }
 
+    /**
+     * Shows an info dialog
+     * @param header
+     * @param text
+     */
     public void actionShowInfoDialog(final String header, final String text) {
         main.showInfoDialog(header, text);
     }
 
+    /**
+     * Shows a help dialog
+     * @param id
+     */
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(id);
     }
 
+    /**
+     * Shows an input dialog
+     * @param header
+     * @param text
+     * @param initial
+     * @return
+     */
     public String actionShowInputDialog(final String header,
                                         final String text,
                                         final String initial) {
         return main.showInputDialog(header, text, initial);
     }
 
+    /**
+     * Shows a "open file" dialog
+     * @param filter
+     * @return
+     */
     public String actionShowOpenFileDialog(String filter) {
         return main.showOpenFileDialog(filter);
     }
 
+    /**
+     * Shows a progress dialog
+     * @param text
+     * @param worker
+     */
     public void actionShowProgressDialog(final String text,
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
 
+    /**
+     * Shows a question dialog
+     * @param header
+     * @param text
+     * @return
+     */
     public boolean actionShowQuestionDialog(final String header,
                                             final String text) {
         return main.showQuestionDialog(header, text);
     }
 
+    /**
+     * Includes all tuples in the research subset
+     */
     public void actionSubsetAll() {
         Data data = model.getInputConfig().getInput();
         RowSet set = model.getInputConfig().getResearchSubset();
@@ -649,6 +759,9 @@ public class Controller implements IView {
                               set));
     }
 
+    /**
+     * Creates a research subset from a file
+     */
     public void actionSubsetFile() {
 
         // Check
@@ -687,6 +800,9 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Excludes all tuples from the subset
+     */
     public void actionSubsetNone() {
         Data data = model.getInputConfig().getInput();
         RowSet empty = RowSet.create(data);
@@ -697,6 +813,9 @@ public class Controller implements IView {
                               empty));
     }
 
+    /**
+     * Creates a subset by executing a query
+     */
     public void actionSubsetQuery() {
         DialogQueryResult result = main.showQueryDialog(model.getQuery(), model.getInputConfig().getInput());
         if (result == null) return;
@@ -711,6 +830,11 @@ public class Controller implements IView {
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
 
+    /**
+     * Registers a listener at the controller
+     * @param target
+     * @param listener
+     */
     public void addListener(final ModelPart target, final IView listener) {
         if (!listeners.containsKey(target)) {
             listeners.put(target, new HashSet<IView>());
@@ -727,19 +851,35 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Returns the popup
+     * @return
+     */
     public MainPopUp getPopup() {
         return main.getPopUp();
     }
 
-    // TODO: Move resources from controller to view?
+    /**
+     * Returns the resources
+     * @return
+     */
     public Resources getResources() {
+        // TODO: Move resources from controller to view?
         return resources;
     }
 
+    /**
+     * Returns the tooltip
+     * @return
+     */
     public MainToolTip getToolTip() {
         return main.getToolTip();
     }
 
+    /**
+     * Unregisters a listener
+     * @param listener
+     */
     public void removeListener(final IView listener) {
         for (final Set<IView> listeners : this.listeners.values()) {
             listeners.remove(listener);
@@ -767,6 +907,11 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Internal method for importing data
+     * @param path
+     * @param separator
+     */
     private void actionImportData(final String path, final char separator) {
 
         final WorkerImport worker = new WorkerImport(path, separator);
@@ -827,6 +972,12 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Internal method for importing hierarchies
+     * @param path
+     * @param separator
+     * @return
+     */
     private AttributeType actionImportHierarchy(final String path,
                                                 final char separator) {
         try {
@@ -837,6 +988,10 @@ public class Controller implements IView {
         return null;
     }
 
+    /**
+     * Internal method for loading a project
+     * @param path
+     */
     private void actionOpenProject(String path) {
         if (!path.endsWith(".deid")) { //$NON-NLS-1$
             path += ".deid"; //$NON-NLS-1$
@@ -971,6 +1126,9 @@ public class Controller implements IView {
         model.setUnmodified();
     }
 
+    /**
+     * Internal method for saving a project
+     */
     private void actionSaveProject() {
         if (model == null) {
             main.showInfoDialog(Resources.getMessage("Controller.86"), Resources.getMessage("Controller.87")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -986,6 +1144,11 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Internal method for showing a "save file" dialog
+     * @param filter
+     * @return
+     */
     private String actionShowSaveFileDialog(String filter) {
         return main.showSaveFileDialog(filter);
     }
@@ -1005,6 +1168,10 @@ public class Controller implements IView {
         return result;
     }
 
+    /**
+     * Updates the view config
+     * @param force Force update even if unchanged
+     */
     private void updateViewConfig(boolean force) {
         
         if (!force && !model.isViewConfigChanged()) return;

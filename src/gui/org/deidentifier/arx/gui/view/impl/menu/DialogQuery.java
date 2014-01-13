@@ -49,14 +49,6 @@ import de.linearbits.objectselector.ICallback;
 import de.linearbits.objectselector.SelectorTokenizer;
 
 public class DialogQuery extends TitleAreaDialog implements IDialog {
-
-    private static enum Operator{
-        EQUALS,
-        GEQ,
-        LEQ,
-        LESS,
-        GREATER
-    }
     
     private Runnable updater = new Runnable(){
         
