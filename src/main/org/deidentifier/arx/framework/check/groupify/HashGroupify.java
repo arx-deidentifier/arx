@@ -154,61 +154,6 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
-    /**
-     * Internal adder method.
-     * 
-     * @param key
-     *            the key
-     * @param line
-     *            the line
-     * @param value
-     *            the value
-     * @param hash
-     *            the hash
-     * @return the hash groupify entry
-     */
-    private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
-
-        // Is the line contained in the research subset
-        if (subset != null && !subset.contains(representant)) {
-            count = 0;
-        }
-
-        // Add entry
-        int index = hash & (buckets.length - 1);
-        HashGroupifyEntry entry = findEntry(key, index, hash);
-        if (entry == null) {
-            if (++elementCount > threshold) {
-                rehash();
-                index = hash & (buckets.length - 1);
-            }
-            entry = createEntry(key, index, hash, representant);
-        }
-        entry.count += count;
-
-        // indirectly check if we are in d-presence mode
-        if (subset != null) {
-            entry.pcount += pcount;
-            if (count > 0) { // this is a research subset line
-                // reset representant, necessary for rollup / history (otherwise
-                // researchSubset.get(line) would potentially be false)
-                entry.representant = representant;
-            }
-        }
-
-        // Compute current outliers, if k-anonymity is part of the criteria
-        if (entry.count >= k) {
-            if (!entry.isNotOutlier) {
-                entry.isNotOutlier = true;
-                currentOutliers -= (entry.count - count);
-            }
-        } else {
-            currentOutliers += count;
-        }
-
-        return entry;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -223,67 +168,6 @@ public class HashGroupify implements IHashGroupify {
             firstEntry = null;
             lastEntry = null;
         }
-    }
-
-    /**
-     * Creates a new entry.
-     * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param hash
-     *            the hash
-     * @param line
-     *            the line
-     * @return the hash groupify entry
-     */
-    private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
-        final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
-        entry.next = buckets[index];
-        entry.representant = line;
-        buckets[index] = entry;
-        if (firstEntry == null) {
-            firstEntry = entry;
-            lastEntry = entry;
-        } else {
-            lastEntry.nextOrdered = entry;
-            lastEntry = entry;
-        }
-        return entry;
-    }
-
-    /**
-     * TODO: Ugly!
-     * 
-     * @param a
-     * @param a2
-     * @return
-     */
-    private boolean equalsIgnoringOutliers(final int[] a, final int[] a2) {
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) { return false; }
-        }
-        return true;
-    }
-
-    /**
-     * Returns the according entry.
-     * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param keyHash
-     *            the key hash
-     * @return the hash groupify entry
-     */
-    private final HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
-        HashGroupifyEntry m = buckets[index];
-        while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
-            m = m.next;
-        }
-        return m;
     }
 
     /*
@@ -364,23 +248,6 @@ public class HashGroupify implements IHashGroupify {
     }
 
     /**
-     * Checks whether the given entry is anonymous
-     * @param entry
-     * @return
-     */
-    private boolean isAnonymous(HashGroupifyEntry entry) {
-
-        // Check minimal group size
-        if (k != Integer.MAX_VALUE && entry.count < k) { return false; }
-
-        // Check other criteria
-        for (int i = 0; i < criteria.length; i++) {
-            if (!criteria[i].isAnonymous(entry)) { return false; }
-        }
-        return true;
-    }
-
-    /**
      * Is the current transformation k-anonymous? CAUTION: Call before
      * isAnonymous()!
      * 
@@ -412,6 +279,149 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.ARX.framework.check.groupify.IHashGroupify#size()
+     */
+    @Override
+    public int size() {
+        return elementCount;
+    }
+
+    /**
+     * Internal adder method.
+     * 
+     * @param key
+     *            the key
+     * @param line
+     *            the line
+     * @param value
+     *            the value
+     * @param hash
+     *            the hash
+     * @return the hash groupify entry
+     */
+    private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
+
+        // Is the line contained in the research subset
+        if (subset != null && !subset.contains(representant)) {
+            count = 0;
+        }
+
+        // Add entry
+        int index = hash & (buckets.length - 1);
+        HashGroupifyEntry entry = findEntry(key, index, hash);
+        if (entry == null) {
+            if (++elementCount > threshold) {
+                rehash();
+                index = hash & (buckets.length - 1);
+            }
+            entry = createEntry(key, index, hash, representant);
+        }
+        entry.count += count;
+
+        // indirectly check if we are in d-presence mode
+        if (subset != null) {
+            entry.pcount += pcount;
+            if (count > 0) { // this is a research subset line
+                // reset representant, necessary for rollup / history (otherwise
+                // researchSubset.get(line) would potentially be false)
+                entry.representant = representant;
+            }
+        }
+
+        // Compute current outliers, if k-anonymity is part of the criteria
+        if (entry.count >= k) {
+            if (!entry.isNotOutlier) {
+                entry.isNotOutlier = true;
+                currentOutliers -= (entry.count - count);
+            }
+        } else {
+            currentOutliers += count;
+        }
+
+        return entry;
+    }
+
+    /**
+     * Creates a new entry.
+     * 
+     * @param key
+     *            the key
+     * @param index
+     *            the index
+     * @param hash
+     *            the hash
+     * @param line
+     *            the line
+     * @return the hash groupify entry
+     */
+    private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
+        final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
+        entry.next = buckets[index];
+        entry.representant = line;
+        buckets[index] = entry;
+        if (firstEntry == null) {
+            firstEntry = entry;
+            lastEntry = entry;
+        } else {
+            lastEntry.nextOrdered = entry;
+            lastEntry = entry;
+        }
+        return entry;
+    }
+
+    /**
+     * TODO: Ugly!
+     * 
+     * @param a
+     * @param a2
+     * @return
+     */
+    private boolean equalsIgnoringOutliers(final int[] a, final int[] a2) {
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) { return false; }
+        }
+        return true;
+    }
+
+    /**
+     * Returns the according entry.
+     * 
+     * @param key
+     *            the key
+     * @param index
+     *            the index
+     * @param keyHash
+     *            the key hash
+     * @return the hash groupify entry
+     */
+    private final HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
+        HashGroupifyEntry m = buckets[index];
+        while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
+            m = m.next;
+        }
+        return m;
+    }
+
+    /**
+     * Checks whether the given entry is anonymous
+     * @param entry
+     * @return
+     */
+    private boolean isAnonymous(HashGroupifyEntry entry) {
+
+        // Check minimal group size
+        if (k != Integer.MAX_VALUE && entry.count < k) { return false; }
+
+        // Check other criteria
+        for (int i = 0; i < criteria.length; i++) {
+            if (!criteria[i].isAnonymous(entry)) { return false; }
+        }
+        return true;
+    }
+
     /**
      * Rehashes this operator.
      */
@@ -428,15 +438,5 @@ public class HashGroupify implements IHashGroupify {
         }
         buckets = newData;
         threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.groupify.IHashGroupify#size()
-     */
-    @Override
-    public int size() {
-        return elementCount;
     }
 }
