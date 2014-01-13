@@ -51,10 +51,7 @@ public class HashGroupify implements IHashGroupify {
     /** Load factor. */
     private final float              loadFactor = 0.75f;
 
-    /**
-     * Maximum number of elements that can be put in this map before having to
-     * rehash.
-     */
+    /** Maximum number of elements that can be put in this map before having to rehash. */
     private int                      threshold;
 
     /** Allowed tuple outliers */
@@ -72,10 +69,8 @@ public class HashGroupify implements IHashGroupify {
     /**
      * Constructs a new hash groupify operator
      * 
-     * @param capacity
-     *            The capacity
-     * @param config
-     *            The config
+     * @param capacity The capacity
+     * @param config The config
      */
     public HashGroupify(int capacity, final ARXConfiguration config) {
 
