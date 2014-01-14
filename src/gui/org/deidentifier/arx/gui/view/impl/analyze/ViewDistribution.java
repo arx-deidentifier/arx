@@ -55,8 +55,6 @@ import org.swtchart.Range;
 
 public class ViewDistribution implements IView {
 
-    private static final int            MAX_DIMENSION = 500;
-
     private Chart                       chart;
     private final Composite             parent;
     private final ModelPart             target;
@@ -184,8 +182,6 @@ public class ViewDistribution implements IView {
 
         if (model == null) { return; }
 
-        final long time = System.currentTimeMillis();
-
         // Obtain the right config
         ModelConfiguration config = model.getOutputConfig();
         if (config == null) {
@@ -233,12 +229,8 @@ public class ViewDistribution implements IView {
         }
 
         // Count
-        boolean suppressed = false;
         final Map<String, Double> map = new HashMap<String, Double>();
         for (int i = 0; i < data.getNumRows(); i++) {
-            if (!suppressed) {
-                suppressed |= data.isOutlier(i);
-            }
             final String val = data.getValue(i, index);
             if (!map.containsKey(val)) {
                 map.put(val, 1d);
@@ -246,7 +238,7 @@ public class ViewDistribution implements IView {
                 map.put(val, map.get(val) + 1);
             }
         }
-
+        
         // Init distribution
         final String[] dvals;
 
@@ -259,24 +251,18 @@ public class ViewDistribution implements IView {
             final String[][] h = hierarchy.getHierarchy();
             for (int i = 0; i < h.length; i++) {
                 final String val = h[i][level];
-                if (map.containsKey(val) ||
-                    ((model.getAnonymizer() != null) && val.equals(model.getAnonymizer()
-                                                                        .getSuppressionString()))) {
+                if (map.containsKey(val)) {
                     if (!done.contains(val)) {
                         list.add(val);
                         done.add(val);
                     }
                 }
             }
-            if (suppressed) {
-                if (!done.contains(model.getAnonymizer().getSuppressionString())) {
+            if (model.getAnonymizer() != null &&
+                map.containsKey(model.getAnonymizer().getSuppressionString()) &&
+                !done.contains(model.getAnonymizer().getSuppressionString())) {
+                
                     list.add(model.getAnonymizer().getSuppressionString());
-                    if (!map.containsKey(list.add(model.getAnonymizer()
-                                                       .getSuppressionString()))) {
-                        map.put(model.getAnonymizer().getSuppressionString(),
-                                0d);
-                    }
-                }
             }
 
             dvals = list.toArray(new String[] {});
@@ -307,38 +293,13 @@ public class ViewDistribution implements IView {
         for (final double i : map.values()) {
             sum += i;
         }
-
-        int step = map.size() / MAX_DIMENSION; // Round down
-        step = Math.max(step, 1);
-        final int length = (int) Math.ceil((double) map.size() / (double) step);
-
-        controller.getResources()
-                  .getLogger()
-                  .info("length:" + length + " step: " + step + "/" + dvals.length + "/" + MAX_DIMENSION); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
-        int sindex = 0;
-        final double[] distribution = new double[length];
-        for (int i = 0; i < dvals.length; i += step) {
-            for (int j = 0; j < step; j++) {
-                if (sindex < distribution.length) {
-                    if ((i + j) < dvals.length) {
-                        distribution[sindex] += map.get(dvals[i + j]) / sum;
-                    }
-                } else {
-                    controller.getResources()
-                              .getLogger()
-                              .warn("Index out of bounds"); //$NON-NLS-1$
-                }
-            }
-            sindex++;
+        final double[] distribution = new double[map.size()];
+        for (int i = 0; i < dvals.length; i ++) {
+            distribution[i] = map.get(dvals[i]) / sum;
         }
 
         // Cache
         cache.put(attribute, distribution);
-
-        controller.getResources()
-                  .getLogger()
-                  .info("Computed distribution in: " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
     }
 
     private void clearCache() {
