@@ -18,9 +18,11 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -42,7 +44,6 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.jfree.chart.ChartPanel;
@@ -50,7 +51,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.GrayPaintScale;
+import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.MatrixSeries;
@@ -61,6 +62,8 @@ import org.jfree.ui.RectangleAnchor;
 
 public class ViewDensity implements IView {
 
+	private static final LookupPaintScale GRADIENT = getGradient();
+	
 	private final Controller      controller;
 	private final ChartComposite  composite;
 	private final ChartPanel      panel;
@@ -133,16 +136,15 @@ public class ViewDensity implements IView {
      */
     private JFreeChart getChart(DataHandle data, String attribute1, String attribute2) { 
     	
-    	// Compute dataset
+    	// Obtain data
     	 final int index1 = data.getColumnIndexOf(attribute1);
          final int index2 = data.getColumnIndexOf(attribute2);
-
          final String[] vals1 = getLabels(attribute1);
          final String[] vals2 = getLabels(attribute2);
-
          final Map<String, Integer> map1 = new HashMap<String, Integer>();
          final Map<String, Integer> map2 = new HashMap<String, Integer>();
 
+         // Build maps
          int index = 0;
          for (int i = 0; i < vals1.length; i ++) {
              map1.put(vals1[i], index++);
@@ -152,44 +154,56 @@ public class ViewDensity implements IView {
               map2.put(vals2[i], index++);
          }
          
-         MatrixSeries matrix = new MatrixSeries("", vals1.length, vals2.length);
-         
-         int max = 0;
+         // Build initial heatmap
+         double[][] heat = new double[vals1.length][vals2.length];
          for (int row = 0; row < data.getNumRows(); row++) {
              
              String v1 = data.getValue(row, index1);
              String v2 = data.getValue(row, index2);
              Integer i1 = map1.get(v1);
              Integer i2 = map2.get(v2);
-
-             matrix.update(i1, i2, matrix.get(i1, i2)+1);
-             max = ((int)matrix.get(i1, i2) > max ? (int)matrix.get(i1, i2) : max);
+             heat[i1][i2]++;
          }
-
-         for (int i=0; i<matrix.getRowCount(); i++){
-        	 for (int j=0; j<matrix.getColumnsCount(); j++){
-        		 matrix.update(i, j, matrix.get(i, j) / (double)max);
-        	 }
-         }
-
          map1.clear();
          map2.clear();
          
+         // Scale down
+         heat = getScaledDown(heat);
+
+         // Compute max
+         double max = 0;
+         for (int x=0; x<heat.length; x++){
+        	 for (int y=0; y<heat[0].length; y++){
+        		 max = heat[x][y] > max ? heat[x][y] : max;
+        	 }
+         }
+         
+         // Normalize
+         for (int x=0; x<heat.length; x++){
+        	 for (int y=0; y<heat[0].length; y++){
+        		 heat[x][y] /= max;
+        	 }
+         }
+         
+         // Create  series
+         MatrixSeries matrix = new MatrixSeries("", heat.length, heat[0].length);
+         for (int x=0; x<heat.length; x++){
+        	 for (int y=0; y<heat[0].length; y++){
+        		 matrix.update(x, y, heat[x][y]);
+        	 }
+         }
          MatrixSeriesCollection collection = new MatrixSeriesCollection(matrix);
 
     	// Create axes
-         NumberAxis xAxis = new NumberAxis(attribute2);
-         xAxis.setAutoRange(true);
-         NumberAxis yAxis = new NumberAxis(attribute1);
-         yAxis.setAutoRange(true);
+        NumberAxis xAxis = new NumberAxis(attribute2);
+        xAxis.setAutoRange(true);
+        NumberAxis yAxis = new NumberAxis(attribute1);
+        yAxis.setAutoRange(true);
 
-        // Create scale
-         GrayPaintScale paintScale = new GrayPaintScale(0, 1d); 
-        
         // Create renderer
         XYBlockRenderer renderer = new XYBlockRenderer(); 
         renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT);
-        renderer.setPaintScale(paintScale);
+        renderer.setPaintScale(GRADIENT);
         
         XYPlot plot = new XYPlot(collection, xAxis, yAxis, renderer); 
         plot.setOrientation(PlotOrientation.HORIZONTAL); 
@@ -201,6 +215,91 @@ public class ViewDensity implements IView {
         
         return chart; 
     } 
+    
+    /**
+     * Downsample the given heatmap
+     * @param heat
+     * @return
+     */
+    private double[][] getScaledDown(double[][] heat) {
+    	
+		int MAX = 100;
+		
+		// Find xFactor
+		int factorX = 1;
+		double lengthX = heat[0].length;
+		while(lengthX > MAX) {
+			factorX++;
+			lengthX = (double)heat[0].length / (double)factorX;
+		}
+
+		// Find yFactor
+		int factorY = 1;
+		double lengthY = heat.length;
+		while(lengthY > MAX) {
+			factorY++;
+			lengthY = (double)heat.length / (double)factorY;
+		}
+		
+		// Nothing to do
+		if (factorX==1 && factorY==1) return heat;
+		
+		// Scale down
+		// TODO: Might loose some data points here
+		double[][] result = new double[heat.length / factorY][heat[0].length / factorX];
+		
+		for (int x=0; x<heat[0].length; x+=factorX) {
+			for (int y=0; y<heat.length; y+=factorY) {
+				
+				int oX = x / factorX;
+				int oY = y / factorY;
+				
+				double val = 0;
+				for (int dX=x; dX<x+factorX; dX++) {
+					for (int dY=y; dY<y+factorY; dY++) {
+						if (dY<heat.length && dX<heat[0].length) val+=heat[dY][dX];
+					}
+				}
+				
+				if (oY<result.length && oX<result[0].length) result[oY][oX] = val;
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+     * Create a gradient
+     * @return
+     */
+    private static LookupPaintScale getGradient() {
+    	
+        Point2D start = new Point2D.Float(0, 0);
+        Point2D end = new Point2D.Float(1, 100);
+        Color[] colors = {Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED};
+        float[] dist = new float[colors.length];
+        for (int i=0; i<dist.length; i++){
+        	dist[i] = (1.0f / (float)dist.length) * (float)i;
+        }
+        LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors);
+
+        BufferedImage image = new BufferedImage(1,100, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = (Graphics2D)image.getGraphics();
+        g2d.setPaint(p);
+        g2d.drawRect(0,0,1,100);
+        g2d.dispose();
+        
+        Color[] result = new Color[100];
+        for (int y=0; y<100; y++){
+        	result[y] = new Color(image.getRGB(0, y));
+        }
+        
+        LookupPaintScale scale = new LookupPaintScale(0d, 1d, Color.white);
+        for (int i=0; i<100; i++){
+        	scale.add((double)i / 100d, result[i]);
+        }
+        return scale;
+    }
 
     @Override
     public void dispose() {
@@ -217,7 +316,6 @@ public class ViewDensity implements IView {
     public void update(final ModelEvent event) {
 
         if (event.part == ModelPart.OUTPUT) {
-            resetPlot();
             redraw();
         }
 
@@ -232,7 +330,6 @@ public class ViewDensity implements IView {
             
             // Handle new data
         } else if (event.part == target) {
-            resetPlot();
             redraw();
             
             // Handle selected attribute
@@ -240,7 +337,6 @@ public class ViewDensity implements IView {
                    event.part == ModelPart.VIEW_CONFIG) {
             if (model.getAttributePair()[0] != null &&
                 model.getAttributePair()[1] != null) {
-                resetPlot();
                 redraw();
             }
         } 
@@ -380,7 +476,7 @@ public class ViewDensity implements IView {
         if ((model.getAttributePair()[0] != null) &&
             (model.getAttributePair()[1] != null)) {
 
-            DataHandle data = getData();
+            final DataHandle data = getData();
             if (data == null) {
                 reset();
                 return;
@@ -392,9 +488,16 @@ public class ViewDensity implements IView {
             if (index1 < 0 || index2 < 0) return;
 
             if (panel == null) {
-        		composite.setRedraw(false);
-        		composite.setChart(getChart(data, model.getAttributePair()[0], model.getAttributePair()[1]));
-                composite.setRedraw(true);
+            	final JFreeChart chart = getChart(data, model.getAttributePair()[0], model.getAttributePair()[1]);
+				controller.getResources().getDisplay()
+						.asyncExec(new Runnable() {
+							public void run() {
+								composite.setRedraw(false);
+								composite.setChart(chart);
+								composite.setRedraw(true);
+							}
+						});
+
         	} else {
         		panel.setChart(getChart(data, model.getAttributePair()[0], model.getAttributePair()[1]));
         	}
