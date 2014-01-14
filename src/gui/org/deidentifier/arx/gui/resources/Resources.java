@@ -77,7 +77,7 @@ public class Resources {
         SimpleLayout layout = new SimpleLayout();
         ConsoleAppender consoleAppender = new ConsoleAppender(layout);
         LOGGER.addAppender(consoleAppender);
-        LOGGER.setLevel(Level.OFF);
+        LOGGER.setLevel(Level.INFO);
     }
 
     private String getFormat(String key) {
