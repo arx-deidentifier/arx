@@ -27,10 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.csstudio.swt.widgets.datadefinition.ColorMap;
-import org.csstudio.swt.widgets.datadefinition.ColorMap.PredefinedColorMap;
-import org.csstudio.swt.widgets.figures.IntensityGraphFigure;
-import org.csstudio.swt.xygraph.linearscale.Range;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
@@ -43,24 +39,28 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
+import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
+import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 public class ViewDensity implements IView {
 
-    private static final int           MAX_DIMENSION = 500;
+    private Canvas               canvas;
+    private final Controller     controller;
+    private IntensityGraphFigure intensityGraph;
 
-    private Canvas                     canvas        = null;
-    private Model                      model;
+    private LightweightSystem    lws;
+    private Model                model;
 
-    private final LightweightSystem    lws;
-    private final IntensityGraphFigure intensityGraph;
-    private final ModelPart            target;
-    private final ModelPart            reset;
-    private final Controller           controller;
+    private final ModelPart      reset;
+    private final ModelPart      target;
 
     public ViewDensity(final Composite parent,
                        final Controller controller,
@@ -81,32 +81,24 @@ public class ViewDensity implements IView {
 
         // Build
         canvas = new Canvas(parent, SWT.NONE);
-        lws = new LightweightSystem(canvas);
-        intensityGraph = new IntensityGraphFigure();
-        lws.setContents(intensityGraph);
-        intensityGraph.getXAxis().setTitleFont(MainWindow.FONT);
-        intensityGraph.getYAxis().setTitleFont(MainWindow.FONT);
-        intensityGraph.getXAxis().setFont(MainWindow.FONT);
-        intensityGraph.getYAxis().setFont(MainWindow.FONT);
-        intensityGraph.setFont(MainWindow.FONT);
-
         canvas.setBackground(parent.getBackground());
-        
+        lws = new LightweightSystem(canvas);
+
         // TODO: OSX workaround
         if (System.getProperty("os.name").toLowerCase().contains("mac")){
-        	int r = canvas.getBackground().getRed()-13;
-        	int g = canvas.getBackground().getGreen()-13;
-        	int b = canvas.getBackground().getBlue()-13;
-        	r = r>0 ? r : 0;
-        	r = g>0 ? g : 0;
-        	r = b>0 ? b : 0;
-        	final org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
-        	canvas.setBackground(c2);
-        	canvas.addDisposeListener(new DisposeListener(){
+            int r = canvas.getBackground().getRed()-13;
+            int g = canvas.getBackground().getGreen()-13;
+            int b = canvas.getBackground().getBlue()-13;
+            r = r>0 ? r : 0;
+            r = g>0 ? g : 0;
+            r = b>0 ? b : 0;
+            final org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
+            canvas.setBackground(c2);
+            canvas.addDisposeListener(new DisposeListener(){
                 public void widgetDisposed(DisposeEvent arg0) {
                     c2.dispose();
                 } 
-        	});
+            });
         }
         
         // Reset
@@ -115,47 +107,53 @@ public class ViewDensity implements IView {
 
     @Override
     public void dispose() {
+        intensityGraph.dispose();
         controller.removeListener(this);
     }
 
     @Override
     public void reset() {
-
-        intensityGraph.setDataArray(new short[0]);
+        resetPlot();
         if (model != null) model.resetAttributePair();
-        canvas.setEnabled(false);
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
 
         if (event.part == ModelPart.OUTPUT) {
-            canvas.setEnabled(true);
+            resetPlot();
             redraw();
         }
 
         // Handle reset target, i.e., e.g. input has changed
         if (event.part == reset) {
             reset();
+            
             // Handle new project
         } else if (event.part == ModelPart.MODEL) {
-            reset();
             model = (Model) event.data;
+            reset();
+            
             // Handle new data
         } else if (event.part == target) {
-            canvas.setEnabled(true);
+            resetPlot();
             redraw();
+            
             // Handle selected attribute
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE ||
                    event.part == ModelPart.VIEW_CONFIG) {
             if (model.getAttributePair()[0] != null &&
                 model.getAttributePair()[1] != null) {
-                canvas.setEnabled(true);
+                resetPlot();
                 redraw();
             }
         } 
     }
 
+    /**
+     * Returns the respective data handle
+     * @return
+     */
     private DataHandle getData() {
         
         // Obtain the right config
@@ -176,7 +174,7 @@ public class ViewDensity implements IView {
         if (data != null && model.getViewConfig().isSubset()){
             data = data.getView();
         }
-
+        
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
             return null;
@@ -220,13 +218,9 @@ public class ViewDensity implements IView {
         }
 
         // Count
-        boolean suppressed = false;
         final int index = data.getColumnIndexOf(attribute);
         final Set<String> elems = new HashSet<String>();
         for (int i = 0; i < data.getNumRows(); i++) {
-            if (!suppressed) {
-                suppressed |= data.isOutlier(i);
-            }
             elems.add(data.getValue(i, index));
         }
 
@@ -247,11 +241,12 @@ public class ViewDensity implements IView {
                     done.add(val);
                 }
             }
-            if (suppressed) {
-                if (!done.contains(model.getAnonymizer().getSuppressionString())) {
-                    list.add(model.getAnonymizer().getSuppressionString());
+            if (model.getAnonymizer() != null &&
+                    elems.contains(model.getAnonymizer().getSuppressionString()) &&
+                    !done.contains(model.getAnonymizer().getSuppressionString())) {
+                    
+                        list.add(model.getAnonymizer().getSuppressionString());
                 }
-            }
 
             dvals = list.toArray(new String[] {});
 
@@ -279,6 +274,9 @@ public class ViewDensity implements IView {
         return dvals;
     }
 
+    /**
+     * Redraws the plot
+     */
     private void redraw() {
 
         if (model == null) { return; }
@@ -295,7 +293,7 @@ public class ViewDensity implements IView {
             }
 
             // Draw
-            canvas.setRedraw(true);
+            canvas.setRedraw(false);
 
             final int index1 = data.getColumnIndexOf(model.getAttributePair()[0]);
             final int index2 = data.getColumnIndexOf(model.getAttributePair()[1]);
@@ -308,82 +306,72 @@ public class ViewDensity implements IView {
             final Map<String, Integer> map1 = new HashMap<String, Integer>();
             final Map<String, Integer> map2 = new HashMap<String, Integer>();
 
-            int step1 = vals1.length / MAX_DIMENSION; // Round down
-            int step2 = vals2.length / MAX_DIMENSION; // Round down
-            step1 = Math.max(step1, 1);
-            step2 = Math.max(step2, 1);
-
             int index = 0;
-            for (int i = 0; i < vals1.length; i += step1) {
-                for (int j = 0; j < step1; j++) {
-                    if ((i + j) < vals1.length) {
-                        map1.put(vals1[i + j], index);
-                    }
-                }
-                index++;
+            for (int i = 0; i < vals1.length; i ++) {
+                map1.put(vals1[i], index++);
             }
-            final int size1 = index;
-
             index = 0;
-            for (int i = 0; i < vals2.length; i += step2) {
-                for (int j = 0; j < step2; j++) {
-                    if ((i + j) < vals2.length) {
-                        map2.put(vals2[i + j], index);
-                    }
-                }
-                index++;
+            for (int i = 0; i < vals2.length; i ++) {
+                 map2.put(vals2[i], index++);
             }
-            final int size2 = index;
-
-            final short[] heat = new short[size1 * size2];
+          
+            final short[] heat = new short[vals1.length * vals2.length];
 
             int max = 0;
-            int ignored = 0;
             for (int row = 0; row < data.getNumRows(); row++) {
-                final String v1 = data.getValue(row, index1);
-                final String v2 = data.getValue(row, index2);
-                final Integer i1 = map1.get(v1);
-                final Integer i2 = map2.get(v2);
-                if ((i1 == null) || (i2 == null)) {
-                    ignored++;
-                } else {
-                    index = (i2 * size1) + i1;
-                    heat[index]++;
-                    max = (heat[index] > max ? heat[index] : max);
-                }
+                
+                String v1 = data.getValue(row, index1);
+                String v2 = data.getValue(row, index2);
+                Integer i1 = map1.get(v1);
+                Integer i2 = map2.get(v2);
+
+                index = (i2 * vals1.length) + i1;
+                heat[index]++;
+                max = (heat[index] > max ? heat[index] : max);
             }
 
             map1.clear();
             map2.clear();
-            if (ignored != 0) {
-                controller.getResources()
-                          .getLogger()
-                          .warn("Ignored " + ignored + " tuples"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
 
             controller.getResources()
                       .getLogger()
                       .info("Density computed in " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
 
-            final int fMax = max;
-
-            // Dont run this asynchronously, because it seems to cause problems
-            // on MS Windows
-            intensityGraph.setMax(fMax);
+            // Don't run this asynchronously, because it seems to cause problems on MS Windows
+            intensityGraph.setMax(max);
             intensityGraph.setMin(0);
-            intensityGraph.setDataHeight(size2);
-            intensityGraph.setDataWidth(size1);
+            intensityGraph.setDataHeight(vals2.length);
+            intensityGraph.setDataWidth(vals1.length);
             intensityGraph.setColorMap(new ColorMap(PredefinedColorMap.JET,
                                                     true,
                                                     true));
             intensityGraph.getXAxis().setTitle(model.getAttributePair()[0]);
             intensityGraph.getYAxis().setTitle(model.getAttributePair()[1]);
-            intensityGraph.getXAxis().setRange(new Range(0, size1 - 1));
-            intensityGraph.getYAxis().setRange(new Range(0, size2 - 1));
+            intensityGraph.getXAxis().setRange(new Range(0, vals1.length - 1));
+            intensityGraph.getYAxis().setRange(new Range(0, vals2.length - 1));
 
             intensityGraph.setDataArray(heat);
             canvas.setRedraw(true);
             canvas.redraw();
         }
+    }
+
+    /**
+     * Recreates the plot, to prevent crashes
+     */
+    private void resetPlot() {
+        canvas.setRedraw(false);
+        
+        if (intensityGraph!=null) intensityGraph.dispose();
+        intensityGraph = new IntensityGraphFigure();
+        intensityGraph.getXAxis().setTitleFont(MainWindow.FONT);
+        intensityGraph.getYAxis().setTitleFont(MainWindow.FONT);
+        intensityGraph.getXAxis().setFont(MainWindow.FONT);
+        intensityGraph.getYAxis().setFont(MainWindow.FONT);
+        intensityGraph.setFont(MainWindow.FONT);
+
+        lws.setContents(intensityGraph);
+        intensityGraph.setDataArray(new short[0]);
+        canvas.setRedraw(true);
     }
 }
