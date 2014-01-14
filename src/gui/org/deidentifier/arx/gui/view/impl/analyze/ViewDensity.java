@@ -18,6 +18,9 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,29 +39,32 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.eclipse.draw2d.LightweightSystem;
-import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap;
-import org.eclipse.nebula.visualization.widgets.datadefinition.ColorMap.PredefinedColorMap;
-import org.eclipse.nebula.visualization.widgets.figures.IntensityGraphFigure;
-import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.LookupPaintScale;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.RegularTimePeriod;
+import org.jfree.data.xy.DefaultXYZDataset;
+import org.jfree.data.xy.XYZDataset;
+import org.jfree.ui.RectangleAnchor;
 
 public class ViewDensity implements IView {
 
-    private Canvas               canvas;
     private final Controller     controller;
-    private IntensityGraphFigure intensityGraph;
 
-    private LightweightSystem    lws;
     private Model                model;
-
     private final ModelPart      reset;
     private final ModelPart      target;
 
@@ -79,35 +85,85 @@ public class ViewDensity implements IView {
         this.reset = reset;
         this.target = target;
 
-        // Build
-        canvas = new Canvas(parent, SWT.NONE);
-        canvas.setBackground(parent.getBackground());
-        lws = new LightweightSystem(canvas);
+        parent.setLayout(new GridLayout());
 
-        // TODO: OSX workaround
-        if (System.getProperty("os.name").toLowerCase().contains("mac")){
-            int r = canvas.getBackground().getRed()-13;
-            int g = canvas.getBackground().getGreen()-13;
-            int b = canvas.getBackground().getBlue()-13;
-            r = r>0 ? r : 0;
-            r = g>0 ? g : 0;
-            r = b>0 ? b : 0;
-            final org.eclipse.swt.graphics.Color c2 = new org.eclipse.swt.graphics.Color(controller.getResources().getDisplay(), r, g, b);
-            canvas.setBackground(c2);
-            canvas.addDisposeListener(new DisposeListener(){
-                public void widgetDisposed(DisposeEvent arg0) {
-                    c2.dispose();
-                } 
-            });
-        }
+     Composite chartComposite = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND | SWT.EMBEDDED);
+     chartComposite.setLayoutData(SWTUtil.createFillGridData());
+
+     org.eclipse.swt.graphics.Color backgroundColor = parent.getBackground();
+
+     Frame chartPanel = SWT_AWT.new_Frame(chartComposite);
+
+     chartPanel.setBackground(new java.awt.Color(backgroundColor.getRed(),
+                                                 backgroundColor.getGreen(),
+                                                 backgroundColor.getBlue()));
+
+     chartPanel.setLayout(new BorderLayout());
+     ChartPanel cp = new ChartPanel(createChart(createDataset()));
+     cp.setDoubleBuffered(true);
+     chartPanel.add(cp, BorderLayout.CENTER); 
+
         
         // Reset
         reset();
     }
+    
+    private static JFreeChart createChart(XYZDataset dataset) { 
+        DateAxis xAxis = new DateAxis("Date"); 
+        xAxis.setLowerMargin(0.0); 
+        xAxis.setUpperMargin(0.0); 
+        NumberAxis yAxis = new NumberAxis("Hour"); 
+        yAxis.setUpperMargin(0.0); 
+        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits()); 
+        XYBlockRenderer renderer = new XYBlockRenderer(); 
+        renderer.setBlockWidth(1000.0 * 60.0 * 60.0 * 24.0); 
+        renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT); 
+        LookupPaintScale paintScale = new LookupPaintScale(); 
+        paintScale.add(new Double(1.0), Color.red); 
+        paintScale.add(new Double(2.0), Color.green); 
+        paintScale.add(new Double(3.0), Color.blue);         
+        paintScale.add(new Double(4.0), Color.yellow); 
+        renderer.setPaintScale(paintScale); 
+        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer); 
+        plot.setOrientation(PlotOrientation.HORIZONTAL); 
+        plot.setBackgroundPaint(Color.lightGray); 
+        plot.setRangeGridlinePaint(Color.white); 
+        JFreeChart chart = new JFreeChart("", plot); 
+        chart.removeLegend(); 
+        chart.setBackgroundPaint(Color.white); 
+        return chart; 
+    } 
+     
+    /** 
+     * Creates a sample dataset. 
+     *  
+     * @return A sample dataset. 
+     */ 
+    private static XYZDataset createDataset() { 
+        double[] xvalues = new double[2400];     
+        double[] yvalues = new double[2400];     
+        double[] zvalues = new double[2400]; 
+        RegularTimePeriod t = new Day(); 
+        for (int days = 0; days < 100; days++) { 
+            double value = 1.0; 
+            for (int hour = 0; hour < 24; hour++) { 
+                if (Math.random() < 0.1) { 
+                    value = Math.random() * 4.0; 
+                } 
+                xvalues[days * 24 + hour] = t.getFirstMillisecond(); 
+                yvalues[days * 24 + hour] = hour; 
+                zvalues[days * 24 + hour] = value; 
+            } 
+            t = t.next(); 
+        } 
+        DefaultXYZDataset dataset = new DefaultXYZDataset(); 
+        dataset.addSeries("Series 1",  
+                new double[][] { xvalues, yvalues, zvalues }); 
+        return dataset; 
+    } 
 
     @Override
     public void dispose() {
-        intensityGraph.dispose();
         controller.removeListener(this);
     }
 
@@ -293,7 +349,6 @@ public class ViewDensity implements IView {
             }
 
             // Draw
-            canvas.setRedraw(false);
 
             final int index1 = data.getColumnIndexOf(model.getAttributePair()[0]);
             final int index2 = data.getColumnIndexOf(model.getAttributePair()[1]);
@@ -338,21 +393,21 @@ public class ViewDensity implements IView {
                       .info("Density computed in " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
 
             // Don't run this asynchronously, because it seems to cause problems on MS Windows
-            intensityGraph.setMax(max);
-            intensityGraph.setMin(0);
-            intensityGraph.setDataHeight(vals2.length);
-            intensityGraph.setDataWidth(vals1.length);
-            intensityGraph.setColorMap(new ColorMap(PredefinedColorMap.JET,
-                                                    true,
-                                                    true));
-            intensityGraph.getXAxis().setTitle(model.getAttributePair()[0]);
-            intensityGraph.getYAxis().setTitle(model.getAttributePair()[1]);
-            intensityGraph.getXAxis().setRange(new Range(0, vals1.length - 1));
-            intensityGraph.getYAxis().setRange(new Range(0, vals2.length - 1));
-
-            intensityGraph.setDataArray(heat);
-            canvas.setRedraw(true);
-            canvas.redraw();
+//            intensityGraph.setMax(max);
+//            intensityGraph.setMin(0);
+//            intensityGraph.setDataHeight(vals2.length);
+//            intensityGraph.setDataWidth(vals1.length);
+//            intensityGraph.setColorMap(new ColorMap(PredefinedColorMap.JET,
+//                                                    true,
+//                                                    true));
+//            intensityGraph.getXAxis().setTitle(model.getAttributePair()[0]);
+//            intensityGraph.getYAxis().setTitle(model.getAttributePair()[1]);
+//            intensityGraph.getXAxis().setRange(new Range(0, vals1.length - 1));
+//            intensityGraph.getYAxis().setRange(new Range(0, vals2.length - 1));
+//
+//            intensityGraph.setDataArray(heat);
+//            canvas.setRedraw(true);
+//            canvas.redraw();
         }
     }
 
@@ -360,18 +415,18 @@ public class ViewDensity implements IView {
      * Recreates the plot, to prevent crashes
      */
     private void resetPlot() {
-        canvas.setRedraw(false);
+//        canvas.setRedraw(false);
         
-        if (intensityGraph!=null) intensityGraph.dispose();
-        intensityGraph = new IntensityGraphFigure();
-        intensityGraph.getXAxis().setTitleFont(MainWindow.FONT);
-        intensityGraph.getYAxis().setTitleFont(MainWindow.FONT);
-        intensityGraph.getXAxis().setFont(MainWindow.FONT);
-        intensityGraph.getYAxis().setFont(MainWindow.FONT);
-        intensityGraph.setFont(MainWindow.FONT);
-
-        lws.setContents(intensityGraph);
-        intensityGraph.setDataArray(new short[0]);
-        canvas.setRedraw(true);
+//        if (intensityGraph!=null) intensityGraph.dispose();
+//        intensityGraph = new IntensityGraphFigure();
+//        intensityGraph.getXAxis().setTitleFont(MainWindow.FONT);
+//        intensityGraph.getYAxis().setTitleFont(MainWindow.FONT);
+//        intensityGraph.getXAxis().setFont(MainWindow.FONT);
+//        intensityGraph.getYAxis().setFont(MainWindow.FONT);
+//        intensityGraph.setFont(MainWindow.FONT);
+//
+//        lws.setContents(intensityGraph);
+//        intensityGraph.setDataArray(new short[0]);
+//        canvas.setRedraw(true);
     }
 }
