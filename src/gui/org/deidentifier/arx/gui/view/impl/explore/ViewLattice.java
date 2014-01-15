@@ -92,27 +92,13 @@ public class ViewLattice extends Panel implements IView {
         NONE
     }
 
-    public static final org.eclipse.swt.graphics.Color GREEN      = GUIHelper.getColor(50,
-                                                                                       205,
-                                                                                       50);
-    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN= GUIHelper.getColor(50,
-																			           128,
-																			           50);
-    public static final org.eclipse.swt.graphics.Color ORANGE     = GUIHelper.getColor(255,
-                                                                                       145,
-                                                                                       0);
-    public static final org.eclipse.swt.graphics.Color RED        = GUIHelper.getColor(255,
-                                                                                       99,
-                                                                                       71);
-    public static final org.eclipse.swt.graphics.Color LIGHT_RED  = GUIHelper.getColor(128,
-																			           99,
-																			           71);
-    public static final org.eclipse.swt.graphics.Color BLUE       = GUIHelper.getColor(0,
-                                                                                       0,
-                                                                                       255);
-    public static final org.eclipse.swt.graphics.Color YELLOW     = GUIHelper.getColor(255,
-                                                                                       215,
-                                                                                       0);
+    public static final org.eclipse.swt.graphics.Color GREEN      = GUIHelper.getColor(50,  205, 50);
+    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN= GUIHelper.getColor(50,  128, 50);
+    public static final org.eclipse.swt.graphics.Color ORANGE     = GUIHelper.getColor(255, 145, 0);
+    public static final org.eclipse.swt.graphics.Color RED        = GUIHelper.getColor(255, 99,  71);
+    public static final org.eclipse.swt.graphics.Color LIGHT_RED  = GUIHelper.getColor(128, 99,  71);
+    public static final org.eclipse.swt.graphics.Color BLUE       = GUIHelper.getColor(0,   0,   255);
+    public static final org.eclipse.swt.graphics.Color YELLOW     = GUIHelper.getColor(255, 215, 0);
 
     public static final Color                          AWT_GREEN  		= asAWTColor(GREEN);
     public static final Color                          AWT_LIGHT_GREEN  = asAWTColor(LIGHT_GREEN);
