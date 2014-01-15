@@ -72,6 +72,7 @@ public class ViewDistribution implements IView {
         // Register
         controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         this.controller = controller;
@@ -170,6 +171,12 @@ public class ViewDistribution implements IView {
             if (chart != null) chart.setEnabled(true);
             redraw();
             
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+
+            attribute = (String) event.data;
+            if (chart != null) chart.setEnabled(true);
+            redraw();
+             
         } else if (event.part == ModelPart.VIEW_CONFIG) {
             
             if (chart != null) chart.setEnabled(true);
@@ -243,7 +250,7 @@ public class ViewDistribution implements IView {
         final String[] dvals;
 
         // Sort by hierarchy if possible
-        if (hierarchy != null) {
+        if (hierarchy != null && hierarchy.getHierarchy()!=null && hierarchy.getHierarchy().length != 0) {
 
             final int level = data.getGeneralization(attribute);
             final List<String> list = new ArrayList<String>();

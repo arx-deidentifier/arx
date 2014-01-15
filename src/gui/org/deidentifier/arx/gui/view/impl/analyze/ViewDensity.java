@@ -96,6 +96,19 @@ public class ViewDensity extends Panel implements IView {
     }
 
     /**
+     * Create a gradient
+     * @return
+     */
+    private static final Color[] getGradient(BufferedImage legend) {
+        
+        Color[] result = new Color[100];
+        for (int y=0; y<100; y++){
+            result[y] = new Color(legend.getRGB(0, y));
+        }
+        return result;
+    }
+    
+    /**
      * Returns the legend
      * @return
      */
@@ -115,19 +128,6 @@ public class ViewDensity extends Panel implements IView {
         g2d.drawRect(0,0,1,100);
         g2d.dispose();
         return legend;
-    }
-    
-    /**
-     * Create a gradient
-     * @return
-     */
-    private static final Color[] getGradient(BufferedImage legend) {
-        
-        Color[] result = new Color[100];
-        for (int y=0; y<100; y++){
-            result[y] = new Color(legend.getRGB(0, y));
-        }
-        return result;
     }
 
     /** The bridge */
@@ -175,6 +175,7 @@ public class ViewDensity extends Panel implements IView {
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -216,6 +217,255 @@ public class ViewDensity extends Panel implements IView {
     }
     
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+    
+    @Override
+    public void paint(final Graphics g) {
+        if (buffer != null) {
+            g.drawImage(buffer, 0, 0, this);
+        } else {
+            g.setColor(background);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+
+
+    @Override
+    public void reset() {
+        attribute1 = null;
+        attribute2 = null;
+        handle = null;
+        updateData();
+        updatePlot();
+        repaint();
+    }
+    
+    @Override
+    public void update(final Graphics g) {
+        paint(g);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.part == ModelPart.OUTPUT) {
+            redraw();
+        }
+
+        if (event.part == reset) {
+            reset();
+            
+        } else if (event.part == target) {
+            redraw();
+            
+        } else if (event.part == ModelPart.MODEL) {
+            this.model = (Model)event.data;
+            this.model.resetAttributePair();
+            reset();
+
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            redraw();
+            
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            redraw();
+            
+        } else if (event.part == ModelPart.VIEW_CONFIG) {
+            redraw();
+        }
+    }
+
+    /**
+     * Utility method which centers a text in a rectangle
+     * 
+     * @param s1
+     * @param g
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
+    private void centerText(final String s1,
+                            final Graphics g,
+                            final int x,
+                            final int y,
+                            final int w,
+                            final int h) {
+        final Font f = g.getFont();
+        final FontMetrics fm = g.getFontMetrics(f);
+        final int ascent = fm.getAscent();
+        final int height = fm.getHeight();
+        int width1 = 0, x0 = 0, y0 = 0;
+        width1 = fm.stringWidth(s1);
+        x0 = x + ((w - width1) / 2);
+        y0 = y + ((h - height) / 2) + ascent;
+        g.drawString(s1, x0, y0);
+    }
+
+    /**
+     * Returns the respective data handle
+     * @return
+     */
+    private DataHandle getData() {
+        
+        // Obtain the right config
+        ModelConfiguration config = model.getOutputConfig();
+        if (config == null) {
+            config = model.getInputConfig();
+        }
+
+        // Obtain the right handle
+        DataHandle data;
+        if (target == ModelPart.INPUT) {
+            data = config.getInput().getHandle();
+        } else {
+            data = model.getOutput();
+        }
+        
+        // Project onto subset, if possible
+        if (data != null && model.getViewConfig().isSubset()){
+            data = data.getView();
+        }
+        
+        // Clear if nothing to draw
+        if ((config == null) || (data == null)) {
+            return null;
+        } else {
+            return data;
+        }
+    }
+
+    /**
+     * Returns the labels sorted per hierarchy or per data type
+     * 
+     * @param attribute
+     * @return
+     */
+    private String[] getLabels(final String attribute) {
+
+        // Obtain the right config
+        ModelConfiguration config = model.getOutputConfig();
+        if (config == null) {
+            config = model.getInputConfig();
+        }
+
+        // Obtain the right handle
+        final DataHandle data;
+        if (target == ModelPart.INPUT) {
+            data = config.getInput().getHandle();
+        } else {
+            data = model.getOutput();
+        }
+
+        // Check if there is a hierarchy
+        final AttributeType type = config.getInput()
+                                         .getDefinition()
+                                         .getAttributeType(attribute);
+
+        Hierarchy hierarchy = null;
+        if (type instanceof Hierarchy) {
+            hierarchy = (Hierarchy) type;
+        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
+            hierarchy = config.getHierarchy(attribute);
+        }
+
+        // Count
+        final int index = data.getColumnIndexOf(attribute);
+        final Set<String> elems = new HashSet<String>();
+        for (int i = 0; i < data.getNumRows(); i++) {
+            elems.add(data.getValue(i, index));
+        }
+
+        // Init distribution
+        final String[] dvals;
+
+        // Sort by hierarchy if possible
+        if (hierarchy != null && hierarchy.getHierarchy()!=null && hierarchy.getHierarchy().length != 0) {
+
+            final int level = data.getGeneralization(attribute);
+            final List<String> list = new ArrayList<String>();
+            final Set<String> done = new HashSet<String>();
+            final String[][] h = hierarchy.getHierarchy();
+            for (int i = 0; i < h.length; i++) {
+                final String val = h[i][level];
+                if (elems.contains(val) && !done.contains(val)) {
+                    list.add(val);
+                    done.add(val);
+                }
+            }
+            if (model.getAnonymizer() != null &&
+                    elems.contains(model.getAnonymizer().getSuppressionString()) &&
+                    !done.contains(model.getAnonymizer().getSuppressionString())) {
+                    
+                        list.add(model.getAnonymizer().getSuppressionString());
+                }
+
+            dvals = list.toArray(new String[] {});
+
+            // Else sort per data type
+        } else {
+            final DataType<?> dtype = data.getDataType(attribute);
+            final String[] v = new String[elems.size()];
+            int i = 0;
+            for (final String s : elems) {
+                v[i++] = s;
+            }
+            Arrays.sort(v, new Comparator<String>() {
+                @Override
+                public int compare(final String arg0, final String arg1) {
+                    try {
+                        return dtype.compare(arg0, arg1);
+                    } catch (final Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            dvals = v;
+        }
+
+        return dvals;
+    }
+    
+    /**
+     * Redraws the plot
+     */
+    private void redraw() {
+
+        if (model != null &&
+            model.getAttributePair() != null &
+            model.getAttributePair()[0] != null &&
+            model.getAttributePair()[1] != null) {
+            
+            final DataHandle data = getData();
+            if (data == null) {
+                reset();
+                return;
+            }
+            
+       	    final int index1 = data.getColumnIndexOf(model.getAttributePair()[0]);
+            final int index2 = data.getColumnIndexOf(model.getAttributePair()[1]);
+
+            if (index1 < 0 || index2 < 0){
+                reset();
+                return;
+            }
+            
+            attribute1 = model.getAttributePair()[0];
+            attribute2 = model.getAttributePair()[1];
+            handle = data;
+
+            updateData();
+            updatePlot();
+            repaint();
+            
+        } else {
+            reset();
+            return; 
+        }
+    }
+
     /**
      * Resets the buffer
      */
@@ -225,6 +475,87 @@ public class ViewDensity extends Panel implements IView {
                                        Math.max(1, getHeight()),
                                        BufferedImage.TYPE_INT_RGB);
         }
+    }
+
+    /**
+     * Recalculates the data array
+     */
+    private void updateData() {
+        
+        if (attribute1 == null || attribute2 == null || handle == null){
+            heatmap = null;
+            return;
+        }
+        
+        final int index1 = handle.getColumnIndexOf(attribute1);
+        final int index2 = handle.getColumnIndexOf(attribute2);
+
+        if (index1 < 0 || index2 < 0){
+            heatmap = null;
+            return;
+        }
+
+        final String[] vals1 = getLabels(attribute1);
+        final String[] vals2 = getLabels(attribute2);
+
+        final Map<String, Integer> map1 = new HashMap<String, Integer>();
+        final Map<String, Integer> map2 = new HashMap<String, Integer>();
+
+        int step1 = vals1.length / MAX_DIMENSION; // Round down
+        int step2 = vals2.length / MAX_DIMENSION; // Round down
+        step1 = Math.max(step1, 1);
+        step2 = Math.max(step2, 1);
+
+        int index = 0;
+        for (int i = 0; i < vals1.length; i += step1) {
+            for (int j = 0; j < step1; j++) {
+                if ((i + j) < vals1.length) {
+                    map1.put(vals1[i + j], index);
+                }
+            }
+            index++;
+        }
+        final int size1 = index;
+
+        index = 0;
+        for (int i = 0; i < vals2.length; i += step2) {
+            for (int j = 0; j < step2; j++) {
+                if ((i + j) < vals2.length) {
+                    map2.put(vals2[i + j], index);
+                }
+            }
+            index++;
+        }
+        final int size2 = index;
+
+        double[][] data = new double[size1][size2];
+
+        double max = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            final String v1 = handle.getValue(row, index1);
+            final String v2 = handle.getValue(row, index2);
+            final Integer i1 = map1.get(v1);
+            final Integer i2 = map2.get(v2);
+            if ((i1 == null) || (i2 == null)) {
+                // TODO: Dont ignore
+            } else {
+                data[i1][i2]++;
+                max = (data[i1][i2] > max ? data[i1][i2] : max);
+            }
+        }
+        
+
+        BufferedImage heatmap = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D)heatmap.getGraphics();
+        
+        for (int y=0; y<data.length; y++){
+            for (int x=0; x<data[y].length; x++){
+                g.setColor(GRADIENT[(int)(data[y][x] / max * (GRADIENT.length-1))]);
+                g.fillRect(x, y, 1, 1);
+            }
+        }
+        g.dispose();
+        this.heatmap = heatmap;
     }
     
     /**
@@ -328,327 +659,5 @@ public class ViewDensity extends Panel implements IView {
         
         // Dispose
         g2d.dispose();
-    }
-
-
-    /**
-     * Utility method which centers a text in a rectangle
-     * 
-     * @param s1
-     * @param g
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     */
-    private void centerText(final String s1,
-                            final Graphics g,
-                            final int x,
-                            final int y,
-                            final int w,
-                            final int h) {
-        final Font f = g.getFont();
-        final FontMetrics fm = g.getFontMetrics(f);
-        final int ascent = fm.getAscent();
-        final int height = fm.getHeight();
-        int width1 = 0, x0 = 0, y0 = 0;
-        width1 = fm.stringWidth(s1);
-        x0 = x + ((w - width1) / 2);
-        y0 = y + ((h - height) / 2) + ascent;
-        g.drawString(s1, x0, y0);
-    }
-    
-    /**
-     * Recalculates the data array
-     */
-    private void updateData() {
-        
-        if (attribute1 == null || attribute2 == null || handle == null){
-            heatmap = null;
-            return;
-        }
-        
-        final int index1 = handle.getColumnIndexOf(attribute1);
-        final int index2 = handle.getColumnIndexOf(attribute2);
-
-        if (index1 < 0 || index2 < 0){
-            heatmap = null;
-            return;
-        }
-
-        final String[] vals1 = getLabels(attribute1);
-        final String[] vals2 = getLabels(attribute2);
-
-        final Map<String, Integer> map1 = new HashMap<String, Integer>();
-        final Map<String, Integer> map2 = new HashMap<String, Integer>();
-
-        int step1 = vals1.length / MAX_DIMENSION; // Round down
-        int step2 = vals2.length / MAX_DIMENSION; // Round down
-        step1 = Math.max(step1, 1);
-        step2 = Math.max(step2, 1);
-
-        int index = 0;
-        for (int i = 0; i < vals1.length; i += step1) {
-            for (int j = 0; j < step1; j++) {
-                if ((i + j) < vals1.length) {
-                    map1.put(vals1[i + j], index);
-                }
-            }
-            index++;
-        }
-        final int size1 = index;
-
-        index = 0;
-        for (int i = 0; i < vals2.length; i += step2) {
-            for (int j = 0; j < step2; j++) {
-                if ((i + j) < vals2.length) {
-                    map2.put(vals2[i + j], index);
-                }
-            }
-            index++;
-        }
-        final int size2 = index;
-
-        double[][] data = new double[size1][size2];
-
-        double max = 0;
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            final String v1 = handle.getValue(row, index1);
-            final String v2 = handle.getValue(row, index2);
-            final Integer i1 = map1.get(v1);
-            final Integer i2 = map2.get(v2);
-            if ((i1 == null) || (i2 == null)) {
-                // TODO: Dont ignore
-            } else {
-                data[i1][i2]++;
-                max = (data[i1][i2] > max ? data[i1][i2] : max);
-            }
-        }
-        
-
-        BufferedImage heatmap = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D)heatmap.getGraphics();
-        
-        for (int y=0; y<data.length; y++){
-            for (int x=0; x<data[y].length; x++){
-                g.setColor(GRADIENT[(int)(data[y][x] / max * (GRADIENT.length-1))]);
-                g.fillRect(x, y, 1, 1);
-            }
-        }
-        g.dispose();
-        this.heatmap = heatmap;
-    }
-    
-    @Override
-    public void paint(final Graphics g) {
-        if (buffer != null) {
-            g.drawImage(buffer, 0, 0, this);
-        } else {
-            g.setColor(background);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    @Override
-    public void reset() {
-        attribute1 = null;
-        attribute2 = null;
-        handle = null;
-        updateData();
-        updatePlot();
-        repaint();
-    }
-    
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.OUTPUT) {
-            redraw();
-        }
-
-        if (event.part == reset) {
-            reset();
-            
-        } else if (event.part == target) {
-            redraw();
-            
-        } else if (event.part == ModelPart.MODEL) {
-            this.model = (Model)event.data;
-            this.model.resetAttributePair();
-            reset();
-
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            redraw();
-            
-        } else if (event.part == ModelPart.VIEW_CONFIG) {
-            redraw();
-        }
-    }
-
-    /**
-     * Returns the respective data handle
-     * @return
-     */
-    private DataHandle getData() {
-        
-        // Obtain the right config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) {
-            config = model.getInputConfig();
-        }
-
-        // Obtain the right handle
-        DataHandle data;
-        if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
-        } else {
-            data = model.getOutput();
-        }
-        
-        // Project onto subset, if possible
-        if (data != null && model.getViewConfig().isSubset()){
-            data = data.getView();
-        }
-        
-        // Clear if nothing to draw
-        if ((config == null) || (data == null)) {
-            return null;
-        } else {
-            return data;
-        }
-    }
-
-    /**
-     * Returns the labels sorted per hierarchy or per data type
-     * 
-     * @param attribute
-     * @return
-     */
-    private String[] getLabels(final String attribute) {
-
-        // Obtain the right config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) {
-            config = model.getInputConfig();
-        }
-
-        // Obtain the right handle
-        final DataHandle data;
-        if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
-        } else {
-            data = model.getOutput();
-        }
-
-        // Check if there is a hierarchy
-        final AttributeType type = config.getInput()
-                                         .getDefinition()
-                                         .getAttributeType(attribute);
-
-        Hierarchy hierarchy = null;
-        if (type instanceof Hierarchy) {
-            hierarchy = (Hierarchy) type;
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            hierarchy = config.getHierarchy(attribute);
-        }
-
-        // Count
-        final int index = data.getColumnIndexOf(attribute);
-        final Set<String> elems = new HashSet<String>();
-        for (int i = 0; i < data.getNumRows(); i++) {
-            elems.add(data.getValue(i, index));
-        }
-
-        // Init distribution
-        final String[] dvals;
-
-        // Sort by hierarchy if possible
-        if (hierarchy != null) {
-
-            final int level = data.getGeneralization(attribute);
-            final List<String> list = new ArrayList<String>();
-            final Set<String> done = new HashSet<String>();
-            final String[][] h = hierarchy.getHierarchy();
-            for (int i = 0; i < h.length; i++) {
-                final String val = h[i][level];
-                if (elems.contains(val) && !done.contains(val)) {
-                    list.add(val);
-                    done.add(val);
-                }
-            }
-            if (model.getAnonymizer() != null &&
-                    elems.contains(model.getAnonymizer().getSuppressionString()) &&
-                    !done.contains(model.getAnonymizer().getSuppressionString())) {
-                    
-                        list.add(model.getAnonymizer().getSuppressionString());
-                }
-
-            dvals = list.toArray(new String[] {});
-
-            // Else sort per data type
-        } else {
-            final DataType<?> dtype = data.getDataType(attribute);
-            final String[] v = new String[elems.size()];
-            int i = 0;
-            for (final String s : elems) {
-                v[i++] = s;
-            }
-            Arrays.sort(v, new Comparator<String>() {
-                @Override
-                public int compare(final String arg0, final String arg1) {
-                    try {
-                        return dtype.compare(arg0, arg1);
-                    } catch (final Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-            dvals = v;
-        }
-
-        return dvals;
-    }
-    
-    /**
-     * Redraws the plot
-     */
-    private void redraw() {
-
-        if (model != null &&
-            model.getAttributePair() != null &
-            model.getAttributePair()[0] != null &&
-            model.getAttributePair()[1] != null) {
-            
-            final DataHandle data = getData();
-            if (data == null) {
-                reset();
-                return;
-            }
-            
-       	    final int index1 = data.getColumnIndexOf(model.getAttributePair()[0]);
-            final int index2 = data.getColumnIndexOf(model.getAttributePair()[1]);
-
-            if (index1 < 0 || index2 < 0){
-                reset();
-                return;
-            }
-            
-            attribute1 = model.getAttributePair()[0];
-            attribute2 = model.getAttributePair()[1];
-            handle = data;
-
-            updateData();
-            updatePlot();
-            repaint();
-            
-        } else {
-            reset();
-            return; 
-        }
     }
 }
