@@ -18,9 +18,19 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.Panel;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -44,34 +54,118 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.LookupPaintScale;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
-import org.jfree.data.xy.DefaultXYZDataset;
-import org.jfree.data.xy.MatrixSeries;
-import org.jfree.data.xy.MatrixSeriesCollection;
-import org.jfree.data.xy.XYZDataset;
-import org.jfree.experimental.chart.swt.ChartComposite;
-import org.jfree.ui.RectangleAnchor;
 
-public class ViewDensity implements IView {
+public class ViewDensity extends Panel implements IView {
 
-	private static final LookupPaintScale GRADIENT = getGradient();
-	
-	private final Controller      controller;
-	private final ChartComposite  composite;
-	private final ChartPanel      panel;
+    /** Static stuff*/
+    private static final long          serialVersionUID  = 5938131772944084967L;
+    /** Static stuff*/
+    private static final int           MAX_DIMENSION     = 500;
+    /** Static stuff*/
+    private static final BufferedImage LEGEND            = getLegend();
+    /** Static stuff*/
+    private static final Color[]       GRADIENT          = getGradient(LEGEND);
+    /** Static stuff*/
+    private static final Font          FONT              = new Font("Arial", Font.PLAIN, 12); //$NON-NLS-1$
 
-	private Model                 model;
-	private final ModelPart       reset;
-	private final ModelPart       target;
+    /** Offset*/
+    private static final int           OFFSET_LEFT       = 20;
+    /** Offset*/
+    private static final int           OFFSET_RIGHT      = 50;
+    /** Offset*/
+    private static final int           OFFSET_LEGEND     = 10;
+    /** Offset*/
+    private static final int           OFFSET_TOP        = 20;
+    /** Offset*/
+    private static final int           OFFSET_BOTTOM     = 20;
+    /** Offset*/
+    private static final int           OFFSET_TICK       = 5;
+    /** Offset*/
+    private static final int           OFFSET_TICK_SMALL = 2;
 
+    /**
+     * Returns an AWT color
+     * @param in
+     * @return
+     */
+    private static Color asAWTColor(final org.eclipse.swt.graphics.Color in) {
+        return new Color(in.getRed(), in.getGreen(), in.getBlue());
+    }
+
+    /**
+     * Returns the legend
+     * @return
+     */
+    private static final BufferedImage getLegend() {
+
+        Point2D start = new Point2D.Float(0, 0);
+        Point2D end = new Point2D.Float(1, 100);
+        Color[] colors = {Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED};
+        float[] dist = new float[colors.length];
+        for (int i=0; i<dist.length; i++){
+            dist[i] = (1.0f / (float)dist.length) * (float)i;
+        }
+        LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors);
+        BufferedImage legend = new BufferedImage(1,100, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = (Graphics2D)legend.getGraphics();
+        g2d.setPaint(p);
+        g2d.drawRect(0,0,1,100);
+        g2d.dispose();
+        return legend;
+    }
+    
+    /**
+     * Create a gradient
+     * @return
+     */
+    private static final Color[] getGradient(BufferedImage legend) {
+        
+        Color[] result = new Color[100];
+        for (int y=0; y<100; y++){
+            result[y] = new Color(legend.getRGB(0, y));
+        }
+        return result;
+    }
+
+    /** The bridge */
+    private final Composite  bridge;
+
+    /** The bridge */
+    private final Frame      frame;
+
+    /** Internal stuff */
+    private final Controller controller;
+    /** Internal stuff */
+    private Model            model;
+    /** Internal stuff */
+    private final ModelPart  reset;
+    /** Internal stuff */
+    private final ModelPart  target;
+
+    /** The back buffer for implementing double buffering */
+    private BufferedImage    buffer     = null;
+    /** The background color*/
+    private Color            background = null;
+    /** The heatmap buffer */
+    private BufferedImage    heatmap    = null;
+    
+    /** Attribute1 */
+    private String           attribute1 = null;
+    /** Attribute2 */
+    private String           attribute2 = null;
+    /** Data */
+    private DataHandle       handle     = null;
+
+	/**
+	 * Creates a new density plot
+	 * @param parent
+	 * @param controller
+	 * @param target
+	 * @param reset
+	 */
     public ViewDensity(final Composite parent,
                        final Controller controller,
                        final ModelPart target,
@@ -90,215 +184,269 @@ public class ViewDensity implements IView {
         this.target = target;
 
         parent.setLayout(new GridLayout());
-        composite = new ChartComposite(parent, SWT.BORDER);
-        composite.setLayoutData(SWTUtil.createFillGridData());
-        composite.setChart(getEmptyChart());
-        panel = null;
+        background = asAWTColor(parent.getBackground());
+        bridge = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND | SWT.EMBEDDED);
+        bridge.setLayoutData(SWTUtil.createFillGridData());
+        frame = SWT_AWT.new_Frame(bridge);
+
+        frame.setLayout(new BorderLayout());
+        frame.add(this, BorderLayout.CENTER);
+        frame.setBackground(Color.WHITE);
         
-//        parent.setLayout(new GridLayout());
-//        Composite chartComposite = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND | SWT.EMBEDDED);
-//        chartComposite.setLayoutData(SWTUtil.createFillGridData());
-//        org.eclipse.swt.graphics.Color backgroundColor = parent.getBackground();
-//        Frame chartPanel = SWT_AWT.new_Frame(chartComposite);
-//        chartPanel.setBackground(new java.awt.Color(backgroundColor.getRed(),
-//                                                    backgroundColor.getGreen(),
-//                                                    backgroundColor.getBlue()));
-//        chartPanel.setLayout(new BorderLayout());
-//        panel = new ChartPanel(getEmptyChart());
-//        panel.setDoubleBuffered(true);
-//        chartPanel.add(panel, BorderLayout.CENTER); 
-//        composite = null;
-        
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(final ComponentEvent arg0) {
+                updateBuffer();
+                updatePlot();
+                repaint();
+            }
+
+            @Override
+            public void componentShown(final ComponentEvent arg0) {
+                updateBuffer();
+                updatePlot();
+                repaint();
+            }
+        });
+
         // Reset
-        reset();
+        updateBuffer();
+        updatePlot();
+        repaint();
     }
     
+
     /**
-     * Creates an empty chart
-     * @return
+     * Resets the buffer
      */
-    private JFreeChart getEmptyChart(){
-    	XYZDataset dataset = new DefaultXYZDataset();
-    	NumberAxis xAxis = new NumberAxis("");
-    	NumberAxis yAxis = new NumberAxis("");
-    	XYBlockRenderer renderer = new XYBlockRenderer(); 
-    	XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer); 
-    	JFreeChart chart = new JFreeChart("", plot);
-    	return chart;
-    }
-    
-    /**
-     * Returns a chart for the given attributes
-     * @param data
-     * @param attribute1
-     * @param attribute2
-     * @return
-     */
-    private JFreeChart getChart(DataHandle data, String attribute1, String attribute2) { 
-    	
-    	// Obtain data
-    	 final int index1 = data.getColumnIndexOf(attribute1);
-         final int index2 = data.getColumnIndexOf(attribute2);
-         final String[] vals1 = getLabels(attribute1);
-         final String[] vals2 = getLabels(attribute2);
-         final Map<String, Integer> map1 = new HashMap<String, Integer>();
-         final Map<String, Integer> map2 = new HashMap<String, Integer>();
-
-         // Build maps
-         int index = 0;
-         for (int i = 0; i < vals1.length; i ++) {
-             map1.put(vals1[i], index++);
-         }
-         index = 0;
-         for (int i = 0; i < vals2.length; i ++) {
-              map2.put(vals2[i], index++);
-         }
-         
-         // Build initial heatmap
-         double[][] heat = new double[vals1.length][vals2.length];
-         for (int row = 0; row < data.getNumRows(); row++) {
-             
-             String v1 = data.getValue(row, index1);
-             String v2 = data.getValue(row, index2);
-             Integer i1 = map1.get(v1);
-             Integer i2 = map2.get(v2);
-             heat[i1][i2]++;
-         }
-         map1.clear();
-         map2.clear();
-         
-         // Scale down
-         heat = getScaledDown(heat);
-
-         // Compute max
-         double max = 0;
-         for (int x=0; x<heat.length; x++){
-        	 for (int y=0; y<heat[0].length; y++){
-        		 max = heat[x][y] > max ? heat[x][y] : max;
-        	 }
-         }
-         
-         // Normalize
-         for (int x=0; x<heat.length; x++){
-        	 for (int y=0; y<heat[0].length; y++){
-        		 heat[x][y] /= max;
-        	 }
-         }
-         
-         // Create  series
-         MatrixSeries matrix = new MatrixSeries("", heat.length, heat[0].length);
-         for (int x=0; x<heat.length; x++){
-        	 for (int y=0; y<heat[0].length; y++){
-        		 matrix.update(x, y, heat[x][y]);
-        	 }
-         }
-         MatrixSeriesCollection collection = new MatrixSeriesCollection(matrix);
-
-    	// Create axes
-        NumberAxis xAxis = new NumberAxis(attribute2);
-        xAxis.setAutoRange(true);
-        NumberAxis yAxis = new NumberAxis(attribute1);
-        yAxis.setAutoRange(true);
-
-        // Create renderer
-        XYBlockRenderer renderer = new XYBlockRenderer(); 
-        renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT);
-        renderer.setPaintScale(GRADIENT);
-        
-        XYPlot plot = new XYPlot(collection, xAxis, yAxis, renderer); 
-        plot.setOrientation(PlotOrientation.HORIZONTAL); 
-        plot.setBackgroundPaint(Color.lightGray); 
-        plot.setRangeGridlinePaint(Color.white); 
-        JFreeChart chart = new JFreeChart("", plot); 
-        chart.removeLegend(); 
-        chart.setBackgroundPaint(Color.white); 
-        
-        return chart; 
-    } 
-    
-    /**
-     * Downsample the given heatmap
-     * @param heat
-     * @return
-     */
-    private double[][] getScaledDown(double[][] heat) {
-    	
-		int MAX = 100;
-		
-		// Find xFactor
-		int factorX = 1;
-		double lengthX = heat[0].length;
-		while(lengthX > MAX) {
-			factorX++;
-			lengthX = (double)heat[0].length / (double)factorX;
-		}
-
-		// Find yFactor
-		int factorY = 1;
-		double lengthY = heat.length;
-		while(lengthY > MAX) {
-			factorY++;
-			lengthY = (double)heat.length / (double)factorY;
-		}
-		
-		// Nothing to do
-		if (factorX==1 && factorY==1) return heat;
-		
-		// Scale down
-		// TODO: Might loose some data points here
-		double[][] result = new double[heat.length / factorY][heat[0].length / factorX];
-		
-		for (int x=0; x<heat[0].length; x+=factorX) {
-			for (int y=0; y<heat.length; y+=factorY) {
-				
-				int oX = x / factorX;
-				int oY = y / factorY;
-				
-				double val = 0;
-				for (int dX=x; dX<x+factorX; dX++) {
-					for (int dY=y; dY<y+factorY; dY++) {
-						if (dY<heat.length && dX<heat[0].length) val+=heat[dY][dX];
-					}
-				}
-				
-				if (oY<result.length && oX<result[0].length) result[oY][oX] = val;
-			}
-		}
-		
-		return result;
-	}
-
-	/**
-     * Create a gradient
-     * @return
-     */
-    private static LookupPaintScale getGradient() {
-    	
-        Point2D start = new Point2D.Float(0, 0);
-        Point2D end = new Point2D.Float(1, 100);
-        Color[] colors = {Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED};
-        float[] dist = new float[colors.length];
-        for (int i=0; i<dist.length; i++){
-        	dist[i] = (1.0f / (float)dist.length) * (float)i;
+    private void updateBuffer() {
+        if (buffer == null || buffer.getWidth() != this.getWidth() || buffer.getHeight() != this.getHeight()) {
+            buffer = new BufferedImage(Math.max(1, getWidth()),
+                                       Math.max(1, getHeight()),
+                                       BufferedImage.TYPE_INT_RGB);
         }
-        LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors);
+    }
+    
+    /**
+     * Redraws the plot
+     */
+    private void updatePlot() {
 
-        BufferedImage image = new BufferedImage(1,100, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = (Graphics2D)image.getGraphics();
-        g2d.setPaint(p);
-        g2d.drawRect(0,0,1,100);
+        // Fill background
+        Graphics2D g2d = (Graphics2D)buffer.getGraphics();
+        g2d.setColor(background);
+        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+        
+        // If enough space
+        if (buffer.getWidth()>OFFSET_LEFT + OFFSET_RIGHT + 100 && buffer.getHeight() > OFFSET_TOP + OFFSET_BOTTOM){
+            
+            // Compute size
+            int width = this.getWidth() - OFFSET_LEFT - OFFSET_RIGHT;
+            int height = this.getHeight() - OFFSET_TOP - OFFSET_BOTTOM;
+    
+            // If data available
+            if (heatmap != null) {
+                
+                // Draw heatmap
+                g2d.drawImage(heatmap, OFFSET_LEFT, OFFSET_TOP, width, height, null);
+                g2d.setColor(Color.black);
+                g2d.drawRect(OFFSET_LEFT, OFFSET_TOP, width, height);
+                
+                // Draw xtics
+                double tickX = (double) width / (double)heatmap.getWidth();
+                if (tickX>=2d){
+                    double currX = tickX;
+                    while (currX < width-1) {
+                        g2d.setColor(Color.darkGray);
+                        g2d.drawLine(OFFSET_LEFT + (int)currX, OFFSET_TOP + height, OFFSET_LEFT + (int)currX + 1, OFFSET_TOP + height + OFFSET_TICK_SMALL);
+                        currX += tickX;
+                    }
+                }
+                
+                // Draw ytics
+                double tickY = (double) height / (double)heatmap.getHeight();
+                if (tickY>=2d){
+                    double currY = tickY;
+                    while (currY < height-1) {
+                        g2d.setColor(Color.darkGray);
+                        g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + (int)currY, OFFSET_LEFT - OFFSET_TICK_SMALL, OFFSET_TOP + (int)currY + 1);
+                        currY += tickY;
+                    }
+                }
+                
+            // Else show info
+            } else {
+                g2d.setColor(Color.white);
+                g2d.fillRect(OFFSET_LEFT, OFFSET_TOP, width, height);
+                g2d.setColor(Color.black);
+                g2d.drawRect(OFFSET_LEFT, OFFSET_TOP, width, height);
+
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2d.setColor(Color.black);
+                centerText("No data", g2d, OFFSET_LEFT, OFFSET_TOP, width, height);
+                
+            }
+            
+            // Draw legend
+            RenderingHints hints = g2d.getRenderingHints();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            int legendWidth = this.getWidth() - width - OFFSET_LEFT - 2 * OFFSET_LEGEND;
+            g2d.drawImage(LEGEND, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP + height, legendWidth, -height, null);
+            g2d.setRenderingHints(hints);
+            g2d.setColor(Color.black);
+            g2d.drawRect(OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP, legendWidth, height);
+            
+            // Draw legend text
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2d.setColor(Color.black);
+            centerText("Max", g2d, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP-15, legendWidth, 10);
+            centerText("Min", g2d, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP+height+5, legendWidth, 10);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            
+            // Draw corner tics
+            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP, OFFSET_LEFT - OFFSET_TICK, OFFSET_TOP);
+            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + height, OFFSET_LEFT - OFFSET_TICK, OFFSET_TOP + height);
+            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + height, OFFSET_LEFT, OFFSET_TOP + height + OFFSET_TICK);
+            g2d.drawLine(OFFSET_LEFT + width, OFFSET_TOP + height, OFFSET_LEFT + width, OFFSET_TOP + height + OFFSET_TICK);
+            
+            // Draw axis labels
+            if (attribute1 != null && attribute2 != null){
+    
+                // x label
+                g2d.setColor(Color.black);
+                g2d.setFont(FONT);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                centerText(attribute2, g2d, OFFSET_LEFT, OFFSET_TOP + height+4, width, 10);
+    
+                // y label
+                g2d.rotate(Math.PI / 2);
+                centerText(attribute1, g2d, OFFSET_TOP, -OFFSET_LEFT+4, height, 10);            
+                g2d.rotate(-Math.PI / 2);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            }
+        }
+        
+        // Dispose
         g2d.dispose();
+    }
+
+
+    /**
+     * Utility method which centers a text in a rectangle
+     * 
+     * @param s1
+     * @param g
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
+    private void centerText(final String s1,
+                            final Graphics g,
+                            final int x,
+                            final int y,
+                            final int w,
+                            final int h) {
+        final Font f = g.getFont();
+        final FontMetrics fm = g.getFontMetrics(f);
+        final int ascent = fm.getAscent();
+        final int height = fm.getHeight();
+        int width1 = 0, x0 = 0, y0 = 0;
+        width1 = fm.stringWidth(s1);
+        x0 = x + ((w - width1) / 2);
+        y0 = y + ((h - height) / 2) + ascent;
+        g.drawString(s1, x0, y0);
+    }
+    
+    /**
+     * Recalculates the data array
+     */
+    private void updateData() {
         
-        Color[] result = new Color[100];
-        for (int y=0; y<100; y++){
-        	result[y] = new Color(image.getRGB(0, y));
+        if (attribute1 == null || attribute2 == null || handle == null){
+            heatmap = null;
+            return;
         }
         
-        LookupPaintScale scale = new LookupPaintScale(0d, 1d, Color.white);
-        for (int i=0; i<100; i++){
-        	scale.add((double)i / 100d, result[i]);
+        final int index1 = handle.getColumnIndexOf(attribute1);
+        final int index2 = handle.getColumnIndexOf(attribute2);
+
+        if (index1 < 0 || index2 < 0){
+            heatmap = null;
+            return;
         }
-        return scale;
+
+        final String[] vals1 = getLabels(attribute1);
+        final String[] vals2 = getLabels(attribute2);
+
+        final Map<String, Integer> map1 = new HashMap<String, Integer>();
+        final Map<String, Integer> map2 = new HashMap<String, Integer>();
+
+        int step1 = vals1.length / MAX_DIMENSION; // Round down
+        int step2 = vals2.length / MAX_DIMENSION; // Round down
+        step1 = Math.max(step1, 1);
+        step2 = Math.max(step2, 1);
+
+        int index = 0;
+        for (int i = 0; i < vals1.length; i += step1) {
+            for (int j = 0; j < step1; j++) {
+                if ((i + j) < vals1.length) {
+                    map1.put(vals1[i + j], index);
+                }
+            }
+            index++;
+        }
+        final int size1 = index;
+
+        index = 0;
+        for (int i = 0; i < vals2.length; i += step2) {
+            for (int j = 0; j < step2; j++) {
+                if ((i + j) < vals2.length) {
+                    map2.put(vals2[i + j], index);
+                }
+            }
+            index++;
+        }
+        final int size2 = index;
+
+        double[][] data = new double[size1][size2];
+
+        double max = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            final String v1 = handle.getValue(row, index1);
+            final String v2 = handle.getValue(row, index2);
+            final Integer i1 = map1.get(v1);
+            final Integer i2 = map2.get(v2);
+            if ((i1 == null) || (i2 == null)) {
+                // TODO: Dont ignore
+            } else {
+                data[i1][i2]++;
+                max = (data[i1][i2] > max ? data[i1][i2] : max);
+            }
+        }
+        
+
+        BufferedImage heatmap = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D)heatmap.getGraphics();
+        
+        for (int y=0; y<data.length; y++){
+            for (int x=0; x<data[y].length; x++){
+                g.setColor(GRADIENT[(int)(data[y][x] / max * (GRADIENT.length-1))]);
+                g.fillRect(x, y, 1, 1);
+            }
+        }
+        g.dispose();
+        this.heatmap = heatmap;
+    }
+    
+    @Override
+    public void paint(final Graphics g) {
+        if (buffer != null) {
+            g.drawImage(buffer, 0, 0, this);
+        } else {
+            g.setColor(background);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
     }
 
     @Override
@@ -308,8 +456,12 @@ public class ViewDensity implements IView {
 
     @Override
     public void reset() {
-        resetPlot();
-        if (model != null) model.resetAttributePair();
+        attribute1 = null;
+        attribute2 = null;
+        handle = null;
+        updateData();
+        updatePlot();
+        repaint();
     }
     
     @Override
@@ -319,27 +471,23 @@ public class ViewDensity implements IView {
             redraw();
         }
 
-        // Handle reset target, i.e., e.g. input has changed
         if (event.part == reset) {
             reset();
             
-            // Handle new project
-        } else if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-            reset();
-            
-            // Handle new data
         } else if (event.part == target) {
             redraw();
             
-            // Handle selected attribute
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE ||
-                   event.part == ModelPart.VIEW_CONFIG) {
-            if (model.getAttributePair()[0] != null &&
-                model.getAttributePair()[1] != null) {
-                redraw();
-            }
-        } 
+        } else if (event.part == ModelPart.MODEL) {
+            this.model = (Model)event.data;
+            this.model.resetAttributePair();
+            reset();
+
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            redraw();
+            
+        } else if (event.part == ModelPart.VIEW_CONFIG) {
+            redraw();
+        }
     }
 
     /**
@@ -465,56 +613,42 @@ public class ViewDensity implements IView {
 
         return dvals;
     }
-
+    
     /**
      * Redraws the plot
      */
     private void redraw() {
 
-        if (model == null) { return; }
-
-        if ((model.getAttributePair()[0] != null) &&
-            (model.getAttributePair()[1] != null)) {
-
+        if (model != null &&
+            model.getAttributePair() != null &
+            model.getAttributePair()[0] != null &&
+            model.getAttributePair()[1] != null) {
+            
             final DataHandle data = getData();
             if (data == null) {
                 reset();
                 return;
             }
-
+            
        	    final int index1 = data.getColumnIndexOf(model.getAttributePair()[0]);
             final int index2 = data.getColumnIndexOf(model.getAttributePair()[1]);
 
-            if (index1 < 0 || index2 < 0) return;
+            if (index1 < 0 || index2 < 0){
+                reset();
+                return;
+            }
+            
+            attribute1 = model.getAttributePair()[0];
+            attribute2 = model.getAttributePair()[1];
+            handle = data;
 
-            if (panel == null) {
-            	final JFreeChart chart = getChart(data, model.getAttributePair()[0], model.getAttributePair()[1]);
-				controller.getResources().getDisplay()
-						.asyncExec(new Runnable() {
-							public void run() {
-								composite.setRedraw(false);
-								composite.setChart(chart);
-								composite.setRedraw(true);
-							}
-						});
-
-        	} else {
-        		panel.setChart(getChart(data, model.getAttributePair()[0], model.getAttributePair()[1]));
-        	}
+            updateData();
+            updatePlot();
+            repaint();
+            
+        } else {
+            reset();
+            return; 
         }
-    }
-
-    /**
-     * Recreates the plot, to prevent crashes
-     */
-    private void resetPlot() {
-    	
-    	if (panel == null) {
-    		composite.setRedraw(false);
-            composite.setChart(getEmptyChart());
-            composite.setRedraw(true);
-    	} else {
-    		panel.setChart(getEmptyChart());
-    	}
     }
 }

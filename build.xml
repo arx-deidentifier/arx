@@ -88,10 +88,6 @@
                 <path path="lib/log4j/log4j-1.2.17.jar" />
                 <path path="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" />
                 <path path="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" />
-                <path path="lib/jfreechart/jfreechart-1.0.17-swt.jar" />
-            	<path path="lib/jfreechart/jcommon-1.0.21.jar" />
-                <path path="lib/jfreechart/jfreechart-1.0.17.jar" />
-                <path path="lib/jfreechart/swtgraphics2d.jar" />
                 <path path="lib/commons/commons-math3-3.1.1.jar"/>
             	<path path="lib/jama/Jama-1.0.2.jar"/>
                 <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
@@ -137,10 +133,6 @@
                 <path path="lib/log4j/log4j-1.2.17.jar" />
                 <path path="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" />
                 <path path="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" />
-                <path path="lib/jfreechart/jfreechart-1.0.17-swt.jar" />
-            	<path path="lib/jfreechart/jcommon-1.0.21.jar" />
-                <path path="lib/jfreechart/jfreechart-1.0.17.jar" />
-                <path path="lib/jfreechart/swtgraphics2d.jar" />
 				<path path="lib/commons/commons-math3-3.1.1.jar"/>
             	<path path="lib/jama/Jama-1.0.2.jar"/>
                 <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
@@ -201,10 +193,6 @@
             <zipfileset src="lib/log4j/log4j-1.2.17.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17-swt.jar" excludes="META-INF/*.SF" />
-        	<zipfileset src="lib/jfreechart/jcommon-1.0.21.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/swtgraphics2d.jar" excludes="META-INF/*.SF" />
 			<zipfileset src="lib/commons/commons-math3-3.1.1.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.SF" />
@@ -229,10 +217,6 @@
             <zipfileset src="lib/log4j/log4j-1.2.17.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17-swt.jar" excludes="META-INF/*.SF" />
-        	<zipfileset src="lib/jfreechart/jcommon-1.0.21.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/swtgraphics2d.jar" excludes="META-INF/*.SF" />
 			<zipfileset src="lib/commons/commons-math3-3.1.1.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.SF" />
@@ -256,10 +240,6 @@
             <zipfileset src="lib/log4j/log4j-1.2.17.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17-swt.jar" excludes="META-INF/*.SF" />
-        	<zipfileset src="lib/jfreechart/jcommon-1.0.21.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/swtgraphics2d.jar" excludes="META-INF/*.SF" />
 			<zipfileset src="lib/commons/commons-math3-3.1.1.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.SF" />
@@ -283,10 +263,6 @@
             <zipfileset src="lib/log4j/log4j-1.2.17.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17-swt.jar" excludes="META-INF/*.SF" />
-        	<zipfileset src="lib/jfreechart/jcommon-1.0.21.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/swtgraphics2d.jar" excludes="META-INF/*.SF" />
 			<zipfileset src="lib/commons/commons-math3-3.1.1.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.SF" />
@@ -310,10 +286,6 @@
             <zipfileset src="lib/log4j/log4j-1.2.17.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17-swt.jar" excludes="META-INF/*.SF" />
-        	<zipfileset src="lib/jfreechart/jcommon-1.0.21.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/swtgraphics2d.jar" excludes="META-INF/*.SF" />
 			<zipfileset src="lib/commons/commons-math3-3.1.1.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.SF" />
@@ -337,10 +309,6 @@
             <zipfileset src="lib/log4j/log4j-1.2.17.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/nattable/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swtchart/org.swtchart_0.8.0.v20120301.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17-swt.jar" excludes="META-INF/*.SF" />
-        	<zipfileset src="lib/jfreechart/jcommon-1.0.21.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/jfreechart-1.0.17.jar" excludes="META-INF/*.SF" />
-            <zipfileset src="lib/jfreechart/swtgraphics2d.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/commons/commons-math3-3.1.1.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.SF" />

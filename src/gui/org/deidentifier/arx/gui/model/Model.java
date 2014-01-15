@@ -178,8 +178,7 @@ public class Model implements Serializable {
 	}
 
 	public String[] getAttributePair() {
-		if (pair == null)
-			pair = new String[] { null, null };
+		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
 
