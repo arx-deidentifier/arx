@@ -282,6 +282,65 @@ public class ViewLattice extends Panel implements IView {
         t.start();
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void paint(final Graphics g) {
+        final Graphics bg = buffer.getGraphics();
+        if (model != null) {
+            draw(bg);
+        } else {
+            bg.setColor(Color.WHITE);
+            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+        }
+        bg.dispose();
+        g.drawImage(buffer, 0, 0, this);
+    }
+
+    /**
+     * Resets the view
+     */
+    @Override
+    public void reset() {
+        numNodes = 0;
+        optimum = null;
+        selectedNode = null;
+        lattice.clear();
+        latticeWidth = 0;
+        latticeHeight = 0;
+        screen = null;
+        this.repaint();
+    }
+
+    @Override
+    public void update(final Graphics g) {
+        paint(g);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.part == ModelPart.SELECTED_NODE) {
+            selectedNode = (ARXNode) event.data;
+            this.repaint();
+        } else if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+        } else if (event.part == ModelPart.FILTER) {
+            if (model != null) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        initialize(model.getResult(), (ModelNodeFilter) event.data);
+                        repaint();
+                    }
+                });
+            }
+        }
+    }
+
     /**
      * Converts an information loss into a relative value in percent
      * 
@@ -363,11 +422,6 @@ public class ViewLattice extends Panel implements IView {
         }
         b.setLength(b.length() - 1);
         return b.toString();
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
     }
 
     /**
@@ -922,34 +976,6 @@ public class ViewLattice extends Panel implements IView {
         });
     }
 
-    @Override
-    public void paint(final Graphics g) {
-        final Graphics bg = buffer.getGraphics();
-        if (model != null) {
-            draw(bg);
-        } else {
-            bg.setColor(Color.WHITE);
-            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-        }
-        bg.dispose();
-        g.drawImage(buffer, 0, 0, this);
-    }
-
-    /**
-     * Resets the view
-     */
-    @Override
-    public void reset() {
-        numNodes = 0;
-        optimum = null;
-        selectedNode = null;
-        lattice.clear();
-        latticeWidth = 0;
-        latticeHeight = 0;
-        screen = null;
-        this.repaint();
-    }
-
     /**
      * Resets the buffer
      */
@@ -957,32 +983,6 @@ public class ViewLattice extends Panel implements IView {
         buffer = new BufferedImage(Math.max(1, getWidth()),
                                    Math.max(1, getHeight()),
                                    BufferedImage.TYPE_INT_RGB);
-    }
-
-    @Override
-    public void update(final Graphics g) {
-        paint(g);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.SELECTED_NODE) {
-            selectedNode = (ARXNode) event.data;
-            this.repaint();
-        } else if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-        } else if (event.part == ModelPart.FILTER) {
-            if (model != null) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        initialize(model.getResult(), (ModelNodeFilter) event.data);
-                        repaint();
-                    }
-                });
-            }
-        }
     }
 
 }
