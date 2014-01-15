@@ -96,6 +96,19 @@ public class ViewDensity extends Panel implements IView {
     }
 
     /**
+     * Create a gradient
+     * @return
+     */
+    private static final Color[] getGradient(BufferedImage legend) {
+        
+        Color[] result = new Color[100];
+        for (int y=0; y<100; y++){
+            result[y] = new Color(legend.getRGB(0, y));
+        }
+        return result;
+    }
+    
+    /**
      * Returns the legend
      * @return
      */
@@ -115,19 +128,6 @@ public class ViewDensity extends Panel implements IView {
         g2d.drawRect(0,0,1,100);
         g2d.dispose();
         return legend;
-    }
-    
-    /**
-     * Create a gradient
-     * @return
-     */
-    private static final Color[] getGradient(BufferedImage legend) {
-        
-        Color[] result = new Color[100];
-        for (int y=0; y<100; y++){
-            result[y] = new Color(legend.getRGB(0, y));
-        }
-        return result;
     }
 
     /** The bridge */
@@ -216,120 +216,62 @@ public class ViewDensity extends Panel implements IView {
     }
     
 
-    /**
-     * Resets the buffer
-     */
-    private void updateBuffer() {
-        if (buffer == null || buffer.getWidth() != this.getWidth() || buffer.getHeight() != this.getHeight()) {
-            buffer = new BufferedImage(Math.max(1, getWidth()),
-                                       Math.max(1, getHeight()),
-                                       BufferedImage.TYPE_INT_RGB);
-        }
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
     }
     
-    /**
-     * Redraws the plot
-     */
-    private void updatePlot() {
-
-        // Fill background
-        Graphics2D g2d = (Graphics2D)buffer.getGraphics();
-        g2d.setColor(background);
-        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-        
-        // If enough space
-        if (buffer.getWidth()>OFFSET_LEFT + OFFSET_RIGHT + 100 && buffer.getHeight() > OFFSET_TOP + OFFSET_BOTTOM){
-            
-            // Compute size
-            int width = this.getWidth() - OFFSET_LEFT - OFFSET_RIGHT;
-            int height = this.getHeight() - OFFSET_TOP - OFFSET_BOTTOM;
-    
-            // If data available
-            if (heatmap != null) {
-                
-                // Draw heatmap
-                g2d.drawImage(heatmap, OFFSET_LEFT, OFFSET_TOP, width, height, null);
-                g2d.setColor(Color.black);
-                g2d.drawRect(OFFSET_LEFT, OFFSET_TOP, width, height);
-                
-                // Draw xtics
-                double tickX = (double) width / (double)heatmap.getWidth();
-                if (tickX>=2d){
-                    double currX = tickX;
-                    while (currX < width-1) {
-                        g2d.setColor(Color.darkGray);
-                        g2d.drawLine(OFFSET_LEFT + (int)currX, OFFSET_TOP + height, OFFSET_LEFT + (int)currX + 1, OFFSET_TOP + height + OFFSET_TICK_SMALL);
-                        currX += tickX;
-                    }
-                }
-                
-                // Draw ytics
-                double tickY = (double) height / (double)heatmap.getHeight();
-                if (tickY>=2d){
-                    double currY = tickY;
-                    while (currY < height-1) {
-                        g2d.setColor(Color.darkGray);
-                        g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + (int)currY, OFFSET_LEFT - OFFSET_TICK_SMALL, OFFSET_TOP + (int)currY + 1);
-                        currY += tickY;
-                    }
-                }
-                
-            // Else show info
-            } else {
-                g2d.setColor(Color.white);
-                g2d.fillRect(OFFSET_LEFT, OFFSET_TOP, width, height);
-                g2d.setColor(Color.black);
-                g2d.drawRect(OFFSET_LEFT, OFFSET_TOP, width, height);
-
-                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g2d.setColor(Color.black);
-                centerText("No data", g2d, OFFSET_LEFT, OFFSET_TOP, width, height);
-                
-            }
-            
-            // Draw legend
-            RenderingHints hints = g2d.getRenderingHints();
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            int legendWidth = this.getWidth() - width - OFFSET_LEFT - 2 * OFFSET_LEGEND;
-            g2d.drawImage(LEGEND, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP + height, legendWidth, -height, null);
-            g2d.setRenderingHints(hints);
-            g2d.setColor(Color.black);
-            g2d.drawRect(OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP, legendWidth, height);
-            
-            // Draw legend text
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g2d.setColor(Color.black);
-            centerText("Max", g2d, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP-15, legendWidth, 10);
-            centerText("Min", g2d, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP+height+5, legendWidth, 10);
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-            
-            // Draw corner tics
-            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP, OFFSET_LEFT - OFFSET_TICK, OFFSET_TOP);
-            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + height, OFFSET_LEFT - OFFSET_TICK, OFFSET_TOP + height);
-            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + height, OFFSET_LEFT, OFFSET_TOP + height + OFFSET_TICK);
-            g2d.drawLine(OFFSET_LEFT + width, OFFSET_TOP + height, OFFSET_LEFT + width, OFFSET_TOP + height + OFFSET_TICK);
-            
-            // Draw axis labels
-            if (attribute1 != null && attribute2 != null){
-    
-                // x label
-                g2d.setColor(Color.black);
-                g2d.setFont(FONT);
-                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                centerText(attribute2, g2d, OFFSET_LEFT, OFFSET_TOP + height+4, width, 10);
-    
-                // y label
-                g2d.rotate(Math.PI / 2);
-                centerText(attribute1, g2d, OFFSET_TOP, -OFFSET_LEFT+4, height, 10);            
-                g2d.rotate(-Math.PI / 2);
-                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-            }
+    @Override
+    public void paint(final Graphics g) {
+        if (buffer != null) {
+            g.drawImage(buffer, 0, 0, this);
+        } else {
+            g.setColor(background);
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
-        
-        // Dispose
-        g2d.dispose();
     }
 
+
+    @Override
+    public void reset() {
+        attribute1 = null;
+        attribute2 = null;
+        handle = null;
+        updateData();
+        updatePlot();
+        repaint();
+    }
+    
+    @Override
+    public void update(final Graphics g) {
+        paint(g);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.part == ModelPart.OUTPUT) {
+            redraw();
+        }
+
+        if (event.part == reset) {
+            reset();
+            
+        } else if (event.part == target) {
+            redraw();
+            
+        } else if (event.part == ModelPart.MODEL) {
+            this.model = (Model)event.data;
+            this.model.resetAttributePair();
+            reset();
+
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            redraw();
+            
+        } else if (event.part == ModelPart.VIEW_CONFIG) {
+            redraw();
+        }
+    }
 
     /**
      * Utility method which centers a text in a rectangle
@@ -356,138 +298,6 @@ public class ViewDensity extends Panel implements IView {
         x0 = x + ((w - width1) / 2);
         y0 = y + ((h - height) / 2) + ascent;
         g.drawString(s1, x0, y0);
-    }
-    
-    /**
-     * Recalculates the data array
-     */
-    private void updateData() {
-        
-        if (attribute1 == null || attribute2 == null || handle == null){
-            heatmap = null;
-            return;
-        }
-        
-        final int index1 = handle.getColumnIndexOf(attribute1);
-        final int index2 = handle.getColumnIndexOf(attribute2);
-
-        if (index1 < 0 || index2 < 0){
-            heatmap = null;
-            return;
-        }
-
-        final String[] vals1 = getLabels(attribute1);
-        final String[] vals2 = getLabels(attribute2);
-
-        final Map<String, Integer> map1 = new HashMap<String, Integer>();
-        final Map<String, Integer> map2 = new HashMap<String, Integer>();
-
-        int step1 = vals1.length / MAX_DIMENSION; // Round down
-        int step2 = vals2.length / MAX_DIMENSION; // Round down
-        step1 = Math.max(step1, 1);
-        step2 = Math.max(step2, 1);
-
-        int index = 0;
-        for (int i = 0; i < vals1.length; i += step1) {
-            for (int j = 0; j < step1; j++) {
-                if ((i + j) < vals1.length) {
-                    map1.put(vals1[i + j], index);
-                }
-            }
-            index++;
-        }
-        final int size1 = index;
-
-        index = 0;
-        for (int i = 0; i < vals2.length; i += step2) {
-            for (int j = 0; j < step2; j++) {
-                if ((i + j) < vals2.length) {
-                    map2.put(vals2[i + j], index);
-                }
-            }
-            index++;
-        }
-        final int size2 = index;
-
-        double[][] data = new double[size1][size2];
-
-        double max = 0;
-        for (int row = 0; row < handle.getNumRows(); row++) {
-            final String v1 = handle.getValue(row, index1);
-            final String v2 = handle.getValue(row, index2);
-            final Integer i1 = map1.get(v1);
-            final Integer i2 = map2.get(v2);
-            if ((i1 == null) || (i2 == null)) {
-                // TODO: Dont ignore
-            } else {
-                data[i1][i2]++;
-                max = (data[i1][i2] > max ? data[i1][i2] : max);
-            }
-        }
-        
-
-        BufferedImage heatmap = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D)heatmap.getGraphics();
-        
-        for (int y=0; y<data.length; y++){
-            for (int x=0; x<data[y].length; x++){
-                g.setColor(GRADIENT[(int)(data[y][x] / max * (GRADIENT.length-1))]);
-                g.fillRect(x, y, 1, 1);
-            }
-        }
-        g.dispose();
-        this.heatmap = heatmap;
-    }
-    
-    @Override
-    public void paint(final Graphics g) {
-        if (buffer != null) {
-            g.drawImage(buffer, 0, 0, this);
-        } else {
-            g.setColor(background);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    @Override
-    public void reset() {
-        attribute1 = null;
-        attribute2 = null;
-        handle = null;
-        updateData();
-        updatePlot();
-        repaint();
-    }
-    
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.OUTPUT) {
-            redraw();
-        }
-
-        if (event.part == reset) {
-            reset();
-            
-        } else if (event.part == target) {
-            redraw();
-            
-        } else if (event.part == ModelPart.MODEL) {
-            this.model = (Model)event.data;
-            this.model.resetAttributePair();
-            reset();
-
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            redraw();
-            
-        } else if (event.part == ModelPart.VIEW_CONFIG) {
-            redraw();
-        }
     }
 
     /**
@@ -650,5 +460,200 @@ public class ViewDensity extends Panel implements IView {
             reset();
             return; 
         }
+    }
+
+    /**
+     * Resets the buffer
+     */
+    private void updateBuffer() {
+        if (buffer == null || buffer.getWidth() != this.getWidth() || buffer.getHeight() != this.getHeight()) {
+            buffer = new BufferedImage(Math.max(1, getWidth()),
+                                       Math.max(1, getHeight()),
+                                       BufferedImage.TYPE_INT_RGB);
+        }
+    }
+
+    /**
+     * Recalculates the data array
+     */
+    private void updateData() {
+        
+        if (attribute1 == null || attribute2 == null || handle == null){
+            heatmap = null;
+            return;
+        }
+        
+        final int index1 = handle.getColumnIndexOf(attribute1);
+        final int index2 = handle.getColumnIndexOf(attribute2);
+
+        if (index1 < 0 || index2 < 0){
+            heatmap = null;
+            return;
+        }
+
+        final String[] vals1 = getLabels(attribute1);
+        final String[] vals2 = getLabels(attribute2);
+
+        final Map<String, Integer> map1 = new HashMap<String, Integer>();
+        final Map<String, Integer> map2 = new HashMap<String, Integer>();
+
+        int step1 = vals1.length / MAX_DIMENSION; // Round down
+        int step2 = vals2.length / MAX_DIMENSION; // Round down
+        step1 = Math.max(step1, 1);
+        step2 = Math.max(step2, 1);
+
+        int index = 0;
+        for (int i = 0; i < vals1.length; i += step1) {
+            for (int j = 0; j < step1; j++) {
+                if ((i + j) < vals1.length) {
+                    map1.put(vals1[i + j], index);
+                }
+            }
+            index++;
+        }
+        final int size1 = index;
+
+        index = 0;
+        for (int i = 0; i < vals2.length; i += step2) {
+            for (int j = 0; j < step2; j++) {
+                if ((i + j) < vals2.length) {
+                    map2.put(vals2[i + j], index);
+                }
+            }
+            index++;
+        }
+        final int size2 = index;
+
+        double[][] data = new double[size1][size2];
+
+        double max = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            final String v1 = handle.getValue(row, index1);
+            final String v2 = handle.getValue(row, index2);
+            final Integer i1 = map1.get(v1);
+            final Integer i2 = map2.get(v2);
+            if ((i1 == null) || (i2 == null)) {
+                // TODO: Dont ignore
+            } else {
+                data[i1][i2]++;
+                max = (data[i1][i2] > max ? data[i1][i2] : max);
+            }
+        }
+        
+
+        BufferedImage heatmap = new BufferedImage(data[0].length, data.length, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D)heatmap.getGraphics();
+        
+        for (int y=0; y<data.length; y++){
+            for (int x=0; x<data[y].length; x++){
+                g.setColor(GRADIENT[(int)(data[y][x] / max * (GRADIENT.length-1))]);
+                g.fillRect(x, y, 1, 1);
+            }
+        }
+        g.dispose();
+        this.heatmap = heatmap;
+    }
+    
+    /**
+     * Redraws the plot
+     */
+    private void updatePlot() {
+
+        // Fill background
+        Graphics2D g2d = (Graphics2D)buffer.getGraphics();
+        g2d.setColor(background);
+        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+        
+        // If enough space
+        if (buffer.getWidth()>OFFSET_LEFT + OFFSET_RIGHT + 100 && buffer.getHeight() > OFFSET_TOP + OFFSET_BOTTOM){
+            
+            // Compute size
+            int width = this.getWidth() - OFFSET_LEFT - OFFSET_RIGHT;
+            int height = this.getHeight() - OFFSET_TOP - OFFSET_BOTTOM;
+    
+            // If data available
+            if (heatmap != null) {
+                
+                // Draw heatmap
+                g2d.drawImage(heatmap, OFFSET_LEFT, OFFSET_TOP, width, height, null);
+                g2d.setColor(Color.black);
+                g2d.drawRect(OFFSET_LEFT, OFFSET_TOP, width, height);
+                
+                // Draw xtics
+                double tickX = (double) width / (double)heatmap.getWidth();
+                if (tickX>=2d){
+                    double currX = tickX;
+                    while (currX < width-1) {
+                        g2d.setColor(Color.darkGray);
+                        g2d.drawLine(OFFSET_LEFT + (int)currX, OFFSET_TOP + height, OFFSET_LEFT + (int)currX + 1, OFFSET_TOP + height + OFFSET_TICK_SMALL);
+                        currX += tickX;
+                    }
+                }
+                
+                // Draw ytics
+                double tickY = (double) height / (double)heatmap.getHeight();
+                if (tickY>=2d){
+                    double currY = tickY;
+                    while (currY < height-1) {
+                        g2d.setColor(Color.darkGray);
+                        g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + (int)currY, OFFSET_LEFT - OFFSET_TICK_SMALL, OFFSET_TOP + (int)currY + 1);
+                        currY += tickY;
+                    }
+                }
+                
+            // Else show info
+            } else {
+                g2d.setColor(Color.white);
+                g2d.fillRect(OFFSET_LEFT, OFFSET_TOP, width, height);
+                g2d.setColor(Color.black);
+                g2d.drawRect(OFFSET_LEFT, OFFSET_TOP, width, height);
+
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2d.setColor(Color.black);
+                centerText("No data", g2d, OFFSET_LEFT, OFFSET_TOP, width, height);
+                
+            }
+            
+            // Draw legend
+            RenderingHints hints = g2d.getRenderingHints();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            int legendWidth = this.getWidth() - width - OFFSET_LEFT - 2 * OFFSET_LEGEND;
+            g2d.drawImage(LEGEND, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP + height, legendWidth, -height, null);
+            g2d.setRenderingHints(hints);
+            g2d.setColor(Color.black);
+            g2d.drawRect(OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP, legendWidth, height);
+            
+            // Draw legend text
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2d.setColor(Color.black);
+            centerText("Max", g2d, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP-15, legendWidth, 10);
+            centerText("Min", g2d, OFFSET_LEFT + width + OFFSET_LEGEND, OFFSET_TOP+height+5, legendWidth, 10);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            
+            // Draw corner tics
+            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP, OFFSET_LEFT - OFFSET_TICK, OFFSET_TOP);
+            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + height, OFFSET_LEFT - OFFSET_TICK, OFFSET_TOP + height);
+            g2d.drawLine(OFFSET_LEFT, OFFSET_TOP + height, OFFSET_LEFT, OFFSET_TOP + height + OFFSET_TICK);
+            g2d.drawLine(OFFSET_LEFT + width, OFFSET_TOP + height, OFFSET_LEFT + width, OFFSET_TOP + height + OFFSET_TICK);
+            
+            // Draw axis labels
+            if (attribute1 != null && attribute2 != null){
+    
+                // x label
+                g2d.setColor(Color.black);
+                g2d.setFont(FONT);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                centerText(attribute2, g2d, OFFSET_LEFT, OFFSET_TOP + height+4, width, 10);
+    
+                // y label
+                g2d.rotate(Math.PI / 2);
+                centerText(attribute1, g2d, OFFSET_TOP, -OFFSET_LEFT+4, height, 10);            
+                g2d.rotate(-Math.PI / 2);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            }
+        }
+        
+        // Dispose
+        g2d.dispose();
     }
 }
