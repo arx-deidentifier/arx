@@ -175,6 +175,7 @@ public class ViewDensity extends Panel implements IView {
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -266,6 +267,9 @@ public class ViewDensity extends Panel implements IView {
             reset();
 
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            redraw();
+            
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             redraw();
             
         } else if (event.part == ModelPart.VIEW_CONFIG) {
@@ -378,7 +382,7 @@ public class ViewDensity extends Panel implements IView {
         final String[] dvals;
 
         // Sort by hierarchy if possible
-        if (hierarchy != null) {
+        if (hierarchy != null && hierarchy.getHierarchy()!=null && hierarchy.getHierarchy().length != 0) {
 
             final int level = data.getGeneralization(attribute);
             final List<String> list = new ArrayList<String>();
