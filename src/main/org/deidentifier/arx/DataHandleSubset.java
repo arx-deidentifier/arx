@@ -163,7 +163,7 @@ public class DataHandleSubset extends DataHandle {
      */
     protected void internalRebuild() {
         int index = 0;
-        for (int i = 0; i < subset.getArray().length; i++) {
+        for (int i = 0; i < subset.getSet().length(); i++) {
             if (this.subset.getSet().contains(i)) {
                 this.subset.getArray()[index++] = i;
             }
