@@ -172,7 +172,7 @@ public class ViewLattice extends Panel implements IView {
     /** For the current view */
     private double                nodeHeight            = 0f;
     /** The lattice to display */
-    private final List<ARXNode> lattice               = new ArrayList<ARXNode>();
+    private final List<ARXNode> lattice                 = new ArrayList<ARXNode>();
     /** The lattice to display */
     private int                   latticeWidth          = 0;
     /** The lattice to display */
@@ -198,10 +198,10 @@ public class ViewLattice extends Panel implements IView {
     private BufferedImage         buffer                = null;
 
     /** The optimum */
-    private ARXNode             optimum;
+    private ARXNode               optimum;
 
     /** The selected node */
-    private ARXNode             selectedNode;
+    private ARXNode               selectedNode;
 
     /** The controller */
     private final Controller      controller;
@@ -219,9 +219,10 @@ public class ViewLattice extends Panel implements IView {
     private int                   tooltipXOnScreen;
     /** The tooltip */
     private int                   tooltipYOnScreen;
-
     /** The tooltip */
     private boolean               tooltipVisible;
+    
+    /** Number format*/
     private final NumberFormat    format                = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /**
