@@ -158,7 +158,7 @@ public class ViewLattice extends Panel implements IView {
     /** For the current view */
     private double                nodeHeight            = 0f;
     /** The lattice to display */
-    private final List<ARXNode> lattice                 = new ArrayList<ARXNode>();
+    private final List<ARXNode>   lattice               = new ArrayList<ARXNode>();
     /** The lattice to display */
     private int                   latticeWidth          = 0;
     /** The lattice to display */
@@ -197,6 +197,7 @@ public class ViewLattice extends Panel implements IView {
 
     /** The bridge */
     private final Frame           frame;
+    
     /** The tooltip */
     private int                   tooltipX;
     /** The tooltip */
