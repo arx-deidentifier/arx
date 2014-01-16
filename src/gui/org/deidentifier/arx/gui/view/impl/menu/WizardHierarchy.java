@@ -35,7 +35,7 @@ public class WizardHierarchy extends Wizard implements IWizard {
 
     public WizardHierarchy(final Controller controller,
                            final String attribute,
-                           final DataType datatype,
+                           final DataType<?> datatype,
                            final String suppressionString,
                            final String[] items) {
         super();

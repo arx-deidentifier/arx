@@ -161,12 +161,9 @@ public class TestDataHandle extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-//        config.addCriterion(new KAnonymity(2));
         config.addCriterion(new Enclosure(subset));
 
-        //necessary to get subset view on input handle
-        @SuppressWarnings("unused")
-        final ARXResult result = anonymizer.anonymize(data, config);
+        anonymizer.anonymize(data, config);
         
         String[][] given = iteratorToArray(data.getHandle().getView().iterator());
         String[][] expected = { { "age",   "gender", "zipcode" }, 
