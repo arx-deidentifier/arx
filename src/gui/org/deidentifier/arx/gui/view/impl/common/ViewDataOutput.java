@@ -25,6 +25,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -124,11 +125,32 @@ public class ViewDataOutput extends ViewData {
         }
     }
     
+    /**
+     * Returns the research subset
+     */
+    private RowSet getSubset(){
+        if (model != null && model.getOutputConfig() != null){
+            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
+            if (d != null) {
+                return d.getSubset().getSet();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    protected void actionCellSelected(CellSelectionEvent arg1) {
+        // Empty by design
+    }
+
     @Override
     protected void actionSort(){
         controller.actionDataSort(false);
     }
-
+    
     @Override
     protected DataDefinition getDefinition() {
         if (model == null) return null;
@@ -145,22 +167,6 @@ public class ViewDataOutput extends ViewData {
                 handle = handle.getView();
             }
             return handle;
-        } else {
-            return null;
-        }
-    }
-    
-    /**
-     * Returns the research subset
-     */
-    private RowSet getSubset(){
-        if (model != null && model.getOutputConfig() != null){
-            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
-            if (d != null) {
-                return d.getSubset().getSet();
-            } else {
-                return null;
-            }
         } else {
             return null;
         }

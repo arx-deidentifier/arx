@@ -208,33 +208,7 @@ public abstract class ViewData implements IView {
      * Cell selection event
      * @param arg1
      */
-    protected void actionCellSelected(CellSelectionEvent arg1) {
-
-        if (model == null) return;
-        
-        int column = arg1.getColumnPosition();
-        int row = arg1.getRowPosition();
-        if (column == 0 && row >= 0) {
-
-            // Remap row index if showing the subset
-            if (table.getData() instanceof DataHandleSubset) {
-                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
-                row = subset[row];
-            }
-
-            // Perform change
-            RowSet subset = model.getInputConfig().getResearchSubset();
-            if (subset.contains(row)) {
-                subset.remove(row);
-            } else {
-                subset.add(row);
-            }
-            
-            // Fire event
-            model.setSubsetManual();
-            controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
-        }
-    }
+    protected abstract void actionCellSelected(CellSelectionEvent arg1) ;
     
     /**
      * Column selection event
@@ -260,12 +234,13 @@ public abstract class ViewData implements IView {
      * Called when the sort button is pressed
      */
     protected abstract void actionSort();
-    
+
     /**
      * Returns the data definition
      * @return
      */
     protected abstract DataDefinition getDefinition();
+    
 
     /**
      * Returns the data definition

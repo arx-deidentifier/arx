@@ -20,11 +20,13 @@ package org.deidentifier.arx.gui.view.impl.common;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -144,6 +146,35 @@ public class ViewDataInput extends ViewData {
         }
     }
     
+    @Override
+    protected void actionCellSelected(CellSelectionEvent arg1) {
+
+        if (model == null) return;
+        
+        int column = arg1.getColumnPosition();
+        int row = arg1.getRowPosition();
+        if (column == 0 && row >= 0) {
+
+            // Remap row index if showing the subset
+            if (table.getData() instanceof DataHandleSubset) {
+                int[] subset = ((DataHandleSubset) table.getData()).getSubset();
+                row = subset[row];
+            }
+
+            // Perform change
+            RowSet subset = model.getInputConfig().getResearchSubset();
+            if (subset.contains(row)) {
+                subset.remove(row);
+            } else {
+                subset.add(row);
+            }
+            
+            // Fire event
+            model.setSubsetManual();
+            controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
+        }
+    }
+
     @Override
     protected void actionSort(){
         controller.actionDataSort(true);

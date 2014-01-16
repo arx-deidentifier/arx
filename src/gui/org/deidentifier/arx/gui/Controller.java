@@ -228,8 +228,7 @@ public class Controller implements IView {
      */
     public void actionDataSort(boolean input) {
         
-        // Break if no output
-        if (model.getOutput() == null) return;
+        // Break if no attribute selected
         if (model.getSelectedAttribute() == null) return;
         
         if (input){
