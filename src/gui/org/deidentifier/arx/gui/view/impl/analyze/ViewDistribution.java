@@ -53,16 +53,16 @@ import org.swtchart.ISeriesSet;
 import org.swtchart.ITitle;
 import org.swtchart.Range;
 
-public class ViewDistribution implements IView {
+public class ViewDistribution extends ViewStatistics implements IView {
 
+    private static final long serialVersionUID = -163862008754422422L;
+    
     private Chart                       chart;
     private final Composite             parent;
-    private final ModelPart             target;
     private final ModelPart             reset;
     private String                      attribute;
     private final Controller            controller;
     private final Map<String, double[]> cache  = new HashMap<String, double[]>();
-    private Model                       model;
 
     public ViewDistribution(final Composite parent,
                             final Controller controller,
@@ -196,12 +196,7 @@ public class ViewDistribution implements IView {
         }
 
         // Obtain the right handle
-        DataHandle data;
-        if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
-        } else {
-            data = model.getOutput();
-        }
+        DataHandle data = getHandle();
 
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
@@ -343,4 +338,5 @@ public class ViewDistribution implements IView {
         chart.setRedraw(true);
         chart.redraw();
     }
+    
 }

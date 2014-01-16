@@ -26,7 +26,6 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
-import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -57,7 +56,7 @@ import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class ViewDensity extends Panel implements IView {
+public class ViewDensity extends ViewStatistics implements IView {
 
     /** Static stuff*/
     private static final long          serialVersionUID  = 5938131772944084967L;
@@ -138,11 +137,7 @@ public class ViewDensity extends Panel implements IView {
     /** Internal stuff */
     private final Controller controller;
     /** Internal stuff */
-    private Model            model;
-    /** Internal stuff */
     private final ModelPart  reset;
-    /** Internal stuff */
-    private final ModelPart  target;
 
     /** The back buffer for implementing double buffering */
     private BufferedImage    buffer     = null;
@@ -316,17 +311,7 @@ public class ViewDensity extends Panel implements IView {
         }
 
         // Obtain the right handle
-        DataHandle data;
-        if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
-        } else {
-            data = model.getOutput();
-        }
-        
-        // Project onto subset, if possible
-        if (data != null && model.getViewConfig().isSubset()){
-            data = data.getView();
-        }
+        DataHandle data = getHandle();
         
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
