@@ -429,5 +429,13 @@ public abstract class DataHandle{
     public boolean isOutlier(int row){
         checkRegistry();
         return registry.isOutlier(this, row);
+    }
+
+    /**
+     * Determines whether this handle is orphaned, i.e., should not be used anymore
+     * @return
+     */
+    public boolean isOrphaned() {
+        return this.registry == null;
     }  
 }
