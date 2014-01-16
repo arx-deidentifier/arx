@@ -21,8 +21,6 @@ package org.deidentifier.arx.gui.view.impl.common;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleSubset;
-import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
