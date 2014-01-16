@@ -45,22 +45,20 @@ import org.eclipse.swt.widgets.ToolItem;
  * A view on a <code>Data</code> object
  * @author Prasser, Kohlmayer
  */
-public class ViewData implements IView {
+public abstract class ViewData implements IView {
 
-    private final Image              IMAGE_INSENSITIVE;
-    private final Image              IMAGE_SENSITIVE;
-    private final Image              IMAGE_QUASI_IDENTIFYING;
-    private final Image              IMAGE_IDENTIFYING;
+    private final Image                IMAGE_INSENSITIVE;
+    private final Image                IMAGE_SENSITIVE;
+    private final Image                IMAGE_QUASI_IDENTIFYING;
+    private final Image                IMAGE_IDENTIFYING;
 
-    private final ComponentDataTable table;
-    private final ModelPart          target;
-    private final ModelPart          reset;
-    private final Controller         controller;
-    private final ToolItem           groupsButton;
-    private final ToolItem           subsetButton;
+    private final ToolItem             groupsButton;
+    private final ToolItem             subsetButton;
 
-    private DataHandle               handle = null;
-    private Model                    model;
+    protected final ComponentDataTable table;
+    protected final Controller         controller;
+
+    protected Model                    model;
 
     /** 
      * Creates a new data view
@@ -68,31 +66,20 @@ public class ViewData implements IView {
      * @param parent
      * @param controller
      * @param title
-     * @param target
-     * @param reset
      */
     public ViewData(final Composite parent,
                     final Controller controller,
-                    final String title,
-                    final ModelPart target,
-                    final ModelPart reset) {
+                    final String title) {
 
         // Register
-        controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
-        controller.addListener(target, this);
-        if (reset != null) {
-            controller.addListener(reset, this);
-        }
         
         // Store
         this.controller = controller;
-        this.reset = reset;
-        this.target = target;
-
+        
         // Load images
         IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
         IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
@@ -106,7 +93,7 @@ public class ViewData implements IView {
                 new Runnable() {
                     @Override
                     public void run() {
-                        controller.actionDataSort(target == ModelPart.INPUT);
+                        actionSort();
                     }
                 });
         bar.add(Resources.getMessage("DataView.2"), //$NON-NLS-1$ 
@@ -149,12 +136,17 @@ public class ViewData implements IView {
             }
         });
         
+        // Build buttons
         this.groupsButton = folder.getBarItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
         this.groupsButton.setEnabled(false);
         this.subsetButton = folder.getBarItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
         this.subsetButton.setEnabled(false);
     }
     
+    /**
+     * Add a scrollbar listener to this view
+     * @param listener
+     */
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
@@ -169,6 +161,10 @@ public class ViewData implements IView {
         table.dispose();
     }
 
+    /**
+     * Returns the NatTable viewport layer
+     * @return
+     */
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }
@@ -178,7 +174,6 @@ public class ViewData implements IView {
         table.reset();
         groupsButton.setEnabled(false);
         subsetButton.setEnabled(false);
-        handle = null;
     }
 
     @Override
@@ -197,101 +192,14 @@ public class ViewData implements IView {
                 subsetButton.setEnabled(false);
             }
         }
-
-        if (event.part == ModelPart.SELECTED_ATTRIBUTE){
-            
-            table.setAttribute(model.getSelectedAttribute());
-            table.redraw();
-            
-        } else if (event.part == reset) {
-            
-            reset();
-
-        } else if (event.part == ModelPart.MODEL) {
-            
-            // Store and reset
+        
+        // Update model
+        if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             reset();
-
-        } else if (event.part == target) {
-
-            // No result avail
-            if (event.data == null) {
-                reset();
-                return;
-            } 
-            
-            // Obtain data definition
-            DataDefinition definition = model.getInputConfig().getInput().getDefinition();
-            if (target == ModelPart.OUTPUT) {
-                definition = model.getOutputConfig().getInput().getDefinition();
-            }
-
-            // Update the table
-            handle = (DataHandle) event.data;
-            DataHandle data = handle;
-            if (model.getViewConfig().isSubset() && 
-                model.getOutputConfig() != null &&
-                model.getOutputConfig().getConfig() != null) {
-                data = handle.getView();
-            }
-            
-            // Its probably ok to use the subset from the input config here,
-            // because the d-presence criterion clones the subset
-            table.setResearchSubset(model.getInputConfig().getResearchSubset());
-            table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
-            table.setData(data);
-            
-            // Update the attribute types
-            table.getHeaderImages().clear();
-            for (int i = 0; i < handle.getNumColumns(); i++) {
-                updateHeaderImage(i, definition.getAttributeType(handle.getAttributeName(i)));
-            }
-            
-            // Redraw
-            table.setEnabled(true);
-            table.redraw();
-
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            
-            if ((model != null) && (handle != null)) {
-                
-                final String attr = (String) event.data;
-
-                // Obtain data definition
-                DataDefinition definition = model.getInputConfig().getInput().getDefinition();
-                if (target == ModelPart.OUTPUT) {
-                    definition = model.getOutputConfig().getInput().getDefinition();
-                }
-
-                // Update the attribute types
-                final int index = handle.getColumnIndexOf(attr);
-                updateHeaderImage(index, definition.getAttributeType(attr));
-                
-                // Redraw
-                table.setEnabled(true);
-                table.redraw();
-            }
-            
-        } else if (event.part == ModelPart.RESEARCH_SUBSET) {
-            
-            // Update research subset
-            table.setResearchSubset((RowSet)event.data);
-            table.redraw();
-            
-        } else if (event.part == ModelPart.VIEW_CONFIG) {
-            
-            DataHandle data = handle;
-            if (model.getViewConfig().isSubset() && 
-                model.getOutputConfig() != null &&
-                model.getOutputConfig().getConfig() != null) {
-                data = handle.getView();
-            }
-            table.setGroups(target == ModelPart.OUTPUT ? model.getGroups() : null);
-            table.setResearchSubset(model.getInputConfig().getResearchSubset());
-            if (table.getData() != data) table.setData(data);
-            table.redraw();
-            
+        }
+        
+        if (event.part == ModelPart.VIEW_CONFIG) {          
             subsetButton.setSelection(model.getViewConfig().isSubset());
         }
     }
@@ -300,7 +208,7 @@ public class ViewData implements IView {
      * Cell selection event
      * @param arg1
      */
-    private void actionCellSelected(CellSelectionEvent arg1) {
+    protected void actionCellSelected(CellSelectionEvent arg1) {
 
         if (model == null) return;
         
@@ -324,38 +232,53 @@ public class ViewData implements IView {
             
             // Fire event
             model.setSubsetManual();
-            controller.update(new ModelEvent(this, 
-                                             ModelPart.RESEARCH_SUBSET, 
-                                             subset));
+            controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
         }
     }
-
+    
     /**
      * Column selection event
      * @param arg1
      */
-    private void actionColumnSelected(ColumnSelectionEvent arg1) {
+    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
         if (model != null) {
             int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
             if (column>=0){
-                final String attr = handle.getAttributeName(column);
-                table.setAttribute(attr);
-                table.redraw();
-                
-                model.setSelectedAttribute(attr);
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.SELECTED_ATTRIBUTE,
-                                                 attr));
+                DataHandle handle = getHandle();
+                if (handle != null){
+                    final String attr = handle.getAttributeName(column);
+                    table.setAttribute(attr);
+                    table.redraw();
+                    model.setSelectedAttribute(attr);
+                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
+                }
             }
         }
     }
+    
+    /**
+     * Called when the sort button is pressed
+     */
+    protected abstract void actionSort();
+    
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataDefinition getDefinition();
+
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataHandle getHandle();
 
     /**
      * Updates the header image in the table
      * @param index
      * @param type
      */
-    private void updateHeaderImage(final int index, final AttributeType type) {
+    protected void updateHeaderImage(final int index, final AttributeType type) {
         if (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }

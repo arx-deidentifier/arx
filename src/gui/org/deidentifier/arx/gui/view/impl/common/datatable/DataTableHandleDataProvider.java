@@ -35,7 +35,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
 
     @Override
     public int getColumnCount() {
-        if (data == null) { return 0; }
+        if (data == null || data.isOrphaned()) { return 0; }
         return data.getNumColumns() + (context.getRows() != null ? 1 : 0);
     }
 
@@ -59,7 +59,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
 
     @Override
     public int getRowCount() {
-        if (data == null) { return 0; }
+        if (data == null || data.isOrphaned()) { return 0; }
         return data.getNumRows();
     }
 
