@@ -170,7 +170,13 @@ public class DataSubset implements Serializable {
         return new DataSubset(bitset, array);
     }
 
-    
+
+    /**
+     * Creates a new subset from the given row set, from which a copy is created
+     * @param data
+     * @param subset
+     * @return
+     */
     public static DataSubset create(Data data, RowSet subset) {
         int rows = data.getHandle().getNumRows();
         RowSet bitset = RowSet.create(data);
