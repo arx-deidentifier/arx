@@ -144,5 +144,4 @@ public class ViewCriteriaList implements IView {
             }
         }
     }
-
 }

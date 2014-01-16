@@ -147,7 +147,6 @@ public class ViewCriterionDefinition implements IView {
     }
 
     private Composite build(final Composite parent) {
-    	
 
         // Create input group
         Composite group = new Composite(parent, SWT.NONE);
