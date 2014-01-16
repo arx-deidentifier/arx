@@ -147,6 +147,36 @@ public class TestDataHandle extends AbstractTest {
 
         assertTrue(Arrays.deepEquals(given, expected));
     }
+    
+    @Test
+    public void testSubset4() throws IllegalArgumentException, IOException {
+
+        Data data = Data.create("data/dis.csv", ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("data/dis_hierarchy_age.csv", ';'));
+        data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
+        data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
+
+        DataSelector selector = DataSelector.create(data).field("gender").equals("male");
+        DataSubset subset = DataSubset.create(data, selector);
+        
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+        final ARXConfiguration config = ARXConfiguration.create();
+//        config.addCriterion(new KAnonymity(2));
+        config.addCriterion(new Enclosure(subset));
+
+        //necessary to get subset view on input handle
+        @SuppressWarnings("unused")
+        final ARXResult result = anonymizer.anonymize(data, config);
+        
+        String[][] given = iteratorToArray(data.getHandle().getView().iterator());
+        String[][] expected = { { "age",   "gender", "zipcode" }, 
+                                {"34","male","82667"},
+                                {"66","male","81925"},
+                                {"70","male","81825"},
+                                {"21","male","82451"} };
+
+        assertTrue(Arrays.deepEquals(given, expected));
+    }
 
     @Test
     public void testGetters() throws IllegalArgumentException, IOException {
