@@ -350,14 +350,6 @@ public class ViewDensity extends Panel implements IView {
             config = model.getInputConfig();
         }
 
-        // Obtain the right handle
-        final DataHandle data;
-        if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
-        } else {
-            data = model.getOutput();
-        }
-
         // Check if there is a hierarchy
         final AttributeType type = config.getInput()
                                          .getDefinition()
@@ -371,10 +363,10 @@ public class ViewDensity extends Panel implements IView {
         }
 
         // Count
-        final int index = data.getColumnIndexOf(attribute);
+        final int index = handle.getColumnIndexOf(attribute);
         final Set<String> elems = new HashSet<String>();
-        for (int i = 0; i < data.getNumRows(); i++) {
-            elems.add(data.getValue(i, index));
+        for (int i = 0; i < handle.getNumRows(); i++) {
+            elems.add(handle.getValue(i, index));
         }
 
         // Init distribution
@@ -383,7 +375,7 @@ public class ViewDensity extends Panel implements IView {
         // Sort by hierarchy if possible
         if (hierarchy != null && hierarchy.getHierarchy()!=null && hierarchy.getHierarchy().length != 0) {
 
-            final int level = data.getGeneralization(attribute);
+            final int level = handle.getGeneralization(attribute);
             final List<String> list = new ArrayList<String>();
             final Set<String> done = new HashSet<String>();
             final String[][] h = hierarchy.getHierarchy();
@@ -405,7 +397,7 @@ public class ViewDensity extends Panel implements IView {
 
             // Else sort per data type
         } else {
-            final DataType<?> dtype = data.getDataType(attribute);
+            final DataType<?> dtype = handle.getDataType(attribute);
             final String[] v = new String[elems.size()];
             int i = 0;
             for (final String s : elems) {
