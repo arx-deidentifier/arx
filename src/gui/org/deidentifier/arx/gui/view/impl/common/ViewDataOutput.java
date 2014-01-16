@@ -25,6 +25,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
@@ -43,7 +44,7 @@ public class ViewDataOutput extends ViewData {
     public ViewDataOutput(final Composite parent,
                          final Controller controller) {
         
-        super(parent, controller, ("AnalyzeView.0")); //$NON-NLS-1
+        super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1
 
         // Register
         controller.addListener(ModelPart.INPUT, this);
