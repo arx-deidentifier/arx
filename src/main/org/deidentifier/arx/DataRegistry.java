@@ -154,7 +154,7 @@ class DataRegistry {
             public void swap(final int arg0, final int arg1) {
                 if (input != null) input.internalSwap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
                 if (output != null) output.internalSwap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
-                if (swapper != null) swapper.swap(arg0, arg1);
+                if (swapper != null) swapper.swap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
             }
         };
         
