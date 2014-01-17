@@ -318,6 +318,14 @@ public class WorkerLoad extends Worker<Model> {
                         config.getInput()
                               .getDefinition()
                               .setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
+                        if (ref != null){
+                            try {
+                                config.setHierarchy(attr, readHierarchy(zip, prefix, ref));
+                            } catch (final IOException e) {
+                                throw new SAXException(e);
+                            }
+                        }
+                        
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
                         config.getInput()
                               .getDefinition()
@@ -340,6 +348,13 @@ public class WorkerLoad extends Worker<Model> {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }
 
+                    attr = null;
+                    atype = null;
+                    dtype = null;
+                    ref = null;
+                    min = null;
+                    max = null;
+                    
                     return true;
 
                 } else if (localName.equals("name")) { //$NON-NLS-1$
