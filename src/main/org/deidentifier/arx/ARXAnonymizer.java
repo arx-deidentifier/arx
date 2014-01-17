@@ -280,7 +280,7 @@ public class ARXAnonymizer {
         } else {
 
         	// Execute
-        	return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
+            return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
         }
     }
 
@@ -715,6 +715,10 @@ public class ARXAnonymizer {
         
         // Execute
         algorithm.traverse();
+        
+        // Deactivate history to prevent bugs when sorting data
+        checker.getHistory().reset();
+        checker.getHistory().setSize(0);
         
         // Return the result
         return new Result(config.getMetric(), checker, lattice, manager, algorithm);
