@@ -212,19 +212,7 @@ public class NodeChecker implements INodeChecker {
     @Deprecated
     public Data transform(final Node node) {
 
-        // Apply transition and groupify
-        currentGroupify.clear();
-        currentGroupify = transformer.apply(0L, node.getTransformation(), currentGroupify);
-
-        // Determine outliers and set infoloss
-        if (!node.isChecked()) {
-            node.setChecked();
-            node.setAnonymous(currentGroupify.isAnonymous());
-            metric.evaluate(node, currentGroupify);
-            node.setTagged();
-        }
-
-        return getBuffer();
+        throw new RuntimeException("Not implemented!");
     }
 
     @Override
