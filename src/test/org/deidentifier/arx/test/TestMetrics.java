@@ -29,7 +29,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.Enclosure;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class TestMetrics extends AbstractTest {
         
         ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(5));
-        config.addCriterion(new Enclosure(subset));
+        config.addCriterion(new Inclusion(subset));
         config.setMaxOutliers(0.02d);
         config.setMetric(Metric.createNMEntropyMetric());
 

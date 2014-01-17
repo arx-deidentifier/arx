@@ -29,7 +29,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * 
  * @author Prasser, Kohlmayer
  */
-public class Enclosure extends DPresence {
+public class Inclusion extends DPresence {
     
     private static final long serialVersionUID = -3984193225980793775L;
     
@@ -37,7 +37,7 @@ public class Enclosure extends DPresence {
      * Creates a new instance of the enclosure criterion
      * @param subset Research subset
      */
-    public Enclosure(DataSubset subset) {
+    public Inclusion(DataSubset subset) {
         super(subset);
     }
         

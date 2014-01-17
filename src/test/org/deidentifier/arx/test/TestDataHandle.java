@@ -31,7 +31,7 @@ import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.Enclosure;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
@@ -131,7 +131,7 @@ public class TestDataHandle extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new Enclosure(subset));
+        config.addCriterion(new Inclusion(subset));
 
         final ARXResult result = anonymizer.anonymize(data, config);
         final DataHandle outHandle = result.getHandle();
@@ -161,7 +161,7 @@ public class TestDataHandle extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new Enclosure(subset));
+        config.addCriterion(new Inclusion(subset));
 
         anonymizer.anonymize(data, config);
         
