@@ -170,6 +170,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         // Set registry
         this.setRegistry(handle.getRegistry());
         this.getRegistry().updateOutput(this);
+        this.getRegistry().createInputSubset(config);
+        this.getRegistry().createOutputSubset(config);
 
         // Set optimum in lattice
         lattice.access().setOptimum(optimum);

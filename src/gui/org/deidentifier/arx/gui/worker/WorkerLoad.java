@@ -86,7 +86,7 @@ public class WorkerLoad extends Worker<Model> {
      * @throws IOException
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
-        zipfile = new ZipFile(path);
+        this.zipfile = new ZipFile(path);
         this.controller = controller;
     }
 

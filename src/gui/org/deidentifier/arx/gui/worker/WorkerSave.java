@@ -41,7 +41,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.Enclosure;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
@@ -118,8 +118,6 @@ public class WorkerSave extends Worker<Model> {
             writeModel(model, zip);
             arg0.worked(2);
             writeInput(model, zip);
-            arg0.worked(3);
-            writeInputSubset(model, zip);
             arg0.worked(4);
             writeOutput(model, zip);
             arg0.worked(5);
@@ -191,7 +189,7 @@ public class WorkerSave extends Worker<Model> {
         b.append("\t").append("<metric>").append(toXML(config.getMetric().getClass().getSimpleName())).append("</metric>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<criteria>\n");
         for (PrivacyCriterion c : config.getCriteria()) {
-        	if (!(c instanceof Enclosure)) {
+        	if (!(c instanceof Inclusion)) {
         		b.append("\t\t").append("<criterion>").append(toXML(c)).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         	}
         }
@@ -553,26 +551,6 @@ public class WorkerSave extends Worker<Model> {
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
-                               .iterator());
-            }
-        }
-    }
-
-    /**
-     * Writes the input to the file
-     * 
-     * @param zip
-     * @throws IOException
-     */
-    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getInputConfig().getInput() != null) {
-            if (model.getInputConfig().getInput().getHandle() != null) {
-                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-                out.write(model.getInputConfig()
-                               .getInput()
-                               .getHandle()
-                               .getView()
                                .iterator());
             }
         }
