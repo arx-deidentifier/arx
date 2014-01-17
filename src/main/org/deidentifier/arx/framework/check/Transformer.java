@@ -52,26 +52,26 @@ public class Transformer {
     /** The buffer. */
     protected int[][]                         buffer;
 
+    protected final ARXConfiguration             config;
+
     /** The data. */
     protected final int[][]                   data;
 
-    protected int[]                           sensitiveValues;
+    /** The dictionary for the snapshot compression **/
+    protected IntArrayDictionary              dictionarySensFreq;
+
+    /** The dictionary for the snapshot compression **/
+    protected IntArrayDictionary              dictionarySensValue;
 
     /** The dimensions. */
     protected final int                       dimensions;
-
     /** The hierarchies. */
     protected final GeneralizationHierarchy[] hierarchies;
 
     /** The instances. */
     protected final AbstractTransformer[]     instances;
-    /** The dictionary for the snapshot compression **/
-    protected IntArrayDictionary              dictionarySensValue;
 
-    /** The dictionary for the snapshot compression **/
-    protected IntArrayDictionary              dictionarySensFreq;
-
-    protected final ARXConfiguration             config;
+    protected int[]                           sensitiveValues;
 
     /**
      * Instantiates a new transformer.
@@ -143,73 +143,6 @@ public class Transformer {
     }
 
     /**
-     * Apply internal.
-     * 
-     * @param projection
-     *            the projection
-     * @param state
-     *            the state
-     * @param source
-     *            the source
-     * @param target
-     *            the target
-     * @param snapshot
-     *            the snapshot
-     * @param transition
-     *            the transition
-     * @return the hash groupify
-     */
-    protected IHashGroupify applyInternal(final long projection,
-                                          final int[] state,
-                                          final IHashGroupify source,
-                                          final IHashGroupify target,
-                                          final int[] snapshot,
-                                          final TransitionType transition) {
-
-        int startIndex = 0;
-        int stopIndex = 0;
-
-        int bucket = 0;
-        HashGroupifyEntry element = null;
-
-        switch (transition) {
-        case UNOPTIMIZED:
-            startIndex = 0;
-            stopIndex = data.length;
-            break;
-        case ROLLUP:
-            startIndex = 0;
-            stopIndex = source.size();
-            bucket = 0;
-            element = source.getFirstEntry();
-            break;
-        case SNAPSHOT:
-            startIndex = 0;
-            stopIndex = snapshot.length /
-                        config.getSnapshotLength();
-            break;
-        }
-
-        AbstractTransformer app = null;
-
-        app = getApplicator(projection);
-
-        app.init(projection,
-                 state,
-                 target,
-                 source,
-                 snapshot,
-                 transition,
-                 startIndex,
-                 stopIndex,
-                 bucket,
-                 element,
-                 buffer);
-
-        return app.call();
-    }
-
-    /**
      * Apply rollup.
      * 
      * @param projection
@@ -257,6 +190,15 @@ public class Transformer {
                              target,
                              snapshot,
                              TransitionType.SNAPSHOT);
+    }
+
+    /**
+     * Gets the buffer.
+     * 
+     * @return the buffer
+     */
+    public int[][] getBuffer() {
+        return buffer;
     }
 
     /**
@@ -362,6 +304,73 @@ public class Transformer {
     }
 
     /**
+     * Apply internal.
+     * 
+     * @param projection
+     *            the projection
+     * @param state
+     *            the state
+     * @param source
+     *            the source
+     * @param target
+     *            the target
+     * @param snapshot
+     *            the snapshot
+     * @param transition
+     *            the transition
+     * @return the hash groupify
+     */
+    protected IHashGroupify applyInternal(final long projection,
+                                          final int[] state,
+                                          final IHashGroupify source,
+                                          final IHashGroupify target,
+                                          final int[] snapshot,
+                                          final TransitionType transition) {
+
+        int startIndex = 0;
+        int stopIndex = 0;
+
+        int bucket = 0;
+        HashGroupifyEntry element = null;
+
+        switch (transition) {
+        case UNOPTIMIZED:
+            startIndex = 0;
+            stopIndex = data.length;
+            break;
+        case ROLLUP:
+            startIndex = 0;
+            stopIndex = source.size();
+            bucket = 0;
+            element = source.getFirstEntry();
+            break;
+        case SNAPSHOT:
+            startIndex = 0;
+            stopIndex = snapshot.length /
+                        config.getSnapshotLength();
+            break;
+        }
+
+        AbstractTransformer app = null;
+
+        app = getApplicator(projection);
+
+        app.init(projection,
+                 state,
+                 target,
+                 source,
+                 snapshot,
+                 transition,
+                 startIndex,
+                 stopIndex,
+                 bucket,
+                 element,
+                 buffer);
+
+        return app.call();
+    }
+
+    /**
      * Gets the applicator.
      * 
      * @param projection
@@ -375,14 +384,5 @@ public class Transformer {
         } else {
             return instances[index];
         }
-    }
-
-    /**
-     * Gets the buffer.
-     * 
-     * @return the buffer
-     */
-    public int[][] getBuffer() {
-        return buffer;
     }
 }
