@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -41,8 +42,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -188,6 +189,7 @@ public class WorkerSave extends Worker<Model> {
         b.append("\t").append("<relativeMaxOutliers>").append(toXML(config.getAllowedOutliers())).append("</relativeMaxOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<metric>").append(toXML(config.getMetric().getClass().getSimpleName())).append("</metric>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         b.append("\t").append("<criteria>\n");
+        if (config.getCriteria().isEmpty()) model.createCriteria(config);
         for (PrivacyCriterion c : config.getCriteria()) {
         	if (!(c instanceof Inclusion)) {
         		b.append("\t\t").append("<criterion>").append(toXML(c)).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -216,13 +218,16 @@ public class WorkerSave extends Worker<Model> {
 
     /**
      * Returns an XML representation of the data definition
+     * @param config 
      * 
      * @param handle
      * @param definition
      * @return
      */
-    private String toXML(final DataHandle handle,
+    private String toXML(final ModelConfiguration config, 
+                         final DataHandle handle,
                          final DataDefinition definition) {
+        
         final StringBuffer b = new StringBuffer();
         b.append("<definition>\n"); //$NON-NLS-1$
         for (int i = 0; i < handle.getNumColumns(); i++) {
@@ -239,10 +244,13 @@ public class WorkerSave extends Worker<Model> {
             b.append("\t\t").append("<name>").append(toXML(attr)).append("</name>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             b.append("\t\t").append("<type>").append(toXML(t.toString())).append("</type>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             b.append("\t\t").append("<datatype>").append(toXML(dt.toString())).append("</datatype>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            if (t instanceof Hierarchy) {
+            if (t instanceof Hierarchy || 
+                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
                 b.append("\t\t").append("<ref>").append("hierarchies/" + toFileName(attr) + ".csv").append("</ref>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                b.append("\t\t").append("<min>").append(toXML(definition.getMinimumGeneralization(attr))).append("</min>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                b.append("\t\t").append("<max>").append(toXML(definition.getMaximumGeneralization(attr))).append("</max>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                if (t instanceof Hierarchy){
+                    b.append("\t\t").append("<min>").append(toXML(definition.getMinimumGeneralization(attr))).append("</min>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    b.append("\t\t").append("<max>").append(toXML(definition.getMaximumGeneralization(attr))).append("</max>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                }
             }
             b.append("\t").append("</assigment>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -471,7 +479,8 @@ public class WorkerSave extends Worker<Model> {
             if (config.getInput().getDefinition() != null) {
                 zip.putNextEntry(new ZipEntry(prefix + "definition.xml")); //$NON-NLS-1$
                 final Writer w = new OutputStreamWriter(zip);
-                w.write(toXML(config.getInput().getHandle(),
+                w.write(toXML(config,
+                              config.getInput().getHandle(),
                               config.getInput().getDefinition()));
                 w.flush();
             }
@@ -501,8 +510,10 @@ public class WorkerSave extends Worker<Model> {
     private void writeHierarchies(final ModelConfiguration config,
                                   final String prefix,
                                   final ZipOutputStream zip) throws IOException {
-    	
-    	// Write hierarchies of QIs
+
+        Set<String> done = new HashSet<String>();
+        
+        // Write hierarchies of QIs
         if (config.getInput() != null) {
             if (config.getInput().getDefinition() != null) {
                 for (final String a : config.getInput()
@@ -517,22 +528,26 @@ public class WorkerSave extends Worker<Model> {
                         final CSVDataOutput out = new CSVDataOutput(zip,
                                                                     model.getSeparator());
                         out.write(h);
+                        done.add(a);
                     }
                 }
             }
         }
         
-        // Write hierarchies of sensitive attributes
-        Set<String> additional = new HashSet<String>();
-        for (HierarchicalDistanceTCloseness c : config.getCriteria(HierarchicalDistanceTCloseness.class)) {
-        	additional.add(c.getAttribute());
-        }
-        
-        for (String attribute : additional){
-        	Hierarchy h = config.getHierarchy(attribute);
-            zip.putNextEntry(new ZipEntry(prefix +"hierarchies/" + toFileName(attribute) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-            out.write(h.getHierarchy());
+        // Write hierarchies for sensitive attributes
+        for (Entry<String, Hierarchy> entry : config.getHierarchies().entrySet()) {
+
+            final String[][] h = entry.getValue().getHierarchy();
+            String a = entry.getKey();
+            
+            if (!done.contains(a)) {
+    
+                if (h != null) {
+                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(a) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
+                    final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                    out.write(h);
+                }
+            }
         }
     }
 
