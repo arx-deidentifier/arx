@@ -35,7 +35,9 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
  * 
  * @author Prasser, Kohlmayer
  */
-public class AttributeType {
+public class AttributeType implements Serializable {
+    
+    private static final long serialVersionUID = -7358540408016873823L;
 
     /**
      * This class implements a generalization hierarchy
@@ -45,7 +47,7 @@ public class AttributeType {
     public static abstract class Hierarchy extends AttributeType implements Serializable {
 
 		private static final long serialVersionUID = -4721439386792383385L;
-
+		
 		/**
          * The implementation for arrays
          * 
@@ -56,7 +58,7 @@ public class AttributeType {
 			private static final long serialVersionUID = 8966189950800782892L;
 			
 			private final String[][] hierarchy;
-
+			
             private ArrayHierarchy(final String[][] hierarchy) {
                 this.hierarchy = hierarchy;
             }

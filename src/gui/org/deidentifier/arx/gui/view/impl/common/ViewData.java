@@ -252,7 +252,7 @@ public abstract class ViewData implements IView {
      * @param type
      */
     protected void updateHeaderImage(final int index, final AttributeType type) {
-        if (table.getHeaderImages().size() <= index) {
+        while (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
         if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
