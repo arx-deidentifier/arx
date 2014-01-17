@@ -182,9 +182,13 @@ public class TestDataHandle extends AbstractTest {
         String[][] given2 = iteratorToArray(h.getView().iterator());
         printArray(given2);
 
-        String[][] expected = { { "age", "gender", "zipcode" }, { ">=61", "*", "81825" }, { ">=61", "*", "81925" }, { "20-60", "*", "82667" }, { "20-60", "*", "82451" } };
+        String[][] expected = { { "age", "gender", "zipcode" }, 
+                                { ">=61", "*", "81825" }, 
+                                { ">=61", "*", "81925" }, 
+                                { "20-60", "*", "82667" }, 
+                                { "20-60", "*", "82451" } };
 
-        assertTrue(Arrays.deepEquals(given, expected));
+        assertTrue(Arrays.deepEquals(given2, expected));
     }
 
     @Test
