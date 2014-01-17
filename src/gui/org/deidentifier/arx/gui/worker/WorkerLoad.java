@@ -200,8 +200,7 @@ public class WorkerLoad extends Worker<Model> {
             model.setInputConfig(config);
             
         } else {
-        	
-            config.setInput(model.getInputConfig().getInput().clone(false));
+            config.setInput(model.getInputConfig().getInput());
             model.setOutputConfig(config);
         }
 

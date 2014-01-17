@@ -190,6 +190,7 @@ public class ViewDataInput extends ViewData {
     protected DataHandle getHandle() {
         if (model != null){
             DataHandle handle = model.getInputConfig().getInput().getHandle();
+            
             if (model.getViewConfig().isSubset() && 
                 model.getOutputConfig() != null &&
                 model.getOutputConfig().getConfig() != null) {
