@@ -354,7 +354,7 @@ public class Transformer {
         AbstractTransformer app = null;
 
         app = getApplicator(projection);
-
+        
         app.init(projection,
                  state,
                  target,
@@ -373,8 +373,7 @@ public class Transformer {
     /**
      * Gets the applicator.
      * 
-     * @param projection
-     *            the projection
+     * @param projection the projection
      * @return the applicator
      */
     protected AbstractTransformer getApplicator(final long projection) {
