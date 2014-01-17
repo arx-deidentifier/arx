@@ -388,16 +388,21 @@ public class ViewDensity extends ViewStatistics implements IView {
             for (final String s : elems) {
                 v[i++] = s;
             }
-            Arrays.sort(v, new Comparator<String>() {
-                @Override
-                public int compare(final String arg0, final String arg1) {
-                    try {
-                        return dtype.compare(arg0, arg1);
-                    } catch (final Exception e) {
-                        throw new RuntimeException(e);
+            try {
+                Arrays.sort(v, new Comparator<String>() {
+                    @Override
+                    public int compare(final String arg0, final String arg1) {
+                        try {
+                            return dtype.compare(arg0, arg1);
+                        } catch (final Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-            });
+                });
+            } catch (Exception e){
+                // TODO: Make sure that invalid data types can not even be selected
+                controller.getResources().getLogger().warn("Invalid data type!");
+            }
             dvals = v;
         }
 
