@@ -169,26 +169,24 @@ public class TestDataHandle extends AbstractTest {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new Inclusion(subset));
 
+        // Transform
         ARXResult result = anonymizer.anonymize(data, config);
-
+        
+        // Sort
         data.getHandle().sort(true, 0, 1, 2);
-
-        String[][] given = iteratorToArray(data.getHandle().getView().iterator());
-        printArray(given);
-
+        
+        // Transform
         ARXNode n = result.getLattice().getLevels()[2][1];
-
         DataHandle h = result.getHandle(n);
-        String[][] given2 = iteratorToArray(h.getView().iterator());
-        printArray(given2);
-
+        
+        String[][] given = iteratorToArray(h.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" }, 
                                 { ">=61", "*", "81825" }, 
                                 { ">=61", "*", "81925" }, 
                                 { "20-60", "*", "82667" }, 
                                 { "20-60", "*", "82451" } };
 
-        assertTrue(Arrays.deepEquals(given2, expected));
+        assertTrue(Arrays.deepEquals(given, expected));
     }
 
     @Test

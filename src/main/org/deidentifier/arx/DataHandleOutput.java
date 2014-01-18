@@ -18,8 +18,10 @@
 
 package org.deidentifier.arx;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -112,6 +114,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     /** The data. */
     private Data          dataIS;
 
+    /** The buffer. */
+    private Data          source;
+    
     /** The data. */
     private Data          dataQI;
 
@@ -197,6 +202,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                      snapshotSizeDataset,
                                                      snapshotSizeSnapshot);
 
+        // Store buffer
+        this.source = checker.getData();
+        
         // Initialize the result
         init(manager,
              checker,
@@ -236,6 +244,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         registry.updateOutput(this);
         this.setRegistry(registry);
+        
+        this.source = checker.getData();
 
         final ARXLattice flattice = new ARXLattice(lattice,
                                                    manager.getDataQI().getHeader(),
@@ -705,5 +715,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         temp = dataIS.getArray()[row1];
         dataIS.getArray()[row1] = dataIS.getArray()[row2];
         dataIS.getArray()[row2] = temp;
+        temp = source.getArray()[row1];
+        source.getArray()[row1] = source.getArray()[row2];
+        source.getArray()[row2] = temp;
     }
 }
