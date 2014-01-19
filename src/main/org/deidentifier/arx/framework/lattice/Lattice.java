@@ -282,6 +282,4 @@ public class Lattice {
     public void triggerTagged() {
         if (this.listener != null) this.listener.nodeTagged(size * multiplier);
     }
-
-  
 }

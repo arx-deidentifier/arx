@@ -585,6 +585,8 @@ public class ARXLattice implements Serializable {
 
         // Estimate with max if not known
         if (top.getMaximumInformationLoss() == null) {
+            // TODO: Check top? First, make sure that this is 
+            // not already done somewhere, or only in the GUI
             top.access().setMaximumInformationLoss(metric.max());
         }
 
@@ -614,6 +616,8 @@ public class ARXLattice implements Serializable {
         // Estimate with zero if not known
         // TODO: Not correct for DM*
         if (bottom.getMinimumInformationLoss() == null) {
+            // TODO: Check bottom? First, make sure that this is 
+            // not already done somewhere, or only in the GUI
             bottom.access().setMinimumInformationLoss(metric.min());
         }
 

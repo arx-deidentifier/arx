@@ -18,10 +18,8 @@
 
 package org.deidentifier.arx;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -372,11 +370,16 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         // Store
         if (!currentNode.isChecked()) {
+            
             currentNode.access().setChecked(true);
-            if (node.isAnonymous()) {
-                currentNode.access().setAnonymous();
-            } else {
-                currentNode.access().setNotAnonymous();
+            // Only in this case, due to the special case 
+            // with multiple sensitive attributes
+            if (config.isPracticalMonotonicity()) {
+                if (node.isAnonymous()) {
+                    currentNode.access().setAnonymous();
+                } else {
+                    currentNode.access().setNotAnonymous();
+                }
             }
             currentNode.access().setMaximumInformationLoss(node.getInformationLoss());
             currentNode.access().setMinimumInformationLoss(node.getInformationLoss());

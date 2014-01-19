@@ -228,8 +228,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 result.add((T) c);
             }
         }
-        // if (result.isEmpty()) return null;
-        // else
         return result;
     }
 

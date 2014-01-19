@@ -66,7 +66,8 @@ public class FLASHAlgorithmIterative extends AbstractFLASHAlgorithm {
         stack.clear();
         checkBottom();
 
-        // TODO: This algorithm is potentially suboptimal, as predictive tagging could be applied in same cases
+        // TODO: This algorithm is potentially suboptimal, 
+        // as predictive tagging could be applied in same cases
         
         // For each node
         final int length = lattice.getLevels().length;
