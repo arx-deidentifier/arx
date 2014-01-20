@@ -354,7 +354,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         currentNode = fnode;
 
-        // Dont transform twice
+        // Don't transform twice
         if ((currentNode != null) && (currentNode == lastNode)) { return this; }
 
         // Prepare
