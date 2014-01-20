@@ -205,12 +205,11 @@ public class ARXAnonymizer {
     public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
 
         // TODO: Fix this
-        if (config.isProtectSensitiveAssociations() && 
-            config.isPracticalMonotonicity() &&
+        if (config.getMaxOutliers()>0d &&
             data.getDefinition().getSensitiveAttributes().size()>1){
             throw new UnsupportedOperationException(
-                      "Assuming practical monotonicity while protecting associations " +
-                      "between multiple sensitive attributes is currently not supported!");
+                      "Combining tuple suppression with " +
+                      "multiple sensitive attributes is currently not supported!");
         }
         
         final long time = System.currentTimeMillis();
