@@ -32,7 +32,9 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract ARXConfiguration getConfiguration();
+    // TODO: Removed because the result config might be different from the input config
+    //       in case of multiple sensitive attributes 
+    // public abstract ARXConfiguration getConfiguration();
 
     /**
      * Gets the global optimum.

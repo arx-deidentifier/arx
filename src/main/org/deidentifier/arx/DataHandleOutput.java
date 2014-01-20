@@ -271,11 +271,12 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         checkColumn(col);
         return header[col];
     }
-
-    @Override
-    public ARXConfiguration getConfiguration() {
-        return config;
-    }
+    // TODO: Removed because the result config might be different from the input config
+    //       in case of multiple sensitive attributes
+    // @Override
+    // public ARXConfiguration getConfiguration() {
+    //  return config;
+    // }
 
     /**
      * Gets the distinct values.
