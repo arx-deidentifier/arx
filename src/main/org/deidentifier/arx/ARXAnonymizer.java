@@ -209,7 +209,7 @@ public class ARXAnonymizer {
             config.isPracticalMonotonicity() &&
             data.getDefinition().getSensitiveAttributes().size()>1){
             throw new UnsupportedOperationException(
-                      "Assuming practical monotonicity while protecting associations" +
+                      "Assuming practical monotonicity while protecting associations " +
                       "between multiple sensitive attributes is currently not supported!");
         }
         
