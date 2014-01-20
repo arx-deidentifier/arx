@@ -189,6 +189,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                     handle.getDefinition(),
                                                     config.getCriteria());
 
+        // Initialize
+        config.initialize(manager);
+
         // Initialize the metric
         metric.initialize(manager.getDataQI(), manager.getHierarchies(), config);
 
