@@ -103,9 +103,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     /** The node checker. */
     private INodeChecker  checker;
 
-    /** The configuration */
-    private ARXConfiguration config;
-
     /** The current node */
     private ARXNode     currentNode;
 
@@ -376,9 +373,10 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         if (!currentNode.isChecked()) {
             
             currentNode.access().setChecked(true);
+            
             // Only in this case, due to the special case 
             // with multiple sensitive attributes
-            if (config.isPracticalMonotonicity()) {
+            if (definition.getSensitiveAttributes().size()<=1) {
                 if (node.isAnonymous()) {
                     currentNode.access().setAnonymous();
                 } else {
@@ -516,7 +514,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                       final boolean removeOutliers,
                       final ARXConfiguration config) {
 
-        this.config = config;
         this.removeOutliers = removeOutliers;
         this.lattice = lattice;
         this.optimalNode = this.lattice.getOptimum();
