@@ -42,7 +42,6 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;

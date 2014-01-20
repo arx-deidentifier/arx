@@ -43,7 +43,6 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
