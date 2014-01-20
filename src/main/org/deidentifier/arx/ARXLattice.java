@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -473,8 +474,8 @@ public class ARXLattice implements Serializable {
      * @param config The config
      */
     ARXLattice(final Lattice lattice,
-                 final String[] header,
-                 final ARXConfiguration config) {
+               final String[] header,
+               final ARXConfiguration config) {
 
         this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
