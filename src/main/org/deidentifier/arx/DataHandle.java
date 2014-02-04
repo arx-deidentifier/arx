@@ -31,7 +31,7 @@ import cern.colt.Swapper;
 
 /**
  * This class provides access to dictionary encoded data. Furthermore, the data
- * is paired to the associated input or output data. This means that, e.g., if
+ * is linked to the associated input or output data. This means that, e.g., if
  * the input data is sorted, the output data will be sorted accordingly. This
  * ensures that original tuples and their generalized counterpart will always
  * have the same row index, which is important for many use cases, e.g., for
