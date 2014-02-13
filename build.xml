@@ -39,7 +39,7 @@
     </target>
 
     <target name="javadoc-api" depends="clean-javadoc">
-        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.6" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="2.0-alpha" windowtitle="ARX API Documentation" private="false" failonerror="true" stylesheetfile="doc/stylesheet.css">
+        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.6" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="2.0-alpha2" windowtitle="ARX API Documentation" private="false" failonerror="true" stylesheetfile="doc/stylesheet.css">
             <classpath>
                 <path path="lib/colt/colt-1.2.0.jar" />
                 <path path="lib/commons/commons-math3-3.1.1.jar"/>
@@ -57,7 +57,7 @@
     </target>
 
     <target name="javadoc-dev" depends="clean-javadoc">
-        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.6" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="2.0-alpha" windowtitle="ARX Developer Documentation" private="false" failonerror="true" stylesheetfile="doc/stylesheet.css">
+        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.6" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="2.0-alpha2" windowtitle="ARX Developer Documentation" private="false" failonerror="true" stylesheetfile="doc/stylesheet.css">
             <classpath>
                 <path path="lib/colt/colt-1.2.0.jar" />
 				<path path="lib/commons/commons-math3-3.1.1.jar"/>
@@ -74,7 +74,7 @@
 
 
     <target name="javadoc-gui" depends="clean-javadoc">
-        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.6" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="2.0-alpha" windowtitle="ARX GUI Documentation" private="false" failonerror="true" stylesheetfile="doc/stylesheet.css">
+        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.6" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="2.0-alpha2" windowtitle="ARX GUI Documentation" private="false" failonerror="true" stylesheetfile="doc/stylesheet.css">
             <classpath>
                 <path path="lib/colt/colt-1.2.0.jar" />
                 <path path="lib/commons/commons-io-2.4.jar" />
@@ -148,28 +148,28 @@
     </target>
 
     <target name="jars" depends="compile, javadoc">
-        <jar destfile="jars/libarx-2.0-alpha-doc.jar">
+        <jar destfile="jars/libarx-2.0-alpha2-doc.jar">
             <fileset dir="doc/api" defaultexcludes="no">
             </fileset>
         </jar>
-        <jar destfile="jars/libarx-2.0-alpha-dev-doc.jar">
+        <jar destfile="jars/libarx-2.0-alpha2-dev-doc.jar">
             <fileset dir="doc/dev" defaultexcludes="no">
             </fileset>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-doc.jar">
+        <jar destfile="jars/arx-2.0-alpha2-doc.jar">
             <fileset dir="doc/gui" defaultexcludes="no">
             </fileset>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-src.jar">
+        <jar destfile="jars/arx-2.0-alpha2-src.jar">
             <fileset dir="src/gui" defaultexcludes="no">
             </fileset>
         </jar>
-        <jar destfile="jars/libarx-2.0-alpha-src.jar">
+        <jar destfile="jars/libarx-2.0-alpha2-src.jar">
             <fileset dir="src/main" defaultexcludes="no" />
             <fileset dir="src/test" defaultexcludes="no" />
             <fileset dir="src/example" defaultexcludes="no" />
         </jar>
-        <jar destfile="jars/libarx-2.0-alpha.jar">
+        <jar destfile="jars/libarx-2.0-alpha2.jar">
             <fileset dir="build/lib" defaultexcludes="no">
             </fileset>
             <zipfileset src="lib/colt/colt-1.2.0.jar" excludes="META-INF/*.SF" />
@@ -177,7 +177,7 @@
             <zipfileset src="lib/jama/Jama-1.0.2.jar" excludes="META-INF/*.SF" />
             <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-osx.jar">
+        <jar destfile="jars/arx-2.0-alpha2-osx.jar">
             <fileset dir="build/gui" defaultexcludes="no">
             </fileset>
 			<zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />
@@ -201,7 +201,7 @@
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-osx-64.jar">
+        <jar destfile="jars/arx-2.0-alpha2-osx-64.jar">
             <fileset dir="build/gui" defaultexcludes="no">
             </fileset>
 			<zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />
@@ -224,7 +224,7 @@
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-gtk.jar">
+        <jar destfile="jars/arx-2.0-alpha2-gtk.jar">
             <fileset dir="build/gui" defaultexcludes="no">
             </fileset>
             <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />
@@ -247,7 +247,7 @@
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-gtk-64.jar">
+        <jar destfile="jars/arx-2.0-alpha2-gtk-64.jar">
             <fileset dir="build/gui" defaultexcludes="no">
             </fileset>
             <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />
@@ -270,7 +270,7 @@
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-win.jar">
+        <jar destfile="jars/arx-2.0-alpha2-win.jar">
             <fileset dir="build/gui" defaultexcludes="no">
             </fileset>
             <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />
@@ -293,7 +293,7 @@
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
         </jar>
-        <jar destfile="jars/arx-2.0-alpha-win-64.jar">
+        <jar destfile="jars/arx-2.0-alpha2-win-64.jar">
             <fileset dir="build/gui" defaultexcludes="no">
             </fileset>
             <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.SF" />

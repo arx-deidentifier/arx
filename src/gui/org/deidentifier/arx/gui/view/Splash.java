@@ -40,7 +40,6 @@ public class Splash extends JWindow{
 
     public Splash() throws IOException{
         
-        this.setAlwaysOnTop(true);
         this.setSize(new Dimension(400,240));
         this.setLocationRelativeTo(null);
     }
