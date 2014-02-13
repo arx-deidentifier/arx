@@ -60,7 +60,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class WorkerLoad extends Worker<Model> {
 
 	private final ZipFile    zipfile;
-	private final Controller controller;
 	private ARXLattice       lattice;
 	private Model            model;
 
@@ -75,7 +74,6 @@ public class WorkerLoad extends Worker<Model> {
     public WorkerLoad(final File file, final Controller controller) throws ZipException,
                                                                    IOException {
         zipfile = new ZipFile(file);
-        this.controller = controller;
     }
 
     /**
@@ -87,7 +85,6 @@ public class WorkerLoad extends Worker<Model> {
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
         this.zipfile = new ZipFile(path);
-        this.controller = controller;
     }
 
     /**
@@ -764,7 +761,7 @@ public class WorkerLoad extends Worker<Model> {
                 if (localName.equals("metadata")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("version")) { //$NON-NLS-1$
-                    if (!payload.equals(controller.getResources().getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
+                    if (!payload.equals(Resources.getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
                     return true;
                 } else {
                     return false;

@@ -94,14 +94,12 @@ public class WorkerSave extends Worker<Model> {
 
     private final String     path;
     private final Model      model;
-    private final Controller controller;
 
     public WorkerSave(final String path,
                       final Controller controller,
                       final Model model) {
         this.path = path;
         this.model = model;
-        this.controller = controller;
     }
 
     @Override
@@ -649,7 +647,7 @@ public class WorkerSave extends Worker<Model> {
         zip.putNextEntry(new ZipEntry("metadata.xml")); //$NON-NLS-1$
         final Writer w = new OutputStreamWriter(zip);
         w.write("<metadata>\n"); //$NON-NLS-1$
-        w.write("\t<version>" + toXML(controller.getResources().getVersion()) + "</version>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+        w.write("\t<version>" + toXML(Resources.getVersion()) + "</version>\n"); //$NON-NLS-1$ //$NON-NLS-2$
         w.write("</metadata>\n"); //$NON-NLS-1$
         w.flush();
 

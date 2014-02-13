@@ -50,6 +50,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
@@ -129,6 +130,10 @@ public class MainWindow implements IView {
         
         // Now reset and disable
         controller.reset();
+    }
+    
+    public void addShellListener(ShellListener listener){
+        this.shell.addShellListener(listener);
     }
 
     @Override

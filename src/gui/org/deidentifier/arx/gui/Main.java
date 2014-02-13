@@ -18,7 +18,16 @@
 
 package org.deidentifier.arx.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
+
+import org.deidentifier.arx.gui.view.Splash;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 
 /**
  * Main entry point
@@ -27,8 +36,41 @@ import org.deidentifier.arx.gui.view.impl.MainWindow;
  */
 public class Main {
 
+    private static Splash splash;
+    
     public static void main(final String[] args) {
-        System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-        new MainWindow().show();
+        
+        try {
+            splash =  new Splash();
+            splash.setVisible(true);
+            
+            System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            MainWindow main = new MainWindow();
+            main.addShellListener(new ShellAdapter(){
+                @Override
+                public void shellActivated(ShellEvent arg0) {
+                    hideSplash();
+                }
+            });
+            main.show();
+            
+        } catch (Throwable e){
+            if (splash!=null){
+                hideSplash();
+            }
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+            
+        }
+    }
+    
+    private static void hideSplash() {
+        new Timer(1000, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                splash.setVisible(false);
+            }
+        }).start(); 
     }
 }
