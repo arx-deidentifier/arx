@@ -20,6 +20,8 @@ package org.deidentifier.arx.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -59,7 +61,12 @@ public class Main {
             if (splash!=null){
                 hideSplash();
             }
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Unexpected error", JOptionPane.ERROR_MESSAGE);
+    		StringWriter sw = new StringWriter();
+    		PrintWriter pw = new PrintWriter(sw);
+    		e.printStackTrace(pw);
+    		final String trace = sw.toString();
+
+            JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
             
         }

@@ -38,7 +38,9 @@ import org.deidentifier.arx.gui.view.impl.analyze.LayoutAnalyze;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
+import org.deidentifier.arx.gui.view.impl.menu.DialogError;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
@@ -166,7 +168,7 @@ public class MainWindow implements IView {
                     display.sleep();
                 }
             } catch (final Exception e) {
-                controller.actionShowErrorDialog(Resources.getMessage("MainWindow.8"), Resources.getMessage("MainWindow.9") + e.getMessage() + Resources.getMessage("MainWindow.10")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                controller.actionShowErrorDialog(Resources.getMessage("MainWindow.8"), Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
@@ -224,11 +226,26 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
-    public void showErrorDialog(final String header, final String text) {
-        MessageDialog.openError(getShell(), header, text);
+    public void showErrorDialog(final String header, final String message) {
+        final DialogError dialog = new DialogError(shell, controller, header, message);
+        dialog.create();
+        dialog.open();
     }
-
+    
+    public void showErrorDialog(final String header, final String message, final String error) {
+        final DialogError dialog = new DialogError(shell, controller, header, message, error);
+        dialog.create();
+        dialog.open();
+    }
+    
+    public void showErrorDialog(final String header, final String message, final Throwable t) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		final String trace = sw.toString();
+		showErrorDialog(header, message, trace);
+    }
+    
     public void showInfoDialog(final String header, final String text) {
         MessageDialog.openInformation(getShell(), header, text);
     }
@@ -310,4 +327,9 @@ public class MainWindow implements IView {
         }
     }
 
+	public void showAboutDialog() {
+		final DialogAbout dialog = new DialogAbout(shell, controller);
+        dialog.create();
+        dialog.open();
+	}
 }

@@ -115,10 +115,9 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
 
         list = new List(form, SWT.SINGLE);
         try {
-            browser = new Browser(form, SWT.NONE);
+            browser = new Browser(form, SWT.BORDER);
         } catch (SWTError e) {
-            controller.actionShowErrorDialog("Error", "Could not open browser");
-            this.close();
+            throw new RuntimeException(e);
         }
         
         for (Entry entry : config.getEntries()) {

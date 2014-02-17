@@ -46,6 +46,7 @@ public class Splash extends Frame{
         this.setAlwaysOnTop(true);
         this.setAutoRequestFocus(true);
         this.setUndecorated(true);
+        this.setBackground(Color.WHITE);
         this.addComponentListener(new ComponentAdapter(){
         	@Override
         	public void componentResized(ComponentEvent e) {
