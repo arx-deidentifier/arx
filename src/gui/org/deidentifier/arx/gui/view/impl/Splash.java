@@ -15,24 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.deidentifier.arx.gui.view;
+package org.deidentifier.arx.gui.view.impl;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Label;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.io.IOException;
 
-import javax.swing.JWindow;
-
 import org.deidentifier.arx.gui.resources.Resources;
 
-public class Splash extends JWindow{
+public class Splash extends Frame{
 
     private static final long serialVersionUID = -4661666752999055995L;
     private final Image splash = Resources.getSplash();
@@ -42,6 +45,15 @@ public class Splash extends JWindow{
         
         this.setSize(new Dimension(400,240));
         this.setLocationRelativeTo(null);
+        this.setAlwaysOnTop(true);
+        this.setAutoRequestFocus(true);
+        this.setUndecorated(true);
+        this.addComponentListener(new ComponentAdapter(){
+        	@Override
+        	public void componentResized(ComponentEvent e) {
+        		repaint();
+			}
+        });
     }
 
     /* (non-Javadoc)
