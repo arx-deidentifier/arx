@@ -135,4 +135,8 @@ public class Resources {
     public int getGradientLength() {
         return 256;
     }
+
+	public static java.awt.Image getImageIcon() throws IOException {
+		return ImageIO.read(Resources.class.getResourceAsStream("logo.png")); //$NON-NLS-1$
+	}
 }

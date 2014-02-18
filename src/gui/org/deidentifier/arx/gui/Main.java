@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.deidentifier.arx.gui.view.impl.Splash;
+import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 
@@ -38,12 +38,12 @@ import org.eclipse.swt.events.ShellEvent;
  */
 public class Main {
 
-    private static Splash splash;
+    private static MainSplash splash;
     
     public static void main(final String[] args) {
         
         try {
-            splash =  new Splash();
+            splash = new MainSplash();
             splash.setVisible(true);
             
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$

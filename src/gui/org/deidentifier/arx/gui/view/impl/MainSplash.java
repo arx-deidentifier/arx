@@ -33,20 +33,24 @@ import java.io.IOException;
 
 import org.deidentifier.arx.gui.resources.Resources;
 
-public class Splash extends Frame{
+import com.sun.awt.AWTUtilities;
+
+public class MainSplash extends Frame{
 
     private static final long serialVersionUID = -4661666752999055995L;
-    private final Image splash = Resources.getSplash();
     private final String version = Resources.getVersion();
+    private final Image splash = Resources.getSplash();;
 
-    public Splash() throws IOException{
+    public MainSplash() throws IOException{
         
         this.setSize(new Dimension(400,240));
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
         this.setAutoRequestFocus(true);
         this.setUndecorated(true);
-        this.setBackground(Color.WHITE);
+        this.setIconImage(Resources.getImageIcon()); //$NON-NLS-1$);
+        AWTUtilities.setWindowOpaque(this, false);
+        
         this.addComponentListener(new ComponentAdapter(){
         	@Override
         	public void componentResized(ComponentEvent e) {
@@ -68,7 +72,7 @@ public class Splash extends Frame{
      */
     @Override
     public void paint(Graphics g) {
-        
+    	
         Graphics2D g2d = (Graphics2D)g;
         
         int width = getWidth();
