@@ -52,7 +52,6 @@ import org.eclipse.swt.widgets.ToolItem;
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
     private String           id;
-    private Controller       controller;
     private Browser          browser;
     private List             list;
     private Image            image;
@@ -60,7 +59,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
 
     public DialogHelp(final Shell parentShell, final Controller controller, final String id) {
         super(parentShell);
-        this.controller = controller;
         this.id = id;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
@@ -163,15 +161,17 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     private int getIndexOf(String location) {
         return config.getIndexForUrl(location);
     }
+    
+    
 
     @Override
     protected Point getInitialSize() {
-        return new Point(800,600);
+        return new Point(900,600);
     }
 
     @Override
     protected boolean isResizable() {
-        return false;
+        return true;
     }
     
     @Override
