@@ -59,7 +59,6 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;

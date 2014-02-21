@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.InformationLoss;
