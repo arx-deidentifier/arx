@@ -78,7 +78,7 @@ public class Resources {
         SimpleLayout layout = new SimpleLayout();
         ConsoleAppender consoleAppender = new ConsoleAppender(layout);
         LOGGER.addAppender(consoleAppender);
-        LOGGER.setLevel(Level.ALL);
+        LOGGER.setLevel(Level.OFF);
     }
 
     private String getFormat(String key) {
@@ -135,4 +135,8 @@ public class Resources {
     public int getGradientLength() {
         return 256;
     }
+
+	public static java.awt.Image getImageIcon() throws IOException {
+		return ImageIO.read(Resources.class.getResourceAsStream("logo.png")); //$NON-NLS-1$
+	}
 }

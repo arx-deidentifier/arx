@@ -112,7 +112,7 @@ public class Controller implements IView {
 
         // Show errors
         if (worker.getError() != null) {
-            main.showErrorDialog("Error!", Resources.getMessage("Controller.2") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog("Error!", Resources.getMessage("Controller.2"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -301,11 +301,11 @@ public class Controller implements IView {
         
         // Show errors
         if (worker.getError() != null) {
-            String message = worker.getError().getMessage();
+            Throwable t = worker.getError();
             if (worker.getError() instanceof InvocationTargetException) {
-                message = worker.getError().getCause().getMessage();
+                t = worker.getError().getCause();
             }
-            main.showErrorDialog(Resources.getMessage("Controller.13"), Resources.getMessage("Controller.14") + message); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(Resources.getMessage("Controller.13"), Resources.getMessage("Controller.14") + t.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             worker.getError().printStackTrace(pw);
@@ -463,7 +463,7 @@ public class Controller implements IView {
         main.showProgressDialog(Resources.getMessage("Controller.39"), worker); //$NON-NLS-1$
 
         if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.40"), Resources.getMessage("Controller.41") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.40"), Resources.getMessage("Controller.41"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
     }
@@ -501,7 +501,7 @@ public class Controller implements IView {
             }
 
         } catch (final Exception e) {
-            main.showErrorDialog(Resources.getMessage("Controller.49"), Resources.getMessage("Controller.50") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.49"), Resources.getMessage("Controller.50"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -649,9 +649,7 @@ public class Controller implements IView {
      * Shows the "about" dialog
      */
     public void actionMenuHelpAbout() {
-        final DialogAbout dialog = new DialogAbout(main.getShell(), this);
-        dialog.create();
-        dialog.open();
+        main.showAboutDialog();
     }
 
     /**
@@ -679,8 +677,8 @@ public class Controller implements IView {
      * @param header
      * @param text
      */
-    public void actionShowErrorDialog(final String header, final String text) {
-        main.showErrorDialog(header, text);
+    public void actionShowErrorDialog(final String header, final String text, final Throwable t) {
+        main.showErrorDialog(header, text, t);
     }
 
     /**
@@ -780,7 +778,7 @@ public class Controller implements IView {
         final WorkerImport worker = new WorkerImport(path, dialog.getSeparator());
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -795,7 +793,7 @@ public class Controller implements IView {
                                   ModelPart.RESEARCH_SUBSET,
                                   subset.getSet()));
         } catch (IllegalArgumentException e){
-            main.showErrorDialog("Error!", e.getMessage());
+            main.showErrorDialog("Error!", e.getMessage(), e);
         }
     }
 
@@ -916,7 +914,7 @@ public class Controller implements IView {
         final WorkerImport worker = new WorkerImport(path, separator);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -982,7 +980,7 @@ public class Controller implements IView {
         try {
             return Hierarchy.create(path, separator);
         } catch (final IOException e) {
-            main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return null;
     }
@@ -1000,14 +998,14 @@ public class Controller implements IView {
         try {
             worker = new WorkerLoad(path, this);
         } catch (final IOException e) {
-            main.showErrorDialog(Resources.getMessage("Controller.81"), Resources.getMessage("Controller.82") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.81"), Resources.getMessage("Controller.82"), e); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
         main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             getResources().getLogger().info(worker.getError());
-            main.showErrorDialog(Resources.getMessage("Controller.84"), Resources.getMessage("Controller.85") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.84"), Resources.getMessage("Controller.85"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -1138,7 +1136,7 @@ public class Controller implements IView {
         main.showProgressDialog(Resources.getMessage("Controller.88"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             getResources().getLogger().info(worker.getError());
-            main.showErrorDialog(Resources.getMessage("Controller.89"), Resources.getMessage("Controller.90") + worker.getError().getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(Resources.getMessage("Controller.89"), Resources.getMessage("Controller.90"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
     }

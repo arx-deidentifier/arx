@@ -17,14 +17,12 @@
  */
 package org.deidentifier.arx.gui.view.impl;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Label;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
@@ -35,19 +33,24 @@ import java.io.IOException;
 
 import org.deidentifier.arx.gui.resources.Resources;
 
-public class Splash extends Frame{
+import com.sun.awt.AWTUtilities;
+
+public class MainSplash extends Frame{
 
     private static final long serialVersionUID = -4661666752999055995L;
-    private final Image splash = Resources.getSplash();
     private final String version = Resources.getVersion();
+    private final Image splash = Resources.getSplash();;
 
-    public Splash() throws IOException{
+    public MainSplash() throws IOException{
         
         this.setSize(new Dimension(400,240));
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
         this.setAutoRequestFocus(true);
         this.setUndecorated(true);
+        this.setIconImage(Resources.getImageIcon()); //$NON-NLS-1$);
+        AWTUtilities.setWindowOpaque(this, false);
+        
         this.addComponentListener(new ComponentAdapter(){
         	@Override
         	public void componentResized(ComponentEvent e) {
@@ -69,7 +72,7 @@ public class Splash extends Frame{
      */
     @Override
     public void paint(Graphics g) {
-        
+    	
         Graphics2D g2d = (Graphics2D)g;
         
         int width = getWidth();

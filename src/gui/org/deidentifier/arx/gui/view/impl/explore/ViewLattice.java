@@ -289,15 +289,17 @@ public class ViewLattice extends Panel implements IView {
 
     @Override
     public void paint(final Graphics g) {
-        final Graphics bg = buffer.getGraphics();
-        if (model != null) {
-            draw(bg);
-        } else {
-            bg.setColor(Color.WHITE);
-            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-        }
-        bg.dispose();
-        g.drawImage(buffer, 0, 0, this);
+    	if (buffer != null) {
+	        final Graphics bg = buffer.getGraphics();
+	        if (model != null) {
+	            draw(bg);
+	        } else {
+	            bg.setColor(Color.WHITE);
+	            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+	        }
+	        bg.dispose();
+	        g.drawImage(buffer, 0, 0, this);
+    	}
     }
 
     /**

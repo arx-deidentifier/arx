@@ -20,12 +20,14 @@ package org.deidentifier.arx.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.deidentifier.arx.gui.view.impl.Splash;
+import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 
@@ -37,6 +39,7 @@ import org.eclipse.swt.events.ShellEvent;
 public class Main {
 
     private static Splash splash = null;
+    private static MainSplash splash;
     
     public static void main(final String[] args) {
         
@@ -45,6 +48,8 @@ public class Main {
                 splash =  new Splash();
                 splash.setVisible(true);
             }
+            splash = new MainSplash();
+            splash.setVisible(true);
             
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
             
@@ -59,7 +64,12 @@ public class Main {
             
         } catch (Throwable e){
             hideSplash();
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Unexpected error", JOptionPane.ERROR_MESSAGE);
+    		StringWriter sw = new StringWriter();
+    		PrintWriter pw = new PrintWriter(sw);
+    		e.printStackTrace(pw);
+    		final String trace = sw.toString();
+
+            JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
             
         }
