@@ -38,52 +38,51 @@ import org.eclipse.swt.events.ShellEvent;
  */
 public class Main {
 
-    private static Splash splash = null;
-    private static MainSplash splash;
-    
+    private static MainSplash splash = null;
+
     public static void main(final String[] args) {
-        
+
         try {
-            if (!isOSX()){
-                splash =  new Splash();
+
+            if (!isOSX()) {
+                splash = new MainSplash();
                 splash.setVisible(true);
             }
-            splash = new MainSplash();
-            splash.setVisible(true);
-            
+
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-            
+
             MainWindow main = new MainWindow();
-            main.addShellListener(new ShellAdapter(){
+            main.addShellListener(new ShellAdapter() {
                 @Override
                 public void shellActivated(ShellEvent arg0) {
                     hideSplash();
                 }
             });
             main.show();
+
+        } catch (Throwable e) {
             
-        } catch (Throwable e){
             hideSplash();
-    		StringWriter sw = new StringWriter();
-    		PrintWriter pw = new PrintWriter(sw);
-    		e.printStackTrace(pw);
-    		final String trace = sw.toString();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            final String trace = sw.toString();
 
             JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
-            
+
         }
     }
-    
+
     private static void hideSplash() {
-        new Timer(1000, new ActionListener(){
+        new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 if (splash != null) splash.setVisible(false);
             }
-        }).start(); 
+        }).start();
     }
-    
+
     private static boolean isOSX() {
         String osName = System.getProperty("os.name");
         return osName.contains("OS X");
