@@ -46,7 +46,6 @@ public class MainSplash extends Frame{
         this.setSize(new Dimension(400,240));
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
-        this.setAutoRequestFocus(true);
         this.setUndecorated(true);
         this.setIconImage(Resources.getImageIcon()); //$NON-NLS-1$);
         AWTUtilities.setWindowOpaque(this, false);
