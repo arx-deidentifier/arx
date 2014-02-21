@@ -28,6 +28,7 @@ import javax.swing.Timer;
 
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
+import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 
@@ -38,6 +39,9 @@ import org.eclipse.swt.events.ShellEvent;
  */
 public class Main {
 
+	private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
+	private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
+	
     private static MainSplash splash = null;
 
     public static void main(final String[] args) {
@@ -47,6 +51,12 @@ public class Main {
             if (!isOSX()) {
                 splash = new MainSplash();
                 splash.setVisible(true);
+            } else {
+            	try {
+            		Class.forName(JDK16_FRAME);
+            	} catch (Exception e){
+            		SWT_AWT.embeddedFrameClass = JDK17_FRAME;
+            	}
             }
 
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
