@@ -36,13 +36,15 @@ import org.eclipse.swt.events.ShellEvent;
  */
 public class Main {
 
-    private static Splash splash;
+    private static Splash splash = null;
     
     public static void main(final String[] args) {
         
         try {
-            splash =  new Splash();
-            splash.setVisible(true);
+            if (!isOSX()){
+                splash =  new Splash();
+                splash.setVisible(true);
+            }
             
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
             
@@ -56,9 +58,7 @@ public class Main {
             main.show();
             
         } catch (Throwable e){
-            if (splash!=null){
-                hideSplash();
-            }
+            hideSplash();
             JOptionPane.showMessageDialog(null, e.getMessage(), "Unexpected error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
             
@@ -69,8 +69,13 @@ public class Main {
         new Timer(1000, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                splash.setVisible(false);
+                if (splash != null) splash.setVisible(false);
             }
         }).start(); 
+    }
+    
+    private static boolean isOSX() {
+        String osName = System.getProperty("os.name");
+        return osName.contains("OS X");
     }
 }
