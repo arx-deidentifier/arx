@@ -23,7 +23,8 @@ public abstract class ViewStatistics extends Panel{
                 DataHandle handle = model.getInputConfig().getInput().getHandle();
                 if (model.getViewConfig().isSubset() && 
                     model.getOutputConfig() != null &&
-                    model.getOutputConfig().getConfig() != null) {
+                    model.getOutputConfig().getConfig() != null &&
+                    handle != null) {
                     handle = handle.getView();
                 }
                 return handle;
@@ -31,7 +32,8 @@ public abstract class ViewStatistics extends Panel{
                 DataHandle handle = model.getOutput();
                 if (model.getViewConfig().isSubset() && 
                     model.getOutputConfig() != null &&
-                    model.getOutputConfig().getConfig() != null) {
+                    model.getOutputConfig().getConfig() != null &&
+                    handle != null) {
                     handle = handle.getView();
                 }
                 return handle;
