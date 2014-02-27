@@ -29,13 +29,15 @@ Highlights
 The framework provides highly efficient implementations of several well-known data anonymization criteria as well as metrics for information loss. In many cases, it outperforms pevious implementations by up to several orders of magnitude. It is able to find optimal solutions for monotonic and non-monotonic metrics as well as the k-anonymity, l-diversity and t-closeness criteria while allowing for tuple suppression. When enabling tuple suppression, a subset of the data items of pre-defined relative size is allowed to not adhere to the specified anonymity criterion. During anonymization this subset is completely suppressed. This allows to further reduce information loss. When employing tuple suppression with l-diversity or t-closeness or non-monotonic metrics, the framework utilizes a modified algorithm that finds an optimal solution and consistently characterizes the solution space. This comes at the cost of increased execution times. Alternatively, the framework can be configured to assume practical monotonicity and find a solution very fast, which will be the global optimum in the majority of cases although this is not guaranteed. The framework provides implementations of classical k-anonymity as well as various variants of l-diversity and t-closeness. Variants of l-diversity include recursive (c,l)-diversity, entropy l-diversity and distinct l-diversity. The t-closeness criterion can be based on the equal or hierarchical earth-movers-distance. The codebase is extensively tested, well documented and suitable for implementing a wide variety of data anonymization algorithms.
 Examples
 
-1. The framework can be used via an intuitive graphical user interface
+The framework can be used via an intuitive graphical user interface
+###
 
-![Image](https://raw.github.com/arx-deidentifier/arx/blob/master/doc/img/overview_view3.png)
+![Image](https://raw.github.com/arx-deidentifier/arx/master/doc/img/overview_view3.png)
 
 It allows to import datasets, create generalization hierarchies, specify the desired anonymity criterion and search the complete solution space in just a few seconds. Afterwards, the solution space can be explored in order to find an anonymous transformation that meets the requirements. To this end, the transformed dataset can be compared to the original input dataset.
 
-2. The framework provides an API for seamless integration into other systems
+The framework provides an API for seamless integration into other systems
+###
 	
 ```Java
 // Load data
@@ -61,20 +63,18 @@ ARXResult result = anonymizer.anonymize(data, config);
 result.getHandle().write("output.csv");
 ```
 
-3. More examples are available in the repository
-
 Limitations
 ------
 
 The ARX framework implements data anonymization with full-domain global-recording based on generalization hierarchies. This means that, by design, the same generalization strategy (i.e., hierarchy) is applied to all values of an attribute, which can result in low data quality and might thus require enabling tuple suppression to produce practicable results. The framework can only anonymize datasets with roughly 10 quasi-identifiers (see the curse of dimensionality). The implementation employs in-memory data management and is thus not able to handle datasets with more than a few million data items on common desktop machines.
 
 
-WEBSITE
+Website
 ------
 
 More details can be found at: http://arx.deidentifier.org/
 
-LICENSE
+License
 ------
 
 The ARX framework is copyright (C) 2012 Florian Kohlmayer and Fabian Prasser. It is licensed under the GNU GPL3:
@@ -85,7 +85,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
-EXTERNAL LIBRARIES
+External Libraries
 ------
 
 The framework uses external libraries. The according licenses are listed in the respective lib folders.
