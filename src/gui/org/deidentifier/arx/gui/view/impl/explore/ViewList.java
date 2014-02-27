@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,11 @@ import cern.colt.Arrays;
 public class ViewList implements IView {
 
     /** The optimum */
+	// TODO: Highlight in list
     private ARXNode             optimum;
 
     /** The selected node */
+	// TODO: Highlight in list
     private ARXNode             selectedNode;
 
     /** The controller */
@@ -140,7 +142,7 @@ public class ViewList implements IView {
             model = (Model) event.data;
         } else if (event.part == ModelPart.FILTER) {
             if (model != null) {
-                initialize(model.getResult(), (ModelNodeFilter) event.data);
+                update(model.getResult(), (ModelNodeFilter) event.data);
             }
         }
     }
@@ -163,6 +165,11 @@ public class ViewList implements IView {
                                                                 .getValue()) * 100d;
     }
 
+    /**
+     * Creates an item in the list
+     * @param item
+     * @param index
+     */
     private void createItem(final TableItem item, final int index) {
 
         final ARXNode node = list.get(index);
@@ -192,7 +199,12 @@ public class ViewList implements IView {
         item.setText(3, max);
     }
 
-    private void initialize(final ARXResult result, final ModelNodeFilter filter) {
+    /**
+     * Updates the list
+     * @param result
+     * @param filter
+     */
+    private void update(final ARXResult result, final ModelNodeFilter filter) {
 
         controller.getResources().getDisplay().asyncExec(new Runnable() {
 

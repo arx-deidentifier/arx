@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract ARXConfiguration getConfiguration();
+    // TODO: Removed because the result config might be different from the input config
+    //       in case of multiple sensitive attributes 
+    // public abstract ARXConfiguration getConfiguration();
 
     /**
      * Gets the global optimum.
@@ -47,7 +49,7 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract int getGroupCount();
+    public abstract int getNumberOfGroups();
 
     /**
      * Returns the number of outlying groups in the currently selected data
@@ -55,7 +57,7 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract int getGroupOutliersCount();
+    public abstract int getNumberOfOutlyingGroups();
 
     /**
      * Returns a handle to the data induced by the optimal transformation
@@ -94,7 +96,7 @@ public interface ARXResult {
      * 
      * @return
      */
-    public abstract int getTupleOutliersCount();
+    public abstract int getNumberOfOutlyingTuples();
 
     /**
      * Indicates if a result is available

@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +60,14 @@ public class IntArrayDictionary {
         return h1;
     }
 
+    /** The entry array. */
+    private IntArrayDictionaryEntry[]                buckets;
+
     /** Current number of elements. */
     private int                                      elementCount;
 
-    /** The entry array. */
-    private IntArrayDictionaryEntry[]                buckets;
+    /** The list */
+    private final ArrayList<IntArrayDictionaryEntry> list;
 
     /** Load factor. */
     private final float                              loadFactor;
@@ -74,9 +77,6 @@ public class IntArrayDictionary {
      * rehash.
      */
     private int                                      threshold;
-
-    /** The list */
-    private final ArrayList<IntArrayDictionaryEntry> list;
 
     /**
      * Constructs a new dictionary
@@ -107,31 +107,6 @@ public class IntArrayDictionary {
             HashTableUtil.nullifyArray(buckets);
             list.clear();
         }
-    }
-
-    /**
-     * Creates a new entry.
-     * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param hash
-     *            the hash
-     * @param value
-     *            the value
-     * @return the hash groupify entry
-     */
-    private IntArrayDictionaryEntry createEntry(final int[] key,
-                                                final int index,
-                                                final int hash) {
-        final IntArrayDictionaryEntry entry = new IntArrayDictionaryEntry(key,
-                                                                          hash,
-                                                                          list.size());
-        entry.setNext(buckets[index]);
-        buckets[index] = entry;
-        list.add(entry);
-        return entry;
     }
 
     /**
@@ -167,30 +142,6 @@ public class IntArrayDictionary {
             }
 
         }
-    }
-
-    /**
-     * Returns the according entry.
-     * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param keyHash
-     *            the key hash
-     * @return the hash entry
-     */
-    private final IntArrayDictionaryEntry findEntry(final int[] key,
-                                                    final int index,
-                                                    final int keyHash) {
-        IntArrayDictionaryEntry m = buckets[index];
-        while ((m != null) &&
-               ((m.getHashcode() != keyHash) ||
-                (key.length != m.getKey().length) || !HashTableUtil.equals(key,
-                                                                           m.getKey()))) {
-            m = m.getNext();
-        }
-        return m;
     }
 
     /**
@@ -230,6 +181,64 @@ public class IntArrayDictionary {
     }
 
     /**
+     * Returns the element count of the dictionary
+     * 
+     * @return the int
+     */
+    public int size() {
+        return elementCount;
+    }
+
+    /**
+     * Creates a new entry.
+     * 
+     * @param key
+     *            the key
+     * @param index
+     *            the index
+     * @param hash
+     *            the hash
+     * @param value
+     *            the value
+     * @return the hash groupify entry
+     */
+    private IntArrayDictionaryEntry createEntry(final int[] key,
+                                                final int index,
+                                                final int hash) {
+        final IntArrayDictionaryEntry entry = new IntArrayDictionaryEntry(key,
+                                                                          hash,
+                                                                          list.size());
+        entry.setNext(buckets[index]);
+        buckets[index] = entry;
+        list.add(entry);
+        return entry;
+    }
+
+    /**
+     * Returns the according entry.
+     * 
+     * @param key
+     *            the key
+     * @param index
+     *            the index
+     * @param keyHash
+     *            the key hash
+     * @return the hash entry
+     */
+    private final IntArrayDictionaryEntry findEntry(final int[] key,
+                                                    final int index,
+                                                    final int keyHash) {
+        IntArrayDictionaryEntry m = buckets[index];
+        while ((m != null) &&
+               ((m.getHashcode() != keyHash) ||
+                (key.length != m.getKey().length) || !HashTableUtil.equals(key,
+                                                                           m.getKey()))) {
+            m = m.getNext();
+        }
+        return m;
+    }
+
+    /**
      * Rehashes this operator.
      */
     private void rehash() {
@@ -249,14 +258,5 @@ public class IntArrayDictionary {
         }
         buckets = newData;
         threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
-    }
-
-    /**
-     * Returns the element count of the dictionary
-     * 
-     * @return the int
-     */
-    public int size() {
-        return elementCount;
     }
 }

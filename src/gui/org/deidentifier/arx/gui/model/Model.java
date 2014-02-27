@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.Enclosure;
+import org.deidentifier.arx.criteria.Inclusion;
 
 public class Model implements Serializable {
 
@@ -148,7 +148,7 @@ public class Model implements Serializable {
         if (!config.containsCriterion(DPresence.class)){
             DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
                                                   getInputConfig().getResearchSubset());
-            config.addCriterion(new Enclosure(subset));
+            config.addCriterion(new Inclusion(subset));
         }
 	}
 
@@ -160,7 +160,7 @@ public class Model implements Serializable {
         // Add an enclosure criterion
         DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
                                               getInputConfig().getResearchSubset());
-		config.addCriterion(new Enclosure(subset));
+		config.addCriterion(new Inclusion(subset));
 
         // Return the config
 		return config;
@@ -178,8 +178,7 @@ public class Model implements Serializable {
 	}
 
 	public String[] getAttributePair() {
-		if (pair == null)
-			pair = new String[] { null, null };
+		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
 

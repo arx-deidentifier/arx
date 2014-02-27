@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,14 +49,6 @@ import de.linearbits.objectselector.ICallback;
 import de.linearbits.objectselector.SelectorTokenizer;
 
 public class DialogQuery extends TitleAreaDialog implements IDialog {
-
-    private static enum Operator{
-        EQUALS,
-        GEQ,
-        LEQ,
-        LESS,
-        GREATER
-    }
     
     private Runnable updater = new Runnable(){
         

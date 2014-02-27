@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,8 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataHandleInput;
 import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
@@ -62,7 +60,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class WorkerLoad extends Worker<Model> {
 
 	private final ZipFile    zipfile;
-	private final Controller controller;
 	private ARXLattice       lattice;
 	private Model            model;
 
@@ -77,7 +74,6 @@ public class WorkerLoad extends Worker<Model> {
     public WorkerLoad(final File file, final Controller controller) throws ZipException,
                                                                    IOException {
         zipfile = new ZipFile(file);
-        this.controller = controller;
     }
 
     /**
@@ -88,8 +84,7 @@ public class WorkerLoad extends Worker<Model> {
      * @throws IOException
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
-        zipfile = new ZipFile(path);
-        this.controller = controller;
+        this.zipfile = new ZipFile(path);
     }
 
     /**
@@ -202,18 +197,8 @@ public class WorkerLoad extends Worker<Model> {
             model.setInputConfig(config);
             
         } else {
-        	
-            config.setInput(model.getInputConfig().getInput().clone(false));
+            config.setInput(model.getInputConfig().getInput());
             model.setOutputConfig(config);
-            
-            // Associate input with output research subset
-            if (model.getOutputConfig() != null){
-	            DataHandleInput inHandle = ((DataHandleInput)model.getInputConfig().getInput().getHandle());
-	            DPresence criterion = model.getOutputConfig().getCriterion(DPresence.class);
-	            if (criterion != null) {
-	            	inHandle.setSubset(criterion.getBitSet(), criterion.getArray());
-	            }
-            }
         }
 
         // Attach definition
@@ -330,6 +315,14 @@ public class WorkerLoad extends Worker<Model> {
                         config.getInput()
                               .getDefinition()
                               .setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
+                        if (ref != null){
+                            try {
+                                config.setHierarchy(attr, readHierarchy(zip, prefix, ref));
+                            } catch (final IOException e) {
+                                throw new SAXException(e);
+                            }
+                        }
+                        
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
                         config.getInput()
                               .getDefinition()
@@ -352,6 +345,13 @@ public class WorkerLoad extends Worker<Model> {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }
 
+                    attr = null;
+                    atype = null;
+                    dtype = null;
+                    ref = null;
+                    min = null;
+                    max = null;
+                    
                     return true;
 
                 } else if (localName.equals("name")) { //$NON-NLS-1$
@@ -761,7 +761,7 @@ public class WorkerLoad extends Worker<Model> {
                 if (localName.equals("metadata")) { //$NON-NLS-1$
                     return true;
                 } else if (localName.equals("version")) { //$NON-NLS-1$
-                    if (!payload.equals(controller.getResources().getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
+                    if (!payload.equals(Resources.getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
                     return true;
                 } else {
                     return false;
@@ -844,6 +844,7 @@ public class WorkerLoad extends Worker<Model> {
             zip.close();
             arg0.worked(7);
         } catch (final Exception e) {
+            e.printStackTrace();
             error = e;
             arg0.done();
             return;

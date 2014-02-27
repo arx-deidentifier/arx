@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,21 +145,40 @@ public class ViewAttributeDefinition implements IView {
                             definition.setAttributeType(attribute, type);
                         }
                         
+                        // Do we need to disable criteria?
+                        boolean criteriaDisabled = false;
+                        
                         // Enable/disable criteria for sensitive attributes
                         if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
                         	model.getLDiversityModel().get(attribute).setActive(true);
                         	model.getTClosenessModel().get(attribute).setActive(true);
                         } else {
+                            
+                            if (model.getLDiversityModel().get(attribute).isEnabled() ||
+                                model.getTClosenessModel().get(attribute).isEnabled()){
+                                criteriaDisabled = true;
+                            }
+                            
                         	model.getLDiversityModel().get(attribute).setActive(false);
-                        	model.getLDiversityModel().get(attribute).setEnabled(false);
                         	model.getTClosenessModel().get(attribute).setActive(false);
+                        	
                         	model.getTClosenessModel().get(attribute).setEnabled(false);
+                        	model.getLDiversityModel().get(attribute).setEnabled(false);
                         }
                         
                         // Enable/disable criteria for quasi-identifiers
                         if (definition.getQuasiIdentifyingAttributes().isEmpty()){
+
+                            if ( model.getKAnonymityModel().isEnabled() ||
+                                 model.getDPresenceModel().isEnabled()){
+                                criteriaDisabled = true;
+                            }
+                            
                             model.getKAnonymityModel().setActive(false);
                             model.getDPresenceModel().setActive(false);
+                            model.getKAnonymityModel().setEnabled(false);
+                            model.getDPresenceModel().setEnabled(false);
+
                         } else {
                             model.getKAnonymityModel().setActive(true);
                             model.getDPresenceModel().setActive(true);
@@ -167,6 +186,13 @@ public class ViewAttributeDefinition implements IView {
 
                         // Update icon
                         updateIcon();
+                        
+                        // Update criteria
+                        if (criteriaDisabled){
+                            controller.update(new ModelEvent(outer,
+                                                             ModelPart.CRITERION_DEFINITION,
+                                                             null));
+                        }
 
                         // Update the views
                         controller.update(new ModelEvent(outer,

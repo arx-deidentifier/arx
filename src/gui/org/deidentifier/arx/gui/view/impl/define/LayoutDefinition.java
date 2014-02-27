@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,9 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
-import org.deidentifier.arx.gui.view.impl.common.ViewData;
+import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -68,7 +66,7 @@ public class LayoutDefinition implements ILayout {
         compositeBottomRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        new ViewData(compositeLeft, controller, Resources.getMessage("AnalyzeView.1"), ModelPart.INPUT, null); //$NON-NLS-1$
+        new ViewDataInput(compositeLeft, controller); 
         new ViewSubsetDefinition(compositeLeft, controller);
         new ViewDataDefinition(compositeTopRight, controller);
         new ViewCriterionDefinition(compositeBottomRight, controller);

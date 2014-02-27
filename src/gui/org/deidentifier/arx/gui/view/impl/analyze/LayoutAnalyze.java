@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,11 @@ package org.deidentifier.arx.gui.view.impl.analyze;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ViewData;
+import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
+import org.deidentifier.arx.gui.view.impl.common.ViewDataOutput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -141,16 +142,10 @@ public class LayoutAnalyze implements ILayout {
         centerRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        dataInputView = new ViewData(centerLeft,
-                                     controller,
-                                     Resources.getMessage("AnalyzeView.1"), //$NON-NLS-1$
-                                     ModelPart.INPUT,
-                                     null);
-        dataOutputView = new ViewData(centerRight,
-                                      controller,
-                                      Resources.getMessage("AnalyzeView.0"), //$NON-NLS-1$
-                                      ModelPart.OUTPUT,
-                                      ModelPart.INPUT);
+        dataInputView = new ViewDataInput(centerLeft,
+                                          controller);
+        dataOutputView = new ViewDataOutput(centerRight,
+                                            controller);
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {

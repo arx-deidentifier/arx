@@ -149,7 +149,8 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
         for (final Node[] level : lattice.getLevels()) {
             if (level.length != 0) {
                 if (level.length == 1) {
-                    checker.check(level[0]);
+                    Node node = level[0];
+                    if (!node.isChecked()) checker.check(level[0]);
                     break;
                 } else {
                     throw new RuntimeException("Multiple bottom nodes!");

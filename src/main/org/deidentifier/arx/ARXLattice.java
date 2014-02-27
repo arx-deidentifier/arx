@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,18 +71,13 @@ public class ARXLattice implements Serializable {
             lattice.metric = metric;
         }
 
-        public void setOptimum(final ARXNode node) {
-            lattice.optimum = node;
-        }
-
-        public void
-                setUncertainty(final boolean uncertainty) {
-            lattice.uncertainty = uncertainty;
-        }
-
         public void
                 setMonotonicSubcriterion(final boolean containsMonotonicSubcriterion) {
             lattice.containsMonotonicSubcriterion = containsMonotonicSubcriterion;
+        }
+
+        public void setOptimum(final ARXNode node) {
+            lattice.optimum = node;
         }
 
         public void setSize(final int size) {
@@ -91,6 +86,11 @@ public class ARXLattice implements Serializable {
 
         public void setTop(final ARXNode top) {
             lattice.top = top;
+        }
+
+        public void
+                setUncertainty(final boolean uncertainty) {
+            lattice.uncertainty = uncertainty;
         }
     }
 
@@ -217,35 +217,35 @@ public class ARXLattice implements Serializable {
             }
         }
 
-        /** The transformation */
-        private int[]                transformation;
+        /** The access */
+        private final Access         access     = new Access(this);
         
         /** Is it anonymous */
         private Anonymity            anonymity;
 
-        /** The min information loss */
-        private InformationLoss      minInformationLoss;
-
-        /** The max information loss */
-        private InformationLoss      maxInformationLoss;
-
         /** Attributes */
         private Map<Integer, Object> attributes = new HashMap<Integer, Object>();
-
-        /** The sucessors */
-        private ARXNode[]            successors;
-
-        /** The predecessors */
-        private ARXNode[]            predecessors;
-
-        /** The headermap */
-        private Map<String, Integer> headermap;
 
         /** Has the node been checked */
         private boolean              checked;
 
-        /** The access */
-        private final Access         access     = new Access(this);
+        /** The headermap */
+        private Map<String, Integer> headermap;
+
+        /** The max information loss */
+        private InformationLoss      maxInformationLoss;
+
+        /** The min information loss */
+        private InformationLoss      minInformationLoss;
+
+        /** The predecessors */
+        private ARXNode[]            predecessors;
+
+        /** The sucessors */
+        private ARXNode[]            successors;
+
+        /** The transformation */
+        private int[]                transformation;
 
         /**
          * Internal constructor for deserialization
@@ -436,8 +436,26 @@ public class ARXLattice implements Serializable {
 
     private static final long     serialVersionUID = -8790104959905019184L;
 
+    /** The accessor */
+    private final Access          access           = new Access(this);
+
+    /** The bottom node */
+    private transient ARXNode     bottom;
+
+    /** Is there a monotonic sub-criterion*/
+    private boolean               containsMonotonicSubcriterion;
+
     /** The levels in the lattice */
     private transient ARXNode[][] levels;
+
+    /** The current max absolute outliers */
+    private int                   maxAbsoluteOutliers;
+    
+    /** Metric */
+    private Metric<?>             metric;
+
+    /** The optimum */
+    private transient ARXNode     optimum;
 
     /** The number of nodes */
     private int                   size;
@@ -445,26 +463,8 @@ public class ARXLattice implements Serializable {
     /** The top node */
     private transient ARXNode     top;
 
-    /** The bottom node */
-    private transient ARXNode     bottom;
-
     /** Are anonymity properties potentially uncertain */
     private boolean               uncertainty;
-    
-    /** Is there a monotonic sub-criterion*/
-    private boolean               containsMonotonicSubcriterion;
-
-    /** Metric */
-    private Metric<?>             metric;
-
-    /** The current max absolute outliers */
-    private int                   maxAbsoluteOutliers;
-
-    /** The accessor */
-    private final Access          access           = new Access(this);
-
-    /** The optimum */
-    private transient ARXNode     optimum;
 
     /**
      * Constructor
@@ -473,8 +473,8 @@ public class ARXLattice implements Serializable {
      * @param config The config
      */
     ARXLattice(final Lattice lattice,
-                 final String[] header,
-                 final ARXConfiguration config) {
+               final String[] header,
+               final ARXConfiguration config) {
 
         this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
@@ -559,23 +559,39 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * This method triggers the estimation of the information loss of all nodes
-     * in the lattice regardless of whether they have been checked for anonymity
-     * or not
+     * Returns the bottom node
+     * 
+     * @return
      */
-    protected void estimateInformationLoss() {
+    public ARXNode getBottom() {
+        return bottom;
+    }
 
-        // only estimate info loss in case of monotonic metrics
-        // or no suppression
-        if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
-            estimateMinLoss();
-            estimateMaxLoss();
-        } else {
+    /**
+     * Returns the levels of the generalization lattice
+     * 
+     * @return
+     */
+    public ARXNode[][] getLevels() {
+        return levels;
+    }
 
-            // TODO: Fix this! We currently assume monotonicity for all metrics!
-            estimateMinLoss();
-            estimateMaxLoss();
-        }
+    /**
+     * Returns the number of nodes
+     * 
+     * @return
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Returns the top node
+     * 
+     * @return
+     */
+    public ARXNode getTop() {
+        return top;
     }
 
     /**
@@ -585,6 +601,8 @@ public class ARXLattice implements Serializable {
 
         // Estimate with max if not known
         if (top.getMaximumInformationLoss() == null) {
+            // TODO: Check top? First, make sure that this is 
+            // not already done somewhere, or only in the GUI
             top.access().setMaximumInformationLoss(metric.max());
         }
 
@@ -614,6 +632,8 @@ public class ARXLattice implements Serializable {
         // Estimate with zero if not known
         // TODO: Not correct for DM*
         if (bottom.getMinimumInformationLoss() == null) {
+            // TODO: Check bottom? First, make sure that this is 
+            // not already done somewhere, or only in the GUI
             bottom.access().setMinimumInformationLoss(metric.min());
         }
 
@@ -636,42 +656,26 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * Returns the bottom node
-     * 
-     * @return
+     * This method triggers the estimation of the information loss of all nodes
+     * in the lattice regardless of whether they have been checked for anonymity
+     * or not
      */
-    public ARXNode getBottom() {
-        return bottom;
-    }
+    protected void estimateInformationLoss() {
 
-    /**
-     * Returns the levels of the generalization lattice
-     * 
-     * @return
-     */
-    public ARXNode[][] getLevels() {
-        return levels;
+        // only estimate info loss in case of monotonic metrics
+        // or no suppression
+        if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
+            estimateMinLoss();
+            estimateMaxLoss();
+        } else {
+
+            // TODO: Fix this! We currently assume monotonicity for all metrics!
+            estimateMinLoss();
+            estimateMaxLoss();
+        }
     }
 
     protected ARXNode getOptimum() {
         return optimum;
-    }
-
-    /**
-     * Returns the number of nodes
-     * 
-     * @return
-     */
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     * Returns the top node
-     * 
-     * @return
-     */
-    public ARXNode getTop() {
-        return top;
     }
 }

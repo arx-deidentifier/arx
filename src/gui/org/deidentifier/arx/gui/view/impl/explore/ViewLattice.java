@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,27 +92,13 @@ public class ViewLattice extends Panel implements IView {
         NONE
     }
 
-    public static final org.eclipse.swt.graphics.Color GREEN      = GUIHelper.getColor(50,
-                                                                                       205,
-                                                                                       50);
-    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN= GUIHelper.getColor(50,
-																			           128,
-																			           50);
-    public static final org.eclipse.swt.graphics.Color ORANGE     = GUIHelper.getColor(255,
-                                                                                       145,
-                                                                                       0);
-    public static final org.eclipse.swt.graphics.Color RED        = GUIHelper.getColor(255,
-                                                                                       99,
-                                                                                       71);
-    public static final org.eclipse.swt.graphics.Color LIGHT_RED  = GUIHelper.getColor(128,
-																			           99,
-																			           71);
-    public static final org.eclipse.swt.graphics.Color BLUE       = GUIHelper.getColor(0,
-                                                                                       0,
-                                                                                       255);
-    public static final org.eclipse.swt.graphics.Color YELLOW     = GUIHelper.getColor(255,
-                                                                                       215,
-                                                                                       0);
+    public static final org.eclipse.swt.graphics.Color GREEN      = GUIHelper.getColor(50,  205, 50);
+    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN= GUIHelper.getColor(50,  128, 50);
+    public static final org.eclipse.swt.graphics.Color ORANGE     = GUIHelper.getColor(255, 145, 0);
+    public static final org.eclipse.swt.graphics.Color RED        = GUIHelper.getColor(255, 99,  71);
+    public static final org.eclipse.swt.graphics.Color LIGHT_RED  = GUIHelper.getColor(128, 99,  71);
+    public static final org.eclipse.swt.graphics.Color BLUE       = GUIHelper.getColor(0,   0,   255);
+    public static final org.eclipse.swt.graphics.Color YELLOW     = GUIHelper.getColor(255, 215, 0);
 
     public static final Color                          AWT_GREEN  		= asAWTColor(GREEN);
     public static final Color                          AWT_LIGHT_GREEN  = asAWTColor(LIGHT_GREEN);
@@ -172,7 +158,7 @@ public class ViewLattice extends Panel implements IView {
     /** For the current view */
     private double                nodeHeight            = 0f;
     /** The lattice to display */
-    private final List<ARXNode> lattice               = new ArrayList<ARXNode>();
+    private final List<ARXNode>   lattice               = new ArrayList<ARXNode>();
     /** The lattice to display */
     private int                   latticeWidth          = 0;
     /** The lattice to display */
@@ -198,10 +184,10 @@ public class ViewLattice extends Panel implements IView {
     private BufferedImage         buffer                = null;
 
     /** The optimum */
-    private ARXNode             optimum;
+    private ARXNode               optimum;
 
     /** The selected node */
-    private ARXNode             selectedNode;
+    private ARXNode               selectedNode;
 
     /** The controller */
     private final Controller      controller;
@@ -211,6 +197,7 @@ public class ViewLattice extends Panel implements IView {
 
     /** The bridge */
     private final Frame           frame;
+    
     /** The tooltip */
     private int                   tooltipX;
     /** The tooltip */
@@ -219,9 +206,10 @@ public class ViewLattice extends Panel implements IView {
     private int                   tooltipXOnScreen;
     /** The tooltip */
     private int                   tooltipYOnScreen;
-
     /** The tooltip */
     private boolean               tooltipVisible;
+    
+    /** Number format*/
     private final NumberFormat    format                = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /**
@@ -292,6 +280,67 @@ public class ViewLattice extends Panel implements IView {
         });
         t.setDaemon(true);
         t.start();
+    }
+
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void paint(final Graphics g) {
+    	if (buffer != null) {
+	        final Graphics bg = buffer.getGraphics();
+	        if (model != null) {
+	            draw(bg);
+	        } else {
+	            bg.setColor(Color.WHITE);
+	            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+	        }
+	        bg.dispose();
+	        g.drawImage(buffer, 0, 0, this);
+    	}
+    }
+
+    /**
+     * Resets the view
+     */
+    @Override
+    public void reset() {
+        numNodes = 0;
+        optimum = null;
+        selectedNode = null;
+        lattice.clear();
+        latticeWidth = 0;
+        latticeHeight = 0;
+        screen = null;
+        this.repaint();
+    }
+
+    @Override
+    public void update(final Graphics g) {
+        paint(g);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+
+        if (event.part == ModelPart.SELECTED_NODE) {
+            selectedNode = (ARXNode) event.data;
+            this.repaint();
+        } else if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+        } else if (event.part == ModelPart.FILTER) {
+            if (model != null) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        initialize(model.getResult(), (ModelNodeFilter) event.data);
+                        repaint();
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -375,11 +424,6 @@ public class ViewLattice extends Panel implements IView {
         }
         b.setLength(b.length() - 1);
         return b.toString();
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
     }
 
     /**
@@ -934,34 +978,6 @@ public class ViewLattice extends Panel implements IView {
         });
     }
 
-    @Override
-    public void paint(final Graphics g) {
-        final Graphics bg = buffer.getGraphics();
-        if (model != null) {
-            draw(bg);
-        } else {
-            bg.setColor(Color.WHITE);
-            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-        }
-        bg.dispose();
-        g.drawImage(buffer, 0, 0, this);
-    }
-
-    /**
-     * Resets the view
-     */
-    @Override
-    public void reset() {
-        numNodes = 0;
-        optimum = null;
-        selectedNode = null;
-        lattice.clear();
-        latticeWidth = 0;
-        latticeHeight = 0;
-        screen = null;
-        this.repaint();
-    }
-
     /**
      * Resets the buffer
      */
@@ -969,32 +985,6 @@ public class ViewLattice extends Panel implements IView {
         buffer = new BufferedImage(Math.max(1, getWidth()),
                                    Math.max(1, getHeight()),
                                    BufferedImage.TYPE_INT_RGB);
-    }
-
-    @Override
-    public void update(final Graphics g) {
-        paint(g);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.SELECTED_NODE) {
-            selectedNode = (ARXNode) event.data;
-            this.repaint();
-        } else if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-        } else if (event.part == ModelPart.FILTER) {
-            if (model != null) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        initialize(model.getResult(), (ModelNodeFilter) event.data);
-                        repaint();
-                    }
-                });
-            }
-        }
     }
 
 }

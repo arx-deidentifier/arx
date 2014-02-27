@@ -1,5 +1,6 @@
 package org.deidentifier.arx;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,15 +13,18 @@ import java.util.Set;
  * @author Prasser, Kohlmayer
  *
  */
-public class DataSubset {
+public class DataSubset implements Serializable {
     
+    private static final long serialVersionUID = 3945730896172205344L;
+
     /**
      * Wrapper around a string array
      * @author Prasser, Kohlmayer
      *
      */
-    private static class Entry{
+    private static class Entry implements Serializable {
         
+        private static final long serialVersionUID = 31695068160887476L;
         private String[] data;
         private int hashcode;
      
@@ -42,10 +46,10 @@ public class DataSubset {
     }
     
     /** The subset as a bitset*/
-    private RowSet bitSet;
+    protected RowSet set;
     
     /** The subset as a sorted array of indices*/
-    private int[] array;
+    protected int[] array;
 
     /**
      * Creates a new instance
@@ -53,7 +57,7 @@ public class DataSubset {
      * @param sortedIndices
      */
     private DataSubset(RowSet bitSet, int[] sortedIndices) {
-        this.bitSet = bitSet;
+        this.set = bitSet;
         this.array = sortedIndices;
     }
 
@@ -110,7 +114,6 @@ public class DataSubset {
         
         // Return
         Arrays.sort(array);
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
     
@@ -142,7 +145,6 @@ public class DataSubset {
         }
         
         // Return
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
     
@@ -165,11 +167,16 @@ public class DataSubset {
             array[idx++] = line;
         }
         Arrays.sort(array);
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
 
-    
+
+    /**
+     * Creates a new subset from the given row set, from which a copy is created
+     * @param data
+     * @param subset
+     * @return
+     */
     public static DataSubset create(Data data, RowSet subset) {
         int rows = data.getHandle().getNumRows();
         RowSet bitset = RowSet.create(data);
@@ -181,12 +188,11 @@ public class DataSubset {
                 array[idx++]=i;
             }
         }
-        ((DataHandleInput)data.getHandle()).setSubset(bitset, array);
         return new DataSubset(bitset, array);
     }
 
-    public RowSet getRowSet() {
-        return bitSet;
+    public RowSet getSet() {
+        return set;
     }
 
     public int[] getArray() {

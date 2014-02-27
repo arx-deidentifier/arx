@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
@@ -27,13 +26,13 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableArrayDataProvider;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayer;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableContext;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableDecorator;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableHandleDataProvider;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableRowHeaderConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayer;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayerStack;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableHandleDataProvider;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableRowHeaderConfiguration;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;

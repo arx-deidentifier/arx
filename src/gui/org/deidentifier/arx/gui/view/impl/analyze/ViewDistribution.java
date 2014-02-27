@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,18 +53,16 @@ import org.swtchart.ISeriesSet;
 import org.swtchart.ITitle;
 import org.swtchart.Range;
 
-public class ViewDistribution implements IView {
+public class ViewDistribution extends ViewStatistics implements IView {
 
-    private static final int            MAX_DIMENSION = 500;
-
+    private static final long serialVersionUID = -163862008754422422L;
+    
     private Chart                       chart;
     private final Composite             parent;
-    private final ModelPart             target;
     private final ModelPart             reset;
     private String                      attribute;
     private final Controller            controller;
     private final Map<String, double[]> cache  = new HashMap<String, double[]>();
-    private Model                       model;
 
     public ViewDistribution(final Composite parent,
                             final Controller controller,
@@ -74,6 +72,7 @@ public class ViewDistribution implements IView {
         // Register
         controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         this.controller = controller;
@@ -172,6 +171,12 @@ public class ViewDistribution implements IView {
             if (chart != null) chart.setEnabled(true);
             redraw();
             
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+
+            attribute = (String) event.data;
+            if (chart != null) chart.setEnabled(true);
+            redraw();
+             
         } else if (event.part == ModelPart.VIEW_CONFIG) {
             
             if (chart != null) chart.setEnabled(true);
@@ -184,8 +189,6 @@ public class ViewDistribution implements IView {
 
         if (model == null) { return; }
 
-        final long time = System.currentTimeMillis();
-
         // Obtain the right config
         ModelConfiguration config = model.getOutputConfig();
         if (config == null) {
@@ -193,12 +196,7 @@ public class ViewDistribution implements IView {
         }
 
         // Obtain the right handle
-        DataHandle data;
-        if (target == ModelPart.INPUT) {
-            data = config.getInput().getHandle();
-        } else {
-            data = model.getOutput();
-        }
+        DataHandle data = getHandle();
 
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
@@ -208,7 +206,7 @@ public class ViewDistribution implements IView {
 
         // Project onto subset, if possible
         if (data != null && model.getViewConfig().isSubset()){
-            data = data.getView(config.getConfig());
+            data = data.getView();
         }
 
         final int index = data.getColumnIndexOf(attribute);
@@ -233,12 +231,8 @@ public class ViewDistribution implements IView {
         }
 
         // Count
-        boolean suppressed = false;
         final Map<String, Double> map = new HashMap<String, Double>();
         for (int i = 0; i < data.getNumRows(); i++) {
-            if (!suppressed) {
-                suppressed |= data.isOutlier(i);
-            }
             final String val = data.getValue(i, index);
             if (!map.containsKey(val)) {
                 map.put(val, 1d);
@@ -246,12 +240,12 @@ public class ViewDistribution implements IView {
                 map.put(val, map.get(val) + 1);
             }
         }
-
+        
         // Init distribution
         final String[] dvals;
 
         // Sort by hierarchy if possible
-        if (hierarchy != null) {
+        if (hierarchy != null && hierarchy.getHierarchy()!=null && hierarchy.getHierarchy().length != 0) {
 
             final int level = data.getGeneralization(attribute);
             final List<String> list = new ArrayList<String>();
@@ -259,24 +253,18 @@ public class ViewDistribution implements IView {
             final String[][] h = hierarchy.getHierarchy();
             for (int i = 0; i < h.length; i++) {
                 final String val = h[i][level];
-                if (map.containsKey(val) ||
-                    ((model.getAnonymizer() != null) && val.equals(model.getAnonymizer()
-                                                                        .getSuppressionString()))) {
+                if (map.containsKey(val)) {
                     if (!done.contains(val)) {
                         list.add(val);
                         done.add(val);
                     }
                 }
             }
-            if (suppressed) {
-                if (!done.contains(model.getAnonymizer().getSuppressionString())) {
+            if (model.getAnonymizer() != null &&
+                map.containsKey(model.getAnonymizer().getSuppressionString()) &&
+                !done.contains(model.getAnonymizer().getSuppressionString())) {
+                
                     list.add(model.getAnonymizer().getSuppressionString());
-                    if (!map.containsKey(list.add(model.getAnonymizer()
-                                                       .getSuppressionString()))) {
-                        map.put(model.getAnonymizer().getSuppressionString(),
-                                0d);
-                    }
-                }
             }
 
             dvals = list.toArray(new String[] {});
@@ -289,16 +277,21 @@ public class ViewDistribution implements IView {
             for (final String s : map.keySet()) {
                 v[i++] = s;
             }
-            Arrays.sort(v, new Comparator<String>() {
-                @Override
-                public int compare(final String arg0, final String arg1) {
-                    try {
-                        return dtype.compare(arg0, arg1);
-                    } catch (final Exception e) {
-                        throw new RuntimeException(e);
+            try {
+                Arrays.sort(v, new Comparator<String>() {
+                    @Override
+                    public int compare(final String arg0, final String arg1) {
+                        try {
+                            return dtype.compare(arg0, arg1);
+                        } catch (final Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-            });
+                });
+            } catch (Exception e) {
+                // TODO: Make sure that invalid data types can not even be selected
+                controller.getResources().getLogger().warn("Invalid data type!");
+            }
             dvals = v;
         }
 
@@ -307,38 +300,13 @@ public class ViewDistribution implements IView {
         for (final double i : map.values()) {
             sum += i;
         }
-
-        int step = map.size() / MAX_DIMENSION; // Round down
-        step = Math.max(step, 1);
-        final int length = (int) Math.ceil((double) map.size() / (double) step);
-
-        controller.getResources()
-                  .getLogger()
-                  .info("length:" + length + " step: " + step + "/" + dvals.length + "/" + MAX_DIMENSION); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
-        int sindex = 0;
-        final double[] distribution = new double[length];
-        for (int i = 0; i < dvals.length; i += step) {
-            for (int j = 0; j < step; j++) {
-                if (sindex < distribution.length) {
-                    if ((i + j) < dvals.length) {
-                        distribution[sindex] += map.get(dvals[i + j]) / sum;
-                    }
-                } else {
-                    controller.getResources()
-                              .getLogger()
-                              .warn("Index out of bounds"); //$NON-NLS-1$
-                }
-            }
-            sindex++;
+        final double[] distribution = new double[map.size()];
+        for (int i = 0; i < dvals.length; i ++) {
+            distribution[i] = map.get(dvals[i]) / sum;
         }
 
         // Cache
         cache.put(attribute, distribution);
-
-        controller.getResources()
-                  .getLogger()
-                  .info("Computed distribution in: " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
     }
 
     private void clearCache() {
@@ -375,4 +343,5 @@ public class ViewDistribution implements IView {
         chart.setRedraw(true);
         chart.redraw();
     }
+    
 }

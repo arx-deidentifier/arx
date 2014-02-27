@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ public class ViewLDiversity extends ViewCriterion{
 	public void reset() {
 		sliderL.setSelection(0);
         sliderC.setSelection(0);
+        sliderC.setEnabled(false);
         labelC.setText("0.001"); //$NON-NLS-1$
         labelL.setText("2"); //$NON-NLS-1$
         comboVariant.select(0);
@@ -188,12 +189,20 @@ public class ViewLDiversity extends ViewCriterion{
         labelL.setText(String.valueOf(m.getL()));
 		sliderL.setSelection(intToSlider(2, 100, m.getL()));
 		sliderC.setSelection(doubleToSlider(0.001d, 100d, m.getC()));
+		
         comboVariant.select(m.getVariant());
         if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {
 			SWTUtil.disable(root);
 		}
+
+        if (m.getVariant() == 2) {
+            sliderC.setEnabled(true);
+        } else {
+            sliderC.setEnabled(false);
+        }
+        
         root.setRedraw(true);
 	}
 }

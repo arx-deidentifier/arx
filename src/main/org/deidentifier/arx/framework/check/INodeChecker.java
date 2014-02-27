@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract int getGroupCount();
+    public abstract int getNumberOfGroups();
 
     /**
      * Returns the current hash groupify
@@ -82,7 +82,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract int getGroupOutliersCount();
+    public abstract int getNumberOfOutlyingGroups();
 
     @Deprecated
     public abstract double getInformationLoss(final Node node);
@@ -99,7 +99,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract int getTupleOutliersCount();
+    public abstract int getNumberOfOutlyingTuples();
 
     /**
      * Returns the data for a given state. Only used for NUMA.

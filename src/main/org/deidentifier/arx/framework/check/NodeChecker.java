@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ public class NodeChecker implements INodeChecker {
         // Initialize all operators
         this.metric = metric;
         this.config = config;
-        data = manager.getDataQI();
+        this.data = manager.getDataQI();
         final int initialSize = (int) (manager.getDataQI().getDataLength() * 0.01d);
 
         final IntArrayDictionary dictionarySensValue;
@@ -96,13 +96,13 @@ public class NodeChecker implements INodeChecker {
             dictionarySensFreq = new IntArrayDictionary(0);
         }
 
-        history = new History(manager.getDataQI().getArray().length, historyMaxSize, snapshotSizeDataset, snapshotSizeSnapshot, config, dictionarySensValue, dictionarySensFreq);
+        this.history = new History(manager.getDataQI().getArray().length, historyMaxSize, snapshotSizeDataset, snapshotSizeSnapshot, config, dictionarySensValue, dictionarySensFreq);
 
-        stateMachine = new StateMachine(history);
-        currentGroupify = new HashGroupify(initialSize, config);
-        lastGroupify = new HashGroupify(initialSize, config);
+        this.stateMachine = new StateMachine(history);
+        this.currentGroupify = new HashGroupify(initialSize, config);
+        this.lastGroupify = new HashGroupify(initialSize, config);
 
-        transformer = new Transformer(manager.getDataQI().getArray(), manager.getHierarchies(), manager.getDataSE().getArray(), config, dictionarySensValue, dictionarySensFreq);
+        this.transformer = new Transformer(manager.getDataQI().getArray(), manager.getHierarchies(), manager.getDataSE().getArray(), config, dictionarySensValue, dictionarySensFreq);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getGroupCount() {
+    public int getNumberOfGroups() {
         return currentGroupify.size();
     }
 
@@ -177,7 +177,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getGroupOutliersCount() {
+    public int getNumberOfOutlyingGroups() {
         return currentGroupify.getGroupOutliersCount();
     }
 
@@ -204,7 +204,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getTupleOutliersCount() {
+    public int getNumberOfOutlyingTuples() {
         return currentGroupify.getTupleOutliersCount();
     }
 
@@ -212,19 +212,7 @@ public class NodeChecker implements INodeChecker {
     @Deprecated
     public Data transform(final Node node) {
 
-        // Apply transition and groupify
-        currentGroupify.clear();
-        currentGroupify = transformer.apply(0L, node.getTransformation(), currentGroupify);
-
-        // Determine outliers and set infoloss
-        if (!node.isChecked()) {
-            node.setChecked();
-            node.setAnonymous(currentGroupify.isAnonymous());
-            metric.evaluate(node, currentGroupify);
-            node.setTagged();
-        }
-
-        return getBuffer();
+        throw new RuntimeException("Not implemented!");
     }
 
     @Override

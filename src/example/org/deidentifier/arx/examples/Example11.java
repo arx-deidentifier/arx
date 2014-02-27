@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ public class Example11 extends Example {
 
             // Print input
             System.out.println(" - Input research subset:");
-            print(data.getHandle().getView(config).iterator());
+            print(data.getHandle().getView().iterator());
 
             // Print info
             printResult(result, data);
@@ -134,7 +134,7 @@ public class Example11 extends Example {
 
             // Print results
             System.out.println(" - Transformed research subset:");
-            print(result.getHandle().getView(config).iterator());
+            print(result.getHandle().getView().iterator());
             
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);

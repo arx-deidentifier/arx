@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,12 +49,10 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                           Resources.getMessage("AboutDialog.7") + Resources.getMessage("AboutDialog.8") + "\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                           +
                                           Resources.getMessage("AboutDialog.10") + Resources.getMessage("AboutDialog.11"); //$NON-NLS-1$ //$NON-NLS-2$
-    private final Controller    controller;
     private Image image;
 
     public DialogAbout(final Shell parentShell, final Controller controller) {
         super(parentShell);
-        this.controller = controller;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
@@ -96,7 +94,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         text.append(Resources.getMessage("AboutDialog.18")); //$NON-NLS-1$
         text.append("\n"); //$NON-NLS-1$
         text.append("\n"); //$NON-NLS-1$
-        text.append(Resources.getMessage("AboutDialog.21") + controller.getResources().getVersion()); //$NON-NLS-1$
+        text.append(Resources.getMessage("AboutDialog.21") + Resources.getVersion()); //$NON-NLS-1$
         text.append("\n"); //$NON-NLS-1$
         text.append(Resources.getMessage("AboutDialog.23")); //$NON-NLS-1$
         label.setText(text.toString());

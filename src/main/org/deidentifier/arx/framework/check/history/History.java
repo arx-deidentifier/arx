@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ public class History {
     private final IntArrayDictionary dictionarySensValue;
 
     /** Maximal number of entries. */
-    private final int                maxSize;
+    private int                      size;
 
     /** A map from nodes to snapshots. */
     private HashMap<Node, int[]>     nodeToSnapshot = null;
@@ -79,27 +79,28 @@ public class History {
      * 
      * @param rowCount
      *            the row count
-     * @param maxSize
+     * @param size
      *            the max size
      * @param snapshotSizeDataset
      *            the snapshotSizeDataset
      */
     public History(final int rowCount,
-                   final int maxSize,
+                   final int size,
                    final double snapshotSizeDataset,
                    final double snapshotSizeSnapshot,
                    final ARXConfiguration config,
                    final IntArrayDictionary dictionarySensValue,
                    final IntArrayDictionary dictionarySensFreq) {
+        
         this.snapshotSizeDataset = (long) (rowCount * snapshotSizeDataset);
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-        cache = new MRUCache<Node>(maxSize);
-        nodeToSnapshot = new HashMap<Node, int[]>(maxSize);
-        this.maxSize = maxSize;
+        this.cache = new MRUCache<Node>(size);
+        this.nodeToSnapshot = new HashMap<Node, int[]>(size);
+        this.size = size;
         this.dictionarySensFreq = dictionarySensFreq;
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
-        requirements = config.getRequirements();
+        this.requirements = config.getRequirements();
     }
 
     /**
@@ -179,8 +180,11 @@ public class History {
      * Clears the history.
      */
     public void reset() {
-        cache.clear();
-        nodeToSnapshot.clear();
+        this.cache.clear();
+        this.nodeToSnapshot.clear();
+        this.dictionarySensFreq.clear();
+        this.dictionarySensValue.clear();
+        this.resultNode = null;
     }
 
     /**
@@ -219,7 +223,7 @@ public class History {
         final int[] data = createSnapshot(g);
 
         // if cache size is to large purge
-        if (cache.size() >= maxSize) {
+        if (cache.size() >= size) {
             purgeCache();
         }
 
@@ -366,5 +370,13 @@ public class History {
             }
         }
 
+    }
+
+    /**
+     * Sets the size of this history
+     * @param size
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 }

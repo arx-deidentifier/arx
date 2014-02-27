@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
@@ -42,9 +41,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
     /** Delta max*/
     private final double dMax;
     /** A compressed representation of the research subset*/
-    private RowSet bitset;
-    /** A sorted array representation of the research subset*/
-    private int[] array;
+    private DataSubset subset;
     
     /**
      * Creates a new instance of the d-presence criterion as proposed in:
@@ -59,8 +56,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         super(false);
         this.dMin = dMin;
         this.dMax = dMax;
-        this.bitset = subset.getRowSet();
-        this.array = subset.getArray();
+        this.subset = subset;
     }
     
     /**
@@ -71,8 +67,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
         super(true);
         this.dMin = 0d;
         this.dMax = 1d;
-        this.bitset = subset.getRowSet();
-        this.array = subset.getArray();
+        this.subset = subset;
     }
         
     @Override
@@ -102,25 +97,8 @@ public class DPresence extends ImplicitPrivacyCriterion{
      * Returns the research subset
      * @return
      */
-    public RowSet getBitSet() {
-        return this.bitset;
-    }
-    
-    /**
-     * Returns the size of the research subset
-     * @return
-     */
-    public int getSize() {
-        return this.array.length;
-    }
-    
-
-    /**
-     * Returns the research subset
-     * @return
-     */
-    public int[] getArray() {
-        return this.array;
+    public DataSubset getSubset() {
+        return this.subset;
     }
 
     /**

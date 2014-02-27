@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,13 +217,14 @@ public class ViewHierarchy implements IView {
                                           .getInput()
                                           .getDefinition();
             final AttributeType type = d.getAttributeType(attribute);
+            
             if (type instanceof Hierarchy) {
                 setHierarchy((Hierarchy) type);
                 base.setEnabled(true);
                 base.redraw();
             } else if ((type == AttributeType.SENSITIVE_ATTRIBUTE) &&
-                       (model.getInputConfig().getHierarchy(model.getSelectedAttribute()) != null)) {
-                setHierarchy(model.getInputConfig().getHierarchy(model.getSelectedAttribute()));
+                       (model.getInputConfig().getHierarchy(attribute) != null)) {
+                setHierarchy(model.getInputConfig().getHierarchy(attribute));
                 base.setEnabled(true);
                 base.redraw();
             } else {

@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,7 @@ public class MetricEntropy extends MetricDefault {
     /** Value unknown */
     private static final double NA               = Double.POSITIVE_INFINITY;
 
-    /**
-     * 
-     */
+    /** */
     private static final long   serialVersionUID = -8618697919821588987L;
 
     /** Log 2 */
@@ -122,7 +120,7 @@ public class MetricEntropy extends MetricDefault {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
             for (DPresence dPresence : crits) {
-                rSubset = dPresence.getBitSet();
+                rSubset = dPresence.getSubset().getSet();
             }
         }
 
@@ -141,23 +139,15 @@ public class MetricEntropy extends MetricDefault {
             // Column -> Id -> Level -> Count
         }
 
-        if (rSubset != null) { // dpresence mode
-            for (int i = 0; i < data.length; i++) { // only use the rows contained in the research subset
-                if (rSubset.contains(i)) {
-                    final int[] row = data[i];
-                    for (int column = 0; column < row.length; column++) {
-                        cardinalities[column][row[column]][0]++;
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < data.length; i++) {
-                final int[] row = data[i];
-                for (int column = 0; column < row.length; column++) {
-                    cardinalities[column][row[column]][0]++;
-                }
-            }
-        }
+		for (int i = 0; i < data.length; i++) { 
+			// only use the rows contained in the research subset
+			if (rSubset == null || rSubset.contains(i)) {
+				final int[] row = data[i];
+				for (int column = 0; column < row.length; column++) {
+					cardinalities[column][row[column]][0]++;
+				}
+			}
+		}
 
         // Create counts for other levels
         for (int column = 0; column < hierarchies.length; column++) {

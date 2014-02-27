@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,10 @@ import java.io.IOException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -248,7 +247,6 @@ public class TestIllegalArguments extends AbstractTest {
     public void testMetric() {
 
         try {
-            final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final ARXConfiguration config = ARXConfiguration.create();
             config.setMetric(null);
         } catch (final NullPointerException e) {

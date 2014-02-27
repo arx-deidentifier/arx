@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ public class WizardHierarchyModel {
     private final List<String> items;
     private Hierarchy          hierarchy;
     private final String       attribute;
-    private final DataType     datatype;
+    private final DataType<?>     datatype;
     private final String       suppressionString;
 
     public WizardHierarchyModel(final String attribute,
-                                final DataType datatype,
+                                final DataType<?> datatype,
                                 final String suppressionString,
                                 final String[] items) {
         rows = items.length;
@@ -52,7 +52,7 @@ public class WizardHierarchyModel {
         return attribute;
     }
 
-    public DataType getDataType() {
+    public DataType<?> getDataType() {
         return datatype;
     }
 

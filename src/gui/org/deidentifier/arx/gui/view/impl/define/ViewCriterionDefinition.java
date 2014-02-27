@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +63,9 @@ public class ViewCriterionDefinition implements IView {
     private static final Metric<?> ITEMS_METRIC[]  = { 
             Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
-            Metric.createDMMetric(),
-            Metric.createEntropyMetric(),
             Metric.createDMStarMetric(),
+            Metric.createEntropyMetric(),
+            Metric.createDMMetric(),
             Metric.createNMEntropyMetric(),
             Metric.createAECSMetric()};
 
@@ -147,7 +147,6 @@ public class ViewCriterionDefinition implements IView {
     }
 
     private Composite build(final Composite parent) {
-    	
 
         // Create input group
         Composite group = new Composite(parent, SWT.NONE);

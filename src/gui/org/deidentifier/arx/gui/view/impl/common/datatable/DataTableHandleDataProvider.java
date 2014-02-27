@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
 
     @Override
     public int getColumnCount() {
-        if (data == null) { return 0; }
+        if (data == null || data.isOrphaned()) { return 0; }
         return data.getNumColumns() + (context.getRows() != null ? 1 : 0);
     }
 
@@ -59,7 +59,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
 
     @Override
     public int getRowCount() {
-        if (data == null) { return 0; }
+        if (data == null || data.isOrphaned()) { return 0; }
         return data.getNumRows();
     }
 

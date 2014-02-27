@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                 // Create row
                 result = new String[header.length];
                 for (int i = 0; i < result.length; i++) {
-                    result[i] = getValueInternal(row, i);
+                    result[i] = internalGetValue(row, i);
                 }
             }
 
@@ -100,41 +100,26 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         }
     }
 
-    /** The global optimum. */
-    private ARXNode     optimalNode;
+    /** The node checker. */
+    private INodeChecker  checker;
 
     /** The current node */
     private ARXNode     currentNode;
 
-    /** The last node */
-    private ARXNode     lastNode;
+    /** The data. */
+    private Data          dataIS;
 
-    /** The lattice. */
-    private ARXLattice  lattice;
-
-    /** The names of the quasiIdentifer. */
-    private String[]      quasiIdentifiers;
-
-    /** Wall clock. */
-    private long          duration;
+    /** The buffer. */
+    private Data          source;
+    
+    /** The data. */
+    private Data          dataQI;
 
     /** The data. */
     private Data          dataSE;
 
-    /** The data. */
-    private Data          dataIS;
-
-    /** The data. */
-    private Data          dataQI;
-
-    /** The generalization hierarchies. */
-    private int[][][]     map;
-
-    /** The string to insert. */
-    private String        suppressionString;
-
-    /** An inverse map for column indices. */
-    private int[]         inverseMap;
+    /** Wall clock. */
+    private long          duration;
 
     /** An inverse map to data arrays. */
     private int[][][]     inverseData;
@@ -142,14 +127,29 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     /** An inverse map to dictionaries. */
     private Dictionary[]  inverseDictionaries;
 
-    /** The node checker. */
-    private INodeChecker  checker;
+    /** An inverse map for column indices. */
+    private int[]         inverseMap;
+
+    /** The last node */
+    private ARXNode     lastNode;
+
+    /** The lattice. */
+    private ARXLattice  lattice;
+
+    /** The generalization hierarchies. */
+    private int[][][]     map;
+
+    /** The global optimum. */
+    private ARXNode     optimalNode;
+
+    /** The names of the quasiIdentifer. */
+    private String[]      quasiIdentifiers;
 
     /** Should we remove outliers */
     private boolean       removeOutliers;
 
-    /** The configuration */
-    private ARXConfiguration config;
+    /** The string to insert. */
+    private String        suppressionString;
 
     /**
      * Internal constructor for deserialization
@@ -167,11 +167,12 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                             final ARXNode optimum,
                             final long time) {
 
+        // Set registry
+        this.setRegistry(handle.getRegistry());
+        this.getRegistry().updateOutput(this);
+        this.getRegistry().createInputSubset(config);
+        this.getRegistry().createOutputSubset(config);
 
-        // Associate
-        this.associate(handle);
-        handle.associate(this);
-    	
         // Set optimum in lattice
         lattice.access().setOptimum(optimum);
 
@@ -185,6 +186,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                     handle.getDefinition(),
                                                     config.getCriteria());
 
+        // Initialize
+        config.initialize(manager);
+
         // Initialize the metric
         metric.initialize(manager.getDataQI(), manager.getHierarchies(), config);
 
@@ -196,6 +200,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                                      snapshotSizeDataset,
                                                      snapshotSizeSnapshot);
 
+        // Store buffer
+        this.source = checker.getData();
+        
         // Initialize the result
         init(manager,
              checker,
@@ -223,7 +230,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      * @param projection A projection mask for results of iterative executions.
      *                   projection[i] must contain true if the ith QI is to be preserved
      */
-    public DataHandleOutput(final DataManager manager,
+    public DataHandleOutput(final DataRegistry registry,
+                            final DataManager manager,
                             final INodeChecker checker,
                             final long time,
                             final String suppressionString,
@@ -231,6 +239,11 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                             final Lattice lattice,
                             final boolean removeOutliers,
                             final ARXConfiguration config) {
+
+        registry.updateOutput(this);
+        this.setRegistry(registry);
+        
+        this.source = checker.getData();
 
         final ARXLattice flattice = new ARXLattice(lattice,
                                                    manager.getDataQI().getHeader(),
@@ -258,11 +271,12 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         checkColumn(col);
         return header[col];
     }
-
-    @Override
-    public ARXConfiguration getConfiguration() {
-        return config;
-    }
+    // TODO: Removed because the result config might be different from the input config
+    //       in case of multiple sensitive attributes
+    // @Override
+    // public ARXConfiguration getConfiguration() {
+    //  return config;
+    // }
 
     /**
      * Gets the distinct values.
@@ -308,15 +322,15 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     @Override
-    public int getGroupCount() {
+    public int getNumberOfGroups() {
         getHandle(currentNode);
-        return checker.getGroupCount();
+        return checker.getNumberOfGroups();
     }
 
     @Override
-    public int getGroupOutliersCount() {
+    public int getNumberOfOutlyingGroups() {
         getHandle(currentNode);
-        return checker.getGroupOutliersCount();
+        return checker.getNumberOfOutlyingGroups();
     }
 
     @Override
@@ -340,7 +354,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         currentNode = fnode;
 
-        // Dont transform twice
+        // Don't transform twice
         if ((currentNode != null) && (currentNode == lastNode)) { return this; }
 
         // Prepare
@@ -357,11 +371,17 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         // Store
         if (!currentNode.isChecked()) {
+            
             currentNode.access().setChecked(true);
-            if (node.isAnonymous()) {
-                currentNode.access().setAnonymous();
-            } else {
-                currentNode.access().setNotAnonymous();
+            
+            // Only in this case, due to the special case 
+            // with multiple sensitive attributes
+            if (definition.getSensitiveAttributes().size()<=1) {
+                if (node.isAnonymous()) {
+                    currentNode.access().setAnonymous();
+                } else {
+                    currentNode.access().setNotAnonymous();
+                }
             }
             currentNode.access().setMaximumInformationLoss(node.getInformationLoss());
             currentNode.access().setMinimumInformationLoss(node.getInformationLoss());
@@ -395,6 +415,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      */
     @Override
     public int getNumColumns() {
+        checkRegistry();
         return header.length;
     }
 
@@ -405,6 +426,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      */
     @Override
     public int getNumRows() {
+        checkRegistry();
         return dataQI.getDataLength();
     }
 
@@ -424,9 +446,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     @Override
-    public int getTupleOutliersCount() {
+    public int getNumberOfOutlyingTuples() {
         getHandle(currentNode);
-        return checker.getTupleOutliersCount();
+        return checker.getNumberOfOutlyingTuples();
     }
 
     /**
@@ -442,12 +464,13 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     public String getValue(final int row, final int col) {
 
         // Check
+        checkRegistry();
         getHandle(currentNode);
         checkColumn(col);
         checkRow(row, dataQI.getDataLength());
 
         // Perform
-        return getValueInternal(row, col);
+        return internalGetValue(row, col);
     }
 
     /**
@@ -472,29 +495,16 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     /**
-     * Swap.
-     * 
-     * @param row1
-     *            the row1
-     * @param row2
-     *            the row2
+     * Initializer
+     * @param manager
+     * @param checker
+     * @param time
+     * @param suppressionString
+     * @param defintion
+     * @param lattice
+     * @param removeOutliers
+     * @param config
      */
-    @Override
-    public void swap(final int row1, final int row2) {
-
-        // Check
-        checkRow(row1, dataQI.getDataLength());
-        checkRow(row2, dataQI.getDataLength());
-
-        // Swap input data
-        if (other != null) {
-            other.swap(row1, row2);
-        }
-
-        // Swap
-        swapInternal(row1, row2);
-    }
-
     private void init(final DataManager manager,
                       final INodeChecker checker,
                       final long time,
@@ -504,16 +514,15 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                       final boolean removeOutliers,
                       final ARXConfiguration config) {
 
-        this.config = config;
         this.removeOutliers = removeOutliers;
         this.lattice = lattice;
-        optimalNode = this.lattice.getOptimum();
-        duration = time;
-        currentNode = optimalNode;
-        lastNode = null;
+        this.optimalNode = this.lattice.getOptimum();
+        this.duration = time;
+        this.currentNode = optimalNode;
+        this.lastNode = null;
         this.suppressionString = suppressionString;
         this.checker = checker;
-        definition = defintion;
+        this.definition = defintion;
 
         // Extract data
         dataQI = checker.getBuffer();
@@ -559,70 +568,9 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         inverseDictionaries[AttributeType.ATTR_TYPE_IS] = dataIS.getDictionary();
         inverseDictionaries[AttributeType.ATTR_TYPE_SE] = dataSE.getDictionary();
         inverseDictionaries[AttributeType.ATTR_TYPE_QI] = dataQI.getDictionary();
-    }
-
-    @Override
-    protected void afterSorting() {
-        // Empty by design
-    }
-
-    /**
-     * Associates this handle with an input data handle.
-     * 
-     * @param inHandle
-     *            the in handle
-     */
-    protected void associate(final DataHandleInput inHandle) {
-        other = inHandle;
-    }
-
-    /**
-     * A negative integer, zero, or a positive integer as the first argument is
-     * less than, equal to, or greater than the second. It uses the specified
-     * data types for comparison if no generalization was applied, otherwise it
-     * uses string comparison.
-     * 
-     * @param row1
-     *            the row1
-     * @param row2
-     *            the row2
-     * @param columns
-     *            the columns
-     * @param ascending
-     *            the ascending
-     * @return the int
-     */
-    @Override
-    protected int compare(final int row1,
-                          final int row2,
-                          final int[] columns,
-                          final boolean ascending) {
-        getHandle(currentNode);
-        for (final int index : columns) {
-
-            final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
-            final int indexMap = inverseMap[index] & AttributeType.MASK;
-            if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
-            
-            int cmp = 0;
-            try {
-                cmp = dataTypes[attributeType][indexMap].compare(getValueInternal(row1,
-                                                                                  index),
-                                                                 getValueInternal(row2,
-                                                                                  index));
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            if (cmp != 0) {
-                if (ascending) {
-                    return -cmp;
-                } else {
-                    return cmp;
-                }
-            }
-        }
-        return 0;
+        
+        // Create view
+        this.getRegistry().createOutputSubset(config);
     }
 
     /**
@@ -664,6 +612,55 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     }
 
     /**
+     * A negative integer, zero, or a positive integer as the first argument is
+     * less than, equal to, or greater than the second. It uses the specified
+     * data types for comparison if no generalization was applied, otherwise it
+     * uses string comparison.
+     * 
+     * @param row1
+     *            the row1
+     * @param row2
+     *            the row2
+     * @param columns
+     *            the columns
+     * @param ascending
+     *            the ascending
+     * @return the int
+     */
+    @Override
+    protected int internalCompare(final int row1,
+                                  final int row2,
+                                  final int[] columns,
+                                  final boolean ascending) {
+        getHandle(currentNode);
+        for (final int index : columns) {
+
+            final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
+            final int indexMap = inverseMap[index] & AttributeType.MASK;
+            if (attributeType == AttributeType.ATTR_TYPE_ID) return 0;
+            
+            int cmp = 0;
+            try {
+                cmp = dataTypes[attributeType][indexMap].compare(internalGetValue(row1,
+                                                                                  index),
+                                                                 internalGetValue(row2,
+                                                                                  index));
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            if (cmp != 0) {
+                if (ascending) {
+                    return -cmp;
+                } else {
+                    return cmp;
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Gets the value internal.
      * 
      * @param row
@@ -673,7 +670,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      * @return the value internal
      */
     @Override
-    protected String getValueInternal(final int row, final int col) {
+    protected String internalGetValue(final int row, final int col) {
 
         // Return the according values
         final int type = inverseMap[col] >>> AttributeType.SHIFT;
@@ -693,11 +690,15 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         }
     }
 
-    @Override
-    protected boolean isOutlierInternal(final int row) {
+    /**
+     * Returns whether the given row is an outlier
+     * @param row
+     * @return
+     */
+    protected boolean internalIsOutlier(final int row) {
         return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
     }
-
+    
     /**
      * Swap internal.
      * 
@@ -706,8 +707,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      * @param row2
      *            the row2
      */
-    @Override
-    protected void swapInternal(final int row1, final int row2) {
+    protected void internalSwap(final int row1, final int row2) {
         // Now swap
         getHandle(currentNode);
         int[] temp = dataQI.getArray()[row1];
@@ -719,5 +719,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         temp = dataIS.getArray()[row1];
         dataIS.getArray()[row1] = dataIS.getArray()[row2];
         dataIS.getArray()[row2] = temp;
+        temp = source.getArray()[row1];
+        source.getArray()[row1] = source.getArray()[row2];
+        source.getArray()[row2] = temp;
     }
 }

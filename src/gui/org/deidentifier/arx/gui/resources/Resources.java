@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,13 @@
 
 package org.deidentifier.arx.gui.resources;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import javax.imageio.ImageIO;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -35,8 +38,6 @@ public class Resources {
 
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
     private static final ResourceBundle FORMATS_BUNDLE  = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.formats"); //$NON-NLS-1$
-
-    private final String                VERSION         = Resources.getMessage("Resources.0"); //$NON-NLS-1$
 
     private final List<String>          DATE_FORMATS    = new ArrayList<String>();
 
@@ -77,7 +78,7 @@ public class Resources {
         SimpleLayout layout = new SimpleLayout();
         ConsoleAppender consoleAppender = new ConsoleAppender(layout);
         LOGGER.addAppender(consoleAppender);
-        LOGGER.setLevel(Level.INFO);
+        LOGGER.setLevel(Level.OFF);
     }
 
     private String getFormat(String key) {
@@ -114,6 +115,11 @@ public class Resources {
                                                  .getResourceAsStream(name));
     }
 
+    public static java.awt.Image getSplash() throws IOException {
+        return ImageIO.read(Resources.class.getResourceAsStream("splash.png")); //$NON-NLS-1$
+    }
+
+    
     public Logger getLogger() {
         return LOGGER;
     }
@@ -122,11 +128,15 @@ public class Resources {
         return shell;
     }
 
-    public String getVersion() {
-        return VERSION;
+    public static String getVersion() {
+        return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
     }
 
     public int getGradientLength() {
         return 256;
     }
+
+	public static java.awt.Image getImageIcon() throws IOException {
+		return ImageIO.read(Resources.class.getResourceAsStream("logo.png")); //$NON-NLS-1$
+	}
 }

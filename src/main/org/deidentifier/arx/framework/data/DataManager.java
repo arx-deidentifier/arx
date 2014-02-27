@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,8 +88,8 @@ public class DataManager {
         // Store research subset
         for (PrivacyCriterion c : criteria) {
             if (c instanceof DPresence) {
-                subset = ((DPresence) c).getBitSet();
-                subsetSize = ((DPresence) c).getSize();
+                subset = ((DPresence) c).getSubset().getSet();
+                subsetSize = ((DPresence) c).getSubset().getArray().length;
                 break;
             }
         }

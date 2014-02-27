@@ -1,6 +1,6 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
- * Copyright (C) 2012 - 2013 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         super.create();
         setTitle(Resources.getMessage("SeparatorDialog.4")); //$NON-NLS-1$
         setMessage(Resources.getMessage("SeparatorDialog.5"), IMessageProvider.INFORMATION); //$NON-NLS-1$
-        super.getShell().setSize(500, 300);
+        super.getShell().setSize(500, 350);
         super.getShell().layout();
         SWTUtil.center(super.getShell(), super.getParentShell());
     }
@@ -136,7 +136,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
             detect(file);
             read(file);
         } catch (final Exception e) {
-            controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.9"), Resources.getMessage("SeparatorDialog.10") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.9"), Resources.getMessage("SeparatorDialog.10"), e); //$NON-NLS-1$ //$NON-NLS-2$
             close();
         }
 
@@ -158,7 +158,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
                     selection = combo.getSelectionIndex();
                     read(file);
                 } catch (final Exception e) {
-                    controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.11"), Resources.getMessage("SeparatorDialog.12") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                    controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.11"), Resources.getMessage("SeparatorDialog.12"), e); //$NON-NLS-1$ //$NON-NLS-2$
                     close();
                 }
             }
