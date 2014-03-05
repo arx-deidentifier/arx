@@ -48,7 +48,12 @@ public class MainSplash extends Frame{
         this.setAlwaysOnTop(true);
         this.setUndecorated(true);
         this.setIconImage(Resources.getImageIcon()); //$NON-NLS-1$);
-        AWTUtilities.setWindowOpaque(this, false);
+        
+        try {
+        	AWTUtilities.setWindowOpaque(this, false);
+        } catch (Exception e){
+        	// No big deal
+        }
         
         this.addComponentListener(new ComponentAdapter(){
         	@Override
