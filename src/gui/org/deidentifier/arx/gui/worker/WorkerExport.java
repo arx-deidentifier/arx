@@ -52,9 +52,8 @@ public class WorkerExport extends Worker<DataHandle> {
     }
 
     @Override
-    public void
-            run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                            InterruptedException {
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
+                                            			InterruptedException {
 
         arg0.beginTask(Resources.getMessage("WorkerExport.0"), 100); //$NON-NLS-1$
 
@@ -91,6 +90,7 @@ public class WorkerExport extends Worker<DataHandle> {
         try {
             final CSVDataOutput csvout = new CSVDataOutput(cout, separator);
             csvout.write(handle.getView().iterator());
+            cout.close();
             result = handle;
             stop = true;
             arg0.worked(100);
