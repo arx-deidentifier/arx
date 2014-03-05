@@ -54,7 +54,7 @@ public class CSVDataOutput {
      * @throws FileNotFoundException
      */
     public CSVDataOutput(final File file, final char separator) throws FileNotFoundException {
-        out = new FileOutputStream(file);
+        this.out = new FileOutputStream(file);
         this.separator = separator;
     }
 
@@ -67,7 +67,7 @@ public class CSVDataOutput {
     public CSVDataOutput(final OutputStream out, final char separator) {
         this.out = out;
         this.separator = separator;
-        stream = true;
+        this.stream = true;
     }
 
     /**
@@ -78,7 +78,7 @@ public class CSVDataOutput {
      * @throws FileNotFoundException
      */
     public CSVDataOutput(final String output, final char separator) throws FileNotFoundException {
-        out = new FileOutputStream(new File(output));
+    	this.out = new FileOutputStream(new File(output));
         this.separator = separator;
     }
 
@@ -144,6 +144,5 @@ public class CSVDataOutput {
                 os.close();
             }
         }
-
     }
 }
