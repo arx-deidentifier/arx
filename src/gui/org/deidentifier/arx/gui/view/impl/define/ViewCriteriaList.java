@@ -106,7 +106,10 @@ public class ViewCriteriaList implements IView {
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
-        } else if (event.part == ModelPart.CRITERION_DEFINITION) {
+        } 
+        
+        if (event.part == ModelPart.CRITERION_DEFINITION ||
+            event.part == ModelPart.MODEL) {
             if (model!=null) {
                 root.setRedraw(false);
                 table.removeAll();
