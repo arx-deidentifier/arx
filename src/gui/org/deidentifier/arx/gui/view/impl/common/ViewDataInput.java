@@ -56,6 +56,8 @@ public class ViewDataInput extends ViewData {
     @Override
     protected void actionCellSelected(CellSelectionEvent arg1) {
 
+    	super.actionCellSelected(arg1);
+    	
         if (model == null) return;
         
         int column = arg1.getColumnPosition();

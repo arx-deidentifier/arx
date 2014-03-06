@@ -53,7 +53,7 @@ public class ViewDataOutput extends ViewData {
     
     @Override
     protected void actionCellSelected(CellSelectionEvent arg1) {
-        // Empty by design
+    	super.actionCellSelected(arg1);
     }
     
     @Override

@@ -145,7 +145,12 @@ public abstract class ViewData implements IView {
      * Cell selection event
      * @param arg1
      */
-    protected abstract void actionCellSelected(CellSelectionEvent arg1) ;
+    protected void actionCellSelected(CellSelectionEvent arg1){
+        if (model != null) {
+            int column = arg1.getColumnPosition() - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
     
     /**
      * Column selection event
@@ -154,16 +159,21 @@ public abstract class ViewData implements IView {
     protected void actionColumnSelected(ColumnSelectionEvent arg1) {
         if (model != null) {
             int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
-            if (column>=0){
-                DataHandle handle = getHandle();
-                if (handle != null){
-                    final String attr = handle.getAttributeName(column);
-                    table.setAttribute(attr);
-                    table.redraw();
-                    model.setSelectedAttribute(attr);
-                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
-                }
-            }
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Selects the given column
+     * @param index
+     */
+    private void actionColumnSelected(int index){
+    	DataHandle handle = getHandle();
+        if (handle != null){
+            final String attr = handle.getAttributeName(index);
+            model.setSelectedAttribute(attr);
+            table.setSelectedAttribute(attr);
+            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
         }
     }
 
@@ -243,6 +253,10 @@ public abstract class ViewData implements IView {
         
         if (event.part == ModelPart.VIEW_CONFIG) {          
             subsetButton.setSelection(model.getViewConfig().isSubset());
+        }
+        
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+        	table.setSelectedAttribute((String)event.data);
         }
     }
 
