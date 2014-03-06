@@ -142,13 +142,44 @@ public abstract class ViewData implements IView {
     }
     
     /**
+     * Cell selection event
+     * @param arg1
+     */
+    protected abstract void actionCellSelected(CellSelectionEvent arg1) ;
+    
+    /**
+     * Column selection event
+     * @param arg1
+     */
+    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
+        if (model != null) {
+            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
+            if (column>=0){
+                DataHandle handle = getHandle();
+                if (handle != null){
+                    final String attr = handle.getAttributeName(column);
+                    table.setAttribute(attr);
+                    table.redraw();
+                    model.setSelectedAttribute(attr);
+                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
+                }
+            }
+        }
+    }
+
+    /**
+     * Called when the sort button is pressed
+     */
+    protected abstract void actionSort();
+
+    /**
      * Add a scrollbar listener to this view
      * @param listener
      */
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
-    
+
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -159,6 +190,18 @@ public abstract class ViewData implements IView {
         table.dispose();
     }
 
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataDefinition getDefinition();
+    
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataHandle getHandle();
+    
     /**
      * Returns the NatTable viewport layer
      * @return
@@ -173,6 +216,7 @@ public abstract class ViewData implements IView {
         groupsButton.setEnabled(false);
         subsetButton.setEnabled(false);
     }
+    
 
     @Override
     public void update(final ModelEvent event) {
@@ -201,50 +245,6 @@ public abstract class ViewData implements IView {
             subsetButton.setSelection(model.getViewConfig().isSubset());
         }
     }
-
-    /**
-     * Cell selection event
-     * @param arg1
-     */
-    protected abstract void actionCellSelected(CellSelectionEvent arg1) ;
-    
-    /**
-     * Column selection event
-     * @param arg1
-     */
-    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
-        if (model != null) {
-            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
-            if (column>=0){
-                DataHandle handle = getHandle();
-                if (handle != null){
-                    final String attr = handle.getAttributeName(column);
-                    table.setAttribute(attr);
-                    table.redraw();
-                    model.setSelectedAttribute(attr);
-                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
-                }
-            }
-        }
-    }
-    
-    /**
-     * Called when the sort button is pressed
-     */
-    protected abstract void actionSort();
-
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataDefinition getDefinition();
-    
-
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataHandle getHandle();
 
     /**
      * Updates the header image in the table

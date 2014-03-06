@@ -38,10 +38,6 @@ public class ComponentTitleBar implements IComponent{
         this.id = id;
     }
 
-    public void add(String title, Image image, Runnable runnable){
-        add(title, image, false, runnable);
-    }
-
     public void add(String title, Image image, boolean toggle, Runnable runnable) {
         this.titles.add(title);
         this.toggle.put(title, toggle);
@@ -49,8 +45,12 @@ public class ComponentTitleBar implements IComponent{
         this.runnables.put(title, runnable);
     }
 
-    public List<String> getTitles() {
-        return titles;
+    public void add(String title, Image image, Runnable runnable){
+        add(title, image, false, runnable);
+    }
+
+    public String getId(){
+        return id;
     }
 
     public Image getImage(String title) {
@@ -61,11 +61,11 @@ public class ComponentTitleBar implements IComponent{
         return runnables.get(title);
     }
     
-    public Boolean isToggle(String title) {
-        return toggle.get(title);
+    public List<String> getTitles() {
+        return titles;
     }
 
-    public String getId(){
-        return id;
+    public Boolean isToggle(String title) {
+        return toggle.get(title);
     }
 }

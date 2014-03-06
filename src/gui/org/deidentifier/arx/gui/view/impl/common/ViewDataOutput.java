@@ -52,6 +52,53 @@ public class ViewDataOutput extends ViewData {
     }
     
     @Override
+    protected void actionCellSelected(CellSelectionEvent arg1) {
+        // Empty by design
+    }
+    
+    @Override
+    protected void actionSort(){
+        controller.actionDataSort(false);
+    }
+
+    @Override
+    protected DataDefinition getDefinition() {
+        if (model == null) return null;
+        else return model.getOutput().getDefinition();
+    }
+
+    @Override
+    protected DataHandle getHandle() {
+        if (model != null){
+            DataHandle handle = model.getOutput();
+            if (model.getViewConfig().isSubset() && 
+                model.getOutputConfig() != null &&
+                model.getOutputConfig().getConfig() != null) {
+                handle = handle.getView();
+            }
+            return handle;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the research subset
+     */
+    private RowSet getSubset(){
+        if (model != null && model.getOutputConfig() != null){
+            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
+            if (d != null) {
+                return d.getSubset().getSet();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void update(final ModelEvent event) {
         
         super.update(event);
@@ -123,53 +170,6 @@ public class ViewDataOutput extends ViewData {
             table.setGroups(model.getGroups());
             table.setResearchSubset(getSubset());
             table.redraw();
-        }
-    }
-    
-    /**
-     * Returns the research subset
-     */
-    private RowSet getSubset(){
-        if (model != null && model.getOutputConfig() != null){
-            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
-            if (d != null) {
-                return d.getSubset().getSet();
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    protected void actionCellSelected(CellSelectionEvent arg1) {
-        // Empty by design
-    }
-
-    @Override
-    protected void actionSort(){
-        controller.actionDataSort(false);
-    }
-    
-    @Override
-    protected DataDefinition getDefinition() {
-        if (model == null) return null;
-        else return model.getOutput().getDefinition();
-    }
-
-    @Override
-    protected DataHandle getHandle() {
-        if (model != null){
-            DataHandle handle = model.getOutput();
-            if (model.getViewConfig().isSubset() && 
-                model.getOutputConfig() != null &&
-                model.getOutputConfig().getConfig() != null) {
-                handle = handle.getView();
-            }
-            return handle;
-        } else {
-            return null;
         }
     }
 }

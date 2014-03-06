@@ -78,6 +78,15 @@ public class DataTableDecorator extends CellPainterWrapper {
         this.defaultBorderStyle = defaultBorderStyle;
     }
 
+    private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
+        IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
+        BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
+        if (borderStyle == null) {
+            borderStyle = this.defaultBorderStyle;
+        }
+        return borderStyle;
+    }
+
     @Override
     public int getPreferredHeight(ILayerCell cell, GC gc, IConfigRegistry configRegistry) {
         BorderStyle borderStyle = getBorderStyle(cell, configRegistry);
@@ -204,15 +213,6 @@ public class DataTableDecorator extends CellPainterWrapper {
         gc.setForeground(originalForeground);
         gc.setLineWidth(originalLineWidth);
         gc.setLineStyle(originalLineStyle);
-    }
-
-    private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
-        IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
-        BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
-        if (borderStyle == null) {
-            borderStyle = this.defaultBorderStyle;
-        }
-        return borderStyle;
     }
 
 }

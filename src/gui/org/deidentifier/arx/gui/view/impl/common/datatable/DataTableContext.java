@@ -46,14 +46,10 @@ public class DataTableContext {
         return array;
     }
 
-    public int getSelectedIndex() {
-        return selectedIndex;
-    }
-    
     public Controller getController() {
         return controller;
     }
-
+    
     public int[] getGroups() {
         return groups;
     }
@@ -74,6 +70,10 @@ public class DataTableContext {
         return rows;
     }
 
+    public int getSelectedIndex() {
+        return selectedIndex;
+    }
+
     public void reset() {
         this.handle = null;
         this.array = null;
@@ -84,10 +84,6 @@ public class DataTableContext {
 
     public void setArray(String[][] array) {
         this.array = array;
-    }
-
-    public void setSelectedIndex(int index) {
-        this.selectedIndex = index;
     }
 
     public void setGroups(int[] groups) {
@@ -101,13 +97,17 @@ public class DataTableContext {
     public void setImages(List<Image> images) {
         this.images = images;
     }
-    
+
     public void setListeners(List<ILayerListener> listeners) {
         this.listeners = listeners;
     }
     
     public void setRows(RowSet rows) {
         this.rows = rows;
+    }
+    
+    public void setSelectedIndex(int index) {
+        this.selectedIndex = index;
     }
 
 }

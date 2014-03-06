@@ -72,6 +72,40 @@ public class ComponentTitledFolder implements IComponent {
         folder.addSelectionListener(listener);
     }
     
+    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitleBar bar) {
+        ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
+        folder.setTopRight( toolbar, SWT.RIGHT );
+        
+        for (String title : bar.getTitles()){
+            
+            final String key = title;
+            ToolItem item = null;
+            if (bar.isToggle(title)) item = new ToolItem( toolbar, SWT.CHECK);
+            else item = new ToolItem( toolbar, SWT.PUSH);
+            item.setImage(bar.getImage(key));
+            item.setToolTipText(title);
+            item.addSelectionListener(new SelectionAdapter(){
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    bar.getRunnable(key).run();
+                }
+            });
+        }
+        
+        ToolItem item = new ToolItem( toolbar, SWT.PUSH );
+        item.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
+        item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+        item.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.actionShowHelpDialog(bar.getId());
+            }
+        });
+        
+        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+    }
+
     public Composite createItem(String title, Image image){
 
         Composite composite = new Composite(folder, SWT.NONE);
@@ -111,39 +145,5 @@ public class ComponentTitledFolder implements IComponent {
 
     public void setSelection(int index) {
         folder.setSelection(index);
-    }
-
-    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitleBar bar) {
-        ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
-        folder.setTopRight( toolbar, SWT.RIGHT );
-        
-        for (String title : bar.getTitles()){
-            
-            final String key = title;
-            ToolItem item = null;
-            if (bar.isToggle(title)) item = new ToolItem( toolbar, SWT.CHECK);
-            else item = new ToolItem( toolbar, SWT.PUSH);
-            item.setImage(bar.getImage(key));
-            item.setToolTipText(title);
-            item.addSelectionListener(new SelectionAdapter(){
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    bar.getRunnable(key).run();
-                }
-            });
-        }
-        
-        ToolItem item = new ToolItem( toolbar, SWT.PUSH );
-        item.setImage(controller.getResources().getImage("help.png"));  //$NON-NLS-1$
-        item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter(){
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                controller.actionShowHelpDialog(bar.getId());
-            }
-        });
-        
-        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
     }
 }

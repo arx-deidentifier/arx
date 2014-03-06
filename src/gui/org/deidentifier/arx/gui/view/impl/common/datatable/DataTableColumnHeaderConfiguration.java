@@ -48,13 +48,6 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
         IMAGE_COL_SELECT = context.getController().getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }
 
-    @Override
-    public void configureRegistry(final IConfigRegistry configRegistry) {
-        super.configureRegistry(configRegistry);
-        addNormalModeStyling(configRegistry);
-        addSelectedModeStyling(configRegistry);
-    }
-
     private void addNormalModeStyling(final IConfigRegistry configRegistry) {
 
         final TextPainter txtPainter = new TextPainter(false, false);
@@ -92,5 +85,12 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
                                                selectedHeaderPainter,
                                                DisplayMode.SELECT,
                                                GridRegion.COLUMN_HEADER);
+    }
+
+    @Override
+    public void configureRegistry(final IConfigRegistry configRegistry) {
+        super.configureRegistry(configRegistry);
+        addNormalModeStyling(configRegistry);
+        addSelectedModeStyling(configRegistry);
     }
 }

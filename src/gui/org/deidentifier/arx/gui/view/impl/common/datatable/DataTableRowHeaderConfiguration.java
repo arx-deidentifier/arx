@@ -45,12 +45,6 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
         cellPainter = bgImagePainter;
     }
 
-    @Override
-    public void configureRegistry(final IConfigRegistry configRegistry) {
-        super.configureRegistry(configRegistry);
-        addSelectedModeStyling(configRegistry);
-    }
-
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
 
         final TextPainter txtPainter = new TextPainter(false, false);
@@ -62,5 +56,11 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
                                                selectedCellPainter,
                                                DisplayMode.SELECT,
                                                GridRegion.ROW_HEADER);
+    }
+
+    @Override
+    public void configureRegistry(final IConfigRegistry configRegistry) {
+        super.configureRegistry(configRegistry);
+        addSelectedModeStyling(configRegistry);
     }
 }
