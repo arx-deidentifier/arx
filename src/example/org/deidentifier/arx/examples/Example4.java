@@ -83,7 +83,7 @@ public class Example4 extends Example {
             .setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", zipcode);
 
-        data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
+        data.getDefinition().setDataType("zipcode", DataType.NUMERIC);
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();

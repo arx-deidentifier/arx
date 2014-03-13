@@ -99,7 +99,7 @@ public abstract class DataType<T> {
         }
     }
 
-    public static class ARXDecimal extends DataType<Double> {
+    public static class ARXNumeric extends DataType<Double> {
         @Override
         public DataType<Double> clone() {
             return this;
@@ -171,7 +171,7 @@ public abstract class DataType<T> {
     }
 
     /** A decimal datatype */
-    public static final DataType<Double> DECIMAL = new ARXDecimal();
+    public static final DataType<Double> NUMERIC = new ARXNumeric();
 
     /** A string datatype */
     public static final DataType<String> STRING  = new ARXString();
