@@ -254,7 +254,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         in.close();
 
         // In case of hierarchy, add header
-        if (!this.data) {
+        if (!this.data && data.size() > 0) {
             // Duplicate last entry
             data.add(data.get(data.size() - 1));
 
