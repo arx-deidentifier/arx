@@ -363,6 +363,9 @@ public class ViewFilter implements IView {
 
         // Reset
         reset();
+        
+        // Return if there is no lattice
+        if (result==null || result.getLattice() == null) return;
 
         // Reset filter
         maxlevels = result.getLattice().getTop().getTransformation();
@@ -503,16 +506,26 @@ public class ViewFilter implements IView {
         if (event.part == ModelPart.INPUT) {
             reset();
         } else if (event.part == ModelPart.RESULT) {
-            initialize(model.getResult(), null);
-            SWTUtil.enable(root);
+            if (model.getResult() == null || model.getResult().getLattice() == null){
+                reset();
+                SWTUtil.disable(root);
+            } else {
+                initialize(model.getResult(), null);
+                SWTUtil.enable(root);
+            }
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             reset();
         } else if (event.part == ModelPart.FILTER) {
             // Only update if we receive a new filter
             if ((filter == null) || (model.getNodeFilter() != filter)) {
-                initialize(model.getResult(), model.getNodeFilter());
-                SWTUtil.enable(root);
+                if (model.getResult() == null || model.getResult().getLattice() == null){
+                    reset();
+                    SWTUtil.disable(root);
+                } else {
+                    initialize(model.getResult(), model.getNodeFilter());
+                    SWTUtil.enable(root);
+                }
             }
         }
     }
