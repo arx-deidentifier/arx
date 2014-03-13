@@ -138,6 +138,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         } catch (final Exception e) {
             controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.9"), Resources.getMessage("SeparatorDialog.10"), e); //$NON-NLS-1$ //$NON-NLS-2$
             close();
+            return parent;
         }
 
         final Combo combo = new Combo(parent, SWT.NONE);
