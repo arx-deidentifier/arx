@@ -48,6 +48,8 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.Vocabulary;
+import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
@@ -64,6 +66,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class WorkerLoad extends Worker<Model> {
 
+	/** The vocabulary to use*/
+	private Vocabulary vocabulary = new Vocabulary_V2();
 	/** The zip file*/
 	private ZipFile    zipfile;
 	/** The lattice*/
@@ -123,9 +127,9 @@ public class WorkerLoad extends Worker<Model> {
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
-                if (localName.equals("clipboard")) { //$NON-NLS-1$
+                if (vocabulary.isClipboard(localName)) {
                     return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                } else if (vocabulary.isNode(localName)) {
                     final ARXNode node = map.get(payload.trim());
                     model.getClipboard().add(node);
                     return true;
@@ -140,9 +144,8 @@ public class WorkerLoad extends Worker<Model> {
                           final String localName,
                           final String qName,
                           final Attributes attributes) throws SAXException {
-                if (localName.equals("clipboard")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                if (vocabulary.isClipboard(localName) ||
+                    vocabulary.isNode(localName)) {
                     return true;
                 } else {
                     return false;
@@ -292,9 +295,9 @@ public class WorkerLoad extends Worker<Model> {
                                   final String localName,
                                   final String qName) throws SAXException {
             	
-                if (localName.equals("definition")) { //$NON-NLS-1$
+                if (vocabulary.isDefinition(localName)) {
                     return true;
-                } else if (localName.equals("assigment")) { //$NON-NLS-1$
+                } else if (vocabulary.isAssigment(localName)) {
 
                     // Attribute name
                     if (attr == null) { throw new SAXException(Resources.getMessage("WorkerLoad.3")); } //$NON-NLS-1$
@@ -362,22 +365,22 @@ public class WorkerLoad extends Worker<Model> {
                     
                     return true;
 
-                } else if (localName.equals("name")) { //$NON-NLS-1$
+                } else if (vocabulary.isName(localName)) {
                     attr = payload;
                     return true;
-                } else if (localName.equals("type")) { //$NON-NLS-1$
+                } else if (vocabulary.isType(localName)) {
                     atype = payload;
                     return true;
-                } else if (localName.equals("datatype")) { //$NON-NLS-1$
+                } else if (vocabulary.isDatatype(localName)) {
                     dtype = payload;
                     return true;
-                } else if (localName.equals("ref")) { //$NON-NLS-1$
+                } else if (vocabulary.isRef(localName)) {
                     ref = payload;
                     return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
+                } else if (vocabulary.isMin(localName)) {
                     min = payload;
                     return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
+                } else if (vocabulary.isMax(localName)) {
                     max = payload;
                     return true;
                 } else {
@@ -391,9 +394,9 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
             	
-                if (localName.equals("definition")) { //$NON-NLS-1$
+                if (vocabulary.isDefinition(localName)) {
                     return true;
-                } else if (localName.equals("assigment")) { //$NON-NLS-1$
+                } else if (vocabulary.isAssigment(localName)) {
                     attr = null;
                     dtype = null;
                     atype = null;
@@ -401,17 +404,12 @@ public class WorkerLoad extends Worker<Model> {
                     min = null;
                     max = null;
                     return true;
-                } else if (localName.equals("name")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("type")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("datatype")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("ref")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
+                } else if (vocabulary.isName(localName) ||
+                           vocabulary.isType(localName) ||
+                           vocabulary.isDatatype(localName) ||
+                           vocabulary.isRef(localName) ||
+                           vocabulary.isMin(localName) ||
+                           vocabulary.isMax(localName)) {
                     return true;
                 } else {
                     return false;
@@ -541,21 +539,15 @@ public class WorkerLoad extends Worker<Model> {
                                   final String localName,
                                   final String qName) throws SAXException {
             	
-                if (localName.equals("lattice")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                if (vocabulary.isLattice(localName) ||
+                    vocabulary.isLevel(localName) ||
+                    vocabulary.isPredecessors(localName) ||
+                    vocabulary.isSuccessors(localName) ||
+                    vocabulary.isInfoloss(localName) ||
+                    vocabulary.isMax2(localName) ||
+                    vocabulary.isMin2(localName)) {
+                        return true;
+                } else if (vocabulary.isNode2(localName)) {
                     final ARXNode node = lattice.new ARXNode();
                     node.access().setAnonymity(anonymity);
                     node.access().setChecked(checked);
@@ -567,13 +559,13 @@ public class WorkerLoad extends Worker<Model> {
                     levels.get(level).add(node);
                     map.put(id, node);
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
+                } else if (vocabulary.isTransformation(localName)) {
                     transformation = readTransformation(payload);
                     return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
+                } else if (vocabulary.isAnonymity(localName)) {
                     anonymity = Anonymity.valueOf(payload);
                     return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
+                } else if (vocabulary.isChecked(localName)) {
                     checked = Boolean.valueOf(payload);
                     return true;
                 } else {
@@ -587,32 +579,25 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
 
-                if (localName.equals("lattice")) { //$NON-NLS-1$
+                if (vocabulary.isLattice(localName)) {
                     return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
-                    level = Integer.valueOf(attributes.getValue("depth")); //$NON-NLS-1$
+                } else if (vocabulary.isLevel(localName)) {
+                    level = Integer.valueOf(vocabulary.getDepth(attributes));
                     if (!levels.containsKey(level)) {
                         levels.put(level, new ArrayList<ARXNode>());
                     }
                     return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
-                    id = Integer.valueOf(attributes.getValue("id")); //$NON-NLS-1$
+                } else if (vocabulary.isNode2(localName)) {
+                    id = Integer.valueOf(vocabulary.getId(attributes));
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
+                } else if (vocabulary.isTransformation(localName) ||
+                           vocabulary.isAnonymity(localName) || 
+                           vocabulary.isChecked(localName) || 
+                           vocabulary.isPredecessors(localName) ||
+                           vocabulary.isSuccessors(localName) ||
+                           vocabulary.isInfoloss(localName) ||
+                           vocabulary.isMax2(localName) ||
+                           vocabulary.isMin2(localName)) {
                     return true;
                 } else {
                     return false;
@@ -635,11 +620,11 @@ public class WorkerLoad extends Worker<Model> {
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
-                if (localName.equals("lattice")) { //$NON-NLS-1$
+                if (vocabulary.isLattice(localName)) {
                     return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
+                } else if (vocabulary.isLevel(localName)) {
                     return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                } else if (vocabulary.isNode2(localName)) {
                     map.get(id)
                        .access()
                        .setPredecessors(predecessors.toArray(new ARXNode[predecessors.size()]));
@@ -647,19 +632,14 @@ public class WorkerLoad extends Worker<Model> {
                        .access()
                        .setSuccessors(successors.toArray(new ARXNode[successors.size()]));
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
+                } else if (vocabulary.isTransformation(localName) ||
+                           vocabulary.isAnonymity(localName) ||
+                           vocabulary.isChecked(localName) ||
+                           vocabulary.isInfoloss(localName) || 
+                           vocabulary.isMax2(localName) ||
+                           vocabulary.isMin2(localName)) {
                     return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
+                } else if (vocabulary.isPredecessors(localName)) {
 
                     final String[] a = payload.trim().split(","); //$NON-NLS-1$
                     for (final String s : a) {
@@ -669,7 +649,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                     }
                     return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
+                } else if (vocabulary.isSuccessors(localName)) {
                     final String[] a = payload.trim().split(","); //$NON-NLS-1$
                     for (final String s : a) {
                         final String b = s.trim();
@@ -678,7 +658,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                     }
                     return true;
-                } else if (localName.equals("attribute")) { //$NON-NLS-1$
+                } else if (vocabulary.isAttribute(localName)) {
                     return true;
                 } else {
                     return false;
@@ -691,32 +671,22 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
 
-                if (localName.equals("lattice")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
-                    id = Integer.valueOf(attributes.getValue("id")); //$NON-NLS-1$
+                if (vocabulary.isNode2(localName)) {
+                    id = Integer.valueOf(vocabulary.getId(attributes));
                     successors.clear();
                     predecessors.clear();
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("attribute")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
+                }   else if (vocabulary.isTransformation(localName) ||
+                             vocabulary.isLattice(localName) ||
+                             vocabulary.isLevel(localName) ||
+                             vocabulary.isAnonymity(localName) ||
+                             vocabulary.isChecked(localName) ||
+                             vocabulary.isPredecessors(localName) ||
+                             vocabulary.isSuccessors(localName) ||
+                             vocabulary.isAttribute(localName) ||
+                             vocabulary.isInfoloss(localName) ||
+                             vocabulary.isMax2(localName) ||
+                             vocabulary.isMin2(localName)) {
                     return true;
                 } else {
                     return false;
@@ -766,9 +736,9 @@ public class WorkerLoad extends Worker<Model> {
                                   final String localName,
                                   final String qName) throws SAXException {
             	
-                if (localName.equals("metadata")) { //$NON-NLS-1$
+                if (vocabulary.isMetadata(localName)) {
                     return true;
-                } else if (localName.equals("version")) { //$NON-NLS-1$
+                } else if (vocabulary.isVersion(localName)) {
                     if (!payload.equals(Resources.getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
                     return true;
                 } else {
@@ -782,9 +752,9 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
             	
-                if (localName.equals("metadata")) { //$NON-NLS-1$
+                if (vocabulary.isMetadata(localName)) {
                     return true;
-                } else if (localName.equals("version")) { //$NON-NLS-1$
+                } else if (vocabulary.isVersion(localName)) {
                     return true;
                 } else {
                     return false;
