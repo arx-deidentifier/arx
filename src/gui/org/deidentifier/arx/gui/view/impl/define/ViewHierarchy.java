@@ -271,26 +271,9 @@ public class ViewHierarchy implements IView {
             min.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent arg0) {
-                    if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
-                        if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
-                            min.select(max.getSelectionIndex() + 1);
-                        } else {
-                            if (model != null) {
-                                String val = min.getItem(min.getSelectionIndex());
-                                if (val.equals(ITEM_ALL)) {
-                                    val = "1"; //$NON-NLS-1$
-                                }
-                                model.getInputConfig()
-                                     .getInput()
-                                     .getDefinition()
-                                     .setMinimumGeneralization(attribute,
-                                                               Integer.valueOf(val) - 1);
-                                controller.update(new ModelEvent(this,
-                                                                 ModelPart.ATTRIBUTE_TYPE,
-                                                                 attribute));
-                            }
-                        }
-                    }
+                    if (updateMin()) controller.update(new ModelEvent(this,
+                                                       ModelPart.ATTRIBUTE_TYPE,
+                                                       attribute));
                 }
             });
 
@@ -301,31 +284,58 @@ public class ViewHierarchy implements IView {
             max.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent arg0) {
-                    if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
-                        if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
-                            max.select(min.getSelectionIndex() - 1);
-                        } else {
-                            if (model != null) {
-                                String val = max.getItem(max.getSelectionIndex());
-                                if (val.equals(ITEM_ALL)) {
-                                    val = String.valueOf(max.getItem(max.getSelectionIndex() - 1));
-                                }
-                                model.getInputConfig()
-                                     .getInput()
-                                     .getDefinition()
-                                     .setMaximumGeneralization(attribute,
-                                                               Integer.valueOf(val) - 1);
-                                controller.update(new ModelEvent(this,
-                                                                 ModelPart.ATTRIBUTE_TYPE,
-                                                                 attribute));
-                            }
-                        }
-                    }
+                    if (updateMax()) controller.update(new ModelEvent(this,
+                                                           ModelPart.ATTRIBUTE_TYPE,
+                                                           attribute));
                 }
             });
         }
 
         init();
+    }
+    
+    private boolean updateMin() {
+        if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
+            if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
+                min.select(max.getSelectionIndex() + 1);
+            } else {
+                if (model != null) {
+                    String val = min.getItem(min.getSelectionIndex());
+                    if (val.equals(ITEM_ALL)) {
+                        val = "1"; //$NON-NLS-1$
+                    }
+                    model.getInputConfig()
+                         .getInput()
+                         .getDefinition()
+                         .setMinimumGeneralization(attribute,
+                                                   Integer.valueOf(val) - 1);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean updateMax(){
+        if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
+            if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
+                max.select(min.getSelectionIndex() - 1);
+            } else {
+                if (model != null) {
+                    String val = max.getItem(max.getSelectionIndex());
+                    if (val.equals(ITEM_ALL)) {
+                        val = String.valueOf(max.getItem(max.getSelectionIndex() - 1));
+                    }
+                    model.getInputConfig()
+                         .getInput()
+                         .getDefinition()
+                         .setMaximumGeneralization(attribute,
+                                                   Integer.valueOf(val) - 1);
+                    return true;
+                } 
+            }
+        } 
+        return false;
     }
 
     private void init() {
@@ -641,7 +651,7 @@ public class ViewHierarchy implements IView {
     }
 
     /**
-     * This is a dirty hack to push the hierarchies into
+     * TODO: This is a dirty hack to push the hierarchies into
      * the definition. It is triggered by a change event on the
      * attribute type 
      */
@@ -663,9 +673,12 @@ public class ViewHierarchy implements IView {
                  .getInput()
                  .getDefinition()
                  .setAttributeType(attribute, h);
+            updateMin();
+            updateMax();
             controller.update(new ModelEvent(this,
                                              ModelPart.ATTRIBUTE_TYPE,
                                              attribute));
+            
         }
 
         // If current attribute is sensitive

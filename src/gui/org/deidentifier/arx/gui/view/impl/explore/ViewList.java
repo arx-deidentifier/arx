@@ -131,6 +131,10 @@ public class ViewList implements IView {
         table.setRedraw(false);
         table.clearAll();
         table.setRedraw(true);
+
+        if (listener != null) {
+            table.removeListener(SWT.SetData, listener);
+        }
     }
 
     @Override
@@ -139,7 +143,9 @@ public class ViewList implements IView {
         if (event.part == ModelPart.SELECTED_NODE) {
             selectedNode = (ARXNode) event.data;
         } else if (event.part == ModelPart.MODEL) {
+            reset();
             model = (Model) event.data;
+            update(model.getResult(), model.getNodeFilter());
         } else if (event.part == ModelPart.FILTER) {
             if (model != null) {
                 update(model.getResult(), (ModelNodeFilter) event.data);
@@ -205,6 +211,9 @@ public class ViewList implements IView {
      * @param filter
      */
     private void update(final ARXResult result, final ModelNodeFilter filter) {
+        
+        if (result == null || result.getLattice() == null) return;
+        if (filter == null) return;
 
         controller.getResources().getDisplay().asyncExec(new Runnable() {
 

@@ -138,6 +138,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         } catch (final Exception e) {
             controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.9"), Resources.getMessage("SeparatorDialog.10"), e); //$NON-NLS-1$ //$NON-NLS-2$
             close();
+            return parent;
         }
 
         final Combo combo = new Combo(parent, SWT.NONE);
@@ -253,7 +254,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         in.close();
 
         // In case of hierarchy, add header
-        if (!this.data) {
+        if (!this.data && data.size() > 0) {
             // Duplicate last entry
             data.add(data.get(data.size() - 1));
 

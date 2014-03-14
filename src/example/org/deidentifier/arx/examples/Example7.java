@@ -87,9 +87,9 @@ public class Example7 extends Example {
         data.getDefinition().setMinimumGeneralization("gender", 1);
 
         // set the datatypes
-        data.getDefinition().setDataType("age", DataType.DECIMAL);
+        data.getDefinition().setDataType("age", DataType.NUMERIC);
         data.getDefinition().setDataType("gender", DataType.STRING);
-        data.getDefinition().setDataType("zipcode", DataType.DECIMAL);
+        data.getDefinition().setDataType("zipcode", DataType.NUMERIC);
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
