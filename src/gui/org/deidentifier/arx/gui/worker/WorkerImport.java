@@ -28,12 +28,24 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker loads external data
+ * @author Fabian Prasser
+ */
 public class WorkerImport extends Worker<Data> {
 
+	/** The path*/
     private final String     path;
+    /** The separator*/
     private final char       separator;
+    /** The stop flag*/
     private volatile boolean stop = false;
 
+    /**
+     * Creates a new instance
+     * @param path
+     * @param separator
+     */
     public WorkerImport(final String path, final char separator) {
         this.path = path;
         this.separator = separator;

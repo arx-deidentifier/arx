@@ -25,10 +25,20 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker applies a transformation
+ * @author Fabian Prasser
+ *
+ */
 public class WorkerTransform extends Worker<DataHandle> {
 
+	/** The model*/
     private final Model model;
 
+    /**
+     * Creates a new instance
+     * @param model
+     */
     public WorkerTransform(final Model model) {
         this.model = model;
     }

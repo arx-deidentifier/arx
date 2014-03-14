@@ -16,44 +16,45 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.worker;
+package org.deidentifier.arx.gui.worker.io;
 
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
- * A base class for workers that perform asynchronous tasks in a progress dialog
- * @author Fabian Prasser
- *
- * @param <T>
+ * Wraps a writer
+ * 
+ * @author Prasser, Kohlmayer
  */
-public abstract class Worker<T> implements IRunnableWithProgress {
-
-	/** Error, if any*/
-    protected Exception error  = null;
-    /** Result, if any*/
-    protected T         result = null;
+public class FileBuilder {
+	
+	/** Stream*/
+    private final OutputStreamWriter w;
 
     /**
-     * Returns the error
-     * @return
+     * Create a new instance
+     * @param w
      */
-    public Exception getError() {
-        return error;
+    public FileBuilder(final OutputStreamWriter w) {
+        this.w = w;
     }
 
     /**
-     * Returns the result
+     * Append a string
+     * @param s
      * @return
+     * @throws IOException
      */
-    public T getResult() {
-        return result;
+    public FileBuilder append(final String s) throws IOException {
+        w.write(s);
+        return this;
     }
 
     /**
-     * Sets the error
-     * @param e
+     * Flush
+     * @throws IOException
      */
-    public void setError(final Exception e) {
-        this.error = e;
+    public void flush() throws IOException {
+        w.flush();
     }
 }

@@ -27,10 +27,19 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker performs the anonymization process
+ * @author Fabian Prasser
+ */
 public class WorkerAnonymize extends Worker<ARXResult> {
 
+	/** The model*/
     private final Model      model;
 
+    /**
+     * Creates a new instance
+     * @param model
+     */
     public WorkerAnonymize(final Model model) {
         this.model = model;
     }

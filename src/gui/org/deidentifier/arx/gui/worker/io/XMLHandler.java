@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.worker;
+package org.deidentifier.arx.gui.worker.io;
 
 import org.deidentifier.arx.gui.resources.Resources;
 import org.xml.sax.Attributes;
@@ -28,7 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class WorkerLoadXMLHandler extends DefaultHandler {
+public abstract class XMLHandler extends DefaultHandler {
 
     public String payload;
 

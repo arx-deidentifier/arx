@@ -30,15 +30,31 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker exports data to disk
+ * @author Fabian Prasser
+ */
 public class WorkerExport extends Worker<DataHandle> {
 
+	/** The stop flag */
 	private volatile boolean stop = false;
-
+	/** The path */
 	private final String path;
+	/** The separator */
 	private final char separator;
+	/** The byte count */
 	private final long bytes;
+	/** The data */
 	private final DataHandle handle;
 
+	/**
+	 * Creates a new instance
+	 * @param path
+	 * @param separator
+	 * @param handle
+	 * @param config
+	 * @param bytes
+	 */
     public WorkerExport(final String path,
                         final char separator,
                         final DataHandle handle,

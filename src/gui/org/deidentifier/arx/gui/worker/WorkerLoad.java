@@ -48,6 +48,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.XMLHandler;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,14 +58,21 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+/**
+ * This worker loads a project file from disk
+ * @author Fabian Prasser
+ */
 public class WorkerLoad extends Worker<Model> {
 
-	private final ZipFile    zipfile;
-	private ARXLattice       lattice;
-	private Model            model;
+	/** The zip file*/
+	private ZipFile    zipfile;
+	/** The lattice*/
+	private ARXLattice lattice;
+	/** The model*/
+	private Model      model;
 
 	/**
-	 * Constructor
+	 * Creates a new instance
 	 * 
 	 * @param file
 	 * @param controller
@@ -110,7 +118,7 @@ public class WorkerLoad extends Worker<Model> {
         // Parse
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
             @Override
             protected boolean end(final String uri,
                                   final String localName,
@@ -275,7 +283,7 @@ public class WorkerLoad extends Worker<Model> {
         // Read xml
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
         	
             String attr, dtype, atype, ref, min, max;
 
@@ -520,7 +528,7 @@ public class WorkerLoad extends Worker<Model> {
         final Map<Integer, ARXNode> map = new HashMap<Integer, ARXNode>();
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
 
             private int       level = 0;
             private int       id    = 0;
@@ -617,7 +625,7 @@ public class WorkerLoad extends Worker<Model> {
         entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
         xmlReader = XMLReaderFactory.createXMLReader();
         inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
         	
             private int                   id;
             private final List<ARXNode> predecessors = new ArrayList<ARXNode>();
@@ -752,7 +760,7 @@ public class WorkerLoad extends Worker<Model> {
 
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
             @Override
             protected boolean end(final String uri,
                                   final String localName,
