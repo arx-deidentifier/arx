@@ -21,7 +21,7 @@ package org.deidentifier.arx.gui.worker.io;
 import org.xml.sax.Attributes;
 
 /**
- * An abstract base calss for the XML vocabulary
+ * An abstract base class for the XML vocabulary
  * @author Fabian Prasser
  */
 public abstract class Vocabulary {
