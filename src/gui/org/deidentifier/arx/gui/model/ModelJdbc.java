@@ -20,7 +20,7 @@ public class ModelJdbc implements Serializable {
 
     }
 
-    public void connect(String type, String server, String port,
+    public boolean connect(String type, String server, String port,
                     String username, String password, String database)
     {
 
@@ -47,7 +47,11 @@ public class ModelJdbc implements Serializable {
 
         } catch (SQLException e) {
 
+            return false;
+
         }
+
+        return true;
 
     }
 
