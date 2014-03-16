@@ -177,7 +177,9 @@ public class WizardImportCsvPage extends WizardPage {
         tableViewerPreview.setContentProvider(new ArrayContentProvider());
 
         tablePreview = tableViewerPreview.getTable();
-        tablePreview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+        GridData gd_tablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+        gd_tablePreview.heightHint = 150;
+        tablePreview.setLayoutData(gd_tablePreview);
         tablePreview.setLinesVisible(true);
         tablePreview.setVisible(false);
 
