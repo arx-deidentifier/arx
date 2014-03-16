@@ -9,7 +9,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 public class WizardImport extends Wizard {
 
-    private WizardImportData data = new WizardImportData(this);
+    private WizardImportData data = new WizardImportData();
 
     private Controller controller;
     private Model model;
@@ -25,17 +25,23 @@ public class WizardImport extends Wizard {
 
     private IWizardPage currentPage;
 
-    public Controller getController()
+    Controller getController()
     {
 
         return controller;
 
     }
 
-    public Model getModel()
+    Model getModel()
     {
 
         return model;
+
+    }
+
+    WizardImportData getData() {
+
+        return data;
 
     }
 
@@ -52,25 +58,25 @@ public class WizardImport extends Wizard {
     public void addPages()
     {
 
-        sourcePage = new WizardImportSourcePage(data);
+        sourcePage = new WizardImportSourcePage(this);
         addPage(sourcePage);
 
-        csvPage = new WizardImportCsvPage(data);
+        csvPage = new WizardImportCsvPage(this);
         addPage(csvPage);
 
-        columnPage = new WizardImportColumnPage(data);
+        columnPage = new WizardImportColumnPage(this);
         addPage(columnPage);
 
-        previewPage = new WizardImportPreviewPage(data);
+        previewPage = new WizardImportPreviewPage(this);
         addPage(previewPage);
 
-        jdbcPage = new WizardImportJdbcPage(data);
+        jdbcPage = new WizardImportJdbcPage(this);
         addPage(jdbcPage);
 
-        tablePage = new WizardImportTablePage(data);
+        tablePage = new WizardImportTablePage(this);
         addPage(tablePage);
 
-        xlsPage = new WizardImportXlsPage(data);
+        xlsPage = new WizardImportXlsPage(this);
         addPage(xlsPage);
 
     }

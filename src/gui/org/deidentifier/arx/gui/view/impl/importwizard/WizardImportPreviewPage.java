@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class WizardImportPreviewPage extends WizardPage {
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
     private Table table;
     private TableViewer tableViewer;
@@ -29,12 +29,12 @@ public class WizardImportPreviewPage extends WizardPage {
     private static final int PREVIEWLINES = 25;
 
 
-    public WizardImportPreviewPage(WizardImportData data)
+    public WizardImportPreviewPage(WizardImport wizardImport)
     {
 
         super("WizardImportPreviewPage");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
         setTitle("Preview");
         setDescription("Please check whether everything is right");
@@ -77,7 +77,7 @@ public class WizardImportPreviewPage extends WizardPage {
 
             }
 
-            List<WizardImportDataColumn> columns = data.getColumns();
+            List<WizardImportDataColumn> columns = wizardImport.getData().getColumns();
 
             for (int i = 0; i < columns.size(); i++) {
 
@@ -124,12 +124,12 @@ public class WizardImportPreviewPage extends WizardPage {
     {
 
         final List<String[]> result = new ArrayList<String[]>();
-        final CSVDataInput in = new CSVDataInput(data.getCsvFileLocation(), data.getCsvSeparator());
+        final CSVDataInput in = new CSVDataInput(wizardImport.getData().getCsvFileLocation(), wizardImport.getData().getCsvSeparator());
         final Iterator<String[]> it = in.iterator();
 
         int count = 0;
 
-        if (data.getCsvContainsHeader()) {
+        if (wizardImport.getData().getCsvContainsHeader()) {
 
             it.next();
 

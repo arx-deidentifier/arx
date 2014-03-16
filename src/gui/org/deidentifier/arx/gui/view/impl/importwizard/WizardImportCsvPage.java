@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class WizardImportCsvPage extends WizardPage {
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
     private ArrayList<WizardImportDataColumn> columns;
 
@@ -53,7 +53,7 @@ public class WizardImportCsvPage extends WizardPage {
     private boolean customSeparator;
 
 
-    public WizardImportCsvPage(WizardImportData data)
+    public WizardImportCsvPage(WizardImport wizardImport)
     {
 
         super("WizardImportCsvPage");
@@ -61,7 +61,7 @@ public class WizardImportCsvPage extends WizardPage {
         setTitle("CSV");
         setDescription("Please provide the information requested below");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
     }
 
@@ -101,7 +101,7 @@ public class WizardImportCsvPage extends WizardPage {
                 setPageComplete(false);
                 setErrorMessage(null);
 
-                final String path = data.getWizard().getController().actionShowOpenFileDialog("*.csv");
+                final String path = wizardImport.getController().actionShowOpenFileDialog("*.csv");
 
                 if (path == null) {
 
@@ -336,7 +336,7 @@ public class WizardImportCsvPage extends WizardPage {
 
         }
 
-        this.data.setColumns(columns);
+        this.wizardImport.getData().setColumns(columns);
 
         if (btnContainsHeader.getSelection()) {
 
@@ -387,10 +387,10 @@ public class WizardImportCsvPage extends WizardPage {
 
         }
 
-        data.setColumns(columns);
-        data.setCsvContainsHeader(btnContainsHeader.getSelection());
-        data.setCsvFileLocation(comboLocation.getText());
-        data.setCsvSeparator(separators[selection]);
+        wizardImport.getData().setColumns(columns);
+        wizardImport.getData().setCsvContainsHeader(btnContainsHeader.getSelection());
+        wizardImport.getData().setCsvFileLocation(comboLocation.getText());
+        wizardImport.getData().setCsvSeparator(separators[selection]);
 
         setPageComplete(true);
 

@@ -16,17 +16,17 @@ public class WizardImportSourcePage extends WizardPage {
     private Button btnDatabase;
     private Button btnXls;
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
 
-    public WizardImportSourcePage(WizardImportData data)
+    public WizardImportSourcePage(WizardImport wizardImport)
     {
 
         super("WizardImportSourcePage");
         setTitle("Source");
         setDescription("Select the source you want to import data from");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
     }
 
@@ -45,7 +45,7 @@ public class WizardImportSourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                data.setSource(source.CSV);
+                wizardImport.getData().setSource(source.CSV);
 
                 setPageComplete(true);
 
@@ -60,7 +60,7 @@ public class WizardImportSourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                data.setSource(source.JDBC);
+                wizardImport.getData().setSource(source.JDBC);
 
                 setPageComplete(true);
 
@@ -75,7 +75,7 @@ public class WizardImportSourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                data.setSource(source.XLS);
+                wizardImport.getData().setSource(source.XLS);
 
                 setPageComplete(true);
 

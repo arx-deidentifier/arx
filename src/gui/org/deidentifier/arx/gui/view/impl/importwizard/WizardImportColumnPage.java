@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class WizardImportColumnPage extends WizardPage {
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
     private Table table;
     private CheckboxTableViewer checkboxTableViewer;
@@ -33,12 +33,12 @@ public class WizardImportColumnPage extends WizardPage {
     private Boolean selectAll = true;
 
 
-    public WizardImportColumnPage(WizardImportData data)
+    public WizardImportColumnPage(WizardImport wizardImport)
     {
 
         super("WizardImportCsvPage");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
         setTitle("Columns");
         setDescription("Please check and/or modify the settings below");
@@ -65,7 +65,7 @@ public class WizardImportColumnPage extends WizardPage {
 
                 ((WizardImportDataColumn)event.getElement()).setEnabled(event.getChecked());
 
-                for (WizardImportDataColumn column : data.getColumns()) {
+                for (WizardImportDataColumn column : wizardImport.getData().getColumns()) {
 
                     if (column.isEnabled()) {
 
@@ -157,7 +157,7 @@ public class WizardImportColumnPage extends WizardPage {
 
         if (visible) {
 
-            checkboxTableViewer.setInput(data.getColumns());
+            checkboxTableViewer.setInput(wizardImport.getData().getColumns());
 
         }
 
@@ -191,11 +191,11 @@ public class WizardImportColumnPage extends WizardPage {
         private void setChecked(int i, Boolean check) {
 
             table.getItem(i).setChecked(check);
-            data.getColumns().get(i).setEnabled(check);
+            wizardImport.getData().getColumns().get(i).setEnabled(check);
 
             setPageComplete(false);
 
-            for (WizardImportDataColumn column : data.getColumns()) {
+            for (WizardImportDataColumn column : wizardImport.getData().getColumns()) {
 
                 if (column.isEnabled()) {
 

@@ -14,14 +14,14 @@ import org.eclipse.swt.widgets.Label;
 
 public class WizardImportXlsPage extends WizardPage {
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
     private Label lblLocation;
     private Combo comboLocation;
     private Button btnChoose;
 
 
-    public WizardImportXlsPage(WizardImportData data)
+    public WizardImportXlsPage(WizardImport wizardImport)
     {
 
         super("WizardImportXlsPage");
@@ -29,7 +29,7 @@ public class WizardImportXlsPage extends WizardPage {
         setTitle("XLS");
         setDescription("Please provide the information requested below");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
     }
 
@@ -66,7 +66,7 @@ public class WizardImportXlsPage extends WizardPage {
                 setPageComplete(false);
                 setErrorMessage(null);
 
-                final String path = data.getWizard().getController().actionShowOpenFileDialog("*.xls");
+                final String path = wizardImport.getController().actionShowOpenFileDialog("*.xls");
 
                 if (path == null) {
 

@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.importwizard;
 
+import org.deidentifier.arx.gui.model.ModelJdbc;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -16,7 +17,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class WizardImportJdbcPage extends WizardPage {
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
     private Label lblType;
     private Combo comboType;
@@ -32,14 +33,14 @@ public class WizardImportJdbcPage extends WizardPage {
     private Text txtPort;
 
 
-    public WizardImportJdbcPage(WizardImportData data)
+    public WizardImportJdbcPage(WizardImport wizardImport)
     {
 
         super("WizardImportJdbcPage");
         setTitle("JDBC");
         setDescription("Please provide the information requested below");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
     }
 

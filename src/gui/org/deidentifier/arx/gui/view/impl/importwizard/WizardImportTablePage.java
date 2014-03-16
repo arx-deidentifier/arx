@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class WizardImportTablePage extends WizardPage {
 
-    private WizardImportData data;
+    private WizardImport wizardImport;
 
     private Table table;
     private TableViewer checkboxTableViewer;
@@ -28,12 +28,12 @@ public class WizardImportTablePage extends WizardPage {
     private TableViewerColumn tableViewerColumnDatatype;
 
 
-    public WizardImportTablePage(WizardImportData data)
+    public WizardImportTablePage(WizardImport wizardImport)
     {
 
         super("WizardImportTablePage");
 
-        this.data = data;
+        this.wizardImport = wizardImport;
 
         setTitle("Tables");
         setDescription("Please select the table you want to import from");
@@ -60,7 +60,7 @@ public class WizardImportTablePage extends WizardPage {
 
                 ((WizardImportDataColumn)event.getElement()).setEnabled(event.getChecked());
 
-                for (WizardImportDataColumn column : data.getColumns()) {
+                for (WizardImportDataColumn column : wizardImport.getData().getColumns()) {
 
                     if (column.isEnabled()) {
 

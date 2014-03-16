@@ -7,8 +7,6 @@ public class WizardImportData {
 
     public enum source {CSV, JDBC, XLS};
 
-    private WizardImport wizard;
-
     private source source;
 
     private List<WizardImportDataColumn> columns;
@@ -16,21 +14,6 @@ public class WizardImportData {
     private String csvFileLocation;
     private char csvSeparator;
     private boolean csvContainsHeader;
-
-
-    public WizardImportData(WizardImport wizard)
-    {
-
-        this.wizard = wizard;
-
-    }
-
-    public WizardImport getWizard()
-    {
-
-        return wizard;
-
-    }
 
     public String getCsvFileLocation()
     {
