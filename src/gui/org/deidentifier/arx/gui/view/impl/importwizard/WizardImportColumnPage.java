@@ -99,6 +99,7 @@ public class WizardImportColumnPage extends WizardPage {
         });
 
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
+        tblclmnEnabled.setToolTipText("Select all");
         tblclmnEnabled.setWidth(30);
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
@@ -174,6 +175,16 @@ public class WizardImportColumnPage extends WizardPage {
             }
 
             selectAll = !selectAll;
+
+            if (selectAll) {
+
+                tblclmnEnabled.setToolTipText("Select all");
+
+            } else {
+
+                tblclmnEnabled.setToolTipText("Deselect all");
+
+            }
 
         }
 
