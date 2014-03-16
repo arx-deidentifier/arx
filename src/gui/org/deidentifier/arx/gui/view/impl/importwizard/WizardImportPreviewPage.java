@@ -89,6 +89,7 @@ public class WizardImportPreviewPage extends WizardPage {
                     tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(i));
 
                     TableColumn tblclmnColumn = tableViewerColumn.getColumn();
+                    tblclmnColumn.setToolTipText("Datatype: " + column.getDatatype());
                     tblclmnColumn.setWidth(100);
                     tblclmnColumn.setText(column.getName());
 
