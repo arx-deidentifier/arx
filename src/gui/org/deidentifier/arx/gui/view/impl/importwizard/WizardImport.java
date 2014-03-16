@@ -20,9 +20,10 @@ public class WizardImport extends Wizard {
     private WizardImportPreviewPage previewPage;
     private WizardImportJdbcPage jdbcPage;
     private WizardImportTablePage tablePage;
+    private WizardImportXlsPage xlsPage;
+
 
     private IWizardPage currentPage;
-
 
     public Controller getController()
     {
@@ -69,6 +70,9 @@ public class WizardImport extends Wizard {
         tablePage = new WizardImportTablePage(data);
         addPage(tablePage);
 
+        xlsPage = new WizardImportXlsPage(data);
+        addPage(xlsPage);
+
     }
 
     @Override
@@ -88,6 +92,10 @@ public class WizardImport extends Wizard {
 
                 return jdbcPage;
 
+            } else if (src == source.XLS) {
+
+                return xlsPage;
+
             }
 
         } else if (currentPage == csvPage) {
@@ -103,6 +111,10 @@ public class WizardImport extends Wizard {
             return tablePage;
 
         } else if (currentPage == tablePage) {
+
+            return columnPage;
+
+        } else if (currentPage == xlsPage) {
 
             return columnPage;
 

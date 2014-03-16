@@ -70,7 +70,18 @@ public class WizardImportSourcePage extends WizardPage {
 
         btnXls = new Button(container, SWT.RADIO);
         btnXls.setText("XLS (Excel)");
-        btnXls.setEnabled(false);
+        btnXls.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                data.setSource(source.XLS);
+
+                setPageComplete(true);
+
+            }
+
+        });
 
         setPageComplete(false);
 
