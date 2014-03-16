@@ -199,6 +199,10 @@ public class WizardImportJdbcPage extends WizardPage {
 
             setPageComplete(true);
 
+        } else {
+
+            setErrorMessage("Unable to connect to database");
+
         }
 
     }
