@@ -13,8 +13,10 @@ import java.util.Map;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -276,6 +278,34 @@ public class WizardImportCsvPage extends WizardPage {
 
         }
 
+        class CSVColumnLabelProvider extends ColumnLabelProvider {
+
+            private int column;
+
+            public CSVColumnLabelProvider(int column) {
+
+                this.column = column;
+
+            }
+
+            @Override
+            public String getText(Object element) {
+
+                return ((String[]) element)[column];
+
+            }
+
+            @Override
+            public String getToolTipText(Object element) {
+
+                int row = data.indexOf(element);
+
+                return "Row: " + (row + 1) + ", Column: " + (column + 1);
+
+            }
+
+        }
+
         int index = 0;
         for (final String s : data.get(0)) {
 
@@ -290,12 +320,15 @@ public class WizardImportCsvPage extends WizardPage {
             if (btnContainsHeader.getSelection()) {
 
                 tableColumn.setText(s);
+                tableColumn.setToolTipText("Column #" + index);
 
             } else {
 
                 column.setName("Column #" + index);
 
             }
+
+            ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
 
             columns.add(column);
 
@@ -358,25 +391,6 @@ public class WizardImportCsvPage extends WizardPage {
         data.setCsvSeparator(separators[selection]);
 
         setPageComplete(true);
-
-    }
-
-    private class CSVColumnLabelProvider extends ColumnLabelProvider {
-
-        private int column;
-
-        public CSVColumnLabelProvider(int column) {
-
-            this.column = column;
-
-        }
-
-        @Override
-        public String getText(Object element) {
-
-            return ((String[]) element)[column];
-
-        }
 
     }
 
