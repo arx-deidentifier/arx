@@ -55,7 +55,18 @@ public class WizardImportSourcePage extends WizardPage {
 
         btnDatabase = new Button(container, SWT.RADIO);
         btnDatabase.setText("Database (JDBC)");
-        btnDatabase.setEnabled(false);
+        btnDatabase.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                data.setSource(source.JDBC);
+
+                setPageComplete(true);
+
+            }
+
+        });
 
         btnXls = new Button(container, SWT.RADIO);
         btnXls.setText("XLS (Excel)");
