@@ -111,7 +111,7 @@ public class WizardImportJdbcPage extends WizardPage {
         lblUsername.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblUsername.setText("Username");
 
-        txtUsername = new Text(container, SWT.BORDER | SWT.PASSWORD);
+        txtUsername = new Text(container, SWT.BORDER);
         txtUsername.setText("jdbc");
         txtUsername.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtUsername.addFocusListener(new FocusAdapter() {
@@ -129,7 +129,7 @@ public class WizardImportJdbcPage extends WizardPage {
         lblPassword.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblPassword.setText("Password");
 
-        txtPassword = new Text(container, SWT.BORDER);
+        txtPassword = new Text(container, SWT.BORDER | SWT.PASSWORD);
         txtPassword.setText("jdbc");
         txtPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtPassword.addFocusListener(new FocusAdapter() {
