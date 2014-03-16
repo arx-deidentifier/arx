@@ -87,7 +87,17 @@ public class Model implements Serializable {
     private String                                subsetOrigin         = "All"; //$NON-NLS-1$
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
     private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
-    
+
+    private ModelJdbc jdbc = new ModelJdbc();
+
+
+    public ModelJdbc getJdbc()
+    {
+
+        return jdbc;
+
+    }
+
 	public Model(final String name, final String description) {
 		this.name = name;
 		this.description = description;
