@@ -26,11 +26,14 @@ import java.io.StringWriter;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
-import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
+import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * Main entry point
@@ -65,6 +68,12 @@ public class Main {
             main.addShellListener(new ShellAdapter() {
                 @Override
                 public void shellActivated(ShellEvent arg0) {
+                    hideSplash();
+                }
+            });
+            main.addListener(SWT.Show, new Listener(){
+                @Override
+                public void handleEvent(Event arg0) {
                     hideSplash();
                 }
             });

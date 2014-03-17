@@ -332,4 +332,8 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
 	}
+
+    public void addListener(int event, Listener listener) {
+        shell.addListener(event, listener);
+    }
 }
