@@ -10,15 +10,33 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 
+/**
+ * Source selection page
+ *
+ * This page provides means to select the source the user wants to import data
+ * from. Once the user makes a choice, it is stored stored within
+ * {@link WizardImport#data} and the page is marked as completed.
+ */
 public class WizardImportSourcePage extends WizardPage {
 
+    /*
+     * Widgets
+     */
     private Button btnCsv;
     private Button btnDatabase;
     private Button btnXls;
 
+    /**
+     * Reference to the wizard containing this page
+     */
     private WizardImport wizardImport;
 
 
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public WizardImportSourcePage(WizardImport wizardImport)
     {
 
@@ -30,6 +48,13 @@ public class WizardImportSourcePage extends WizardPage {
 
     }
 
+    /**
+     * Creates the design of this page
+     *
+     * This adds all the controls to the page along with their listeners. It
+     * basically waits for any button to be pressed, which will mark the page
+     * as completed and lets the user proceed to the next page.
+     */
     public void createControl(Composite parent)
     {
 
@@ -38,6 +63,9 @@ public class WizardImportSourcePage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
+        /*
+         * Add button for CSV
+         */
         btnCsv = new Button(container, SWT.RADIO);
         btnCsv.setText("CSV");
         btnCsv.addSelectionListener(new SelectionAdapter() {
@@ -53,6 +81,9 @@ public class WizardImportSourcePage extends WizardPage {
 
         });
 
+        /*
+         * Add button for database
+         */
         btnDatabase = new Button(container, SWT.RADIO);
         btnDatabase.setText("Database (JDBC)");
         btnDatabase.addSelectionListener(new SelectionAdapter() {
@@ -68,6 +99,9 @@ public class WizardImportSourcePage extends WizardPage {
 
         });
 
+        /*
+         * Add button for Excel
+         */
         btnXls = new Button(container, SWT.RADIO);
         btnXls.setText("XLS (Excel)");
         btnXls.addSelectionListener(new SelectionAdapter() {
@@ -83,6 +117,9 @@ public class WizardImportSourcePage extends WizardPage {
 
         });
 
+        /*
+         * Mark page as incomplete until a button is pressed
+         */
         setPageComplete(false);
 
     }
