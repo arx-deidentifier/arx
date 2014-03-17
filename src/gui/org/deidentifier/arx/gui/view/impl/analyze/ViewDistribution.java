@@ -189,14 +189,9 @@ public class ViewDistribution extends ViewStatistics implements IView {
 
         if (model == null) { return; }
 
-        // Obtain the right config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) {
-            config = model.getInputConfig();
-        }
-
-        // Obtain the right handle
-        DataHandle data = getHandle();
+        // Obtain the data
+        ModelConfiguration config = super.getConfig();
+        DataHandle data = super.getHandle();
 
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
@@ -204,19 +199,17 @@ public class ViewDistribution extends ViewStatistics implements IView {
             return;
         }
 
-        // Project onto subset, if possible
-        if (data != null && model.getViewConfig().isSubset()){
-            data = data.getView();
-        }
-
+        // Obtain index of attribute
         final int index = data.getColumnIndexOf(attribute);
 
+        // Clear
         if (index == -1) {
             clearCache();
             reset();
             return;
         }
 
+        // Cache is cleared when new output is created
         if (cache.containsKey(attribute)) { return; }
 
         // Check if there is a hierarchy

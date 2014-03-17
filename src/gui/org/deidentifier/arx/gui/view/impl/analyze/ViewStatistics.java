@@ -4,6 +4,7 @@ import java.awt.Panel;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 
 public abstract class ViewStatistics extends Panel{
@@ -18,9 +19,10 @@ public abstract class ViewStatistics extends Panel{
      * @return
      */
     protected DataHandle getHandle() {
+        DataHandle handle = null;
         if (model != null){
             if (target == ModelPart.INPUT){
-                DataHandle handle = model.getInputConfig().getInput().getHandle();
+                handle = model.getInputConfig().getInput().getHandle();
                 if (model.getViewConfig().isSubset() && 
                     model.getOutputConfig() != null &&
                     model.getOutputConfig().getConfig() != null &&
@@ -29,7 +31,7 @@ public abstract class ViewStatistics extends Panel{
                 }
                 return handle;
             } else {
-                DataHandle handle = model.getOutput();
+                handle = model.getOutput();
                 if (model.getViewConfig().isSubset() && 
                     model.getOutputConfig() != null &&
                     model.getOutputConfig().getConfig() != null &&
@@ -37,6 +39,23 @@ public abstract class ViewStatistics extends Panel{
                     handle = handle.getView();
                 }
                 return handle;
+            }
+        } else {
+            return null;
+        }
+    }
+    
+
+    /**
+     * Returns the config
+     * @return
+     */
+    protected ModelConfiguration getConfig() {
+        if (model != null){
+            if (target == ModelPart.INPUT){
+                return model.getInputConfig();
+            } else {
+                return model.getOutputConfig();
             }
         } else {
             return null;
