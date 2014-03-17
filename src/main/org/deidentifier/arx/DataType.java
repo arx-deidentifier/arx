@@ -29,10 +29,12 @@ import java.util.Date;
  */
 public abstract class DataType<T> {
 	
-	/*
-	 * TODO: Implement Boolean, Integer, Float
-	 */
+	/* TODO: Implement Boolean, Integer, Float */
 
+    /**
+     * Base class for date/time types
+     * @author Fabian Prasser
+     */
 	public static class ARXDate extends DataType<Date> {
 
         SimpleDateFormat format;
@@ -99,6 +101,10 @@ public abstract class DataType<T> {
         }
     }
 
+	/**
+	 * Base class for numeric types
+	 * @author Fabian Prasser
+	 */
     public static class ARXNumeric extends DataType<Double> {
         @Override
         public DataType<Double> clone() {
@@ -121,7 +127,7 @@ public abstract class DataType<T> {
 
         @Override
         public String toString() {
-            return "Decimal";
+            return "Numeric";
         }
         
         @Override
@@ -135,6 +141,10 @@ public abstract class DataType<T> {
         }
     }
 
+    /**
+     * Base class for String types
+     * @author Fabian Prasser
+     */
     public static class ARXString extends DataType<String> {
         @Override
         public DataType<String> clone() {
