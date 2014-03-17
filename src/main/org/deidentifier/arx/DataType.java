@@ -293,10 +293,10 @@ public abstract class DataType<T> {
     public static final DataType<String> STRING  = new ARXString();
 
     /** A date data type with default format dd.mm.yyyy */
-    public static final DataType<Date> DATE    = new ARXDate();
-    
-    /** A generic integer data type*/
-    public static final DataType<Long> INTEGER = new ARXInteger();
+    public static final DataType<Date>   DATE    = new ARXDate();
+
+    /** A generic integer data type */
+    public static final DataType<Long>   INTEGER = new ARXInteger();
 
     /**
      * An integer data type with given format
