@@ -388,7 +388,7 @@ public class WizardImportCsvPage extends WizardPage {
         }
 
         wizardImport.getData().setColumns(columns);
-        wizardImport.getData().setCsvContainsHeader(btnContainsHeader.getSelection());
+        wizardImport.getData().setfirstRowContainsHeader(btnContainsHeader.getSelection());
         wizardImport.getData().setCsvFileLocation(comboLocation.getText());
         wizardImport.getData().setCsvSeparator(separators[selection]);
 

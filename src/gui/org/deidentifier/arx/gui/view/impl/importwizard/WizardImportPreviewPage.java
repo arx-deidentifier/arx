@@ -129,7 +129,7 @@ public class WizardImportPreviewPage extends WizardPage {
 
         int count = 0;
 
-        if (wizardImport.getData().getCsvContainsHeader()) {
+        if (wizardImport.getData().getfirstRowContainsHeader()) {
 
             it.next();
 

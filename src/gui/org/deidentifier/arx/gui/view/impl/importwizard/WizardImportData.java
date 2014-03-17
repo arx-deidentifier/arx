@@ -13,7 +13,7 @@ public class WizardImportData {
 
     private String csvFileLocation;
     private char csvSeparator;
-    private boolean csvContainsHeader;
+    private boolean firstRowContainsHeader = true;
 
     public String getCsvFileLocation()
     {
@@ -43,17 +43,17 @@ public class WizardImportData {
 
     }
 
-    public boolean getCsvContainsHeader()
+    public boolean getfirstRowContainsHeader()
     {
 
-        return csvContainsHeader;
+        return firstRowContainsHeader;
 
     }
 
-    public void setCsvContainsHeader(boolean csvContainsHeader)
+    public void setfirstRowContainsHeader(boolean firstRowContainsHeader)
     {
 
-        this.csvContainsHeader = csvContainsHeader;
+        this.firstRowContainsHeader = firstRowContainsHeader;
 
     }
 
