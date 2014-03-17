@@ -334,10 +334,28 @@ public abstract class DataType<T> {
     @Override
     public abstract DataType<T> clone();
     
+    /**
+     * Converts a value into a string
+     * @param t
+     * @return
+     */
     public abstract String toString(T t);
     
+    /**
+     * Converts a string into a value
+     * @param s
+     * @return
+     */
     public abstract T fromString(String s);
 
+    /**
+     * Compares two values
+     * @param s1
+     * @param s2
+     * @return
+     * @throws NumberFormatException
+     * @throws ParseException
+     */
     public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
 
 }
