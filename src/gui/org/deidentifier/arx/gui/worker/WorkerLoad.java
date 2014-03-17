@@ -67,7 +67,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class WorkerLoad extends Worker<Model> {
 
 	/** The vocabulary to use*/
-	private Vocabulary vocabulary = new Vocabulary_V2();
+	private Vocabulary vocabulary = null;
 	/** The zip file*/
 	private ZipFile    zipfile;
 	/** The lattice*/
@@ -582,13 +582,13 @@ public class WorkerLoad extends Worker<Model> {
                 if (vocabulary.isLattice(localName)) {
                     return true;
                 } else if (vocabulary.isLevel(localName)) {
-                    level = Integer.valueOf(vocabulary.getDepth(attributes));
+                    level = Integer.valueOf(attributes.getValue(vocabulary.getDepth()));
                     if (!levels.containsKey(level)) {
                         levels.put(level, new ArrayList<ARXNode>());
                     }
                     return true;
                 } else if (vocabulary.isNode2(localName)) {
-                    id = Integer.valueOf(vocabulary.getId(attributes));
+                    id = Integer.valueOf(attributes.getValue(vocabulary.getId()));
                     return true;
                 } else if (vocabulary.isTransformation(localName) ||
                            vocabulary.isAnonymity(localName) || 
@@ -672,7 +672,7 @@ public class WorkerLoad extends Worker<Model> {
                                     final Attributes attributes) throws SAXException {
 
                 if (vocabulary.isNode2(localName)) {
-                    id = Integer.valueOf(vocabulary.getId(attributes));
+                    id = Integer.valueOf(attributes.getValue(vocabulary.getId()));
                     successors.clear();
                     predecessors.clear();
                     return true;
@@ -725,41 +725,53 @@ public class WorkerLoad extends Worker<Model> {
      */
     private void readMetadata(final ZipFile zip) throws IOException,
                                                 SAXException {
+        
         final ZipEntry entry = zip.getEntry("metadata.xml"); //$NON-NLS-1$
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.9")); } //$NON-NLS-1$
 
+        // Read vocabulary
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
         xmlReader.setContentHandler(new XMLHandler() {
-            @Override
-            protected boolean end(final String uri,
-                                  final String localName,
-                                  final String qName) throws SAXException {
-            	
-                if (vocabulary.isMetadata(localName)) {
-                    return true;
-                } else if (vocabulary.isVersion(localName)) {
-                    if (!payload.equals(Resources.getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
+            
+            Vocabulary_V2 vocabulary = new Vocabulary_V2();
+            String version = null;
+            String vocabularyVersion = null;
+            
             @Override
             protected boolean start(final String uri,
                                     final String localName,
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
-            	
-                if (vocabulary.isMetadata(localName)) {
-                    return true;
-                } else if (vocabulary.isVersion(localName)) {
+                
+                if (vocabulary.isMetadata(localName) ||
+                    vocabulary.isVersion(localName) ||
+                    vocabulary.isVocabulary(localName)) {
                     return true;
                 } else {
                     return false;
                 }
             }
+            
+            @Override
+            protected boolean end(final String uri,
+                                  final String localName,
+                                  final String qName) throws SAXException {
+                
+                if (vocabulary.isMetadata(localName)) {
+                    if (vocabularyVersion == null){ vocabularyVersion = "1.0"; } //$NON-NLS-1$
+                    WorkerLoad.this.vocabulary = Vocabulary.forVersion(vocabularyVersion);
+                    WorkerLoad.this.vocabulary.checkVersion(version);
+                } else if (vocabulary.isVersion(localName)) {
+                    version = payload;
+                } else if (vocabulary.isVocabulary(localName)) {
+                    vocabularyVersion = payload;
+                } else {
+                    return false;
+                }
+                return true;
+            }
+
         });
         xmlReader.parse(inputSource);
     }

@@ -18,7 +18,6 @@
 
 package org.deidentifier.arx.gui.worker.io;
 
-import org.xml.sax.Attributes;
 
 /**
  * Second version of the ARX XML vocabulary
@@ -44,7 +43,12 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 		b.append("<!-- z = attribute                  -->\n");
 		return b.toString();
 	}
-	
+
+    @Override
+    public String getVocabularyVersion() {
+        return "2.0";
+    }
+    
 	@Override
 	public String getNode2() {
 		return "n"; //$NON-NLS-1$
@@ -94,89 +98,4 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 	public String getMax2() {
 		return "u"; //$NON-NLS-1$
 	}
-	
-	@Override
-	public String getAttribute() {
-		return "attribute"; //$NON-NLS-1$
-	}
-
-	@Override
-	public boolean isNode2(String value) {
-		return value.equals(getNode2()) || value.equals(super.getNode2());
-	}
-
-	@Override
-	public boolean isId(String value) {
-		return value.equals(getId()) || value.equals(super.getId());
-	}
-
-	@Override
-	public boolean isTransformation(String value) {
-		return value.equals(getTransformation())
-				|| value.equals(super.getTransformation());
-	}
-
-	@Override
-	public boolean isAnonymity(String value) {
-		return value.equals(getAnonymity())
-				|| value.equals(super.getAnonymity());
-	}
-
-	@Override
-	public boolean isChecked(String value) {
-		return value.equals(getChecked()) || value.equals(super.getChecked());
-	}
-
-	@Override
-	public boolean isPredecessors(String value) {
-		return value.equals(getPredecessors())
-				|| value.equals(super.getPredecessors());
-	}
-
-	@Override
-	public boolean isSuccessors(String value) {
-		return value.equals(getSuccessors())
-				|| value.equals(super.getSuccessors());
-	}
-
-	@Override
-	public boolean isInfoloss(String value) {
-		return value.equals(getInfoloss()) || value.equals(super.getInfoloss());
-	}
-
-	@Override
-	public boolean isMin2(String value) {
-		return value.equals(getMin2()) || value.equals(super.getMin2());
-	}
-
-	@Override
-	public boolean isMax2(String value) {
-		return value.equals(getMax2()) || value.equals(super.getMax2());
-	}
-
-	@Override
-	public boolean isAttribute(String value) {
-		return value.equals(getAttribute()) || value.equals(super.getAttribute());
-	}
-	
-
-    @Override
-    public String getId(Attributes attributes) {
-        String val = attributes.getValue(this.getId());
-        if (val == null) {
-            return attributes.getValue(super.getId());
-        } else {
-            return val;
-        }
-    }
-
-    @Override
-    public String getDepth(Attributes attributes) {
-        String val = attributes.getValue(this.getDepth());
-        if (val == null) {
-            return attributes.getValue(super.getDepth());
-        } else {
-            return val;
-        }
-    }
 }

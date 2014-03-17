@@ -18,18 +18,36 @@
 
 package org.deidentifier.arx.gui.worker.io;
 
-import org.xml.sax.Attributes;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.xml.sax.SAXException;
 
 /**
  * An abstract base class for the XML vocabulary
  * @author Fabian Prasser
  */
 public abstract class Vocabulary {
+    
+    private static final Map<String, Vocabulary> versions = new HashMap<String, Vocabulary>();
+    
+    static {
+        Vocabulary_V1 v1 = new Vocabulary_V1();
+        Vocabulary_V2 v2 = new Vocabulary_V2();
+        versions.put(v1.getVocabularyVersion(), v1);
+        versions.put(v2.getVocabularyVersion(), v2);
+    }
+    
+    public static Vocabulary forVersion(String version){
+        return versions.get(version);
+    }
 	
 	public abstract String getHeader();
-	
+    public abstract String getVocabularyVersion();
+
 	public abstract String getMetadata();
 	public abstract String getVersion();
+	public abstract String getVocabulary();
 	
 	public abstract String getClipboard();
 	public abstract String getNode();
@@ -66,10 +84,24 @@ public abstract class Vocabulary {
 	public abstract String getMin2();
 	public abstract String getMax2();
 	public abstract String getAttribute();
-
+	
+	public abstract String getProject();
+    public abstract String getSeparator();
+    public abstract String getDescription();
+    public abstract String getSuppressionString();
+    public abstract String getHistorySize();
+    public abstract String getSnapshotSizeDataset();
+    public abstract String getSnapshotSizeSnapshot();
+    public abstract String getInitialNodesInViewer();
+    public abstract String getMaxNodesInLattice();
+    public abstract String getMaxNodesInViewer();
+    public abstract String getSelectedAttribute();
+    public abstract String getInputBytes();
+    
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
 	public boolean isVersion(String value){return value.equals(getVersion());}
-
+	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
+	
 	public boolean isClipboard(String value){ return value.equals(getClipboard()); }
 	public boolean isNode(String value){return value.equals(getNode());}
 
@@ -106,11 +138,5 @@ public abstract class Vocabulary {
 	public boolean isMax2(String value){return value.equals(getMax2());}
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
 
-    public String getId(Attributes attributes) {
-        return attributes.getValue(this.getId());
-    }
-
-    public String getDepth(Attributes attributes) {
-        return attributes.getValue(this.getDepth());
-    }
+    public abstract void checkVersion(String version) throws SAXException;
 }

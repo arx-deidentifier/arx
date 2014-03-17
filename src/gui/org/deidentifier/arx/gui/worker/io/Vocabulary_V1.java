@@ -18,6 +18,9 @@
 
 package org.deidentifier.arx.gui.worker.io;
 
+import org.deidentifier.arx.gui.resources.Resources;
+import org.xml.sax.SAXException;
+
 /**
  * First version of the ARX XML vocabulary
  * @author Fabian Prasser
@@ -29,7 +32,19 @@ public class Vocabulary_V1 extends Vocabulary {
 	public String getHeader() {
 		return "<!-- ARX XML Vocabulary Version 1.0 -->";
 	}
-	
+
+    @Override
+    public String getVocabularyVersion() {
+        return "1.0";
+    }
+
+    @Override
+    public void checkVersion(String version) throws SAXException {
+        if (!version.equals("2.0")) {
+            throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
+        }
+    }
+    
 	@Override
 	public String getConfig(){
 		return "config"; //$NON-NLS-1$
@@ -177,12 +192,78 @@ public class Vocabulary_V1 extends Vocabulary {
 		return "node"; //$NON-NLS-1$
 	}
 
+	
+	
 	@Override
 	public String getMetadata() {
-		return "metadata";
+		return "metadata"; //$NON-NLS-1$
 	}
 	@Override
 	public String getVersion() {
-		return "version";
+		return "version"; //$NON-NLS-1$
 	}
+	@Override
+    public String getVocabulary() {
+        return "vocabulary"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getProject() {
+        return "project"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getSeparator() {
+        return "separator"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getDescription() {
+        return "description"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getSuppressionString() {
+        return "suppressionString"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getHistorySize() {
+        return "historySize"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getSnapshotSizeDataset() {
+        return "snapshotSizeDataset"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getSnapshotSizeSnapshot() {
+        return "snapshotSizeSnapshot"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getInitialNodesInViewer() {
+        return "initialNodesInViewer"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getMaxNodesInLattice() {
+        return "maxNodesInLattice"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getMaxNodesInViewer() {
+        return "maxNodesInViewer"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getSelectedAttribute() {
+        return "selectedAttribute"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getInputBytes() {
+        return "inputBytes"; //$NON-NLS-1$
+    }
 }
