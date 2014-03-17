@@ -1,9 +1,17 @@
 package org.deidentifier.arx.gui.view.impl.importwizard;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -14,24 +22,19 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 
 
 public class WizardImportXlsPage extends WizardPage {
 
     private WizardImport wizardImport;
 
-    private ArrayList<String> sheets;
-    private ArrayList<WizardImportDataColumn> columns;
-
     private Label lblLocation;
     private Combo comboLocation;
     private Button btnChoose;
     private Button btnContainsHeader;
-    private Combo comboSheet;
     private Label lblSheet;
-    private Table tablePreview;
-    private TableViewer tableViewerPreview;
+    private Combo comboSheets;
+    private ComboViewer comboViewerSheets;
 
     private static final int PREVIEWLINES = 5;
 
@@ -67,6 +70,8 @@ public class WizardImportXlsPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
+                wizardImport.getData().setFileLocation(comboLocation.getText());
+
                 readSheets();
 
             }
@@ -98,6 +103,7 @@ public class WizardImportXlsPage extends WizardPage {
                 }
 
                 comboLocation.select(comboLocation.indexOf(path));
+                wizardImport.getData().setFileLocation(comboLocation.getText());
 
                 readSheets();
 
@@ -109,12 +115,20 @@ public class WizardImportXlsPage extends WizardPage {
         lblSheet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblSheet.setText("Sheet");
 
-        comboSheet = new Combo(container, SWT.READ_ONLY);
-        comboSheet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboSheet.addSelectionListener(new SelectionAdapter() {
+        comboViewerSheets = new ComboViewer(container, SWT.READ_ONLY);
+        comboViewerSheets.setContentProvider(new ArrayContentProvider());
+
+        comboSheets = comboViewerSheets.getCombo();
+        comboSheets.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboSheets.addSelectionListener(new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(final SelectionEvent arg0) {
+            public void widgetSelected(SelectionEvent arg0) {
+
+                wizardImport.getData().setXlsSheetIndex(comboSheets.getSelectionIndex());
+                readPreview();
+
+                setPageComplete(true);
 
             }
 
@@ -131,27 +145,14 @@ public class WizardImportXlsPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                
+                wizardImport.getData().setfirstRowContainsHeader(btnContainsHeader.getSelection());
+                readPreview();
 
             }
 
         });
 
         new Label(container, SWT.NONE);
-
-        new Label(container, SWT.NONE);
-        new Label(container, SWT.NONE);
-        new Label(container, SWT.NONE);
-
-        tableViewerPreview = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
-        tableViewerPreview.setContentProvider(new ArrayContentProvider());
-
-        tablePreview = tableViewerPreview.getTable();
-        GridData gd_tablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
-        gd_tablePreview.heightHint = 150;
-        tablePreview.setLayoutData(gd_tablePreview);
-        tablePreview.setLinesVisible(true);
-        tablePreview.setVisible(false);
 
         setPageComplete(false);
 
@@ -160,6 +161,117 @@ public class WizardImportXlsPage extends WizardPage {
     private void readSheets() {
 
         setErrorMessage(null);
+
+        ArrayList<String> sheets = new ArrayList<String>();
+
+        try {
+
+            FileInputStream file = new FileInputStream(new File(comboLocation.getText()));
+            HSSFWorkbook workbook = new HSSFWorkbook(file);
+
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+
+                sheets.add(workbook.getSheetName(i));
+
+            }
+
+            file.close();
+
+        } catch (IOException e) {
+
+            setErrorMessage("Error accessing file");
+
+            return;
+
+        }
+
+        if (sheets.size() == 0) {
+
+            setErrorMessage("File doesn't contain any sheets");
+
+            return;
+
+        }
+
+        comboViewerSheets.setInput(sheets);
+
+    }
+
+    private void readPreview() {
+
+        setErrorMessage(null);
+
+        ArrayList<ArrayList<Cell>> result = new ArrayList<ArrayList<Cell>>();
+
+        try {
+
+            FileInputStream file = new FileInputStream(new File(comboLocation.getText()));
+            HSSFWorkbook workbook = new HSSFWorkbook(file);
+
+            HSSFSheet sheet = workbook.getSheetAt(comboSheets.getSelectionIndex());
+            Iterator<Row> rowIterator = sheet.iterator();
+
+            int count = 0;
+
+            while (rowIterator.hasNext() && (count < PREVIEWLINES)) {
+
+                ArrayList<Cell> cells = new ArrayList<Cell>();
+
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                while(cellIterator.hasNext()) {
+
+                    cells.add(cellIterator.next());
+
+                }
+
+                result.add(cells);
+
+                count++;
+
+            }
+
+            file.close();
+
+            if (result.size() == 0 || result.get(0).size() == 0) {
+
+                setErrorMessage("Sheet doesn't contain any data");
+
+                return;
+
+            }
+
+            ArrayList<WizardImportDataColumn> columns = new ArrayList<WizardImportDataColumn>();
+
+            int index = 0;
+            for (final Cell c : result.get(0)) {
+
+                WizardImportDataColumn column = new WizardImportDataColumn(false, "", "String");
+
+                if (btnContainsHeader.getSelection()) {
+
+                    column.setName(c.getStringCellValue());
+
+                } else {
+
+                    column.setName("Column #" + index);
+
+                }
+
+                columns.add(column);
+
+            }
+
+            wizardImport.getData().setColumns(columns);
+
+        } catch (IOException e) {
+
+            setErrorMessage("Error accessing file");
+
+            return;
+
+        }
 
     }
 
