@@ -11,21 +11,35 @@ public class WizardImportData {
 
     private List<WizardImportDataColumn> columns;
 
-    private String csvFileLocation;
+    private String fileLocation;
     private char csvSeparator;
     private boolean firstRowContainsHeader = true;
+    private int xlsSheetIndex;
 
-    public String getCsvFileLocation()
-    {
 
-        return csvFileLocation;
+    public int getXlsSheetIndex() {
+
+        return xlsSheetIndex;
 
     }
 
-    public void setCsvFileLocation(String fileLocation)
+    public void setXlsSheetIndex(int xlsSheetIndex) {
+
+        this.xlsSheetIndex = xlsSheetIndex;
+
+    }
+
+    public String getFileLocation()
     {
 
-        this.csvFileLocation = fileLocation;
+        return fileLocation;
+
+    }
+
+    public void setFileLocation(String fileLocation)
+    {
+
+        this.fileLocation = fileLocation;
 
     }
 

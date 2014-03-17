@@ -124,7 +124,7 @@ public class WizardImportPreviewPage extends WizardPage {
     {
 
         final List<String[]> result = new ArrayList<String[]>();
-        final CSVDataInput in = new CSVDataInput(wizardImport.getData().getCsvFileLocation(), wizardImport.getData().getCsvSeparator());
+        final CSVDataInput in = new CSVDataInput(wizardImport.getData().getFileLocation(), wizardImport.getData().getCsvSeparator());
         final Iterator<String[]> it = in.iterator();
 
         int count = 0;
