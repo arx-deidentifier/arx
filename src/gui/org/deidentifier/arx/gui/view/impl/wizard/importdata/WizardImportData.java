@@ -3,32 +3,75 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import java.util.List;
 
 
+/**
+ * Contains data gathered by the wizard and offers means to access it
+ *
+ * This object is accessible to all pages of the wizard and can be used to set
+ * or retrieve data.
+ *
+ * TODO Change to more elegant implementation (i.e. general key value storage)
+ */
 public class WizardImportData {
 
+    /**
+     * Possible sources for importing data
+     */
     public enum source {CSV, JDBC, XLS};
 
+    /**
+     * Actual source data should be imported from
+     */
     private source source;
 
+    /**
+     * List of detected columns to be imported
+     *
+     * Each column is represented by {@link WizardImportDataColumn}.
+     */
     private List<WizardImportDataColumn> columns;
 
+    /**
+     * Location of file to import from
+     */
     private String fileLocation;
+
+    /**
+     * Separator for columns (in case of CSV import)
+     */
     private char csvSeparator;
+
+    /**
+     * Indicates whether first row contains header
+     */
     private boolean firstRowContainsHeader = true;
+
+    /**
+     * Index of sheet to import from (in case of Excel import)
+     */
     private int xlsSheetIndex;
 
 
+    /**
+     * @return {@link #xlsSheetIndex}
+     */
     public int getXlsSheetIndex() {
 
         return xlsSheetIndex;
 
     }
 
+    /**
+     * @param xlsSheetIndex {@link #xlsSheetIndex}
+     */
     public void setXlsSheetIndex(int xlsSheetIndex) {
 
         this.xlsSheetIndex = xlsSheetIndex;
 
     }
 
+    /**
+     * @return {@link #fileLocation}
+     */
     public String getFileLocation()
     {
 
@@ -36,6 +79,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @param fileLocation {@link #fileLocation}
+     */
     public void setFileLocation(String fileLocation)
     {
 
@@ -43,6 +89,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @return {@link #csvSeparator}
+     */
     public char getCsvSeparator()
     {
 
@@ -50,6 +99,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @param csvSeparator {@link #csvSeparator}
+     */
     public void setCsvSeparator(char csvSeparator)
     {
 
@@ -57,6 +109,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @return {@link #firstRowContainsHeader}
+     */
     public boolean getfirstRowContainsHeader()
     {
 
@@ -64,6 +119,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @param firstRowContainsHeader {@link #firstRowContainsHeader}
+     */
     public void setfirstRowContainsHeader(boolean firstRowContainsHeader)
     {
 
@@ -71,6 +129,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @return {@link #source}
+     */
     public source getSource()
     {
 
@@ -78,6 +139,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @param source {@link #source}
+     */
     public void setSource(source source)
     {
 
@@ -85,6 +149,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @return {@link #columns}
+     */
     public List<WizardImportDataColumn> getColumns()
     {
 
@@ -92,6 +159,9 @@ public class WizardImportData {
 
     }
 
+    /**
+     * @param columns {@link #columns}
+     */
     public void setColumns(List<WizardImportDataColumn> columns)
     {
 
