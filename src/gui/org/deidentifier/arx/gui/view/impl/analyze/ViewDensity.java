@@ -329,12 +329,9 @@ public class ViewDensity extends ViewStatistics implements IView {
      */
     private String[] getLabels(final String attribute) {
 
-        // Obtain the right config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) {
-            config = model.getInputConfig();
-        }
-
+        // Obtain config
+        ModelConfiguration config = super.getConfig();
+        
         // Check if there is a hierarchy
         final AttributeType type = config.getInput()
                                          .getDefinition()
@@ -346,7 +343,7 @@ public class ViewDensity extends ViewStatistics implements IView {
         } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
             hierarchy = config.getHierarchy(attribute);
         }
-
+        
         // Count
         final int index = handle.getColumnIndexOf(attribute);
         final Set<String> elems = new HashSet<String>();
@@ -364,6 +361,7 @@ public class ViewDensity extends ViewStatistics implements IView {
             final List<String> list = new ArrayList<String>();
             final Set<String> done = new HashSet<String>();
             final String[][] h = hierarchy.getHierarchy();
+
             for (int i = 0; i < h.length; i++) {
                 final String val = h[i][level];
                 if (elems.contains(val) && !done.contains(val)) {
@@ -478,7 +476,7 @@ public class ViewDensity extends ViewStatistics implements IView {
 
         final String[] vals1 = getLabels(attribute1);
         final String[] vals2 = getLabels(attribute2);
-
+        
         final Map<String, Integer> map1 = new HashMap<String, Integer>();
         final Map<String, Integer> map2 = new HashMap<String, Integer>();
 
@@ -510,7 +508,7 @@ public class ViewDensity extends ViewStatistics implements IView {
         final int size2 = index;
 
         double[][] data = new double[size1][size2];
-
+        
         double max = 0;
         for (int row = 0; row < handle.getNumRows(); row++) {
             final String v1 = handle.getValue(row, index1);
