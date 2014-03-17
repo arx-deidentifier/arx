@@ -72,7 +72,7 @@ public class DataSelector {
             for (int i=0; i<handle.getNumColumns(); i++){
                 String attribute = handle.getAttributeName(i);
                 org.deidentifier.arx.DataType<?> type = definition.getDataType(attribute);
-                if (type == org.deidentifier.arx.DataType.NUMERIC) {
+                if (type == org.deidentifier.arx.DataType.DECIMAL) {
                     result.put(attribute, DataType.NUMERIC);
                 } else if (type == org.deidentifier.arx.DataType.STRING) {
                     result.put(attribute, DataType.STRING);                    

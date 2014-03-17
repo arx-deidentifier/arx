@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,8 +30,6 @@ import java.util.Date;
  */
 public abstract class DataType<T> {
 	
-	/* TODO: Implement Boolean, Integer, Float */
-
     /**
      * Base class for date/time types
      * @author Fabian Prasser
@@ -40,11 +39,23 @@ public abstract class DataType<T> {
         SimpleDateFormat format;
         String           string;
 
+        /**
+         * Create a data with a "dd.MM.yyyy" format string
+         * for <code>SimpleDateFormat</code>.
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
+         */
         private ARXDate() {
             string = "dd.MM.yyyy";
             format = new SimpleDateFormat(string);
         }
 
+
+        /**
+         * Create a data with a format string. Format strings must be valid formats
+         * for <code>SimpleDateFormat</code>.
+         * @param format
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
+         */
         private ARXDate(final String format) {
             this.format = new SimpleDateFormat(format);
             this.string = format;
@@ -56,8 +67,7 @@ public abstract class DataType<T> {
         }
 
         @Override
-        public int
-                compare(final String s1, final String s2) throws ParseException {
+        public int compare(final String s1, final String s2) throws ParseException {
             return format.parse(s1).compareTo(format.parse(s2));
         }
 
@@ -101,20 +111,36 @@ public abstract class DataType<T> {
         }
     }
 
-	/**
-	 * Base class for numeric types
-	 * @author Fabian Prasser
-	 */
-    public static class ARXNumeric extends DataType<Double> {
+    /**
+     * Base class for numeric types
+     * @author Fabian Prasser
+     */
+    public static class ARXInteger extends DataType<Long> {
+        
+        private DecimalFormat format;
+        
+        public ARXInteger(){
+            format = null;
+        }
+        
+        /**
+         * Create a numeric with a format string. Format strings must be valid formats
+         * for <code>DecimalFormat</code>.
+         * @param format
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
+         */
+        public ARXInteger(String format){
+            this.format = new DecimalFormat(format);
+        }
+        
         @Override
-        public DataType<Double> clone() {
+        public DataType<Long> clone() {
             return this;
         }
 
         @Override
-        public int
-                compare(final String s1, final String s2) throws NumberFormatException {
-            return Double.valueOf(s1).compareTo(Double.valueOf(s2));
+        public int compare(final String s1, final String s2) throws NumberFormatException {
+            return fromString(s1).compareTo(fromString(s2));
         }
 
         @Override
@@ -127,22 +153,102 @@ public abstract class DataType<T> {
 
         @Override
         public String toString() {
-            return "Numeric";
+            return "Integer";
+        }
+        
+        @Override
+        public Long fromString(String s) {
+            if (format==null){
+                return Long.valueOf(s);
+            } else {
+                try {
+                    return format.parse(s).longValue();
+                } catch (ParseException e) {
+                    throw new NumberFormatException(e.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public String toString(Long s){
+            if (format==null){
+                return String.valueOf(s);
+            } else {
+                return format.format(s);
+            }
+        }
+    }
+
+	/**
+	 * Base class for numeric types
+	 * @author Fabian Prasser
+	 */
+    public static class ARXDecimal extends DataType<Double> {
+        
+        private DecimalFormat format;
+        
+        public ARXDecimal(){
+            format = null;
+        }
+        
+        /**
+         * Create a numeric with a format string. Format strings must be valid formats
+         * for <code>DecimalFormat</code>.
+         * @param format
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
+         */
+        public ARXDecimal(String format){
+            this.format = new DecimalFormat(format);
+        }
+        
+        @Override
+        public DataType<Double> clone() {
+            return this;
+        }
+
+        @Override
+        public int compare(final String s1, final String s2) throws NumberFormatException {
+            return fromString(s1).compareTo(fromString(s2));
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) { return true; }
+            if (obj == null) { return false; }
+            if (getClass() != obj.getClass()) { return false; }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "Decimal";
         }
         
         @Override
         public Double fromString(String s) {
-        	return Double.valueOf(s);
+            if (format==null){
+                return Double.valueOf(s);
+            } else {
+                try {
+                    return format.parse(s).doubleValue();
+                } catch (ParseException e) {
+                    throw new NumberFormatException(e.getMessage());
+                }
+            }
         }
 
         @Override
         public String toString(Double s){
-        	return String.valueOf(s);
+            if (format==null){
+                return String.valueOf(s);
+            } else {
+                return format.format(s);
+            }
         }
     }
 
     /**
-     * Base class for String types
+     * Base class for string types
      * @author Fabian Prasser
      */
     public static class ARXString extends DataType<String> {
@@ -180,17 +286,42 @@ public abstract class DataType<T> {
         }
     }
 
-    /** A decimal datatype */
-    public static final DataType<Double> NUMERIC = new ARXNumeric();
+    /** A generic decimal data type */
+    public static final DataType<Double> DECIMAL = new ARXDecimal();
 
-    /** A string datatype */
+    /** A string data type */
     public static final DataType<String> STRING  = new ARXString();
 
-    /** A date datatype with default fomat dd.mm.yyyy */
+    /** A date data type with default format dd.mm.yyyy */
     public static final DataType<Date> DATE    = new ARXDate();
+    
+    /** A generic integer data type*/
+    public static final DataType<Long> INTEGER = new ARXInteger();
 
     /**
-     * A date datatype with given format
+     * An integer data type with given format
+     * 
+     * @see SimpleDateFormat
+     * @param format
+     * @return
+     */
+    public static final DataType<Long> INTEGER(final String format) {
+        return new ARXInteger(format);
+    }
+    
+    /**
+     * A decimal data type with given format
+     * 
+     * @see SimpleDateFormat
+     * @param format
+     * @return
+     */
+    public static final DataType<Double> DECIMAL(final String format) {
+        return new ARXDecimal(format);
+    }
+    
+    /**
+     * A date data type with given format
      * 
      * @see SimpleDateFormat
      * @param format
@@ -207,8 +338,6 @@ public abstract class DataType<T> {
     
     public abstract T fromString(String s);
 
-    public abstract int
-            compare(String s1, String s2) throws NumberFormatException,
-                                         ParseException;
+    public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
 
 }

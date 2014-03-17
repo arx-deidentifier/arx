@@ -71,7 +71,7 @@ public class ViewAttributeDefinition implements IView {
 
     private static final DataType<?>[]  COMBO2_TYPES  = new DataType[] { 
                                         DataType.STRING,
-                                        DataType.NUMERIC,
+                                        DataType.DECIMAL,
                                         DataType.DATE                };
 
     private final Combo                  typeCombo;

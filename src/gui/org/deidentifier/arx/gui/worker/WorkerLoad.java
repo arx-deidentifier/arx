@@ -307,10 +307,10 @@ public class WorkerLoad extends Worker<Model> {
                         config.getInput()
                               .getDefinition()
                               .setDataType(attr, DataType.STRING);
-                    } else if (dtype.equals(DataType.NUMERIC.toString())) {
+                    } else if (dtype.equals(DataType.DECIMAL.toString())) {
                         config.getInput()
                               .getDefinition()
-                              .setDataType(attr, DataType.NUMERIC);
+                              .setDataType(attr, DataType.DECIMAL);
                     } else {
                         config.getInput()
                               .getDefinition()
