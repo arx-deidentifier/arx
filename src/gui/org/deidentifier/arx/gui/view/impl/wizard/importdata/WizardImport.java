@@ -51,6 +51,7 @@ public class WizardImport extends Wizard {
         setWindowTitle("Import data wizard");
 
         this.controller = controller;
+        this.model = model;
 
     }
 
