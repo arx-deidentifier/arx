@@ -226,6 +226,55 @@ public class MainWindow implements IView {
             return null;
         }
     }
+
+    public String showDecimalFormatInputDialog(final String header,
+                                               final String text,
+                                               final Collection<String> decimals) {
+
+        // Validator
+        final IInputValidator validator = new IInputValidator() {
+            @Override
+            public String isValid(final String arg0) {
+                DateFormat f = null;
+                try {
+                    f = new SimpleDateFormat(arg0);
+                } catch (final Exception e) {
+                    return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
+                }
+                for (final String date : decimals) {
+                    try {
+                        f.parse(date);
+                    } catch (final Exception e) {
+                        return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
+                    }
+                }
+                return null;
+            }
+        };
+
+        // Try to find a valid formatter
+        String initial = ""; //$NON-NLS-1$
+        for (final String format : controller.getResources().getDecimalFormats()) {
+            if (validator.isValid(format) == null) {
+                initial = format;
+                break;
+            }
+        }
+
+        // Input dialog
+        final InputDialog dlg = new InputDialog(shell,
+                                                header,
+                                                text,
+                                                initial,
+                                                validator);
+
+        // Return value
+        if (dlg.open() == Window.OK) {
+            return dlg.getValue();
+        } else {
+            return null;
+        }
+    }
     public void showErrorDialog(final String header, final String message) {
         final DialogError dialog = new DialogError(shell, controller, header, message);
         dialog.create();
@@ -299,6 +348,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
 	}
+	
     public String showSaveFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         dialog.setFilterExtensions(new String[] { filter });
@@ -318,8 +368,7 @@ public class MainWindow implements IView {
     @Override
     public void update(final ModelEvent event) {
 
-        // Careful! In the main window, this is also called after editing the
-        // project properties
+        // Careful! In the main window, this is also called after editing the project properties
         if (event.part == ModelPart.MODEL) {
             final Model model = (Model) event.data;
             shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
