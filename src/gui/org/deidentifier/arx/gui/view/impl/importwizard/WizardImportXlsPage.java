@@ -1,5 +1,9 @@
 package org.deidentifier.arx.gui.view.impl.importwizard;
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -10,15 +14,26 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 
 
 public class WizardImportXlsPage extends WizardPage {
 
     private WizardImport wizardImport;
 
+    private ArrayList<String> sheets;
+    private ArrayList<WizardImportDataColumn> columns;
+
     private Label lblLocation;
     private Combo comboLocation;
     private Button btnChoose;
+    private Button btnContainsHeader;
+    private Combo comboSheet;
+    private Label lblSheet;
+    private Table tablePreview;
+    private TableViewer tableViewerPreview;
+
+    private static final int PREVIEWLINES = 5;
 
 
     public WizardImportXlsPage(WizardImport wizardImport)
@@ -52,6 +67,8 @@ public class WizardImportXlsPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
+                readSheets();
+
             }
 
         });
@@ -82,11 +99,67 @@ public class WizardImportXlsPage extends WizardPage {
 
                 comboLocation.select(comboLocation.indexOf(path));
 
+                readSheets();
+
             }
 
         });
 
+        lblSheet = new Label(container, SWT.NONE);
+        lblSheet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblSheet.setText("Sheet");
+
+        comboSheet = new Combo(container, SWT.READ_ONLY);
+        comboSheet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboSheet.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+
+            }
+
+        });
+
+        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);
+
+        btnContainsHeader = new Button(container, SWT.CHECK);
+        btnContainsHeader.setText("First row contains column names");
+        btnContainsHeader.setSelection(true);
+        btnContainsHeader.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                
+
+            }
+
+        });
+
+        new Label(container, SWT.NONE);
+
+        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);
+
+        tableViewerPreview = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewerPreview.setContentProvider(new ArrayContentProvider());
+
+        tablePreview = tableViewerPreview.getTable();
+        GridData gd_tablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+        gd_tablePreview.heightHint = 150;
+        tablePreview.setLayoutData(gd_tablePreview);
+        tablePreview.setLinesVisible(true);
+        tablePreview.setVisible(false);
+
         setPageComplete(false);
+
+    }
+
+    private void readSheets() {
+
+        setErrorMessage(null);
 
     }
 
