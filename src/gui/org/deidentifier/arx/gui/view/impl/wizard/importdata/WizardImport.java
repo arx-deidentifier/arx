@@ -22,7 +22,6 @@ public class WizardImport extends Wizard {
     private WizardImportTablePage tablePage;
     private WizardImportXlsPage xlsPage;
 
-
     private IWizardPage currentPage;
 
     Controller getController()
