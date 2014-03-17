@@ -21,10 +21,15 @@ package org.deidentifier.arx;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.deidentifier.arx.DataType.ARXDate;
+import org.deidentifier.arx.DataType.ARXDecimal;
+import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.Swapper;
@@ -133,6 +138,110 @@ public abstract class DataHandle{
      * @return
      */
     public abstract String getValue(int row, int col);
+
+    /**
+     * Returns a float value from the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     * @throws ParseException
+     */
+    public float getFloat(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXDecimal) {
+            return ((ARXDecimal)type).fromString(value).floatValue();
+        } else if (type instanceof ARXInteger) {
+            return ((ARXInteger)type).fromString(value).floatValue();
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
+    
+    /**
+     * Returns a double value from the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     * @throws ParseException
+     */
+    public double getDouble(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXDecimal) {
+            return ((ARXDecimal)type).fromString(value);
+        } else if (type instanceof ARXInteger) {
+            return ((ARXInteger)type).fromString(value);
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
+
+    /**
+     * Returns an int value from the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     * @throws ParseException
+     */
+    public int getInt(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXInteger) {
+            return ((ARXInteger)type).fromString(value).intValue();
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
+
+    /**
+     * Returns a long value from the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     * @throws ParseException
+     */
+    public long getLong(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXInteger) {
+            return ((ARXInteger)type).fromString(value);
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
+
+    /**
+     * Returns a date/time value from the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     * @throws ParseException
+     */
+    public Date getDate(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXDate) {
+            return ((ARXDate)type).fromString(value);
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
 
     /**
      * Returns a new data handle that represents a context specific view on the dataset
