@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.importwizard;
+package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.model.ModelJdbc;
 import org.eclipse.jface.wizard.WizardPage;

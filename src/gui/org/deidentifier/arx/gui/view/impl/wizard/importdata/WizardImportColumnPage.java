@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.importwizard;
+package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;

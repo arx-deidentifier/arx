@@ -1,8 +1,8 @@
-package org.deidentifier.arx.gui.view.impl.importwizard;
+package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.view.impl.importwizard.WizardImportData.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.WizardImportData.source;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
