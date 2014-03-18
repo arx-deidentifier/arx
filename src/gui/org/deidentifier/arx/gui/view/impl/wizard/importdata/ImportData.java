@@ -50,6 +50,16 @@ public class ImportData {
      */
     private int xlsSheetIndex;
 
+    /**
+     * Preview data
+     */
+    private List<String[]> previewData;
+
+    /**
+     * Maximum number of lines to be loaded for preview
+     */
+    public static final int previewDataMaxLines = 25;
+
 
     /**
      * @return {@link #xlsSheetIndex}
@@ -166,6 +176,24 @@ public class ImportData {
     {
 
         this.columns = columns;
+
+    }
+
+    /**
+     * @param columns {@link #previewData}
+     */
+    public void setPreviewData(List<String[]> previewData) {
+
+        this.previewData = previewData;
+
+    }
+
+    /**
+     * @return {@link #previewData}
+     */
+    public List<String[]> getPreviewData() {
+
+        return previewData;
 
     }
 

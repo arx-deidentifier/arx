@@ -1,11 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.io.CSVDataInput;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -25,8 +21,6 @@ public class PreviewPage extends WizardPage {
 
     private Table table;
     private TableViewer tableViewer;
-
-    private static final int PREVIEWLINES = 25;
 
 
     public PreviewPage(ImportDataWizard wizardImport)
@@ -97,15 +91,7 @@ public class PreviewPage extends WizardPage {
 
             }
 
-            try {
-
-                tableViewer.setInput(readPreviewFromCsv());
-
-            } catch (IOException e) {
-
-                setErrorMessage("Error reading from CSV file");
-
-            }
+            tableViewer.setInput(wizardImport.getData().getPreviewData());
 
             table.layout();
             table.setRedraw(true);
@@ -117,32 +103,6 @@ public class PreviewPage extends WizardPage {
             setPageComplete(false);
 
         }
-
-    }
-
-    private ArrayList<String[]> readPreviewFromCsv() throws IOException
-    {
-
-        final List<String[]> result = new ArrayList<String[]>();
-        final CSVDataInput in = new CSVDataInput(wizardImport.getData().getFileLocation(), wizardImport.getData().getCsvSeparator());
-        final Iterator<String[]> it = in.iterator();
-
-        int count = 0;
-
-        if (wizardImport.getData().getfirstRowContainsHeader()) {
-
-            it.next();
-
-        }
-
-        while (it.hasNext() && (count < PREVIEWLINES)) {
-
-            result.add(it.next());
-            count++;
-
-        }
-
-        return (ArrayList<String[]>) result;
 
     }
 

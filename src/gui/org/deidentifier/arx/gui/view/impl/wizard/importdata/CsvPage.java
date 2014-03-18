@@ -47,7 +47,6 @@ public class CsvPage extends WizardPage {
     private Table tablePreview;
     private TableViewer tableViewerPreview;
 
-    private static final int PREVIEWLINES = 5;
     private int selection;
     private final char[] separators = {';', ',', '|', '\t'};
     private final String[] labels = {";", ",", "|", "Tab"};
@@ -196,7 +195,7 @@ public class CsvPage extends WizardPage {
         String line = r.readLine();
         final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 
-        while ((count < PREVIEWLINES) && (line != null)) {
+        while ((count < ImportData.previewDataMaxLines) && (line != null)) {
 
             final char[] a = line.toCharArray();
 
@@ -258,7 +257,7 @@ public class CsvPage extends WizardPage {
 
         int count = 0;
 
-        while (it.hasNext() && (count < PREVIEWLINES)) {
+        while (it.hasNext() && (count < ImportData.previewDataMaxLines)) {
 
             data.add(it.next());
             count++;
@@ -351,6 +350,7 @@ public class CsvPage extends WizardPage {
         }
 
         tableViewerPreview.setInput(data);
+        wizardImport.getData().setPreviewData(data);
 
         tablePreview.setVisible(true);
         tablePreview.layout();
