@@ -79,11 +79,7 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     }
 
     /**
-     * Gets datatype of column
-     *
-     * By default all columns are assumed to be strings.
-     *
-     * TODO Get datatype from column object after detecting it previously
+     * Returns index of datatype for given column
      */
     @Override
     protected Object getValue(Object element)
@@ -117,7 +113,7 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     }
 
     /**
-     * Sets datatype of column
+     * Sets new datatype for given column
      *
      * Internally this function makes use of
      * {@link ImportDataColumn#setDatatype(Class)}. The values itself are taken
