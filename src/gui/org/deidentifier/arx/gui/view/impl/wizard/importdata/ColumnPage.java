@@ -158,7 +158,8 @@ public class ColumnPage extends WizardPage {
          */
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
         tblclmnEnabled.setToolTipText("Select all");
-        tblclmnEnabled.setWidth(30);
+        tblclmnEnabled.setText("SA");
+        tblclmnEnabled.setWidth(40);
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
         /*
@@ -282,10 +283,12 @@ public class ColumnPage extends WizardPage {
             if (selectAll) {
 
                 tblclmnEnabled.setToolTipText("Select all");
+                tblclmnEnabled.setText("SA");
 
             } else {
 
                 tblclmnEnabled.setToolTipText("Deselect all");
+                tblclmnEnabled.setText("DA");
 
             }
 
