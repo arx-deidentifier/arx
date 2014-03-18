@@ -412,7 +412,7 @@ public abstract class DataHandle{
      */
     protected void checkColumn(final int column1) {
         if ((column1 < 0) || (column1 > (header.length - 1))) { 
-            throw new IndexOutOfBoundsException("Column index out of range: "+column1+" > " + (header.length - 1)); 
+            throw new IndexOutOfBoundsException("Column index out of range: "+column1+". Valid: 0 - " + (header.length - 1)); 
         }
     }
 
