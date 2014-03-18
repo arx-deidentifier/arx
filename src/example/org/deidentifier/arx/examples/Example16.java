@@ -25,7 +25,6 @@ import java.util.Iterator;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
@@ -33,7 +32,6 @@ import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataStatistics.ContingencyTable;
 import org.deidentifier.arx.DataStatistics.ContingencyTable.Entry;
 import org.deidentifier.arx.DataStatistics.FrequencyDistribution;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
@@ -82,11 +80,9 @@ public class Example16 extends Example {
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
 
         data.getDefinition().setAttributeType("age", age);
-        data.getDefinition().setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
         
-        data.getDefinition().setDataType("age", DataType.INTEGER);
-
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
@@ -127,17 +123,6 @@ public class Example16 extends Example {
             System.out.println("   " + Arrays.toString(distribution.values));
             System.out.println("   " + Arrays.toString(distribution.frequency));
             
-            System.out.println(" - Distribution of attribute 'gender' in input:");
-            distribution = data.getHandle().getStatistics().getFrequencyDistribution(1, false);
-            System.out.println("   " + Arrays.toString(distribution.values));
-            System.out.println("   " + Arrays.toString(distribution.frequency));
-
-            // Print frequencies
-            System.out.println(" - Distribution of attribute 'gender' in output:");
-            distribution = result.getHandle().getStatistics().getFrequencyDistribution(1, true);
-            System.out.println("   " + Arrays.toString(distribution.values));
-            System.out.println("   " + Arrays.toString(distribution.frequency));
-
             // Print contingency tables
             ContingencyTable contingency;
             System.out.println(" - Contingency of attribute 'gender' and 'zipcode' in input:");
@@ -158,7 +143,6 @@ public class Example16 extends Example {
                 Entry e = contingency.iterator.next();
                 System.out.println("   ["+e.value1+", "+e.value2+", "+e.frequency+"]");
             }
-
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);
         } catch (final IOException e) {
