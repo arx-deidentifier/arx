@@ -95,7 +95,27 @@ public abstract class DataHandle{
         checkRegistry();
         return definition.getDataType(attribute);
     }
-
+    
+    /**
+     * Returns a date/time value from the specified cell
+     * 
+     * @param row
+     *            The cell's row index
+     * @param col
+     *            The cell's column index
+     * @return
+     * @throws ParseException
+     */
+    public Date getDate(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXDate) {
+            return ((ARXDate)type).fromString(value);
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
+    
     /**
      * Returns the data definition
      * @return
@@ -106,38 +126,26 @@ public abstract class DataHandle{
     }
 
     /**
-     * Returns an array containing the distinct values in the given column
-     * 
-     * @param column
-     *            The column to process
-     * @return
-     */
-    public abstract String[] getDistinctValues(int column);
-
-    /**
-     * Returns the generalization level for the attribute
-     * 
-     * @param attribute
-     * @return
-     */
-    public abstract int getGeneralization(String attribute);
-
-    /** Returns the number of columns in the dataset */
-    public abstract int getNumColumns();
-
-    /** Returns the number of rows in the dataset */
-    public abstract int getNumRows();
-
-    /**
-     * Returns the value in the specified cell
+     * Returns a double value from the specified cell
      * 
      * @param row
      *            The cell's row index
      * @param col
      *            The cell's column index
      * @return
+     * @throws ParseException
      */
-    public abstract String getValue(int row, int col);
+    public double getDouble(int row, int col) throws ParseException{
+        String value = getValue(row, col);
+        DataType<?> type = getDataType(getAttributeName(col));
+        if (type instanceof ARXDecimal) {
+            return ((ARXDecimal)type).fromString(value);
+        } else if (type instanceof ARXInteger) {
+            return ((ARXInteger)type).fromString(value);
+        } else {
+            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
+        }
+    }
 
     /**
      * Returns a float value from the specified cell
@@ -162,26 +170,12 @@ public abstract class DataHandle{
     }
     
     /**
-     * Returns a double value from the specified cell
+     * Returns the generalization level for the attribute
      * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * @param attribute
      * @return
-     * @throws ParseException
      */
-    public double getDouble(int row, int col) throws ParseException{
-        String value = getValue(row, col);
-        DataType<?> type = getDataType(getAttributeName(col));
-        if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).fromString(value);
-        } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value);
-        } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
-        }
-    }
+    public abstract int getGeneralization(String attribute);
 
     /**
      * Returns an int value from the specified cell
@@ -223,25 +217,31 @@ public abstract class DataHandle{
         }
     }
 
+    /** Returns the number of columns in the dataset */
+    public abstract int getNumColumns();
+
+    /** Returns the number of rows in the dataset */
+    public abstract int getNumRows();
+
     /**
-     * Returns a date/time value from the specified cell
+     * Returns an object providing access to basic descriptive statistics about the data represented
+     * by this handle
+     * @return
+     */
+    public DataStatistics getStatistics(){
+        return new DataStatistics(this);
+    }
+    
+    /**
+     * Returns the value in the specified cell
      * 
      * @param row
      *            The cell's row index
      * @param col
      *            The cell's column index
      * @return
-     * @throws ParseException
      */
-    public Date getDate(int row, int col) throws ParseException{
-        String value = getValue(row, col);
-        DataType<?> type = getDataType(getAttributeName(col));
-        if (type instanceof ARXDate) {
-            return ((ARXDate)type).fromString(value);
-        } else {
-            throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
-        }
-    }
+    public abstract String getValue(int row, int col);
 
     /**
      * Returns a new data handle that represents a context specific view on the dataset
@@ -255,13 +255,24 @@ public abstract class DataHandle{
             return this.subset;
         }
     }
-    
+
     /**
-     * Sets the subset
-     * @param handle
+     * Determines whether this handle is orphaned, i.e., should not be used anymore
+     * @return
      */
-    protected void setView(DataHandle handle){
-        this.subset = handle;
+    public boolean isOrphaned() {
+        return this.registry == null;
+    }
+
+    /**
+     * Determines whether a given row is an outlier in the currently associated
+     * data transformation
+     * 
+     * @param row
+     */
+    public boolean isOutlier(int row){
+        checkRegistry();
+        return registry.isOutlier(this, row);
     }
 
     /**
@@ -270,7 +281,7 @@ public abstract class DataHandle{
      * @return
      */
     public abstract Iterator<String[]> iterator();
-
+    
     /**
      * Writes the data to a CSV file
      * 
@@ -317,6 +328,83 @@ public abstract class DataHandle{
     }
 
     /**
+     * Sorts the dataset according to the given columns. Will sort input and
+     * output analogously.
+     * 
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(boolean ascending, int... columns) {
+        checkRegistry();
+        registry.sort(this, ascending, columns);
+    }
+
+    /**
+     * Sorts the dataset according to the given columns and the given range.
+     * Will sort input and output analogously.
+     * 
+     * @param from
+     *            The lower bound
+     * @param to
+     *            The upper bound
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(int from, int to, boolean ascending, int... columns) {
+        checkRegistry();
+        registry.sort(this, from, to, ascending, columns);
+    }
+
+    /**
+     * Sorts the dataset according to the given columns. Will sort input and
+     * output analogously.
+     * @param swapper
+     *            A swapper
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(Swapper swapper, boolean ascending, int... columns) {
+        checkRegistry();
+        registry.sort(this, swapper, ascending, columns);
+    }
+    
+    /**
+     * Sorts the dataset according to the given columns and the given range.
+     * Will sort input and output analogously.
+     * 
+     * @param swapper
+     *            A swapper
+     * @param from
+     *            The lower bound
+     * @param to
+     *            The upper bound
+     * @param columns
+     *            An integer array containing column indicides
+     * @param ascending
+     *            Sort ascending or descending
+     */
+    public void sort(Swapper swapper, int from, int to, boolean ascending, int... columns) {
+        checkRegistry();
+        registry.sort(this, swapper, from, to, ascending, columns);
+    }
+
+    /**
+     * Swaps both rows
+     * @param row1
+     * @param row2
+     */
+    public void swap(int row1, int row2){
+        checkRegistry();
+        registry.swap(this, row1, row2);
+    }
+
+    /**
      * Checks a column index
      * 
      * @param column1
@@ -325,7 +413,7 @@ public abstract class DataHandle{
     protected void checkColumn(final int column1) {
         if ((column1 < 0) || (column1 > (header.length - 1))) { throw new IndexOutOfBoundsException("Column index out of range!"); }
     }
-    
+
     /**
      * Checks the column indexes
      * 
@@ -348,7 +436,7 @@ public abstract class DataHandle{
             if ((i > 0) && (cols[i] == cols[i - 1])) { throw new IllegalArgumentException("Duplicate column index provided!"); }
         }
     }
-
+    
     /**
      * Checks whether a registry is referenced
      */
@@ -380,6 +468,16 @@ public abstract class DataHandle{
     protected abstract void createDataTypeArray();
     
     /**
+     * Returns the base data type without generalization
+     * @param attribute
+     * @return
+     */
+    protected DataType<?> getBaseDataType(final String attribute) {
+        checkRegistry();
+        return getRegistry().getBaseDataType(attribute);
+    }
+    
+    /**
      * Returns the datatypes
      * @return
      */
@@ -387,6 +485,15 @@ public abstract class DataHandle{
         checkRegistry();
         return definition.getDataTypes();
     }
+    
+    /**
+     * Returns an array containing the distinct values in the given column
+     * 
+     * @param column
+     *            The column to process
+     * @return
+     */
+    protected abstract String[] getDistinctValues(int column);
 
     /**
      * Returns the registry associated with this handle
@@ -394,6 +501,14 @@ public abstract class DataHandle{
      */
     protected DataRegistry getRegistry() {
         return this.registry;
+    }
+
+    /**
+     * Returns the string inserted for suppressed data items
+     * @return
+     */
+    protected String getSuppressionString(){
+        return null;
     }
 
     /**
@@ -434,7 +549,7 @@ public abstract class DataHandle{
         }
         return 0;
     }
-    
+
     /**
      * Internal representation of get value
      * 
@@ -443,7 +558,7 @@ public abstract class DataHandle{
      * @return
      */
     protected abstract String internalGetValue(int row, int col);
-    
+
     /**
      * Updates the registry
      * @param registry
@@ -451,100 +566,12 @@ public abstract class DataHandle{
     protected void setRegistry(DataRegistry registry){
         this.registry = registry;
     }
-    
-    /**
-     * Sorts the dataset according to the given columns. Will sort input and
-     * output analogously.
-     * @param swapper
-     *            A swapper
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
-     */
-    public void sort(Swapper swapper, boolean ascending, int... columns) {
-        checkRegistry();
-        registry.sort(this, swapper, ascending, columns);
-    }
 
     /**
-     * Sorts the dataset according to the given columns. Will sort input and
-     * output analogously.
-     * 
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     * Sets the subset
+     * @param handle
      */
-    public void sort(boolean ascending, int... columns) {
-        checkRegistry();
-        registry.sort(this, ascending, columns);
-    }
-
-    /**
-     * Sorts the dataset according to the given columns and the given range.
-     * Will sort input and output analogously.
-     * 
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
-     */
-    public void sort(int from, int to, boolean ascending, int... columns) {
-        checkRegistry();
-        registry.sort(this, from, to, ascending, columns);
-    }
-
-    /**
-     * Sorts the dataset according to the given columns and the given range.
-     * Will sort input and output analogously.
-     * 
-     * @param swapper
-     *            A swapper
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
-     */
-    public void sort(Swapper swapper, int from, int to, boolean ascending, int... columns) {
-        checkRegistry();
-        registry.sort(this, swapper, from, to, ascending, columns);
-    }
-
-    /**
-     * Swaps both rows
-     * @param row1
-     * @param row2
-     */
-    public void swap(int row1, int row2){
-        checkRegistry();
-        registry.swap(this, row1, row2);
-    }
-
-    /**
-     * Determines whether a given row is an outlier in the currently associated
-     * data transformation
-     * 
-     * @param row
-     */
-    public boolean isOutlier(int row){
-        checkRegistry();
-        return registry.isOutlier(this, row);
-    }
-
-    /**
-     * Determines whether this handle is orphaned, i.e., should not be used anymore
-     * @return
-     */
-    public boolean isOrphaned() {
-        return this.registry == null;
+    protected void setView(DataHandle handle){
+        this.subset = handle;
     }  
 }

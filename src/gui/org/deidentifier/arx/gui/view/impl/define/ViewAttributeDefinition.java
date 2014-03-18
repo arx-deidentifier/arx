@@ -269,7 +269,7 @@ public class ViewAttributeDefinition implements IView {
 
         final DataHandle h = model.getInputConfig().getInput().getHandle();
         final List<String> vals = new ArrayList<String>();
-        for (final String s : h.getDistinctValues(h.getColumnIndexOf(attribute))) {
+        for (final String s : h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute))) {
             vals.add(s);
         }
         return vals;

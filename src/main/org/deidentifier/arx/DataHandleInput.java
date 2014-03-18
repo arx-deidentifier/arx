@@ -228,4 +228,9 @@ public class DataHandleInput extends DataHandle {
         data[row1] = data[row2];
         data[row2] = temp;
     }
+
+    @Override
+    protected DataType<?> getBaseDataType(final String attribute) {
+        return this.getDataType(attribute);
+    }
 }
