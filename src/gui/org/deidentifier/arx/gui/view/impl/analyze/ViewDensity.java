@@ -311,7 +311,7 @@ public class ViewDensity extends ViewStatistics implements IView {
         }
 
         // Obtain the right handle
-        DataHandle data = getHandle();
+        DataHandle data = getContext().handle;
         
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
@@ -330,7 +330,7 @@ public class ViewDensity extends ViewStatistics implements IView {
     private String[] getLabels(final String attribute) {
 
         // Obtain config
-        ModelConfiguration config = super.getConfig();
+        ModelConfiguration config = getContext().config;
         
         // Check if there is a hierarchy
         final AttributeType type = config.getInput()

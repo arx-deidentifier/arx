@@ -15,25 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.deidentifier.arx.gui.view.impl.analyze;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -57,12 +47,14 @@ public class ViewDistribution extends ViewStatistics implements IView {
 
     private static final long serialVersionUID = -163862008754422422L;
     
-    private Chart                       chart;
     private final Composite             parent;
     private final ModelPart             reset;
-    private String                      attribute;
     private final Controller            controller;
-    private final Map<String, double[]> cache  = new HashMap<String, double[]>();
+    private final Map<String, double[]> cache = new HashMap<String, double[]>();
+
+    private Chart                       chart;
+    private String                      attribute;
+    private StatisticsContext           context;
 
     public ViewDistribution(final Composite parent,
                             final Controller controller,
@@ -185,133 +177,39 @@ public class ViewDistribution extends ViewStatistics implements IView {
         }
     }
 
-    private void analyze() {
-
-        if (model == null) { return; }
-
-        // Obtain the data
-        ModelConfiguration config = super.getConfig();
-        DataHandle data = super.getHandle();
-
-        // Clear if nothing to draw
-        if ((config == null) || (data == null)) {
-            reset();
-            return;
-        }
-
-        // Obtain index of attribute
-        final int index = data.getColumnIndexOf(attribute);
-
-        // Clear
-        if (index == -1) {
-            clearCache();
-            reset();
-            return;
-        }
-
-        // Cache is cleared when new output is created
-        if (cache.containsKey(attribute)) { return; }
-
-        // Check if there is a hierarchy
-        final AttributeType type = config.getInput()
-                                         .getDefinition()
-                                         .getAttributeType(attribute);
-        Hierarchy hierarchy = null;
-        if (type instanceof Hierarchy) {
-            hierarchy = (Hierarchy) type;
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            hierarchy = config.getHierarchy(attribute);
-        }
-
-        // Count
-        final Map<String, Double> map = new HashMap<String, Double>();
-        for (int i = 0; i < data.getNumRows(); i++) {
-            final String val = data.getValue(i, index);
-            if (!map.containsKey(val)) {
-                map.put(val, 1d);
-            } else {
-                map.put(val, map.get(val) + 1);
-            }
-        }
-        
-        // Init distribution
-        final String[] dvals;
-
-        // Sort by hierarchy if possible
-        if (hierarchy != null && hierarchy.getHierarchy()!=null && hierarchy.getHierarchy().length != 0) {
-
-            final int level = data.getGeneralization(attribute);
-            final List<String> list = new ArrayList<String>();
-            final Set<String> done = new HashSet<String>();
-            final String[][] h = hierarchy.getHierarchy();
-            for (int i = 0; i < h.length; i++) {
-                final String val = h[i][level];
-                if (map.containsKey(val)) {
-                    if (!done.contains(val)) {
-                        list.add(val);
-                        done.add(val);
-                    }
-                }
-            }
-            if (model.getAnonymizer() != null &&
-                map.containsKey(model.getAnonymizer().getSuppressionString()) &&
-                !done.contains(model.getAnonymizer().getSuppressionString())) {
-                
-                    list.add(model.getAnonymizer().getSuppressionString());
-            }
-
-            dvals = list.toArray(new String[] {});
-
-            // Else sort per data type
-        } else {
-            final DataType<?> dtype = data.getDataType(attribute);
-            final String[] v = new String[map.size()];
-            int i = 0;
-            for (final String s : map.keySet()) {
-                v[i++] = s;
-            }
-            try {
-                Arrays.sort(v, new Comparator<String>() {
-                    @Override
-                    public int compare(final String arg0, final String arg1) {
-                        try {
-                            return dtype.compare(arg0, arg1);
-                        } catch (final Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                // TODO: Make sure that invalid data types can not even be selected
-                controller.getResources().getLogger().warn("Invalid data type!");
-            }
-            dvals = v;
-        }
-
-        // Sum up and divide
-        double sum = 0;
-        for (final double i : map.values()) {
-            sum += i;
-        }
-        final double[] distribution = new double[map.size()];
-        for (int i = 0; i < dvals.length; i ++) {
-            distribution[i] = map.get(dvals[i]) / sum;
-        }
-
-        // Cache
-        cache.put(attribute, distribution);
-    }
-
     private void clearCache() {
         cache.clear();
     }
 
     private void redraw() {
 
-        analyze();
+        // Obtain context
+        StatisticsContext context = super.getContext();
+        if (!context.equals(this.context)) {
+            this.cache.clear();
+            this.context = context;
+        }
+
+        // Check
+        if (context.config == null || context.handle == null) { return; }
+
+        // Update cache
+        if (!cache.containsKey(attribute)) {
+            
+            DataHandle handle = context.handle;
+            int column = handle.getColumnIndexOf(attribute);
+            
+            if (column >= 0){
+                Hierarchy hierarchy = super.getHierarchy(context, attribute); 
+                double[] frequency = handle.getStatistics().getFrequencyDistribution(column, hierarchy).frequency;
+                cache.put(attribute, frequency);
+            }
+        }
         
+        // Check
         if (cache.isEmpty() || (cache.get(attribute) == null)) { return; }
 
+        // Update chart
         chart.setRedraw(false);
 
         final ISeriesSet seriesSet = chart.getSeriesSet();
@@ -336,5 +234,5 @@ public class ViewDistribution extends ViewStatistics implements IView {
         chart.setRedraw(true);
         chart.redraw();
     }
-    
+
 }
