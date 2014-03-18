@@ -37,49 +37,12 @@ import org.eclipse.swt.widgets.Shell;
 public class Resources {
 
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-    private static final ResourceBundle DATE_FORMATS_BUNDLE  = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.dates"); //$NON-NLS-1$
-    private static final ResourceBundle DECIMAL_FORMATS_BUNDLE  = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.decimals"); //$NON-NLS-1$
-
-    private final List<String>          DATE_FORMATS    = new ArrayList<String>();
-    private final List<String>          DECIMAL_FORMATS    = new ArrayList<String>();
 
     private Logger                      LOGGER          = Logger.getRootLogger();
     
     public Resources(final Shell shell) {
 
         this.shell = shell;
-
-        DATE_FORMATS.add(this.getDateFormat("Formats.1")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.2")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.3")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.4")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.5")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.6")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.7")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.8")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.9")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.10")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.11")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.12")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.13")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.14")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.15")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.16")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.17")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.18")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.19")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.20")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.21")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.22")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.23")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.24")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.25")); //$NON-NLS-1$
-        DATE_FORMATS.add(this.getDateFormat("Formats.26")); //$NON-NLS-1$
-
-        DECIMAL_FORMATS.add(this.getDecimalFormat("Formats.1")); //$NON-NLS-1$
-        DECIMAL_FORMATS.add(this.getDecimalFormat("Formats.2")); //$NON-NLS-1$
-        DECIMAL_FORMATS.add(this.getDecimalFormat("Formats.3")); //$NON-NLS-1$
-        DECIMAL_FORMATS.add(this.getDecimalFormat("Formats.4")); //$NON-NLS-1$
         
         // Release config
         SimpleLayout layout = new SimpleLayout();
@@ -88,22 +51,6 @@ public class Resources {
         LOGGER.setLevel(Level.OFF);
     }
 
-    private String getDateFormat(String key) {
-        try {
-            return DATE_FORMATS_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
-
-    private String getDecimalFormat(String key) {
-        try {
-            return DECIMAL_FORMATS_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
-    
     /*
      * TODO: Make this method non-static
      */
@@ -116,14 +63,6 @@ public class Resources {
     }
 
     private final Shell shell;
-
-    public List<String> getDateFormats() {
-        return DATE_FORMATS;
-    }
-
-    public List<String> getDecimalFormats() {
-        return DECIMAL_FORMATS;
-    }
 
     public Display getDisplay() {
         return shell.getDisplay();
