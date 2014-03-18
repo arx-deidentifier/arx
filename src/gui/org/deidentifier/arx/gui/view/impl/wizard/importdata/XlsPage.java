@@ -10,6 +10,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.deidentifier.arx.DataType.ARXString;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -247,7 +248,7 @@ public class XlsPage extends WizardPage {
             int index = 0;
             for (final Cell c : result.get(0)) {
 
-                ImportDataColumn column = new ImportDataColumn(false, "", "String");
+                ImportDataColumn column = new ImportDataColumn(false, "", ARXString.class);
 
                 if (btnContainsHeader.getSelection()) {
 

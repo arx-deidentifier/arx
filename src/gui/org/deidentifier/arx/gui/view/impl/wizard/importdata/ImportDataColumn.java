@@ -1,5 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import org.deidentifier.arx.DataType;
+
 
 /**
  * Represents a single data column
@@ -23,10 +25,8 @@ public class ImportDataColumn {
 
     /**
      * Datatype of the column
-     *
-     * TODO Change to DataType from arx framework
      */
-    private String datatype;
+    private Class<? extends DataType<?>> datatype;
 
 
     /**
@@ -36,7 +36,7 @@ public class ImportDataColumn {
      * @param name {@link #name}
      * @param datatype {@link #datatype}
      */
-    public ImportDataColumn(boolean enabled, String name, String datatype)
+    public ImportDataColumn(boolean enabled, String name, Class<? extends DataType<?>> datatype)
     {
 
         setEnabled(enabled);
@@ -88,17 +88,18 @@ public class ImportDataColumn {
     /**
      * @return {@link #datatype}
      */
-    public String getDatatype()
+    @SuppressWarnings("unchecked")
+    public Class<DataType<?>> getDatatype()
     {
 
-        return datatype;
+        return (Class<DataType<?>>) datatype;
 
     }
 
     /**
      * @param datatype {@link #datatype}
      */
-    public void setDatatype(String datatype)
+    public void setDatatype(Class<? extends DataType<?>> datatype)
     {
 
         this.datatype = datatype;

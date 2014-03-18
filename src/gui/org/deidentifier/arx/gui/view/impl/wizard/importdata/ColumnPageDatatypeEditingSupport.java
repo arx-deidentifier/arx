@@ -1,5 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXDate;
+import org.deidentifier.arx.DataType.ARXDecimal;
+import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.DataType.ARXString;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -27,7 +32,14 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     /**
      * Allowed values for the user to choose from
      */
-    private String[] choices = new String[]{"String", "Numerical", "Date/Time"};
+    private String[] choices = new String[] {
+
+        ARXString.class.getSimpleName(),
+        ARXDecimal.class.getSimpleName(),
+        ARXInteger.class.getSimpleName(),
+        ARXDate.class.getSimpleName()
+
+    };
 
 
     /**
@@ -85,14 +97,39 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
      * Sets datatype of column
      *
      * Internally this function makes use of
-     * {@link ImportDataColumn#setDatatype(String)}. The values are taken
+     * {@link ImportDataColumn#setDatatype(Class)}. The values itself are taken
      * from {@link #choices}.
      */
     @Override
     protected void setValue(Object element, Object value)
     {
 
-        ((ImportDataColumn)element).setDatatype(choices[(int)value]);
+        Class<? extends DataType<?>> datatype = null;
+
+        switch ((int)value) {
+
+        case 0:
+
+            datatype = ARXString.class;
+            break;
+
+        case 1:
+
+            datatype = ARXDecimal.class;
+            break;
+
+        case 2:
+            datatype = ARXInteger.class;
+            break;
+
+        case 3:
+
+            datatype = ARXDate.class;
+            break;
+
+        }
+
+        ((ImportDataColumn)element).setDatatype(datatype);
         getViewer().update(element, null);
 
     }

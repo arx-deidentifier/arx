@@ -134,7 +134,7 @@ public class ColumnPage extends WizardPage {
 
                 ImportDataColumn column = (ImportDataColumn)element;
 
-                return column.getDatatype();
+                return column.getDatatype().getSimpleName();
 
             }
 
