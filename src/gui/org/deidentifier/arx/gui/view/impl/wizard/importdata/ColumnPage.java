@@ -1,5 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.Entry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -132,9 +134,19 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                ImportDataColumn column = (ImportDataColumn)element;
+                DataType<?> column = ((ImportDataColumn) element).getDatatype();
 
-                return column.getDatatype().getSimpleName();
+                for (Entry<?> entry : DataType.LIST) {
+
+                    if (entry.newInstance().getClass() == column.getClass()) {
+
+                        return entry.getLabel();
+
+                    }
+
+                }
+
+                return null;
 
             }
 

@@ -248,7 +248,7 @@ public class XlsPage extends WizardPage {
             int index = 0;
             for (final Cell c : result.get(0)) {
 
-                ImportDataColumn column = new ImportDataColumn(false, "", ARXString.class);
+                ImportDataColumn column = new ImportDataColumn(false, "", new ARXString());
 
                 if (btnContainsHeader.getSelection()) {
 

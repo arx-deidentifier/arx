@@ -26,7 +26,7 @@ public class ImportDataColumn {
     /**
      * Datatype of the column
      */
-    private Class<? extends DataType<?>> datatype;
+    private DataType<?> datatype;
 
 
     /**
@@ -36,7 +36,7 @@ public class ImportDataColumn {
      * @param name {@link #name}
      * @param datatype {@link #datatype}
      */
-    public ImportDataColumn(boolean enabled, String name, Class<? extends DataType<?>> datatype)
+    public ImportDataColumn(boolean enabled, String name, DataType<?> datatype)
     {
 
         setEnabled(enabled);
@@ -88,18 +88,17 @@ public class ImportDataColumn {
     /**
      * @return {@link #datatype}
      */
-    @SuppressWarnings("unchecked")
-    public Class<DataType<?>> getDatatype()
+    public DataType<?> getDatatype()
     {
 
-        return (Class<DataType<?>>) datatype;
+        return datatype;
 
     }
 
     /**
      * @param datatype {@link #datatype}
      */
-    public void setDatatype(Class<? extends DataType<?>> datatype)
+    public void setDatatype(DataType<?> datatype)
     {
 
         this.datatype = datatype;

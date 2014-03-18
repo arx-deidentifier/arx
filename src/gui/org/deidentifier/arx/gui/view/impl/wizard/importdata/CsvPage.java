@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.deidentifier.arx.DataType.ARXString;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -312,7 +312,7 @@ public class CsvPage extends WizardPage {
         int index = 0;
         for (final String s : data.get(0)) {
 
-            ImportDataColumn column = new ImportDataColumn(false, s, ARXString.class);
+            ImportDataColumn column = new ImportDataColumn(false, s, DataType.STRING);
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
             tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(index++));

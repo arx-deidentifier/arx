@@ -1,10 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ARXDate;
-import org.deidentifier.arx.DataType.ARXDecimal;
-import org.deidentifier.arx.DataType.ARXInteger;
-import org.deidentifier.arx.DataType.ARXString;
+import org.deidentifier.arx.DataType.Entry;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -32,14 +32,7 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     /**
      * Allowed values for the user to choose from
      */
-    private String[] choices = new String[] {
-
-        ARXString.class.getSimpleName(),
-        ARXDecimal.class.getSimpleName(),
-        ARXInteger.class.getSimpleName(),
-        ARXDate.class.getSimpleName()
-
-    };
+    private String[] choices;
 
 
     /**
@@ -51,6 +44,16 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     {
 
         super(viewer);
+
+        List<String> labels = new ArrayList<String>();
+
+        for (Entry<?> entry : DataType.LIST) {
+
+            labels.add(entry.getLabel());
+
+        }
+
+        choices = labels.toArray(new String[labels.size()]);
 
         editor = new ComboBoxCellEditor(viewer.getTable(), choices, SWT.READ_ONLY);
 
@@ -85,29 +88,23 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     protected Object getValue(Object element)
     {
 
-        Class<? extends DataType<?>> datatype = ((ImportDataColumn)element).getDatatype();
+        DataType<?> datatype = ((ImportDataColumn)element).getDatatype();
 
-        int value = 0;
+        int i = 0;
 
-        if (datatype == ARXString.class) {
+        for (Entry<?> entry : DataType.LIST) {
 
-            value = 0;
+            if (entry.newInstance().getClass() == datatype.getClass()) {
 
-        } else if (datatype == ARXDecimal.class) {
+                return i;
 
-            value = 1;
+            }
 
-        } else if (datatype == ARXInteger.class) {
-
-            value = 2;
-
-        } else if (datatype == ARXDate.class) {
-
-            value = 3;
+            i++;
 
         }
 
-        return value;
+        return null;
 
 
     }
@@ -123,33 +120,20 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
     protected void setValue(Object element, Object value)
     {
 
-        Class<? extends DataType<?>> datatype = null;
+        String label = choices[(int) value];
 
-        switch ((int)value) {
+        for (Entry<?> entry : DataType.LIST) {
 
-        case 0:
+            if (entry.getLabel().equals(label)) {
 
-            datatype = ARXString.class;
-            break;
+                ((ImportDataColumn)element).setDatatype(entry.newInstance());
+                getViewer().update(element, null);
 
-        case 1:
+                return;
 
-            datatype = ARXDecimal.class;
-            break;
-
-        case 2:
-            datatype = ARXInteger.class;
-            break;
-
-        case 3:
-
-            datatype = ARXDate.class;
-            break;
+            }
 
         }
-
-        ((ImportDataColumn)element).setDatatype(datatype);
-        getViewer().update(element, null);
 
     }
 
