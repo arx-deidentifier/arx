@@ -27,10 +27,26 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
+/**
+ * Column overview page
+ *
+ * This pages gives the user an overview of the columns, allows him to change
+ * the name and datatype of each column and whether or not it should actually
+ * be imported.
+ *
+ * The columns need to be stored within {{@link ImportDataWizard#data} and
+ * every change is written back to this object.
+ */
 public class ColumnPage extends WizardPage {
 
+    /**
+     * Reference to the wizard containing this page
+     */
     private ImportDataWizard wizardImport;
 
+    /*
+     * Widgets
+     */
     private Table table;
     private CheckboxTableViewer checkboxTableViewer;
     private TableColumn tblclmnName;
@@ -40,9 +56,17 @@ public class ColumnPage extends WizardPage {
     private TableColumn tblclmnEnabled;
     private TableViewerColumn tableViewerColumnEnabled;
 
+    /**
+     * Indicator for the next action of {@link ColumnEnabledSelectionListener}
+     */
     private Boolean selectAll = true;
 
 
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public ColumnPage(ImportDataWizard wizardImport)
     {
 
@@ -55,6 +79,9 @@ public class ColumnPage extends WizardPage {
 
     }
 
+    /**
+     * Creates the design of this page along with the appropriate listeners
+     */
     public void createControl(Composite parent)
     {
 
@@ -63,10 +90,19 @@ public class ColumnPage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
+        /*
+         * TableViewer for the columns with a checkbox in each row
+         */
         checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
         checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
 
+            /**
+             * Sets the status of the given item
+             *
+             * Furthermore marks the page as completed once at least one item
+             * is selected.
+             */
             @Override
             public void checkStateChanged(CheckStateChangedEvent event)
             {
@@ -91,13 +127,22 @@ public class ColumnPage extends WizardPage {
 
         });
 
+        /*
+         * Actual table for {@link #checkboxTableViewer}
+         */
         table = checkboxTableViewer.getTable();
         table.setHeaderVisible(true);
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
+        /*
+         * Pseudo column to make checkboxes appear in a cell
+         */
         tableViewerColumnEnabled = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnEnabled.setLabelProvider(new ColumnLabelProvider() {
 
+            /**
+             * Always empty as the cells should only contain the checkbox
+             */
             @Override
             public String getText(Object element)
             {
@@ -108,15 +153,24 @@ public class ColumnPage extends WizardPage {
 
         });
 
+        /*
+         * Actual column for {@link tableViewerColumnEnabled}
+         */
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
         tblclmnEnabled.setToolTipText("Select all");
         tblclmnEnabled.setWidth(30);
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
+        /*
+         * Column containing the names
+         */
         tableViewerColumnName = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnName.setEditingSupport(new NameEditingSupport(checkboxTableViewer));
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
+            /**
+             * Gets name of cells from  {@link ImportDataColumn#getName()}
+             */
             @Override
             public String getText(Object element)
             {
@@ -129,15 +183,24 @@ public class ColumnPage extends WizardPage {
 
         });
 
+        /*
+         * Actual column for {@link tableViewerColumnName}
+         */
         tblclmnName = tableViewerColumnName.getColumn();
         tblclmnName.setToolTipText("Name of the column");
         tblclmnName.setWidth(300);
         tblclmnName.setText("Name");
 
+        /*
+         * Column containing the datatypes
+         */
         tableViewerColumnDatatype = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnDatatype.setEditingSupport(new DatatypeEditingSupport(checkboxTableViewer));
         tableViewerColumnDatatype.setLabelProvider(new ColumnLabelProvider() {
 
+            /**
+             * Gets datatype of cells from {@link ImportDataColumn#getDatatype()}
+             */
             @Override
             public String getText(Object element)
             {
@@ -160,15 +223,24 @@ public class ColumnPage extends WizardPage {
 
         });
 
+        /*
+         * Actual column for {@link tableViewerColumnDatatype}
+         */
         tblclmnDatatype = tableViewerColumnDatatype.getColumn();
         tblclmnDatatype.setToolTipText("Datatype of the column");
         tblclmnDatatype.setWidth(100);
         tblclmnDatatype.setText("Datatype");
 
+        /*
+         * Wait for at least one column to be enabled
+         */
         setPageComplete(false);
 
     }
 
+    /**
+     * Adds input to table once page gets visible
+     */
     @Override
     public void setVisible(boolean visible)
     {
@@ -183,8 +255,19 @@ public class ColumnPage extends WizardPage {
 
     }
 
+    /**
+     * Listens for click events of the "enabled" column
+     *
+     * By clicking on the column all items can be selected and/or deselected
+     * at once. The action depends upon {@link ColumnPage#selectAll}.
+     */
     private final class ColumnEnabledSelectionListener extends SelectionAdapter {
 
+        /**
+         * Iterates through all of the items and invokes
+         * {@link #setChecked(int, Boolean)} to all of them. Furthermore the
+         * tooltip is changed appropriately.
+         */
         @Override
         public void widgetSelected(SelectionEvent arg0) {
 
@@ -208,6 +291,12 @@ public class ColumnPage extends WizardPage {
 
         }
 
+        /**
+         * Applies a boolean value to the given item
+         *
+         * @param i Item that <code>check</code> should be applied to
+         * @param check Value that should be applied to item <code>i</code>
+         */
         private void setChecked(int i, Boolean check) {
 
             table.getItem(i).setChecked(check);
