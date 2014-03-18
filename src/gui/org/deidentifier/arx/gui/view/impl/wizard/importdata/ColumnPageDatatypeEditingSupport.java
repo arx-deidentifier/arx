@@ -86,10 +86,33 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
      * TODO Get datatype from column object after detecting it previously
      */
     @Override
-    protected Object getValue(Object arg0)
+    protected Object getValue(Object element)
     {
 
-        return 0;
+        Class<? extends DataType<?>> datatype = ((ImportDataColumn)element).getDatatype();
+
+        int value = 0;
+
+        if (datatype == ARXString.class) {
+
+            value = 0;
+
+        } else if (datatype == ARXDecimal.class) {
+
+            value = 1;
+
+        } else if (datatype == ARXInteger.class) {
+
+            value = 2;
+
+        } else if (datatype == ARXDate.class) {
+
+            value = 3;
+
+        }
+
+        return value;
+
 
     }
 
