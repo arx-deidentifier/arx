@@ -9,7 +9,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
  * necessarily end up in the set of imported data. Furthermore it is possible
  * for the user to rename a column and change its datatype.
  */
-public class DataColumn {
+public class ImportDataColumn {
 
     /**
      * Indicates whether this particular column is enabled
@@ -36,7 +36,7 @@ public class DataColumn {
      * @param name {@link #name}
      * @param datatype {@link #datatype}
      */
-    public DataColumn(boolean enabled, String name, String datatype)
+    public ImportDataColumn(boolean enabled, String name, String datatype)
     {
 
         setEnabled(enabled);

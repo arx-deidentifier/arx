@@ -11,7 +11,7 @@ import java.util.List;
  *
  * TODO Change to more elegant implementation (i.e. general key value storage)
  */
-public class Data {
+public class ImportData {
 
     /**
      * Possible sources for importing data
@@ -26,9 +26,9 @@ public class Data {
     /**
      * List of detected columns to be imported
      *
-     * Each column is represented by {@link DataColumn}.
+     * Each column is represented by {@link ImportDataColumn}.
      */
-    private List<DataColumn> columns;
+    private List<ImportDataColumn> columns;
 
     /**
      * Location of file to import from
@@ -152,7 +152,7 @@ public class Data {
     /**
      * @return {@link #columns}
      */
-    public List<DataColumn> getColumns()
+    public List<ImportDataColumn> getColumns()
     {
 
         return columns;
@@ -162,7 +162,7 @@ public class Data {
     /**
      * @param columns {@link #columns}
      */
-    public void setColumns(List<DataColumn> columns)
+    public void setColumns(List<ImportDataColumn> columns)
     {
 
         this.columns = columns;

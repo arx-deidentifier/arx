@@ -77,11 +77,11 @@ public class PreviewPage extends WizardPage {
 
             }
 
-            List<DataColumn> columns = wizardImport.getData().getColumns();
+            List<ImportDataColumn> columns = wizardImport.getData().getColumns();
 
             for (int i = 0; i < columns.size(); i++) {
 
-                DataColumn column = columns.get(i);
+                ImportDataColumn column = columns.get(i);
 
                 if (column.isEnabled()) {
 

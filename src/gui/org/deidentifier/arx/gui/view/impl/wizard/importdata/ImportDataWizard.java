@@ -2,7 +2,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.Data.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.source;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -29,7 +29,7 @@ public class ImportDataWizard extends Wizard {
     /**
      * Object storing data gathered by the wizard
      */
-    private Data data = new Data();
+    private ImportData data = new ImportData();
 
     /**
      * Reference of controller being used by this wizard
@@ -84,7 +84,7 @@ public class ImportDataWizard extends Wizard {
     /**
      * Returns a reference to the object containing the gathered data
      */
-    Data getData() {
+    ImportData getData() {
 
         return data;
 

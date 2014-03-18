@@ -1,6 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.Data.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.source;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

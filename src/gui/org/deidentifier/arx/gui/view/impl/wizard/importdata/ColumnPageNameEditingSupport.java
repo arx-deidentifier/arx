@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
  * This allows to change the name of columns with the column page
  * {@link ColumnPage}. The modifications are performed within a simple text
  * field {@link TextCellEditor}. The name itself is stored with the
- * appropriate {@link DataColumn} object.
+ * appropriate {@link ImportDataColumn} object.
  */
 public class ColumnPageNameEditingSupport extends EditingSupport {
 
@@ -59,24 +59,24 @@ public class ColumnPageNameEditingSupport extends EditingSupport {
     }
 
     /**
-     * Gets name of column ({@link DataColumn#getName()})
+     * Gets name of column ({@link ImportDataColumn#getName()})
      */
     @Override
     protected Object getValue(Object arg0)
     {
 
-        return ((DataColumn)arg0).getName();
+        return ((ImportDataColumn)arg0).getName();
 
     }
 
     /**
-     * Sets name of column ({@link DataColumn#setName(String)})
+     * Sets name of column ({@link ImportDataColumn#setName(String)})
      */
     @Override
     protected void setValue(Object element, Object value)
     {
 
-        ((DataColumn)element).setName((String)value);
+        ((ImportDataColumn)element).setName((String)value);
         getViewer().update(element, null);
 
     }

@@ -63,9 +63,9 @@ public class ColumnPage extends WizardPage {
 
                 setPageComplete(false);
 
-                ((DataColumn)event.getElement()).setEnabled(event.getChecked());
+                ((ImportDataColumn)event.getElement()).setEnabled(event.getChecked());
 
-                for (DataColumn column : wizardImport.getData().getColumns()) {
+                for (ImportDataColumn column : wizardImport.getData().getColumns()) {
 
                     if (column.isEnabled()) {
 
@@ -111,7 +111,7 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                DataColumn column = (DataColumn)element;
+                ImportDataColumn column = (ImportDataColumn)element;
 
                 return column.getName();
 
@@ -132,7 +132,7 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                DataColumn column = (DataColumn)element;
+                ImportDataColumn column = (ImportDataColumn)element;
 
                 return column.getDatatype();
 
@@ -195,7 +195,7 @@ public class ColumnPage extends WizardPage {
 
             setPageComplete(false);
 
-            for (DataColumn column : wizardImport.getData().getColumns()) {
+            for (ImportDataColumn column : wizardImport.getData().getColumns()) {
 
                 if (column.isEnabled()) {
 

@@ -13,7 +13,7 @@ import org.eclipse.swt.SWT;
  * This allows to change the datatype of columns with the column page
  * {@link ColumnPage}. The modifications are performed with a combo box
  * {@link ComboBoxCellEditor}. The datatype itself is stored with the
- * appropriate {@link DataColumn} object.
+ * appropriate {@link ImportDataColumn} object.
  *
  * TODO Implement better editor for datatypes of arx framework
  */
@@ -85,14 +85,14 @@ public class ColumnPageDatatypeEditingSupport extends EditingSupport {
      * Sets datatype of column
      *
      * Internally this function makes use of
-     * {@link DataColumn#setDatatype(String)}. The values are taken
+     * {@link ImportDataColumn#setDatatype(String)}. The values are taken
      * from {@link #choices}.
      */
     @Override
     protected void setValue(Object element, Object value)
     {
 
-        ((DataColumn)element).setDatatype(choices[(int)value]);
+        ((ImportDataColumn)element).setDatatype(choices[(int)value]);
         getViewer().update(element, null);
 
     }

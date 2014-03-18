@@ -242,12 +242,12 @@ public class XlsPage extends WizardPage {
 
             }
 
-            ArrayList<DataColumn> columns = new ArrayList<DataColumn>();
+            ArrayList<ImportDataColumn> columns = new ArrayList<ImportDataColumn>();
 
             int index = 0;
             for (final Cell c : result.get(0)) {
 
-                DataColumn column = new DataColumn(false, "", "String");
+                ImportDataColumn column = new ImportDataColumn(false, "", "String");
 
                 if (btnContainsHeader.getSelection()) {
 

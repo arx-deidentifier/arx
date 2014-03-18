@@ -35,7 +35,7 @@ public class CsvPage extends WizardPage {
 
     private ImportDataWizard wizardImport;
 
-    private ArrayList<DataColumn> columns;
+    private ArrayList<ImportDataColumn> columns;
 
     private Label lblLocation;
     private Combo comboLocation;
@@ -253,7 +253,7 @@ public class CsvPage extends WizardPage {
         final CSVDataInput in = new CSVDataInput(comboLocation.getText(), separators[selection]);
         final Iterator<String[]> it = in.iterator();
         final List<String[]> data = new ArrayList<String[]>();
-        columns = new ArrayList<DataColumn>();
+        columns = new ArrayList<ImportDataColumn>();
 
         int count = 0;
 
@@ -311,7 +311,7 @@ public class CsvPage extends WizardPage {
         int index = 0;
         for (final String s : data.get(0)) {
 
-            DataColumn column = new DataColumn(false, s, "String");
+            ImportDataColumn column = new ImportDataColumn(false, s, "String");
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
             tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(index++));
