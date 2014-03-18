@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class CsvPage extends WizardPage {
 
-    private ImportWizard wizardImport;
+    private ImportDataWizard wizardImport;
 
     private ArrayList<DataColumn> columns;
 
@@ -53,7 +53,7 @@ public class CsvPage extends WizardPage {
     private boolean customSeparator;
 
 
-    public CsvPage(ImportWizard wizardImport)
+    public CsvPage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportCsvPage");

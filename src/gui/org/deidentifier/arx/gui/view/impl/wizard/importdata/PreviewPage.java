@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class PreviewPage extends WizardPage {
 
-    private ImportWizard wizardImport;
+    private ImportDataWizard wizardImport;
 
     private Table table;
     private TableViewer tableViewer;
@@ -29,7 +29,7 @@ public class PreviewPage extends WizardPage {
     private static final int PREVIEWLINES = 25;
 
 
-    public PreviewPage(ImportWizard wizardImport)
+    public PreviewPage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportPreviewPage");

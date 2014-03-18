@@ -24,7 +24,7 @@ import org.eclipse.jface.wizard.Wizard;
  *
  * Refer to appropriate page(s) for more details about a specific source.
  */
-public class ImportWizard extends Wizard {
+public class ImportDataWizard extends Wizard {
 
     /**
      * Object storing data gathered by the wizard
@@ -96,7 +96,7 @@ public class ImportWizard extends Wizard {
      * @param controller Reference to controller
      * @param model Reference to model
      */
-    public ImportWizard(Controller controller, Model model)
+    public ImportDataWizard(Controller controller, Model model)
     {
 
         setWindowTitle("Import data wizard");

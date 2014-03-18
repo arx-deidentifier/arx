@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class ColumnPage extends WizardPage {
 
-    private ImportWizard wizardImport;
+    private ImportDataWizard wizardImport;
 
     private Table table;
     private CheckboxTableViewer checkboxTableViewer;
@@ -33,7 +33,7 @@ public class ColumnPage extends WizardPage {
     private Boolean selectAll = true;
 
 
-    public ColumnPage(ImportWizard wizardImport)
+    public ColumnPage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportCsvPage");

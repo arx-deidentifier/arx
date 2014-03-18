@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 
 public class XlsPage extends WizardPage {
 
-    private ImportWizard wizardImport;
+    private ImportDataWizard wizardImport;
 
     private Label lblLocation;
     private Combo comboLocation;
@@ -39,7 +39,7 @@ public class XlsPage extends WizardPage {
     private static final int PREVIEWLINES = 5;
 
 
-    public XlsPage(ImportWizard wizardImport)
+    public XlsPage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportXlsPage");

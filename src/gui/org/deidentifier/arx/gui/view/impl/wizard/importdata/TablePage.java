@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class TablePage extends WizardPage {
 
-    private ImportWizard wizardImport;
+    private ImportDataWizard wizardImport;
 
     private Table table;
     private TableViewer checkboxTableViewer;
@@ -28,7 +28,7 @@ public class TablePage extends WizardPage {
     private TableViewerColumn tableViewerColumnDatatype;
 
 
-    public TablePage(ImportWizard wizardImport)
+    public TablePage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportTablePage");

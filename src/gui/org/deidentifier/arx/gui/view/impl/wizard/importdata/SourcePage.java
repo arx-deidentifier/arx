@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * This page provides means to select the source the user wants to import data
  * from. Once the user makes a choice, it is stored stored within
- * {@link ImportWizard#data} and the page is marked as completed.
+ * {@link ImportDataWizard#data} and the page is marked as completed.
  */
 public class SourcePage extends WizardPage {
 
@@ -29,7 +29,7 @@ public class SourcePage extends WizardPage {
     /**
      * Reference to the wizard containing this page
      */
-    private ImportWizard wizardImport;
+    private ImportDataWizard wizardImport;
 
 
     /**
@@ -37,7 +37,7 @@ public class SourcePage extends WizardPage {
      *
      * @param wizardImport Reference to wizard containing this page
      */
-    public SourcePage(ImportWizard wizardImport)
+    public SourcePage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportSourcePage");
