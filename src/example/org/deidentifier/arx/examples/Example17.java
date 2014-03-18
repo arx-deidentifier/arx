@@ -33,6 +33,7 @@ public class Example17 extends Example {
      * 
      * @param args The arguments
      */
+    @SuppressWarnings("unused")
     public static void main(final String[] args) {
         
         // List all data types
