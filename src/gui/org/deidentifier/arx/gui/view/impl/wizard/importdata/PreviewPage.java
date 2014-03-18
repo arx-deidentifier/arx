@@ -15,14 +15,34 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
+/**
+ * Preview page
+ *
+ * This page gives the user a preview over the data and how it is about to be
+ * imported. Only enabled columns will be displayed
+ * {@link ImportDataColumn#enabled}. The datatype of each column will be shown
+ * as tooltip. Only up to {@link ImportData#previewDataMaxLines} lines will be
+ * shown.
+ */
 public class PreviewPage extends WizardPage {
 
+    /**
+     * Reference to the wizard containing this page
+     */
     private ImportDataWizard wizardImport;
 
+    /*
+     * Widgets
+     */
     private Table table;
     private TableViewer tableViewer;
 
 
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public PreviewPage(ImportDataWizard wizardImport)
     {
 
@@ -35,6 +55,9 @@ public class PreviewPage extends WizardPage {
 
     }
 
+    /**
+     * Creates the design of this page
+     */
     public void createControl(Composite parent)
     {
 
@@ -55,6 +78,9 @@ public class PreviewPage extends WizardPage {
 
     }
 
+    /**
+     * Adds input to table once page gets visible
+     */
     @Override
     public void setVisible(boolean visible)
     {
@@ -106,16 +132,34 @@ public class PreviewPage extends WizardPage {
 
     }
 
+
+    /**
+     * Returns cell content for each column
+     *
+     * The data itself comes in form of {@link ImportData#getPreviewData()}.
+     * This class is a wrapper around this list and makes specific fields
+     * available to the column.
+     */
     private class PreviewColumnLabelProvider extends ColumnLabelProvider {
 
+        /**
+         * Column index this provider is meant to be for, starting with 0
+         */
         private int column;
 
+
+        /**
+         * @param column Column index this provider is for
+         */
         public PreviewColumnLabelProvider(int column) {
 
             this.column = column;
 
         }
 
+        /**
+         * Returns content for this column {@link #column}.
+         */
         @Override
         public String getText(Object element) {
 
