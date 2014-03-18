@@ -411,7 +411,9 @@ public abstract class DataHandle{
      * @param length
      */
     protected void checkColumn(final int column1) {
-        if ((column1 < 0) || (column1 > (header.length - 1))) { throw new IndexOutOfBoundsException("Column index out of range!"); }
+        if ((column1 < 0) || (column1 > (header.length - 1))) { 
+            throw new IndexOutOfBoundsException("Column index out of range: "+column1+" > " + (header.length - 1)); 
+        }
     }
 
     /**
@@ -423,7 +425,9 @@ public abstract class DataHandle{
     protected void checkColumns(final int[] columns) {
 
         // Check
-        if ((columns.length == 0) || (columns.length > header.length)) { throw new IllegalArgumentException("Invalid column indices provided!"); }
+        if ((columns.length == 0) || (columns.length > header.length)) { 
+            throw new IllegalArgumentException("Invalid number of column indices"); 
+        }
 
         // Create a sorted copy of the input columns
         final int[] cols = new int[columns.length];
@@ -433,7 +437,7 @@ public abstract class DataHandle{
         // Check
         for (int i = 0; i < cols.length; i++) {
             checkColumn(cols[i]);
-            if ((i > 0) && (cols[i] == cols[i - 1])) { throw new IllegalArgumentException("Duplicate column index provided!"); }
+            if ((i > 0) && (cols[i] == cols[i - 1])) { throw new IllegalArgumentException("Duplicate column index"); }
         }
     }
     
@@ -442,7 +446,7 @@ public abstract class DataHandle{
      */
     protected void checkRegistry() {
         if (registry == null) {
-            throw new RuntimeException("This data handle is orphaned!");
+            throw new RuntimeException("This data handle is orphaned");
         }
     }
 
@@ -453,11 +457,9 @@ public abstract class DataHandle{
      * @param length
      */
     protected void checkRow(final int row1, final int length) {
-        if ((row1 < 0) || (row1 > length)) { throw new IndexOutOfBoundsException("Row index (" +
-                                                                                 row1 +
-                                                                                 ") out of range (0<=row<=" +
-                                                                                 (length) +
-                                                                                 ")!"); }
+        if ((row1 < 0) || (row1 > length)) { 
+            throw new IndexOutOfBoundsException("Row index (" + row1 + ") out of range (0 <= row <= " + length + ")"); 
+        }
     }
 
     /**
