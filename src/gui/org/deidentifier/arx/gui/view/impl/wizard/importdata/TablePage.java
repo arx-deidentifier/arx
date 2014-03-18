@@ -24,8 +24,8 @@ public class TablePage extends WizardPage {
     private TableViewer checkboxTableViewer;
     private TableColumn tblclmnName;
     private TableViewerColumn tableViewerColumnName;
-    private TableColumn tblclmnDatatype;
-    private TableViewerColumn tableViewerColumnDatatype;
+    private TableColumn tblclmnNumberOfRows;
+    private TableViewerColumn tableViewerNumberOfRows;
 
 
     public TablePage(ImportDataWizard wizardImport)
@@ -101,26 +101,24 @@ public class TablePage extends WizardPage {
         tblclmnName.setWidth(300);
         tblclmnName.setText("Name");
 
-        tableViewerColumnDatatype = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        tableViewerColumnDatatype.setEditingSupport(new ColumnPageDatatypeEditingSupport(checkboxTableViewer));
-        tableViewerColumnDatatype.setLabelProvider(new ColumnLabelProvider() {
+        tableViewerNumberOfRows = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+        tableViewerNumberOfRows.setEditingSupport(new ColumnPageDatatypeEditingSupport(checkboxTableViewer));
+        tableViewerNumberOfRows.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
             public String getText(Object element)
             {
 
-                ImportDataColumn column = (ImportDataColumn)element;
-
-                return column.getDatatype().getSimpleName();
+                return null;
 
             }
 
         });
 
-        tblclmnDatatype = tableViewerColumnDatatype.getColumn();
-        tblclmnDatatype.setToolTipText("Number of entries");
-        tblclmnDatatype.setWidth(100);
-        tblclmnDatatype.setText("Entries");
+        tblclmnNumberOfRows = tableViewerNumberOfRows.getColumn();
+        tblclmnNumberOfRows.setToolTipText("Number of rows");
+        tblclmnNumberOfRows.setWidth(100);
+        tblclmnNumberOfRows.setText("# rows");
 
         setPageComplete(false);
 
