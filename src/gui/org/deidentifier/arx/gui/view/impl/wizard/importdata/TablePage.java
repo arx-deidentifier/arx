@@ -81,7 +81,6 @@ public class TablePage extends WizardPage {
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         tableViewerColumnName = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        tableViewerColumnName.setEditingSupport(new ColumnPageNameEditingSupport(checkboxTableViewer));
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
@@ -102,7 +101,6 @@ public class TablePage extends WizardPage {
         tblclmnName.setText("Name");
 
         tableViewerNumberOfRows = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        tableViewerNumberOfRows.setEditingSupport(new ColumnPageDatatypeEditingSupport(checkboxTableViewer));
         tableViewerNumberOfRows.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
