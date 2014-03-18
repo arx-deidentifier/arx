@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
-public class WizardImportColumnPage extends WizardPage {
+public class ColumnPage extends WizardPage {
 
-    private WizardImport wizardImport;
+    private ImportWizard wizardImport;
 
     private Table table;
     private CheckboxTableViewer checkboxTableViewer;
@@ -33,7 +33,7 @@ public class WizardImportColumnPage extends WizardPage {
     private Boolean selectAll = true;
 
 
-    public WizardImportColumnPage(WizardImport wizardImport)
+    public ColumnPage(ImportWizard wizardImport)
     {
 
         super("WizardImportCsvPage");
@@ -63,9 +63,9 @@ public class WizardImportColumnPage extends WizardPage {
 
                 setPageComplete(false);
 
-                ((WizardImportDataColumn)event.getElement()).setEnabled(event.getChecked());
+                ((DataColumn)event.getElement()).setEnabled(event.getChecked());
 
-                for (WizardImportDataColumn column : wizardImport.getData().getColumns()) {
+                for (DataColumn column : wizardImport.getData().getColumns()) {
 
                     if (column.isEnabled()) {
 
@@ -104,14 +104,14 @@ public class WizardImportColumnPage extends WizardPage {
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
         tableViewerColumnName = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        tableViewerColumnName.setEditingSupport(new WizardImportColumnPageNameEditingSupport(checkboxTableViewer));
+        tableViewerColumnName.setEditingSupport(new ColumnPageNameEditingSupport(checkboxTableViewer));
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
             public String getText(Object element)
             {
 
-                WizardImportDataColumn column = (WizardImportDataColumn)element;
+                DataColumn column = (DataColumn)element;
 
                 return column.getName();
 
@@ -125,14 +125,14 @@ public class WizardImportColumnPage extends WizardPage {
         tblclmnName.setText("Name");
 
         tableViewerColumnDatatype = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        tableViewerColumnDatatype.setEditingSupport(new WizardImportColumnPageDatatypeEditingSupport(checkboxTableViewer));
+        tableViewerColumnDatatype.setEditingSupport(new ColumnPageDatatypeEditingSupport(checkboxTableViewer));
         tableViewerColumnDatatype.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
             public String getText(Object element)
             {
 
-                WizardImportDataColumn column = (WizardImportDataColumn)element;
+                DataColumn column = (DataColumn)element;
 
                 return column.getDatatype();
 
@@ -195,7 +195,7 @@ public class WizardImportColumnPage extends WizardPage {
 
             setPageComplete(false);
 
-            for (WizardImportDataColumn column : wizardImport.getData().getColumns()) {
+            for (DataColumn column : wizardImport.getData().getColumns()) {
 
                 if (column.isEnabled()) {
 

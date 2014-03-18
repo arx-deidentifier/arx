@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 
-public class WizardImportXlsPage extends WizardPage {
+public class XlsPage extends WizardPage {
 
-    private WizardImport wizardImport;
+    private ImportWizard wizardImport;
 
     private Label lblLocation;
     private Combo comboLocation;
@@ -39,7 +39,7 @@ public class WizardImportXlsPage extends WizardPage {
     private static final int PREVIEWLINES = 5;
 
 
-    public WizardImportXlsPage(WizardImport wizardImport)
+    public XlsPage(ImportWizard wizardImport)
     {
 
         super("WizardImportXlsPage");
@@ -242,12 +242,12 @@ public class WizardImportXlsPage extends WizardPage {
 
             }
 
-            ArrayList<WizardImportDataColumn> columns = new ArrayList<WizardImportDataColumn>();
+            ArrayList<DataColumn> columns = new ArrayList<DataColumn>();
 
             int index = 0;
             for (final Cell c : result.get(0)) {
 
-                WizardImportDataColumn column = new WizardImportDataColumn(false, "", "String");
+                DataColumn column = new DataColumn(false, "", "String");
 
                 if (btnContainsHeader.getSelection()) {
 

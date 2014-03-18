@@ -64,7 +64,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
 import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.WizardImport;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -516,7 +516,7 @@ public class Controller implements IView {
             return;
         }
 
-        WizardDialog dialog = new WizardDialog(main.getShell(), new WizardImport(this, model));
+        WizardDialog dialog = new WizardDialog(main.getShell(), new ImportWizard(this, model));
         dialog.open();
 
     }

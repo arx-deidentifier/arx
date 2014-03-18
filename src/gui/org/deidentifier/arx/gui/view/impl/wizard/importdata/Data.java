@@ -11,7 +11,7 @@ import java.util.List;
  *
  * TODO Change to more elegant implementation (i.e. general key value storage)
  */
-public class WizardImportData {
+public class Data {
 
     /**
      * Possible sources for importing data
@@ -26,9 +26,9 @@ public class WizardImportData {
     /**
      * List of detected columns to be imported
      *
-     * Each column is represented by {@link WizardImportDataColumn}.
+     * Each column is represented by {@link DataColumn}.
      */
-    private List<WizardImportDataColumn> columns;
+    private List<DataColumn> columns;
 
     /**
      * Location of file to import from
@@ -152,7 +152,7 @@ public class WizardImportData {
     /**
      * @return {@link #columns}
      */
-    public List<WizardImportDataColumn> getColumns()
+    public List<DataColumn> getColumns()
     {
 
         return columns;
@@ -162,7 +162,7 @@ public class WizardImportData {
     /**
      * @param columns {@link #columns}
      */
-    public void setColumns(List<WizardImportDataColumn> columns)
+    public void setColumns(List<DataColumn> columns)
     {
 
         this.columns = columns;

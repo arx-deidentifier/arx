@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
-public class WizardImportPreviewPage extends WizardPage {
+public class PreviewPage extends WizardPage {
 
-    private WizardImport wizardImport;
+    private ImportWizard wizardImport;
 
     private Table table;
     private TableViewer tableViewer;
@@ -29,7 +29,7 @@ public class WizardImportPreviewPage extends WizardPage {
     private static final int PREVIEWLINES = 25;
 
 
-    public WizardImportPreviewPage(WizardImport wizardImport)
+    public PreviewPage(ImportWizard wizardImport)
     {
 
         super("WizardImportPreviewPage");
@@ -77,11 +77,11 @@ public class WizardImportPreviewPage extends WizardPage {
 
             }
 
-            List<WizardImportDataColumn> columns = wizardImport.getData().getColumns();
+            List<DataColumn> columns = wizardImport.getData().getColumns();
 
             for (int i = 0; i < columns.size(); i++) {
 
-                WizardImportDataColumn column = columns.get(i);
+                DataColumn column = columns.get(i);
 
                 if (column.isEnabled()) {
 

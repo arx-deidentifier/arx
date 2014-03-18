@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 
-public class WizardImportJdbcPage extends WizardPage {
+public class JdbcPage extends WizardPage {
 
-    private WizardImport wizardImport;
+    private ImportWizard wizardImport;
 
     private Label lblType;
     private Combo comboType;
@@ -33,7 +33,7 @@ public class WizardImportJdbcPage extends WizardPage {
     private Text txtPort;
 
 
-    public WizardImportJdbcPage(WizardImport wizardImport)
+    public JdbcPage(ImportWizard wizardImport)
     {
 
         super("WizardImportJdbcPage");

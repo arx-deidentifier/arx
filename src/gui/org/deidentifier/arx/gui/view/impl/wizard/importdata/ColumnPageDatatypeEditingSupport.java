@@ -11,13 +11,13 @@ import org.eclipse.swt.SWT;
  * Implements the editing support for datatype column within the column page
  *
  * This allows to change the datatype of columns with the column page
- * {@link WizardImportColumnPage}. The modifications are performed with a
- * combo box {@link ComboBoxCellEditor}. The datatype itself is stored
- * with the appropriate {@link WizardImportDataColumn} object.
+ * {@link ColumnPage}. The modifications are performed with a combo box
+ * {@link ComboBoxCellEditor}. The datatype itself is stored with the
+ * appropriate {@link DataColumn} object.
  *
  * TODO Implement better editor for datatypes of arx framework
  */
-public class WizardImportColumnPageDatatypeEditingSupport extends EditingSupport {
+public class ColumnPageDatatypeEditingSupport extends EditingSupport {
 
     /**
      * Actual editor
@@ -35,7 +35,7 @@ public class WizardImportColumnPageDatatypeEditingSupport extends EditingSupport
      *
      * @param viewer The TableViewer this editor is implemented for
      */
-    public WizardImportColumnPageDatatypeEditingSupport(TableViewer viewer)
+    public ColumnPageDatatypeEditingSupport(TableViewer viewer)
     {
 
         super(viewer);
@@ -85,14 +85,14 @@ public class WizardImportColumnPageDatatypeEditingSupport extends EditingSupport
      * Sets datatype of column
      *
      * Internally this function makes use of
-     * {@link WizardImportDataColumn#setDatatype(String)}. The values are taken
+     * {@link DataColumn#setDatatype(String)}. The values are taken
      * from {@link #choices}.
      */
     @Override
     protected void setValue(Object element, Object value)
     {
 
-        ((WizardImportDataColumn)element).setDatatype(choices[(int)value]);
+        ((DataColumn)element).setDatatype(choices[(int)value]);
         getViewer().update(element, null);
 
     }

@@ -1,6 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.WizardImportData.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.Data.source;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Composite;
  *
  * This page provides means to select the source the user wants to import data
  * from. Once the user makes a choice, it is stored stored within
- * {@link WizardImport#data} and the page is marked as completed.
+ * {@link ImportWizard#data} and the page is marked as completed.
  */
-public class WizardImportSourcePage extends WizardPage {
+public class SourcePage extends WizardPage {
 
     /*
      * Widgets
@@ -29,7 +29,7 @@ public class WizardImportSourcePage extends WizardPage {
     /**
      * Reference to the wizard containing this page
      */
-    private WizardImport wizardImport;
+    private ImportWizard wizardImport;
 
 
     /**
@@ -37,7 +37,7 @@ public class WizardImportSourcePage extends WizardPage {
      *
      * @param wizardImport Reference to wizard containing this page
      */
-    public WizardImportSourcePage(WizardImport wizardImport)
+    public SourcePage(ImportWizard wizardImport)
     {
 
         super("WizardImportSourcePage");

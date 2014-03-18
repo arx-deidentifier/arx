@@ -31,11 +31,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
-public class WizardImportCsvPage extends WizardPage {
+public class CsvPage extends WizardPage {
 
-    private WizardImport wizardImport;
+    private ImportWizard wizardImport;
 
-    private ArrayList<WizardImportDataColumn> columns;
+    private ArrayList<DataColumn> columns;
 
     private Label lblLocation;
     private Combo comboLocation;
@@ -53,7 +53,7 @@ public class WizardImportCsvPage extends WizardPage {
     private boolean customSeparator;
 
 
-    public WizardImportCsvPage(WizardImport wizardImport)
+    public CsvPage(ImportWizard wizardImport)
     {
 
         super("WizardImportCsvPage");
@@ -253,7 +253,7 @@ public class WizardImportCsvPage extends WizardPage {
         final CSVDataInput in = new CSVDataInput(comboLocation.getText(), separators[selection]);
         final Iterator<String[]> it = in.iterator();
         final List<String[]> data = new ArrayList<String[]>();
-        columns = new ArrayList<WizardImportDataColumn>();
+        columns = new ArrayList<DataColumn>();
 
         int count = 0;
 
@@ -311,7 +311,7 @@ public class WizardImportCsvPage extends WizardPage {
         int index = 0;
         for (final String s : data.get(0)) {
 
-            WizardImportDataColumn column = new WizardImportDataColumn(false, s, "String");
+            DataColumn column = new DataColumn(false, s, "String");
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
             tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(index++));

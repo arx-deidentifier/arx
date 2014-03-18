@@ -10,11 +10,11 @@ import org.eclipse.jface.viewers.TextCellEditor;
  * Implements the editing support for name column within the column page
  *
  * This allows to change the name of columns with the column page
- * {@link WizardImportColumnPage}. The modifications are performed within a
- * simple text field {@link TextCellEditor}. The name itself is stored
- * with the appropriate {@link WizardImportDataColumn} object.
+ * {@link ColumnPage}. The modifications are performed within a simple text
+ * field {@link TextCellEditor}. The name itself is stored with the
+ * appropriate {@link DataColumn} object.
  */
-public class WizardImportColumnPageNameEditingSupport extends EditingSupport {
+public class ColumnPageNameEditingSupport extends EditingSupport {
 
     /**
      * Actual editor
@@ -27,7 +27,7 @@ public class WizardImportColumnPageNameEditingSupport extends EditingSupport {
      *
      * @param viewer The TableViewer this editor is implemented for
      */
-    public WizardImportColumnPageNameEditingSupport(TableViewer viewer)
+    public ColumnPageNameEditingSupport(TableViewer viewer)
     {
 
         super(viewer);
@@ -59,24 +59,24 @@ public class WizardImportColumnPageNameEditingSupport extends EditingSupport {
     }
 
     /**
-     * Gets name of column ({@link WizardImportDataColumn#getName()})
+     * Gets name of column ({@link DataColumn#getName()})
      */
     @Override
     protected Object getValue(Object arg0)
     {
 
-        return ((WizardImportDataColumn)arg0).getName();
+        return ((DataColumn)arg0).getName();
 
     }
 
     /**
-     * Sets name of column ({@link WizardImportDataColumn#setName(String)})
+     * Sets name of column ({@link DataColumn#setName(String)})
      */
     @Override
     protected void setValue(Object element, Object value)
     {
 
-        ((WizardImportDataColumn)element).setName((String)value);
+        ((DataColumn)element).setName((String)value);
         getViewer().update(element, null);
 
     }

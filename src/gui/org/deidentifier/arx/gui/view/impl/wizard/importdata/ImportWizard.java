@@ -2,7 +2,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.WizardImportData.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.Data.source;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -17,19 +17,19 @@ import org.eclipse.jface.wizard.Wizard;
  * Multiple sources are supported for the import are supported:
  *
  * <ul>
- *  <li>{@link WizardImportCsvPage} CSV</li>
- *  <li>{@link WizardImportJdbcPage} Database (JDBC)</li>
- *  <li>{@link WizardImportXlsPage} Excel</li>
+ *  <li>{@link CsvPage} CSV</li>
+ *  <li>{@link JdbcPage} Database (JDBC)</li>
+ *  <li>{@link XlsPage} Excel</li>
  * </ul>
  *
  * Refer to appropriate page(s) for more details about a specific source.
  */
-public class WizardImport extends Wizard {
+public class ImportWizard extends Wizard {
 
     /**
      * Object storing data gathered by the wizard
      */
-    private WizardImportData data = new WizardImportData();
+    private Data data = new Data();
 
     /**
      * Reference of controller being used by this wizard
@@ -44,13 +44,13 @@ public class WizardImport extends Wizard {
     /*
      * All of the pages provided by this wizard
      */
-    private WizardImportSourcePage sourcePage;
-    private WizardImportCsvPage csvPage;
-    private WizardImportColumnPage columnPage;
-    private WizardImportPreviewPage previewPage;
-    private WizardImportJdbcPage jdbcPage;
-    private WizardImportTablePage tablePage;
-    private WizardImportXlsPage xlsPage;
+    private SourcePage sourcePage;
+    private CsvPage csvPage;
+    private ColumnPage columnPage;
+    private PreviewPage previewPage;
+    private JdbcPage jdbcPage;
+    private TablePage tablePage;
+    private XlsPage xlsPage;
 
     /**
      * Holds reference to the page currently being shown
@@ -84,7 +84,7 @@ public class WizardImport extends Wizard {
     /**
      * Returns a reference to the object containing the gathered data
      */
-    WizardImportData getData() {
+    Data getData() {
 
         return data;
 
@@ -96,7 +96,7 @@ public class WizardImport extends Wizard {
      * @param controller Reference to controller
      * @param model Reference to model
      */
-    public WizardImport(Controller controller, Model model)
+    public ImportWizard(Controller controller, Model model)
     {
 
         setWindowTitle("Import data wizard");
@@ -118,25 +118,25 @@ public class WizardImport extends Wizard {
     public void addPages()
     {
 
-        sourcePage = new WizardImportSourcePage(this);
+        sourcePage = new SourcePage(this);
         addPage(sourcePage);
 
-        csvPage = new WizardImportCsvPage(this);
+        csvPage = new CsvPage(this);
         addPage(csvPage);
 
-        columnPage = new WizardImportColumnPage(this);
+        columnPage = new ColumnPage(this);
         addPage(columnPage);
 
-        previewPage = new WizardImportPreviewPage(this);
+        previewPage = new PreviewPage(this);
         addPage(previewPage);
 
-        jdbcPage = new WizardImportJdbcPage(this);
+        jdbcPage = new JdbcPage(this);
         addPage(jdbcPage);
 
-        tablePage = new WizardImportTablePage(this);
+        tablePage = new TablePage(this);
         addPage(tablePage);
 
-        xlsPage = new WizardImportXlsPage(this);
+        xlsPage = new XlsPage(this);
         addPage(xlsPage);
 
     }
