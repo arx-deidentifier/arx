@@ -213,7 +213,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
              removeOutliers,
              config);
     }
-
+    
     /**
      * Instantiates a new ARX result.
      * 
@@ -271,12 +271,22 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         checkColumn(col);
         return header[col];
     }
-    // TODO: Removed because the result config might be different from the input config
-    //       in case of multiple sensitive attributes
-    // @Override
-    // public ARXConfiguration getConfiguration() {
-    //  return config;
-    // }
+
+    @Override
+    public DataType<?> getDataType(String attribute) {
+        
+        int col = this.getColumnIndexOf(attribute);
+
+        // Return the according values
+        final int type = inverseMap[col] >>> AttributeType.SHIFT;
+        switch (type) {
+        case AttributeType.ATTR_TYPE_ID:
+            return DataType.STRING;
+        default:
+            final int index = inverseMap[col] & AttributeType.MASK;
+            return dataTypes[type][index];
+        }
+    }
 
     /**
      * Gets the distinct values.
@@ -319,18 +329,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     @Override
     public ARXNode getGlobalOptimum() {
         return optimalNode;
-    }
-
-    @Override
-    public int getNumberOfGroups() {
-        getHandle(currentNode);
-        return checker.getNumberOfGroups();
-    }
-
-    @Override
-    public int getNumberOfOutlyingGroups() {
-        getHandle(currentNode);
-        return checker.getNumberOfOutlyingGroups();
     }
 
     @Override
@@ -408,6 +406,24 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         return lattice;
     }
 
+    @Override
+    public int getNumberOfGroups() {
+        getHandle(currentNode);
+        return checker.getNumberOfGroups();
+    }
+
+    @Override
+    public int getNumberOfOutlyingGroups() {
+        getHandle(currentNode);
+        return checker.getNumberOfOutlyingGroups();
+    }
+
+    @Override
+    public int getNumberOfOutlyingTuples() {
+        getHandle(currentNode);
+        return checker.getNumberOfOutlyingTuples();
+    }
+
     /**
      * Gets the num columns.
      * 
@@ -443,12 +459,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     @Override
     public long getTime() {
         return duration;
-    }
-
-    @Override
-    public int getNumberOfOutlyingTuples() {
-        getHandle(currentNode);
-        return checker.getNumberOfOutlyingTuples();
     }
 
     /**
@@ -572,6 +582,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         // Create view
         this.getRegistry().createOutputSubset(config);
     }
+    
+    
 
     /**
      * Creates the data type array.
@@ -587,28 +599,36 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         for (int i = 0; i < dataTypes.length; i++) {
             final DataType<?>[] type = dataTypes[i];
 
-            String[] headers = null;
+            String[] header = null;
 
             switch (i) {
             case AttributeType.ATTR_TYPE_IS:
-                headers = dataIS.getHeader();
+                header = dataIS.getHeader();
                 break;
             case AttributeType.ATTR_TYPE_QI:
-                headers = dataQI.getHeader();
+                header = dataQI.getHeader();
                 break;
             case AttributeType.ATTR_TYPE_SE:
-                headers = dataSE.getHeader();
+                header = dataSE.getHeader();
                 break;
             }
 
             for (int j = 0; j < type.length; j++) {
-                dataTypes[i][j] = definition.getDataType(headers[j]);
+                dataTypes[i][j] = definition.getDataType(header[j]);
                 if ((i == AttributeType.ATTR_TYPE_QI) &&
                     (currentNode.getTransformation()[j] > 0)) {
                     dataTypes[i][j] = DataType.STRING;
                 }
             }
         }
+    }
+ 
+    /**
+     * Returns the suppression string
+     * @return
+     */
+    protected String getSuppressionString(){
+        return this.suppressionString;
     }
 
     /**

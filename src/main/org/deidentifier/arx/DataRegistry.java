@@ -225,6 +225,15 @@ class DataRegistry {
     }
     
     /**
+     * Returns the base data type without generalization
+     * @param attribute
+     * @return
+     */
+    protected DataType<?> getBaseDataType(String attribute) {
+        return this.input.getBaseDataType(attribute);
+    }
+
+    /**
      * Implementation of {@link DataHandle#isOutlier(row)}
      * @param handle
      * @param row
@@ -259,7 +268,7 @@ class DataRegistry {
             this.inputSubset = null;
         }
     }
-
+    
     /**
      * Implementation of {@link DataHandle#sort(boolean, int...)}
      * @param handle
@@ -269,7 +278,7 @@ class DataRegistry {
     protected void sort(final DataHandle handle, final boolean ascending, final int... columns) {
         sort(handle, 0, handle.getNumRows(), ascending, columns);
     }
-    
+
     /**
      * Implementation of {@link DataHandle#sort(int, int, boolean, int...)}
      * @param handle
@@ -296,7 +305,7 @@ class DataRegistry {
     protected void sort(final DataHandle handle, final Swapper swapper, final boolean ascending, final int... columns) {
         sort(handle, swapper, 0, handle.getNumRows(), ascending, columns);
     }
-
+    
     /**
      * Implementation of {@link DataHandle#sort(Swapper, int, int, boolean, int...)}
      * @param handle
@@ -322,7 +331,7 @@ class DataRegistry {
             sortAll(handle, swapper, from, to, ascending, columns);
         }
     }
-    
+
     /**
      * Implementation of {@link DataHandle#swap(int, int)}
      * @param dataHandle

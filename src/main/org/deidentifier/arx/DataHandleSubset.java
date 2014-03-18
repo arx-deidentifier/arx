@@ -36,6 +36,13 @@ public class DataHandleSubset extends DataHandle {
         checkRegistry();
         return source.getAttributeName(col);
     }
+    
+    
+
+    @Override
+    public DataType<?> getDataType(String attribute) {
+        return source.getDataType(attribute);
+    }
 
     @Override
     public String[] getDistinctValues(int column) {
@@ -126,36 +133,23 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
-        return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
-    }
-
-    @Override
     protected void createDataTypeArray() {
         this.dataTypes = source.dataTypes;
     }
 
     @Override
+    protected String getSuppressionString(){
+        return source.getSuppressionString();
+    }
+
+    @Override
+    protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
+        return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
+    }
+
+    @Override
     protected String internalGetValue(int row, int col) {
         return source.internalGetValue(this.subset.getArray()[row], col);
-    }
-
-    /**
-     * Translates the row number
-     * @param row
-     * @return
-     */
-    protected int internalTranslate(int row) {
-        return this.subset.getArray()[row];
-    }
-
-    /**
-     * Swaps the bits in the set representation
-     * @param row1
-     * @param row2
-     */
-    protected void internalSwap(int row1, int row2) {
-        this.subset.getSet().swap(row1, row2);
     }
 
     /**
@@ -168,5 +162,23 @@ public class DataHandleSubset extends DataHandle {
                 this.subset.getArray()[index++] = i;
             }
         }
+    }
+
+    /**
+     * Swaps the bits in the set representation
+     * @param row1
+     * @param row2
+     */
+    protected void internalSwap(int row1, int row2) {
+        this.subset.getSet().swap(row1, row2);
+    }
+    
+    /**
+     * Translates the row number
+     * @param row
+     * @return
+     */
+    protected int internalTranslate(int row) {
+        return this.subset.getArray()[row];
     }
 }

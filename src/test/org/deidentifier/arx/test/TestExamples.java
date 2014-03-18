@@ -159,4 +159,44 @@ public class TestExamples {
             Assert.fail();
         }
     }
+
+    @Test
+    public void testExample13() {
+        try {
+            Example12.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample14() {
+        try {
+            Example12.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample15() {
+        try {
+            Example12.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample16() {
+        try {
+            Example12.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
 }

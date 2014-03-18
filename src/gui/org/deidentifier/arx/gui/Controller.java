@@ -386,6 +386,7 @@ public class Controller implements IView {
                                                       model.getInputConfig()
                                                            .getInput()
                                                            .getHandle()
+                                                           .getStatistics()
                                                            .getDistinctValues(index));
         if (i.open(main.getShell())) {
             update(new ModelEvent(this, ModelPart.HIERARCHY, i.getModel()
