@@ -1,64 +1,160 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.analyze;
 
 import java.awt.Panel;
 
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 
+/**
+ * This class implements a base class for views that show statistic properties of the data
+ * @author Fabian Prasser
+ */
 public abstract class ViewStatistics extends Panel{
     
-    private static final long serialVersionUID = 5170104283288654748L;
-    
-    protected ModelPart target;
-    protected Model model;
-
     /**
-     * Returns the data handle
-     * @return
+     * This class implements a context for drawing statistics
+     * @author Fabian Prasser
      */
-    protected DataHandle getHandle() {
-        DataHandle handle = null;
-        if (model != null){
-            if (target == ModelPart.INPUT){
-                handle = model.getInputConfig().getInput().getHandle();
-                if (model.getViewConfig().isSubset() && 
-                    model.getOutputConfig() != null &&
-                    model.getOutputConfig().getConfig() != null &&
-                    handle != null) {
-                    handle = handle.getView();
-                }
-                return handle;
-            } else {
-                handle = model.getOutput();
-                if (model.getViewConfig().isSubset() && 
-                    model.getOutputConfig() != null &&
-                    model.getOutputConfig().getConfig() != null &&
-                    handle != null) {
-                    handle = handle.getView();
-                }
-                return handle;
-            }
-        } else {
-            return null;
+    public static class StatisticsContext{
+        /** The according config*/
+        public final ModelConfiguration config;
+        /** The according handle*/
+        public final DataHandle handle;
+        /**
+         * Initial constructor
+         * @param config
+         * @param handle
+         */
+        private StatisticsContext(ModelConfiguration config, DataHandle handle) {
+            this.config = config;
+            this.handle = handle;
+        }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result +
+                     ((config == null) ? 0 : config.hashCode());
+            result = prime * result +
+                     ((handle == null) ? 0 : handle.hashCode());
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            StatisticsContext other = (StatisticsContext) obj;
+            if (config == null) {
+                if (other.config != null) return false;
+            } else if (!config.equals(other.config)) return false;
+            if (handle == null) {
+                if (other.handle != null) return false;
+            } else if (!handle.equals(other.handle)) return false;
+            return true;
         }
     }
     
+    private static final long serialVersionUID = 5170104283288654748L;
+    
+    /** The target (input or output)*/
+    protected ModelPart target;
+    /** The model*/
+    protected Model model;
 
     /**
-     * Returns the config
+     * Returns the current context, consisting of a consistent combination of
+     * a config and a data handle
      * @return
      */
-    protected ModelConfiguration getConfig() {
-        if (model != null){
-            if (target == ModelPart.INPUT){
-                return model.getInputConfig();
+    protected StatisticsContext getContext(){
+        
+        // Prepare
+        DataHandle handle = null;
+        ModelConfiguration config = null;
+        
+        // Check
+        if (model==null) return null;
+        
+        // If input 
+        if (target == ModelPart.INPUT){
+            
+            // If output available
+            if (model.getOutputConfig() != null && model.getOutputConfig().getInput() != null){
+                config = model.getOutputConfig();
             } else {
-                return model.getOutputConfig();
+                config = model.getInputConfig();
             }
+            handle = config.getInput().getHandle();
+           
+        // If output
         } else {
-            return null;
+            config = model.getOutputConfig();
+            handle = model.getOutput();
         }
+        
+        // If subset view enabled
+        if (model.getViewConfig().isSubset() && 
+            model.getOutputConfig() != null &&
+            model.getOutputConfig().getConfig() != null &&
+            handle != null) {
+            handle = handle.getView();
+        }
+        
+        // Return
+        return new StatisticsContext(config, handle);
+    }
+
+    /**
+     * Returns a generalization hierarchy for the attribute, if available
+     * @param context
+     * @param attribute
+     * @return
+     */
+    protected Hierarchy getHierarchy(StatisticsContext context, String attribute) {
+
+        // We only accept sanitized input
+        // TODO: Theoretically, we could also use input-hierarchies
+        // TODO: but would need to make sure that these cover all data items
+        if (context.config == model.getInputConfig()) return null;
+        
+        // First, check hierarchies for QIs
+        AttributeType type = context.handle.getDefinition().getAttributeType(attribute);
+        if (type instanceof Hierarchy){
+            return (Hierarchy)type;
+        }
+        
+        // Second, check for hierarchies associated with t-closeness
+        for (HierarchicalDistanceTCloseness t : context.config.getCriteria(HierarchicalDistanceTCloseness.class)){
+            if (t.getAttribute().equals(attribute)) {
+                return t.getHierarchy();
+            }
+        }
+        
+        // Nothing found
+        return null;
     }
 }
