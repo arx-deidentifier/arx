@@ -36,11 +36,12 @@ public class Example17 extends Example {
     @SuppressWarnings("unused")
     public static void main(final String[] args) {
         
-        // List all data types
+        // 1. List all data types
         for (Entry<?> type : DataType.LIST){
             
             // Print basic information
             System.out.println(" - Label : " + type.getLabel());
+            System.out.println("   * Class: " + type.getWrappedClass());
             System.out.println("   * Format: " + type.hasFormat());
             if (type.hasFormat()){
                 System.out.println("   * Formats: " + type.getExampleFormats());
@@ -54,5 +55,8 @@ public class Example17 extends Example {
                 instance = type.newInstance(type.getExampleFormats().get(0));
             }
         }
+        
+        // 2. Obtain specific data type
+        Entry<Double> entry = DataType.LIST(Double.class);
     }
 }

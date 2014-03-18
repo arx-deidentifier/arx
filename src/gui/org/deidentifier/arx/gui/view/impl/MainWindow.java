@@ -23,9 +23,12 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.Entry;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -178,6 +181,7 @@ public class MainWindow implements IView {
         display.dispose();
     }
 
+    @SuppressWarnings("unchecked")
     public String showDateFormatInputDialog(final String header,
                                             final String text,
                                             final Collection<String> dates) {
@@ -205,7 +209,8 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        for (final String format : controller.getResources().getDateFormats()) {
+        Entry<Date> entry = DataType.LIST(Date.class);
+        for (final String format : entry.getExampleFormats()) {
             if (validator.isValid(format) == null) {
                 initial = format;
                 break;
@@ -254,7 +259,8 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        for (final String format : controller.getResources().getDecimalFormats()) {
+        Entry<Double> entry = DataType.LIST(Double.class);
+        for (final String format : entry.getExampleFormats()) {
             if (validator.isValid(format) == null) {
                 initial = format;
                 break;

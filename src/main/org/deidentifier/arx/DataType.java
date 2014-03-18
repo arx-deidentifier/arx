@@ -45,6 +45,8 @@ public abstract class DataType<T> {
         private boolean hasFormat;
         /** If yes, a list of available formats*/
         private List<String> exampleFormats;
+        /** The wrapped java class*/
+        private Class<?> clazz;
         
         /**
          * Internal constructor
@@ -52,7 +54,8 @@ public abstract class DataType<T> {
          * @param hasFormat
          * @param exampleFormats
          */
-        private Entry(String label, boolean hasFormat, List<String> exampleFormats) {
+        private Entry(Class<T> clazz, String label, boolean hasFormat, List<String> exampleFormats) {
+            this.clazz = clazz;
             this.label = label;
             this.hasFormat = hasFormat;
             this.exampleFormats = exampleFormats;
@@ -81,6 +84,14 @@ public abstract class DataType<T> {
          */
         public List<String> getExampleFormats() {
             return exampleFormats;
+        }
+        
+        /**
+         * Returns the wrapped java class
+         * @return
+         */
+        public Class<?> getWrappedClass() {
+            return clazz;
         }
         
         /**
@@ -352,6 +363,21 @@ public abstract class DataType<T> {
         	return s;
         }
     }
+    
+    /** 
+     * Returns a datatype for the given class
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static final <U> Entry<U> LIST(Class<U> clazz){
+        for (Entry<?> entry : LIST) {
+            if (entry.getWrappedClass() == clazz) {
+                return (Entry<U>)entry;
+            }
+        }
+        return null;
+    }
 
     /** Provides a list of all available data types */
     public static final List<Entry<?>>   LIST    = listDataTypes();
@@ -407,19 +433,19 @@ public abstract class DataType<T> {
      */
     private static List<Entry<?>> listDataTypes(){
         List<Entry<?>> list = new ArrayList<Entry<?>>();
-        list.add(new Entry<String>("String", false, new ArrayList<String>()){
+        list.add(new Entry<String>(String.class, "String", false, new ArrayList<String>()){
             @Override public DataType<String> newInstance() { return STRING; }
             @Override public DataType<String> newInstance(String format) {return STRING;}
         });
-        list.add(new Entry<Date>("Date/Time",  true, listDateFormats()){
+        list.add(new Entry<Date>(Date.class, "Date/Time",  true, listDateFormats()){
             @Override public DataType<Date> newInstance() { return DATE; }
             @Override public DataType<Date> newInstance(String format) {return DATE(format);}
         });
-        list.add(new Entry<Double>("Decimal", true, listDecimalFormats()){
+        list.add(new Entry<Double>(Double.class, "Decimal", true, listDecimalFormats()){
             @Override public DataType<Double> newInstance() { return DECIMAL; }
             @Override public DataType<Double> newInstance(String format) {return DECIMAL(format);}
         });
-        list.add(new Entry<Long>("Integer", false, new ArrayList<String>()){
+        list.add(new Entry<Long>(Long.class, "Integer", false, new ArrayList<String>()){
             @Override public DataType<Long> newInstance() { return INTEGER; }
             @Override public DataType<Long> newInstance(String format) {return INTEGER(format);}
         });
