@@ -21,7 +21,9 @@ package org.deidentifier.arx;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This class provides access to the data types supported by the ARX framework
@@ -29,7 +31,72 @@ import java.util.Date;
  * @author Prasser, Kohlmayer
  */
 public abstract class DataType<T> {
-	
+
+    /**
+     * An entry in the list of available data types
+     * @author Fabian Prasser
+     * @param <T>
+     */
+    public static abstract class Entry<T> {
+
+        /** A human readable label*/
+        private String label;
+        /** Can the type be parameterized with a format string*/
+        private boolean hasFormat;
+        /** If yes, a list of available formats*/
+        private List<String> exampleFormats;
+        
+        /**
+         * Internal constructor
+         * @param label
+         * @param hasFormat
+         * @param exampleFormats
+         */
+        private Entry(String label, boolean hasFormat, List<String> exampleFormats) {
+            this.label = label;
+            this.hasFormat = hasFormat;
+            this.exampleFormats = exampleFormats;
+        }
+        
+        /**
+         * Returns a human readable label
+         * @return
+         */
+        public String getLabel() {
+            return label;
+        }
+        
+        /**
+         * Returns whether the type be parameterized with a format string. Note that every data type
+         * can be instantiated without a format string, using a default format.
+         * @return
+         */
+        public boolean hasFormat() {
+            return hasFormat;
+        }
+        
+        /**
+         * Returns a list of example formats
+         * @return
+         */
+        public List<String> getExampleFormats() {
+            return exampleFormats;
+        }
+        
+        /**
+         * Creates a new instance with default format string
+         * @return
+         */
+        public abstract DataType<T> newInstance();
+        
+        /**
+         * Creates a new instance with the given format string
+         * @param format
+         * @return
+         */
+        public abstract DataType<T> newInstance(String format);
+    }
+    
     /**
      * Base class for date/time types
      * @author Fabian Prasser
@@ -119,7 +186,7 @@ public abstract class DataType<T> {
         
         private DecimalFormat format;
         
-        public ARXInteger(){
+        private ARXInteger(){
             format = null;
         }
         
@@ -129,7 +196,7 @@ public abstract class DataType<T> {
          * @param format
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
-        public ARXInteger(String format){
+        private ARXInteger(String format){
             this.format = new DecimalFormat(format);
         }
         
@@ -187,7 +254,7 @@ public abstract class DataType<T> {
         
         private DecimalFormat format;
         
-        public ARXDecimal(){
+        private ARXDecimal(){
             format = null;
         }
         
@@ -197,7 +264,7 @@ public abstract class DataType<T> {
          * @param format
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
-        public ARXDecimal(String format){
+        private ARXDecimal(String format){
             this.format = new DecimalFormat(format);
         }
         
@@ -286,6 +353,9 @@ public abstract class DataType<T> {
         }
     }
 
+    /** Provides a list of all available data types */
+    public static final List<Entry<?>>   LIST    = listDataTypes();
+
     /** A generic decimal data type */
     public static final DataType<Double> DECIMAL = new ARXDecimal();
 
@@ -297,11 +367,11 @@ public abstract class DataType<T> {
 
     /** A generic integer data type */
     public static final DataType<Long>   INTEGER = new ARXInteger();
-
+    
     /**
      * An integer data type with given format
      * 
-     * @see SimpleDateFormat
+     * @see DecimalFormat
      * @param format
      * @return
      */
@@ -312,7 +382,7 @@ public abstract class DataType<T> {
     /**
      * A decimal data type with given format
      * 
-     * @see SimpleDateFormat
+     * @see DecimalFormat
      * @param format
      * @return
      */
@@ -331,6 +401,79 @@ public abstract class DataType<T> {
         return new ARXDate(format);
     }
 
+    /**
+     * Lists all available data types
+     * @return
+     */
+    private static List<Entry<?>> listDataTypes(){
+        List<Entry<?>> list = new ArrayList<Entry<?>>();
+        list.add(new Entry<String>("String", false, new ArrayList<String>()){
+            @Override public DataType<String> newInstance() { return STRING; }
+            @Override public DataType<String> newInstance(String format) {return STRING;}
+        });
+        list.add(new Entry<Date>("Date/Time",  true, listDateFormats()){
+            @Override public DataType<Date> newInstance() { return DATE; }
+            @Override public DataType<Date> newInstance(String format) {return DATE(format);}
+        });
+        list.add(new Entry<Double>("Decimal", true, listDecimalFormats()){
+            @Override public DataType<Double> newInstance() { return DECIMAL; }
+            @Override public DataType<Double> newInstance(String format) {return DECIMAL(format);}
+        });
+        list.add(new Entry<Long>("Integer", false, new ArrayList<String>()){
+            @Override public DataType<Long> newInstance() { return INTEGER; }
+            @Override public DataType<Long> newInstance(String format) {return INTEGER(format);}
+        });
+        return list;
+    }
+    
+    /**
+     * Provides a list of example formats for the <code>Date</code> data type
+     * @return
+     */
+    private static List<String> listDateFormats(){
+        List<String> result = new ArrayList<String>();
+        result.add("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        result.add("yyyy-MM-ddZZ");
+        result.add("yyyy-MM-dd'T'HH:mm:ssz");
+        result.add("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        result.add("EEE MMM d hh:mm:ss z yyyy");
+        result.add("EEE MMM dd HH:mm:ss yyyy");
+        result.add("EEEE, dd-MMM-yy HH:mm:ss zzz");
+        result.add("EEE, dd MMM yyyy HH:mm:ss zzz");
+        result.add("EEE, dd MMM yy HH:mm:ss z");
+        result.add("EEE, dd MMM yy HH:mm z");
+        result.add("EEE, dd MMM yyyy HH:mm:ss z");
+        result.add("yyyy-MM-dd'T'HH:mm:ss");
+        result.add("EEE, dd MMM yyyy HH:mm:ss Z");
+        result.add("dd MMM yy HH:mm:ss z");
+        result.add("dd MMM yy HH:mm z");
+        result.add("'T'HH:mm:ss");
+        result.add("'T'HH:mm:ssZZ");
+        result.add("HH:mm:ss");
+        result.add("HH:mm:ssZZ");
+        result.add("yyyy-MM-dd");
+        result.add("yyyy-MM-dd hh:mm:ss");
+        result.add("yyyy-MM-dd HH:mm:ss");
+        result.add("yyyy-MM-dd'T'HH:mm:ssz");
+        result.add("yyyy-MM-dd'T'HH:mm:ss");
+        result.add("yyyy-MM-dd'T'HH:mm:ssZZ");
+        result.add("yyyy-MM-dd");
+        return result;
+    }
+
+    /**
+     * Provides a list of example formats for the <code>Decimal</code> data type
+     * @return
+     */
+    private static List<String> listDecimalFormats(){
+        List<String> result = new ArrayList<String>();
+        result.add("#,##0");
+        result.add("#,##0.###");
+        result.add("#,##0%");
+        result.add("¤#,##0.00;(¤#,##0.00)");
+        return result;
+    }
+    
     @Override
     public abstract DataType<T> clone();
     
@@ -357,5 +500,4 @@ public abstract class DataType<T> {
      * @throws ParseException
      */
     public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
-
 }
