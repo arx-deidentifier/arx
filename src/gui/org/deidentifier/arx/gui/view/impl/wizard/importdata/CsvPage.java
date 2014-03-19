@@ -312,6 +312,7 @@ public class CsvPage extends WizardPage {
         for (final String s : data.get(0)) {
 
             ImportDataColumn column = new ImportDataColumn(false, s, DataType.STRING);
+            column.setIndex(index);
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
             tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(index++));

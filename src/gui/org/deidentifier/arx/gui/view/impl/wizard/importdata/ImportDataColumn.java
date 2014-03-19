@@ -28,6 +28,11 @@ public class ImportDataColumn {
      */
     private DataType<?> datatype;
 
+    /**
+     * Index of column, starting with 0
+     */
+    private int index;
+
 
     /**
      * Creates a new object representing a column with the given parameters
@@ -102,6 +107,24 @@ public class ImportDataColumn {
     {
 
         this.datatype = datatype;
+
+    }
+
+    /**
+     * @return {@link #index}
+     */
+    public int getIndex() {
+
+        return index;
+
+    }
+
+    /**
+     * @param index {@link #index}
+     */
+    public void setIndex(int index) {
+
+        this.index = index;
 
     }
 
