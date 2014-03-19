@@ -1,7 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.deidentifier.arx.DataType;
 
 
 /**
@@ -240,6 +243,67 @@ public class ImportData {
         }
 
         return result;
+
+    }
+
+    public Iterator<String[]> getIterator() throws Exception {
+
+        if (!isWizardFinished()) {
+
+            throw new Exception("Wizard is not yet finished");
+
+        }
+
+        return new ImportDataIterator(this);
+
+    }
+
+    /**
+     * @return Returns array of datatypes for enabled columns
+     * @throws Exception Cannot be invoked when wizard is not yet finished
+     */
+    public DataType<?>[] getIteratorColumnDatatypes() throws Exception {
+
+        if (!isWizardFinished()) {
+
+            throw new Exception("Wizard is not yet finished");
+
+        }
+
+        List<DataType<?>> resultList = new ArrayList<DataType<?>>();
+
+        for (ImportDataColumn column : columns) {
+
+            if (column.isEnabled()) {
+
+                resultList.add(column.getDatatype());
+
+            }
+
+        }
+
+        return resultList.toArray(new DataType[resultList.size()]);
+
+    }
+
+    /**
+     * @return Number of columns enabled
+     */
+    public int getNumberOfEnabledColumns() {
+
+        int i = 0;
+
+        for (ImportDataColumn column : columns) {
+
+            if (column.isEnabled()) {
+
+                i++;
+
+            }
+
+        }
+
+        return i;
 
     }
 
