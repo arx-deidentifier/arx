@@ -2,7 +2,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.sources;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -161,17 +161,17 @@ public class ImportDataWizard extends Wizard {
 
         if (currentPage == sourcePage) {
 
-            source src = data.getSource();
+            sources src = data.getSource();
 
-            if (src == source.CSV) {
+            if (src == sources.CSV) {
 
                 return csvPage;
 
-            } else if (src == source.JDBC) {
+            } else if (src == sources.JDBC) {
 
                 return jdbcPage;
 
-            } else if (src == source.XLS) {
+            } else if (src == sources.XLS) {
 
                 return xlsPage;
 

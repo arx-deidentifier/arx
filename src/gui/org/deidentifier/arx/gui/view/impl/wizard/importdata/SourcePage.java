@@ -1,6 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.source;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.sources;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -73,7 +73,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(source.CSV);
+                wizardImport.getData().setSource(sources.CSV);
 
                 setPageComplete(true);
 
@@ -91,7 +91,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(source.JDBC);
+                wizardImport.getData().setSource(sources.JDBC);
 
                 setPageComplete(true);
 
@@ -109,7 +109,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(source.XLS);
+                wizardImport.getData().setSource(sources.XLS);
 
                 setPageComplete(true);
 
