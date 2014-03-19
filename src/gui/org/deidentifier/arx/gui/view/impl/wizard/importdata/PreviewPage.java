@@ -122,6 +122,7 @@ public class PreviewPage extends WizardPage {
             table.layout();
             table.setRedraw(true);
 
+            wizardImport.getData().setWizardFinished(true);
             setPageComplete(true);
 
         } else {

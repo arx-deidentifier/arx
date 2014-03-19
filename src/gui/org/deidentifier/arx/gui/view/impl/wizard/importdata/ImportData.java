@@ -61,6 +61,29 @@ public class ImportData {
      */
     public static final int previewDataMaxLines = 25;
 
+    /**
+     * Indicates whether wizard was finished completely
+     */
+    private boolean wizardFinished;
+
+
+    /**
+     * @return {@link #wizardFinished}
+     */
+    public boolean isWizardFinished() {
+
+        return wizardFinished;
+
+    }
+
+    /**
+     * @param {@link #wizardFinished}
+     */
+    public void setWizardFinished(boolean wizardFinished) {
+
+        this.wizardFinished = wizardFinished;
+
+    }
 
     /**
      * @return {@link #xlsSheetIndex}
