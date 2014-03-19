@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -194,6 +195,28 @@ public class ImportData {
     public List<String[]> getPreviewData() {
 
         return previewData;
+
+    }
+
+    /**
+     * Returns a list of strings containing the data for the given column
+     *
+     * @param importDataColumn Column the data should be returned for
+     *
+     * @return Data for the given column
+     */
+    public List<String> getPreviewDataForColumn(ImportDataColumn importDataColumn) {
+
+        List<String> result = new ArrayList<String>();
+        int index = importDataColumn.getIndex();
+
+        for (String[] previewData : getPreviewData()) {
+
+            result.add(previewData[index]);
+
+        }
+
+        return result;
 
     }
 
