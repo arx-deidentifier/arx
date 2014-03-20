@@ -54,14 +54,14 @@ public class DataHandleInput extends DataHandle {
         // Register
         this.setRegistry(new DataRegistry());
         this.getRegistry().updateInput(this);
-        this.definition = data.getDefinition();
+        this.definition = data.getDefinition().clone();
 
         // Obtain header
         final String[] columns = iterator.next();
         super.header = Arrays.copyOf(columns, columns.length);
 
         // Init dictionary
-        dictionary = new Dictionary(header.length);
+        this.dictionary = new Dictionary(header.length);
 
         // Encode data
         List<int[]> vals = new ArrayList<int[]>();
@@ -198,6 +198,16 @@ public class DataHandleInput extends DataHandle {
                 dataTypes[0][i] = DataType.STRING;
             }
         }
+    }
+    
+    /**
+     * Update the definition
+     * @param data
+     */
+    protected void update(Data data){
+        // TODO: Only need to do this when definition changes
+        this.definition = data.getDefinition().clone();
+        this.createDataTypeArray();
     }
     
     /*

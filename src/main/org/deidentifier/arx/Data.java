@@ -256,6 +256,9 @@ public abstract class Data {
     public DataHandle getHandle() {
         if (handle == null) {
             handle = new DataHandleInput(this);
+        } else {
+            // TODO: Only need to do this when definition changes
+            handle.update(this);
         }
         return handle;
     }
