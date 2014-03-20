@@ -47,9 +47,9 @@ import org.eclipse.swt.widgets.List;
  */
 public class WizardHierarchyPageOrder extends WizardPage {
 
-    private final WizardHierarchyModel model;
-    private List                       list;
     private final Controller           controller;
+    private List                       list;
+    private final WizardHierarchyModel model;
 
     /**
      * Constructor
@@ -171,8 +171,43 @@ public class WizardHierarchyPageOrder extends WizardPage {
                 }
             }
         });
-
+        sort(model.getDataType());
         setControl(composite);
+    }
+    
+    @Override
+    public boolean isPageComplete() {
+        return true;
+    }
+    
+    /**
+     * Move an item down
+     */
+    private void down() {
+        final int index = list.getSelectionIndex();
+        if ((index != -1) && (index < (list.getItemCount() - 1))) {
+
+            // TODO: Ugly!
+            final String t = model.getItems().get(index + 1);
+            model.getItems().set(index + 1, model.getItems().get(index));
+            model.getItems().set(index, t);
+            list.setItems(model.getItems().toArray(new String[] {}));
+            list.setSelection(index + 1);
+        }
+    }
+
+    /**
+     * Returns a description for the given label
+     * @param label
+     * @return
+     */
+    private DataTypeDescription<?> getDataType(String label){
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            if (label.equals(desc.getLabel())){
+                return desc;
+            }
+        }
+        throw new RuntimeException("Unknown data type: "+label);
     }
     
     /**
@@ -186,7 +221,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
         }
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Returns the index of a given data type
      * @param type
@@ -219,41 +254,6 @@ public class WizardHierarchyPageOrder extends WizardPage {
         } catch (Exception e){
             return false;
         }
-    }
-    
-    /**
-     * Returns a description for the given label
-     * @param label
-     * @return
-     */
-    private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.LIST){
-            if (label.equals(desc.getLabel())){
-                return desc;
-            }
-        }
-        throw new RuntimeException("Unknown data type: "+label);
-    }
-
-    /**
-     * Move an item down
-     */
-    private void down() {
-        final int index = list.getSelectionIndex();
-        if ((index != -1) && (index < (list.getItemCount() - 1))) {
-
-            // TODO: Ugly!
-            final String t = model.getItems().get(index + 1);
-            model.getItems().set(index + 1, model.getItems().get(index));
-            model.getItems().set(index, t);
-            list.setItems(model.getItems().toArray(new String[] {}));
-            list.setSelection(index + 1);
-        }
-    }
-
-    @Override
-    public boolean isPageComplete() {
-        return true;
     }
 
     /**
