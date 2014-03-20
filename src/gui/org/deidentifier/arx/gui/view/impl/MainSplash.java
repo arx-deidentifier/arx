@@ -41,6 +41,7 @@ public class MainSplash extends Frame{
     private final String version = Resources.getVersion();
     private final Image splash = Resources.getSplash();;
 
+    @SuppressWarnings("restriction")
     public MainSplash() throws IOException{
         
         this.setSize(new Dimension(400,240));
