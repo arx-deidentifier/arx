@@ -304,7 +304,7 @@ public class WorkerLoad extends Worker<Model> {
                     if (attr == null) { throw new SAXException(Resources.getMessage("WorkerLoad.3")); } //$NON-NLS-1$
                     
                     // TODO: For backwards compatibility only
-                    if (vocabulary.getVersion().equals("1.0")) {
+                    if (vocabulary.getVocabularyVersion().equals("1.0")) {
                         
                         // Data type
                         if (dtype.equals(DataType.STRING.toString())) {
@@ -320,7 +320,7 @@ public class WorkerLoad extends Worker<Model> {
                                   .getDefinition()
                                   .setDataType(attr, DataType.DATE(dtype));
                         }
-                    } else if (vocabulary.getVersion().equals("2.0")) {
+                    } else if (vocabulary.getVocabularyVersion().equals("2.0")) {
                         
                         // Find matching data type
                         DataType<?> datatype = null;
@@ -346,7 +346,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                         
                         // Store
-                        config.getInput().getDefinition().setDataType(attr, DataType.STRING);
+                        config.getInput().getDefinition().setDataType(attr, datatype);
                     }
 
                     // Attribute type
