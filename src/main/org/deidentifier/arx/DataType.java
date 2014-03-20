@@ -148,6 +148,12 @@ public abstract class DataType<T> {
         public int compare(final String s1, final String s2) throws ParseException {
             return format.parse(s1).compareTo(format.parse(s2));
         }
+        
+        @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
 
         @Override
         public boolean equals(final Object obj) {
@@ -155,8 +161,7 @@ public abstract class DataType<T> {
             if (obj == null) { return false; }
             if (getClass() != obj.getClass()) { return false; }
             final ARXDate other = (ARXDate) obj;
-            if (string == null) {
-                if (other.string != null) { return false; }
+            if (string == null) { if (other.string != null) { return false; }
             } else if (!string.equals(other.string)) { return false; }
             return true;
         }
@@ -196,9 +201,11 @@ public abstract class DataType<T> {
     public static class ARXInteger extends DataType<Long> {
         
         private DecimalFormat format;
+        private String        string;
         
         private ARXInteger(){
-            format = null;
+            this.format = null;
+            this.string = null;
         }
         
         /**
@@ -209,6 +216,7 @@ public abstract class DataType<T> {
          */
         private ARXInteger(String format){
             this.format = new DecimalFormat(format);
+            this.string = format;
         }
         
         @Override
@@ -222,10 +230,19 @@ public abstract class DataType<T> {
         }
 
         @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
+
+        @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
             if (obj == null) { return false; }
             if (getClass() != obj.getClass()) { return false; }
+            final ARXInteger other = (ARXInteger) obj;
+            if (string == null) { if (other.string != null) { return false; }
+            } else if (!string.equals(other.string)) { return false; }
             return true;
         }
 
@@ -264,9 +281,11 @@ public abstract class DataType<T> {
     public static class ARXDecimal extends DataType<Double> {
         
         private DecimalFormat format;
+        private String        string;
         
         private ARXDecimal(){
-            format = null;
+            this.format = null;
+            this.string = null;
         }
         
         /**
@@ -277,6 +296,7 @@ public abstract class DataType<T> {
          */
         private ARXDecimal(String format){
             this.format = new DecimalFormat(format);
+            this.string = format;
         }
         
         @Override
@@ -290,10 +310,19 @@ public abstract class DataType<T> {
         }
 
         @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
+
+        @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
             if (obj == null) { return false; }
             if (getClass() != obj.getClass()) { return false; }
+            final ARXDecimal other = (ARXDecimal) obj;
+            if (string == null) { if (other.string != null) { return false; }
+            } else if (!string.equals(other.string)) { return false; }
             return true;
         }
 
@@ -340,6 +369,11 @@ public abstract class DataType<T> {
             return s1.compareTo(s2);
         }
 
+        @Override
+        public int hashCode() {
+            return ARXString.class.hashCode();
+        }
+        
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
