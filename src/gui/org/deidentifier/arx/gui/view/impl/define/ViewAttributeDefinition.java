@@ -232,6 +232,10 @@ public class ViewAttributeDefinition implements IView {
                             }
                         } else {
                             type = description.newInstance();
+                            if (!isValidDataType(type, getValues())) {
+                                type = DataType.STRING;
+                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
+                            }
                         }
 
                         // Set and update
@@ -287,6 +291,20 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
+     * Returns a description for the given label
+     * @param label
+     * @return
+     */
+    private DataTypeDescription<?> getDataType(String label){
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            if (label.equals(desc.getLabel())){
+                return desc;
+            }
+        }
+        throw new RuntimeException("Unknown data type: "+label);
+    }
+    
+    /**
      * Returns the labels of all available data types
      * @return
      */
@@ -315,20 +333,6 @@ public class ViewAttributeDefinition implements IView {
     }
     
     /**
-     * Returns a description for the given label
-     * @param label
-     * @return
-     */
-    private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.LIST){
-            if (label.equals(desc.getLabel())){
-                return desc;
-            }
-        }
-        throw new RuntimeException("Unknown data type: "+label);
-    }
-
-    /**
      * Create an iterator over the values in the column for this attribute
      * 
      * @return
@@ -341,6 +345,24 @@ public class ViewAttributeDefinition implements IView {
             vals.add(s);
         }
         return vals;
+    }
+
+    /**
+     * Checks whether the data type is valid
+     * @param type
+     * @param values
+     * @return
+     */
+    private boolean isValidDataType(DataType<?> type, Collection<String> values){
+        // TODO: Ugly
+        try {
+            for (String value : values){
+                type.fromString(value);
+            }
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
 
     private void updateAttributeType() {

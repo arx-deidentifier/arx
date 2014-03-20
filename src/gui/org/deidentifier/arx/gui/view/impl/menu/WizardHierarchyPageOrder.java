@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -153,6 +154,10 @@ public class WizardHierarchyPageOrder extends WizardPage {
                             }
                         } else {
                             type = description.newInstance();
+                            if (!isValidDataType(type, model.getItems())) {
+                                type = DataType.STRING;
+                                combo.select(getIndexOfDataType(DataType.STRING)+1);                        
+                            }
                         }
                     }
                     try {
@@ -196,6 +201,24 @@ public class WizardHierarchyPageOrder extends WizardPage {
             idx++;
         }
         throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
+    }
+
+    /**
+     * Checks whether the data type is valid
+     * @param type
+     * @param values
+     * @return
+     */
+    private boolean isValidDataType(DataType<?> type, Collection<String> values){
+        // TODO: Ugly
+        try {
+            for (String value : values){
+                type.fromString(value);
+            }
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
     
     /**
