@@ -18,9 +18,10 @@
 
 package org.deidentifier.arx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.deidentifier.arx.framework.data.Dictionary;
 
@@ -44,14 +45,16 @@ public class DataHandleInput extends DataHandle {
      */
     protected DataHandleInput(final Data data) {
 
+        // Obtain and check iterator
+        final Iterator<String[]> iterator = data.iterator();
+        if (!iterator.hasNext()) { 
+            throw new IllegalArgumentException("Data object is empty!"); 
+        }
+
+        // Register
         this.setRegistry(new DataRegistry());
         this.getRegistry().updateInput(this);
         this.definition = data.getDefinition();
-
-        // Obtain iterator
-        final Iterator<String[]> iterator = data.iterator();
-
-        if (!iterator.hasNext()) { throw new IllegalArgumentException("Data object is empty!"); }
 
         // Obtain header
         final String[] columns = iterator.next();
@@ -61,7 +64,7 @@ public class DataHandleInput extends DataHandle {
         dictionary = new Dictionary(header.length);
 
         // Encode data
-        final LinkedList<int[]> vals = new LinkedList<int[]>();
+        List<int[]> vals = new ArrayList<int[]>();
         while (iterator.hasNext()) {
 
             // Process a tuple
@@ -74,15 +77,10 @@ public class DataHandleInput extends DataHandle {
         }
 
         // Build array
-        this.data = new int[vals.size()][];
-        final Iterator<int[]> i = vals.iterator();
-        int index = 0;
-        while (i.hasNext()) {
-            this.data[index++] = i.next();
-        }
+        this.data = vals.toArray(new int[vals.size()][]);
 
         // finalize dictionary
-        dictionary.finalizeAll();
+        this.dictionary.finalizeAll();
 
         // Create datatype array
         createDataTypeArray();
@@ -102,9 +100,9 @@ public class DataHandleInput extends DataHandle {
         this.getRegistry().updateInput(this);
 
         // Obtain header
-        super.header = other.header;
-        dictionary = other.dictionary;
-        data = other.data;
+        this.header = other.header;
+        this.dictionary = other.dictionary;
+        this.data = other.data;
 
         // Create datatype array
         createDataTypeArray();
