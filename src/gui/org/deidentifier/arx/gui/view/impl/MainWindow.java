@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.Entry;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -209,7 +209,7 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        Entry<Date> entry = DataType.LIST(Date.class);
+        DataTypeDescription<Date> entry = DataType.LIST(Date.class);
         for (final String format : entry.getExampleFormats()) {
             if (validator.isValid(format) == null) {
                 initial = format;
@@ -259,7 +259,7 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        Entry<Double> entry = DataType.LIST(Double.class);
+        DataTypeDescription<Double> entry = DataType.LIST(Double.class);
         for (final String format : entry.getExampleFormats()) {
             if (validator.isValid(format) == null) {
                 initial = format;

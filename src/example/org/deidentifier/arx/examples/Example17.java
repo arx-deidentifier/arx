@@ -19,7 +19,7 @@
 package org.deidentifier.arx.examples;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.Entry;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 
 /**
  * This class implements an example of how to list the available data types
@@ -37,7 +37,7 @@ public class Example17 extends Example {
     public static void main(final String[] args) {
         
         // 1. List all data types
-        for (Entry<?> type : DataType.LIST){
+        for (DataTypeDescription<?> type : DataType.LIST){
             
             // Print basic information
             System.out.println(" - Label : " + type.getLabel());
@@ -57,6 +57,6 @@ public class Example17 extends Example {
         }
         
         // 2. Obtain specific data type
-        Entry<Double> entry = DataType.LIST(Double.class);
+        DataTypeDescription<Double> entry = DataType.LIST(Double.class);
     }
 }

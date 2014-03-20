@@ -33,90 +33,20 @@ import java.util.List;
 public abstract class DataType<T> {
 
     /**
-     * An entry in the list of available data types
-     * @author Fabian Prasser
-     * @param <T>
-     */
-    public static abstract class Entry<T> {
-
-        /** A human readable label*/
-        private String label;
-        /** Can the type be parameterized with a format string*/
-        private boolean hasFormat;
-        /** If yes, a list of available formats*/
-        private List<String> exampleFormats;
-        /** The wrapped java class*/
-        private Class<?> clazz;
-        
-        /**
-         * Internal constructor
-         * @param label
-         * @param hasFormat
-         * @param exampleFormats
-         */
-        private Entry(Class<T> clazz, String label, boolean hasFormat, List<String> exampleFormats) {
-            this.clazz = clazz;
-            this.label = label;
-            this.hasFormat = hasFormat;
-            this.exampleFormats = exampleFormats;
-        }
-        
-        /**
-         * Returns a human readable label
-         * @return
-         */
-        public String getLabel() {
-            return label;
-        }
-        
-        /**
-         * Returns whether the type be parameterized with a format string. Note that every data type
-         * can be instantiated without a format string, using a default format.
-         * @return
-         */
-        public boolean hasFormat() {
-            return hasFormat;
-        }
-        
-        /**
-         * Returns a list of example formats
-         * @return
-         */
-        public List<String> getExampleFormats() {
-            return exampleFormats;
-        }
-        
-        /**
-         * Returns the wrapped java class
-         * @return
-         */
-        public Class<?> getWrappedClass() {
-            return clazz;
-        }
-        
-        /**
-         * Creates a new instance with default format string
-         * @return
-         */
-        public abstract DataType<T> newInstance();
-        
-        /**
-         * Creates a new instance with the given format string
-         * @param format
-         * @return
-         */
-        public abstract DataType<T> newInstance(String format);
-    }
-    
-    /**
      * Base class for date/time types
      * @author Fabian Prasser
      */
 	public static class ARXDate extends DataType<Date> {
+	    
+        /** The description of the data type*/
+        private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  true, listDateFormats()){
+            @Override public DataType<Date> newInstance() { return DATE; }
+            @Override public DataType<Date> newInstance(String format) {return DATE(format);}
+        };
+        
+        private SimpleDateFormat format;
 
-        SimpleDateFormat format;
-        String           string;
-
+        private String           string;
         /**
          * Create a data with a "dd.MM.yyyy" format string
          * for <code>SimpleDateFormat</code>.
@@ -126,7 +56,6 @@ public abstract class DataType<T> {
             string = "dd.MM.yyyy";
             format = new SimpleDateFormat(string);
         }
-
 
         /**
          * Create a data with a format string. Format strings must be valid formats
@@ -139,6 +68,7 @@ public abstract class DataType<T> {
             this.string = format;
         }
 
+
         @Override
         public DataType<Date> clone() {
             return new ARXDate(string);
@@ -147,12 +77,6 @@ public abstract class DataType<T> {
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
             return format.parse(s1).compareTo(format.parse(s2));
-        }
-        
-        @Override
-        public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
         }
 
         @Override
@@ -165,11 +89,6 @@ public abstract class DataType<T> {
             } else if (!string.equals(other.string)) { return false; }
             return true;
         }
-
-        @Override
-        public String toString() {
-            return "Date(" + string + ")";
-        }
         
         @Override
         public Date fromString(String s) {
@@ -181,8 +100,8 @@ public abstract class DataType<T> {
         }
 
         @Override
-        public String toString(Date s){
-        	return format.format(s);
+        public DataTypeDescription<Date> getDescription(){
+            return description;
         }
 
         /**
@@ -192,43 +111,7 @@ public abstract class DataType<T> {
         public String getFormat() {
             return string;
         }
-    }
-
-    /**
-     * Base class for numeric types
-     * @author Fabian Prasser
-     */
-    public static class ARXInteger extends DataType<Long> {
         
-        private DecimalFormat format;
-        private String        string;
-        
-        private ARXInteger(){
-            this.format = null;
-            this.string = null;
-        }
-        
-        /**
-         * Create a numeric with a format string. Format strings must be valid formats
-         * for <code>DecimalFormat</code>.
-         * @param format
-         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
-         */
-        private ARXInteger(String format){
-            this.format = new DecimalFormat(format);
-            this.string = format;
-        }
-        
-        @Override
-        public DataType<Long> clone() {
-            return this;
-        }
-
-        @Override
-        public int compare(final String s1, final String s2) throws NumberFormatException {
-            return fromString(s1).compareTo(fromString(s2));
-        }
-
         @Override
         public int hashCode() {
             if (string==null) return 0;
@@ -236,53 +119,31 @@ public abstract class DataType<T> {
         }
 
         @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
-            final ARXInteger other = (ARXInteger) obj;
-            if (string == null) { if (other.string != null) { return false; }
-            } else if (!string.equals(other.string)) { return false; }
-            return true;
-        }
-
-        @Override
         public String toString() {
-            return "Integer";
-        }
-        
-        @Override
-        public Long fromString(String s) {
-            if (format==null){
-                return Long.valueOf(s);
-            } else {
-                try {
-                    return format.parse(s).longValue();
-                } catch (ParseException e) {
-                    throw new NumberFormatException(e.getMessage());
-                }
-            }
+            return "Date(" + string + ")";
         }
 
         @Override
-        public String toString(Long s){
-            if (format==null){
-                return String.valueOf(s);
-            } else {
-                return format.format(s);
-            }
+        public String toString(Date s){
+        	return format.format(s);
         }
     }
-
-	/**
+    
+    /**
 	 * Base class for numeric types
 	 * @author Fabian Prasser
 	 */
     public static class ARXDecimal extends DataType<Double> {
         
-        private DecimalFormat format;
-        private String        string;
+        /** The description of the data type*/
+        private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()){
+            @Override public DataType<Double> newInstance() { return DECIMAL; }
+            @Override public DataType<Double> newInstance(String format) {return DECIMAL(format);}
+        };
         
+        private DecimalFormat format;
+        
+        private String        string;
         private ARXDecimal(){
             this.format = null;
             this.string = null;
@@ -303,16 +164,10 @@ public abstract class DataType<T> {
         public DataType<Double> clone() {
             return this;
         }
-
+        
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             return fromString(s1).compareTo(fromString(s2));
-        }
-
-        @Override
-        public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
         }
 
         @Override
@@ -327,11 +182,6 @@ public abstract class DataType<T> {
         }
 
         @Override
-        public String toString() {
-            return "Decimal";
-        }
-        
-        @Override
         public Double fromString(String s) {
             if (format==null){
                 return Double.valueOf(s);
@@ -345,6 +195,22 @@ public abstract class DataType<T> {
         }
 
         @Override
+        public DataTypeDescription<Double> getDescription(){
+            return description;
+        }
+
+        @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+            return "Decimal";
+        }
+
+        @Override
         public String toString(Double s){
             if (format==null){
                 return String.valueOf(s);
@@ -355,25 +221,118 @@ public abstract class DataType<T> {
     }
 
     /**
+     * Base class for numeric types
+     * @author Fabian Prasser
+     */
+    public static class ARXInteger extends DataType<Long> {
+        
+        /** The description of the data type*/
+        private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()){
+            @Override public DataType<Long> newInstance() { return INTEGER; }
+            @Override public DataType<Long> newInstance(String format) {return INTEGER(format);}
+        };
+        
+        private DecimalFormat format;
+        
+        private String        string;
+        private ARXInteger(){
+            this.format = null;
+            this.string = null;
+        }
+        
+        /**
+         * Create a numeric with a format string. Format strings must be valid formats
+         * for <code>DecimalFormat</code>.
+         * @param format
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
+         */
+        private ARXInteger(String format){
+            this.format = new DecimalFormat(format);
+            this.string = format;
+        }
+        
+        @Override
+        public DataType<Long> clone() {
+            return this;
+        }
+        
+        @Override
+        public int compare(final String s1, final String s2) throws NumberFormatException {
+            return fromString(s1).compareTo(fromString(s2));
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) { return true; }
+            if (obj == null) { return false; }
+            if (getClass() != obj.getClass()) { return false; }
+            final ARXInteger other = (ARXInteger) obj;
+            if (string == null) { if (other.string != null) { return false; }
+            } else if (!string.equals(other.string)) { return false; }
+            return true;
+        }
+
+        @Override
+        public Long fromString(String s) {
+            if (format==null){
+                return Long.valueOf(s);
+            } else {
+                try {
+                    return format.parse(s).longValue();
+                } catch (ParseException e) {
+                    throw new NumberFormatException(e.getMessage());
+                }
+            }
+        }
+
+        @Override
+        public DataTypeDescription<Long> getDescription(){
+            return description;
+        }
+
+        @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+            return "Integer";
+        }
+
+        @Override
+        public String toString(Long s){
+            if (format==null){
+                return String.valueOf(s);
+            } else {
+                return format.format(s);
+            }
+        }
+    }
+
+	/**
      * Base class for string types
      * @author Fabian Prasser
      */
     public static class ARXString extends DataType<String> {
+        
+        /** The description of the data type*/
+        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "String", false, new ArrayList<String>()){
+            @Override public DataType<String> newInstance() { return STRING; }
+            @Override public DataType<String> newInstance(String format) {return STRING;}
+        };
+        
         @Override
         public DataType<String> clone() {
             return this;
         }
-
+        
         @Override
         public int compare(final String s1, final String s2) {
             return s1.compareTo(s2);
         }
 
-        @Override
-        public int hashCode() {
-            return ARXString.class.hashCode();
-        }
-        
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) { return true; }
@@ -383,13 +342,23 @@ public abstract class DataType<T> {
         }
 
         @Override
-        public String toString() {
-            return "String";
+        public String fromString(String s) {
+        	return s;
         }
         
         @Override
-        public String fromString(String s) {
-        	return s;
+        public DataTypeDescription<String> getDescription(){
+            return description;
+        }
+
+        @Override
+        public int hashCode() {
+            return ARXString.class.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+            return "String";
         }
 
         @Override
@@ -397,46 +366,107 @@ public abstract class DataType<T> {
         	return s;
         }
     }
-    
-    /** 
-     * Returns a datatype for the given class
-     * @param clazz
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public static final <U> Entry<U> LIST(Class<U> clazz){
-        for (Entry<?> entry : LIST) {
-            if (entry.getWrappedClass() == clazz) {
-                return (Entry<U>)entry;
-            }
-        }
-        return null;
-    }
 
-    /** Provides a list of all available data types */
-    public static final List<Entry<?>>   LIST    = listDataTypes();
+    /**
+     * An entry in the list of available data types
+     * @author Fabian Prasser
+     * @param <T>
+     */
+    public static abstract class DataTypeDescription<T> {
+
+        /** The wrapped java class*/
+        private Class<?> clazz;
+        /** If yes, a list of available formats*/
+        private List<String> exampleFormats;
+        /** Can the type be parameterized with a format string*/
+        private boolean hasFormat;
+        /** A human readable label*/
+        private String label;
+        
+        /**
+         * Internal constructor
+         * @param label
+         * @param hasFormat
+         * @param exampleFormats
+         */
+        private DataTypeDescription(Class<T> clazz, String label, boolean hasFormat, List<String> exampleFormats) {
+            this.clazz = clazz;
+            this.label = label;
+            this.hasFormat = hasFormat;
+            this.exampleFormats = exampleFormats;
+        }
+        
+        /**
+         * Returns a list of example formats
+         * @return
+         */
+        public List<String> getExampleFormats() {
+            return exampleFormats;
+        }
+        
+        /**
+         * Returns a human readable label
+         * @return
+         */
+        public String getLabel() {
+            return label;
+        }
+        
+        /**
+         * Returns the wrapped java class
+         * @return
+         */
+        public Class<?> getWrappedClass() {
+            return clazz;
+        }
+        
+        /**
+         * Returns whether the type be parameterized with a format string. Note that every data type
+         * can be instantiated without a format string, using a default format.
+         * @return
+         */
+        public boolean hasFormat() {
+            return hasFormat;
+        }
+        
+        /**
+         * Creates a new instance with default format string
+         * @return
+         */
+        public abstract DataType<T> newInstance();
+        
+        /**
+         * Creates a new instance with the given format string
+         * @param format
+         * @return
+         */
+        public abstract DataType<T> newInstance(String format);
+    }
+    
+    /** A date data type with default format dd.mm.yyyy */
+    public static final DataType<Date>   DATE    = new ARXDate();
 
     /** A generic decimal data type */
     public static final DataType<Double> DECIMAL = new ARXDecimal();
 
+    /** A generic integer data type */
+    public static final DataType<Long>   INTEGER = new ARXInteger();
+
+    /** Provides a list of all available data types */
+    public static final List<DataTypeDescription<?>>   LIST    = listDataTypes();
+
     /** A string data type */
     public static final DataType<String> STRING  = new ARXString();
 
-    /** A date data type with default format dd.mm.yyyy */
-    public static final DataType<Date>   DATE    = new ARXDate();
-
-    /** A generic integer data type */
-    public static final DataType<Long>   INTEGER = new ARXInteger();
-    
     /**
-     * An integer data type with given format
+     * A date data type with given format
      * 
-     * @see DecimalFormat
+     * @see SimpleDateFormat
      * @param format
      * @return
      */
-    public static final DataType<Long> INTEGER(final String format) {
-        return new ARXInteger(format);
+    public static final DataType<Date> DATE(final String format) {
+        return new ARXDate(format);
     }
     
     /**
@@ -451,38 +481,41 @@ public abstract class DataType<T> {
     }
     
     /**
-     * A date data type with given format
+     * An integer data type with given format
      * 
-     * @see SimpleDateFormat
+     * @see DecimalFormat
      * @param format
      * @return
      */
-    public static final DataType<Date> DATE(final String format) {
-        return new ARXDate(format);
+    public static final DataType<Long> INTEGER(final String format) {
+        return new ARXInteger(format);
+    }
+    
+    /** 
+     * Returns a datatype for the given class
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static final <U> DataTypeDescription<U> LIST(Class<U> clazz){
+        for (DataTypeDescription<?> entry : LIST) {
+            if (entry.getWrappedClass() == clazz) {
+                return (DataTypeDescription<U>)entry;
+            }
+        }
+        return null;
     }
 
     /**
      * Lists all available data types
      * @return
      */
-    private static List<Entry<?>> listDataTypes(){
-        List<Entry<?>> list = new ArrayList<Entry<?>>();
-        list.add(new Entry<String>(String.class, "String", false, new ArrayList<String>()){
-            @Override public DataType<String> newInstance() { return STRING; }
-            @Override public DataType<String> newInstance(String format) {return STRING;}
-        });
-        list.add(new Entry<Date>(Date.class, "Date/Time",  true, listDateFormats()){
-            @Override public DataType<Date> newInstance() { return DATE; }
-            @Override public DataType<Date> newInstance(String format) {return DATE(format);}
-        });
-        list.add(new Entry<Double>(Double.class, "Decimal", true, listDecimalFormats()){
-            @Override public DataType<Double> newInstance() { return DECIMAL; }
-            @Override public DataType<Double> newInstance(String format) {return DECIMAL(format);}
-        });
-        list.add(new Entry<Long>(Long.class, "Integer", false, new ArrayList<String>()){
-            @Override public DataType<Long> newInstance() { return INTEGER; }
-            @Override public DataType<Long> newInstance(String format) {return INTEGER(format);}
-        });
+    private static List<DataTypeDescription<?>> listDataTypes(){
+        List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
+        list.add(STRING.getDescription());
+        list.add(DATE.getDescription());
+        list.add(DECIMAL.getDescription());
+        list.add(INTEGER.getDescription());
         return list;
     }
     
@@ -538,11 +571,14 @@ public abstract class DataType<T> {
     public abstract DataType<T> clone();
     
     /**
-     * Converts a value into a string
-     * @param t
+     * Compares two values
+     * @param s1
+     * @param s2
      * @return
+     * @throws NumberFormatException
+     * @throws ParseException
      */
-    public abstract String toString(T t);
+    public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
     
     /**
      * Converts a string into a value
@@ -552,12 +588,15 @@ public abstract class DataType<T> {
     public abstract T fromString(String s);
 
     /**
-     * Compares two values
-     * @param s1
-     * @param s2
+     * Returns a description of the data type
      * @return
-     * @throws NumberFormatException
-     * @throws ParseException
      */
-    public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
+    public abstract DataTypeDescription<T> getDescription();
+    
+    /**
+     * Converts a value into a string
+     * @param t
+     * @return
+     */
+    public abstract String toString(T t);
 }
