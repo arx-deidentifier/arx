@@ -20,10 +20,8 @@ package org.deidentifier.arx.gui.view.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.deidentifier.arx.Data;
@@ -44,6 +42,7 @@ import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
+import org.deidentifier.arx.gui.view.impl.menu.DialogFormatSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
@@ -215,11 +214,12 @@ public class MainWindow implements IView {
                 break;
             }
         }
-
-        // Input dialog
-        final InputDialog dlg = new InputDialog(shell,
+        
+        // Open dialog
+        final DialogFormatSelection dlg = new DialogFormatSelection(shell,
                                                 header,
                                                 text,
+                                                description.getExampleFormats().toArray(new String[]{}),
                                                 initial,
                                                 validator);
 
