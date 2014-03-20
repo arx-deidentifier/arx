@@ -469,21 +469,21 @@ public abstract class DataType<T> {
     public static interface DataTypeWithFormat {
         public abstract String getFormat();
     }
-    
+
     /** A date data type with default format dd.mm.yyyy */
-    public static final DataType<Date>   DATE    = new ARXDate();
+    public static final DataType<Date>               DATE    = new ARXDate();
 
     /** A generic decimal data type */
-    public static final DataType<Double> DECIMAL = new ARXDecimal();
+    public static final DataType<Double>             DECIMAL = new ARXDecimal();
 
     /** A generic integer data type */
-    public static final DataType<Long>   INTEGER = new ARXInteger();
-
-    /** Provides a list of all available data types */
-    public static final List<DataTypeDescription<?>>   LIST    = listDataTypes();
+    public static final DataType<Long>               INTEGER = new ARXInteger();
 
     /** A string data type */
-    public static final DataType<String> STRING  = new ARXString();
+    public static final DataType<String>             STRING  = new ARXString();
+
+    /** Provides a list of all available data types */
+    public static final List<DataTypeDescription<?>> LIST    = listDataTypes();
 
     /**
      * A date data type with given format
@@ -537,7 +537,7 @@ public abstract class DataType<T> {
      * Lists all available data types
      * @return
      */
-    private static List<DataTypeDescription<?>> listDataTypes(){
+    private static final List<DataTypeDescription<?>> listDataTypes(){
         List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
         list.add(STRING.getDescription());
         list.add(DATE.getDescription());
