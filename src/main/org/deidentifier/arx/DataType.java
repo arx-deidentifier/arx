@@ -31,12 +31,12 @@ import java.util.List;
  * @author Prasser, Kohlmayer
  */
 public abstract class DataType<T> {
-
+    
     /**
      * Base class for date/time types
      * @author Fabian Prasser
      */
-	public static class ARXDate extends DataType<Date> {
+	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat {
 	    
         /** The description of the data type*/
         private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  true, listDateFormats()){
@@ -104,10 +104,7 @@ public abstract class DataType<T> {
             return description;
         }
 
-        /**
-         * Returns the format
-         * @return
-         */
+        @Override
         public String getFormat() {
             return string;
         }
@@ -128,12 +125,12 @@ public abstract class DataType<T> {
         	return format.format(s);
         }
     }
-    
+
     /**
 	 * Base class for numeric types
 	 * @author Fabian Prasser
 	 */
-    public static class ARXDecimal extends DataType<Double> {
+    public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat {
         
         /** The description of the data type*/
         private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()){
@@ -144,6 +141,7 @@ public abstract class DataType<T> {
         private DecimalFormat format;
         
         private String        string;
+        
         private ARXDecimal(){
             this.format = null;
             this.string = null;
@@ -156,8 +154,13 @@ public abstract class DataType<T> {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
         private ARXDecimal(String format){
-            this.format = new DecimalFormat(format);
-            this.string = format;
+            if (format != null){
+                this.format = new DecimalFormat(format);
+                this.string = format;
+            } else {
+                this.format = null;
+                this.string = null;
+            }
         }
         
         @Override
@@ -200,11 +203,16 @@ public abstract class DataType<T> {
         }
 
         @Override
+        public String getFormat() {
+            return string;
+        }
+
+        @Override
         public int hashCode() {
             if (string==null) return 0;
             else return string.hashCode();
         }
-        
+
         @Override
         public String toString() {
             return "Decimal";
@@ -219,12 +227,12 @@ public abstract class DataType<T> {
             }
         }
     }
-
+    
     /**
      * Base class for numeric types
      * @author Fabian Prasser
      */
-    public static class ARXInteger extends DataType<Long> {
+    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat {
         
         /** The description of the data type*/
         private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()){
@@ -235,6 +243,7 @@ public abstract class DataType<T> {
         private DecimalFormat format;
         
         private String        string;
+        
         private ARXInteger(){
             this.format = null;
             this.string = null;
@@ -247,8 +256,13 @@ public abstract class DataType<T> {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
         private ARXInteger(String format){
-            this.format = new DecimalFormat(format);
-            this.string = format;
+            if (format != null){
+                this.format = new DecimalFormat(format);
+                this.string = format;
+            } else {
+                this.format = null;
+                this.string = null;   
+            }
         }
         
         @Override
@@ -291,6 +305,11 @@ public abstract class DataType<T> {
         }
 
         @Override
+        public String getFormat() {
+            return string;
+        }
+
+        @Override
         public int hashCode() {
             if (string==null) return 0;
             else return string.hashCode();
@@ -311,7 +330,7 @@ public abstract class DataType<T> {
         }
     }
 
-	/**
+    /**
      * Base class for string types
      * @author Fabian Prasser
      */
@@ -367,7 +386,7 @@ public abstract class DataType<T> {
         }
     }
 
-    /**
+	/**
      * An entry in the list of available data types
      * @author Fabian Prasser
      * @param <T>
@@ -441,6 +460,14 @@ public abstract class DataType<T> {
          * @return
          */
         public abstract DataType<T> newInstance(String format);
+    }
+
+    /**
+     * An interface for data types with format
+     * @author Fabian Prasser
+     */
+    public static interface DataTypeWithFormat {
+        public abstract String getFormat();
     }
     
     /** A date data type with default format dd.mm.yyyy */
