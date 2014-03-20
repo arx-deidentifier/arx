@@ -58,27 +58,33 @@ public class ViewAttributeDefinition implements IView {
                                         AttributeType.INSENSITIVE_ATTRIBUTE,
                                         AttributeType.SENSITIVE_ATTRIBUTE,
                                         null,
-                                        AttributeType.IDENTIFYING_ATTRIBUTE       };
+                                        AttributeType.IDENTIFYING_ATTRIBUTE };
+    
     private static final String[]       COMBO1_VALUES = new String[] { 
                                         Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
                                         Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
                                         Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$ 
+                                        Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$
+
     private String                       attribute     = null;
-    private final Controller             controller;
-
-    private final Combo                  dataTypeCombo;
-
-    private final ViewHierarchy          editor;
-
-    private final Image                 IMAGE_IDENTIFYING;
-    private final Image                 IMAGE_INSENSITIVE;
-    private final Image                 IMAGE_QUASI_IDENTIFYING;
-    private final Image                 IMAGE_SENSITIVE;
     private Model                        model;
+
+    private final Controller             controller;
+    private final Combo                  dataTypeCombo;
+    private final ViewHierarchy          editor;
+    private final Image                  IMAGE_IDENTIFYING;
+    private final Image                  IMAGE_INSENSITIVE;
+    private final Image                  IMAGE_QUASI_IDENTIFYING;
+    private final Image                  IMAGE_SENSITIVE;
     private final CTabItem               tab;
     private final Combo                  typeCombo;
 
+    /**
+     * Constructor
+     * @param parent
+     * @param attribute
+     * @param controller
+     */
     public ViewAttributeDefinition(final CTabFolder parent,
                                    final String attribute,
                                    final Controller controller) {
@@ -281,6 +287,7 @@ public class ViewAttributeDefinition implements IView {
             final String attr = (String) event.data;
             if (attr.equals(attribute)) {
                 updateAttributeType();
+                updateDataType();
                 updateIcon();
             }
         } else if (event.part == ModelPart.INPUT) {
@@ -365,6 +372,9 @@ public class ViewAttributeDefinition implements IView {
         }
     }
 
+    /** 
+     * Update the attribute type
+     */
     private void updateAttributeType() {
         AttributeType type = model.getInputConfig()
                                   .getInput()
@@ -381,6 +391,9 @@ public class ViewAttributeDefinition implements IView {
         }
     }
 
+    /**
+     * Update the data type
+     */
     private void updateDataType() {
 
         final DataType<?> dtype = model.getInputConfig()
@@ -391,6 +404,9 @@ public class ViewAttributeDefinition implements IView {
         dataTypeCombo.select(getIndexOfDataType(dtype));
     }
 
+    /**
+     * Update the column icon
+     */
     private void updateIcon() {
         AttributeType type = model.getInputConfig()
                                   .getInput()
