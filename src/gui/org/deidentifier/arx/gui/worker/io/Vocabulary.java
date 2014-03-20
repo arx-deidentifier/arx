@@ -66,6 +66,7 @@ public abstract class Vocabulary {
 	public abstract String getName();
 	public abstract String getType();
 	public abstract String getDatatype();
+	public abstract String getFormat();
 	public abstract String getRef();
 	public abstract String getMin();
 	public abstract String getMax();
@@ -119,6 +120,7 @@ public abstract class Vocabulary {
 	public boolean isName(String value){return value.equals(getName());}
 	public boolean isType(String value){return value.equals(getType());}
 	public boolean isDatatype(String value){return value.equals(getDatatype());}
+	public boolean isFormat(String value){return value.equals(getFormat());}
 	public boolean isRef(String value){return value.equals(getRef());}
 	public boolean isMin(String value){return value.equals(getMin());}
 	public boolean isMax(String value){return value.equals(getMax());}

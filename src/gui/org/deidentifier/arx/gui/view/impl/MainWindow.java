@@ -181,24 +181,24 @@ public class MainWindow implements IView {
         display.dispose();
     }
 
-    @SuppressWarnings("unchecked")
-    public String showDateFormatInputDialog(final String header,
-                                            final String text,
-                                            final Collection<String> dates) {
+    public String showFormatInputDialog(final String header,
+                                        final String text,
+                                        final DataTypeDescription<?> description,
+                                        final Collection<String> values) {
 
         // Validator
         final IInputValidator validator = new IInputValidator() {
             @Override
             public String isValid(final String arg0) {
-                DateFormat f = null;
+                DataType<?> type;
                 try {
-                    f = new SimpleDateFormat(arg0);
+                    type = description.newInstance(arg0);
                 } catch (final Exception e) {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
                 }
-                for (final String date : dates) {
+                for (final String value : values) {
                     try {
-                        f.parse(date);
+                        type.fromString(value);
                     } catch (final Exception e) {
                         return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
                     }
@@ -209,8 +209,7 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        DataTypeDescription<Date> entry = DataType.LIST(Date.class);
-        for (final String format : entry.getExampleFormats()) {
+        for (final String format : description.getExampleFormats()) {
             if (validator.isValid(format) == null) {
                 initial = format;
                 break;
@@ -232,55 +231,6 @@ public class MainWindow implements IView {
         }
     }
 
-    public String showDecimalFormatInputDialog(final String header,
-                                               final String text,
-                                               final Collection<String> decimals) {
-
-        // Validator
-        final IInputValidator validator = new IInputValidator() {
-            @Override
-            public String isValid(final String arg0) {
-                DateFormat f = null;
-                try {
-                    f = new SimpleDateFormat(arg0);
-                } catch (final Exception e) {
-                    return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
-                }
-                for (final String date : decimals) {
-                    try {
-                        f.parse(date);
-                    } catch (final Exception e) {
-                        return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
-                    }
-                }
-                return null;
-            }
-        };
-
-        // Try to find a valid formatter
-        String initial = ""; //$NON-NLS-1$
-        DataTypeDescription<Double> entry = DataType.LIST(Double.class);
-        for (final String format : entry.getExampleFormats()) {
-            if (validator.isValid(format) == null) {
-                initial = format;
-                break;
-            }
-        }
-
-        // Input dialog
-        final InputDialog dlg = new InputDialog(shell,
-                                                header,
-                                                text,
-                                                initial,
-                                                validator);
-
-        // Return value
-        if (dlg.open() == Window.OK) {
-            return dlg.getValue();
-        } else {
-            return null;
-        }
-    }
     public void showErrorDialog(final String header, final String message) {
         final DialogError dialog = new DialogError(shell, controller, header, message);
         dialog.create();

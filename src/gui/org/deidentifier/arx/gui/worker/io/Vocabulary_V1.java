@@ -99,6 +99,10 @@ public class Vocabulary_V1 extends Vocabulary {
 		return "datatype"; //$NON-NLS-1$
 	}
 	@Override
+	public String getFormat() {
+	    return "format"; //$NON-NLS-1$
+	}
+	@Override
 	public String getRef() {
 		return "ref"; //$NON-NLS-1$
 	}

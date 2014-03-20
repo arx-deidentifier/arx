@@ -41,6 +41,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
@@ -183,7 +184,13 @@ public class WorkerSave extends Worker<Model> {
             writer.indent(vocabulary.getAssigment());
             writer.write(vocabulary.getName(), attr);
             writer.write(vocabulary.getType(), t.toString());
-            writer.write(vocabulary.getDatatype(), dt.toString());
+            writer.write(vocabulary.getDatatype(), dt.getDescription().getLabel());
+            if (dt.getDescription().hasFormat()){
+                String format = ((DataTypeWithFormat)dt).getFormat();
+                if (format != null){
+                    writer.write(vocabulary.getFormat(), format);
+                }
+            }
             
             if (t instanceof Hierarchy || 
                 (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {

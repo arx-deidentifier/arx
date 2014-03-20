@@ -43,6 +43,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -660,16 +661,19 @@ public class Controller implements IView {
     }
 
     /**
-     * Shows the date-format dialog
+     * Shows a dialog for selecting a format for a data type
      * @param header
      * @param text
+     * @param type
      * @param values
      * @return
      */
-    public String actionShowDateFormatInputDialog(final String header,
-                                                 final String text,
-                                                 final Collection<String> values) {
-        return main.showDateFormatInputDialog(header, text, values);
+    public String actionShowFormatInputDialog(final String header,
+                                              final String text,
+                                              final DataTypeDescription<?> type,
+                                              final Collection<String> values) {
+        
+        return main.showFormatInputDialog(header, text, type, values);
     }
 
     /**
