@@ -19,8 +19,6 @@
 package org.deidentifier.arx.gui.resources;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -34,24 +32,25 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * This class provides access to basic resources
+ * @author Fabian Prasser
+ */
 public class Resources {
 
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
 
-    private Logger                      LOGGER          = Logger.getRootLogger();
+    /**
+     * Returns the logo
+     * @return
+     * @throws IOException
+     */
+	public static java.awt.Image getImageIcon() throws IOException {
+		return ImageIO.read(Resources.class.getResourceAsStream("logo.png")); //$NON-NLS-1$
+	}
     
-    public Resources(final Shell shell) {
-
-        this.shell = shell;
-        
-        // Release config
-        SimpleLayout layout = new SimpleLayout();
-        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-        LOGGER.addAppender(consoleAppender);
-        LOGGER.setLevel(Level.OFF);
-    }
-
-    /*
+    /** 
+     * Returns the associated message
      * TODO: Make this method non-static
      */
     public static String getMessage(String key) {
@@ -62,39 +61,81 @@ public class Resources {
         }
     }
 
-    private final Shell shell;
+    /**
+     * Returns the splash image
+     * @return
+     * @throws IOException
+     */
+    public static java.awt.Image getSplash() throws IOException {
+        return ImageIO.read(Resources.class.getResourceAsStream("splash.png")); //$NON-NLS-1$
+    }
 
+    /**
+     * Returns the version
+     * @return
+     */
+    public static String getVersion() {
+        return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
+    }
+
+    private final Logger logger = Logger.getRootLogger();
+
+    private final Shell  shell;
+
+    /**
+     * Creates a new instance
+     * @param shell
+     */
+    public Resources(final Shell shell) {
+
+        this.shell = shell;
+        
+        // Release config
+        SimpleLayout layout = new SimpleLayout();
+        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+        logger.addAppender(consoleAppender);
+        logger.setLevel(Level.OFF);
+    }
+    
+    /**
+     * Returns the display
+     * @return
+     */
     public Display getDisplay() {
         return shell.getDisplay();
     }
 
+    /**
+     * Returns the size of the gradient used in heatmaps
+     * @return
+     */
+    public int getGradientLength() {
+        return 256;
+    }
+
+    /**
+     * Returns an image
+     * @param name
+     * @return
+     */
     public Image getImage(final String name) {
         return new Image(shell.getDisplay(), this.getClass()
                                                  .getResourceAsStream(name));
     }
 
-    public static java.awt.Image getSplash() throws IOException {
-        return ImageIO.read(Resources.class.getResourceAsStream("splash.png")); //$NON-NLS-1$
-    }
-
-    
+    /**
+     * Returns the logger
+     * @return
+     */
     public Logger getLogger() {
-        return LOGGER;
+        return logger;
     }
 
+    /**
+     * Returns the shell
+     * @return
+     */
     public Shell getShell() {
         return shell;
     }
-
-    public static String getVersion() {
-        return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
-    }
-
-    public int getGradientLength() {
-        return 256;
-    }
-
-	public static java.awt.Image getImageIcon() throws IOException {
-		return ImageIO.read(Resources.class.getResourceAsStream("logo.png")); //$NON-NLS-1$
-	}
 }

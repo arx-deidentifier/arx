@@ -20,11 +20,25 @@ package org.deidentifier.arx.gui.view.def;
 
 import org.deidentifier.arx.gui.model.ModelEvent;
 
+/**
+ * An interface for views
+ * @author Fabian Prasser
+ */
 public interface IView {
 
+    /**
+     * Disposes the view
+     */
     public void dispose();
 
+    /**
+     * Resets the view
+     */
     public void reset();
 
+    /**
+     * Updates the view
+     * @param event
+     */
     public void update(ModelEvent event);
 }
