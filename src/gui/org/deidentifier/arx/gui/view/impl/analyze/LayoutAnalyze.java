@@ -113,7 +113,9 @@ public class LayoutAnalyze implements ILayout {
             stop = true;
             synchronized (monitor) {
                 try {
-                    monitor.wait();
+                    while (synchronizer != null){
+                        monitor.wait();
+                    }
                 } catch (final InterruptedException e) {
                     // Die silently
                 }
