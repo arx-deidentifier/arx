@@ -46,11 +46,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * This view displays most settings regarding privacy criteria
+ * @author Fabian Prasser
+ */
 public class ViewCriterionDefinition implements IView {
 
     private static final int       SLIDER_MAX      = 1000;
     private static final int       LABEL_WIDTH     = 50;
     private static final int       LABEL_HEIGHT    = 20;
+    
     private static final String    LABELS_METRIC[] = { 
             Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
@@ -60,6 +65,7 @@ public class ViewCriterionDefinition implements IView {
             Resources.getMessage("CriterionDefinitionView.5"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.52"), //$NON-NLS-1$
     };
+    
     private static final Metric<?> ITEMS_METRIC[]  = { 
             Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
@@ -77,15 +83,20 @@ public class ViewCriterionDefinition implements IView {
     private Button                 buttonPracticalMonotonicity;
     private Button                 buttonProtectSensitiveAssociations;
     private Combo                  comboMetric;
-    private Composite			   root;
-    
-    private ComponentTitledFolder           folder;
+    private Composite              root;
+
+    private ComponentTitledFolder  folder;
     private ToolItem               enable;
     private ToolItem               push;
     private ToolItem               pull;
-    
+
     private ViewCriteriaList       clv;
     
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewCriterionDefinition(final Composite parent,
                                    final Controller controller) {
 
@@ -153,9 +164,7 @@ public class ViewCriterionDefinition implements IView {
         group.setLayoutData(SWTUtil.createFillGridData());
         group.setLayout(SWTUtil.createGridLayout(2));
 
-        /*
-         *  Add tab folder for criteria
-         */
+        // Add tab folder for criteria
         GridData gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.grabExcessHorizontalSpace = true;
@@ -215,9 +224,7 @@ public class ViewCriterionDefinition implements IView {
         push.setEnabled(false);
         pull.setEnabled(false);
       
-        /*
-         * Add general view
-         */
+        // Add general view
         gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.horizontalSpan = 2;

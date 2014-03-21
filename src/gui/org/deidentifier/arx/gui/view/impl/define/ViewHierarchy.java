@@ -152,6 +152,10 @@ public class ViewHierarchy implements IView {
         base.redraw();
     }
 
+    /**
+     * Sets the hierarchy displayed by this view
+     * @param type
+     */
     public void setHierarchy(final AttributeType.Hierarchy type) {
 
         hierarchy = type.getHierarchy();
@@ -197,6 +201,10 @@ public class ViewHierarchy implements IView {
         pushHierarchy();
     }
 
+    /**
+     * Sets the layout data
+     * @param d
+     */
     public void setLayoutData(final Object d) {
         base.setLayoutData(d);
     }
@@ -237,6 +245,10 @@ public class ViewHierarchy implements IView {
         }
     }
 
+    /**
+     * Creates the control
+     * @param parent
+     */
     private void create(final Composite parent) {
 
         base = new Composite(parent, SWT.NONE);
@@ -294,6 +306,10 @@ public class ViewHierarchy implements IView {
         init();
     }
     
+    /**
+     * Updates the min generalization level
+     * @return
+     */
     private boolean updateMin() {
         if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
             if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
@@ -316,6 +332,10 @@ public class ViewHierarchy implements IView {
         return false;
     }
     
+    /**
+     * Updates the max generalization level
+     * @return
+     */
     private boolean updateMax(){
         if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
             if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
@@ -338,6 +358,9 @@ public class ViewHierarchy implements IView {
         return false;
     }
 
+    /**
+     * Initializes the view
+     */
     private void init() {
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -699,6 +722,9 @@ public class ViewHierarchy implements IView {
         }
     }
 
+    /**
+     * Updates the hierarchy
+     */
     private void updateHierarchy() {
         final int rows = table.getItemCount();
         final int cols = table.getColumnCount();
