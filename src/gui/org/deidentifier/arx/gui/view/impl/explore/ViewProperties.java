@@ -42,16 +42,25 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * This view displays properties about the currently selected transformation
+ * @author Fabian Prasser
+ */
 public class ViewProperties implements IView {
 
     private ARXResult               result;
     private Table                   table;
     private final List<TableColumn> columns = new ArrayList<TableColumn>();
     private final List<TableItem>   items   = new ArrayList<TableItem>();
-    private final NumberFormat      format  = new DecimalFormat("##0.000");                //$NON-NLS-1$
+    private final NumberFormat      format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
     private final Composite         root;
     private final Controller        controller;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewProperties(final Composite parent,
                               final Controller controller) {
 
@@ -79,23 +88,21 @@ public class ViewProperties implements IView {
      * @return
      */
     private double asRelativeValue(final InformationLoss infoLoss) {
-        return ((infoLoss.getValue() - result.getLattice()
-                                             .getBottom()
-                                             .getMinimumInformationLoss()
-                                             .getValue()) / result.getLattice()
-                                                                  .getTop()
-                                                                  .getMaximumInformationLoss()
-                                                                  .getValue()) * 100d;
+        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
+        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
+        return ((infoLoss.getValue() - min) / (max - min)) * 100d;
     }
 
+    /**
+     * Creates the required controls
+     * @param groupNode
+     */
     private void createNodeGroup(final Composite groupNode) {
 
         table = new Table(groupNode, SWT.BORDER);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         final GridData gdata = SWTUtil.createFillGridData();
-        // gdata.heightHint = (NUM_PROPERTIES * table.getItemHeight())
-        // + table.getHeaderHeight() + (2 * table.getBorderWidth());
         table.setLayoutData(gdata);
 
         TableColumn c = new TableColumn(table, SWT.NONE);
@@ -158,7 +165,11 @@ public class ViewProperties implements IView {
         SWTUtil.disable(root);
     }
 
-    private void setSelectedNode(final ARXNode node) {
+    /**
+     * Updates the view
+     * @param node
+     */
+    private void update(final ARXNode node) {
         // TODO: Implement unknown
         table.setRedraw(false);
         for (final TableItem i : items) {
@@ -172,10 +183,8 @@ public class ViewProperties implements IView {
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
         if (node.getMinimumInformationLoss() != null) {
-            c.setText(1,
-                      String.valueOf(node.getMinimumInformationLoss()
-                                         .getValue()) +
-                              " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+            c.setText(1, String.valueOf(node.getMinimumInformationLoss().getValue()) +
+                         " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
         }
@@ -183,10 +192,8 @@ public class ViewProperties implements IView {
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
         if (node.getMaximumInformationLoss() != null) {
-            c.setText(1,
-                      String.valueOf(node.getMaximumInformationLoss()
-                                         .getValue()) +
-                              " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+            c.setText(1, String.valueOf(node.getMaximumInformationLoss().getValue()) +
+                         " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
         }
@@ -220,12 +227,10 @@ public class ViewProperties implements IView {
             result = (ARXResult) event.data;
             reset();
         } else if (event.part == ModelPart.SELECTED_NODE) {
-
-            // No result available
             if (event.data == null) {
                 reset();
             } else {
-                setSelectedNode((ARXNode) event.data);
+                update((ARXNode) event.data);
                 SWTUtil.enable(root);
             }
         }
