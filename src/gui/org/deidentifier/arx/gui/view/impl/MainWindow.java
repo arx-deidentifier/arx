@@ -312,10 +312,14 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        for (final String format : description.getExampleFormats()) {
-            if (validator.isValid(format) == null) {
-                initial = format;
-                break;
+        if (validator.isValid(DEFAULT) == null) {
+            initial = DEFAULT;
+        } else {
+            for (final String format : description.getExampleFormats()) {
+                if (validator.isValid(format) == null) {
+                    initial = format;
+                    break;
+                }
             }
         }
         
