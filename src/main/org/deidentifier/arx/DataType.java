@@ -598,7 +598,9 @@ public abstract class DataType<T> {
     public abstract DataType<T> clone();
     
     /**
-     * Compares two values
+     * Compares two values. The result is 0 if both values are equal, 
+     * less than 0 if the first value is less than the second argument, 
+     * and greater than 0 if the first value is greater than the second argument.
      * @param s1
      * @param s2
      * @return
