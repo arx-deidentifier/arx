@@ -161,8 +161,7 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException
      */
-    public static Data
-            create(final InputStream stream, final char separator) throws IOException {
+    public static Data create(final InputStream stream, final char separator) throws IOException {
         return new IterableData(new CSVDataInput(stream, separator).iterator());
     }
 
