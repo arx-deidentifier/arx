@@ -64,6 +64,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * The main window of the ARX GUI Tool
+ * @author Fabian Prasser
+ */
 public class MainWindow implements IView {
 
     public static final Font            FONT                      = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
@@ -81,6 +85,9 @@ public class MainWindow implements IView {
 
     private final ComponentTitledFolder root;
 
+    /**
+     * Creates a new instance
+     */
     public MainWindow() {
 
         // Init
@@ -136,6 +143,19 @@ public class MainWindow implements IView {
         controller.reset();
     }
     
+    /**
+	 * Adds a listener
+	 * @param event
+	 * @param listener
+	 */
+    public void addListener(int event, Listener listener) {
+        shell.addListener(event, listener);
+    }
+
+    /**
+     * Adds a shell listener
+     * @param listener
+     */
     public void addShellListener(ShellListener listener){
         this.shell.addShellListener(listener);
     }
@@ -145,23 +165,41 @@ public class MainWindow implements IView {
         controller.removeListener(this);
     }
 
+    /**
+     * Returns the popup window
+     * @return
+     */
     public MainPopUp getPopUp() {
         return popup;
     }
 
+    /**
+     * Returns the shell
+     * @return
+     */
     public Shell getShell() {
         return shell;
     }
 
+    /**
+     * Returns the tooltip window
+     * @return
+     */
     public MainToolTip getToolTip() {
         return tooltip;
     }
 
+    /**
+     * Resets the GUI
+     */
     public void reset() {
         root.setSelection(0);
         root.setEnabled(false);
     }
 
+    /**
+     * Main SWT event loop
+     */
     public void show() {
         shell.open();
         while (!shell.isDisposed()) {
@@ -180,18 +218,84 @@ public class MainWindow implements IView {
         display.dispose();
     }
 
+    /**
+     * Shows an about dialog
+     */
+	public void showAboutDialog() {
+		final DialogAbout dialog = new DialogAbout(shell, controller);
+        dialog.create();
+        dialog.open();
+	}
+    
+    /**
+     * Shows an error dialog
+     * @param header
+     * @param message
+     */
+    public void showErrorDialog(final String header, final String message) {
+        final DialogError dialog = new DialogError(shell, controller, header, message);
+        dialog.create();
+        dialog.open();
+    }
+    
+    /**
+     * Shows an error dialog
+     * @param header
+     * @param message
+     * @param error
+     */
+    public void showErrorDialog(final String header, final String message, final String error) {
+        final DialogError dialog = new DialogError(shell, controller, header, message, error);
+        dialog.create();
+        dialog.open();
+    }
+    
+    /**
+     * Shows an error dialog
+     * @param header
+     * @param message
+     * @param t
+     */
+    public void showErrorDialog(final String header, final String message, final Throwable t) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		final String trace = sw.toString();
+		showErrorDialog(header, message, trace);
+    }
+
+    /**
+     * Shows an input dialog for selecting formats string for data types
+     * @param header
+     * @param text
+     * @param description
+     * @param values
+     * @return
+     */
     public String showFormatInputDialog(final String header,
                                         final String text,
                                         final DataTypeDescription<?> description,
                                         final Collection<String> values) {
 
+        // Check
+        if (!description.hasFormat()) {
+            throw new RuntimeException("This dialog can only be used for data types with format");
+        }
+        
+        // Init
+        final String DEFAULT = "Default";
+        
         // Validator
         final IInputValidator validator = new IInputValidator() {
             @Override
             public String isValid(final String arg0) {
                 DataType<?> type;
                 try {
-                    type = description.newInstance(arg0);
+                    if (arg0.equals(DEFAULT)) {
+                        type = description.newInstance();
+                    } else {
+                        type = description.newInstance(arg0);
+                    }
                 } catch (final Exception e) {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
                 }
@@ -215,11 +319,16 @@ public class MainWindow implements IView {
             }
         }
         
+        // Extract list of formats
+        List<String> formats = new ArrayList<String>();
+        formats.add(DEFAULT);
+        formats.addAll(description.getExampleFormats());
+        
         // Open dialog
         final DialogFormatSelection dlg = new DialogFormatSelection(shell,
                                                 header,
                                                 text,
-                                                description.getExampleFormats().toArray(new String[]{}),
+                                                formats.toArray(new String[]{}),
                                                 initial,
                                                 validator);
 
@@ -231,30 +340,32 @@ public class MainWindow implements IView {
         }
     }
 
-    public void showErrorDialog(final String header, final String message) {
-        final DialogError dialog = new DialogError(shell, controller, header, message);
+    /**
+     * Shows a help dialog
+     * @param id
+     */
+	public void showHelpDialog(String id) {
+        final DialogHelp dialog = new DialogHelp(shell, controller, id);
         dialog.create();
         dialog.open();
-    }
-    
-    public void showErrorDialog(final String header, final String message, final String error) {
-        final DialogError dialog = new DialogError(shell, controller, header, message, error);
-        dialog.create();
-        dialog.open();
-    }
-    
-    public void showErrorDialog(final String header, final String message, final Throwable t) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		t.printStackTrace(pw);
-		final String trace = sw.toString();
-		showErrorDialog(header, message, trace);
-    }
-    
+	}
+
+    /**
+     * Shows an info dialog
+     * @param header
+     * @param text
+     */
     public void showInfoDialog(final String header, final String text) {
         MessageDialog.openInformation(getShell(), header, text);
     }
 
+    /**
+     * Shows an input dialog
+     * @param header
+     * @param text
+     * @param initial
+     * @return
+     */
     public String showInputDialog(final String header,
                                   final String text,
                                   final String initial) {
@@ -271,6 +382,11 @@ public class MainWindow implements IView {
         }
     }
 
+    /**
+     * Shows a file open dialog
+     * @param filter
+     * @return
+     */
     public String showOpenFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFilterExtensions(new String[] { filter });
@@ -278,6 +394,11 @@ public class MainWindow implements IView {
         return dialog.open();
     }
 
+    /**
+     * Shows a progress dialog
+     * @param text
+     * @param worker
+     */
     public void showProgressDialog(final String text, final Worker<?> worker) {
         try {
             new ProgressMonitorDialog(shell).run(true, true, worker);
@@ -285,7 +406,13 @@ public class MainWindow implements IView {
             worker.setError(e);
         }
     }
-
+	
+	/**
+     * Shows a query dialog for selecting a research subset
+     * @param query
+     * @param data
+     * @return
+     */
     public DialogQueryResult showQueryDialog(String query, Data data) {
 
         // Dialog
@@ -295,16 +422,21 @@ public class MainWindow implements IView {
         else {return dialog.getResult();}
     }
 
+    /**
+     * Shows a question dialog
+     * @param header
+     * @param text
+     * @return
+     */
     public boolean showQuestionDialog(final String header, final String text) {
         return MessageDialog.openQuestion(getShell(), header, text);
     }
 
-	public void showHelpDialog(String id) {
-        final DialogHelp dialog = new DialogHelp(shell, controller, id);
-        dialog.create();
-        dialog.open();
-	}
-	
+    /**
+	 * Shows a file save dialog
+	 * @param filter
+	 * @return
+	 */
     public String showSaveFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         dialog.setFilterExtensions(new String[] { filter });
@@ -312,6 +444,11 @@ public class MainWindow implements IView {
         return dialog.open();
     }
 
+    /**
+     * Shows a dialog for selecting privacy criteria
+     * @param others
+     * @return
+     */
     public ModelExplicitCriterion showSelectCriterionDialog(List<ModelExplicitCriterion> others) {
 
         // Dialog
@@ -321,7 +458,7 @@ public class MainWindow implements IView {
         else {return dialog.getCriterion();}
     }
 
-    @Override
+	@Override
     public void update(final ModelEvent event) {
 
         // Careful! In the main window, this is also called after editing the project properties
@@ -330,15 +467,5 @@ public class MainWindow implements IView {
             shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
             root.setEnabled(true);
         }
-    }
-
-	public void showAboutDialog() {
-		final DialogAbout dialog = new DialogAbout(shell, controller);
-        dialog.create();
-        dialog.open();
-	}
-
-    public void addListener(int event, Listener listener) {
-        shell.addListener(event, listener);
     }
 }
