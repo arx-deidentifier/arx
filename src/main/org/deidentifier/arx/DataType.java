@@ -58,7 +58,7 @@ public abstract class DataType<T> {
         }
 
         /**
-         * Create a data with a format string. Format strings must be valid formats
+         * Create a date with a format string. Format strings must be valid formats
          * for <code>SimpleDateFormat</code>.
          * @param format
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
