@@ -164,7 +164,7 @@ public class ViewHierarchy implements IView {
             i.dispose();
         }
 
-        if ((type == null) || (type.getHierarchy() == null) ||
+        if ((type.getHierarchy() == null) ||
             (type.getHierarchy().length == 0)) {
             table.setRedraw(true);
             table.redraw();
