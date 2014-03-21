@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Listener;
 public class LayoutAnalyze implements ILayout {
 
     private class Synchronizer implements Runnable {
+        
         final ViewData in;
         final ViewData out;
         Boolean         stop     = false;
@@ -76,25 +77,28 @@ public class LayoutAnalyze implements ILayout {
                             Display.getDefault().syncExec(runnable);
                         }
                     } catch (final Exception e) {
-                    } // Catch nattable bugs
+                        // Die silently
+                    } 
                 }
                 try {
                     Thread.sleep(10);
                 } catch (final InterruptedException e) {
+                    // Die silently
                 }
             }
             synchronizer = null;
-            synchronized (stop) {
-                stop.notify();
+            synchronized (LayoutAnalyze.this) {
+                LayoutAnalyze.this.notify();
             }
         }
 
         public void stop() {
             stop = true;
-            synchronized (stop) {
+            synchronized (LayoutAnalyze.this) {
                 try {
-                    stop.wait();
+                    LayoutAnalyze.this.wait();
                 } catch (final InterruptedException e) {
+                    // Die silently
                 }
             }
         }
