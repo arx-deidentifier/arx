@@ -36,8 +36,6 @@ import org.eclipse.swt.widgets.Listener;
 public class LayoutExplore implements ILayout {
 
     private final Composite root;
-    private ModelNodeFilter filter;
-    private ARXResult       result;
 
     public LayoutExplore(final Composite parent, final Controller controller) {
 
@@ -45,17 +43,7 @@ public class LayoutExplore implements ILayout {
         root = new Composite(parent, SWT.NONE);
         root.setLayoutData(SWTUtil.createFillGridData());
         root.setLayout(SWTUtil.createGridLayout(1));
-        root.addListener(SWT.Show, new Listener() {
-            @Override
-            public void handleEvent(final Event arg0) {
-                if ((result != null) && (filter != null)) {
-                    controller.update(new ModelEvent(this,
-                                                     ModelPart.FILTER,
-                                                     filter));
-                }
-            }
-        });
-
+ 
         // Create top composite
         ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
