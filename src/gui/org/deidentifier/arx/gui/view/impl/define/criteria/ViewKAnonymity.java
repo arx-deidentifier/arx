@@ -34,11 +34,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
+/**
+ * A view on a k-anonymity criterion
+ * @author Fabian Prasser
+ */
 public class ViewKAnonymity extends ViewCriterion {
 
 	private Label labelK;
 	private Scale sliderK;
 
+	/**
+	 * Creates a new instance
+	 * @param parent
+	 * @param controller
+	 * @param model
+	 */
 	public ViewKAnonymity(final Composite parent, final Controller controller,
 			final Model model) {
 

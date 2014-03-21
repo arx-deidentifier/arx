@@ -34,6 +34,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
+/**
+ * A view on a d-presence criterion
+ * @author Fabian Prasser
+ */
 public class ViewDPresence extends ViewCriterion{
 
     private Scale                  sliderDMin;
@@ -41,6 +45,12 @@ public class ViewDPresence extends ViewCriterion{
     private Label                  labelDMin;
     private Label                  labelDMax;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     * @param model
+     */
     public ViewDPresence(final Composite parent,
                          final Controller controller,
                          final Model model) {
