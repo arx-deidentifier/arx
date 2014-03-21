@@ -35,6 +35,10 @@ import org.deidentifier.arx.gui.resources.Resources;
 
 import com.sun.awt.AWTUtilities;
 
+/**
+ * This class implements a splash window
+ * @author Fabian Prasser, Florian Kohlmayer
+ */
 public class MainSplash extends Frame{
 
     private static final long serialVersionUID = -4661666752999055995L;

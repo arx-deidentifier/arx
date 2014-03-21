@@ -27,12 +27,21 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * This class implements the global main menu
+ * @author Fabian Prasser
+ */
 public class MainMenu {
 
     private static final String FILE_NAME = Resources.getMessage("MainMenu.0"); //$NON-NLS-1$
     private static final String EDIT_NAME = Resources.getMessage("MainMenu.1"); //$NON-NLS-1$
     private static final String HELP_NAME = Resources.getMessage("MainMenu.2"); //$NON-NLS-1$
 
+    /**
+     * Creates a new instance
+     * @param shell
+     * @param controller
+     */
     public MainMenu(final Shell shell, final Controller controller) {
 
         // Create Menu
@@ -219,6 +228,5 @@ public class MainMenu {
                 controller.actionMenuHelpAbout();
             }
         });
-
     }
 }

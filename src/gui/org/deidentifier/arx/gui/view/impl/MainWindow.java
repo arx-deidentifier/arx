@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The main window of the ARX GUI Tool
+ * This class implements the global application window
  * @author Fabian Prasser
  */
 public class MainWindow implements IView {
