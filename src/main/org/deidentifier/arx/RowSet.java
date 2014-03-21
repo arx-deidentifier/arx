@@ -20,11 +20,10 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
-
 /**
  * A set of rows
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
  */
 public class RowSet implements Serializable {
 

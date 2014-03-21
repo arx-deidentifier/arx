@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,16 +31,24 @@ import java.util.List;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class DataType<T> {
+public abstract class DataType<T> implements Serializable {
     
+    private static final long serialVersionUID = -4380267779210935078L;
+
     /**
      * Base class for date/time types
      * @author Fabian Prasser
      */
 	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat {
-	    
+	
+        private static final long serialVersionUID = -1658470914184442833L;
+
         /** The description of the data type*/
         private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  true, listDateFormats()){
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -1723392257250720908L;
             @Override public DataType<Date> newInstance() { return DATE; }
             @Override public DataType<Date> newInstance(String format) {return DATE(format);}
         };
@@ -131,9 +140,15 @@ public abstract class DataType<T> {
 	 * @author Fabian Prasser
 	 */
     public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat {
-        
+  
+        private static final long serialVersionUID = 7293446977526103610L;
+
         /** The description of the data type*/
         private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()){
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -3549629178680030868L;
             @Override public DataType<Double> newInstance() { return DECIMAL; }
             @Override public DataType<Double> newInstance(String format) {return DECIMAL(format);}
         };
@@ -234,8 +249,14 @@ public abstract class DataType<T> {
      */
     public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat {
         
+        private static final long serialVersionUID = -631163546929231044L;
+
         /** The description of the data type*/
         private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()){
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -4498725217659811835L;
             @Override public DataType<Long> newInstance() { return INTEGER; }
             @Override public DataType<Long> newInstance(String format) {return INTEGER(format);}
         };
@@ -336,8 +357,14 @@ public abstract class DataType<T> {
      */
     public static class ARXString extends DataType<String> {
         
+        private static final long serialVersionUID = 903334212175979691L;
+        
         /** The description of the data type*/
         private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "String", false, new ArrayList<String>()){
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -6679110898204862834L;
             @Override public DataType<String> newInstance() { return STRING; }
             @Override public DataType<String> newInstance(String format) {return STRING;}
         };
@@ -391,8 +418,10 @@ public abstract class DataType<T> {
      * @author Fabian Prasser
      * @param <T>
      */
-    public static abstract class DataTypeDescription<T> {
+    public static abstract class DataTypeDescription<T> implements Serializable {
 
+        private static final long serialVersionUID = 6369986224526795419L;
+        
         /** The wrapped java class*/
         private Class<?> clazz;
         /** If yes, a list of available formats*/
