@@ -410,14 +410,11 @@ public class ViewLattice extends Panel implements IView {
         b.append(format.format(asRelativeValue(node.getMaximumInformationLoss())));
         b.append(" [%]\n"); //$NON-NLS-1$
         for (final String qi : node.getQuasiIdentifyingAttributes()) {
+            int height = model.getOutputConfig().getInput().getDefinition().getHierarchyHeight(qi);
             b.append(" * "); //$NON-NLS-1$
             b.append(qi);
             b.append(": "); //$NON-NLS-1$
-            b.append(format.format(asRelativeValue(node.getGeneralization(qi),
-                                                   model.getOutputConfig()
-                                                        .getInput()
-                                                        .getDefinition()
-                                                        .getHierarchyHeight(qi) - 1)));
+            b.append(format.format(asRelativeValue(node.getGeneralization(qi), height - 1)));
             b.append(" [%]\n"); //$NON-NLS-1$
         }
         b.setLength(b.length() - 1);
@@ -457,8 +454,7 @@ public class ViewLattice extends Panel implements IView {
         // Set style
         g.setStroke(new BasicStroke(strokeWidthConnection));
         g.setColor(Color.black);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                           RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Draw connections
         for (final ARXNode node : lattice) {
