@@ -137,9 +137,7 @@ public class ViewDistribution extends ViewStatistics implements IView {
 
         final ITitle yAxisTitle = yAxis.getTitle();
         yAxisTitle.setText(""); //$NON-NLS-1$
-        if (chart != null) {
-            chart.setEnabled(false);
-        }
+        chart.setEnabled(false);
     }
 
     @Override
