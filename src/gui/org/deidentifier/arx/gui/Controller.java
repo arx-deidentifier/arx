@@ -661,12 +661,12 @@ public class Controller implements IView {
     }
 
     /**
-     * Shows a dialog for selecting a format for a data type
-     * @param header
-     * @param text
-     * @param type
-     * @param values
-     * @return
+     * Shows a dialog for selecting a format string for a data type
+     * @param header The dialog's title
+     * @param text The dialog's text
+     * @param type The description of the data type for which to choose a format string
+     * @param values The values to check the format string against
+     * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
     public String actionShowFormatInputDialog(final String header,
                                               final String text,
