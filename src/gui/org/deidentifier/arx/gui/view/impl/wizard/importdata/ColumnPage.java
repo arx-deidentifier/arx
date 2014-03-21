@@ -503,7 +503,10 @@ public class ColumnPage extends WizardPage {
          *
          * Internally this function makes use of
          * {@link ImportDataColumn#setDatatype(Class)}. The values itself are
-         * taken from {@link #choices}.
+         * taken from {@link #choices}. The format string that can be provided
+         * by the user is retrieved using
+         * {@link Controller#actionShowFormatInputDialog(String, String,
+         * DataTypeDescription, java.util.Collection)}.
          */
         @Override
         protected void setValue(Object element, Object value)
