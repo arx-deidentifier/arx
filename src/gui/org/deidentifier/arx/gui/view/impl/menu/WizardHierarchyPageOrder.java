@@ -18,13 +18,14 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -40,14 +41,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 
+/**
+ * This class implements a page in the wizard that allows ordering data items
+ * @author Fabian Prasser
+ */
 public class WizardHierarchyPageOrder extends WizardPage {
 
-    private final WizardHierarchyModel model;
-    private List                       list;
-    private final int                  order = 1;
     private final Controller           controller;
-    private String                     format;
+    private List                       list;
+    private final WizardHierarchyModel model;
 
+    /**
+     * Constructor
+     * @param controller
+     * @param model
+     */
     public WizardHierarchyPageOrder(final Controller controller,
                                     final WizardHierarchyModel model) {
         super(""); //$NON-NLS-1$
@@ -120,47 +128,61 @@ public class WizardHierarchyPageOrder extends WizardPage {
         final Combo combo = new Combo(bottom1, SWT.NONE);
         combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         combo.add(Resources.getMessage("HierarchyWizardPageOrder.8")); //$NON-NLS-1$
-        combo.add(Resources.getMessage("HierarchyWizardPageOrder.9")); //$NON-NLS-1$
-        combo.add(Resources.getMessage("HierarchyWizardPageOrder.10")); //$NON-NLS-1$
-        combo.add(Resources.getMessage("HierarchyWizardPageOrder.11")); //$NON-NLS-1$
+        for (String type : getDataTypes()){
+            combo.add(type);
+        }
         combo.select(0);
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (combo.getSelectionIndex() == 0) {
-                    sortDefault();
-                } else if (combo.getSelectionIndex() == 1) {
-                    sortLexicographic();
-                } else if (combo.getSelectionIndex() == 2) {
-                    sortNumeric();
-                } else if (combo.getSelectionIndex() == 3) {
-
-                    // Choose a format
-                    format = controller.actionShowDateFormatInputDialog(Resources.getMessage("HierarchyWizardPageOrder.12"), Resources.getMessage("HierarchyWizardPageOrder.13"), model.getItems()); //$NON-NLS-1$ //$NON-NLS-2$
-
-                    // Invalid or valid
-                    if (format == null) {
-                        sortDefault();
-                        combo.select(0);
-                    } else {
-                        sortDate();
+                if (combo.getSelectionIndex() >=0 ){
+                    DataType<?> type = model.getDataType();
+                    if (combo.getSelectionIndex() > 0) {
+                        String label = combo.getItem(combo.getSelectionIndex());
+                        DataTypeDescription<?> description = getDataType(label);
+    
+                        // Open format dialog
+                        if (description.hasFormat()) {
+                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, model.getItems());
+                            if (format == null) {
+                                type = DataType.STRING;
+                                combo.select(getIndexOfDataType(DataType.STRING)+1);
+                            } else {
+                                type = description.newInstance(format);
+                            }
+                        } else {
+                            type = description.newInstance();
+                            if (!isValidDataType(type, model.getItems())) {
+                                type = DataType.STRING;
+                                combo.select(getIndexOfDataType(DataType.STRING)+1);                        
+                            }
+                        }
+                    }
+                    try {
+                        sort(type);
+                    } catch (Exception e){
+                        // TODO: This is an ugly fix for cases in which the data type is not correct,
+                        // TODO: e.g., when specifying "numeric" for "strings" which will result in
+                        // TODO: a NumberFormatException
+                        sort(DataType.STRING);
                     }
                 }
             }
         });
-
-        try {
-            sortDefault();
-        } catch (Exception e){
-            // TODO: This is an ugly fix for cases in which the data type is not correct,
-            // TODO: e.g., when specifying "numeric" for "strings" which will result in
-            // TODO: a NumberFormatException
-            sortLexicographic();
-        }
-
+        sort(model.getDataType());
         setControl(composite);
     }
-
+    
+    @Override
+    public boolean isPageComplete() {
+        return true;
+    }
+    
+    /**
+     * Move an item down
+     */
     private void down() {
         final int index = list.getSelectionIndex();
         if ((index != -1) && (index < (list.getItemCount() - 1))) {
@@ -174,19 +196,76 @@ public class WizardHierarchyPageOrder extends WizardPage {
         }
     }
 
-    @Override
-    public boolean isPageComplete() {
-        return true;
+    /**
+     * Returns a description for the given label
+     * @param label
+     * @return
+     */
+    private DataTypeDescription<?> getDataType(String label){
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            if (label.equals(desc.getLabel())){
+                return desc;
+            }
+        }
+        throw new RuntimeException("Unknown data type: "+label);
+    }
+    
+    /**
+     * Returns the labels of all available data types
+     * @return
+     */
+    private String[] getDataTypes(){
+        ArrayList<String> list = new ArrayList<String>();
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            list.add(desc.getLabel());
+        }
+        return list.toArray(new String[list.size()]);
     }
 
-    private void sortDate() {
+    /**
+     * Returns the index of a given data type
+     * @param type
+     * @return
+     */
+    private int getIndexOfDataType(DataType<?> type){
+        int idx = 0;
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            if (desc.getLabel().equals(type.getDescription().getLabel())) {
+                return idx;
+            }
+            idx++;
+        }
+        throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
+    }
+
+    /**
+     * Checks whether the data type is valid
+     * @param type
+     * @param values
+     * @return
+     */
+    private boolean isValidDataType(DataType<?> type, Collection<String> values){
+        // TODO: Ugly
+        try {
+            for (String value : values){
+                type.fromString(value);
+            }
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    /**
+     * Perform sorting
+     * @param type
+     */
+    private void sort(final DataType<?> type) {
         list.removeAll();
-        final DateFormat f = new SimpleDateFormat(format);
         Collections.sort(model.getItems(), new Comparator<String>() {
-            @Override
-            public int compare(final String arg0, final String arg1) {
+            @Override public int compare(final String arg0, final String arg1) {
                 try {
-                    return order * f.parse(arg0).compareTo(f.parse(arg1));
+                    return type.compare(arg0, arg1);
                 } catch (final ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -197,58 +276,9 @@ public class WizardHierarchyPageOrder extends WizardPage {
         }
     }
 
-    private void sortDefault() {
-        list.removeAll();
-        final DataType<?> type = model.getDataType();
-        Collections.sort(model.getItems(), new Comparator<String>() {
-            @Override
-            public int compare(final String arg0, final String arg1) {
-                try {
-                    return order * type.compare(arg0, arg1);
-                } catch (final ParseException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        for (final String s : model.getItems()) {
-            list.add(s);
-        }
-    }
-
-    private void sortLexicographic() {
-        list.removeAll();
-        try {
-            Collections.sort(model.getItems(), new Comparator<String>() {
-                @Override
-                public int compare(final String arg0, final String arg1) {
-                    return order * arg0.compareTo(arg1);
-                }
-
-            });
-        } catch (final Exception e) {
-        }
-        for (final String s : model.getItems()) {
-            list.add(s);
-        }
-    }
-
-    private void sortNumeric() {
-        list.removeAll();
-        try {
-            Collections.sort(model.getItems(), new Comparator<String>() {
-                @Override
-                public int compare(final String arg0, final String arg1) {
-                    return order *
-                           Double.valueOf(arg0).compareTo(Double.valueOf(arg1));
-                }
-            });
-        } catch (final Exception e) {
-        }
-        for (final String s : model.getItems()) {
-            list.add(s);
-        }
-    }
-
+    /**
+     * Move an item up
+     */
     private void up() {
         final int index = list.getSelectionIndex();
         if ((index != -1) && (index > 0)) {

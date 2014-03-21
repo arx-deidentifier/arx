@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.Entry;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -213,11 +213,11 @@ public class ColumnPage extends WizardPage {
 
                 DataType<?> column = ((ImportDataColumn) element).getDatatype();
 
-                for (Entry<?> entry : DataType.LIST) {
+                for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
 
-                    if (entry.newInstance().getClass() == column.getClass()) {
+                    if (DataTypeDescription.newInstance().getClass() == column.getClass()) {
 
-                        return entry.getLabel();
+                        return DataTypeDescription.getLabel();
 
                     }
 
@@ -440,9 +440,9 @@ public class ColumnPage extends WizardPage {
 
             List<String> labels = new ArrayList<String>();
 
-            for (Entry<?> entry : DataType.LIST) {
+            for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
 
-                labels.add(entry.getLabel());
+                labels.add(DataTypeDescription.getLabel());
 
             }
 
@@ -485,9 +485,9 @@ public class ColumnPage extends WizardPage {
 
             int i = 0;
 
-            for (Entry<?> entry : DataType.LIST) {
+            for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
 
-                if (entry.newInstance().getClass() == datatype.getClass()) {
+                if (DataTypeDescription.newInstance().getClass() == datatype.getClass()) {
 
                     return i;
 
@@ -515,26 +515,26 @@ public class ColumnPage extends WizardPage {
 
             String label = choices[(int) value];
 
-            for (Entry<?> entry : DataType.LIST) {
+            for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
 
-                if (entry.getLabel().equals(label)) {
+                if (DataTypeDescription.getLabel().equals(label)) {
 
                     DataType<?> datatype = null;
 
-                    if (entry.hasFormat()) {
+                    if (DataTypeDescription.hasFormat()) {
 
                         Shell shell = Display.getDefault().getActiveShell();
                         InputDialog dialog = new InputDialog(
                                 shell,
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
-                                detectValidFormatter(entry, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))),
-                                new DatatypeFormatValidator(entry, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element)))
+                                detectValidFormatter(DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))),
+                                new DatatypeFormatValidator(DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element)))
                         );
 
                         if (dialog.open() == Window.OK) {
 
-                            datatype = entry.newInstance(dialog.getValue());
+                            datatype = DataTypeDescription.newInstance(dialog.getValue());
 
                         } else {
 
@@ -550,7 +550,7 @@ public class ColumnPage extends WizardPage {
                         /*
                          * Datatype has no format
                          */
-                        datatype = entry.newInstance();
+                        datatype = DataTypeDescription.newInstance();
 
                     }
 
@@ -569,24 +569,24 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Tries to find a valid formatter for given entry and column data
+         * Tries to find a valid formatter for given DataTypeDescription and column data
          *
-         * This iterates over all formats defined for the given entry
-         * {@link Entry#getExampleFormats()} and tries to apply it to the
+         * This iterates over all formats defined for the given DataTypeDescription
+         * {@link DataTypeDescription#getExampleFormats()} and tries to apply it to the
          * given <code>columnPreview</code>. Once it detects a valid one,
          * it gets returned. If no valid formatter can be found, an empty
          * string will be returned.
          *
-         * @param entry Entry a formatter should be detected for
+         * @param DataTypeDescription DataTypeDescription a formatter should be detected for
          * @param columnPreview Data formatter should apply to
          *
          * @return Detected formatter, empty string if none was found
          */
-        private String detectValidFormatter(Entry<?> entry, List<String> columnPreview) {
+        private String detectValidFormatter(DataTypeDescription<?> DataTypeDescription, List<String> columnPreview) {
 
-            for (String format : entry.getExampleFormats()) {
+            for (String format : DataTypeDescription.getExampleFormats()) {
 
-                if (new DatatypeFormatValidator(entry, columnPreview).isValid(format) == null) {
+                if (new DatatypeFormatValidator(DataTypeDescription, columnPreview).isValid(format) == null) {
 
                     return format;
 
@@ -601,7 +601,7 @@ public class ColumnPage extends WizardPage {
         /**
          * Validates format strings for the datatype
          *
-         * Certain datatypes ({@link Entry#hasFormat}) can be supplied with a
+         * Certain datatypes ({@link DataTypeDescription#hasFormat}) can be supplied with a
          * format string from the user. This validator makes sure that the
          * given format string is valid and can be applied to the preview data.
          */
@@ -610,7 +610,7 @@ public class ColumnPage extends WizardPage {
             /**
              * The datatype the validation should be performed for
              */
-            private Entry<?> entry;
+            private DataTypeDescription<?> DataTypeDescription;
 
             /**
              * The preview data
@@ -621,12 +621,12 @@ public class ColumnPage extends WizardPage {
             /**
              * Creates a new validator for given datatype and preview data
              *
-             * @param entry {@link #entry}
+             * @param DataTypeDescription {@link #DataTypeDescription}
              * @param columnPreviev {@link #columnPreview}
              */
-            public DatatypeFormatValidator(Entry<?> entry, List<String> columnPreview) {
+            public DatatypeFormatValidator(DataTypeDescription<?> DataTypeDescription, List<String> columnPreview) {
 
-                this.entry = entry;
+                this.DataTypeDescription = DataTypeDescription;
                 this.columnPreview = columnPreview;
 
             }
@@ -663,7 +663,7 @@ public class ColumnPage extends WizardPage {
                  */
                 try {
 
-                    datatype = entry.newInstance(argument);
+                    datatype = DataTypeDescription.newInstance(argument);
 
                 } catch (Exception e) {
 

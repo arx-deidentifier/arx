@@ -49,6 +49,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * A help dialog
+ * @author Fabian Prasser
+ */
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
     private String           id;
@@ -57,6 +61,12 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     private Image            image;
     private DialogHelpConfig config = new DialogHelpConfig();
 
+    /**
+     * Constructor
+     * @param parentShell
+     * @param controller
+     * @param id
+     */
     public DialogHelp(final Shell parentShell, final Controller controller, final String id) {
         super(parentShell);
         this.id = id;
@@ -154,16 +164,24 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
+    /**
+     * Returns the url for an index
+     * @param index
+     * @return
+     */
     protected String getUrlOf(int index) {
         return config.getUrlForIndex(index);
     }
 
+    /**
+     * Returns the index of a url
+     * @param location
+     * @return
+     */
     private int getIndexOf(String location) {
         return config.getIndexForUrl(location);
     }
     
-    
-
     @Override
     protected Point getInitialSize() {
         return new Point(900,600);

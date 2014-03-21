@@ -27,6 +27,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -45,43 +46,45 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * This view displays basic attribute information.
+ * TODO: Display data type formats 
+ * 
+ * @author Fabian Prasser
+ */
 public class ViewAttributeDefinition implements IView {
-
-    private final Image                 IMAGE_INSENSITIVE;
-    private final Image                 IMAGE_SENSITIVE;
-    private final Image                 IMAGE_QUASI_IDENTIFYING;
-    private final Image                 IMAGE_IDENTIFYING;
-
-    private static final String[]       COMBO1_VALUES = new String[] { 
-                                        Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
-                                        Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$ 
 
     private static final AttributeType[] COMBO1_TYPES  = new AttributeType[] { 
                                         AttributeType.INSENSITIVE_ATTRIBUTE,
                                         AttributeType.SENSITIVE_ATTRIBUTE,
                                         null,
-                                        AttributeType.IDENTIFYING_ATTRIBUTE       };
+                                        AttributeType.IDENTIFYING_ATTRIBUTE };
+    
+    private static final String[]       COMBO1_VALUES = new String[] { 
+                                        Resources.getMessage("AttributeDefinitionView.0"), //$NON-NLS-1$
+                                        Resources.getMessage("AttributeDefinitionView.1"), //$NON-NLS-1$
+                                        Resources.getMessage("AttributeDefinitionView.2"), //$NON-NLS-1$
+                                        Resources.getMessage("AttributeDefinitionView.3") }; //$NON-NLS-1$
 
-    private static final String[]       COMBO2_VALUES = new String[] { 
-                                        Resources.getMessage("AttributeDefinitionView.4"), //$NON-NLS-1$ 
-                                        Resources.getMessage("AttributeDefinitionView.5"), //$NON-NLS-1$ 
-                                        Resources.getMessage("AttributeDefinitionView.6") };  //$NON-NLS-1$                                                  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-    private static final DataType<?>[]  COMBO2_TYPES  = new DataType[] { 
-                                        DataType.STRING,
-                                        DataType.DECIMAL,
-                                        DataType.DATE                };
-
-    private final Combo                  typeCombo;
-    private final Combo                  dataTypeCombo;
     private String                       attribute     = null;
-    private final CTabItem               tab;
     private Model                        model;
-    private final ViewHierarchy          editor;
-    private final Controller             controller;
 
+    private final Controller             controller;
+    private final Combo                  dataTypeCombo;
+    private final ViewHierarchy          editor;
+    private final Image                  IMAGE_IDENTIFYING;
+    private final Image                  IMAGE_INSENSITIVE;
+    private final Image                  IMAGE_QUASI_IDENTIFYING;
+    private final Image                  IMAGE_SENSITIVE;
+    private final CTabItem               tab;
+    private final Combo                  typeCombo;
+
+    /**
+     * Constructor
+     * @param parent
+     * @param attribute
+     * @param controller
+     */
     public ViewAttributeDefinition(final CTabFolder parent,
                                    final String attribute,
                                    final Controller controller) {
@@ -207,8 +210,8 @@ public class ViewAttributeDefinition implements IView {
         kLabel2.setText(Resources.getMessage("AttributeDefinitionView.8")); //$NON-NLS-1$
         dataTypeCombo = new Combo(type, SWT.READ_ONLY);
         dataTypeCombo.setLayoutData(SWTUtil.createFillGridData());
-        dataTypeCombo.setItems(COMBO2_VALUES);
-        dataTypeCombo.select(0);
+        dataTypeCombo.setItems(getDataTypes());
+        dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
         dataTypeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -218,16 +221,26 @@ public class ViewAttributeDefinition implements IView {
                         (model.getInputConfig().getInput() != null)) {
 
                         // Obtain type
-                        DataType<?> type = COMBO2_TYPES[dataTypeCombo.getSelectionIndex()];
+                        String label = dataTypeCombo.getItem(dataTypeCombo.getSelectionIndex());
+                        DataTypeDescription<?> description = getDataType(label);
+                        DataType<?> type;
 
-                        // Open dateformat dialog
-                        if (type == DataType.DATE) {
-                            final String format = controller.actionShowDateFormatInputDialog(Resources.getMessage("AttributeDefinitionView.9"), Resources.getMessage("AttributeDefinitionView.10"), getValues()); //$NON-NLS-1$ //$NON-NLS-2$
+                        // Open format dialog
+                        if (description.hasFormat()) {
+                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValues());
                             if (format == null) {
                                 type = DataType.STRING;
-                                dataTypeCombo.select(0);
+                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
                             } else {
-                                type = DataType.DATE(format);
+                                type = description.newInstance(format);
+                            }
+                        } else {
+                            type = description.newInstance();
+                            if (!isValidDataType(type, getValues())) {
+                                type = DataType.STRING;
+                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
                             }
                         }
 
@@ -260,6 +273,72 @@ public class ViewAttributeDefinition implements IView {
         IMAGE_IDENTIFYING.dispose();
     }
 
+    @Override
+    public void reset() {
+        // Nothing to do
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+            editor.update(event);
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            final String attr = (String) event.data;
+            if (attr.equals(attribute)) {
+                updateAttributeType();
+                updateDataType();
+                updateIcon();
+            }
+        } else if (event.part == ModelPart.INPUT) {
+            updateAttributeType();
+            updateDataType();
+            editor.update(event);
+        }
+    }
+    
+    /**
+     * Returns a description for the given label
+     * @param label
+     * @return
+     */
+    private DataTypeDescription<?> getDataType(String label){
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            if (label.equals(desc.getLabel())){
+                return desc;
+            }
+        }
+        throw new RuntimeException("Unknown data type: "+label);
+    }
+    
+    /**
+     * Returns the labels of all available data types
+     * @return
+     */
+    private String[] getDataTypes(){
+        List<String> list = new ArrayList<String>();
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            list.add(desc.getLabel());
+        }
+        return list.toArray(new String[list.size()]);
+    }
+    
+    /**
+     * Returns the index of a given data type
+     * @param type
+     * @return
+     */
+    private int getIndexOfDataType(DataType<?> type){
+        int idx = 0;
+        for (DataTypeDescription<?> desc : DataType.LIST){
+            if (desc.getLabel().equals(type.getDescription().getLabel())) {
+                return idx;
+            }
+            idx++;
+        }
+        throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
+    }
+    
     /**
      * Create an iterator over the values in the column for this attribute
      * 
@@ -275,30 +354,27 @@ public class ViewAttributeDefinition implements IView {
         return vals;
     }
 
-    @Override
-    public void reset() {
-        // Nothing to do
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-            editor.update(event);
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            final String attr = (String) event.data;
-            if (attr.equals(attribute)) {
-                updateAttributeType();
-                updateIcon();
+    /**
+     * Checks whether the data type is valid
+     * @param type
+     * @param values
+     * @return
+     */
+    private boolean isValidDataType(DataType<?> type, Collection<String> values){
+        // TODO: Ugly
+        try {
+            for (String value : values){
+                type.fromString(value);
             }
-        } else if (event.part == ModelPart.INPUT) {
-
-            updateAttributeType();
-            updateDataType();
-            editor.update(event);
+            return true;
+        } catch (Exception e){
+            return false;
         }
     }
 
+    /** 
+     * Update the attribute type
+     */
     private void updateAttributeType() {
         AttributeType type = model.getInputConfig()
                                   .getInput()
@@ -315,21 +391,22 @@ public class ViewAttributeDefinition implements IView {
         }
     }
 
+    /**
+     * Update the data type
+     */
     private void updateDataType() {
-        // TODO: Handle DATE with user-defined format accordingly
+
         final DataType<?> dtype = model.getInputConfig()
                                     .getInput()
                                     .getDefinition()
                                     .getDataType(attribute);
-        for (int i = 0; i < COMBO2_TYPES.length; i++) {
-            if (dtype.equals(COMBO2_TYPES[i])) {
-                dataTypeCombo.select(i);
-                break;
-            }
-        }
-
+        
+        dataTypeCombo.select(getIndexOfDataType(dtype));
     }
 
+    /**
+     * Update the column icon
+     */
     private void updateIcon() {
         AttributeType type = model.getInputConfig()
                                   .getInput()

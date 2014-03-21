@@ -38,6 +38,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * A dialog for displaying error messages
+ * @author Fabian Prasser
+ *
+ */
 public class DialogError extends TitleAreaDialog implements IDialog {
 
     private Image image;
@@ -45,6 +50,13 @@ public class DialogError extends TitleAreaDialog implements IDialog {
     private final String message;
     private final String error;
 
+    /**
+     * Constructor for displaying one message
+     * @param parentShell
+     * @param controller
+     * @param title
+     * @param message
+     */
     public DialogError(final Shell parentShell, final Controller controller,
     				   final String title, final String message) {
         super(parentShell);
@@ -54,6 +66,14 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
+    /**
+     * Constructor for displaying two messages
+     * @param parentShell
+     * @param controller
+     * @param title
+     * @param message
+     * @param error
+     */
     public DialogError(final Shell parentShell, final Controller controller,
     				   final String title, final String message, String error) {
         super(parentShell);

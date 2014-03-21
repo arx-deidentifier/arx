@@ -28,6 +28,8 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
@@ -56,8 +58,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
+/**
+ * This view displays basic properties about input or output data
+ * TODO: Split into at least two views
+ * 
+ * @author Fabian Prasser
+ */
 public class ViewProperties implements IView {
 
+    /**
+     * A content provider
+     * @author Fabian Prasser
+     */
     private class InputContentProvider implements ITreeContentProvider {
 
         @Override
@@ -94,6 +106,11 @@ public class ViewProperties implements IView {
 
     }
 
+    /**
+     * A label provider
+     * @author Fabian Prasser
+     *
+     */
     private class InputLabelProvider implements ITableLabelProvider {
 
         @Override
@@ -139,6 +156,11 @@ public class ViewProperties implements IView {
         }
     }
 
+    /**
+     * A content provider
+     * @author Fabian Prasser
+     *
+     */
     private class OutputContentProvider implements ITreeContentProvider {
 
         @Override
@@ -175,6 +197,10 @@ public class ViewProperties implements IView {
 
     }
 
+    /**
+     * A content provider
+     * @author Fabian Prasser
+     */
     private class OutputLabelProvider implements ITableLabelProvider {
 
         @Override
@@ -217,6 +243,10 @@ public class ViewProperties implements IView {
         }
     }
 
+    /**
+     * A class for properties displayed in the tree view
+     * @author Fabian Prasser
+     */
     private class Property {
         public Property       parent;
         public List<Property> children = new ArrayList<Property>();
@@ -253,6 +283,13 @@ public class ViewProperties implements IView {
 
     private final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
+    /**
+     * Constructor
+     * @param parent
+     * @param controller
+     * @param target
+     * @param reset
+     */
     public ViewProperties(final Composite parent,
                           final Controller controller,
                           final ModelPart target,
@@ -296,14 +333,14 @@ public class ViewProperties implements IView {
     public void update(final ModelEvent event) {
 
         SWTUtil.enable(root);
-        redraw();
+        update();
 
         // Handle reset target, i.e., e.g. input has changed
         if (event.part == reset) {
             reset();
         } else if (event.part == target) {
             SWTUtil.enable(root);
-            redraw();
+            update();
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             reset();
@@ -329,6 +366,10 @@ public class ViewProperties implements IView {
                                                                   .getValue()) * 100d;
     }
 
+    /**
+     * Creates the view
+     * @param group
+     */
     private void create(final Composite group) {
 
         final Tree tree = new Tree(group, SWT.BORDER | SWT.H_SCROLL |
@@ -365,6 +406,10 @@ public class ViewProperties implements IView {
             column6.setAlignment(SWT.LEFT);
             column6.setText(Resources.getMessage("PropertiesView.5")); //$NON-NLS-1$
             column6.setWidth(100);
+            final TreeColumn column7 = new TreeColumn(tree, SWT.RIGHT);
+            column7.setAlignment(SWT.LEFT);
+            column7.setText(Resources.getMessage("PropertiesView.101")); //$NON-NLS-1$
+            column7.setWidth(80);
             final TreeColumn column3 = new TreeColumn(tree, SWT.RIGHT);
             column3.setAlignment(SWT.LEFT);
             column3.setText(Resources.getMessage("PropertiesView.6")); //$NON-NLS-1$
@@ -385,7 +430,10 @@ public class ViewProperties implements IView {
         treeViewer.expandAll();
     }
 
-    private void redraw() {
+    /**
+     * Update the view
+     */
+    private void update() {
 
         if (model == null) { return; }
 
@@ -417,10 +465,10 @@ public class ViewProperties implements IView {
 
         root.setRedraw(false);
         if (target == ModelPart.INPUT) {
-            redrawInput(config, 
+            updateInput(config, 
                         data);
         } else {
-            redrawOutput(config,
+            updateOutput(config,
                          model.getResult(),
                          model.getSelectedNode(),
                          data);
@@ -428,7 +476,12 @@ public class ViewProperties implements IView {
         root.setRedraw(true);
     }
 
-    private void redrawInput(final ModelConfiguration config, final DataHandle data) {
+    /**
+     * Update the input properties
+     * @param config
+     * @param data
+     */
+    private void updateInput(final ModelConfiguration config, final DataHandle data) {
 
         roots.clear();
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
@@ -457,15 +510,20 @@ public class ViewProperties implements IView {
             if (data.getDefinition()
                     .getQuasiIdentifyingAttributes()
                     .contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                final String[] values = new String[] { "", "", "", "", "" , ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 values[0] = s;
                 if (data.getDefinition().getHierarchy(s) != null) {
-                    values[1] = data.getDefinition().getDataType(s).toString();
-                    values[2] = String.valueOf(data.getDefinition()
-                                                   .getHierarchyHeight(s));
+                    DataType<?> type = data.getDefinition().getDataType(s);
+                    values[1] = type.getDescription().getLabel();
+                    if (type.getDescription().hasFormat() && 
+                        ((DataTypeWithFormat)type).getFormat() != null){
+                        values[2] = ((DataTypeWithFormat)type).getFormat();
+                    }
                     values[3] = String.valueOf(data.getDefinition()
-                                                   .getMinimumGeneralization(s));
+                                                   .getHierarchyHeight(s));
                     values[4] = String.valueOf(data.getDefinition()
+                                                   .getMinimumGeneralization(s));
+                    values[5] = String.valueOf(data.getDefinition()
                                                    .getMaximumGeneralization(s));
                 }
                 new Property(quasiIdentifying,
@@ -514,7 +572,14 @@ public class ViewProperties implements IView {
 
     }
 
-    private void redrawOutput(final ModelConfiguration config,
+    /**
+     * Update the output
+     * @param config
+     * @param result
+     * @param node
+     * @param data
+     */
+    private void updateOutput(final ModelConfiguration config,
                               final ARXResult result,
                               final ARXNode node,
                               final DataHandle data) {
@@ -605,6 +670,5 @@ public class ViewProperties implements IView {
 
         treeViewer.refresh();
         treeViewer.expandAll();
-
     }
 }

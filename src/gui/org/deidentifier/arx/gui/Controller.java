@@ -43,6 +43,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -75,6 +76,7 @@ import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import cern.colt.Swapper;
 
@@ -650,16 +652,37 @@ public class Controller implements IView {
     }
 
     /**
-     * Shows the date-format dialog
-     * @param header
-     * @param text
-     * @param values
-     * @return
+     * Shows a dialog for selecting a format string for a data type
+     * @param shell The parent shell
+     * @param title The dialog's title
+     * @param text The dialog's text
+     * @param type The description of the data type for which to choose a format string
+     * @param values The values to check the format string against
+     * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
-    public String actionShowDateFormatInputDialog(final String header,
-                                                 final String text,
-                                                 final Collection<String> values) {
-        return main.showDateFormatInputDialog(header, text, values);
+    public String actionShowFormatInputDialog(final Shell shell,
+                                              final String title,
+                                              final String text,
+                                              final DataTypeDescription<?> type,
+                                              final Collection<String> values) {
+        
+        return main.showFormatInputDialog(shell, title, text, type, values);
+    }
+
+    /**
+     * Shows a dialog for selecting a format string for a data type
+     * @param title The dialog's title
+     * @param text The dialog's text
+     * @param type The description of the data type for which to choose a format string
+     * @param values The values to check the format string against
+     * @return The format string, or <code>null</code> if no format was (or could be) selected 
+     */
+    public String actionShowFormatInputDialog(final String title,
+                                              final String text,
+                                              final DataTypeDescription<?> type,
+                                              final Collection<String> values) {
+        
+        return main.showFormatInputDialog(title, text, type, values);
     }
 
     /**

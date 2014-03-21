@@ -43,6 +43,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
@@ -288,7 +289,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max;
+            String attr, dtype, atype, ref, min, max, format;
 
             @Override
             protected boolean end(final String uri,
@@ -301,20 +302,51 @@ public class WorkerLoad extends Worker<Model> {
 
                     // Attribute name
                     if (attr == null) { throw new SAXException(Resources.getMessage("WorkerLoad.3")); } //$NON-NLS-1$
-
-                    // Data type
-                    if (dtype.equals(DataType.STRING.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setDataType(attr, DataType.STRING);
-                    } else if (dtype.equals(DataType.DECIMAL.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setDataType(attr, DataType.DECIMAL);
-                    } else {
-                        config.getInput()
-                              .getDefinition()
-                              .setDataType(attr, DataType.DATE(dtype));
+                    
+                    // TODO: For backwards compatibility only
+                    if (vocabulary.getVocabularyVersion().equals("1.0")) {
+                        
+                        // Data type
+                        if (dtype.equals(DataType.STRING.toString())) {
+                            config.getInput()
+                                  .getDefinition()
+                                  .setDataType(attr, DataType.STRING);
+                        } else if (dtype.equals(DataType.DECIMAL.toString())) {
+                            config.getInput()
+                                  .getDefinition()
+                                  .setDataType(attr, DataType.DECIMAL);
+                        } else {
+                            config.getInput()
+                                  .getDefinition()
+                                  .setDataType(attr, DataType.DATE(dtype));
+                        }
+                    } else if (vocabulary.getVocabularyVersion().equals("2.0")) {
+                        
+                        // Find matching data type
+                        DataType<?> datatype = null;
+                        for (DataTypeDescription<?> description : DataType.LIST) {
+                            if (description.getLabel().equals(dtype)){
+                                
+                                // Check format
+                                if (format != null){
+                                    if (!description.hasFormat()) {
+                                        throw new RuntimeException("Invalid format specified for data type");
+                                    }
+                                    datatype = description.newInstance(format);
+                                } else {
+                                    datatype = description.newInstance();
+                                }
+                                break;
+                            }
+                        }
+                        
+                        // Check if found
+                        if (datatype == null){
+                            throw new RuntimeException("No data type specified for attribute: "+attr);
+                        }
+                        
+                        // Store
+                        config.getInput().getDefinition().setDataType(attr, datatype);
                     }
 
                     // Attribute type
@@ -362,6 +394,7 @@ public class WorkerLoad extends Worker<Model> {
                     ref = null;
                     min = null;
                     max = null;
+                    format = null;
                     
                     return true;
 
@@ -373,6 +406,9 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isDatatype(localName)) {
                     dtype = payload;
+                    return true;
+                } else if (vocabulary.isFormat(localName)) {
+                    format = payload;
                     return true;
                 } else if (vocabulary.isRef(localName)) {
                     ref = payload;
@@ -407,6 +443,7 @@ public class WorkerLoad extends Worker<Model> {
                 } else if (vocabulary.isName(localName) ||
                            vocabulary.isType(localName) ||
                            vocabulary.isDatatype(localName) ||
+                           vocabulary.isFormat(localName) ||
                            vocabulary.isRef(localName) ||
                            vocabulary.isMin(localName) ||
                            vocabulary.isMax(localName)) {

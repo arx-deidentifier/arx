@@ -38,6 +38,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * An about dialog
+ * @author Fabian Prasser
+ */
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
     private static final String LICENSE = Resources.getMessage("AboutDialog.0") + Resources.getMessage("AboutDialog.1") //$NON-NLS-1$ //$NON-NLS-2$
@@ -51,6 +55,11 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                           Resources.getMessage("AboutDialog.10") + Resources.getMessage("AboutDialog.11"); //$NON-NLS-1$ //$NON-NLS-2$
     private Image image;
 
+    /**
+     * Constructor
+     * @param parentShell
+     * @param controller
+     */
     public DialogAbout(final Shell parentShell, final Controller controller) {
         super(parentShell);
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$

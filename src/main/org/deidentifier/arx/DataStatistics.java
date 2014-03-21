@@ -442,7 +442,7 @@ public class DataStatistics {
                 try {
                     return type.compare(array[arg0], array[arg1]);
                 } catch (NumberFormatException | ParseException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Some values seem to not conform to the data type", e);
                 }
             }
         }, new Swapper(){
@@ -466,7 +466,13 @@ public class DataStatistics {
         GenericSorting.mergeSort(0, array.length, new IntComparator(){
             @Override
             public int compare(int arg0, int arg1) {
-                return order.get(array[arg0]).compareTo(order.get(array[arg1]));
+                Integer order1 = order.get(array[arg0]);
+                Integer order2 = order.get(array[arg1]);
+                if (order1 == null || order2 == null) {
+                    throw new RuntimeException("The hierarchy seems to not cover all data values");
+                } else {
+                    return order1.compareTo(order2);
+                }
             }
         }, new Swapper(){
             @Override

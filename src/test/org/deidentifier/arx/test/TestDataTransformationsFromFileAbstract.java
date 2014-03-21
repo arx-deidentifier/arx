@@ -114,8 +114,8 @@ public abstract class TestDataTransformationsFromFileAbstract extends AbstractTe
     @Override
     @Before
     public void setUp() {
-        // empty by design
-
+        // Empty by design
+        // We also intentionally don't call super.setUp()
     }
 
     @Test
