@@ -196,7 +196,7 @@ public class ViewSubsetDefinition implements IView{
 
     private void update() {
         // TODO: Maybe make this a default for all views?
-    	if (model.getInputConfig()==null || model.getInputConfig().getResearchSubset()==null){
+    	if (model==null || model.getInputConfig()==null || model.getInputConfig().getResearchSubset()==null){
     		reset();
     		return;
     	}
@@ -206,8 +206,6 @@ public class ViewSubsetDefinition implements IView{
         this.size.setText(String.valueOf(size));
         this.total.setText(String.valueOf(total));
         this.percent.setText(format.format(percent));
-        if (this.model != null) {
-            this.origin.setText(model.getSubsetOrigin());
-        }
+        this.origin.setText(model.getSubsetOrigin());
     }
 }
