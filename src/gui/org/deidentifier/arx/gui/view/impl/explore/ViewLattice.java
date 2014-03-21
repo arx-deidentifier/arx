@@ -112,6 +112,11 @@ public class ViewLattice extends Panel implements IView {
     public static final Color                          AWT_BLUE   		= asAWTColor(BLUE);
     public static final Color                          AWT_YELLOW 		= asAWTColor(YELLOW);
 
+    /**
+     * Converts between different implementations of the color class
+     * @param in
+     * @return
+     */
     private static Color asAWTColor(final org.eclipse.swt.graphics.Color in) {
         return new Color(in.getRed(), in.getGreen(), in.getBlue());
     }
@@ -214,10 +219,10 @@ public class ViewLattice extends Panel implements IView {
     private boolean               tooltipVisible;
     
     /** Number format*/
-    private final NumberFormat    format                = new DecimalFormat("##0.000"); //$NON-NLS-1$
+    private final NumberFormat    format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /**
-     * Init
+     * Creates a new instance
      * 
      * @param parent
      * @param controller
@@ -231,8 +236,7 @@ public class ViewLattice extends Panel implements IView {
 
         this.controller = controller;
         parent.setLayout(new GridLayout());
-        bridge = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND |
-                                       SWT.EMBEDDED);
+        bridge = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND | SWT.EMBEDDED);
         bridge.setLayoutData(SWTUtil.createFillGridData());
         frame = SWT_AWT.new_Frame(bridge);
 
@@ -262,8 +266,7 @@ public class ViewLattice extends Panel implements IView {
                                     final MainToolTip tip = controller.getToolTip();
                                     if (node != null) {
                                         tip.setText(createTooltipText(node));
-                                        tip.show(tooltipXOnScreen + 1,
-                                                 tooltipYOnScreen + 1);
+                                        tip.show(tooltipXOnScreen + 1, tooltipYOnScreen + 1);
                                         tooltipVisible = true;
                                     } else {
                                         tip.hide();
@@ -273,11 +276,11 @@ public class ViewLattice extends Panel implements IView {
                             }
                         });
                         repaint();
-
                     }
                     try {
                         Thread.sleep(TOOLTIP_WAIT);
                     } catch (final InterruptedException e) {
+                        // Die silently
                     }
                 }
             }
@@ -386,14 +389,20 @@ public class ViewLattice extends Panel implements IView {
                             final int y,
                             final int w,
                             final int h) {
+        
+        // Obtain metrics and data
         final Font f = g.getFont();
         final FontMetrics fm = g.getFontMetrics(f);
         final int ascent = fm.getAscent();
         final int height = fm.getHeight();
+        
+        // Compute position
         int width1 = 0, x0 = 0, y0 = 0;
         width1 = fm.stringWidth(s1);
         x0 = x + ((w - width1) / 2);
         y0 = y + ((h - height) / 2) + ascent;
+        
+        // Draw
         g.drawString(s1, x0, y0);
     }
 
@@ -512,7 +521,9 @@ public class ViewLattice extends Panel implements IView {
                                                (int) nodeHeight);
 
         // Clipping
-        if (!bounds.intersects(new Rectangle(0, 0, screen.width, screen.height))) { return false; }
+        if (!bounds.intersects(new Rectangle(0, 0, screen.width, screen.height))) { 
+            return false; 
+        }
 
         // Degrade if too far away
         if (bounds.width <= 4) {
@@ -548,17 +559,13 @@ public class ViewLattice extends Panel implements IView {
             if (bounds.width >= 20) {
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                final String text = (String) node.getAttributes()
-                                                 .get(ATTRIBUTE_LABEL);
+                final String text = (String) node.getAttributes().get(ATTRIBUTE_LABEL);
                 g.setFont(new Font("Arial", Font.PLAIN, 8)); //$NON-NLS-1$
-                final float factor1 = (bounds.width * 0.7f) /
-                                      g.getFontMetrics().stringWidth(text);
-                final float factor2 = (bounds.height * 0.7f) /
-                                      g.getFontMetrics().getHeight();
+                final float factor1 = (bounds.width * 0.7f) / g.getFontMetrics().stringWidth(text);
+                final float factor2 = (bounds.height * 0.7f) / g.getFontMetrics().getHeight();
                 final float factor = Math.min(factor1, factor2);
-                g.setFont(g.getFont()
-                           .deriveFont(AffineTransform.getScaleInstance(factor,
-                                                                        factor)));
+                g.setFont(g.getFont().deriveFont(AffineTransform.getScaleInstance(factor,
+                                                                                  factor)));
 
                 // Scale text to fit and center in r
                 centerText(text,
@@ -603,11 +610,12 @@ public class ViewLattice extends Panel implements IView {
      */
     private ARXNode getNode(final int x, final int y) {
         for (final ARXNode node : lattice) {
-            final Bounds bounds = (Bounds) node.getAttributes()
-                                               .get(ATTRIBUTE_BOUNDS);
+            final Bounds bounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
             if (bounds == null) { return null; }
             if ((x >= bounds.x) && (y >= bounds.y) &&
-                (x <= (bounds.x + nodeWidth)) && (y <= (bounds.y + nodeHeight))) { return node; }
+                (x <= (bounds.x + nodeWidth)) && (y <= (bounds.y + nodeHeight))) { 
+                return node; 
+            }
         }
         return null;
     }
@@ -773,73 +781,19 @@ public class ViewLattice extends Panel implements IView {
      */
     private void initializeListeners() {
 
-        final IView outer = this;
-
         addMouseListener(new MouseAdapter() {
+            
             @Override
             public void mouseClicked(final MouseEvent arg0) {
-
                 if (arg0.getButton() == MouseEvent.BUTTON1) {
                     final ARXNode node = getNode(arg0.getX(), arg0.getY());
                     if (node != null) {
-                        selectedNode = node;
-                        Display.getDefault().asyncExec(new Runnable() {
-                            @Override
-                            public void run() {
-                                model.setSelectedNode(selectedNode);
-                                controller.update(new ModelEvent(outer,
-                                                                 ModelPart.SELECTED_NODE,
-                                                                 selectedNode));
-                            }
-                        });
-                        repaint();
-                        return;
+                        actionButtonClicked1(node);
                     }
                 } else if (arg0.getButton() == MouseEvent.BUTTON3) {
                     final ARXNode node = getNode(arg0.getX(), arg0.getY());
                     if (node != null) {
-                        selectedNode = node;
-                        Display.getDefault().asyncExec(new Runnable() {
-                            @Override
-                            public void run() {
-                                model.setSelectedNode(selectedNode);
-                                controller.update(new ModelEvent(outer,
-                                                                 ModelPart.SELECTED_NODE,
-                                                                 selectedNode));
-                                final String item1 = Resources.getMessage("LatticeView.9"); //$NON-NLS-1$
-                                final String item2 = Resources.getMessage("LatticeView.10"); //$NON-NLS-1$
-                                controller.getPopup()
-                                          .setItems(new String[] { item1, item2 },
-                                                    new SelectionAdapter() {
-                                                        @Override
-                                                        public void
-                                                                widgetSelected(final SelectionEvent arg0) {
-                                                            if (arg0.data.equals(item1)) {
-                                                                model.getClipboard()
-                                                                     .add(selectedNode);
-                                                                controller.update(new ModelEvent(outer,
-                                                                                                 ModelPart.CLIPBOARD,
-                                                                                                 selectedNode));
-                                                                model.setSelectedNode(selectedNode);
-                                                                controller.update(new ModelEvent(outer,
-                                                                                                 ModelPart.SELECTED_NODE,
-                                                                                                 selectedNode));
-                                                            } else if (arg0.data.equals(item2)) {
-                                                                controller.actionApplySelectedTransformation();
-                                                                model.setSelectedNode(selectedNode);
-                                                                controller.update(new ModelEvent(outer,
-                                                                                                 ModelPart.SELECTED_NODE,
-                                                                                                 selectedNode));
-                                                            }
-                                                        }
-                                                    });
-                                controller.getPopup().show(arg0.getXOnScreen(),
-                                                           arg0.getYOnScreen());
-                                controller.getToolTip().hide();
-                            }
-                        });
-                        repaint();
-                        return;
+                        actionButtonClicked3(node, arg0.getXOnScreen(), arg0.getYOnScreen());
                     }
                 }
             }
@@ -970,6 +924,62 @@ public class ViewLattice extends Panel implements IView {
                 repaint();
             }
         });
+    }
+
+    /**
+     * Called when button 3 is clicked on a node
+     * @param node
+     * @param x
+     * @param y
+     */
+    private void actionButtonClicked3(ARXNode node, final int x, final int y) {
+        selectedNode = node;
+        Display.getDefault().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                model.setSelectedNode(selectedNode);
+                controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
+                final String item1 = Resources.getMessage("LatticeView.9"); //$NON-NLS-1$
+                final String item2 = Resources.getMessage("LatticeView.10"); //$NON-NLS-1$
+                controller.getPopup().setItems(new String[] { item1, item2 }, new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent arg0) {
+                        if (arg0.data.equals(item1)) {
+                            model.getClipboard().add(selectedNode);
+                            controller.update(new ModelEvent(ViewLattice.this, ModelPart.CLIPBOARD, selectedNode));
+                            model.setSelectedNode(selectedNode);
+                            controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
+                        } else if (arg0.data.equals(item2)) {
+                            controller.actionApplySelectedTransformation();
+                            model.setSelectedNode(selectedNode);
+                            controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
+                        }
+                    }
+                });
+                controller.getPopup().show(x, y);
+                controller.getToolTip().hide();
+            }
+        });
+        repaint();
+        return;
+    }
+
+    /**
+     * Called when button 1 is clicked on a node
+     * @param node
+     */
+    private void actionButtonClicked1(ARXNode node) {
+        selectedNode = node;
+        Display.getDefault().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                model.setSelectedNode(selectedNode);
+                controller.update(new ModelEvent(ViewLattice.this,
+                                                 ModelPart.SELECTED_NODE,
+                                                 selectedNode));
+            }
+        });
+        repaint();
     }
 
     /**
