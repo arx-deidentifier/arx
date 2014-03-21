@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * A view on a <code>Data</code> object
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
  */
 public class ViewDataInput extends ViewData {
 
