@@ -71,12 +71,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * This class implements a view which draws a lattice
+ * This class implements a view of a lattice
  * 
- * @author prasser
+ * @author Fabian Prasser
  */
 public class ViewLattice extends Panel implements IView {
 
+    /**
+     * Bounds
+     * @author Fabian Prasser
+     */
     private static class Bounds implements Serializable {
         private static final long serialVersionUID = -7472570696920782588L;
         public double             centerX;
@@ -350,15 +354,9 @@ public class ViewLattice extends Panel implements IView {
      * @return
      */
     private double asRelativeValue(final InformationLoss infoLoss) {
-        return ((infoLoss.getValue() - model.getResult()
-                                            .getLattice()
-                                            .getBottom()
-                                            .getMinimumInformationLoss()
-                                            .getValue()) / model.getResult()
-                                                                .getLattice()
-                                                                .getTop()
-                                                                .getMaximumInformationLoss()
-                                                                .getValue()) * 100d;
+        Double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
+        Double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
+        return (infoLoss.getValue() - min) / (max - min) * 100d;
     }
 
     /**
@@ -986,5 +984,4 @@ public class ViewLattice extends Panel implements IView {
                                    Math.max(1, getHeight()),
                                    BufferedImage.TYPE_INT_RGB);
     }
-
 }
