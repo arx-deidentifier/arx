@@ -36,9 +36,9 @@ public class LayoutStatistics implements ILayout {
     private final ComponentTitledFolder     folder;
 
     public LayoutStatistics(final Composite parent,
-                          final Controller controller,
-                          final ModelPart target,
-                          final ModelPart reset) {
+                            final Controller controller,
+                            final ModelPart target,
+                            final ModelPart reset) {
 
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, null, "id-50");
@@ -53,7 +53,11 @@ public class LayoutStatistics implements ILayout {
         // Create the views
         new ViewDistribution(item1, controller, target, reset);
         new ViewDensity(item2, controller, target, reset);
-        new ViewProperties(item3, controller, target, reset);
+        if (target == ModelPart.INPUT) {
+            new ViewInputProperties(item3, controller);
+        } else {
+            new ViewOutputProperties(item3, controller);
+        }
     }
 
     public void addSelectionListener(final SelectionListener listener) {
