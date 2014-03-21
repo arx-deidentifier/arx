@@ -39,6 +39,10 @@ import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 
+/**
+ * A grid layer for the data view
+ * @author Fabian Prasser
+ */
 public class DataTableGridLayer extends GridLayer {
 
     protected IUniqueIndexLayer bodyDataLayer;
@@ -48,12 +52,22 @@ public class DataTableGridLayer extends GridLayer {
     private DataTableContext    context;
     private NatTable            table;
 
+    /**
+     * Creates a new instance
+     * @param useDefaultConfiguration
+     * @param table
+     * @param context
+     */
     protected DataTableGridLayer(boolean useDefaultConfiguration, NatTable table, DataTableContext context) {
         super(useDefaultConfiguration);
         this.context = context;
         this.table = table;
     }
 
+    /**
+     * Returns the body data layer
+     * @return
+     */
     public IUniqueIndexLayer getBodyDataLayer() {
         return bodyDataLayer;
     }
@@ -63,6 +77,10 @@ public class DataTableGridLayer extends GridLayer {
         return (DataTableBodyLayerStack) super.getBodyLayer();
     }
 
+    /**
+     * Returns the column header layer
+     * @return
+     */
     public IUniqueIndexLayer getColumnHeaderDataLayer() {
         return columnHeaderDataLayer;
     }
@@ -72,6 +90,10 @@ public class DataTableGridLayer extends GridLayer {
         return (ColumnHeaderLayer) super.getColumnHeaderLayer();
     }
 
+    /**
+     * Returns the corner data layer
+     * @return
+     */
     public IUniqueIndexLayer getCornerDataLayer() {
         return cornerDataLayer;
     }
@@ -81,6 +103,10 @@ public class DataTableGridLayer extends GridLayer {
         return (CornerLayer) super.getCornerLayer();
     }
 
+    /**
+     * Returns the row header layer
+     * @return
+     */
     public IUniqueIndexLayer getRowHeaderDataLayer() {
         return rowHeaderDataLayer;
     }
@@ -90,10 +116,21 @@ public class DataTableGridLayer extends GridLayer {
         return (RowHeaderLayer) super.getRowHeaderLayer();
     }
 
+    /**
+     * Initialize
+     * @param bodyDataProvider
+     * @param columnHeaderDataProvider
+     */
     protected void init(IDataProvider bodyDataProvider, IDataProvider columnHeaderDataProvider) {
         init(bodyDataProvider, columnHeaderDataProvider, new DefaultRowHeaderDataProvider(bodyDataProvider));
     }
 
+    /**
+     * Initialize
+     * @param bodyDataProvider
+     * @param columnHeaderDataProvider
+     * @param rowHeaderDataProvider
+     */
     protected void init(IDataProvider bodyDataProvider,
                         IDataProvider columnHeaderDataProvider,
                         IDataProvider rowHeaderDataProvider) {
@@ -103,6 +140,13 @@ public class DataTableGridLayer extends GridLayer {
              new DefaultCornerDataProvider(columnHeaderDataProvider, rowHeaderDataProvider));
     }
 
+    /**
+     * Initialize
+     * @param bodyDataProvider
+     * @param columnHeaderDataProvider
+     * @param rowHeaderDataProvider
+     * @param cornerDataProvider
+     */
     protected void init(IDataProvider bodyDataProvider,
                         IDataProvider columnHeaderDataProvider,
                         IDataProvider rowHeaderDataProvider,
@@ -113,6 +157,13 @@ public class DataTableGridLayer extends GridLayer {
              new DataLayer(cornerDataProvider));
     }
 
+    /**
+     * Initialize
+     * @param bodyDataLayer
+     * @param columnHeaderDataLayer
+     * @param rowHeaderDataLayer
+     * @param cornerDataLayer
+     */
     protected void init(IUniqueIndexLayer bodyDataLayer,
                         IUniqueIndexLayer columnHeaderDataLayer,
                         IUniqueIndexLayer rowHeaderDataLayer,
@@ -146,9 +197,14 @@ public class DataTableGridLayer extends GridLayer {
         setCornerLayer(cornerLayer);
     }
 
+    /**
+     * Initialize
+     * @param rowData
+     * @param propertyNames
+     * @param propertyToLabelMap
+     */
     protected <T> void init(List<T> rowData, String[] propertyNames, Map<String, String> propertyToLabelMap) {
         init(new DefaultBodyDataProvider<T>(rowData, propertyNames),
              new DefaultColumnHeaderDataProvider(propertyNames, propertyToLabelMap));
     }
-
 }

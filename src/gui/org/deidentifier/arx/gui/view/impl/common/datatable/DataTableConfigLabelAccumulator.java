@@ -23,11 +23,20 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 
+/**
+ * A label accumulator for the data view
+ * @author Fabian Prasser
+ */
 public class DataTableConfigLabelAccumulator implements IConfigLabelAccumulator {
 
     private final DataTableContext context;
     private final NatTable         table;
 
+    /**
+     * Creates a new instance
+     * @param table
+     * @param context
+     */
     public DataTableConfigLabelAccumulator(NatTable table, DataTableContext context) {
         this.context = context;
         this.table = table;

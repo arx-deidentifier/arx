@@ -31,11 +31,17 @@ import org.eclipse.swt.graphics.Rectangle;
 /**
  * Paints an image. If no image is provided, it will attempt to look up an image
  * from the cell style.
+ * 
+ * @author Fabian Prasser
  */
 public class DataTableImagePainter extends BackgroundPainter {
 
     private final DataTableContext context;
 
+    /**
+     * Creates a new instance
+     * @param context
+     */
     public DataTableImagePainter(DataTableContext context) {
         super();
         this.context = context;
@@ -59,5 +65,4 @@ public class DataTableImagePainter extends BackgroundPainter {
             }
         }
     }
-
 }

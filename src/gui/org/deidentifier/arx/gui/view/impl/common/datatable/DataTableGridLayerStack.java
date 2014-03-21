@@ -29,8 +29,19 @@ import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProv
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultRowHeaderDataProvider;
 
+/**
+ * A grid layer stack for the data view
+ * @author Fabian Prasser
+ *
+ */
 public class DataTableGridLayerStack extends DataTableGridLayer {
 
+    /**
+     * Creates a new instance
+     * @param bodyDataProvider
+     * @param table
+     * @param context
+     */
     public DataTableGridLayerStack(final IDataProvider bodyDataProvider, NatTable table, DataTableContext context) {
         super(true, table, context);
         List<String> lcolumns = new ArrayList<String>();

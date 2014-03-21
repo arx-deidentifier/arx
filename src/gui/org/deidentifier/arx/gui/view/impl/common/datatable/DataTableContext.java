@@ -27,6 +27,10 @@ import org.deidentifier.arx.gui.Controller;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * A context for the data view. It provides all necessary data to be displayed.
+ * @author Fabian Prasser
+ */
 public class DataTableContext {
 
     private List<Image>          images        = new ArrayList<Image>();
@@ -38,42 +42,81 @@ public class DataTableContext {
     private Controller           controller    = null;
     private int                  selectedIndex = -1;
 
+    /**
+     * Creates a new instance
+     * @param controller
+     */
     public DataTableContext(Controller controller) {
         this.controller = controller;
     }
 
+    /**
+     * Returns the data array, if any
+     * @return
+     */
     public String[][] getArray() {
         return array;
     }
 
+    /**
+     * Returns the controller
+     * @return
+     */
     public Controller getController() {
         return controller;
     }
     
+    /**
+     * Returns information about the equivalence classes
+     * @return
+     */
     public int[] getGroups() {
         return groups;
     }
 
+    /**
+     * Returns the data handle, if any
+     * @return
+     */
     public DataHandle getHandle() {
         return handle;
     }
 
+    /**
+     * Returns the header images
+     * @return
+     */
     public List<Image> getImages() {
         return images;
     }
 
+    /**
+     * Returns all layer listeners
+     * @return
+     */
     public List<ILayerListener> getListeners() {
         return listeners;
     }
 
+    /**
+     * Returns the research subset
+     * @return
+     */
     public RowSet getRows() {
         return rows;
     }
 
+    /**
+     * Returns the selected index
+     * @return
+     */
     public int getSelectedIndex() {
         return selectedIndex;
     }
 
+    /**
+     * Resets the context
+     */
     public void reset() {
         this.handle = null;
         this.array = null;
@@ -82,32 +125,59 @@ public class DataTableContext {
         this.images.clear();
     }
 
+    /**
+     * Sets the array data
+     * @param array
+     */
     public void setArray(String[][] array) {
         this.array = array;
     }
 
+    /**
+     * Sets the groups
+     * @param groups
+     */
     public void setGroups(int[] groups) {
         this.groups = groups;
     }
 
+    /**
+     * Sets a data handle
+     * @param handle
+     */
     public void setHandle(DataHandle handle) {
         this.handle = handle;
     }
 
+    /**
+     * Sets the header images
+     * @param images
+     */
     public void setImages(List<Image> images) {
         this.images = images;
     }
 
+    /**
+     * Sets the layer listeners
+     * @param listeners
+     */
     public void setListeners(List<ILayerListener> listeners) {
         this.listeners = listeners;
     }
     
+    /**
+     * Sets the research subset
+     * @param rows
+     */
     public void setRows(RowSet rows) {
         this.rows = rows;
     }
     
+    /**
+     * Sets the selected column index
+     * @param index
+     */
     public void setSelectedIndex(int index) {
         this.selectedIndex = index;
     }
-
 }
