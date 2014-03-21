@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -18,7 +16,6 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,8 +23,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -523,18 +518,11 @@ public class ColumnPage extends WizardPage {
 
                     if (DataTypeDescription.hasFormat()) {
 
-                        Shell shell = Display.getDefault().getActiveShell();
-                        InputDialog dialog = new InputDialog(
-                                shell,
-                                "Format string",
-                                "Please provide a format string describing each item of this column",
-                                detectValidFormatter(DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))),
-                                new DatatypeFormatValidator(DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element)))
-                        );
+                        final String format = wizardImport.getController().actionShowFormatInputDialog("Format string", "Please provide a format string describing each item of this column", DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element)));
 
-                        if (dialog.open() == Window.OK) {
+                        if (format != null) {
 
-                            datatype = DataTypeDescription.newInstance(dialog.getValue());
+                            datatype = DataTypeDescription.newInstance(format);
 
                         } else {
 
@@ -563,135 +551,6 @@ public class ColumnPage extends WizardPage {
                     return;
 
                 }
-
-            }
-
-        }
-
-        /**
-         * Tries to find a valid formatter for given DataTypeDescription and column data
-         *
-         * This iterates over all formats defined for the given DataTypeDescription
-         * {@link DataTypeDescription#getExampleFormats()} and tries to apply it to the
-         * given <code>columnPreview</code>. Once it detects a valid one,
-         * it gets returned. If no valid formatter can be found, an empty
-         * string will be returned.
-         *
-         * @param DataTypeDescription DataTypeDescription a formatter should be detected for
-         * @param columnPreview Data formatter should apply to
-         *
-         * @return Detected formatter, empty string if none was found
-         */
-        private String detectValidFormatter(DataTypeDescription<?> DataTypeDescription, List<String> columnPreview) {
-
-            for (String format : DataTypeDescription.getExampleFormats()) {
-
-                if (new DatatypeFormatValidator(DataTypeDescription, columnPreview).isValid(format) == null) {
-
-                    return format;
-
-                }
-
-            }
-
-            return "";
-
-        }
-
-        /**
-         * Validates format strings for the datatype
-         *
-         * Certain datatypes ({@link DataTypeDescription#hasFormat}) can be supplied with a
-         * format string from the user. This validator makes sure that the
-         * given format string is valid and can be applied to the preview data.
-         */
-        class DatatypeFormatValidator implements IInputValidator {
-
-            /**
-             * The datatype the validation should be performed for
-             */
-            private DataTypeDescription<?> DataTypeDescription;
-
-            /**
-             * The preview data
-             */
-            private List<String> columnPreview;
-
-
-            /**
-             * Creates a new validator for given datatype and preview data
-             *
-             * @param DataTypeDescription {@link #DataTypeDescription}
-             * @param columnPreviev {@link #columnPreview}
-             */
-            public DatatypeFormatValidator(DataTypeDescription<?> DataTypeDescription, List<String> columnPreview) {
-
-                this.DataTypeDescription = DataTypeDescription;
-                this.columnPreview = columnPreview;
-
-            }
-
-            /**
-             * Performs the actual validation
-             *
-             * First of all it tries to initiate a new object with the given
-             * format <code>argument</code>. If this succeeds it tries to apply
-             * the resulting formatter to each item of the preview data
-             * {@link #columnPreview}. If all of this can be performed, success
-             * will be indicated, otherwise an error message will be returned.
-             *
-             * Note that for an empty argument an empty string is returned.
-             * This makes sure that no error message is displayed cases when
-             * nothing has been entered, yet internally it is still an error
-             * and the OK button will be greyed out.
-             *
-             * @param argument Format string to validate
-             */
-            @Override
-            public String isValid(String argument) {
-
-                if (argument.equals("")) {
-
-                    return "";
-
-                }
-
-                DataType<?> datatype = null;
-
-                /*
-                 * Try to create object with given format string
-                 */
-                try {
-
-                    datatype = DataTypeDescription.newInstance(argument);
-
-                } catch (Exception e) {
-
-                    return "Invalid format string";
-
-                }
-
-                /*
-                 * Iterate over column data and try to parse
-                 */
-                try {
-
-                    for (String column : columnPreview) {
-
-                        datatype.fromString(column);
-
-                    }
-
-                } catch (Exception e) {
-
-                    return "Format string could not be applied to preview data";
-
-                }
-
-                /*
-                 * Indicate success
-                 */
-                return null;
 
             }
 
