@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
+import org.deidentifier.arx.gui.Controller;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -518,7 +519,13 @@ public class ColumnPage extends WizardPage {
 
                     if (DataTypeDescription.hasFormat()) {
 
-                        final String format = wizardImport.getController().actionShowFormatInputDialog("Format string", "Please provide a format string describing each item of this column", DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element)));
+                        final Controller controller = wizardImport.getController();
+
+                        final String format = controller.actionShowFormatInputDialog(
+                            "Format string",
+                            "Please provide a format string describing each item of this column",
+                            DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))
+                        );
 
                         if (format != null) {
 
