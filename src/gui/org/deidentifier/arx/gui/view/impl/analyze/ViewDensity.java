@@ -413,7 +413,7 @@ public class ViewDensity extends ViewStatistics implements IView {
     private void redraw() {
 
         if (model != null &&
-            model.getAttributePair() != null &
+            model.getAttributePair() != null &&
             model.getAttributePair()[0] != null &&
             model.getAttributePair()[1] != null) {
             
