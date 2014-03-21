@@ -43,6 +43,10 @@ import org.swtchart.ISeriesSet;
 import org.swtchart.ITitle;
 import org.swtchart.Range;
 
+/**
+ * This view displays a frequency distribution
+ * @author Fabian Prasser
+ */
 public class ViewDistribution extends ViewStatistics implements IView {
 
     private static final long serialVersionUID = -163862008754422422L;
@@ -56,6 +60,13 @@ public class ViewDistribution extends ViewStatistics implements IView {
     private String                      attribute;
     private StatisticsContext           context;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     * @param target
+     * @param reset
+     */
     public ViewDistribution(final Composite parent,
                             final Controller controller,
                             final ModelPart target,
@@ -137,7 +148,7 @@ public class ViewDistribution extends ViewStatistics implements IView {
         if (event.part == ModelPart.OUTPUT) {
             if (chart != null) chart.setEnabled(true);
             clearCache();
-            redraw();
+            update();
         }
 
         if (event.part == reset) {
@@ -149,7 +160,7 @@ public class ViewDistribution extends ViewStatistics implements IView {
             
             if (chart != null) chart.setEnabled(true);
             clearCache();
-            redraw();
+            update();
             
         } else if (event.part == ModelPart.MODEL) {
             
@@ -161,27 +172,33 @@ public class ViewDistribution extends ViewStatistics implements IView {
 
             attribute = (String) event.data;
             if (chart != null) chart.setEnabled(true);
-            redraw();
+            update();
             
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 
             attribute = (String) event.data;
             if (chart != null) chart.setEnabled(true);
-            redraw();
+            update();
              
         } else if (event.part == ModelPart.VIEW_CONFIG) {
             
             if (chart != null) chart.setEnabled(true);
             clearCache();
-            redraw();
+            update();
         }
     }
 
+    /**
+     * Clears the cache
+     */
     private void clearCache() {
         cache.clear();
     }
 
-    private void redraw() {
+    /**
+     * Updates the view
+     */
+    private void update() {
 
         // Obtain context
         StatisticsContext context = super.getContext();
@@ -234,5 +251,4 @@ public class ViewDistribution extends ViewStatistics implements IView {
         chart.setRedraw(true);
         chart.redraw();
     }
-
 }

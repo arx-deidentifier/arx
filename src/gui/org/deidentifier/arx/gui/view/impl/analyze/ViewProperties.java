@@ -349,8 +349,8 @@ public class ViewProperties implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent TODO: Code
-     * duplicate from NodePropertiesView
+     * Converts an information loss into a relative value in percent 
+     * TODO: Code duplicate from NodePropertiesView
      * 
      * @param infoLoss
      * @return

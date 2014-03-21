@@ -56,6 +56,10 @@ import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * This class displays a contingency table as a heatmap
+ * @author Fabian Prasser
+ */
 public class ViewDensity extends ViewStatistics implements IView {
 
     /** Static stuff*/
