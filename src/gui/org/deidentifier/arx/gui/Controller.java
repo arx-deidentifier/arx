@@ -74,6 +74,7 @@ import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 
 import cern.colt.Swapper;
 
@@ -658,6 +659,24 @@ public class Controller implements IView {
      */
     public void actionMenuHelpHelp() {
     	actionShowHelpDialog(null);
+    }
+
+    /**
+     * Shows a dialog for selecting a format string for a data type
+     * @param shell The parent shell
+     * @param title The dialog's title
+     * @param text The dialog's text
+     * @param type The description of the data type for which to choose a format string
+     * @param values The values to check the format string against
+     * @return The format string, or <code>null</code> if no format was (or could be) selected 
+     */
+    public String actionShowFormatInputDialog(final Shell shell,
+                                              final String title,
+                                              final String text,
+                                              final DataTypeDescription<?> type,
+                                              final Collection<String> values) {
+        
+        return main.showFormatInputDialog(shell, title, text, type, values);
     }
 
     /**

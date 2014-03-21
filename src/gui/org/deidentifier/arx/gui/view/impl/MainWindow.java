@@ -272,7 +272,24 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public String showFormatInputDialog(final String header,
+    public String showFormatInputDialog(String title,
+                                        String text,
+                                        DataTypeDescription<?> type,
+                                        Collection<String> values) {
+        return showFormatInputDialog(shell, title, text, type, values);
+    }
+
+    /**
+     * Shows an input dialog for selecting formats string for data types
+     * @param shell
+     * @param header
+     * @param text
+     * @param description
+     * @param values
+     * @return
+     */
+    public String showFormatInputDialog(final Shell shell,
+                                        final String header,
                                         final String text,
                                         final DataTypeDescription<?> description,
                                         final Collection<String> values) {
@@ -330,11 +347,11 @@ public class MainWindow implements IView {
         
         // Open dialog
         final DialogFormatSelection dlg = new DialogFormatSelection(shell,
-                                                header,
-                                                text,
-                                                formats.toArray(new String[]{}),
-                                                initial,
-                                                validator);
+                                                                    header,
+                                                                    text,
+                                                                    formats.toArray(new String[]{}),
+                                                                    initial,
+                                                                    validator);
 
         // Return value
         if (dlg.open() == Window.OK) {
@@ -397,8 +414,8 @@ public class MainWindow implements IView {
         dialog.setFilterIndex(0);
         return dialog.open();
     }
-
-    /**
+	
+	/**
      * Shows a progress dialog
      * @param text
      * @param worker
@@ -410,8 +427,8 @@ public class MainWindow implements IView {
             worker.setError(e);
         }
     }
-	
-	/**
+
+    /**
      * Shows a query dialog for selecting a research subset
      * @param query
      * @param data
@@ -448,7 +465,7 @@ public class MainWindow implements IView {
         return dialog.open();
     }
 
-    /**
+	/**
      * Shows a dialog for selecting privacy criteria
      * @param others
      * @return
@@ -462,7 +479,7 @@ public class MainWindow implements IView {
         else {return dialog.getCriterion();}
     }
 
-	@Override
+    @Override
     public void update(final ModelEvent event) {
 
         // Careful! In the main window, this is also called after editing the project properties
