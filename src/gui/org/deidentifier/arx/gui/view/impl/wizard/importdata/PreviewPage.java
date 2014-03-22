@@ -2,10 +2,14 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.util.List;
 
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -113,6 +117,8 @@ public class PreviewPage extends WizardPage {
                     tblclmnColumn.setWidth(100);
                     tblclmnColumn.setText(column.getName());
 
+                    ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
+
                 }
 
             }
@@ -165,6 +171,29 @@ public class PreviewPage extends WizardPage {
         public String getText(Object element) {
 
             return ((String[]) element)[column];
+
+        }
+
+        /**
+         * Returns tooltip for a particular cell
+         *
+         * This will return the datatype and potentially the associated format
+         * with the datatype for each cell.
+         */
+        @Override
+        public String getToolTipText(Object element) {
+
+            DataType<?> datatype = wizardImport.getData().getColumns().get(column).getDatatype();
+
+            String result = "Datatype: " + datatype.getDescription().getLabel();
+
+            if (datatype.getDescription().hasFormat()) {
+
+                result += ", format: " + ((DataTypeWithFormat)datatype).getFormat();
+
+            }
+
+            return result;
 
         }
 
