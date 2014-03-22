@@ -35,6 +35,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * This view displays basic information about the research subset
+ * @author Fabian Prasser
+ */
 public class ViewSubsetDefinition implements IView{
 
     private Controller controller;
@@ -53,6 +57,11 @@ public class ViewSubsetDefinition implements IView{
     
     private DecimalFormat format = new DecimalFormat("##0.00");
     
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewSubsetDefinition(final Composite parent,
                                 final Controller controller) {
 
@@ -63,6 +72,11 @@ public class ViewSubsetDefinition implements IView{
         this.root = build(parent);
     }
 
+    /**
+     * Builds the view
+     * @param parent
+     * @return
+     */
     private Composite build(Composite parent) {
 
         ComponentTitleBar bar = new ComponentTitleBar("id-40");
@@ -140,7 +154,6 @@ public class ViewSubsetDefinition implements IView{
         return group;
     }
 
-
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -155,6 +168,9 @@ public class ViewSubsetDefinition implements IView{
         disable();
     }
     
+    /**
+     * Enables the view
+     */
     private void enable(){
         // TODO: Maybe make this a default for all views?
         all.setEnabled(true);
@@ -164,6 +180,9 @@ public class ViewSubsetDefinition implements IView{
         SWTUtil.enable(root);
     }
     
+    /**
+     * Disables the view
+     */
     private void disable(){
         // TODO: Maybe make this a default for all views?
         all.setEnabled(false);
@@ -194,9 +213,12 @@ public class ViewSubsetDefinition implements IView{
         } 
     }
 
+    /**
+     * Updates the view
+     */
     private void update() {
         // TODO: Maybe make this a default for all views?
-    	if (model.getInputConfig()==null || model.getInputConfig().getResearchSubset()==null){
+    	if (model==null || model.getInputConfig()==null || model.getInputConfig().getResearchSubset()==null){
     		reset();
     		return;
     	}
@@ -206,8 +228,6 @@ public class ViewSubsetDefinition implements IView{
         this.size.setText(String.valueOf(size));
         this.total.setText(String.valueOf(total));
         this.percent.setText(format.format(percent));
-        if (this.model != null) {
-            this.origin.setText(model.getSubsetOrigin());
-        }
+        this.origin.setText(model.getSubsetOrigin());
     }
 }

@@ -26,11 +26,21 @@ import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.util.IClientAreaProvider;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 
+/**
+ * A BodyLayerStack for the DataView
+ * @author Fabian Prasser
+ */
 public class DataTableBodyLayerStack extends AbstractLayerTransform {
 
     private final SelectionLayer selectionLayer;
     private final ViewportLayer  viewportLayer;
 
+    /**
+     * Creates a new instance
+     * @param underlyingLayer
+     * @param table
+     * @param context
+     */
     public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, NatTable table, DataTableContext context) {
         this.selectionLayer = new DataTableSelectionLayer(underlyingLayer, context);
         this.viewportLayer = new ViewportLayer(selectionLayer);
@@ -39,10 +49,18 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
         this.registerCommandHandler(new CopyDataCommandHandler(selectionLayer));
     }
 
+    /**
+     * Returns the selection layer
+     * @return
+     */
     public SelectionLayer getSelectionLayer() {
         return selectionLayer;
     }
 
+    /**
+     * Returns the viewport layer
+     * @return
+     */
     public ViewportLayer getViewportLayer() {
         return viewportLayer;
     }

@@ -21,11 +21,20 @@ package org.deidentifier.arx.gui.view.impl.common.datatable;
 import org.deidentifier.arx.RowSet;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+/**
+ * A DataProvider for the DataView
+ * @author Fabian Prasser
+ */
 public class DataTableArrayDataProvider implements IDataProvider {
 
     private final String[][]       data;
     private final DataTableContext context;
 
+    /**
+     * Creates a new instance
+     * @param data
+     * @param context
+     */
     public DataTableArrayDataProvider(final String[][] data, DataTableContext context) {
         this.data = data;
         this.context = context;

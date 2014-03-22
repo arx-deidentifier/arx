@@ -29,11 +29,22 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * This class implements a titled border
+ * @author Fabian Prasser
+ */
 public class ComponentTitledBorder implements IComponent{
     
     private final CTabFolder folder;
     private final CTabItem tab; 
     
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     * @param title
+     * @param id
+     */
     public ComponentTitledBorder(Composite parent, Controller controller, String title, String id){
 
         folder = new CTabFolder(parent, SWT.TOP | SWT.BORDER | SWT.FLAT);
@@ -59,14 +70,26 @@ public class ComponentTitledBorder implements IComponent{
         folder.setSelection(tab);
     }
     
+    /**
+     * Returns the underlying control
+     * @return
+     */
     public Composite getControl(){
         return folder;
     }
     
+    /**
+     * Sets the child control
+     * @param child
+     */
     public void setChild(Control child){
         this.tab.setControl(child);
     }
     
+    /**
+     * Sets layout data
+     * @param data
+     */
     public void setLayoutData(Object data){
         folder.setLayoutData(data);
     }

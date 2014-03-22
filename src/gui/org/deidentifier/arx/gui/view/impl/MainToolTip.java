@@ -26,11 +26,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * This class implements a global tool tip
+ * @author Fabian Prasser
+ */
 public class MainToolTip {
 
     private final Shell shell;
     private final Text  text;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     */
     public MainToolTip(final Shell parent) {
         shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
         shell.setLayout(new GridLayout());
@@ -47,15 +55,27 @@ public class MainToolTip {
         });
     }
 
+    /**
+     * Hides the tool tip
+     */
     public void hide() {
         shell.setVisible(false);
     }
 
+    /**
+     * Sets the text of the tool tip
+     * @param message
+     */
     public void setText(final String message) {
         text.setText(message);
         shell.pack();
     }
 
+    /**
+     * Shows the tool tip
+     * @param x
+     * @param y
+     */
     public void show(final int x, final int y) {
         shell.setLocation(x, y);
         shell.setVisible(true);

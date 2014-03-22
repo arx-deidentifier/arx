@@ -26,6 +26,10 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * A base class for views on privacy criteria
+ * @author Fabian Prasser
+ */
 public abstract class ViewCriterion implements IView {
 
 	protected static final int SLIDER_MAX = 1000;
@@ -35,6 +39,12 @@ public abstract class ViewCriterion implements IView {
 	protected Model model;
 	protected Composite root;
 
+	/**
+	 * Creates a new instance
+	 * @param parent
+	 * @param controller
+	 * @param model
+	 */
 	public ViewCriterion(final Composite parent, final Controller controller,
 			final Model model) {
 		this.controller = controller;
@@ -68,6 +78,11 @@ public abstract class ViewCriterion implements IView {
         }
 	}
 
+	/**
+	 * Implement this to build the view
+	 * @param parent
+	 * @return
+	 */
 	protected abstract Composite build(Composite parent);
 
 	/**
@@ -101,8 +116,18 @@ public abstract class ViewCriterion implements IView {
 		return val;
 	}
 
+	/**
+	 * Implement this to parse the settings into a privacy criterion
+	 */
 	protected abstract void parse();
 
+	/**
+	 * TODO: Ok?
+	 * @param min
+	 * @param max
+	 * @param value
+	 * @return
+	 */
 	protected double sliderToDouble(final double min, final double max,
 			final int value) {
 		double val = ((double) value / (double) SLIDER_MAX) * max;
@@ -116,6 +141,13 @@ public abstract class ViewCriterion implements IView {
 		return val;
 	}
 
+	/**
+	 * TODO: Ok?
+	 * @param min
+	 * @param max
+	 * @param value
+	 * @return
+	 */
 	protected int sliderToInt(final int min, final int max, final int value) {
 		int val = (int) Math
 				.round(((double) value / (double) SLIDER_MAX) * max);

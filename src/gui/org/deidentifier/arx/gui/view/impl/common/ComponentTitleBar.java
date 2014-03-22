@@ -26,6 +26,11 @@ import java.util.Map;
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * A basic title bar, which offers some buttons
+ * 
+ * @author Fabian Prasser
+ */
 public class ComponentTitleBar implements IComponent{
     
     private List<String> titles = new ArrayList<String>();
@@ -34,10 +39,21 @@ public class ComponentTitleBar implements IComponent{
     private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
     private String id;
     
+    /**
+     * Creates a new instance
+     * @param id
+     */
     public ComponentTitleBar(String id) {    
         this.id = id;
     }
 
+    /**
+     * Adds a button
+     * @param title
+     * @param image
+     * @param toggle
+     * @param runnable
+     */
     public void add(String title, Image image, boolean toggle, Runnable runnable) {
         this.titles.add(title);
         this.toggle.put(title, toggle);
@@ -45,26 +61,55 @@ public class ComponentTitleBar implements IComponent{
         this.runnables.put(title, runnable);
     }
 
+    /**
+     * Adds a new button
+     * @param title
+     * @param image
+     * @param runnable
+     */
     public void add(String title, Image image, Runnable runnable){
         add(title, image, false, runnable);
     }
 
+    /**
+     * Returns the id
+     * @return
+     */
     public String getId(){
         return id;
     }
 
+    /**
+     * Returns the image for the given button
+     * @param title
+     * @return
+     */
     public Image getImage(String title) {
         return images.get(title);
     }
 
+    /**
+     * Returns the runnable for the given button
+     * @param title
+     * @return
+     */
     public Runnable getRunnable(String title) {
         return runnables.get(title);
     }
     
+    /**
+     * Returns the titles of all buttons
+     * @return
+     */
     public List<String> getTitles() {
         return titles;
     }
 
+    /**
+     * Returns whether the given button is a toggle button
+     * @param title
+     * @return
+     */
     public Boolean isToggle(String title) {
         return toggle.get(title);
     }

@@ -26,10 +26,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * This class implements the layout for the data definition perspective
+ * @author Fabian Prasser
+ */
 public class LayoutDefinition implements ILayout {
 
     private final Composite center;
     
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public LayoutDefinition(final Composite parent, final Controller controller) {
 
 		// Define

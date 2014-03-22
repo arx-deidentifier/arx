@@ -31,10 +31,12 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.MainPopUp;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,6 +50,10 @@ import org.eclipse.swt.widgets.TableItem;
 
 import cern.colt.Arrays;
 
+/**
+ * This class displays the clipboard
+ * @author Fabian Prasser
+ */
 public class ViewClipboard implements IView {
 
     private static final int        NODE_COMMENT = 111;
@@ -58,6 +64,11 @@ public class ViewClipboard implements IView {
     private final Composite         root;
     private final Controller        controller;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewClipboard(final Composite parent, final Controller controller) {
 
         // Listen
@@ -73,10 +84,8 @@ public class ViewClipboard implements IView {
         border.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout groupNodeGridLayout = new GridLayout();
         root.setLayout(groupNodeGridLayout);
-        final IView outer = this;
 
-        table = new Table(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL |
-                                SWT.H_SCROLL);
+        table = new Table(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
@@ -89,7 +98,7 @@ public class ViewClipboard implements IView {
                 if (s.length > 0) {
                     final ARXNode node = (ARXNode) s[0].getData();
                     model.setSelectedNode(node);
-                    controller.update(new ModelEvent(outer,
+                    controller.update(new ModelEvent(ViewClipboard.this,
                                                      ModelPart.SELECTED_NODE,
                                                      node));
                 }
@@ -107,44 +116,10 @@ public class ViewClipboard implements IView {
                         final String item1 = Resources.getMessage("NodeClipboardView.1"); //$NON-NLS-1$
                         final String item2 = Resources.getMessage("NodeClipboardView.2"); //$NON-NLS-1$
                         final String item3 = Resources.getMessage("NodeClipboardView.3"); //$NON-NLS-1$
-                        controller.getPopup().setItems(new String[] { item1,
-                                                               item2,
-                                                               item3 },
-                                                       new SelectionAdapter() {
-                                                           @Override
-                                                           public void
-                                                                   widgetSelected(final SelectionEvent arg0) {
-                                                               final ARXNode node = (ARXNode) i.getData();
-                                                               model.setSelectedNode(node);
-                                                               controller.update(new ModelEvent(outer,
-                                                                                                ModelPart.SELECTED_NODE,
-                                                                                                node));
-                                                               if (arg0.data.equals(item1)) {
-                                                                   final String label = Arrays.toString(node.getTransformation());
-                                                                   final String value = controller.actionShowInputDialog(Resources.getMessage("NodeClipboardView.4"), Resources.getMessage("NodeClipboardView.5") + label, i.getText(1)); //$NON-NLS-1$ //$NON-NLS-2$
-                                                                   if (value != null) {
-                                                                       i.setText(1,
-                                                                                 value);
-                                                                       node.getAttributes()
-                                                                           .put(NODE_COMMENT,
-                                                                                value);
-                                                                   }
-
-                                                               } else if (arg0.data.equals(item2)) {
-                                                                   model.getClipboard()
-                                                                        .remove(node);
-                                                                   removeItem(i);
-                                                                   controller.update(new ModelEvent(outer,
-                                                                                                    ModelPart.CLIPBOARD,
-                                                                                                    null));
-                                                               } else if (arg0.data.equals(item3)) {
-                                                                   controller.actionApplySelectedTransformation();
-                                                               }
-                                                           }
-
-                                                       });
-                        controller.getPopup().show(Display.getDefault()
-                                                          .getCursorLocation());
+                        MainPopUp popup = controller.getPopup();
+                        popup.setItems(new String[] { item1, item2, item3 },
+                                       getSelectionListener( item1, item2, item3, i));
+                        popup.show(Display.getDefault().getCursorLocation());
                         controller.getToolTip().hide();
                     }
                 }
@@ -167,7 +142,46 @@ public class ViewClipboard implements IView {
     public void dispose() {
         controller.removeListener(this);
     }
+    
+    /**
+     * Creates a selection listener
+     * @param item1
+     * @param item2
+     * @param item3
+     * @param i
+     * @return
+     */
+    private SelectionListener getSelectionListener(final String item1, final String item2, final String item3, final TableItem i) {
+        return new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                ARXNode node = (ARXNode) i.getData();
+                model.setSelectedNode(node);
+                controller.update(new ModelEvent(ViewClipboard.this, ModelPart.SELECTED_NODE, node));
+                if (arg0.data.equals(item1)) {
+                    final String label = Arrays.toString(node.getTransformation());
+                    final String value = controller.actionShowInputDialog(Resources.getMessage("NodeClipboardView.4"), Resources.getMessage("NodeClipboardView.5") + label, i.getText(1)); //$NON-NLS-1$ //$NON-NLS-2$
+                    if (value != null) {
+                        i.setText(1, value);
+                        node.getAttributes().put(NODE_COMMENT, value);
+                    }
 
+                } else if (arg0.data.equals(item2)) {
+                    model.getClipboard().remove(node);
+                    removeItem(i);
+                    controller.update(new ModelEvent(ViewClipboard.this, ModelPart.CLIPBOARD, null));
+                } else if (arg0.data.equals(item3)) {
+                    controller.actionApplySelectedTransformation();
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the item at the given location
+     * @param pt
+     * @return
+     */
     private TableItem getItemAt(final Point pt) {
         int index = table.getTopIndex();
         while (index < table.getItemCount()) {
@@ -181,6 +195,10 @@ public class ViewClipboard implements IView {
         return null;
     }
 
+    /**
+     * Removes the item
+     * @param item
+     */
     private void removeItem(final TableItem item) {
         int index = -1;
         for (int i = 0; i < table.getItemCount(); i++) {

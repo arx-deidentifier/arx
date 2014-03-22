@@ -34,13 +34,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * A column style for the data view
+ * @author Fabian Prasser
+ */
 public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyleConfiguration {
 
-    private final Image     IMAGE_COL_BACK;
-    private final Image     IMAGE_COL_SELECT;
-
+    private final Image            IMAGE_COL_BACK;
+    private final Image            IMAGE_COL_SELECT;
     private final DataTableContext context;
 
+    /**
+     * Creates a new instance
+     * @param context
+     */
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
         this.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
         this.context = context;
@@ -48,6 +55,10 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
         IMAGE_COL_SELECT = context.getController().getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }
 
+    /**
+     * Add normal styling to the registry
+     * @param configRegistry
+     */
     private void addNormalModeStyling(final IConfigRegistry configRegistry) {
 
         final TextPainter txtPainter = new TextPainter(false, false);
@@ -70,6 +81,10 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
                                                GridRegion.CORNER);
     }
 
+    /**
+     * Add selected styling to the registry
+     * @param configRegistry
+     */
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
 
         final TextPainter txtPainter = new TextPainter(false, false);

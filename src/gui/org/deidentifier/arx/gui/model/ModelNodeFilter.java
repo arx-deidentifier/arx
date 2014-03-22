@@ -31,12 +31,12 @@ public class ModelNodeFilter implements Serializable {
 
     private static final long    serialVersionUID   = 5451641489562102719L;
 
-    private Set<Integer>[]       generalizations    = null;
     private final Set<Anonymity> anonymity          = new HashSet<Anonymity>();
-    private double               minInformationLoss = 0;
+    private Set<Integer>[]       generalizations    = null;
     private double               maxInformationLoss = Double.MAX_VALUE;
     private int[]                maxLevels          = null;
     private int                  maxNumNodesInitial = 0;
+    private double               minInformationLoss = 0;
 
     @SuppressWarnings("unchecked")
     public ModelNodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
@@ -89,66 +89,6 @@ public class ModelNodeFilter implements Serializable {
     	// TODO: Introduce uncertain values in GUI
         anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
-    }
-
-    /**
-     * Cleans up the settings
-     * 
-     * @param lattice
-     * @return
-     */
-    private void clean(final Set<ARXNode> visible, final int[] optimum) {
-
-        // Remove hidden from visible
-        final Iterator<ARXNode> i = visible.iterator();
-        while (i.hasNext()) {
-            final ARXNode node = i.next();
-            if (!isAllowed(node)) {
-                i.remove();
-            }
-        }
-
-        // Build sets
-        @SuppressWarnings("unchecked")
-		final Set<Integer>[] required = new HashSet[optimum.length];
-        for (int j = 0; j < optimum.length; j++) {
-            required[j] = new HashSet<Integer>();
-        }
-        for (final ARXNode node : visible) {
-            for (int j = 0; j < optimum.length; j++) {
-                required[j].add(node.getTransformation()[j]);
-            }
-        }
-
-        // Clean the settings
-        for (int j = 0; j < optimum.length; j++) {
-            final Iterator<Integer> it = generalizations[j].iterator();
-            while (it.hasNext()) {
-                final int l = it.next();
-                if (!required[j].contains(l)) {
-                    it.remove();
-                }
-            }
-        }
-    }
-
-    /**
-     * Counts the number of visible nodes
-     * 
-     * @param lattice
-     * @return
-     */
-    private int
-            count(final Set<ARXNode> visible, final Set<ARXNode> hidden) {
-        final Iterator<ARXNode> i = hidden.iterator();
-        while (i.hasNext()) {
-            final ARXNode node = i.next();
-            if (isAllowed(node)) {
-                i.remove();
-                visible.add(node);
-            }
-        }
-        return visible.size();
     }
 
     public void disallowAll() {
@@ -383,5 +323,65 @@ public class ModelNodeFilter implements Serializable {
     public boolean isAllowedUnknown() {
         return anonymity.contains(Anonymity.PROBABLY_ANONYMOUS) ||
         	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS); 
+    }
+
+    /**
+     * Cleans up the settings
+     * 
+     * @param lattice
+     * @return
+     */
+    private void clean(final Set<ARXNode> visible, final int[] optimum) {
+
+        // Remove hidden from visible
+        final Iterator<ARXNode> i = visible.iterator();
+        while (i.hasNext()) {
+            final ARXNode node = i.next();
+            if (!isAllowed(node)) {
+                i.remove();
+            }
+        }
+
+        // Build sets
+        @SuppressWarnings("unchecked")
+		final Set<Integer>[] required = new HashSet[optimum.length];
+        for (int j = 0; j < optimum.length; j++) {
+            required[j] = new HashSet<Integer>();
+        }
+        for (final ARXNode node : visible) {
+            for (int j = 0; j < optimum.length; j++) {
+                required[j].add(node.getTransformation()[j]);
+            }
+        }
+
+        // Clean the settings
+        for (int j = 0; j < optimum.length; j++) {
+            final Iterator<Integer> it = generalizations[j].iterator();
+            while (it.hasNext()) {
+                final int l = it.next();
+                if (!required[j].contains(l)) {
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * Counts the number of visible nodes
+     * 
+     * @param lattice
+     * @return
+     */
+    private int
+            count(final Set<ARXNode> visible, final Set<ARXNode> hidden) {
+        final Iterator<ARXNode> i = hidden.iterator();
+        while (i.hasNext()) {
+            final ARXNode node = i.next();
+            if (isAllowed(node)) {
+                i.remove();
+                visible.add(node);
+            }
+        }
+        return visible.size();
     }
 }

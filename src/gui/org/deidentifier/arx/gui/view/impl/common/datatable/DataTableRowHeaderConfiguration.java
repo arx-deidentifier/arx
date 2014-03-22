@@ -31,11 +31,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * A configuration for row headers in the data view
+ * @author Fabian Prasser
+ */
 public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfiguration {
 
     private final Image IMAGE_ROW_BACK; //$NON-NLS-1$
     private final Image IMAGE_ROW_SELECT; //$NON-NLS-1$
 
+    /**
+     * Creates a new instance
+     * @param context
+     */
     public DataTableRowHeaderConfiguration(DataTableContext context) {
         font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
         IMAGE_ROW_BACK   = context.getController().getResources().getImage("row_header_bg.png");         //$NON-NLS-1$
@@ -45,6 +53,10 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
         cellPainter = bgImagePainter;
     }
 
+    /**
+     * Add selected style
+     * @param configRegistry
+     */
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
 
         final TextPainter txtPainter = new TextPainter(false, false);

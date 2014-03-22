@@ -23,11 +23,20 @@ import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.RowSet;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+/**
+ * A data provider based on a data handle
+ * @author Fabian Prasser
+ */
 public class DataTableHandleDataProvider implements IDataProvider {
 
     private final DataHandle       data;
     private final DataTableContext context;
 
+    /**
+     * Creates a new instance
+     * @param data
+     * @param context
+     */
     public DataTableHandleDataProvider(final DataHandle data, final DataTableContext context) {
         this.data = data;
         this.context = context;

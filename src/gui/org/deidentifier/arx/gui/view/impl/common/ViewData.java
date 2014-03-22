@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A view on a <code>Data</code> object
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
  */
 public abstract class ViewData implements IView {
 

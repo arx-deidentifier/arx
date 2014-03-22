@@ -35,6 +35,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
+/**
+ * Implements a view on a t-closeness criterion
+ * @author Fabian Prasser
+ */
 public class ViewTCloseness extends ViewCriterion {
 
 	private static final String VARIANTS[] = {
@@ -43,9 +47,14 @@ public class ViewTCloseness extends ViewCriterion {
 	private Scale sliderT;
 	private Combo comboVariant;
 	private Label labelT;
-
 	private String attribute;
 
+	/**
+	 * Creates a new instance
+	 * @param parent
+	 * @param controller
+	 * @param model
+	 */
 	public ViewTCloseness(final Composite parent, final Controller controller,
 			final Model model) {
 

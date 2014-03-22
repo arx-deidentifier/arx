@@ -36,6 +36,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * This class displays a list of all defined privacy criteria
+ * @author fabian
+ */
 public class ViewCriteriaList implements IView {
 
     private Controller  controller;
@@ -50,6 +54,11 @@ public class ViewCriteriaList implements IView {
     private Image       symbolK;
     private Image       symbolD;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewCriteriaList(final Composite parent, final Controller controller) {
 
         // Register

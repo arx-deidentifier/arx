@@ -39,6 +39,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * This view displays settings for all attributes
+ * @author Fabian Prasser
+ */
 public class ViewDataDefinition implements IView {
 
     private final Controller           controller;
@@ -47,6 +51,11 @@ public class ViewDataDefinition implements IView {
     private final Set<IView>           views = new HashSet<IView>();
     private Model                      model;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewDataDefinition(final Composite parent,
                               final Controller controller) {
 
@@ -108,6 +117,9 @@ public class ViewDataDefinition implements IView {
         folder.redraw();
     }
 
+    /**
+     * Handle a selection event
+     */
     private void selectionEvent() {
         int index = folder.getSelectionIndex();
         if (index >= 0) {

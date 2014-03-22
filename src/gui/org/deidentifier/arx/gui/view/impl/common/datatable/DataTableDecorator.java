@@ -17,14 +17,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * + * {@link NatTable} decorator class which is used to draw borders for cells
- * whose LabelStack + * contains border related labels. + *
- * <p>
- * Compared to the LineBorderDecorator which paints a border for every side of a
- * cell, + * with this implementation you are free to choose for which side a
- * border should be painted + * or not.
- * </p>
- * + * + * @author Dirk Fauth + *
+ * A table decorator. Based on code from Dirk Fauth.
+ * @author Dirk Fauth
+ * @author Fabian Prasser
  */
 public class DataTableDecorator extends CellPainterWrapper {
 

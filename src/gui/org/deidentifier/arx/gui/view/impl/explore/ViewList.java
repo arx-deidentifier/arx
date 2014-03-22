@@ -48,19 +48,12 @@ import org.eclipse.swt.widgets.TableItem;
 import cern.colt.Arrays;
 
 /**
- * This class implements a list view on selected nodes
+ * This class implements a list view on selected nodes.
+ * TODO: Highlight optimum and currently selected node in list
  * 
  * @author prasser
  */
 public class ViewList implements IView {
-
-    /** The optimum */
-	// TODO: Highlight in list
-    private ARXNode             optimum;
-
-    /** The selected node */
-	// TODO: Highlight in list
-    private ARXNode             selectedNode;
 
     /** The controller */
     private final Controller    controller;
@@ -126,8 +119,6 @@ public class ViewList implements IView {
      */
     @Override
     public void reset() {
-        optimum = null;
-        selectedNode = null;
         table.setRedraw(false);
         table.clearAll();
         table.setRedraw(true);
@@ -141,7 +132,7 @@ public class ViewList implements IView {
     public void update(final ModelEvent event) {
 
         if (event.part == ModelPart.SELECTED_NODE) {
-            selectedNode = (ARXNode) event.data;
+            // selectedNode = (ARXNode) event.data;
         } else if (event.part == ModelPart.MODEL) {
             reset();
             model = (Model) event.data;
@@ -224,7 +215,7 @@ public class ViewList implements IView {
                 list.clear();
 
                 final ARXLattice l = result.getLattice();
-                optimum = result.getGlobalOptimum();
+                // optimum = result.getGlobalOptimum();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         if (filter.isAllowed(node)) {
