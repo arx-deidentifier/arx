@@ -262,7 +262,7 @@ public class ImportData {
      * @return Returns array of datatypes for enabled columns
      * @throws Exception Cannot be invoked when wizard is not yet finished
      */
-    public DataType<?>[] getIteratorColumnDatatypes() throws Exception {
+    public DataType<?>[] getColumnDatatypes() throws Exception {
 
         if (!isWizardFinished()) {
 
