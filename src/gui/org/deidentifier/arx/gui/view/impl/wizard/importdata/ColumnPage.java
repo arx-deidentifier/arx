@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -21,9 +22,11 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -56,12 +59,13 @@ public class ColumnPage extends WizardPage {
     private TableViewerColumn tableViewerColumnDatatype;
     private TableColumn tblclmnEnabled;
     private TableViewerColumn tableViewerColumnEnabled;
+    private TableColumn tblclmnFormat;
+    private TableViewerColumn tableViewerColumnFormat;
 
     /**
      * Indicator for the next action of {@link ColumnEnabledSelectionListener}
      */
     private Boolean selectAll = true;
-
 
     /**
      * Creates a new instance of this page and sets its title and description
@@ -230,8 +234,79 @@ public class ColumnPage extends WizardPage {
          */
         tblclmnDatatype = tableViewerColumnDatatype.getColumn();
         tblclmnDatatype.setToolTipText("Datatype of the column");
-        tblclmnDatatype.setWidth(100);
+        tblclmnDatatype.setWidth(120);
         tblclmnDatatype.setText("Datatype");
+
+        /*
+         * Column containing the format of the format
+         */
+        tableViewerColumnFormat = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+        tableViewerColumnFormat.setLabelProvider(new ColumnLabelProvider() {
+
+            /**
+             * Returns datatype format of cells
+             *
+             * This retrieves the datatype for each cell by invoking
+             * {@link ImportDataColumn#getDatatype()} and returns the format
+             * {@link DataTypeWithFormat#getFormat()} of it for each column
+             * that actually has a datatype format defined. In case of simple
+             * datatypes without a format specifier an empty string gets
+             * returned.
+             *
+             * @param element Column in question
+             */
+            @Override
+            public String getText(Object element)
+            {
+
+                DataType<?> column = ((ImportDataColumn) element).getDatatype();
+
+                if (column instanceof DataTypeWithFormat) {
+
+                        return ((DataTypeWithFormat) column).getFormat();
+
+                }
+
+                return "";
+
+            }
+
+            /**
+             * Returns the background color for cells
+             *
+             * This retrieves the datatype for each cell by invoking
+             * {@link ImportDataColumn#getDatatype()} and returns the a
+             * backgroundcolor for each cell. For columns that actually have a
+             * datatype format defined, {@link SWT#COLOR_GRAY} is returned,
+             * else the default will be used.
+             *
+             * @param element Column in question
+             */
+            @Override
+            public Color getBackground(Object element) {
+
+                DataType<?> column = ((ImportDataColumn) element).getDatatype();
+
+                if (!column.getDescription().hasFormat()) {
+
+                    return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
+
+                }
+
+                return super.getBackground(element);
+
+            }
+
+        });
+
+        /*
+         * Actual column for {@link tableViewerColumnFormat}
+         */
+        tblclmnFormat = tableViewerColumnFormat.getColumn();
+        tblclmnFormat.setWidth(120);
+        tblclmnFormat.setToolTipText("Format of the associated datatype");
+        tblclmnFormat.setWidth(100);
+        tblclmnFormat.setText("Format");
 
         /*
          * Wait for at least one column to be enabled
