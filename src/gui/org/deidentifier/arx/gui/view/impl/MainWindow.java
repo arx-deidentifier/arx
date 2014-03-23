@@ -268,29 +268,14 @@ public class MainWindow implements IView {
      * Shows an input dialog for selecting formats string for data types
      * @param header
      * @param text
+     * @param preselected Preselected format string, can be null
      * @param description
      * @param values
      * @return
      */
-    public String showFormatInputDialog(String title,
-                                        String text,
-                                        DataTypeDescription<?> type,
-                                        Collection<String> values) {
-        return showFormatInputDialog(shell, title, text, type, values);
-    }
-
-    /**
-     * Shows an input dialog for selecting formats string for data types
-     * @param shell
-     * @param header
-     * @param text
-     * @param description
-     * @param values
-     * @return
-     */
-    public String showFormatInputDialog(final Shell shell,
-                                        final String header,
+    public String showFormatInputDialog(final String header,
                                         final String text,
+                                        final String preselected,
                                         final DataTypeDescription<?> description,
                                         final Collection<String> values) {
 
@@ -329,7 +314,10 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        if (validator.isValid(DEFAULT) == null) {
+        if (preselected != null && validator.isValid(preselected) == null){
+            initial = preselected;
+        }
+        else if (validator.isValid(DEFAULT) == null) {
             initial = DEFAULT;
         } else {
             for (final String format : description.getExampleFormats()) {
