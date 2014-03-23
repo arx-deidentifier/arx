@@ -598,12 +598,26 @@ public class ColumnPage extends WizardPage {
                     if (DataTypeDescription.hasFormat()) {
 
                         final Controller controller = wizardImport.getController();
+                        final String format;
 
-                        final String format = controller.actionShowFormatInputDialog(
-                            "Format string",
-                            "Please provide a format string describing each item of this column",
-                            DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))
-                        );
+                        if (((ImportDataColumn)element).getDatatype() instanceof DataTypeWithFormat) {
+
+                            format = controller.actionShowFormatInputDialog(
+                                "Format string",
+                                "Please provide a format string describing each item of this column",
+                                ((DataTypeWithFormat)((ImportDataColumn)element).getDatatype()).getFormat(),
+                                DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))
+                            );
+
+                        } else {
+
+                            format = controller.actionShowFormatInputDialog(
+                                "Format string",
+                                "Please provide a format string describing each item of this column",
+                                DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))
+                            );
+
+                        }
 
                         if (format != null) {
 
