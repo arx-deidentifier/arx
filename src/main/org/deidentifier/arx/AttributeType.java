@@ -389,7 +389,7 @@ public class AttributeType implements Serializable {
         case ATTR_TYPE_QI:
             return "QUASI_IDENTIFYING_ATTRIBUTE";
         default:
-            return null;
+            return "UNKNOWN_ATTRIBUTE_TYPE";
         }
     }
 }
