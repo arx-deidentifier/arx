@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
