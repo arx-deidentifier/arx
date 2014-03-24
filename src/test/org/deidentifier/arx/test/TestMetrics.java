@@ -58,7 +58,7 @@ public class TestMetrics extends AbstractTest {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(data, config);
         
-        result.getHandle().sort(true, new int[]{0,1,2,3,4});
+        result.getOutput(false).sort(true, new int[]{0,1,2,3,4});
         
         ARXLattice lattice = result.getLattice();
         

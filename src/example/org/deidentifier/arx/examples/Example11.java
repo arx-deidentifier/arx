@@ -130,11 +130,11 @@ public class Example11 extends Example {
                      
             // Print results
             System.out.println(" - Transformed data:");
-            print(result.getHandle().iterator());
+            print(result.getOutput(false).iterator());
 
             // Print results
             System.out.println(" - Transformed research subset:");
-            print(result.getHandle().getView().iterator());
+            print(result.getOutput(false).getView().iterator());
             
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);

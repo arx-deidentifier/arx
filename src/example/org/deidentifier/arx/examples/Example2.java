@@ -76,7 +76,7 @@ public class Example2 extends Example {
 
             // Write results
             System.out.print(" - Writing data...");
-            result.getHandle().save("data/test_anonymized.csv", ';');
+            result.getOutput(false).save("data/test_anonymized.csv", ';');
             System.out.println("Done!");
 
         } catch (final IllegalArgumentException e) {

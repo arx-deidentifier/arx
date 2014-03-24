@@ -65,7 +65,7 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(frequency, distribution.frequency));
 
         // Check output
-        distribution = result.getHandle().getStatistics().getFrequencyDistribution(0, true);
+        distribution = result.getOutput(false).getStatistics().getFrequencyDistribution(0, true);
         values = new String[]{"<50", ">=50"};
         frequency = new double[]{0.5714285714285714, 0.42857142857142855};
         assertTrue(Arrays.equals(values, distribution.values));
@@ -98,7 +98,7 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(frequency, distribution.frequency));
 
         // Check output
-        distribution = result.getHandle().getStatistics().getFrequencyDistribution(1, true);
+        distribution = result.getOutput(false).getStatistics().getFrequencyDistribution(1, true);
         values = new String[]{"*"};
         frequency = new double[]{1.0};
         assertTrue(Arrays.equals(values, distribution.values));
@@ -145,7 +145,7 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
 
         // Check output
-        contingency = result.getHandle()
+        contingency = result.getOutput(false)
                             .getStatistics()
                             .getContingencyTable(0, true, 2, true);
                 
@@ -201,7 +201,7 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
 
         // Check output
-        contingency = result.getHandle().getView().getStatistics().getContingencyTable(0, true, 2, true);
+        contingency = result.getOutput(false).getView().getStatistics().getContingencyTable(0, true, 2, true);
 
         values1 = new String[]{"<50"};
         values2 = new String[]{"81***"};

@@ -104,7 +104,7 @@ public class Example16 extends Example {
             
             // Print results
             System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getHandle().iterator();
+            final Iterator<String[]> transformed = result.getOutput(false).iterator();
             while (transformed.hasNext()) {
                 System.out.print("   ");
                 System.out.println(Arrays.toString(transformed.next()));
@@ -119,7 +119,7 @@ public class Example16 extends Example {
 
             // Print frequencies
             System.out.println(" - Distribution of attribute 'age' in output:");
-            distribution = result.getHandle().getStatistics().getFrequencyDistribution(0, true);
+            distribution = result.getOutput(false).getStatistics().getFrequencyDistribution(0, true);
             System.out.println("   " + Arrays.toString(distribution.values));
             System.out.println("   " + Arrays.toString(distribution.frequency));
             
@@ -136,7 +136,7 @@ public class Example16 extends Example {
             
             // Print contingency tables
             System.out.println(" - Contingency of attribute 'gender' and 'zipcode' in output:");
-            contingency = result.getHandle().getStatistics().getContingencyTable(0, true, 2, true);
+            contingency = result.getOutput(false).getStatistics().getContingencyTable(0, true, 2, true);
             System.out.println("   " + Arrays.toString(contingency.values1));
             System.out.println("   " + Arrays.toString(contingency.values2));
             while (contingency.iterator.hasNext()) {
