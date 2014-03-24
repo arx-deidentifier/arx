@@ -28,7 +28,8 @@ public class DataHandleSubset extends DataHandle {
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        createDataTypeArray();
+        // TODO: How about such statistics for the subset?
+        this.statistics = new DataStatistics(this, null);
     }
 
     @Override
@@ -133,8 +134,8 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected void createDataTypeArray() {
-        this.dataTypes = source.dataTypes;
+    protected DataType<?>[][] getDataTypeArray() {
+        return source.dataTypes;
     }
 
     @Override
@@ -180,5 +181,18 @@ public class DataHandleSubset extends DataHandle {
      */
     protected int internalTranslate(int row) {
         return this.subset.getArray()[row];
+    }
+    
+    /**
+     * Returns the underlying source data handle
+     * @return
+     */
+    protected DataHandle getSource(){
+        return source;
+    }
+
+    @Override
+    protected void doRelease() {
+        // Nothing to do
     }
 }

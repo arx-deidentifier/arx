@@ -65,7 +65,7 @@ public class DataDefinition {
         for (final String attr : maxGeneralization.keySet()) {
             d.maxGeneralization.put(attr, maxGeneralization.get(attr));
         }
-        
+        d.setLocked(this.isLocked());
         return d;
     }
 

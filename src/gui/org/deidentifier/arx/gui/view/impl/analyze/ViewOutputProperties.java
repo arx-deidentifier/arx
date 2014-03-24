@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.DPresence;
@@ -215,10 +216,17 @@ public class ViewOutputProperties extends ViewProperties {
         roots.clear();
         
         // Print basic info on outliers
-        new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(result.getNumberOfOutlyingGroups()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(result.getNumberOfGroups()) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(result.getNumberOfOutlyingGroups()) }); //$NON-NLS-1$
-
+        EquivalenceClassStatistics statistics = model.getOutput().getStatistics().getEquivalenceClassStatistics();
+        // TODO: This is because of subset views. Provide statistics as well!
+        if (statistics != null) {
+            new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(statistics.getNumberOfGroups()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.110"), new String[] { String.valueOf(statistics.getMinimalEquivalenceClassSize()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.111"), new String[] { String.valueOf(statistics.getMaximalEquivalenceClassSize()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.112"), new String[] { String.valueOf(statistics.getAverageEquivalenceClassSize()) }); //$NON-NLS-1$
+        }
+        
         // Print information loss
         if (node.getMaximumInformationLoss().getValue() == 
             node.getMinimumInformationLoss().getValue()) {

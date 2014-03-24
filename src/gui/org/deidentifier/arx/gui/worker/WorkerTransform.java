@@ -52,7 +52,7 @@ public class WorkerTransform extends Worker<DataHandle> {
 
         try {
             arg0.worked(1);
-            result = model.getResult().getHandle(model.getSelectedNode());
+            result = model.getResult().getHandle(model.getSelectedNode(), false);
         } catch (final Exception e) {
             error = e;
         }

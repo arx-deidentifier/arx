@@ -113,14 +113,10 @@ public class ARXAnonymizer {
         /**
          * Creates a new instance.
          * 
-         * @param metric
-         *            the metric
-         * @param checker
-         *            the checker
-         * @param lattice
-         *            the lattice
-         * @param manager
-         *            the manager
+         * @param metric  the metric
+         * @param checker the checker
+         * @param lattice the lattice
+         * @param manager the manager
          */
         Result(final Metric<?> metric,
                final INodeChecker checker,
@@ -143,16 +139,23 @@ public class ARXAnonymizer {
          */
 		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
 
-			// Create output handle
-			final DataHandleOutput outHandle = new DataHandleOutput(
-                    handle.getRegistry(),
-					this.manager, this.checker,
-					System.currentTimeMillis() - time, suppressionString,
-					handle.getDefinition(), this.lattice, removeOutliers,
-					config);
+		    // Create lattice
+	        final ARXLattice flattice = new ARXLattice(lattice,
+	                                                   manager.getDataQI().getHeader(),
+	                                                   config);
 
-            // Return
-            return outHandle;
+			// Create output handle
+	        ((DataHandleInput)handle).setLocked(true);
+            return new ARXResult(handle.getRegistry(),
+                                 this.manager,
+                                 this.checker,
+                                 handle.getDefinition(),
+                                 config,
+                                 flattice,
+                                 flattice.getOptimum(),
+                                 System.currentTimeMillis() - time,
+                                 suppressionString,
+                                 removeOutliers);      
 		}
     }
 
@@ -240,6 +243,10 @@ public class ARXAnonymizer {
      */
     public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
         
+        if (((DataHandleInput)data.getHandle()).isLocked()){
+            throw new RuntimeException("This data handle is locked. Please release it first");
+        }
+        
         DataHandle handle = data.getHandle();
 
         // TODO: Fix this
@@ -282,6 +289,9 @@ public class ARXAnonymizer {
 				ARXConfiguration currentConfig = config.clone();
 				previousDefinition = currentDefinition;
 				currentDefinition = handle.getDefinition().clone();
+				
+				// Unlock
+				currentDefinition.setLocked(false);
 
 				// Remove all other l-diversity and substitute
 				for (LDiversity c : currentConfig.getCriteria(LDiversity.class)) {
@@ -298,6 +308,9 @@ public class ARXAnonymizer {
 						currentDefinition.setAttributeType(c.getAttribute(), substition);
 					}
 				}
+				
+				// Lock
+				currentDefinition.setLocked(true);
 
 				// Adopt results from the previous iteration
 				Lattice lattice = null;
@@ -326,6 +339,7 @@ public class ARXAnonymizer {
 			    DataDefinition finalDefinition = createFinalDefinition(definition);
 			    ARXConfiguration finalConfig = createFinalConfig(config);
 			    LatticeManipulator finalManipulator = createFinalManipulator(result.lattice, config, ((DataHandleInput) handle).header, currentDefinition, definition);
+			    ((DataHandleInput)handle).setDefinition(finalDefinition);
 			    result = anonymizeInternal(handle, finalDefinition, finalConfig, null, 1, null, finalManipulator);
 			}
 			
@@ -650,9 +664,11 @@ public class ARXAnonymizer {
      */
     private DataDefinition createFinalDefinition(DataDefinition definition) {
         DataDefinition result = definition.clone();
+        result.setLocked(false);
         for (String attr : definition.getSensitiveAttributes()) {
             result.setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
         }
+        result.setLocked(true);
         return result;
     }
 
@@ -836,6 +852,11 @@ public class ARXAnonymizer {
 
         // Encode
         final DataManager manager = prepareDataManager(handle, definition, config);
+        
+        // Attach arrays to data handle
+        ((DataHandleInput)handle).update(manager.getDataQI().getArray(), 
+                                         manager.getDataSE().getArray(),
+                                         manager.getDataIS().getArray());
 
         // Initialize
         config.initialize(manager);

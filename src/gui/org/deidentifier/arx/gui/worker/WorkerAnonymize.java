@@ -75,9 +75,9 @@ public class WorkerAnonymize extends Worker<ARXResult> {
             arg0.beginTask(Resources.getMessage("WorkerAnonymize.2"), 2); //$NON-NLS-1$
 
             // Determine minimum and maximum information loss
-            result.getHandle(result.getLattice().getBottom());
+            result.getHandle(result.getLattice().getBottom(), false);
             arg0.worked(1);
-            result.getHandle(result.getLattice().getTop());
+            result.getHandle(result.getLattice().getTop(), false);
             arg0.beginTask(Resources.getMessage("WorkerAnonymize.3"), 1); //$NON-NLS-1$
             if (result.isResultAvailable()) {
                 result.getHandle();

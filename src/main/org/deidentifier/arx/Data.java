@@ -217,27 +217,6 @@ public abstract class Data {
 
     private DataDefinition  definition = new DataDefinition();
 
-    @Override
-    public Data clone() {
-        return clone(true);
-    }
-
-    /**
-     * Clones the data object
-     * 
-     * @param cloneDefinition
-     * @return
-     */
-    public Data clone(boolean cloneDefinition) {
-        final Data other = new DefaultData();
-        if (cloneDefinition) other.definition = definition.clone();
-        else other.definition = new DataDefinition();
-        if (handle != null) {
-            other.handle = new DataHandleInput(handle, other.definition);
-        }
-        return other;
-    }
-
     /**
      * Returns the data definition
      * 
@@ -256,7 +235,6 @@ public abstract class Data {
         if (handle == null) {
             handle = new DataHandleInput(this);
         } else {
-            // TODO: Only need to do this when definition changes
             handle.update(this);
         }
         return handle;

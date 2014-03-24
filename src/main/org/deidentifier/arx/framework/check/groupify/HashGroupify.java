@@ -32,6 +32,99 @@ import org.deidentifier.arx.framework.data.Data;
  * @author Prasser, Kohlmayer
  */
 public class HashGroupify implements IHashGroupify {
+    
+
+    /**
+     * Statistics about the groups, excluding outliers
+     * @author Fabian Prasser
+     */
+    public static class GroupStatistics {
+
+        private int averageEquivalenceClassSize;
+        private int maximalEquivalenceClassSize;
+        private int minimalEquivalenceClassSize;
+        private int numberOfGroups;
+        private int numberOfOutlyingEquivalenceClasses;
+        private int numberOfOutlyingTuples;
+        
+        /**
+         * Creates a new instance
+         * @param handle
+         * @param averageEquivalenceClassSize
+         * @param maximalEquivalenceClassSize
+         * @param minimalEquivalenceClassSize
+         * @param numberOfGroups
+         * @param numberOfOutlyingEquivalenceClasses
+         * @param numberOfOutlyingTuples
+         */
+        protected GroupStatistics( int averageEquivalenceClassSize,
+                                              int maximalEquivalenceClassSize,
+                                              int minimalEquivalenceClassSize,
+                                              int numberOfGroups,
+                                              int numberOfOutlyingEquivalenceClasses,
+                                              int numberOfOutlyingTuples) {
+            this.averageEquivalenceClassSize = averageEquivalenceClassSize;
+            this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;
+            this.minimalEquivalenceClassSize = minimalEquivalenceClassSize;
+            this.numberOfGroups = numberOfGroups;
+            this.numberOfOutlyingEquivalenceClasses = numberOfOutlyingEquivalenceClasses;
+            this.numberOfOutlyingTuples = numberOfOutlyingTuples;
+        }
+        
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public int getAverageEquivalenceClassSize(){
+            return averageEquivalenceClassSize;
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public int getMaximalEquivalenceClassSize(){
+            return maximalEquivalenceClassSize;
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class
+         * @return
+         */
+        public int getMinimalEquivalenceClassSize(){
+            return minimalEquivalenceClassSize;
+        }
+
+        /**
+         * Returns the number of equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfGroups() {
+            return numberOfGroups;
+        }
+
+        /**
+         * Returns the number of outlying equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingEquivalenceClasses() {
+            return numberOfOutlyingEquivalenceClasses;
+        }
+
+        /**
+         * Returns the number of outliers in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingTuples() {
+            return numberOfOutlyingTuples;
+        }
+    }
 
     /** The current outliers. */
     private int                      currentOutliers;
@@ -175,39 +268,6 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public HashGroupifyEntry getFirstEntry() {
         return firstEntry;
-    }
-
-    @Override
-    public int getGroupOutliersCount() {
-        // Iterate over all groups
-        // TODO: Could be more efficient
-        int result = 0;
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-            final boolean anonymous = isAnonymous(entry);
-            if (!anonymous) {
-                result++;
-            }
-            entry = entry.nextOrdered;
-        }
-        return result;
-    }
-
-    @Override
-    public int getTupleOutliersCount() {
-
-        // Iterate over all groups
-        // TODO: Could be more efficient
-        int result = 0;
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-            final boolean anonymous = isAnonymous(entry);
-            if (!anonymous) {
-                result += entry.count;
-            }
-            entry = entry.nextOrdered;
-        }
-        return result;
     }
 
     @Override
@@ -433,5 +493,41 @@ public class HashGroupify implements IHashGroupify {
         }
         buckets = newData;
         threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
+    }
+
+    @Override
+    public GroupStatistics getGroupStatistics(){
+        
+        int averageEquivalenceClassSize = 0;
+        int maximalEquivalenceClassSize = Integer.MIN_VALUE;
+        int minimalEquivalenceClassSize = Integer.MAX_VALUE;
+        int numberOfEquivalenceClasses = this.size();
+        int numberOfOutlyingEquivalenceClasses = 0;
+        int numberOfOutlyingTuples = 0;
+        
+        // Iterate over all groups
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            final boolean anonymous = isAnonymous(entry);
+            if (!anonymous) {
+                numberOfOutlyingEquivalenceClasses++;
+                numberOfOutlyingTuples += entry.count;
+            } else {
+                averageEquivalenceClassSize += entry.count;
+                maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
+                minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
+            }
+            entry = entry.nextOrdered;
+        }
+        
+        averageEquivalenceClassSize = (int)((double)averageEquivalenceClassSize / 
+                                            (double)(numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses)); 
+        
+        return new GroupStatistics(averageEquivalenceClassSize,
+                                   maximalEquivalenceClassSize,
+                                   minimalEquivalenceClassSize,
+                                   numberOfEquivalenceClasses,
+                                   numberOfOutlyingEquivalenceClasses,
+                                   numberOfOutlyingTuples);
     }
 }

@@ -58,10 +58,9 @@ public class ModelConfiguration implements Serializable {
 
         final ModelConfiguration c = new ModelConfiguration();
         c.removeOutliers = removeOutliers;
-        c.input = input.clone();
+        c.input = input;
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
-        // Clone, but avoid creating a second clone
         c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
         return c;
     }

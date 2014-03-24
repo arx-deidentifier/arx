@@ -28,6 +28,7 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataStatistics.ContingencyTable.Entry;
 import org.deidentifier.arx.DataType.ARXString;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -39,6 +40,94 @@ import cern.colt.function.IntComparator;
  *
  */
 public class DataStatistics {
+    
+    /**
+     * Creates a new instance
+     * @param handle
+     * @param averageEquivalenceClassSize
+     * @param maximalEquivalenceClassSize
+     * @param minimalEquivalenceClassSize
+     * @param numberOfGroups
+     * @param numberOfOutlyingEquivalenceClasses
+     * @param numberOfOutlyingTuples
+     */
+    public DataStatistics(DataHandle handle,
+                          EquivalenceClassStatistics ecStatistics) {
+        this.ecStatistics = ecStatistics;
+        this.handle = handle;
+    }
+    
+    /**
+     * Statistics about the equivalence classes
+     * @author Fabian Prasser
+     */
+    public static class EquivalenceClassStatistics {
+
+        private GroupStatistics groupStatistics;
+        
+        /**
+         * Creates a new instance
+         * @param groupStatistics Statistics obtained from hash groupify
+         */
+        protected EquivalenceClassStatistics(GroupStatistics groupStatistics) {
+            this.groupStatistics = groupStatistics;
+        }
+
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public int getAverageEquivalenceClassSize(){
+            return groupStatistics.getAverageEquivalenceClassSize();
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public int getMaximalEquivalenceClassSize(){
+            return groupStatistics.getMaximalEquivalenceClassSize();
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class
+         * @return
+         */
+        public int getMinimalEquivalenceClassSize(){
+            return groupStatistics.getMinimalEquivalenceClassSize();
+        }
+
+        /**
+         * Returns the number of equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfGroups() {
+            return groupStatistics.getNumberOfGroups();
+        }
+
+        /**
+         * Returns the number of outlying equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingEquivalenceClasses() {
+            return groupStatistics.getNumberOfOutlyingEquivalenceClasses();
+        }
+
+        /**
+         * Returns the number of outliers in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingTuples() {
+            return groupStatistics.getNumberOfOutlyingTuples();
+        }
+    }
 
     /**
      * A frequency distribution
@@ -144,14 +233,9 @@ public class DataStatistics {
     /** The handle*/
     private DataHandle handle;
     
-    /**
-     * Creates a new instance
-     * @param handle
-     */
-    protected DataStatistics(DataHandle handle){
-        this.handle = handle;
-    }
-
+    /** The equivalence class statistics*/
+    private EquivalenceClassStatistics ecStatistics;
+    
     /**
      * Returns the distinct set of data items from the given column
      * 
@@ -506,5 +590,13 @@ public class DataStatistics {
         }
         
         return hierarchy;
+    }
+    
+    /**
+     * Returns statistics about the equivalence classes
+     * @return
+     */
+    public EquivalenceClassStatistics getEquivalenceClassStatistics(){
+        return ecStatistics;
     }
 }
