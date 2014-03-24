@@ -284,7 +284,6 @@ public class ARXResult {
         }
         
         // Obtain statistics
-        // TODO: Need to obtain statistics for subsets, too
         GroupStatistics[] statistics = checker.getGroupStatistics();
         EquivalenceClassStatistics eqStatistics = new EquivalenceClassStatistics(statistics[0]);
         EquivalenceClassStatistics peqStatistics = new EquivalenceClassStatistics(statistics[1]);
