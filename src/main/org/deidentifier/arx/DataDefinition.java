@@ -32,6 +32,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * @author Prasser, Kohlmayer
  */
 public class DataDefinition {
+    
+    /** Is this data definition locked*/
+    private boolean locked = false;
 
     /** The mapped attribute types */
     private final Map<String, AttributeType> attributeTypes    = new HashMap<String, AttributeType>();
@@ -210,6 +213,7 @@ public class DataDefinition {
     public void setAttributeType(final String attribute,
                                  final AttributeType type) {
     	
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
         if (type == null) { throw new NullPointerException("Type must not be null"); }
         attributeTypes.put(attribute, type);
     }
@@ -221,6 +225,8 @@ public class DataDefinition {
      * @param type
      */
     public void setDataType(final String attribute, final DataType<?> type) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
         if (type == null) { throw new NullPointerException("Type must not be null"); }
         dataTypes.put(attribute, type);
     }
@@ -233,6 +239,8 @@ public class DataDefinition {
      */
     public void setMaximumGeneralization(final String attribute,
                                          final int maximum) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
     	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
     		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
     	}
@@ -247,6 +255,8 @@ public class DataDefinition {
      */
     public void setMinimumGeneralization(final String attribute,
                                          final int minimum) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
     	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
     		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
     	}
@@ -267,5 +277,20 @@ public class DataDefinition {
             }
         }
         return result;
+    }
+    
+    /**
+     * Lock/unlock the definition
+     */
+    protected void setLocked(boolean locked){
+        this.locked = locked;
+    }
+    
+    /**
+     * Returns whether this definition can be altered
+     * @return
+     */
+    public boolean isLocked(){
+        return locked;
     }
 }
