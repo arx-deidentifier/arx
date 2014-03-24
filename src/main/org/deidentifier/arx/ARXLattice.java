@@ -409,7 +409,7 @@ public class ARXLattice implements Serializable {
 
         public IntArrayWrapper(final int[] array) {
             this.array = array;
-            hashCode = Arrays.hashCode(array);
+            this.hashCode = Arrays.hashCode(array);
         }
 
         @Override
