@@ -77,7 +77,7 @@ public class DataDefinition {
     }
 
     /**
-     * Returns the Datatype for the coulmn name
+     * Returns the Datatype for the column name
      * 
      * @param columnName
      * @return
