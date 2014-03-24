@@ -31,7 +31,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * 
  * @author Prasser, Kohlmayer
  */
-public class DataDefinition {
+public class DataDefinition implements Cloneable{
     
     /** Is this data definition locked*/
     private boolean locked = false;

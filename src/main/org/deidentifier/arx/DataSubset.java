@@ -40,6 +40,7 @@ public class DataSubset implements Serializable {
 
         @Override
         public boolean equals(Object obj) {
+            if (obj == null) return false;
             Entry other = (Entry) obj;
             return Arrays.equals(data, other.data);
         }
@@ -105,7 +106,7 @@ public class DataSubset implements Serializable {
                 throw new IllegalArgumentException("No match found for: "+Arrays.toString(tuple));
             }
             if (indices.isEmpty()) {
-            	throw new IllegalArgumentException("Too many matches found for: "+tuple);
+            	throw new IllegalArgumentException("Too many matches found for: "+Arrays.toString(tuple));
             }
             int index = indices.remove(0);
             bitset.add(index);

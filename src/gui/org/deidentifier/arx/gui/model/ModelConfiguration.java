@@ -31,7 +31,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
-public class ModelConfiguration implements Serializable {
+public class ModelConfiguration implements Serializable, Cloneable {
 
     private static final long      serialVersionUID = -2887699232096897527L;
 

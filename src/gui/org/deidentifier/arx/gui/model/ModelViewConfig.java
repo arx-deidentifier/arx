@@ -2,7 +2,7 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
-public class ModelViewConfig implements Serializable {
+public class ModelViewConfig implements Serializable, Cloneable {
 
     public static enum Mode {
         SORTED_INPUT,
@@ -17,6 +17,7 @@ public class ModelViewConfig implements Serializable {
     private String  attribute = null;
     private boolean subset    = false;
 
+    @Override
     public ModelViewConfig clone() {
         ModelViewConfig result = new ModelViewConfig();
         result.mode = this.mode;
