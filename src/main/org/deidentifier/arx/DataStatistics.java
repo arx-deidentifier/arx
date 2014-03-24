@@ -78,7 +78,7 @@ public class DataStatistics {
          * Returns the maximal size of an equivalence class
          * @return
          */
-        public int getAverageEquivalenceClassSize(){
+        public double getAverageEquivalenceClassSize(){
             return groupStatistics.getAverageEquivalenceClassSize();
         }
 

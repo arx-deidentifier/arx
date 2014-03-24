@@ -40,13 +40,13 @@ public class HashGroupify implements IHashGroupify {
      */
     public static class GroupStatistics {
 
-        private int averageEquivalenceClassSize;
-        private int maximalEquivalenceClassSize;
-        private int minimalEquivalenceClassSize;
-        private int numberOfGroups;
-        private int numberOfOutlyingEquivalenceClasses;
-        private int numberOfOutlyingTuples;
-        
+        private double averageEquivalenceClassSize;
+        private int    maximalEquivalenceClassSize;
+        private int    minimalEquivalenceClassSize;
+        private int    numberOfGroups;
+        private int    numberOfOutlyingEquivalenceClasses;
+        private int    numberOfOutlyingTuples;
+
         /**
          * Creates a new instance
          * @param handle
@@ -57,12 +57,12 @@ public class HashGroupify implements IHashGroupify {
          * @param numberOfOutlyingEquivalenceClasses
          * @param numberOfOutlyingTuples
          */
-        protected GroupStatistics( int averageEquivalenceClassSize,
-                                              int maximalEquivalenceClassSize,
-                                              int minimalEquivalenceClassSize,
-                                              int numberOfGroups,
-                                              int numberOfOutlyingEquivalenceClasses,
-                                              int numberOfOutlyingTuples) {
+        protected GroupStatistics(double averageEquivalenceClassSize,
+                                  int maximalEquivalenceClassSize,
+                                  int minimalEquivalenceClassSize,
+                                  int numberOfGroups,
+                                  int numberOfOutlyingEquivalenceClasses,
+                                  int numberOfOutlyingTuples) {
             this.averageEquivalenceClassSize = averageEquivalenceClassSize;
             this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;
             this.minimalEquivalenceClassSize = minimalEquivalenceClassSize;
@@ -75,7 +75,7 @@ public class HashGroupify implements IHashGroupify {
          * Returns the maximal size of an equivalence class
          * @return
          */
-        public int getAverageEquivalenceClassSize(){
+        public double getAverageEquivalenceClassSize(){
             return averageEquivalenceClassSize;
         }
 
@@ -498,7 +498,7 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public GroupStatistics getGroupStatistics(){
         
-        int averageEquivalenceClassSize = 0;
+        double averageEquivalenceClassSize = 0;
         int maximalEquivalenceClassSize = Integer.MIN_VALUE;
         int minimalEquivalenceClassSize = Integer.MAX_VALUE;
         int numberOfEquivalenceClasses = this.size();
@@ -520,8 +520,8 @@ public class HashGroupify implements IHashGroupify {
             entry = entry.nextOrdered;
         }
         
-        averageEquivalenceClassSize = (int)((double)averageEquivalenceClassSize / 
-                                            (double)(numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses)); 
+        averageEquivalenceClassSize = averageEquivalenceClassSize / 
+                                      (double)(numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses); 
         
         return new GroupStatistics(averageEquivalenceClassSize,
                                    maximalEquivalenceClassSize,
