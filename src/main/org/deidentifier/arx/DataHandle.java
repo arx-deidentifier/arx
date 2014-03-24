@@ -480,15 +480,6 @@ public abstract class DataHandle{
     }
     
     /**
-     * Returns the datatypes
-     * @return
-     */
-    protected Map<String, DataType<?>> getDataTypes() {
-        checkRegistry();
-        return definition.getDataTypes();
-    }
-    
-    /**
      * Returns an array containing the distinct values in the given column
      * 
      * @param column

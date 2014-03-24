@@ -92,31 +92,6 @@ public class DataDefinition {
     }
 
     /**
-     * Returns the data types
-     * 
-     * @return
-     */
-    protected Map<String, DataType<?>> getDataTypes() {
-        return dataTypes;
-    }
-
-    /**
-     * Returns all generalization hierarchies
-     * 
-     * @return
-     */
-    protected Map<String, String[][]> getHierarchies() {
-        final Map<String, String[][]> result = new HashMap<String, String[][]>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
-                result.put(entry.getKey(),
-                           ((Hierarchy) entry.getValue()).getHierarchy());
-            }
-        }
-        return result;
-    }
-
-    /**
      * Returns the according hierarchy
      * 
      * @return
@@ -276,5 +251,21 @@ public class DataDefinition {
     		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
     	}
         minGeneralization.put(attribute, minimum);
+    }
+
+    /**
+     * Returns all generalization hierarchies
+     * 
+     * @return
+     */
+    protected Map<String, String[][]> getHierarchies() {
+        final Map<String, String[][]> result = new HashMap<String, String[][]>();
+        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
+            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
+                result.put(entry.getKey(),
+                           ((Hierarchy) entry.getValue()).getHierarchy());
+            }
+        }
+        return result;
     }
 }
