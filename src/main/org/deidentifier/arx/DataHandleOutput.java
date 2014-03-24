@@ -135,6 +135,8 @@ public class DataHandleOutput extends DataHandle {
      * @param manager The data manager
      * @param checker The node checker
      * @param node The node to apply
+     * @param eqStatistics Statistics for the whole data
+     * @param peqStatistics Statistics for the subset
      * @param suppressionString The suppression string
      * @param definition The data definition
      * @param removeOutliers Do we remove outliers
@@ -146,6 +148,7 @@ public class DataHandleOutput extends DataHandle {
                                final Data buffer,
                                final ARXNode node,
                                final EquivalenceClassStatistics eqStatistics,
+                               final EquivalenceClassStatistics peqStatistics,
                                final String suppressionString,
                                final DataDefinition definition,
                                final boolean removeOutliers,
@@ -203,7 +206,7 @@ public class DataHandleOutput extends DataHandle {
         this.inverseDictionaries[AttributeType.ATTR_TYPE_QI] = this.dataQI.getDictionary();
         
         // Create view
-        this.getRegistry().createOutputSubset(node, config);
+        this.getRegistry().createOutputSubset(node, config, peqStatistics);
         
         // Obtain data types
         this.dataTypes = getDataTypeArray();

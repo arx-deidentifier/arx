@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
 import org.deidentifier.arx.criteria.DPresence;
 
 import cern.colt.GenericSorting;
@@ -58,9 +59,9 @@ class DataRegistry {
      * @param subset
      * @return
      */
-    private DataHandleSubset createSubset(DataHandle handle, DataSubset subset) {
+    private DataHandleSubset createSubset(DataHandle handle, DataSubset subset, EquivalenceClassStatistics eqStatistics) {
         
-        DataHandleSubset result = new DataHandleSubset(handle, subset);
+        DataHandleSubset result = new DataHandleSubset(handle, subset, eqStatistics);
         result.setRegistry(this);
         return result;
     }
@@ -196,7 +197,7 @@ class DataRegistry {
     protected void createInputSubset(ARXConfiguration config){
         
         if (config.containsCriterion(DPresence.class)) {
-            this.inputSubset = createSubset(this.input, config.getCriterion(DPresence.class).getSubset());
+            this.inputSubset = createSubset(this.input, config.getCriterion(DPresence.class).getSubset(), null);
         } else {
             this.inputSubset = null;
         }
@@ -371,10 +372,11 @@ class DataRegistry {
 
     /**
      * Creates the views on the subset
+     * @param peqStatistics 
      */
-    protected void createOutputSubset(ARXNode node, ARXConfiguration config){
+    protected void createOutputSubset(ARXNode node, ARXConfiguration config, EquivalenceClassStatistics peqStatistics){
         if (config.containsCriterion(DPresence.class)) {
-            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset()));
+            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset(), peqStatistics));
         } else {
             this.outputSubset.remove(node);
         }
