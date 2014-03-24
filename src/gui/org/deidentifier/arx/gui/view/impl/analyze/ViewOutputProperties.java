@@ -22,9 +22,8 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
@@ -34,9 +33,9 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -188,23 +187,15 @@ public class ViewOutputProperties extends ViewProperties {
      */
     protected void update() {
 
-        if (model == null) { return; }
+        Context context = getContext().getContext();
 
-        // Obtain the right config
-        ModelConfiguration config = model.getOutputConfig();
-        if (config == null) {
-            config = model.getInputConfig();
-        }
-
-        // Obtain the right handle
-        final DataHandle data = model.getOutput();
-
-        // Clear if nothing to draw
-        if ((config == null) || (data == null)) {
+        if (context == null ||
+            context.config == null ||
+            context.handle == null) {
             reset();
-            return;
+            return; 
         }
-
+        
         // Disable redrawing
         root.setRedraw(false);
         
@@ -216,7 +207,7 @@ public class ViewOutputProperties extends ViewProperties {
         roots.clear();
         
         // Print basic info on outliers
-        EquivalenceClassStatistics statistics = model.getOutput().getStatistics().getEquivalenceClassStatistics();
+        EquivalenceClassStatistics statistics = context.handle.getStatistics().getEquivalenceClassStatistics();
         // TODO: This is because of subset views. Provide statistics as well!
         if (statistics != null) {
             new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
@@ -246,8 +237,8 @@ public class ViewOutputProperties extends ViewProperties {
         if (node.isAnonymous() == Anonymity.ANONYMOUS) {
 
             // Print info about d-presence
-            if (config.containsCriterion(DPresence.class)) {
-                DPresence criterion = config.getCriterion(DPresence.class);
+            if (context.config.containsCriterion(DPresence.class)) {
+                DPresence criterion = context.config.getCriterion(DPresence.class);
                 // only if its not an auto-generated criterion
                 if (!(criterion.getDMin()==0d && criterion.getDMax()==1d)){
                     Property n = new Property(Resources.getMessage("PropertiesView.92"), new String[] { Resources.getMessage("PropertiesView.93") }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -256,15 +247,15 @@ public class ViewOutputProperties extends ViewProperties {
                 }
             }
             // Print info about k-anonymity
-            if (config.containsCriterion(KAnonymity.class)) {
-                KAnonymity criterion = config.getCriterion(KAnonymity.class);
+            if (context.config.containsCriterion(KAnonymity.class)) {
+                KAnonymity criterion = context.config.getCriterion(KAnonymity.class);
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.52") }); //$NON-NLS-1$ //$NON-NLS-2$
                 new Property(n, Resources.getMessage("PropertiesView.53"), new String[] { String.valueOf(criterion.getK())}); //$NON-NLS-1$
             }
             
             // Print info about l-diversity or t-closeness
             int index = 0;
-            for (PrivacyCriterion c : config.getCriteria()) {
+            for (PrivacyCriterion c : context.config.getCriteria()) {
                 if (c instanceof DistinctLDiversity){
                     DistinctLDiversity criterion = (DistinctLDiversity)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.57"), new String[] { Resources.getMessage("PropertiesView.58") }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -291,7 +282,7 @@ public class ViewOutputProperties extends ViewProperties {
                     Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.84") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.85"), new String[] { String.valueOf(criterion.getT()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
-                    final int height = config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
+                    final int height = context.config.getHierarchy(criterion.getAttribute()).getHierarchy()[0].length;
                     new Property(n, "SE-"+(index++), new String[] { Resources.getMessage("PropertiesView.87") + String.valueOf(height) }); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }

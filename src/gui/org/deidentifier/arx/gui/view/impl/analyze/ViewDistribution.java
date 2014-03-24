@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -47,18 +48,29 @@ import org.swtchart.Range;
  * This view displays a frequency distribution
  * @author Fabian Prasser
  */
-public class ViewDistribution extends ViewStatistics implements IView {
-
-    private static final long serialVersionUID = -163862008754422422L;
-    
-    private final Composite             parent;
-    private final ModelPart             reset;
-    private final Controller            controller;
-    private final Map<String, double[]> cache = new HashMap<String, double[]>();
+public class ViewDistribution implements IView {
 
     private Chart                       chart;
+
+    /** Internal stuff */
+    private final Composite             parent;
+    /** Internal stuff */
+    private final ModelPart             reset;
+    /** Internal stuff */
+    private final Controller            controller;
+    /** Internal stuff */
+    private final Map<String, double[]> cache    = new HashMap<String, double[]>();
+
+    /** Internal stuff */
     private String                      attribute;
-    private StatisticsContext           context;
+    /** Internal stuff */
+    private Context                     context;
+    /** Internal stuff */
+    private final ModelPart             target;
+    /** Internal stuff */
+    private Model                       model;
+    /** Internal stuff */
+    private AnalysisContext             acontext = new AnalysisContext();
 
     /**
      * Creates a new instance
@@ -163,6 +175,8 @@ public class ViewDistribution extends ViewStatistics implements IView {
         } else if (event.part == ModelPart.MODEL) {
             
             model = (Model) event.data;
+            this.acontext.setModel(model);
+            this.acontext.setTarget(target);
             clearCache();
             reset();
 
@@ -199,7 +213,7 @@ public class ViewDistribution extends ViewStatistics implements IView {
     private void update() {
 
         // Obtain context
-        StatisticsContext context = super.getContext();
+        Context context = acontext.getContext();
         if (!context.equals(this.context)) {
             this.cache.clear();
             this.context = context;
@@ -215,7 +229,7 @@ public class ViewDistribution extends ViewStatistics implements IView {
             int column = handle.getColumnIndexOf(attribute);
             
             if (column >= 0){
-                Hierarchy hierarchy = super.getHierarchy(context, attribute); 
+                Hierarchy hierarchy = acontext.getHierarchy(context, attribute); 
                 double[] frequency = handle.getStatistics().getFrequencyDistribution(column, hierarchy).frequency;
                 cache.put(attribute, frequency);
             }

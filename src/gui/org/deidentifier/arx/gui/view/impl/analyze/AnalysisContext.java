@@ -18,8 +18,6 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
-import java.awt.Panel;
-
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
@@ -32,13 +30,13 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
  * This class implements a base class for views that show statistic properties of the data
  * @author Fabian Prasser
  */
-public abstract class ViewStatistics extends Panel{
+public class AnalysisContext {
     
     /**
      * This class implements a context for drawing statistics
      * @author Fabian Prasser
      */
-    public static class StatisticsContext{
+    public static class Context{
         /** The according config*/
         public final ModelConfiguration config;
         /** The according handle*/
@@ -48,7 +46,7 @@ public abstract class ViewStatistics extends Panel{
          * @param config
          * @param handle
          */
-        private StatisticsContext(ModelConfiguration config, DataHandle handle) {
+        private Context(ModelConfiguration config, DataHandle handle) {
             this.config = config;
             this.handle = handle;
         }
@@ -67,7 +65,7 @@ public abstract class ViewStatistics extends Panel{
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            StatisticsContext other = (StatisticsContext) obj;
+            Context other = (Context) obj;
             if (config == null) {
                 if (other.config != null) return false;
             } else if (!config.equals(other.config)) return false;
@@ -78,19 +76,17 @@ public abstract class ViewStatistics extends Panel{
         }
     }
     
-    private static final long serialVersionUID = 5170104283288654748L;
-    
     /** The target (input or output)*/
-    protected ModelPart target;
+    private ModelPart target;
     /** The model*/
-    protected Model model;
+    private Model model;
 
     /**
      * Returns the current context, consisting of a consistent combination of
      * a config and a data handle
      * @return
      */
-    protected StatisticsContext getContext(){
+    public Context getContext(){
         
         // Prepare
         DataHandle handle = null;
@@ -125,7 +121,7 @@ public abstract class ViewStatistics extends Panel{
         }
         
         // Return
-        return new StatisticsContext(config, handle);
+        return new Context(config, handle);
     }
 
     /**
@@ -134,7 +130,7 @@ public abstract class ViewStatistics extends Panel{
      * @param attribute
      * @return
      */
-    protected Hierarchy getHierarchy(StatisticsContext context, String attribute) {
+    public Hierarchy getHierarchy(Context context, String attribute) {
 
         // We only accept sanitized input
         // TODO: Theoretically, we could also use input-hierarchies
@@ -156,5 +152,21 @@ public abstract class ViewStatistics extends Panel{
         
         // Nothing found
         return null;
+    }
+
+    public ModelPart getTarget() {
+        return target;
+    }
+
+    public void setTarget(ModelPart target) {
+        this.target = target;
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 }
