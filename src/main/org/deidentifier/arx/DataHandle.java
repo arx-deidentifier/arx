@@ -55,7 +55,7 @@ public abstract class DataHandle{
     /** The data types */
     protected DataType<?>[][] dataTypes  = null;
 
-    /** The data defintion */
+    /** The data definition */
     protected DataDefinition  definition = null;
     
     /** The header */
