@@ -35,20 +35,20 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
-    /** The global optimum. */
-    private final ARXNode          optimalNode;
-
-    /** Wall clock. */
-    private final long             duration;
+    /** Lock the buffer */
+    private DataHandle             bufferLockedBy = null;
 
     /** The node checker. */
     private final INodeChecker     checker;
 
-    /** The registry */
-    private final DataRegistry     registry;
+    /** The config */
+    private final ARXConfiguration config;
 
     /** The data definition */
     private final DataDefinition   definition;
+
+    /** Wall clock. */
+    private final long             duration;
 
     /** The lattice */
     private final ARXLattice       lattice;
@@ -56,17 +56,17 @@ public class ARXResult {
     /** The data manager */
     private final DataManager      manager;
 
-    /** The suppression string */
-    private final String           suppressionString;
+    /** The global optimum. */
+    private final ARXNode          optimalNode;
+
+    /** The registry */
+    private final DataRegistry     registry;
 
     /** Flag regarding the suppression of outliers */
     private final boolean          removeOutliers;
 
-    /** The config */
-    private final ARXConfiguration config;
-
-    /** Lock the buffer */
-    private DataHandle             bufferLockedBy = null;
+    /** The suppression string */
+    private final String           suppressionString;
 
     /**
      * Internal constructor for deserialization
@@ -191,20 +191,40 @@ public class ARXResult {
     }
 
     /**
-     * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
-     * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
-     * obtain multiple handles to different representations of the data set. When setting the flag to false, all previous
-     * handles for output data will be invalidated when a new handle is obtained.
-     *  
-     * @param fork Set this flag to false, only if you know exactly what you are doing.
+     * Returns a handle to the data obtained by applying the optimal transformation. This method will not copy the buffer, 
+     * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
+     * obtained. Use this only if you know exactly what you are doing.
      * 
      * @return
      */
-    public DataHandle getHandle(boolean fork) {
+    @Deprecated
+    public DataHandle getHandle() {
         if (optimalNode == null) { return null; }
-        return getHandle(optimalNode, fork);
+        return getOutput(optimalNode, false);
     }
 
+    /**
+     * Returns a handle to data obtained by applying the given transformation. This method will not copy the buffer, 
+     * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
+     * obtained. Use this only if you know exactly what you are doing.
+     * @param node the transformation
+     * 
+     * @return
+     */
+    @Deprecated
+    public DataHandle getHandle(ARXNode node) {
+        return getOutput(node, false);
+    }
+    
+    /**
+     * Returns the lattice
+     * 
+     * @return
+     */
+    public ARXLattice getLattice() {
+        return lattice;
+    }
+    
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method will fork the buffer, 
      * allowing to obtain multiple handles to different representations of the data set. Note that only one instance can
@@ -212,9 +232,9 @@ public class ARXResult {
      * 
      * @return
      */
-    public DataHandle getHandle() {
+    public DataHandle getOutput() {
         if (optimalNode == null) { return null; }
-        return getHandle(optimalNode, true);
+        return getOutput(optimalNode, true);
     }
     
     /**
@@ -226,8 +246,8 @@ public class ARXResult {
      * 
      * @return
      */
-    public DataHandle getHandle(ARXNode node) {
-        return getHandle(node, true);
+    public DataHandle getOutput(ARXNode node) {
+        return getOutput(node, true);
     }
     
     /**
@@ -241,7 +261,7 @@ public class ARXResult {
      * 
      * @return
      */
-    public DataHandle getHandle(ARXNode node, boolean fork) {
+    public DataHandle getOutput(ARXNode node, boolean fork) {
         
         // Check
         if (fork && bufferLockedBy != null) {
@@ -316,12 +336,18 @@ public class ARXResult {
     }
 
     /**
-     * Returns the lattice
+     * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
+     * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
+     * obtain multiple handles to different representations of the data set. When setting the flag to false, all previous
+     * handles for output data will be invalidated when a new handle is obtained.
+     *  
+     * @param fork Set this flag to false, only if you know exactly what you are doing.
      * 
      * @return
      */
-    public ARXLattice getLattice() {
-        return lattice;
+    public DataHandle getOutput(boolean fork) {
+        if (optimalNode == null) { return null; }
+        return getOutput(optimalNode, fork);
     }
 
     /**
