@@ -86,7 +86,7 @@ public class WorkerLoad extends Worker<Model> {
 	 */
     public WorkerLoad(final File file, final Controller controller) throws ZipException,
                                                                    IOException {
-        zipfile = new ZipFile(file);
+        this.zipfile = new ZipFile(file);
     }
 
     /**
@@ -243,7 +243,7 @@ public class WorkerLoad extends Worker<Model> {
             
             // Update model
             model.setResult(new ARXResult(config.getInput().getHandle(),
-                                          config.getInput().getDefinition(),
+                                          config.getInput().getHandle().getDefinition(),
                                           lattice,
                                           removeOutliers,
                                           suppressionString,

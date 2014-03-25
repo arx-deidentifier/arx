@@ -41,6 +41,7 @@ import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
+import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
 import org.deidentifier.arx.gui.view.impl.menu.DialogFormatSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
@@ -218,6 +219,15 @@ public class MainWindow implements IView {
         display.dispose();
     }
 
+    /**
+     * Shows a debug dialog
+     */
+    public void showDebugDialog() {
+        final DialogDebug dialog = new DialogDebug(shell, controller);
+        dialog.create();
+        dialog.open();
+    }
+    
     /**
      * Shows an about dialog
      */

@@ -228,5 +228,15 @@ public class MainMenu {
                 controller.actionMenuHelpAbout();
             }
         });
+
+        final MenuItem debugItem = new MenuItem(helpMenu, SWT.PUSH);
+        debugItem.setText("Debug"); //$NON-NLS-1$
+        debugItem.setImage(controller.getResources().getImage("information.png")); //$NON-NLS-1$
+        debugItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                controller.actionMenuHelpDebug();
+            }
+        });
     }
 }
