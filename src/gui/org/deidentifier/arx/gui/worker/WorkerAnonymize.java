@@ -71,6 +71,7 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         try {
             
             // Anonymize
+            model.getInputConfig().getInput().getHandle().release();
         	result = anonymizer.anonymize(model.getInputConfig().getInput(), model.getInputConfig().getConfig());
             arg0.beginTask(Resources.getMessage("WorkerAnonymize.2"), 2); //$NON-NLS-1$
 

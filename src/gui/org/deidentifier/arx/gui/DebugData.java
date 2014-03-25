@@ -20,69 +20,82 @@ package org.deidentifier.arx.gui;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.gui.model.Model;
 
+/**
+ * Class for creating debug data
+ * @author Fabian Prasser
+ *
+ */
 public class DebugData {
 
+    /** The model*/
     private Model model;
     
+    /**
+     * Creates a new instance
+     * @param model
+     */
     protected DebugData(Model model){
         this.model = model;
     }
     
+    /**
+     * Returns some debug data
+     * @return
+     */
     protected String getData(){
 
         if (model == null) return "No debug data available"; //$NON-NLS-1$
         
         StringBuilder builder = new StringBuilder();
         builder.append("Handles\n");
+        builder.append(" - Data\n");
+        builder.append("   * Input : ").append(getDebugData(model.getInputConfig().getInput().getDefinition()));
         builder.append(" - Input\n");
-        builder.append("   * Input   : ").append(getDebugData(model.getInputConfig().getInput().getHandle())).append("\n");
-        builder.append("   * Input(V): ").append(getDebugData(model.getInputConfig().getInput().getHandle().getView())).append("\n");
+        builder.append("   * Input : ").append(getDebugData("             ", model.getInputConfig().getInput().getHandle()));
         if (model.getOutput() != null) {
             builder.append(" - Output\n");
-            builder.append("   * Input    : ").append(getDebugData(model.getOutputConfig().getInput().getHandle())).append("\n");
-            builder.append("   * Input(V) : ").append(getDebugData(model.getOutputConfig().getInput().getHandle().getView())).append("\n");
-            builder.append("   * Output   : ").append(getDebugData(model.getOutput())).append("\n");
-            builder.append("   * Output(V): ").append(getDebugData(model.getOutput().getView())).append("\n");
+            builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle()));
+            builder.append("   * Output: ").append(getDebugData("             ", model.getOutput()));
         }
-        builder.append("Definitions\n");
-        builder.append(" - Input\n");
-        
-        DataDefinition definition = model.getInputConfig().getInput().getDefinition();
-        builder.append("   * Data    : ").append(getDebugData(definition)).append("\n");
-        definition = model.getInputConfig().getInput().getHandle().getDefinition();
-        builder.append("   * Input   : ").append(getDebugData(definition)).append("\n");
-        definition = model.getInputConfig().getInput().getHandle().getView().getDefinition();
-        builder.append("   * Input(V): ").append(getDebugData(definition)).append("\n");
-
-        if (model.getOutput() != null) {
-            builder.append(" - Output\n");
-
-            definition = model.getOutputConfig().getInput().getDefinition();
-            builder.append("   * Data     : ").append(getDebugData(definition)).append("\n");
-
-            definition = model.getOutputConfig().getInput().getHandle().getDefinition();
-            builder.append("   * Input    : ").append(getDebugData(definition)).append("\n");
-
-            definition = model.getOutputConfig().getInput().getHandle().getView().getDefinition();
-            builder.append("   * Input(V) : ").append(getDebugData(definition)).append("\n");
-
-            definition = model.getOutput().getDefinition();
-            builder.append("   * Output   : ").append(getDebugData(definition)).append("\n");
-
-            definition = model.getOutput().getView().getDefinition();
-            builder.append("   * Output(V): ").append(getDebugData(definition)).append("\n");
-        }
-        
         return builder.toString();
     }
     
-    private String getDebugData(DataHandle handle){
-        return "@"+handle.hashCode()+(handle.isOrphaned() ? "[Orphaned]" : "");
+    /**
+     * Returns a string representation of a handle
+     * @param prefix
+     * @param handle
+     * @return
+     */
+    private String getDebugData(String prefix, DataHandle handle){
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("DataHandle@").append(handle.hashCode());
+        if (handle.isOrphaned()) {
+            builder.append(" [Orphaned]\n");
+        } else {
+            builder.append("\n");
+            builder.append(prefix).append("DataDefinition@").append(handle.getDefinition().hashCode());
+            builder.append(handle.getDefinition().isLocked() ? " [Locked]\n" : "\n");
+            if (!(handle instanceof DataHandleSubset)) {
+                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView()));
+            }
+        }  
+        return builder.toString();
     }
-    
+
+    /**
+     * Returns a string representation of a definition
+     * @param definition
+     * @return
+     */
     private String getDebugData(DataDefinition definition){
-        return "@"+definition.hashCode()+(definition.isLocked() ? "[Locked]" : "");
-    }
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("DataDefinition@").append(definition.hashCode());
+        builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
+        return builder.toString();
+    }    
 }
