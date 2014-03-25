@@ -932,71 +932,14 @@ public class Controller implements IView {
         }
     }
     
+    /**
+     * Returns debug data
+     * @return
+     */
     public String getDebugData(){
-        
-        if (model == null) return "No debug data available"; //$NON-NLS-1$
-        
-        StringBuilder builder = new StringBuilder();
-        builder.append("Handles\n");
-        builder.append(" - Input\n");
-        builder.append("   * Input   : @").append(model.getInputConfig().getInput().getHandle().hashCode()).append("\n");
-        builder.append("   * Input(V): @").append(model.getInputConfig().getInput().getHandle().getView().hashCode()).append("\n");
-        if (model.getOutput() != null) {
-            builder.append(" - Output\n");
-            builder.append("   * Input    : @").append(model.getOutputConfig().getInput().getHandle().hashCode()).append("\n");
-            builder.append("   * Input(V) : @").append(model.getOutputConfig().getInput().getHandle().getView().hashCode()).append("\n");
-            builder.append("   * Output   : @").append(model.getOutput().hashCode()).append("\n");
-            builder.append("   * Output(V): @").append(model.getOutput().getView().hashCode()).append("\n");
-        }
-        builder.append("Definitions\n");
-        builder.append(" - Input\n");
-        
-        DataDefinition definition = model.getInputConfig().getInput().getDefinition();
-        builder.append("   * Data    : @").append(definition.hashCode());
-        if (definition.isLocked()) builder.append(" [Locked]\n");
-        else builder.append("\n");
-        
-        definition = model.getInputConfig().getInput().getHandle().getDefinition();
-        builder.append("   * Input   : @").append(definition.hashCode());
-        if (definition.isLocked()) builder.append(" [Locked]\n");
-        else builder.append("\n");
-        
-        definition = model.getInputConfig().getInput().getHandle().getView().getDefinition();
-        builder.append("   * Input(V): @").append(definition.hashCode());
-        if (definition.isLocked()) builder.append(" [Locked]\n");
-        else builder.append("\n");
-        
-        if (model.getOutput() != null) {
-            builder.append(" - Output\n");
-
-            definition = model.getOutputConfig().getInput().getDefinition();
-            builder.append("   * Data     : @").append(definition.hashCode());
-            if (definition.isLocked()) builder.append(" [Locked]\n");
-            else builder.append("\n");
-            
-            definition = model.getOutputConfig().getInput().getHandle().getDefinition();
-            builder.append("   * Input    : @").append(definition.hashCode());
-            if (definition.isLocked()) builder.append(" [Locked]\n");
-            else builder.append("\n");
-            
-            definition = model.getOutputConfig().getInput().getHandle().getView().getDefinition();
-            builder.append("   * Input(V) : @").append(definition.hashCode());
-            if (definition.isLocked()) builder.append(" [Locked]\n");
-            else builder.append("\n");
-            
-            definition = model.getOutput().getDefinition();
-            builder.append("   * Output   : @").append(definition.hashCode());
-            if (definition.isLocked()) builder.append(" [Locked]\n");
-            else builder.append("\n");
-            
-            definition = model.getOutput().getView().getDefinition();
-            builder.append("   * Output(V): @").append(definition.hashCode());
-            if (definition.isLocked()) builder.append(" [Locked]\n");
-            else builder.append("\n");
-        }
-        
-        return builder.toString();
+        return new DebugData(model).getData();
     }
+        
 
     /**
      * Internal method for importing data
