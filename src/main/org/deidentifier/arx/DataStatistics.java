@@ -73,6 +73,33 @@ public class DataStatistics {
             this.groupStatistics = groupStatistics;
         }
 
+        /**
+         * Returns the maximal size of an equivalence class.
+         * This number takes into account one additional equivalence class containing all outliers
+         * @return
+         */
+        public double getAverageEquivalenceClassSizeIncludingOutliers(){
+            return groupStatistics.getAverageEquivalenceClassSizeIncludingOutliers();
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class.
+         * This number takes into account one additional equivalence class containing all outliers
+         * @return
+         */
+        public int getMaximalEquivalenceClassSizeIncludingOutliers(){
+            return groupStatistics.getMaximalEquivalenceClassSizeIncludingOutliers();
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class. 
+         * This number takes into account one additional equivalence class containing all outliers
+         * @return
+         */
+        public int getMinimalEquivalenceClassSizeIncludingOutliers(){
+            return groupStatistics.getMinimalEquivalenceClassSizeIncludingOutliers();
+        }
+
 
         /**
          * Returns the maximal size of an equivalence class

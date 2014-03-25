@@ -213,9 +213,9 @@ public class ViewOutputProperties extends ViewProperties {
             new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingTuples()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(statistics.getNumberOfGroups()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
-            new Property(Resources.getMessage("PropertiesView.110"), new String[] { String.valueOf(statistics.getMinimalEquivalenceClassSize()) }); //$NON-NLS-1$
-            new Property(Resources.getMessage("PropertiesView.111"), new String[] { String.valueOf(statistics.getMaximalEquivalenceClassSize()) }); //$NON-NLS-1$
-            new Property(Resources.getMessage("PropertiesView.112"), new String[] { String.valueOf(statistics.getAverageEquivalenceClassSize()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.110"), new String[] { String.valueOf(statistics.getMinimalEquivalenceClassSize()) + " (" + String.valueOf(statistics.getMinimalEquivalenceClassSizeIncludingOutliers()) + ")"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new Property(Resources.getMessage("PropertiesView.111"), new String[] { String.valueOf(statistics.getMaximalEquivalenceClassSize()) + " (" + String.valueOf(statistics.getMaximalEquivalenceClassSizeIncludingOutliers()) + ")"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new Property(Resources.getMessage("PropertiesView.112"), new String[] { String.valueOf(statistics.getAverageEquivalenceClassSize()) + " (" + String.valueOf(statistics.getAverageEquivalenceClassSizeIncludingOutliers()) + ")"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         
         // Print information loss
