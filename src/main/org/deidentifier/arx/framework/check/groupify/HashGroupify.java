@@ -493,51 +493,102 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public GroupStatistics[] getGroupStatistics() {
 
+        // Statistics for the whole dataset
         double averageEquivalenceClassSize = 0;
         int maximalEquivalenceClassSize = Integer.MIN_VALUE;
         int minimalEquivalenceClassSize = Integer.MAX_VALUE;
         int numberOfEquivalenceClasses = 0;
         int numberOfOutlyingEquivalenceClasses = 0;
         int numberOfOutlyingTuples = 0;
-
-        double pAverageEquivalenceClassSize = 0;
-        int pMaximalEquivalenceClassSize = Integer.MIN_VALUE;
-        int pMinimalEquivalenceClassSize = Integer.MAX_VALUE;
-        int pNumberOfEquivalenceClasses = this.size();
-        int pNumberOfOutlyingEquivalenceClasses = 0;
-        int pNumberOfOutlyingTuples = 0;
-
-        // Iterate over all groups
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-            final boolean anonymous = isAnonymous(entry);
-            if (!anonymous) {
-                if (entry.count > 0) {
-                    numberOfOutlyingEquivalenceClasses++;
-                    numberOfOutlyingTuples += entry.count;
+        
+        // If there is no subset
+        if (subset == null) {
+            HashGroupifyEntry entry = firstEntry;
+            while (entry != null) {
+                final boolean anonymous = isAnonymous(entry);
+                if (!anonymous) {
+                     numberOfOutlyingEquivalenceClasses++;
+                     numberOfOutlyingTuples += entry.count;
+                } else {
+                    numberOfEquivalenceClasses++;
+                    averageEquivalenceClassSize += entry.count;
+                    maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
+                    minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
                 }
-                if (entry.pcount > 0) {
-                    pNumberOfOutlyingEquivalenceClasses++;
-                    pNumberOfOutlyingTuples += entry.pcount;
-                }
-            } else {
-                if (entry.pcount > 0) {
-                    pAverageEquivalenceClassSize += entry.pcount;
-                    pMaximalEquivalenceClassSize = Math.max(pMaximalEquivalenceClassSize, entry.pcount);
-                    pMinimalEquivalenceClassSize = Math.min(pMinimalEquivalenceClassSize, entry.pcount);
-                }
-                numberOfEquivalenceClasses++;
-                averageEquivalenceClassSize += entry.count;
-                maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
-                minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
+                entry = entry.nextOrdered;
             }
-            entry = entry.nextOrdered;
+            averageEquivalenceClassSize = averageEquivalenceClassSize / (double) (numberOfEquivalenceClasses);
+            return new GroupStatistics[] { new GroupStatistics(averageEquivalenceClassSize,
+                                                               maximalEquivalenceClassSize,
+                                                               minimalEquivalenceClassSize,
+                                                               numberOfEquivalenceClasses,
+                                                               numberOfOutlyingEquivalenceClasses,
+                                                               numberOfOutlyingTuples),
+                                            new GroupStatistics(averageEquivalenceClassSize,
+                                                                maximalEquivalenceClassSize,
+                                                                minimalEquivalenceClassSize,
+                                                                numberOfEquivalenceClasses,
+                                                                numberOfOutlyingEquivalenceClasses,
+                                                                numberOfOutlyingTuples) };
+            
+        // If there is a subset
+        } else {
+    
+            // Statistics for the subset
+            double pAverageEquivalenceClassSize = 0;
+            int pMaximalEquivalenceClassSize = Integer.MIN_VALUE;
+            int pMinimalEquivalenceClassSize = Integer.MAX_VALUE;
+            int pNumberOfEquivalenceClasses = this.size();
+            int pNumberOfOutlyingEquivalenceClasses = 0;
+            int pNumberOfOutlyingTuples = 0;
+    
+            // Iterate over all groups
+            HashGroupifyEntry entry = firstEntry;
+            while (entry != null) {
+                final boolean anonymous = isAnonymous(entry);
+                if (!anonymous) {
+                    if (entry.pcount > 0) {
+                        numberOfOutlyingEquivalenceClasses++;
+                        numberOfOutlyingTuples += entry.pcount;
+                    }
+                    if (entry.count > 0) {
+                        pNumberOfOutlyingEquivalenceClasses++;
+                        pNumberOfOutlyingTuples += entry.count;
+                    }
+                } else {
+                    if (entry.pcount > 0) {
+                        averageEquivalenceClassSize += entry.pcount;
+                        maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.pcount);
+                        minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.pcount);
+                    }
+                    if (entry.count > 0) {
+                        numberOfEquivalenceClasses++;
+                        pAverageEquivalenceClassSize += entry.count;
+                        pMaximalEquivalenceClassSize = Math.max(pMaximalEquivalenceClassSize, entry.count);
+                        pMinimalEquivalenceClassSize = Math.min(pMinimalEquivalenceClassSize, entry.count);
+                    }
+                }
+                entry = entry.nextOrdered;
+            }
+
+            averageEquivalenceClassSize = averageEquivalenceClassSize /
+                                          (double) (numberOfEquivalenceClasses);
+
+            pAverageEquivalenceClassSize = pAverageEquivalenceClassSize /
+                                           (double) (pNumberOfEquivalenceClasses - pNumberOfOutlyingEquivalenceClasses);
+
+            return new GroupStatistics[] { new GroupStatistics(averageEquivalenceClassSize,
+                                                               maximalEquivalenceClassSize,
+                                                               minimalEquivalenceClassSize,
+                                                               numberOfEquivalenceClasses,
+                                                               numberOfOutlyingEquivalenceClasses,
+                                                               numberOfOutlyingTuples),
+                                            new GroupStatistics(pAverageEquivalenceClassSize,
+                                                                pMaximalEquivalenceClassSize,
+                                                                pMinimalEquivalenceClassSize,
+                                                                pNumberOfEquivalenceClasses,
+                                                                pNumberOfOutlyingEquivalenceClasses,
+                                                                pNumberOfOutlyingTuples) };
         }
-
-        averageEquivalenceClassSize = averageEquivalenceClassSize / (double) (numberOfEquivalenceClasses);
-
-        pAverageEquivalenceClassSize = pAverageEquivalenceClassSize / (double) (pNumberOfEquivalenceClasses - pNumberOfOutlyingEquivalenceClasses);
-
-        return new GroupStatistics[] { new GroupStatistics(averageEquivalenceClassSize, maximalEquivalenceClassSize, minimalEquivalenceClassSize, numberOfEquivalenceClasses, numberOfOutlyingEquivalenceClasses, numberOfOutlyingTuples), new GroupStatistics(pAverageEquivalenceClassSize, pMaximalEquivalenceClassSize, pMinimalEquivalenceClassSize, pNumberOfEquivalenceClasses, pNumberOfOutlyingEquivalenceClasses, pNumberOfOutlyingTuples) };
     }
 }
