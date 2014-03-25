@@ -84,8 +84,7 @@ public class WorkerLoad extends Worker<Model> {
 	 * @throws ZipException
 	 * @throws IOException
 	 */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException,
-                                                                   IOException {
+    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
         this.zipfile = new ZipFile(file);
     }
 
