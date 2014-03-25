@@ -317,7 +317,7 @@ public class ARXResult {
         // Create
         DataHandleOutput result = new DataHandleOutput(registry,
                                                        manager,
-                                                       checker.getBuffer().clone(),
+                                                       buffer,
                                                        node,
                                                        eqStatistics,
                                                        peqStatistics,
