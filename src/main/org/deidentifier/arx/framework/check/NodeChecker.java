@@ -231,7 +231,7 @@ public class NodeChecker implements INodeChecker {
     }
     
     @Override
-    public GroupStatistics[] getGroupStatistics(){
+    public GroupStatistics getGroupStatistics(){
         return currentGroupify.getGroupStatistics();
     }
 }

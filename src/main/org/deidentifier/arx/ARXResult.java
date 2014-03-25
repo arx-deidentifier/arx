@@ -22,7 +22,6 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -304,9 +303,7 @@ public class ARXResult {
         }
         
         // Obtain statistics
-        GroupStatistics[] statistics = checker.getGroupStatistics();
-        EquivalenceClassStatistics eqStatistics = new EquivalenceClassStatistics(statistics[0]);
-        EquivalenceClassStatistics peqStatistics = new EquivalenceClassStatistics(statistics[1]);
+        EquivalenceClassStatistics statistics = new EquivalenceClassStatistics(checker.getGroupStatistics());
         
         // Clone if needed
         org.deidentifier.arx.framework.data.Data buffer = checker.getBuffer();
@@ -319,8 +316,7 @@ public class ARXResult {
                                                        manager,
                                                        buffer,
                                                        node,
-                                                       eqStatistics,
-                                                       peqStatistics,
+                                                       statistics,
                                                        suppressionString,
                                                        definition,
                                                        removeOutliers,
