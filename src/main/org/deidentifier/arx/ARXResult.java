@@ -307,7 +307,7 @@ public class ARXResult {
         
         // Clone if needed
         org.deidentifier.arx.framework.data.Data buffer = checker.getBuffer();
-        if (!fork) {
+        if (fork) {
             buffer = buffer.clone(); 
         }
 
