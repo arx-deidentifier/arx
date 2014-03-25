@@ -41,7 +41,11 @@ public class DebugData {
      */
     protected String getData(Model model){
 
-        if (model == null) return "No debug data available"; //$NON-NLS-1$
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null) { 
+            return "No debug data available"; //$NON-NLS-1$
+        }
         
         StringBuilder builder = new StringBuilder();
         builder.append("Handles\n");
