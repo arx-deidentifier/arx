@@ -943,14 +943,6 @@ public class Controller implements IView {
     }
     
     /**
-     * Add some debug data
-     * @param data The data
-     */
-    public void addDebugData(String data){
-        this.debug.addData(data);
-    }
-
-    /**
      * Internal method for importing data
      * @param path
      * @param separator
