@@ -35,7 +35,10 @@ import org.deidentifier.arx.metric.Metric;
 public class ARXResult {
 
     /** Lock the buffer */
-    private DataHandle             bufferLockedBy = null;
+    private DataHandle             bufferLockedByHandle = null;
+
+    /** Lock the buffer */
+    private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
     private final INodeChecker     checker;
@@ -262,15 +265,20 @@ public class ARXResult {
      */
     public DataHandle getOutput(ARXNode node, boolean fork) {
         
-        // Check
-        if (fork && bufferLockedBy != null) {
+        // Check lock
+        if (fork && bufferLockedByHandle != null) {
             throw new RuntimeException("The buffer is currently locked by another handle");
         }
 
-        // Check
-        if (!fork && bufferLockedBy != null) {
-            registry.release(bufferLockedBy);
-            bufferLockedBy = null;
+        // Release lock
+        if (!fork && bufferLockedByHandle != null) {
+            if (bufferLockedByNode == node) {
+                return bufferLockedByHandle;
+            } else {
+                registry.release(bufferLockedByHandle);
+                bufferLockedByHandle = null;
+                bufferLockedByNode = null;
+            }
         }
         
         DataHandle handle = registry.getOutputHandle(node);
@@ -312,7 +320,8 @@ public class ARXResult {
         }
 
         // Create
-        DataHandleOutput result = new DataHandleOutput(registry,
+        DataHandleOutput result = new DataHandleOutput(this,
+                                                       registry,
                                                        manager,
                                                        buffer,
                                                        node,
@@ -324,7 +333,8 @@ public class ARXResult {
         
         // Lock
         if (!fork) {
-            bufferLockedBy = result; 
+            bufferLockedByHandle = result; 
+            bufferLockedByNode = node;
         }
         
         // Return
@@ -362,5 +372,16 @@ public class ARXResult {
      */
     public boolean isResultAvailable() {
         return optimalNode != null;
+    }
+
+    /**
+     * Releases the buffer
+     * @param handle
+     */
+    protected void releaseBuffer(DataHandleOutput handle) {
+        if (handle == bufferLockedByHandle) {
+            bufferLockedByHandle = null;
+            bufferLockedByNode = null;
+        }
     }
 }

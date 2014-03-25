@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.gui;
 
+import java.util.ArrayList;
+
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleSubset;
@@ -29,23 +31,15 @@ import org.deidentifier.arx.gui.model.Model;
  *
  */
 public class DebugData {
+    
+    private ArrayList<String> list = new ArrayList<String>();
 
-    /** The model*/
-    private Model model;
-    
-    /**
-     * Creates a new instance
-     * @param model
-     */
-    protected DebugData(Model model){
-        this.model = model;
-    }
-    
     /**
      * Returns some debug data
+     * @param Model The model
      * @return
      */
-    protected String getData(){
+    protected String getData(Model model){
 
         if (model == null) return "No debug data available"; //$NON-NLS-1$
         
@@ -60,6 +54,12 @@ public class DebugData {
             builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle()));
             builder.append("   * Output: ").append(getDebugData("             ", model.getOutput()));
         }
+        
+        builder.append("\nAdditional\n");
+        for (String s : list){
+            builder.append(" - ").append(s).append("\n");
+        }
+        
         return builder.toString();
     }
     
@@ -98,4 +98,13 @@ public class DebugData {
         builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
         return builder.toString();
     }    
+    
+    /**
+     * Add some additional data
+     * @param data
+     * @return
+     */
+    protected void addData(String data){
+        this.list.add(data);
+    }
 }

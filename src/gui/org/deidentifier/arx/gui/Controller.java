@@ -89,6 +89,8 @@ public class Controller implements IView {
     private final MainWindow                 main;
     /** The resources*/
     private final Resources                  resources;
+    /** The debug data*/
+    private final DebugData                  debug = new DebugData();
     /** Listeners registered by the views*/
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
 
@@ -327,6 +329,12 @@ public class Controller implements IView {
             if (result.isResultAvailable()) {
                 model.setOutput(result.getOutput(false), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
+                addDebugData("#2  "+String.valueOf(result.getOutput(false).hashCode()));
+                addDebugData("#2a "+String.valueOf(result.getOutput(false).getDefinition().hashCode()));
+                addDebugData("#2b "+String.valueOf(result.getGlobalOptimum().hashCode()));
+                addDebugData("#3  "+String.valueOf(result.getOutput(false).hashCode()));
+                addDebugData("#3a "+String.valueOf(result.getOutput(false).getDefinition().hashCode()));
+                addDebugData("#3b "+String.valueOf(result.getGlobalOptimum().hashCode()));
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
                                       result.getOutput(false)));
@@ -937,9 +945,16 @@ public class Controller implements IView {
      * @return
      */
     public String getDebugData(){
-        return new DebugData(model).getData();
+        return this.debug.getData(model);
     }
-        
+    
+    /**
+     * Add some debug data
+     * @param data The data
+     */
+    public void addDebugData(String data){
+        this.debug.addData(data);
+    }
 
     /**
      * Internal method for importing data

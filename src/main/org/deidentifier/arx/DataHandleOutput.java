@@ -95,6 +95,9 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
+    /** The current result */
+    private ARXResult      result;
+
     /** The current node */
     private ARXNode        node;
 
@@ -142,7 +145,8 @@ public class DataHandleOutput extends DataHandle {
      * @param node The underlying transformation
      * @param config The underlying config
      */
-    protected DataHandleOutput(final DataRegistry registry,
+    protected DataHandleOutput(final ARXResult result,
+                               final DataRegistry registry,
                                final DataManager manager,
                                final Data buffer,
                                final ARXNode node,
@@ -155,6 +159,7 @@ public class DataHandleOutput extends DataHandle {
         registry.updateOutput(node, this);
         this.setRegistry(registry);
 
+        this.result = result;
         this.removeOutliers = removeOutliers;
         this.suppressionString = suppressionString;
         this.definition = definition;
@@ -478,7 +483,7 @@ public class DataHandleOutput extends DataHandle {
      * Releases all resources
      */
     protected void doRelease() {
-
+        result.releaseBuffer(this);
         node = null;
         dataIS = null;
         dataQI = null;
