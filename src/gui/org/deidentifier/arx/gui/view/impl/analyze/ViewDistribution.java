@@ -88,6 +88,7 @@ public class ViewDistribution implements IView {
         controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         this.controller = controller;
@@ -174,7 +175,7 @@ public class ViewDistribution implements IView {
             
         } else if (event.part == ModelPart.MODEL) {
             
-            model = (Model) event.data;
+            this.model = (Model) event.data;
             this.acontext.setModel(model);
             this.acontext.setTarget(target);
             clearCache();
@@ -182,13 +183,19 @@ public class ViewDistribution implements IView {
 
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
 
-            attribute = (String) event.data;
+            this.attribute = (String) event.data;
             if (chart != null) chart.setEnabled(true);
             update();
-            
+        } else if (event.part == ModelPart.DATA_TYPE) {
+
+            this.cache.remove((String) event.data);
+            if (this.attribute.equals((String) event.data)) {
+                if (chart != null) chart.setEnabled(true);
+                update();
+            }
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 
-            attribute = (String) event.data;
+            this.attribute = (String) event.data;
             if (chart != null) chart.setEnabled(true);
             update();
              
