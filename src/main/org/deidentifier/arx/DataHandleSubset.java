@@ -40,7 +40,6 @@ public class DataHandleSubset extends DataHandle {
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        // TODO: How about such statistics for the subset?
         this.statistics = new DataStatistics(this, eqStatistics);
     }
 
