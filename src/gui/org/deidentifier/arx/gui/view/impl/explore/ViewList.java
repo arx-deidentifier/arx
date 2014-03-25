@@ -208,9 +208,8 @@ public class ViewList implements IView {
                 table.setRedraw(false);
                 table.clearAll();
                 list.clear();
-
+                
                 final ARXLattice l = result.getLattice();
-                // optimum = result.getGlobalOptimum();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         if (filter.isAllowed(node)) {

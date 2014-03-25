@@ -304,8 +304,10 @@ public class ViewFilter implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 if (filter != null) {
-                    filter.allowInformationLoss(intToInformationLoss(min.getSelection()),
-                                                filter.getAllowedMaxInformationLoss());
+                    
+                    double minLoss = intToInformationLoss(min.getSelection());
+                    double maxLoss = filter.getAllowedMaxInformationLoss();
+                    filter.allowInformationLoss(minLoss, maxLoss);
                     controller.update(new ModelEvent(outer,
                                                      ModelPart.FILTER,
                                                      filter));
@@ -413,8 +415,8 @@ public class ViewFilter implements IView {
     private int informationLossToInt(final double value) {
 
         // Relative
-        Double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
-        Double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
+        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
+        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
         double val = (value - min) / (max - min);
         
         // Scaled with integer.max
@@ -527,9 +529,9 @@ public class ViewFilter implements IView {
         }
 
         // In relation to integer.max
-        double val = min + ((double) value / (double) SCALE_MAX_VALUE * (max - min));
+        double val = min + (((double) value / (double) SCALE_MAX_VALUE) * (max - min));
 
         // Return
-        return (int) val;
+        return val;
     }
 }
