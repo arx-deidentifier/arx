@@ -329,12 +329,6 @@ public class Controller implements IView {
             if (result.isResultAvailable()) {
                 model.setOutput(result.getOutput(false), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
-                addDebugData("#2  "+String.valueOf(result.getOutput(false).hashCode()));
-                addDebugData("#2a "+String.valueOf(result.getOutput(false).getDefinition().hashCode()));
-                addDebugData("#2b "+String.valueOf(result.getGlobalOptimum().hashCode()));
-                addDebugData("#3  "+String.valueOf(result.getOutput(false).hashCode()));
-                addDebugData("#3a "+String.valueOf(result.getOutput(false).getDefinition().hashCode()));
-                addDebugData("#3b "+String.valueOf(result.getGlobalOptimum().hashCode()));
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
                                       result.getOutput(false)));
