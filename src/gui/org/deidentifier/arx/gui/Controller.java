@@ -325,11 +325,11 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.RESULT, result));
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
-                model.setOutput(result.getHandle(), result.getGlobalOptimum());
+                model.setOutput(result.getOutput(false), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
-                                      result.getHandle()));
+                                      result.getOutput(false)));
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
@@ -647,6 +647,13 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows the "debug" dialog
+     */
+    public void actionMenuHelpDebug() {
+        main.showDebugDialog();
+    }
+
+    /**
      * Shows the "about" dialog
      */
     public void actionMenuHelpAbout() {
@@ -924,6 +931,15 @@ public class Controller implements IView {
             }
         }
     }
+    
+    /**
+     * Returns debug data
+     * @return
+     */
+    public String getDebugData(){
+        return new DebugData(model).getData();
+    }
+        
 
     /**
      * Internal method for importing data
