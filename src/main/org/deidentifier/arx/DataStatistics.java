@@ -18,6 +18,10 @@
 
 package org.deidentifier.arx;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -318,42 +322,32 @@ public class DataStatistics {
         final String[][] _hierarchy = hierarchy != null ? hierarchy.getHierarchy() : null;
 
         // Sort by data type
-        if (_hierarchy == null){
+        if (_hierarchy == null || level==0){
             sort(list, datatype);
-            
-        // Sort by hierarchy
+        // Sort by hierarchy and data type
         } else {
             // Build order directly from the hierarchy
             final Map<String, Integer> order = new HashMap<String, Integer>();
             int max = 0; // The order to use for the suppression string
-            if (level==0 || handle.getBaseDataType(attribute) instanceof ARXString){
-                for (int i=0; i<_hierarchy.length; i++){
-                    if (!order.containsKey(_hierarchy[i][level])) {
-                        order.put(_hierarchy[i][level], order.size());
-                    }
-                }
-                max = order.size();
-            // Build order indirectly by using a data type and a hierarchy
-            } else {
-                // Create base order
-                Set<String> baseSet = new HashSet<String>();
-                for (int i=0; i<_hierarchy.length; i++){
-                    baseSet.add(_hierarchy[i][0]);
-                }
-                String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
-                sort(baseArray, handle.getBaseDataType(attribute));
-                Map<String, Integer> baseOrder = new HashMap<String, Integer>();
-                for (int i=0; i<baseArray.length; i++){
-                    baseOrder.put(baseArray[i], i);
-                }
-                
-                // Build higher level order from base order
-                for (int i=0; i<_hierarchy.length; i++){
-                    if (!order.containsKey(_hierarchy[i][level])) {
-                        int position = baseOrder.get(_hierarchy[i][0]);
-                        order.put(_hierarchy[i][level], position);
-                        max = Math.max(position, max)+1;
-                    }
+
+            // Create base order
+            Set<String> baseSet = new HashSet<String>();
+            for (int i = 0; i < _hierarchy.length; i++) {
+                baseSet.add(_hierarchy[i][0]);
+            }
+            String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
+            sort(baseArray, handle.getBaseDataType(attribute));
+            Map<String, Integer> baseOrder = new HashMap<String, Integer>();
+            for (int i = 0; i < baseArray.length; i++) {
+                baseOrder.put(baseArray[i], i);
+            }
+
+            // Build higher level order from base order
+            for (int i = 0; i < _hierarchy.length; i++) {
+                if (!order.containsKey(_hierarchy[i][level])) {
+                    int position = baseOrder.get(_hierarchy[i][0]);
+                    order.put(_hierarchy[i][level], position);
+                    max = Math.max(position, max) + 1;
                 }
             }
             

@@ -229,8 +229,7 @@ public class ViewDistribution implements IView {
             int column = handle.getColumnIndexOf(attribute);
             
             if (column >= 0){
-                Hierarchy hierarchy = null;
-                if (this.target == ModelPart.OUTPUT) hierarchy = acontext.getHierarchy(context, attribute); 
+                Hierarchy hierarchy = acontext.getHierarchy(context, attribute); 
                 double[] frequency = handle.getStatistics().getFrequencyDistribution(column, hierarchy).frequency;
                 cache.put(attribute, frequency);
             }
