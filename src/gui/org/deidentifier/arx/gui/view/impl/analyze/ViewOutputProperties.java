@@ -210,7 +210,7 @@ public class ViewOutputProperties extends ViewProperties {
         EquivalenceClassStatistics statistics = context.handle.getStatistics().getEquivalenceClassStatistics();
         // TODO: This is because of subset views. Provide statistics as well!
         if (statistics != null) {
-            new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingTuples()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.42"), new String[] { String.valueOf(statistics.getNumberOfGroups()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.43"), new String[] { String.valueOf(statistics.getNumberOfOutlyingEquivalenceClasses()) }); //$NON-NLS-1$
             new Property(Resources.getMessage("PropertiesView.110"), new String[] { String.valueOf(statistics.getMinimalEquivalenceClassSize()) }); //$NON-NLS-1$
