@@ -50,8 +50,6 @@ public class DataHandleSubset extends DataHandle {
         return source.getAttributeName(col);
     }
     
-    
-
     @Override
     public DataType<?> getDataType(String attribute) {
         return source.getDataType(attribute);
