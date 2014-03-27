@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.importdata.ImportAdapter;
 
 /**
  * Represents input data for the ARX framework
@@ -200,6 +202,29 @@ public abstract class Data {
     public static Data
             create(final String path, final char separator) throws IOException {
         return new IterableData(new CSVDataInput(path, separator).iterator());
+    }
+
+    /**
+     * Creates a new data object from an import Adapter
+     *
+     * @param adapter The adapter that should be used to import data
+     *
+     * @return Data object as described by ImportAdapter
+     *
+     * @throws IOException
+     */
+    public static Data create(final ImportAdapter adapter) throws IOException {
+
+        final Data data = new IterableData(adapter);
+
+        for (Column column : adapter.getColumns()) {
+
+            data.getDefinition().setDataType(column.getName(), column.getDatatype());
+
+        }
+
+        return data;
+
     }
 
     /**
