@@ -33,6 +33,137 @@ import org.deidentifier.arx.framework.data.Data;
  */
 public class HashGroupify implements IHashGroupify {
 
+    /**
+     * Statistics about the groups, excluding outliers
+     * @author Fabian Prasser
+     */
+    public static class GroupStatistics {
+
+        private double averageEquivalenceClassSize;
+        private int    maximalEquivalenceClassSize;
+        private int    minimalEquivalenceClassSize;
+        private double averageEquivalenceClassSizeIncludingOutliers;
+        private int    maximalEquivalenceClassSizeIncludingOutliers;
+        private int    minimalEquivalenceClassSizeIncludingOutliers;
+        private int    numberOfGroups;
+        private int    numberOfOutlyingEquivalenceClasses;
+        private int    numberOfOutlyingTuples;
+
+        /**
+         * Creates a new instance
+         * @param handle
+         * @param averageEquivalenceClassSize
+         * @param maximalEquivalenceClassSize
+         * @param minimalEquivalenceClassSize
+         * @param averageEquivalenceClassSizeIncludingOutliers
+         * @param maximalEquivalenceClassSizeIncludingOutliers
+         * @param minimalEquivalenceClassSizeIncludingOutliers
+         * @param numberOfGroups
+         * @param numberOfOutlyingEquivalenceClasses
+         * @param numberOfOutlyingTuples
+         */
+        protected GroupStatistics(double averageEquivalenceClassSize,
+                                  int maximalEquivalenceClassSize,
+                                  int minimalEquivalenceClassSize,
+                                  double averageEquivalenceClassSizeIncludingOutliers,
+                                  int maximalEquivalenceClassSizeIncludingOutliers,
+                                  int minimalEquivalenceClassSizeIncludingOutliers,
+                                  int numberOfGroups,
+                                  int numberOfOutlyingEquivalenceClasses,
+                                  int numberOfOutlyingTuples) {
+            this.averageEquivalenceClassSize = averageEquivalenceClassSize;
+            this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;
+            this.minimalEquivalenceClassSize = minimalEquivalenceClassSize;
+            this.averageEquivalenceClassSizeIncludingOutliers = averageEquivalenceClassSizeIncludingOutliers;
+            this.maximalEquivalenceClassSizeIncludingOutliers = maximalEquivalenceClassSizeIncludingOutliers;
+            this.minimalEquivalenceClassSizeIncludingOutliers = minimalEquivalenceClassSizeIncludingOutliers;
+            this.numberOfGroups = numberOfGroups;
+            this.numberOfOutlyingEquivalenceClasses = numberOfOutlyingEquivalenceClasses;
+            this.numberOfOutlyingTuples = numberOfOutlyingTuples;
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public double getAverageEquivalenceClassSize() {
+            return averageEquivalenceClassSize;
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class. This number takes into account one additional
+         * equivalence class containing all outliers
+         * @return
+         */
+        public double getAverageEquivalenceClassSizeIncludingOutliers() {
+            return averageEquivalenceClassSizeIncludingOutliers;
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public int getMaximalEquivalenceClassSize() {
+            return maximalEquivalenceClassSize;
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class. This number takes into account one additional
+         * equivalence class containing all outliers
+         * @return
+         */
+        public int getMaximalEquivalenceClassSizeIncludingOutliers() {
+            return maximalEquivalenceClassSizeIncludingOutliers;
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class
+         * @return
+         */
+        public int getMinimalEquivalenceClassSize() {
+            return minimalEquivalenceClassSize;
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class. This number takes into account one additional
+         * equivalence class containing all outliers
+         * @return
+         */
+        public int getMinimalEquivalenceClassSizeIncludingOutliers() {
+            return minimalEquivalenceClassSizeIncludingOutliers;
+        }
+
+        /**
+         * Returns the number of equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfGroups() {
+            return numberOfGroups;
+        }
+
+        /**
+         * Returns the number of outlying equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingEquivalenceClasses() {
+            return numberOfOutlyingEquivalenceClasses;
+        }
+
+        /**
+         * Returns the number of outliers in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingTuples() {
+            return numberOfOutlyingTuples;
+        }
+    }
+
     /** The current outliers. */
     private int                      currentOutliers;
 
@@ -109,7 +240,7 @@ public class HashGroupify implements IHashGroupify {
             }
 
             // Only add sensitive value if in research subset
-            if (subset == null || subset.contains(representant)) { 
+            if (subset == null || subset.contains(representant)) {
                 entry.distribution.add(sensitive);
             }
         }
@@ -178,36 +309,61 @@ public class HashGroupify implements IHashGroupify {
     }
 
     @Override
-    public int getGroupOutliersCount() {
-        // Iterate over all groups
-        // TODO: Could be more efficient
-        int result = 0;
+    public GroupStatistics getGroupStatistics() {
+
+        // Statistics about equivalence classes
+        double averageEquivalenceClassSize = 0;
+        int averageEquivalenceClassSizeCounter = 0;
+        int maximalEquivalenceClassSize = Integer.MIN_VALUE;
+        int minimalEquivalenceClassSize = Integer.MAX_VALUE;
+        int numberOfEquivalenceClasses = 0;
+        int numberOfOutlyingEquivalenceClasses = 0;
+        int numberOfOutlyingTuples = 0;
+        
+        // If there is no subset
         HashGroupifyEntry entry = firstEntry;
         while (entry != null) {
-            final boolean anonymous = isAnonymous(entry);
-            if (!anonymous) {
-                result++;
-            }
-            entry = entry.nextOrdered;
-        }
-        return result;
-    }
-
-    @Override
-    public int getTupleOutliersCount() {
-
-        // Iterate over all groups
-        // TODO: Could be more efficient
-        int result = 0;
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-            final boolean anonymous = isAnonymous(entry);
-            if (!anonymous) {
-                result += entry.count;
-            }
-            entry = entry.nextOrdered;
-        }
-        return result;
+            if (entry.count > 0){
+                final boolean anonymous = isAnonymous(entry);
+                numberOfEquivalenceClasses++;
+                if (!anonymous) {
+                     numberOfOutlyingEquivalenceClasses++;
+                     numberOfOutlyingTuples += entry.count;
+                } else {
+                    averageEquivalenceClassSizeCounter += entry.count;
+                     maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
+                     minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
+                 }
+             }
+             entry = entry.nextOrdered;
+         }
+        
+         // Compute average
+         averageEquivalenceClassSize = (double) averageEquivalenceClassSizeCounter / 
+                                       (double) (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses);
+         
+         // Statistics including suppression
+         double averageEquivalenceClassSizeAll = averageEquivalenceClassSize;
+         int maximalEquivalenceClassSizeAll = maximalEquivalenceClassSize;
+         int minimalEquivalenceClassSizeAll = minimalEquivalenceClassSize;
+         if (numberOfOutlyingTuples > 0){
+             averageEquivalenceClassSizeAll = (double)(averageEquivalenceClassSizeCounter + numberOfOutlyingTuples) /
+                                              (double)(numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses + 1);
+             
+             maximalEquivalenceClassSizeAll = Math.max(maximalEquivalenceClassSize, numberOfOutlyingTuples);
+             minimalEquivalenceClassSizeAll = Math.min(minimalEquivalenceClassSize, numberOfOutlyingTuples);
+         }
+         
+         // Return
+         return new GroupStatistics(averageEquivalenceClassSize,
+                                    maximalEquivalenceClassSize,
+                                    minimalEquivalenceClassSize,
+                                    averageEquivalenceClassSizeAll,
+                                    maximalEquivalenceClassSizeAll,
+                                    minimalEquivalenceClassSizeAll,
+                                    numberOfEquivalenceClasses,
+                                    numberOfOutlyingEquivalenceClasses,
+                                    numberOfOutlyingTuples);
     }
 
     @Override
@@ -319,9 +475,10 @@ public class HashGroupify implements IHashGroupify {
         // indirectly check if we are in d-presence mode
         if (subset != null) {
             entry.pcount += pcount;
-            if (count > 0) { // this is a research subset line
-                // reset representant, necessary for rollup / history (otherwise
-                // researchSubset.get(line) would potentially be false)
+            if (count > 0) {
+                // this is a research subset line
+                // reset representant, necessary for rollup / history
+                // (otherwise researchSubset.get(line) would potentially be false)
                 entry.representant = representant;
             }
         }

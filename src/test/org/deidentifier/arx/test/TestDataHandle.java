@@ -60,7 +60,7 @@ public class TestDataHandle extends AbstractTest {
         config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
-        final DataHandle outHandle = result.getHandle();
+        final DataHandle outHandle = result.getOutput(false);
         outHandle.sort(false, 2);
 
         outHandle.getView().sort(true, 0);
@@ -92,7 +92,7 @@ public class TestDataHandle extends AbstractTest {
         config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
-        final DataHandle outHandle = result.getHandle();
+        final DataHandle outHandle = result.getOutput(false);
         outHandle.sort(false, 2);
 
         outHandle.getView().sort(true, 0);
@@ -121,7 +121,7 @@ public class TestDataHandle extends AbstractTest {
         config.addCriterion(new Inclusion(subset));
 
         final ARXResult result = anonymizer.anonymize(data, config);
-        final DataHandle outHandle = result.getHandle();
+        final DataHandle outHandle = result.getOutput(false);
 
         data.getHandle().sort(true, 0);
 
@@ -177,7 +177,7 @@ public class TestDataHandle extends AbstractTest {
         
         // Transform
         ARXNode n = result.getLattice().getLevels()[2][1];
-        DataHandle h = result.getHandle(n);
+        DataHandle h = result.getOutput(n, false);
         
         String[][] given = iteratorToArray(h.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" }, 
@@ -217,7 +217,7 @@ public class TestDataHandle extends AbstractTest {
         config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
-        final DataHandle outHandle = result.getHandle();
+        final DataHandle outHandle = result.getOutput(false);
         final DataHandle inHandle = provider.getData().getHandle();
         inHandle.sort(false, 0);
 
@@ -264,7 +264,7 @@ public class TestDataHandle extends AbstractTest {
         config.setMaxOutliers(0d);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
-        final DataHandle outHandle = result.getHandle();
+        final DataHandle outHandle = result.getOutput(false);
         outHandle.sort(false, 2);
 
         final String[][] inArray = iteratorToArray(inHandle.iterator());

@@ -151,15 +151,10 @@ public class ViewList implements IView {
      * @return
      */
     private double asRelativeValue(final InformationLoss infoLoss) {
-        return ((infoLoss.getValue() - model.getResult()
-                                            .getLattice()
-                                            .getBottom()
-                                            .getMinimumInformationLoss()
-                                            .getValue()) / model.getResult()
-                                                                .getLattice()
-                                                                .getTop()
-                                                                .getMaximumInformationLoss()
-                                                                .getValue()) * 100d;
+        
+        double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
+        double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
+        return ((infoLoss.getValue() - min) / (max-min)) * 100d;
     }
 
     /**
@@ -213,9 +208,8 @@ public class ViewList implements IView {
                 table.setRedraw(false);
                 table.clearAll();
                 list.clear();
-
+                
                 final ARXLattice l = result.getLattice();
-                // optimum = result.getGlobalOptimum();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         if (filter.isAllowed(node)) {

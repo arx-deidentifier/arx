@@ -19,6 +19,7 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
 public interface IHashGroupify {
 
@@ -34,19 +35,6 @@ public interface IHashGroupify {
      */
     public abstract HashGroupifyEntry getFirstEntry();
 
-    /**
-     * Returns the number of outlying groups
-     * 
-     * @return
-     */
-    public abstract int getGroupOutliersCount();
-
-    /**
-     * Returns the number of outlying tuples
-     * 
-     * @return
-     */
-    public abstract int getTupleOutliersCount();
 
     /**
      * Min groupsize greater equals.
@@ -107,4 +95,10 @@ public interface IHashGroupify {
      * @param pcount
      */
     public abstract void addSnapshot(int[] outtuple, int representant, int count, int[] elements, int[] frequencies, int pcount);
+
+    /**
+     * Returns statistics about the groups
+     * @return
+     */
+    public abstract GroupStatistics getGroupStatistics();
 }

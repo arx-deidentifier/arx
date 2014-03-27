@@ -26,6 +26,7 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.Panel;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -60,8 +61,8 @@ import org.eclipse.swt.widgets.Composite;
  * This class displays a contingency table as a heatmap
  * @author Fabian Prasser
  */
-public class ViewDensity extends ViewStatistics implements IView {
-
+public class ViewDensity extends Panel implements IView {
+    
     /** Static stuff*/
     private static final long          serialVersionUID  = 5938131772944084967L;
     /** Static stuff*/
@@ -142,6 +143,13 @@ public class ViewDensity extends ViewStatistics implements IView {
     private final Controller controller;
     /** Internal stuff */
     private final ModelPart  reset;
+    /** Internal stuff */
+    private final ModelPart  target;
+    /** Internal stuff */
+    private Model model;
+    /** Internal stuff */
+    private AnalysisContext context = new AnalysisContext();
+
 
     /** The back buffer for implementing double buffering */
     private BufferedImage    buffer     = null;
@@ -262,6 +270,8 @@ public class ViewDensity extends ViewStatistics implements IView {
         } else if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
             this.model.resetAttributePair();
+            this.context.setModel(model);
+            this.context.setTarget(target);
             reset();
 
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
@@ -315,7 +325,7 @@ public class ViewDensity extends ViewStatistics implements IView {
         }
 
         // Obtain the right handle
-        DataHandle data = getContext().handle;
+        DataHandle data = this.context.getContext().handle;
         
         // Clear if nothing to draw
         if ((config == null) || (data == null)) {
@@ -334,7 +344,7 @@ public class ViewDensity extends ViewStatistics implements IView {
     private String[] getLabels(final String attribute) {
 
         // Obtain config
-        ModelConfiguration config = getContext().config;
+        ModelConfiguration config = this.context.getContext().config;
         
         // Check if there is a hierarchy
         final AttributeType type = config.getInput()

@@ -91,6 +91,8 @@ public class Controller implements IView {
     private final MainWindow                 main;
     /** The resources*/
     private final Resources                  resources;
+    /** The debug data*/
+    private final DebugData                  debug = new DebugData();
     /** Listeners registered by the views*/
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
 
@@ -327,11 +329,11 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.RESULT, result));
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
-                model.setOutput(result.getHandle(), result.getGlobalOptimum());
+                model.setOutput(result.getOutput(false), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
-                                      result.getHandle()));
+                                      result.getOutput(false)));
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
@@ -637,6 +639,13 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows the "debug" dialog
+     */
+    public void actionMenuHelpDebug() {
+        main.showDebugDialog();
+    }
+
+    /**
      * Shows the "about" dialog
      */
     public void actionMenuHelpAbout() {
@@ -914,7 +923,15 @@ public class Controller implements IView {
             }
         }
     }
-
+    
+    /**
+     * Returns debug data
+     * @return
+     */
+    public String getDebugData(){
+        return this.debug.getData(model);
+    }
+    
     /**
      * Internal method for importing data
      * @param path
@@ -1058,7 +1075,7 @@ public class Controller implements IView {
         if (tempSelectedNode != null) {
             model.setSelectedNode(tempSelectedNode);
             update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            final DataHandle handle = model.getResult().getHandle(tempSelectedNode);
+            final DataHandle handle = model.getResult().getOutput(tempSelectedNode, false);
             model.setOutput(handle, tempSelectedNode);
             update(new ModelEvent(this, ModelPart.OUTPUT, handle));
         }

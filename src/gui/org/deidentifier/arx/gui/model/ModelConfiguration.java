@@ -31,7 +31,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
-public class ModelConfiguration implements Serializable {
+public class ModelConfiguration implements Serializable, Cloneable {
 
     private static final long      serialVersionUID = -2887699232096897527L;
 
@@ -58,10 +58,9 @@ public class ModelConfiguration implements Serializable {
 
         final ModelConfiguration c = new ModelConfiguration();
         c.removeOutliers = removeOutliers;
-        c.input = input.clone();
+        c.input = input;
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
-        // Clone, but avoid creating a second clone
         c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
         return c;
     }

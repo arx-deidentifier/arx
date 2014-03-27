@@ -99,7 +99,7 @@ public abstract class AbstractTest extends TestCase {
 
     protected String[][] resultToArray(final ARXResult result) {
         final ArrayList<String[]> list = new ArrayList<String[]>();
-        final Iterator<String[]> transformed = result.getHandle().iterator();
+        final Iterator<String[]> transformed = result.getOutput(false).iterator();
         while (transformed.hasNext()) {
             list.add(transformed.next());
         }

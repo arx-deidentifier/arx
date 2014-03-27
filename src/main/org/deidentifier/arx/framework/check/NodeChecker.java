@@ -23,6 +23,7 @@ import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -176,11 +177,6 @@ public class NodeChecker implements INodeChecker {
         return currentGroupify;
     }
 
-    @Override
-    public int getNumberOfOutlyingGroups() {
-        return currentGroupify.getGroupOutliersCount();
-    }
-
     /**
      * Returns the checkers history, if any
      * @return
@@ -201,11 +197,6 @@ public class NodeChecker implements INodeChecker {
     @Override
     public Metric<?> getMetric() {
         return metric;
-    }
-
-    @Override
-    public int getNumberOfOutlyingTuples() {
-        return currentGroupify.getTupleOutliersCount();
     }
 
     @Override
@@ -237,5 +228,10 @@ public class NodeChecker implements INodeChecker {
 
         // Return the buffer
         return getBuffer();
+    }
+    
+    @Override
+    public GroupStatistics getGroupStatistics(){
+        return currentGroupify.getGroupStatistics();
     }
 }

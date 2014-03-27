@@ -70,16 +70,23 @@ public abstract class ViewProperties implements IView {
             p.parent = this;
         }
     }
+
+    /** Internal stuff */
     protected final List<Property> roots  = new ArrayList<Property>();
+    /** Internal stuff */
     protected final Composite      root;
+    /** Internal stuff */
     protected final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
-    
+    /** Internal stuff */
     protected Model                model;
+    /** Internal stuff */
     protected TreeViewer           treeViewer;
-    
-    private final Controller     controller;
-    private final ModelPart      target;
-    private final ModelPart      reset;
+    /** Internal stuff */
+    private final Controller       controller;
+    /** Internal stuff */
+    private final ModelPart        reset;
+    /** Internal stuff */
+    private final AnalysisContext  context = new AnalysisContext();
     
     /**
      * Constructor
@@ -94,6 +101,7 @@ public abstract class ViewProperties implements IView {
                              final ModelPart reset) {
 
         // Register
+        controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.METRIC, this);
@@ -106,8 +114,8 @@ public abstract class ViewProperties implements IView {
             controller.addListener(reset, this);
         }
         this.reset = reset;
-        this.target = target;
         this.root = parent;
+        this.context.setTarget(target);
     }
 
     @Override
@@ -128,17 +136,15 @@ public abstract class ViewProperties implements IView {
     @Override
     public void update(final ModelEvent event) {
 
-        SWTUtil.enable(root);
-        update();
-
         if (event.part == reset) {
-            reset();
-        } else if (event.part == target) {
-            SWTUtil.enable(root);
-            update();
+            this.reset();
         } else if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
+            this.model = (Model) event.data;
+            this.context.setModel(model);
             reset();
+        } else {
+            SWTUtil.enable(root);
+            this.update();
         }
     }
 
@@ -154,14 +160,17 @@ public abstract class ViewProperties implements IView {
      * @param infoLoss
      * @return
      */
-    protected double asRelativeValue(final InformationLoss infoLoss,
-                                   final ARXResult result) {
-        return ((infoLoss.getValue() - result.getLattice()
-                                             .getBottom()
-                                             .getMinimumInformationLoss()
-                                             .getValue()) / result.getLattice()
-                                                                  .getTop()
-                                                                  .getMaximumInformationLoss()
-                                                                  .getValue()) * 100d;
+    protected double asRelativeValue(final InformationLoss infoLoss, final ARXResult result) {
+        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
+        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
+        return ((infoLoss.getValue() - min) / (max-min)) * 100d;
+    }
+    
+    /**
+     * Returns the context
+     * @return
+     */
+    protected AnalysisContext getContext(){
+        return context;
     }
 }

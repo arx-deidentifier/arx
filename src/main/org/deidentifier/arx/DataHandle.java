@@ -25,8 +25,8 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Map;
 
+import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
@@ -47,20 +47,26 @@ import cern.colt.Swapper;
  */
 public abstract class DataHandle{
 
-    /** The current registry*/
-    private DataRegistry      registry = null;
+    /** The current registry */
+    protected DataRegistry    registry   = null;
 
-    /** The current research subset*/
-    private DataHandle        subset = null;
+    /** The current research subset */
+    protected DataHandle      subset     = null;
 
     /** The data types */
     protected DataType<?>[][] dataTypes  = null;
 
-    /** The data defintion */
+    /** The data definition */
     protected DataDefinition  definition = null;
-    
+
     /** The header */
     protected String[]        header     = null;
+
+    /** The statistics */
+    protected DataStatistics  statistics = null;
+
+    /** The node */
+    protected ARXNode         node       = null;
     
     /**
      * Returns the name of the specified column
@@ -216,6 +222,14 @@ public abstract class DataHandle{
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
+    
+    /**
+     * Returns the transformation 
+     * @return
+     */
+    public ARXNode getTransformation(){
+        return node;
+    }
 
     /** Returns the number of columns in the dataset */
     public abstract int getNumColumns();
@@ -229,7 +243,7 @@ public abstract class DataHandle{
      * @return
      */
     public DataStatistics getStatistics(){
-        return new DataStatistics(this);
+        return statistics;
     }
     
     /**
@@ -463,11 +477,11 @@ public abstract class DataHandle{
     }
 
     /**
-     * generate datatypeArray for compare
+     * Generates an array of data types
      * 
      * @return
      */
-    protected abstract void createDataTypeArray();
+    protected abstract DataType<?>[][] getDataTypeArray();
     
     /**
      * Returns the base data type without generalization
@@ -477,15 +491,6 @@ public abstract class DataHandle{
     protected DataType<?> getBaseDataType(final String attribute) {
         checkRegistry();
         return getRegistry().getBaseDataType(attribute);
-    }
-    
-    /**
-     * Returns the datatypes
-     * @return
-     */
-    protected Map<String, DataType<?>> getDataTypes() {
-        checkRegistry();
-        return definition.getDataTypes();
     }
     
     /**
@@ -576,4 +581,19 @@ public abstract class DataHandle{
     protected void setView(DataHandle handle){
         this.subset = handle;
     }  
+    
+    /**
+     * Releases this handle and all associated resources. If a input handle is released all associated results are released
+     * as well.
+     */
+    public void release() {
+        if (registry != null){
+            registry.release(this);
+        }
+    }
+    
+    /**
+     * Releases all resources
+     */
+    protected abstract void doRelease();
 }

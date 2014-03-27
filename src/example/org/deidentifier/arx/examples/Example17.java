@@ -18,6 +18,12 @@
 
 package org.deidentifier.arx.examples;
 
+import java.text.ParseException;
+import java.util.Date;
+
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 
@@ -32,9 +38,10 @@ public class Example17 extends Example {
      * Entry point.
      * 
      * @param args The arguments
+     * @throws ParseException 
      */
     @SuppressWarnings("unused")
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws ParseException {
         
         // 1. List all data types
         for (DataTypeDescription<?> type : DataType.LIST){
@@ -58,5 +65,26 @@ public class Example17 extends Example {
         
         // 2. Obtain specific data type
         DataTypeDescription<Double> entry = DataType.LIST(Double.class);
+        
+
+        // 3. Obtain data in specific formats
+        final DefaultData data = Data.create();
+        data.add("identifier", "name", "zip", "age", "nationality", "sen");
+        data.add("a", "Alice", "47906", "35", "USA", "1.1.2013");
+        data.add("b", "Bob", "47903", "59", "Canada", "1.1.2013");
+        data.add("c", "Christine", "47906", "42", "USA", "1.1.2013");
+        data.add("d", "Dirk", "47630", "18", "Brazil", "1.1.2013");
+        data.add("e", "Eunice", "47630", "22", "Brazil", "1.1.2013");
+        data.add("f", "Frank", "47633", "63", "Peru", "1.1.2013");
+        data.add("g", "Gail", "48973", "33", "Spain", "1.1.2013");
+        data.add("h", "Harry", "48972", "47", "Bulgaria", "1.1.2013");
+        data.add("i", "Iris", "48970", "52", "France", "1.1.2013");
+        
+        data.getDefinition().setDataType("zip", DataType.DECIMAL("#,##0"));
+        data.getDefinition().setDataType("sen", DataType.DATE("dd.MM.yyyy"));
+        
+        DataHandle handle = data.getHandle();
+        double value1 = handle.getDouble(2, 2);
+        Date value2 = handle.getDate(2, 5);
     }
 }

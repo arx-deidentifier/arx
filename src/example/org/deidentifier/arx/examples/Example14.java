@@ -81,7 +81,7 @@ public class Example14 extends Example {
             // Process results
             if (result.getGlobalOptimum() != null){
                 System.out.println(" - Transformed data:");
-                final Iterator<String[]> transformed = result.getHandle()
+                final Iterator<String[]> transformed = result.getOutput(false)
                                                              .iterator();
                 while (transformed.hasNext()) {
                     System.out.print("   ");

@@ -19,6 +19,7 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
@@ -77,12 +78,6 @@ public interface INodeChecker {
      */
     public abstract IHashGroupify getGroupify();
 
-    /**
-     * Returns the number of outlying groups from the previous check
-     * 
-     * @return
-     */
-    public abstract int getNumberOfOutlyingGroups();
 
     @Deprecated
     public abstract double getInformationLoss(final Node node);
@@ -93,13 +88,6 @@ public interface INodeChecker {
      * @return
      */
     public abstract Metric<?> getMetric();
-
-    /**
-     * Returns the number of outliers from the previous check
-     * 
-     * @return
-     */
-    public abstract int getNumberOfOutlyingTuples();
 
     /**
      * Returns the data for a given state. Only used for NUMA.
@@ -124,4 +112,10 @@ public interface INodeChecker {
      * @return
      */
     public abstract History getHistory();
+
+    /**
+     * Returns statistics about the groups
+     * @return
+     */
+    public abstract GroupStatistics getGroupStatistics();
 }

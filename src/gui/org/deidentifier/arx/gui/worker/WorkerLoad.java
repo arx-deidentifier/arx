@@ -38,10 +38,10 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
@@ -84,9 +84,8 @@ public class WorkerLoad extends Worker<Model> {
 	 * @throws ZipException
 	 * @throws IOException
 	 */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException,
-                                                                   IOException {
-        zipfile = new ZipFile(file);
+    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
+        this.zipfile = new ZipFile(file);
     }
 
     /**
@@ -242,18 +241,18 @@ public class WorkerLoad extends Worker<Model> {
             model.setSelectedNode(outputNode);
             
             // Update model
-            model.setResult(new DataHandleOutput(config.getInput().getHandle(),
-                                                 config.getInput().getDefinition(),
-                                                 lattice,
-                                                 removeOutliers,
-                                                 suppressionString,
-                                                 historySize,
-                                                 snapshotSizeSnapshot,
-                                                 snapshotSizeDataset,
-                                                 metric,
-                                                 model.getOutputConfig().getConfig(),
-                                                 optimalNode,
-                                                 time));
+            model.setResult(new ARXResult(config.getInput().getHandle(),
+                                          config.getInput().getHandle().getDefinition(),
+                                          lattice,
+                                          removeOutliers,
+                                          suppressionString,
+                                          historySize,
+                                          snapshotSizeSnapshot,
+                                          snapshotSizeDataset,
+                                          metric,
+                                          model.getOutputConfig().getConfig(),
+                                          optimalNode,
+                                          time));
 
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();

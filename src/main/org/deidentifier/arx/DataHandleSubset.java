@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
+
 
 /**
  * This implementation of a data handle projects a given data handle onto a given research subset.
@@ -23,12 +25,22 @@ public class DataHandleSubset extends DataHandle {
      * @param subset
      */
     protected DataHandleSubset(DataHandle source, DataSubset subset){
+        this(source, subset, null);
+    }
+
+    /**
+     * Creates a new handle that represents the research subset
+     * @param source
+     * @param subset
+     * @param eqStatistics
+     */
+    public DataHandleSubset(DataHandle source, DataSubset subset, EquivalenceClassStatistics eqStatistics) {
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        createDataTypeArray();
+        this.statistics = new DataStatistics(this, eqStatistics);
     }
 
     @Override
@@ -37,8 +49,6 @@ public class DataHandleSubset extends DataHandle {
         return source.getAttributeName(col);
     }
     
-    
-
     @Override
     public DataType<?> getDataType(String attribute) {
         return source.getDataType(attribute);
@@ -133,8 +143,8 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected void createDataTypeArray() {
-        this.dataTypes = source.dataTypes;
+    protected DataType<?>[][] getDataTypeArray() {
+        return source.dataTypes;
     }
 
     @Override
@@ -180,5 +190,18 @@ public class DataHandleSubset extends DataHandle {
      */
     protected int internalTranslate(int row) {
         return this.subset.getArray()[row];
+    }
+    
+    /**
+     * Returns the underlying source data handle
+     * @return
+     */
+    protected DataHandle getSource(){
+        return source;
+    }
+
+    @Override
+    protected void doRelease() {
+        // Nothing to do
     }
 }

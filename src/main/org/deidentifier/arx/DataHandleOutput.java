@@ -23,23 +23,18 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.framework.check.INodeChecker;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Lattice;
-import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.metric.Metric;
 
 /**
- * An implementation of the class DataHandle and the ARXResult interface for
- * output data.
+ * An implementation of the class DataHandle for output data.
  * 
  * @author Prasser, Kohlmayer
  */
-public class DataHandleOutput extends DataHandle implements ARXResult {
+public class DataHandleOutput extends DataHandle {
 
     /**
      * The class ResultIterator.
@@ -100,163 +95,124 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         }
     }
 
-    /** The node checker. */
-    private INodeChecker  checker;
+    /** The current result */
+    private ARXResult      result;
 
     /** The current node */
-    private ARXNode     currentNode;
+    private ARXNode        node;
 
     /** The data. */
-    private Data          dataIS;
-
-    /** The buffer. */
-    private Data          source;
-    
-    /** The data. */
-    private Data          dataQI;
+    protected Data         dataIS;
 
     /** The data. */
-    private Data          dataSE;
+    protected Data         dataQI;
 
-    /** Wall clock. */
-    private long          duration;
+    /** The data. */
+    protected Data         dataSE;
 
     /** An inverse map to data arrays. */
-    private int[][][]     inverseData;
+    private int[][][]    inverseData;
 
     /** An inverse map to dictionaries. */
-    private Dictionary[]  inverseDictionaries;
+    private Dictionary[] inverseDictionaries;
 
     /** An inverse map for column indices. */
-    private int[]         inverseMap;
-
-    /** The last node */
-    private ARXNode     lastNode;
-
-    /** The lattice. */
-    private ARXLattice  lattice;
+    private int[]        inverseMap;
 
     /** The generalization hierarchies. */
-    private int[][][]     map;
-
-    /** The global optimum. */
-    private ARXNode     optimalNode;
+    private int[][][]    map;
 
     /** The names of the quasiIdentifer. */
-    private String[]      quasiIdentifiers;
+    private String[]     quasiIdentifiers;
 
     /** Should we remove outliers */
-    private boolean       removeOutliers;
+    private boolean      removeOutliers;
 
     /** The string to insert. */
-    private String        suppressionString;
+    private String       suppressionString;
 
     /**
-     * Internal constructor for deserialization
-     */
-    public DataHandleOutput(final DataHandle handle,
-                            final DataDefinition definition,
-                            final ARXLattice lattice,
-                            final boolean removeOutliers,
-                            final String suppressionString,
-                            final int historySize,
-                            final double snapshotSizeSnapshot,
-                            final double snapshotSizeDataset,
-                            final Metric<?> metric,
-                            final ARXConfiguration config,
-                            final ARXNode optimum,
-                            final long time) {
-
-        // Set registry
-        this.setRegistry(handle.getRegistry());
-        this.getRegistry().updateOutput(this);
-        this.getRegistry().createInputSubset(config);
-        this.getRegistry().createOutputSubset(config);
-
-        // Set optimum in lattice
-        lattice.access().setOptimum(optimum);
-
-        // Extract data
-        final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
-        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header,
-                                                    dataArray,
-                                                    dictionary,
-                                                    handle.getDefinition(),
-                                                    config.getCriteria());
-
-        // Initialize
-        config.initialize(manager);
-
-        // Initialize the metric
-        metric.initialize(manager.getDataQI(), manager.getHierarchies(), config);
-
-        // Create a node checker
-        final INodeChecker checker = new NodeChecker(manager,
-                                                     metric,
-                                                     config,
-                                                     historySize,
-                                                     snapshotSizeDataset,
-                                                     snapshotSizeSnapshot);
-
-        // Store buffer
-        this.source = checker.getData();
-        
-        // Initialize the result
-        init(manager,
-             checker,
-             time,
-             suppressionString,
-             definition,
-             lattice,
-             removeOutliers,
-             config);
-    }
-    
-    /**
-     * Instantiates a new ARX result.
+     * Instantiates a new handle.
      * 
+     * @param registry The registry
      * @param manager The data manager
      * @param checker The node checker
-     * @param time The elapsed wall-clock  time
+     * @param node The node to apply
+     * @param statistics Statistics for the dataset
      * @param suppressionString The suppression string
      * @param definition The data definition
-     * @param lattice The lattice
-     * @param practicalMonotonicity Do we assume practical monotonicity
      * @param removeOutliers Do we remove outliers
-     * @param maximumAbsoluteOutliers The maximum number of outliers
-     * @param config The configuration
-     * @param projection A projection mask for results of iterative executions.
-     *                   projection[i] must contain true if the ith QI is to be preserved
+     * @param node The underlying transformation
+     * @param config The underlying config
      */
-    public DataHandleOutput(final DataRegistry registry,
-                            final DataManager manager,
-                            final INodeChecker checker,
-                            final long time,
-                            final String suppressionString,
-                            final DataDefinition definition,
-                            final Lattice lattice,
-                            final boolean removeOutliers,
-                            final ARXConfiguration config) {
+    protected DataHandleOutput(final ARXResult result,
+                               final DataRegistry registry,
+                               final DataManager manager,
+                               final Data buffer,
+                               final ARXNode node,
+                               final EquivalenceClassStatistics statistics,
+                               final String suppressionString,
+                               final DataDefinition definition,
+                               final boolean removeOutliers,
+                               final ARXConfiguration config) {
 
-        registry.updateOutput(this);
+        registry.updateOutput(node, this);
         this.setRegistry(registry);
+
+        this.result = result;
+        this.removeOutliers = removeOutliers;
+        this.suppressionString = suppressionString;
+        this.definition = definition;
+        this.statistics = new DataStatistics(this, statistics);
+        this.node = node;
+
+        // Extract data
+        this.dataQI = buffer;
+        this.dataSE = manager.getDataSE();
+        this.dataIS = manager.getDataIS();
+        this.header = manager.getHeader();
+
+        // Init quasi identifiers and hierarchies
+        GeneralizationHierarchy[] hierarchies = manager.getHierarchies();
+        this.quasiIdentifiers = new String[hierarchies.length];
+        this.map = new int[hierarchies.length][][];
+        for (int i = 0; i < hierarchies.length; i++) {
+            this.quasiIdentifiers[i] = hierarchies[i].getName();
+            this.map[i] = hierarchies[i].getArray();
+        }
+
+        // Build map inverse
+        this.inverseMap = new int[header.length];
+        for (int i = 0; i < this.inverseMap.length; i++) {
+            this.inverseMap[i] = (AttributeType.ATTR_TYPE_ID << AttributeType.SHIFT);
+        }
+        for (int i = 0; i < this.dataQI.getMap().length; i++) {
+            this.inverseMap[dataQI.getMap()[i]] = i | (AttributeType.ATTR_TYPE_QI << AttributeType.SHIFT);
+        }
+        for (int i = 0; i < this.dataSE.getMap().length; i++) {
+            this.inverseMap[dataSE.getMap()[i]] = i | (AttributeType.ATTR_TYPE_SE << AttributeType.SHIFT);
+        }
+        for (int i = 0; i < dataIS.getMap().length; i++) {
+            inverseMap[dataIS.getMap()[i]] = i | (AttributeType.ATTR_TYPE_IS << AttributeType.SHIFT);
+        }
+
+        // Build inverse data array
+        this.inverseData = new int[3][][];
+        this.inverseData[AttributeType.ATTR_TYPE_IS] = this.dataIS.getArray();
+        this.inverseData[AttributeType.ATTR_TYPE_SE] = this.dataSE.getArray();
+        this.inverseData[AttributeType.ATTR_TYPE_QI] = this.dataQI.getArray();
+
+        // Build inverse dictionary array
+        this.inverseDictionaries = new Dictionary[3];
+        this.inverseDictionaries[AttributeType.ATTR_TYPE_IS] = this.dataIS.getDictionary();
+        this.inverseDictionaries[AttributeType.ATTR_TYPE_SE] = this.dataSE.getDictionary();
+        this.inverseDictionaries[AttributeType.ATTR_TYPE_QI] = this.dataQI.getDictionary();
         
-        this.source = checker.getData();
-
-        final ARXLattice flattice = new ARXLattice(lattice,
-                                                   manager.getDataQI().getHeader(),
-                                                   config);
-
-        init(manager,
-             checker,
-             time,
-             suppressionString,
-             definition,
-             flattice,
-             removeOutliers,
-             config);
+        // Create view
+        this.getRegistry().createOutputSubset(node, config, statistics);
+        
+        // Obtain data types
+        this.dataTypes = getDataTypeArray();
     }
 
     /**
@@ -268,6 +224,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      */
     @Override
     public String getAttributeName(final int col) {
+        checkRegistry();
         checkColumn(col);
         return header[col];
     }
@@ -275,6 +232,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     @Override
     public DataType<?> getDataType(String attribute) {
         
+        checkRegistry();
         int col = this.getColumnIndexOf(attribute);
 
         // Return the according values
@@ -298,9 +256,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
     @Override
     public String[] getDistinctValues(final int col) {
 
-        getHandle(currentNode);
-
         // Check
+        checkRegistry();
         checkColumn(col);
 
         // TODO: Inefficient
@@ -313,115 +270,8 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
     @Override
     public int getGeneralization(final String attribute) {
-        return currentNode.getGeneralization(attribute);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXResult#getGlobalOptimum()
-     */
-    /**
-     * Gets the global optimalARXNode.
-     * 
-     * @return the global optimalARXNode
-     */
-    @Override
-    public ARXNode getGlobalOptimum() {
-        return optimalNode;
-    }
-
-    @Override
-    public DataHandle getHandle() {
-        if (optimalNode == null) { return null; }
-        return getHandle(optimalNode);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXResult#getHandle()
-     */
-    /**
-     * Gets the handle.
-     * 
-     * @return the handle
-     */
-    @Override
-    public DataHandle getHandle(final ARXNode fnode) {
-
-        currentNode = fnode;
-
-        // Don't transform twice
-        if ((currentNode != null) && (currentNode == lastNode)) { return this; }
-
-        // Prepare
-        lastNode = currentNode;
-        final Node node = new Node(0);
-        int level = 0; for (int i : fnode.getTransformation()) level+= i;
-        node.setTransformation(fnode.getTransformation(), level);
-        if (currentNode.isChecked()) {
-            node.setChecked();
-        }
-
-        // Suppress
-        checker.transformAndMarkOutliers(node);
-
-        // Store
-        if (!currentNode.isChecked()) {
-            
-            currentNode.access().setChecked(true);
-            
-            // Only in this case, due to the special case 
-            // with multiple sensitive attributes
-            if (definition.getSensitiveAttributes().size()<=1) {
-                if (node.isAnonymous()) {
-                    currentNode.access().setAnonymous();
-                } else {
-                    currentNode.access().setNotAnonymous();
-                }
-            }
-            currentNode.access().setMaximumInformationLoss(node.getInformationLoss());
-            currentNode.access().setMinimumInformationLoss(node.getInformationLoss());
-            lattice.estimateInformationLoss();
-        }
-
-        // Create datatype array
-        createDataTypeArray();
-        return this;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXResult#getLattice()
-     */
-    /**
-     * Gets the lattice.
-     * 
-     * @return the lattice
-     */
-    @Override
-    public ARXLattice getLattice() {
-        return lattice;
-    }
-
-    @Override
-    public int getNumberOfGroups() {
-        getHandle(currentNode);
-        return checker.getNumberOfGroups();
-    }
-
-    @Override
-    public int getNumberOfOutlyingGroups() {
-        getHandle(currentNode);
-        return checker.getNumberOfOutlyingGroups();
-    }
-
-    @Override
-    public int getNumberOfOutlyingTuples() {
-        getHandle(currentNode);
-        return checker.getNumberOfOutlyingTuples();
+        checkRegistry();
+        return node.getGeneralization(attribute);
     }
 
     /**
@@ -446,20 +296,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         return dataQI.getDataLength();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.ARXResult#getTime()
-     */
-    /**
-     * Gets the time.
-     * 
-     * @return the time
-     */
-    @Override
-    public long getTime() {
-        return duration;
-    }
 
     /**
      * Gets the value.
@@ -475,7 +311,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
 
         // Check
         checkRegistry();
-        getHandle(currentNode);
         checkColumn(col);
         checkRow(row, dataQI.getDataLength());
 
@@ -483,15 +318,6 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
         return internalGetValue(row, col);
     }
 
-    /**
-     * Checks if is result available.
-     * 
-     * @return true, if is result available
-     */
-    @Override
-    public boolean isResultAvailable() {
-        return optimalNode != null;
-    }
 
     /**
      * Iterator.
@@ -500,98 +326,17 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      */
     @Override
     public Iterator<String[]> iterator() {
-        getHandle(currentNode);
+        checkRegistry();
         return new ResultIterator();
     }
-
-    /**
-     * Initializer
-     * @param manager
-     * @param checker
-     * @param time
-     * @param suppressionString
-     * @param defintion
-     * @param lattice
-     * @param removeOutliers
-     * @param config
-     */
-    private void init(final DataManager manager,
-                      final INodeChecker checker,
-                      final long time,
-                      final String suppressionString,
-                      final DataDefinition defintion,
-                      final ARXLattice lattice,
-                      final boolean removeOutliers,
-                      final ARXConfiguration config) {
-
-        this.removeOutliers = removeOutliers;
-        this.lattice = lattice;
-        this.optimalNode = this.lattice.getOptimum();
-        this.duration = time;
-        this.currentNode = optimalNode;
-        this.lastNode = null;
-        this.suppressionString = suppressionString;
-        this.checker = checker;
-        this.definition = defintion;
-
-        // Extract data
-        dataQI = checker.getBuffer();
-        dataSE = manager.getDataSE();
-        dataIS = manager.getDataIS();
-        super.header = manager.getHeader();
-
-        // Init quasi identifiers and hierarchies
-        final GeneralizationHierarchy[] hierarchies = manager.getHierarchies();
-        quasiIdentifiers = new String[hierarchies.length];
-        map = new int[hierarchies.length][][];
-        for (int i = 0; i < hierarchies.length; i++) {
-            quasiIdentifiers[i] = hierarchies[i].getName();
-            map[i] = hierarchies[i].getArray();
-        }
-
-        // Build map inverse
-        inverseMap = new int[header.length];
-        for (int i = 0; i < inverseMap.length; i++) {
-            inverseMap[i] = (AttributeType.ATTR_TYPE_ID << AttributeType.SHIFT);
-        }
-        for (int i = 0; i < dataQI.getMap().length; i++) {
-            inverseMap[dataQI.getMap()[i]] = i |
-                                             (AttributeType.ATTR_TYPE_QI << AttributeType.SHIFT);
-        }
-        for (int i = 0; i < dataSE.getMap().length; i++) {
-            inverseMap[dataSE.getMap()[i]] = i |
-                                             (AttributeType.ATTR_TYPE_SE << AttributeType.SHIFT);
-        }
-        for (int i = 0; i < dataIS.getMap().length; i++) {
-            inverseMap[dataIS.getMap()[i]] = i |
-                                             (AttributeType.ATTR_TYPE_IS << AttributeType.SHIFT);
-        }
-
-        // Build inverse data array
-        inverseData = new int[3][][];
-        inverseData[AttributeType.ATTR_TYPE_IS] = dataIS.getArray();
-        inverseData[AttributeType.ATTR_TYPE_SE] = dataSE.getArray();
-        inverseData[AttributeType.ATTR_TYPE_QI] = dataQI.getArray();
-
-        // Build inverse dictionary array
-        inverseDictionaries = new Dictionary[3];
-        inverseDictionaries[AttributeType.ATTR_TYPE_IS] = dataIS.getDictionary();
-        inverseDictionaries[AttributeType.ATTR_TYPE_SE] = dataSE.getDictionary();
-        inverseDictionaries[AttributeType.ATTR_TYPE_QI] = dataQI.getDictionary();
-        
-        // Create view
-        this.getRegistry().createOutputSubset(config);
-    }
-    
-    
 
     /**
      * Creates the data type array.
      */
     @Override
-    protected void createDataTypeArray() {
+    protected DataType<?>[][] getDataTypeArray() {
 
-        dataTypes = new DataType[3][];
+        DataType<?>[][] dataTypes = new DataType[3][];
         dataTypes[AttributeType.ATTR_TYPE_IS] = new DataType[dataIS.getHeader().length];
         dataTypes[AttributeType.ATTR_TYPE_SE] = new DataType[dataSE.getHeader().length];
         dataTypes[AttributeType.ATTR_TYPE_QI] = new DataType[dataQI.getHeader().length];
@@ -616,11 +361,12 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
             for (int j = 0; j < type.length; j++) {
                 dataTypes[i][j] = definition.getDataType(header[j]);
                 if ((i == AttributeType.ATTR_TYPE_QI) &&
-                    (currentNode.getTransformation()[j] > 0)) {
+                    (node.getTransformation()[j] > 0)) {
                     dataTypes[i][j] = DataType.STRING;
                 }
             }
         }
+        return dataTypes;
     }
  
     /**
@@ -652,7 +398,7 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
                                   final int row2,
                                   final int[] columns,
                                   final boolean ascending) {
-        getHandle(currentNode);
+
         for (final int index : columns) {
 
             final int attributeType = inverseMap[index] >>> AttributeType.SHIFT;
@@ -728,19 +474,32 @@ public class DataHandleOutput extends DataHandle implements ARXResult {
      *            the row2
      */
     protected void internalSwap(final int row1, final int row2) {
-        // Now swap
-        getHandle(currentNode);
         int[] temp = dataQI.getArray()[row1];
         dataQI.getArray()[row1] = dataQI.getArray()[row2];
         dataQI.getArray()[row2] = temp;
-        temp = dataSE.getArray()[row1];
-        dataSE.getArray()[row1] = dataSE.getArray()[row2];
-        dataSE.getArray()[row2] = temp;
-        temp = dataIS.getArray()[row1];
-        dataIS.getArray()[row1] = dataIS.getArray()[row2];
-        dataIS.getArray()[row2] = temp;
-        temp = source.getArray()[row1];
-        source.getArray()[row1] = source.getArray()[row2];
-        source.getArray()[row2] = temp;
+    }
+
+    /**
+     * Releases all resources
+     */
+    protected void doRelease() {
+        result.releaseBuffer(this);
+        node = null;
+        dataIS = null;
+        dataQI = null;
+        dataSE = null;
+        inverseData = null;
+        inverseDictionaries = null;
+        inverseMap = null;
+        map = null;
+        quasiIdentifiers = null;
+        suppressionString = null;
+        registry = null;
+        subset = null;
+        dataTypes = null;
+        definition = null;
+        header = null;
+        statistics = null;
+        node = null;
     }
 }

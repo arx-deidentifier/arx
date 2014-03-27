@@ -18,6 +18,10 @@
 
 package org.deidentifier.arx;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +32,7 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataStatistics.ContingencyTable.Entry;
 import org.deidentifier.arx.DataType.ARXString;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -39,6 +44,121 @@ import cern.colt.function.IntComparator;
  *
  */
 public class DataStatistics {
+    
+    /**
+     * Creates a new instance
+     * @param handle
+     * @param averageEquivalenceClassSize
+     * @param maximalEquivalenceClassSize
+     * @param minimalEquivalenceClassSize
+     * @param numberOfGroups
+     * @param numberOfOutlyingEquivalenceClasses
+     * @param numberOfOutlyingTuples
+     */
+    public DataStatistics(DataHandle handle,
+                          EquivalenceClassStatistics ecStatistics) {
+        this.ecStatistics = ecStatistics;
+        this.handle = handle;
+    }
+    
+    /**
+     * Statistics about the equivalence classes
+     * @author Fabian Prasser
+     */
+    public static class EquivalenceClassStatistics {
+
+        private GroupStatistics groupStatistics;
+        
+        /**
+         * Creates a new instance
+         * @param groupStatistics Statistics obtained from hash groupify
+         */
+        protected EquivalenceClassStatistics(GroupStatistics groupStatistics) {
+            this.groupStatistics = groupStatistics;
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class.
+         * This number takes into account one additional equivalence class containing all outliers
+         * @return
+         */
+        public double getAverageEquivalenceClassSizeIncludingOutliers(){
+            return groupStatistics.getAverageEquivalenceClassSizeIncludingOutliers();
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class.
+         * This number takes into account one additional equivalence class containing all outliers
+         * @return
+         */
+        public int getMaximalEquivalenceClassSizeIncludingOutliers(){
+            return groupStatistics.getMaximalEquivalenceClassSizeIncludingOutliers();
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class. 
+         * This number takes into account one additional equivalence class containing all outliers
+         * @return
+         */
+        public int getMinimalEquivalenceClassSizeIncludingOutliers(){
+            return groupStatistics.getMinimalEquivalenceClassSizeIncludingOutliers();
+        }
+
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public double getAverageEquivalenceClassSize(){
+            return groupStatistics.getAverageEquivalenceClassSize();
+        }
+
+        /**
+         * Returns the maximal size of an equivalence class
+         * @return
+         */
+        public int getMaximalEquivalenceClassSize(){
+            return groupStatistics.getMaximalEquivalenceClassSize();
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class
+         * @return
+         */
+        public int getMinimalEquivalenceClassSize(){
+            return groupStatistics.getMinimalEquivalenceClassSize();
+        }
+
+        /**
+         * Returns the number of equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfGroups() {
+            return groupStatistics.getNumberOfGroups();
+        }
+
+        /**
+         * Returns the number of outlying equivalence classes in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingEquivalenceClasses() {
+            return groupStatistics.getNumberOfOutlyingEquivalenceClasses();
+        }
+
+        /**
+         * Returns the number of outliers in the currently selected data
+         * representation
+         * 
+         * @return
+         */
+        public int getNumberOfOutlyingTuples() {
+            return groupStatistics.getNumberOfOutlyingTuples();
+        }
+    }
 
     /**
      * A frequency distribution
@@ -144,14 +264,9 @@ public class DataStatistics {
     /** The handle*/
     private DataHandle handle;
     
-    /**
-     * Creates a new instance
-     * @param handle
-     */
-    protected DataStatistics(DataHandle handle){
-        this.handle = handle;
-    }
-
+    /** The equivalence class statistics*/
+    private EquivalenceClassStatistics ecStatistics;
+    
     /**
      * Returns the distinct set of data items from the given column
      * 
@@ -207,42 +322,32 @@ public class DataStatistics {
         final String[][] _hierarchy = hierarchy != null ? hierarchy.getHierarchy() : null;
 
         // Sort by data type
-        if (_hierarchy == null){
+        if (_hierarchy == null || level==0){
             sort(list, datatype);
-            
-        // Sort by hierarchy
+        // Sort by hierarchy and data type
         } else {
             // Build order directly from the hierarchy
             final Map<String, Integer> order = new HashMap<String, Integer>();
             int max = 0; // The order to use for the suppression string
-            if (level==0 || handle.getBaseDataType(attribute) instanceof ARXString){
-                for (int i=0; i<_hierarchy.length; i++){
-                    if (!order.containsKey(_hierarchy[i][level])) {
-                        order.put(_hierarchy[i][level], order.size());
-                    }
-                }
-                max = order.size();
-            // Build order indirectly by using a data type and a hierarchy
-            } else {
-                // Create base order
-                Set<String> baseSet = new HashSet<String>();
-                for (int i=0; i<_hierarchy.length; i++){
-                    baseSet.add(_hierarchy[i][0]);
-                }
-                String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
-                sort(baseArray, handle.getBaseDataType(attribute));
-                Map<String, Integer> baseOrder = new HashMap<String, Integer>();
-                for (int i=0; i<baseArray.length; i++){
-                    baseOrder.put(baseArray[i], i);
-                }
-                
-                // Build higher level order from base order
-                for (int i=0; i<_hierarchy.length; i++){
-                    if (!order.containsKey(_hierarchy[i][level])) {
-                        int position = baseOrder.get(_hierarchy[i][0]);
-                        order.put(_hierarchy[i][level], position);
-                        max = Math.max(position, max)+1;
-                    }
+
+            // Create base order
+            Set<String> baseSet = new HashSet<String>();
+            for (int i = 0; i < _hierarchy.length; i++) {
+                baseSet.add(_hierarchy[i][0]);
+            }
+            String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
+            sort(baseArray, handle.getBaseDataType(attribute));
+            Map<String, Integer> baseOrder = new HashMap<String, Integer>();
+            for (int i = 0; i < baseArray.length; i++) {
+                baseOrder.put(baseArray[i], i);
+            }
+
+            // Build higher level order from base order
+            for (int i = 0; i < _hierarchy.length; i++) {
+                if (!order.containsKey(_hierarchy[i][level])) {
+                    int position = baseOrder.get(_hierarchy[i][0]);
+                    order.put(_hierarchy[i][level], position);
+                    max = Math.max(position, max) + 1;
                 }
             }
             
@@ -506,5 +611,13 @@ public class DataStatistics {
         }
         
         return hierarchy;
+    }
+    
+    /**
+     * Returns statistics about the equivalence classes
+     * @return
+     */
+    public EquivalenceClassStatistics getEquivalenceClassStatistics(){
+        return ecStatistics;
     }
 }

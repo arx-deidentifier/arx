@@ -151,7 +151,7 @@ public class Example8 extends Example {
 
             // Process results
             System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getHandle()
+            final Iterator<String[]> transformed = result.getOutput(false)
                                                          .iterator();
             while (transformed.hasNext()) {
                 System.out.print("   ");
