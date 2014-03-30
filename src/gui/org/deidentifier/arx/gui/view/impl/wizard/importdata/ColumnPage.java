@@ -22,11 +22,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -268,32 +266,6 @@ public class ColumnPage extends WizardPage {
                 }
 
                 return "";
-
-            }
-
-            /**
-             * Returns the background color for cells
-             *
-             * This retrieves the datatype for each cell by invoking
-             * {@link ImportDataColumn#getDatatype()} and returns the a
-             * backgroundcolor for each cell. For columns that actually have a
-             * datatype format defined, {@link SWT#COLOR_GRAY} is returned,
-             * else the default will be used.
-             *
-             * @param element Column in question
-             */
-            @Override
-            public Color getBackground(Object element) {
-
-                DataType<?> column = ((ImportDataColumn) element).getDatatype();
-
-                if (!column.getDescription().hasFormat()) {
-
-                    return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
-
-                }
-
-                return super.getBackground(element);
 
             }
 
