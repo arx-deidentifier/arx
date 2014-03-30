@@ -19,7 +19,7 @@
 package org.deidentifier.arx;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
+import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -311,7 +311,7 @@ public class ARXResult {
         }
         
         // Obtain statistics
-        EquivalenceClassStatistics statistics = new EquivalenceClassStatistics(checker.getGroupStatistics());
+        StatisticsEquivalenceClasses statistics = new StatisticsEquivalenceClasses(checker.getGroupStatistics());
         
         // Clone if needed
         org.deidentifier.arx.framework.data.Data buffer = checker.getBuffer();

@@ -28,11 +28,11 @@ import java.util.Set;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.DataStatistics.ContingencyTable;
-import org.deidentifier.arx.DataStatistics.ContingencyTable.Entry;
-import org.deidentifier.arx.DataStatistics.FrequencyDistribution;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.StatisticsContingencyTable;
+import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class TestDataStatistics extends AbstractTest {
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
         
         // Define
-        FrequencyDistribution distribution;
+        StatisticsFrequencyDistribution distribution;
         String[] values;
         double[] frequency;
         
@@ -86,7 +86,7 @@ public class TestDataStatistics extends AbstractTest {
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
         
         // Define
-        FrequencyDistribution distribution;
+        StatisticsFrequencyDistribution distribution;
         String[] values;
         double[] frequency;
         
@@ -119,7 +119,7 @@ public class TestDataStatistics extends AbstractTest {
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
         
         // Define
-        ContingencyTable contingency;
+        StatisticsContingencyTable contingency;
         String[] values1;
         String[] values2;
         double[][] frequencies;
@@ -182,7 +182,7 @@ public class TestDataStatistics extends AbstractTest {
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
         
         // Define
-        ContingencyTable contingency;
+        StatisticsContingencyTable contingency;
         String[] values1;
         String[] values2;
         double[][] frequencies;
@@ -213,7 +213,7 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
     }
 
-    private double[][] contingencyToArray(ContingencyTable contingency) {
+    private double[][] contingencyToArray(StatisticsContingencyTable contingency) {
 
         List<double[]> list = new ArrayList<double[]>();
         while (contingency.iterator.hasNext()) {

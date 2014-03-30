@@ -29,9 +29,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
-import org.deidentifier.arx.DataStatistics.ContingencyTable;
-import org.deidentifier.arx.DataStatistics.ContingencyTable.Entry;
-import org.deidentifier.arx.DataStatistics.FrequencyDistribution;
+import org.deidentifier.arx.aggregates.StatisticsContingencyTable;
+import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
+import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
@@ -111,7 +111,7 @@ public class Example16 extends Example {
             }
             
             // Print frequencies
-            FrequencyDistribution distribution;
+            StatisticsFrequencyDistribution distribution;
             System.out.println(" - Distribution of attribute 'age' in input:");
             distribution = data.getHandle().getStatistics().getFrequencyDistribution(0, false);
             System.out.println("   " + Arrays.toString(distribution.values));
@@ -124,7 +124,7 @@ public class Example16 extends Example {
             System.out.println("   " + Arrays.toString(distribution.frequency));
             
             // Print contingency tables
-            ContingencyTable contingency;
+            StatisticsContingencyTable contingency;
             System.out.println(" - Contingency of attribute 'gender' and 'zipcode' in input:");
             contingency = data.getHandle().getStatistics().getContingencyTable(0, true, 2, true);
             System.out.println("   " + Arrays.toString(contingency.values1));

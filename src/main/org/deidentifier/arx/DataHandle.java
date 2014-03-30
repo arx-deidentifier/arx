@@ -30,6 +30,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
 
 import cern.colt.Swapper;
@@ -45,29 +46,29 @@ import cern.colt.Swapper;
  * 
  * @author Prasser, Kohlmayer
  */
-public abstract class DataHandle{
-
-    /** The current registry */
-    protected DataRegistry    registry   = null;
-
-    /** The current research subset */
-    protected DataHandle      subset     = null;
+public abstract class DataHandle {
 
     /** The data types */
-    protected DataType<?>[][] dataTypes  = null;
+    protected DataType<?>[][]   dataTypes  = null;
 
     /** The data definition */
-    protected DataDefinition  definition = null;
+    protected DataDefinition    definition = null;
 
     /** The header */
-    protected String[]        header     = null;
-
-    /** The statistics */
-    protected DataStatistics  statistics = null;
+    protected String[]          header     = null;
 
     /** The node */
-    protected ARXNode         node       = null;
-    
+    protected ARXNode           node       = null;
+
+    /** The current registry */
+    protected DataRegistry      registry   = null;
+
+    /** The statistics */
+    protected StatisticsBuilder statistics = null;
+
+    /** The current research subset */
+    protected DataHandle        subset     = null;
+
     /**
      * Returns the name of the specified column
      * 
@@ -116,7 +117,7 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDate) {
-            return ((ARXDate)type).fromString(value);
+            return ((ARXDate)type).parse(value);
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -145,9 +146,9 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).fromString(value);
+            return ((ARXDecimal)type).parse(value);
         } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value);
+            return ((ARXInteger)type).parse(value);
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -167,9 +168,9 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).fromString(value).floatValue();
+            return ((ARXDecimal)type).parse(value).floatValue();
         } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value).floatValue();
+            return ((ARXInteger)type).parse(value).floatValue();
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -197,7 +198,7 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value).intValue();
+            return ((ARXInteger)type).parse(value).intValue();
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -217,20 +218,12 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value);
+            return ((ARXInteger)type).parse(value);
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
     
-    /**
-     * Returns the transformation 
-     * @return
-     */
-    public ARXNode getTransformation(){
-        return node;
-    }
-
     /** Returns the number of columns in the dataset */
     public abstract int getNumColumns();
 
@@ -242,8 +235,16 @@ public abstract class DataHandle{
      * by this handle
      * @return
      */
-    public DataStatistics getStatistics(){
+    public StatisticsBuilder getStatistics(){
         return statistics;
+    }
+
+    /**
+     * Returns the transformation 
+     * @return
+     */
+    public ARXNode getTransformation(){
+        return node;
     }
     
     /**
@@ -296,6 +297,16 @@ public abstract class DataHandle{
      */
     public abstract Iterator<String[]> iterator();
     
+    /**
+     * Releases this handle and all associated resources. If a input handle is released all associated results are released
+     * as well.
+     */
+    public void release() {
+        if (registry != null){
+            registry.release(this);
+        }
+    }
+
     /**
      * Writes the data to a CSV file
      * 
@@ -372,7 +383,7 @@ public abstract class DataHandle{
         checkRegistry();
         registry.sort(this, from, to, ascending, columns);
     }
-
+    
     /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
@@ -387,7 +398,7 @@ public abstract class DataHandle{
         checkRegistry();
         registry.sort(this, swapper, ascending, columns);
     }
-    
+
     /**
      * Sorts the dataset according to the given columns and the given range.
      * Will sort input and output analogously.
@@ -429,7 +440,7 @@ public abstract class DataHandle{
             throw new IndexOutOfBoundsException("Column index out of range: "+column1+". Valid: 0 - " + (header.length - 1)); 
         }
     }
-
+    
     /**
      * Checks the column indexes
      * 
@@ -454,7 +465,7 @@ public abstract class DataHandle{
             if ((i > 0) && (cols[i] == cols[i - 1])) { throw new IllegalArgumentException("Duplicate column index"); }
         }
     }
-    
+
     /**
      * Checks whether a registry is referenced
      */
@@ -475,13 +486,11 @@ public abstract class DataHandle{
             throw new IndexOutOfBoundsException("Row index (" + row1 + ") out of range (0 <= row <= " + length + ")"); 
         }
     }
-
+    
     /**
-     * Generates an array of data types
-     * 
-     * @return
+     * Releases all resources
      */
-    protected abstract DataType<?>[][] getDataTypeArray();
+    protected abstract void doRelease();
     
     /**
      * Returns the base data type without generalization
@@ -492,7 +501,14 @@ public abstract class DataHandle{
         checkRegistry();
         return getRegistry().getBaseDataType(attribute);
     }
-    
+
+    /**
+     * Generates an array of data types
+     * 
+     * @return
+     */
+    protected abstract DataType<?>[][] getDataTypeArray();
+
     /**
      * Returns an array containing the distinct values in the given column
      * 
@@ -564,8 +580,8 @@ public abstract class DataHandle{
      * @param col
      * @return
      */
-    protected abstract String internalGetValue(int row, int col);
-
+    protected abstract String internalGetValue(int row, int col);  
+    
     /**
      * Updates the registry
      * @param registry
@@ -573,27 +589,12 @@ public abstract class DataHandle{
     protected void setRegistry(DataRegistry registry){
         this.registry = registry;
     }
-
+    
     /**
      * Sets the subset
      * @param handle
      */
     protected void setView(DataHandle handle){
         this.subset = handle;
-    }  
-    
-    /**
-     * Releases this handle and all associated resources. If a input handle is released all associated results are released
-     * as well.
-     */
-    public void release() {
-        if (registry != null){
-            registry.release(this);
-        }
     }
-    
-    /**
-     * Releases all resources
-     */
-    protected abstract void doRelease();
 }

@@ -16,12 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx;
+package org.deidentifier.arx.aggregates;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,10 +25,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.DataStatistics.ContingencyTable.Entry;
+import org.deidentifier.arx.DataHandleStatistics;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXString;
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
+import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 
 import cern.colt.GenericSorting;
 import cern.colt.Swapper;
@@ -43,7 +41,7 @@ import cern.colt.function.IntComparator;
  * @author Fabian Prasser
  *
  */
-public class DataStatistics {
+public class StatisticsBuilder {
     
     /**
      * Creates a new instance
@@ -55,217 +53,17 @@ public class DataStatistics {
      * @param numberOfOutlyingEquivalenceClasses
      * @param numberOfOutlyingTuples
      */
-    public DataStatistics(DataHandle handle,
-                          EquivalenceClassStatistics ecStatistics) {
+    public StatisticsBuilder(DataHandleStatistics handle,
+                          StatisticsEquivalenceClasses ecStatistics) {
         this.ecStatistics = ecStatistics;
         this.handle = handle;
     }
     
-    /**
-     * Statistics about the equivalence classes
-     * @author Fabian Prasser
-     */
-    public static class EquivalenceClassStatistics {
-
-        private GroupStatistics groupStatistics;
-        
-        /**
-         * Creates a new instance
-         * @param groupStatistics Statistics obtained from hash groupify
-         */
-        protected EquivalenceClassStatistics(GroupStatistics groupStatistics) {
-            this.groupStatistics = groupStatistics;
-        }
-
-        /**
-         * Returns the maximal size of an equivalence class.
-         * This number takes into account one additional equivalence class containing all outliers
-         * @return
-         */
-        public double getAverageEquivalenceClassSizeIncludingOutliers(){
-            return groupStatistics.getAverageEquivalenceClassSizeIncludingOutliers();
-        }
-
-        /**
-         * Returns the maximal size of an equivalence class.
-         * This number takes into account one additional equivalence class containing all outliers
-         * @return
-         */
-        public int getMaximalEquivalenceClassSizeIncludingOutliers(){
-            return groupStatistics.getMaximalEquivalenceClassSizeIncludingOutliers();
-        }
-
-        /**
-         * Returns the minimal size of an equivalence class. 
-         * This number takes into account one additional equivalence class containing all outliers
-         * @return
-         */
-        public int getMinimalEquivalenceClassSizeIncludingOutliers(){
-            return groupStatistics.getMinimalEquivalenceClassSizeIncludingOutliers();
-        }
-
-
-        /**
-         * Returns the maximal size of an equivalence class
-         * @return
-         */
-        public double getAverageEquivalenceClassSize(){
-            return groupStatistics.getAverageEquivalenceClassSize();
-        }
-
-        /**
-         * Returns the maximal size of an equivalence class
-         * @return
-         */
-        public int getMaximalEquivalenceClassSize(){
-            return groupStatistics.getMaximalEquivalenceClassSize();
-        }
-
-        /**
-         * Returns the minimal size of an equivalence class
-         * @return
-         */
-        public int getMinimalEquivalenceClassSize(){
-            return groupStatistics.getMinimalEquivalenceClassSize();
-        }
-
-        /**
-         * Returns the number of equivalence classes in the currently selected data
-         * representation
-         * 
-         * @return
-         */
-        public int getNumberOfGroups() {
-            return groupStatistics.getNumberOfGroups();
-        }
-
-        /**
-         * Returns the number of outlying equivalence classes in the currently selected data
-         * representation
-         * 
-         * @return
-         */
-        public int getNumberOfOutlyingEquivalenceClasses() {
-            return groupStatistics.getNumberOfOutlyingEquivalenceClasses();
-        }
-
-        /**
-         * Returns the number of outliers in the currently selected data
-         * representation
-         * 
-         * @return
-         */
-        public int getNumberOfOutlyingTuples() {
-            return groupStatistics.getNumberOfOutlyingTuples();
-        }
-    }
-
-    /**
-     * A frequency distribution
-     * @author Fabian Prasser
-     *
-     */
-    public static class FrequencyDistribution {
-
-        /** The data values, sorted*/
-        public final String[] values;
-        /** The corresponding frequencies*/
-        public final double[] frequency;
-        /** The total number of data values*/
-        public final int      count;
-
-        /**
-         * Internal constructor
-         * @param items
-         * @param frequency
-         * @param count
-         */
-        private FrequencyDistribution(String[] items, double[] frequency, int count) {
-            this.values = items;
-            this.count = count;
-            this.frequency = frequency;
-        }
-    }
-
-    /**
-     * A contingency table
-     * @author Fabian Prasser
-     */
-    public static class ContingencyTable {
-        
-        /**
-         * An entry in the contingency table
-         * @author Fabian Prasser
-         */
-        public static class Entry {
-            
-            /** Index of the value from the first column*/
-            public int    value1;
-            /** Index of the value from the second column*/
-            public int    value2;
-            /** Associated frequency*/
-            public double frequency;
-            
-            /**
-             * Internal constructor
-             * @param value1
-             * @param value2
-             */
-            private Entry(int value1, int value2){
-                this.value1 = value1;
-                this.value2 = value2;
-            }
-            
-            @Override
-            public int hashCode() {
-                final int prime = 31;
-                int result = 1;
-                result = prime * result + value1;
-                result = prime * result + value2;
-                return result;
-            }
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) return true;
-                if (obj == null) return false;
-                if (getClass() != obj.getClass()) return false;
-                Entry other = (Entry) obj;
-                if (value1 != other.value1) return false;
-                if (value2 != other.value2) return false;
-                return true;
-            }
-        }
-
-        /** The data values from the first column, sorted*/
-        public final String[]        values1;
-        /** The data values from the second column, sorted*/
-        public final String[]        values2;
-        /** The total number of entries in the contingency table*/
-        public final int             count;
-        /** An iterator over the elements in the contingency table*/
-        public final Iterator<ContingencyTable.Entry> iterator;
-
-        /**
-         * Internal constructor
-         * @param value1
-         * @param value2
-         * @param count
-         * @param iterator
-         */
-        private ContingencyTable(String[] value1, String[] value2, int count, 
-                                 Iterator<ContingencyTable.Entry> iterator) {
-            this.values1 = value1;
-            this.values2 = value2;
-            this.count = count;
-            this.iterator = iterator;
-        }
-    }
-
     /** The handle*/
-    private DataHandle handle;
+    private DataHandleStatistics handle;
     
     /** The equivalence class statistics*/
-    private EquivalenceClassStatistics ecStatistics;
+    private StatisticsEquivalenceClasses ecStatistics;
     
     /**
      * Returns the distinct set of data items from the given column
@@ -371,7 +169,7 @@ public class DataStatistics {
      * @param column The column
      * @return
      */
-    public FrequencyDistribution getFrequencyDistribution(int column) {
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column) {
         return getFrequencyDistribution(column, true);
     }
 
@@ -384,7 +182,7 @@ public class DataStatistics {
      *                                 definition (if any)
      * @return
      */
-    public FrequencyDistribution getFrequencyDistribution(int column, boolean orderFromDefinition) {
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, boolean orderFromDefinition) {
         return getFrequencyDistribution(column, getHierarchy(column, orderFromDefinition));
     }
 
@@ -396,7 +194,7 @@ public class DataStatistics {
      * @param hierarchy The hierarchy, may be null      
      * @return
      */
-    public FrequencyDistribution getFrequencyDistribution(int column, Hierarchy hierarchy) {
+    public StatisticsFrequencyDistribution getFrequencyDistribution(int column, Hierarchy hierarchy) {
 
         // Init
         String[] values = getDistinctValuesOrdered(column, hierarchy);
@@ -421,7 +219,7 @@ public class DataStatistics {
         }
         
         // Return
-        return new FrequencyDistribution(values, frequencies, count);
+        return new StatisticsFrequencyDistribution(values, frequencies, count);
     }
 
     /**
@@ -433,7 +231,7 @@ public class DataStatistics {
      * @param column2 The second column
      * @return
      */
-    public ContingencyTable getContingencyTable(int column1, int column2) {
+    public StatisticsContingencyTable getContingencyTable(int column1, int column2) {
         return getContingencyTable(column1, true, column2, true);
     }
 
@@ -450,7 +248,7 @@ public class DataStatistics {
      *                                  definition (if any)
      * @return
      */
-    public ContingencyTable getContingencyTable(int column1, boolean orderFromDefinition1,
+    public StatisticsContingencyTable getContingencyTable(int column1, boolean orderFromDefinition1,
                                                 int column2, boolean orderFromDefinition2) {
         
         return getContingencyTable(column1, getHierarchy(column1, orderFromDefinition1),
@@ -467,7 +265,7 @@ public class DataStatistics {
      * @param hierarchy2  The hierarchy for the second column, may be null
      * @return
      */
-    public ContingencyTable getContingencyTable(int column1, Hierarchy hierarchy1,
+    public StatisticsContingencyTable getContingencyTable(int column1, Hierarchy hierarchy1,
                                                 int column2, Hierarchy hierarchy2) {
 
         // Init
@@ -531,7 +329,7 @@ public class DataStatistics {
         };
 
         // Result result
-        return new ContingencyTable(values1, values2, count, iterator);
+        return new StatisticsContingencyTable(values1, values2, count, iterator);
     }
     
     /**
@@ -617,7 +415,7 @@ public class DataStatistics {
      * Returns statistics about the equivalence classes
      * @return
      */
-    public EquivalenceClassStatistics getEquivalenceClassStatistics(){
+    public StatisticsEquivalenceClasses getEquivalenceClassStatistics(){
         return ecStatistics;
     }
 }

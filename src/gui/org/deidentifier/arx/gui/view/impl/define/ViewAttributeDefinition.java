@@ -364,7 +364,7 @@ public class ViewAttributeDefinition implements IView {
         // TODO: Ugly
         try {
             for (String value : values){
-                type.fromString(value);
+                type.parse(value);
             }
             return true;
         } catch (Exception e){

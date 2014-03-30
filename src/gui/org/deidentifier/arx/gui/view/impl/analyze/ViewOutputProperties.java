@@ -23,7 +23,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
+import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
@@ -207,7 +207,7 @@ public class ViewOutputProperties extends ViewProperties {
         roots.clear();
         
         // Print basic info on outliers
-        EquivalenceClassStatistics statistics = context.handle.getStatistics().getEquivalenceClassStatistics();
+        StatisticsEquivalenceClasses statistics = context.handle.getStatistics().getEquivalenceClassStatistics();
         // TODO: This is because of subset views. Provide statistics as well!
         if (statistics != null) {
             new Property(Resources.getMessage("PropertiesView.41"), new String[] { String.valueOf(statistics.getNumberOfOutlyingTuples()) }); //$NON-NLS-1$
