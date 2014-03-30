@@ -81,7 +81,7 @@ public class ColumnPage extends WizardPage {
         this.wizardImport = wizardImport;
 
         setTitle("Columns");
-        setDescription("Please check and/or modify the settings below");
+        setDescription("Please check and/or modify the detected columns");
 
     }
 
