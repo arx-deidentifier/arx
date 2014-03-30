@@ -390,7 +390,7 @@ public class CsvPage extends WizardPage {
         }
 
         wizardImport.getData().setColumns(columns);
-        wizardImport.getData().setfirstRowContainsHeader(btnContainsHeader.getSelection());
+        wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
         wizardImport.getData().setFileLocation(comboLocation.getText());
         wizardImport.getData().setCsvSeparator(separators[selection]);
 

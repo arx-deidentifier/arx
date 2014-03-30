@@ -146,7 +146,7 @@ public class XlsPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setfirstRowContainsHeader(btnContainsHeader.getSelection());
+                wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
                 readPreview();
 
             }

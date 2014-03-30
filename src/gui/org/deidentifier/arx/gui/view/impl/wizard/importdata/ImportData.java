@@ -159,7 +159,7 @@ public class ImportData {
     /**
      * @param firstRowContainsHeader {@link #firstRowContainsHeader}
      */
-    public void setfirstRowContainsHeader(boolean firstRowContainsHeader)
+    public void setFirstRowContainsHeader(boolean firstRowContainsHeader)
     {
 
         this.firstRowContainsHeader = firstRowContainsHeader;
