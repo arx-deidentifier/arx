@@ -158,7 +158,7 @@ public class HeatmapRenderer {
         Iterator<Entry> iterator = table.iterator;
         while (iterator.hasNext()){
             Entry entry = iterator.next();
-            g.setColor(GRADIENT[(int)(entry.frequency * (GRADIENT.length-1))]);
+            g.setColor(GRADIENT[(int)(entry.frequency / table.maxFrequency * (GRADIENT.length-1))]);
             g.fillRect(entry.value1, entry.value2, 1, 1);
         }
         g.dispose();
