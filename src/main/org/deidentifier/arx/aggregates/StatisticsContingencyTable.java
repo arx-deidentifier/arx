@@ -57,6 +57,8 @@ public class StatisticsContingencyTable {
     public final String[]        values2;
     /** The total number of entries in the contingency table*/
     public final int             count;
+    /** Maximal frequency in the contingency table*/
+    public final double          maxFrequency;
     /** An iterator over the elements in the contingency table*/
     public final Iterator<StatisticsContingencyTable.Entry> iterator;
 
@@ -68,10 +70,11 @@ public class StatisticsContingencyTable {
      * @param iterator
      */
     StatisticsContingencyTable(String[] value1, String[] value2, int count, 
-                             Iterator<StatisticsContingencyTable.Entry> iterator) {
+                               double maxFrequency, Iterator<StatisticsContingencyTable.Entry> iterator) {
         this.values1 = value1;
         this.values2 = value2;
         this.count = count;
+        this.maxFrequency = maxFrequency;
         this.iterator = iterator;
     }
 }

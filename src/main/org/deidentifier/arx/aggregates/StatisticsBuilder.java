@@ -331,13 +331,16 @@ public class StatisticsBuilder {
         }
         
         // Create entry set
+        int max = Integer.MIN_VALUE;
         final Map<Entry, Integer> entries = new HashMap<Entry, Integer>();
         for (int row=0; row<handle.getNumRows(); row++){
             int index1 = indexes1.get(handle.getValue(row, column1));
             int index2 = indexes2.get(handle.getValue(row, column2));
             Entry entry = new Entry(index1, index2);
             Integer previous = entries.get(entry);
-            entries.put(entry, previous != null ? previous + 1 : 1);
+            int value = previous != null ? previous + 1 : 1;
+            max = Math.max(max, value);
+            entries.put(entry, value);
         }
         
         // Create iterator
@@ -377,7 +380,7 @@ public class StatisticsBuilder {
         };
 
         // Result result
-        return new StatisticsContingencyTable(values1, values2, count, iterator);
+        return new StatisticsContingencyTable(values1, values2, count, (double)max/(double)count, iterator);
     }
     /**
      * Returns a contingency table for the given columns. The order for string data items is derived
@@ -438,13 +441,16 @@ public class StatisticsBuilder {
         // Create entry set
         final Map<Entry, Double> entries = new HashMap<Entry, Double>();
         Iterator<Entry> iter = table.iterator;
+        double max = Double.MIN_VALUE;
         while (iter.hasNext()) {
             Entry old = iter.next();
             int index1 = (int)Math.round((double)old.value1 * factor1);
             int index2 = (int)Math.round((double)old.value2 * factor2);
             Entry entry = new Entry(index1, index2);
             Double previous = entries.get(entry);
-            entries.put(entry, previous != null ? previous + old.frequency : old.frequency);
+            double value = previous != null ? previous + old.frequency : old.frequency;
+            max = Math.max(value, max);
+            entries.put(entry, value);
         }
                 
         // Create iterator
@@ -483,7 +489,7 @@ public class StatisticsBuilder {
         };
 
         // Result result
-        return new StatisticsContingencyTable(values1, values2, table.count, iterator);
+        return new StatisticsContingencyTable(values1, values2, table.count, max, iterator);
     }
     
     /**
