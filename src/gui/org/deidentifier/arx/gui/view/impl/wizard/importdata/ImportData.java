@@ -1,10 +1,9 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.io.importdata.Column;
 
 
 /**
@@ -30,9 +29,9 @@ public class ImportData {
     /**
      * List of detected columns to be imported
      *
-     * Each column is represented by {@link ImportDataColumn}.
+     * Each column is represented by {@link Column}.
      */
-    private List<ImportDataColumn> columns;
+    private List<WizardColumn> columns;
 
     /**
      * Location of file to import from
@@ -189,7 +188,7 @@ public class ImportData {
     /**
      * @return {@link #columns}
      */
-    public List<ImportDataColumn> getColumns()
+    public List<WizardColumn> getWizardColumns()
     {
 
         return columns;
@@ -199,7 +198,7 @@ public class ImportData {
     /**
      * @param columns {@link #columns}
      */
-    public void setColumns(List<ImportDataColumn> columns)
+    public void setWizardColumns(List<WizardColumn> columns)
     {
 
         this.columns = columns;
@@ -227,18 +226,26 @@ public class ImportData {
     /**
      * Returns a list of strings containing the data for the given column
      *
-     * @param importDataColumn Column the data should be returned for
+     * @param column Column the data should be returned for
      *
      * @return Data for the given column
      */
-    public List<String> getPreviewDataForColumn(ImportDataColumn importDataColumn) {
+    public List<String> getPreviewData(WizardColumn column) throws Exception {
 
         List<String> result = new ArrayList<String>();
-        int index = importDataColumn.getIndex();
+        int index = columns.indexOf(column);
 
-        for (String[] previewData : getPreviewData()) {
+        if (index != -1) {
 
-            result.add(previewData[index]);
+            for (String[] s : getPreviewData()) {
+
+                result.add(s[index]);
+
+            }
+
+        } else {
+
+            throw new Exception("Column not part of preview data");
 
         }
 
@@ -246,64 +253,31 @@ public class ImportData {
 
     }
 
-    public Iterator<String[]> getIterator() throws Exception {
-
-        if (!isWizardFinished()) {
-
-            throw new Exception("Wizard is not yet finished");
-
-        }
-
-        return new ImportDataIterator(this);
-
-    }
-
     /**
-     * @return Returns array of datatypes for enabled columns
-     * @throws Exception Cannot be invoked when wizard is not yet finished
+     * Returns a list of {@link Column} with elements that are enabled
+     *
+     * {@link WizardColumn} is a wrapper for the wizard. These elements can
+     * be disabled by the user. This method will only return those elements
+     * that are enabled.
+     *
+     * @return {@link Column} List of enabled elements
      */
-    public DataType<?>[] getColumnDatatypes() throws Exception {
+    public List<Column> getEnabledColumns()
+    {
 
-        if (!isWizardFinished()) {
+        List<Column> result = new ArrayList<Column>();
 
-            throw new Exception("Wizard is not yet finished");
-
-        }
-
-        List<DataType<?>> resultList = new ArrayList<DataType<?>>();
-
-        for (ImportDataColumn column : columns) {
+        for (WizardColumn column : columns) {
 
             if (column.isEnabled()) {
 
-                resultList.add(column.getDatatype());
+                result.add(column.getColumn());
 
             }
 
         }
 
-        return resultList.toArray(new DataType[resultList.size()]);
-
-    }
-
-    /**
-     * @return Number of columns enabled
-     */
-    public int getNumberOfEnabledColumns() {
-
-        int i = 0;
-
-        for (ImportDataColumn column : columns) {
-
-            if (column.isEnabled()) {
-
-                i++;
-
-            }
-
-        }
-
-        return i;
+        return result;
 
     }
 

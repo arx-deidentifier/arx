@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.importdata.CSVImportAdapter;
+import org.deidentifier.arx.io.importdata.Column;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -36,7 +38,7 @@ public class CsvPage extends WizardPage {
 
     private ImportDataWizard wizardImport;
 
-    private ArrayList<ImportDataColumn> columns;
+    private ArrayList<WizardColumn> wizardColumns;
 
     private Label lblLocation;
     private Combo comboLocation;
@@ -248,27 +250,82 @@ public class CsvPage extends WizardPage {
 
     }
 
-    private void readPreview(String string) throws IOException {
+    private void readPreview(String string) throws Exception {
 
-        final CSVDataInput in = new CSVDataInput(comboLocation.getText(), separators[selection]);
+        /*
+         * Parameters from the user interface
+         */
+        final String location = comboLocation.getText();
+        final char separator = separators[selection];
+        final boolean containsHeader = btnContainsHeader.getSelection();
+
+        /*
+         * Variables needed for processing
+         */
+        final CSVDataInput in = new CSVDataInput(location, separator);
         final Iterator<String[]> it = in.iterator();
-        final List<String[]> data = new ArrayList<String[]>();
-        columns = new ArrayList<ImportDataColumn>();
+        final ArrayList<String[]> previewData = new ArrayList<String[]>();
+        final String[] firstLine;
 
+        /*
+         * Check whether there is at least one line in file and retrieve it
+         */
+        if (it.hasNext()) {
+
+            firstLine = it.next();
+
+        } else {
+
+            throw new Exception("No data in file");
+
+        }
+
+        /*
+         * Initialize {@link #allColumns}
+         */
+        wizardColumns = new ArrayList<WizardColumn>();
+        List<Column> columns = new ArrayList<Column>();
+
+        /*
+         * Iterate over columns and add it to {@link #allColumns}
+         */
+        for (int i = 0; i < firstLine.length; i++) {
+
+            Column column = new Column(i, DataType.STRING);
+            WizardColumn wizardColumn = new WizardColumn(column);
+
+            wizardColumns.add(wizardColumn);
+            columns.add(column);
+
+        }
+
+        /*
+         * Create import adapter and pass detected columns to it
+         */
+        CSVImportAdapter importAdapter = new CSVImportAdapter(location, separator, containsHeader);
+        importAdapter.setColumns(columns);
+
+        /*
+         * Get up to {ImportData#previewDataMaxLines} lines for previewing
+         */
         int count = 0;
+        while (importAdapter.hasNext() && (count <= ImportData.previewDataMaxLines)) {
 
-        while (it.hasNext() && (count < ImportData.previewDataMaxLines)) {
-
-            data.add(it.next());
+            previewData.add(importAdapter.next());
             count++;
 
         }
 
         in.close();
 
-        if (data.size() == 0) {
+        /*
+         * Remove first entry as it contains name of columns
+         */
+        previewData.remove(0);
 
-            return;
+        if (previewData.size() == 0) {
+
+            throw new Exception("No preview data in file");
 
         }
 
@@ -300,7 +357,7 @@ public class CsvPage extends WizardPage {
             @Override
             public String getToolTipText(Object element) {
 
-                int row = data.indexOf(element);
+                int row = previewData.indexOf(element);
 
                 return "Row: " + (row + 1) + ", Column: " + (column + 1);
 
@@ -308,41 +365,30 @@ public class CsvPage extends WizardPage {
 
         }
 
-        int index = 0;
-        for (final String s : data.get(0)) {
-
-            ImportDataColumn column = new ImportDataColumn(false, s, DataType.STRING);
-            column.setIndex(index);
+        for (WizardColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(index++));
+            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(column.getColumn().getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
 
             if (btnContainsHeader.getSelection()) {
 
-                tableColumn.setText(s);
-                tableColumn.setToolTipText("Column #" + index);
-
-            } else {
-
-                column.setName("Column #" + index);
+                tableColumn.setText(column.getColumn().getName());
+                tableColumn.setToolTipText("Column #" + column.getColumn().getIndex());
 
             }
 
             ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
 
-            columns.add(column);
-
         }
 
-        this.wizardImport.getData().setColumns(columns);
+        this.wizardImport.getData().setWizardColumns(wizardColumns);
 
         if (btnContainsHeader.getSelection()) {
 
             tablePreview.setHeaderVisible(true);
-            data.remove(0);
 
         } else {
 
@@ -350,8 +396,8 @@ public class CsvPage extends WizardPage {
 
         }
 
-        tableViewerPreview.setInput(data);
-        wizardImport.getData().setPreviewData(data);
+        tableViewerPreview.setInput(previewData);
+        wizardImport.getData().setPreviewData(previewData);
 
         tablePreview.setVisible(true);
         tablePreview.layout();
@@ -381,7 +427,7 @@ public class CsvPage extends WizardPage {
 
             readPreview(comboLocation.getText());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
 
             setErrorMessage("Error while trying to access the file");
 
@@ -389,7 +435,7 @@ public class CsvPage extends WizardPage {
 
         }
 
-        wizardImport.getData().setColumns(columns);
+        wizardImport.getData().setWizardColumns(wizardColumns);
         wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
         wizardImport.getData().setFileLocation(comboLocation.getText());
         wizardImport.getData().setCsvSeparator(separators[selection]);

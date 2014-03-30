@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
+import org.deidentifier.arx.io.importdata.Column;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -101,25 +102,19 @@ public class PreviewPage extends WizardPage {
 
             }
 
-            List<ImportDataColumn> columns = wizardImport.getData().getColumns();
+            List<Column> columns = wizardImport.getData().getEnabledColumns();
 
-            for (int i = 0; i < columns.size(); i++) {
+            for (Column column : columns) {
 
-                ImportDataColumn column = columns.get(i);
+                TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+                tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(column.getIndex()));
 
-                if (column.isEnabled()) {
+                TableColumn tblclmnColumn = tableViewerColumn.getColumn();
+                tblclmnColumn.setToolTipText("Datatype: " + column.getDatatype());
+                tblclmnColumn.setWidth(100);
+                tblclmnColumn.setText(column.getName());
 
-                    TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-                    tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(i));
-
-                    TableColumn tblclmnColumn = tableViewerColumn.getColumn();
-                    tblclmnColumn.setToolTipText("Datatype: " + column.getDatatype());
-                    tblclmnColumn.setWidth(100);
-                    tblclmnColumn.setText(column.getName());
-
-                    ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
-
-                }
+                ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
 
             }
 
@@ -183,7 +178,7 @@ public class PreviewPage extends WizardPage {
         @Override
         public String getToolTipText(Object element) {
 
-            DataType<?> datatype = wizardImport.getData().getColumns().get(column).getDatatype();
+            DataType<?> datatype = wizardImport.getData().getWizardColumns().get(column).getColumn().getDatatype();
 
             String result = "Datatype: " + datatype.getDescription().getLabel();
 

@@ -60,7 +60,7 @@ public class TablePage extends WizardPage {
 
                 ((ImportDataColumn)event.getElement()).setEnabled(event.getChecked());
 
-                for (ImportDataColumn column : wizardImport.getData().getColumns()) {
+                for (ImportDataColumn column : wizardImport.getData().getWizardColumns()) {
 
                     if (column.isEnabled()) {
 

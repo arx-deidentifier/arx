@@ -7,6 +7,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.io.importdata.Column;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -15,6 +16,7 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -66,7 +68,7 @@ public class ColumnPage extends WizardPage {
     /**
      * Indicator for the next action of {@link ColumnEnabledSelectionListener}
      */
-    private Boolean selectAll = true;
+    private boolean selectAll = false;
 
     /**
      * Creates a new instance of this page and sets its title and description
@@ -101,6 +103,31 @@ public class ColumnPage extends WizardPage {
          */
         checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
+        checkboxTableViewer.setCheckStateProvider(new ICheckStateProvider() {
+
+            /**
+             * No element should be grayed out
+             */
+            @Override
+            public boolean isGrayed(Object column)
+            {
+
+                return false;
+
+            }
+
+            /**
+             * @return {@link WizardColumn#isEnabled()}
+             */
+            @Override
+            public boolean isChecked(Object column)
+            {
+
+                return ((WizardColumn)column).isEnabled();
+
+            }
+
+        });
         checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
 
             /**
@@ -115,9 +142,9 @@ public class ColumnPage extends WizardPage {
 
                 setPageComplete(false);
 
-                ((ImportDataColumn)event.getElement()).setEnabled(event.getChecked());
+                ((WizardColumn)event.getElement()).setEnabled(event.getChecked());
 
-                for (ImportDataColumn column : wizardImport.getData().getColumns()) {
+                for (WizardColumn column : wizardImport.getData().getWizardColumns()) {
 
                     if (column.isEnabled()) {
 
@@ -197,8 +224,8 @@ public class ColumnPage extends WizardPage {
          * Actual column for {@link tableViewerColumnEnabled}
          */
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
-        tblclmnEnabled.setToolTipText("Select all");
-        tblclmnEnabled.setText("SA");
+        tblclmnEnabled.setToolTipText("Deselect all");
+        tblclmnEnabled.setText("DA");
         tblclmnEnabled.setWidth(40);
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
@@ -210,15 +237,15 @@ public class ColumnPage extends WizardPage {
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Gets name of cells from  {@link ImportDataColumn#getName()}
+             * Gets name of cells from  {@link WizardColumn#getColumn()}
              */
             @Override
             public String getText(Object element)
             {
 
-                ImportDataColumn column = (ImportDataColumn)element;
+                WizardColumn column = (WizardColumn)element;
 
-                return column.getName();
+                return column.getColumn().getName();
 
             }
 
@@ -240,13 +267,13 @@ public class ColumnPage extends WizardPage {
         tableViewerColumnDatatype.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Gets datatype of cells from {@link ImportDataColumn#getDatatype()}
+             * Gets datatype of cells from {@link WizardColumn#getDatatype()}
              */
             @Override
             public String getText(Object element)
             {
 
-                DataType<?> column = ((ImportDataColumn) element).getDatatype();
+                DataType<?> column = ((WizardColumn) element).getColumn().getDatatype();
 
                 for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
 
@@ -282,7 +309,7 @@ public class ColumnPage extends WizardPage {
              * Returns datatype format of cells
              *
              * This retrieves the datatype for each cell by invoking
-             * {@link ImportDataColumn#getDatatype()} and returns the format
+             * {@link WizardColumn#getColumn()} and returns the format
              * {@link DataTypeWithFormat#getFormat()} of it for each column
              * that actually has a datatype format defined. In case of simple
              * datatypes without a format specifier an empty string gets
@@ -294,7 +321,7 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                DataType<?> column = ((ImportDataColumn) element).getDatatype();
+                DataType<?> column = ((WizardColumn) element).getColumn().getDatatype();
 
                 if (column instanceof DataTypeWithFormat) {
 
@@ -370,7 +397,8 @@ public class ColumnPage extends WizardPage {
 
         if (visible) {
 
-            checkboxTableViewer.setInput(wizardImport.getData().getColumns());
+            checkboxTableViewer.setInput(wizardImport.getData().getWizardColumns());
+            setPageComplete((wizardImport.getData().getWizardColumns().size() > 0));
 
         }
 
@@ -423,11 +451,11 @@ public class ColumnPage extends WizardPage {
         private void setChecked(int i, Boolean check) {
 
             table.getItem(i).setChecked(check);
-            wizardImport.getData().getColumns().get(i).setEnabled(check);
+            wizardImport.getData().getWizardColumns().get(i).setEnabled(check);
 
             setPageComplete(false);
 
-            for (ImportDataColumn column : wizardImport.getData().getColumns()) {
+            for (WizardColumn column : wizardImport.getData().getWizardColumns()) {
 
                 if (column.isEnabled()) {
 
@@ -450,7 +478,7 @@ public class ColumnPage extends WizardPage {
      * This allows to change the name of columns with the column page
      * {@link ColumnPage}. The modifications are performed within a simple text
      * field {@link TextCellEditor}. The name itself is stored with the
-     * appropriate {@link ImportDataColumn} object.
+     * appropriate {@link WizardColumn#column} object.
      */
     public class NameEditingSupport extends EditingSupport {
 
@@ -497,24 +525,24 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Gets name of column ({@link ImportDataColumn#getName()})
+         * Gets name of column ({@link WizardColumn#getColumn()})
          */
         @Override
         protected Object getValue(Object arg0)
         {
 
-            return ((ImportDataColumn)arg0).getName();
+            return ((WizardColumn)arg0).getColumn().getName();
 
         }
 
         /**
-         * Sets name of column ({@link ImportDataColumn#setName(String)})
+         * Sets name of column ({@link WizardColumn#getColumn()})
          */
         @Override
         protected void setValue(Object element, Object value)
         {
 
-            ((ImportDataColumn)element).setName((String)value);
+            ((WizardColumn)element).getColumn().setName((String)value);
             getViewer().update(element, null);
 
         }
@@ -528,7 +556,7 @@ public class ColumnPage extends WizardPage {
      * This allows to change the datatype of columns with the column page
      * {@link ColumnPage}. The modifications are performed with a combo box
      * {@link ComboBoxCellEditor}. The datatype itself is stored with the
-     * appropriate {@link ImportDataColumn} object.
+     * appropriate {@link WizardColumn} object.
      */
     public class DatatypeEditingSupport extends EditingSupport {
 
@@ -568,7 +596,9 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Indicate that all cells within this column can be edited
+         * Indicates that all enabled cells within this column can be edited
+         *
+         * @param column The column that the editor should be returned for
          */
         @Override
         protected boolean canEdit(Object arg0)
@@ -589,14 +619,11 @@ public class ColumnPage extends WizardPage {
 
         }
 
-        /**
-         * Returns index of datatype for given column
-         */
         @Override
         protected Object getValue(Object element)
         {
 
-            DataType<?> datatype = ((ImportDataColumn)element).getDatatype();
+            DataType<?> datatype = ((WizardColumn)element).getColumn().getDatatype();
 
             int i = 0;
 
@@ -617,40 +644,44 @@ public class ColumnPage extends WizardPage {
 
         }
 
-        /**
-         * Sets new datatype for given column
-         *
-         * Internally this function makes use of
-         * {@link ImportDataColumn#setDatatype(Class)}. The values itself are
-         * taken from {@link #choices}. The format string that can be provided
-         * by the user is retrieved using
-         * {@link Controller#actionShowFormatInputDialog(String, String,
-         * DataTypeDescription, java.util.Collection)}.
-         */
         @Override
         protected void setValue(Object element, Object value)
         {
 
             String label = choices[(int) value];
+            WizardColumn wizardColumn = (WizardColumn)element;
+            Column column = wizardColumn.getColumn();
+            List<String> previewData;
 
-            for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
+            try {
 
-                if (DataTypeDescription.getLabel().equals(label)) {
+                previewData = wizardImport.getData().getPreviewData(wizardColumn);
+
+            } catch (Exception e) {
+
+                return;
+
+            }
+
+            for (DataTypeDescription<?> description : DataType.LIST) {
+
+                if (description.getLabel().equals(label)) {
 
                     DataType<?> datatype = null;
 
-                    if (DataTypeDescription.hasFormat()) {
+                    if (description.hasFormat()) {
 
                         final Controller controller = wizardImport.getController();
-                        final String format;
+                        String format = null;
 
-                        if (((ImportDataColumn)element).getDatatype() instanceof DataTypeWithFormat) {
+                        if (column.getDatatype().getClass() == description.newInstance().getClass()) {
 
                             format = controller.actionShowFormatInputDialog(
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
-                                ((DataTypeWithFormat)((ImportDataColumn)element).getDatatype()).getFormat(),
-                                DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))
+                                ((DataTypeWithFormat)column.getDatatype()).getFormat(),
+                                description,
+                                previewData
                             );
 
                         } else {
@@ -658,14 +689,15 @@ public class ColumnPage extends WizardPage {
                             format = controller.actionShowFormatInputDialog(
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
-                                DataTypeDescription, wizardImport.getData().getPreviewDataForColumn(((ImportDataColumn)element))
+                                description,
+                                previewData
                             );
 
                         }
 
                         if (format != null) {
 
-                            datatype = DataTypeDescription.newInstance(format);
+                            datatype = description.newInstance(format);
 
                         } else {
 
@@ -681,14 +713,14 @@ public class ColumnPage extends WizardPage {
                         /*
                          * Datatype has no format
                          */
-                        datatype = DataTypeDescription.newInstance();
+                        datatype = description.newInstance();
 
                     }
 
                     /*
                      * Apply datatype
                      */
-                    ((ImportDataColumn)element).setDatatype(datatype);
+                    column.setDatatype(datatype);
                     getViewer().update(element, null);
 
                     return;
