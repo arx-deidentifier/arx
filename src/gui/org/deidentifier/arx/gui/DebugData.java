@@ -18,8 +18,6 @@
 
 package org.deidentifier.arx.gui;
 
-import java.util.ArrayList;
-
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleSubset;
@@ -32,8 +30,6 @@ import org.deidentifier.arx.gui.model.Model;
  */
 public class DebugData {
     
-    private ArrayList<String> list = new ArrayList<String>();
-
     /**
      * Returns some debug data
      * @param Model The model
@@ -57,11 +53,6 @@ public class DebugData {
             builder.append(" - Output\n");
             builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle()));
             builder.append("   * Output: ").append(getDebugData("             ", model.getOutput()));
-        }
-        
-        builder.append("\nAdditional\n");
-        for (String s : list){
-            builder.append(" - ").append(s).append("\n");
         }
         
         return builder.toString();
@@ -103,12 +94,4 @@ public class DebugData {
         return builder.toString();
     }    
     
-    /**
-     * Add some additional data
-     * @param data
-     * @return
-     */
-    protected void addData(String data){
-        this.list.add(data);
-    }
 }
