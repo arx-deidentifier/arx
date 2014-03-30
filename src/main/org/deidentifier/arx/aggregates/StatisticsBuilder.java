@@ -397,6 +397,9 @@ public class StatisticsBuilder {
                                                           int column2,
                                                           int size2,
                                                           Hierarchy hierarchy2) {
+        
+        // Check
+        if (size1 <= 0 || size2 <= 0) throw new IllegalArgumentException("Size must be > 0");
 
         // Obtain default table
         StatisticsContingencyTable table = getContingencyTable(column1,
