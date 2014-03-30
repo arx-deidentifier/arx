@@ -24,6 +24,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -59,6 +60,8 @@ public class ColumnPage extends WizardPage {
     private TableViewerColumn tableViewerColumnEnabled;
     private TableColumn tblclmnFormat;
     private TableViewerColumn tableViewerColumnFormat;
+    private Button btnUp;
+    private Button btnDown;
 
     /**
      * Indicator for the next action of {@link ColumnEnabledSelectionListener}
@@ -91,7 +94,7 @@ public class ColumnPage extends WizardPage {
         Composite container = new Composite(parent, SWT.NULL);
 
         setControl(container);
-        container.setLayout(new GridLayout(1, false));
+        container.setLayout(new GridLayout(2, false));
 
         /*
          * TableViewer for the columns with a checkbox in each row
@@ -135,7 +138,41 @@ public class ColumnPage extends WizardPage {
          */
         table = checkboxTableViewer.getTable();
         table.setHeaderVisible(true);
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+        table.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                /*
+                 * Check for first item
+                 */
+                if (table.getSelectionIndex() == 0) {
+
+                    btnUp.setEnabled(false);
+
+                } else {
+
+                    btnUp.setEnabled(true);
+
+                }
+
+                /*
+                 * Check for last item
+                 */
+                if (table.getSelectionIndex() == table.getItemCount() - 1) {
+
+                    btnDown.setEnabled(false);
+
+                } else {
+
+                    btnDown.setEnabled(true);
+
+                }
+
+            }
+
+        });
 
         /*
          * Pseudo column to make checkboxes appear in a cell
@@ -279,6 +316,41 @@ public class ColumnPage extends WizardPage {
         tblclmnFormat.setToolTipText("Format of the associated datatype");
         tblclmnFormat.setWidth(100);
         tblclmnFormat.setText("Format");
+
+        /*
+         * Buttons to move columns up or down
+         */
+        btnUp = new Button(container, SWT.NONE);
+        btnUp.setText("Move up");
+        btnUp.setImage(wizardImport.getController().getResources().getImage("arrow_up.png"));
+        btnUp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        btnUp.setEnabled(false);
+        btnUp.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                // Dummy
+
+            }
+
+        });
+
+        btnDown = new Button(container, SWT.NONE);
+        btnDown.setText("Move down");
+        btnDown.setImage(wizardImport.getController().getResources().getImage("arrow_down.png"));
+        btnDown.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        btnDown.setEnabled(false);
+        btnDown.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                // Dummy
+
+            }
+
+        });
 
         /*
          * Wait for at least one column to be enabled
