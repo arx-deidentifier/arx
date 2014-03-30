@@ -209,7 +209,7 @@ public class ViewInputProperties extends ViewProperties {
 
         // Obtain the right handle
         final DataHandle data;
-        if (config.getInput() == null) {
+        if (config == null || config.getInput() == null) {
             reset();
             return;
         } else {
@@ -217,7 +217,7 @@ public class ViewInputProperties extends ViewProperties {
         }
 
         // Clear if nothing to draw
-        if ((config == null) || (data == null)) {
+        if (data == null) {
             reset();
             return;
         }
