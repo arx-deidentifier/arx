@@ -152,6 +152,8 @@ public class HeatmapRenderer {
                                                   BufferedImage.TYPE_INT_ARGB);
         
         Graphics2D g = (Graphics2D)heatmap.getGraphics();
+        g.setColor(GRADIENT[0]);
+        g.fillRect(0, 0, heatmap.getWidth(), heatmap.getHeight());
         
         Iterator<Entry> iterator = table.iterator;
         while (iterator.hasNext()){
