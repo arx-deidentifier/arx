@@ -561,7 +561,6 @@ public abstract class DataType<T> implements Serializable {
             } else {
                 return s1.compareTo(s2);
             }
-            
         }
 
         @Override
