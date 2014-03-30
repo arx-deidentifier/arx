@@ -254,11 +254,11 @@ public class HeatmapRenderer {
                 g2d.setColor(Color.black);
                 g2d.setFont(FONT);
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                drawText(attribute2, g2d, OFFSET_LEFT, OFFSET_TOP + height+4, width, 10);
+                drawText(attribute1, g2d, OFFSET_LEFT, OFFSET_TOP + height+4, width, 10);
     
                 // y label
                 g2d.rotate(Math.PI / 2);
-                drawText(attribute1, g2d, OFFSET_TOP, -OFFSET_LEFT+4, height, 10);            
+                drawText(attribute2, g2d, OFFSET_TOP, -OFFSET_LEFT+4, height, 10);            
                 g2d.rotate(-Math.PI / 2);
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             }
