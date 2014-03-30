@@ -65,6 +65,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
 import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportDataWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -74,6 +75,7 @@ import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 
 import cern.colt.Swapper;
 
@@ -518,21 +520,9 @@ public class Controller implements IView {
             return;
         }
 
-        // Check
-        final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
-        if (path == null) { return; }
+        WizardDialog dialog = new WizardDialog(main.getShell(), new ImportDataWizard(this, model));
+        dialog.open();
 
-        // Separator
-        final DialogSeparator dialog = new DialogSeparator(main.getShell(),
-                                                           this,
-                                                           path,
-                                                           true);
-        dialog.create();
-        if (dialog.open() == Window.CANCEL) {
-            return;
-        } else {
-            actionImportData(path, dialog.getSeparator());
-        }
     }
 
     /**
