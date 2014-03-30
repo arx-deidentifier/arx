@@ -109,6 +109,16 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
+        public boolean isValid(String s) {
+            try {
+                format.format(s);
+                return true;
+            } catch (Exception e){
+                return false;
+            }
+        }
+
+        @Override
         public DataTypeDescription<Date> getDescription(){
             return description;
         }
@@ -209,6 +219,20 @@ public abstract class DataType<T> implements Serializable {
                 } catch (ParseException e) {
                     throw new NumberFormatException(e.getMessage());
                 }
+            }
+        }
+
+        @Override
+        public boolean isValid(String s) {
+            try {
+                if (format==null){
+                    Double.valueOf(s);
+                } else {
+                    format.format(s);
+                }
+                return true;
+            } catch (Exception e){
+                return false;
             }
         }
 
@@ -349,6 +373,20 @@ public abstract class DataType<T> implements Serializable {
                 return format.format(s);
             }
         }
+        
+        @Override
+        public boolean isValid(String s) {
+            try {
+                if (format==null){
+                    Long.valueOf(s);
+                } else {
+                    format.format(s);
+                }
+                return true;
+            } catch (Exception e){
+                return false;
+            }
+        }
     }
 
     /**
@@ -410,6 +448,11 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public String format(String s){
         	return s;
+        }
+
+        @Override
+        public boolean isValid(String s) {
+            return true;
         }
     }
 
@@ -657,4 +700,11 @@ public abstract class DataType<T> implements Serializable {
      * @return
      */
     public abstract String format(T t);
+
+    /**
+     * Checks whether the given string conforms to the data type's format
+     * @param s
+     * @return
+     */
+    public abstract boolean isValid(String s);
 }
