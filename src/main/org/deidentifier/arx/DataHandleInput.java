@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
@@ -98,7 +99,7 @@ public class DataHandleInput extends DataHandle {
         this.dataTypes = getDataTypeArray();
         
         // Create statistics
-        this.statistics = new DataStatistics(this, null);
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), null);
     }
 
     @Override

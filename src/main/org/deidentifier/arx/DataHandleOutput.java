@@ -23,7 +23,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
@@ -150,7 +151,7 @@ public class DataHandleOutput extends DataHandle {
                                final DataManager manager,
                                final Data buffer,
                                final ARXNode node,
-                               final EquivalenceClassStatistics statistics,
+                               final StatisticsEquivalenceClasses statistics,
                                final String suppressionString,
                                final DataDefinition definition,
                                final boolean removeOutliers,
@@ -163,7 +164,7 @@ public class DataHandleOutput extends DataHandle {
         this.removeOutliers = removeOutliers;
         this.suppressionString = suppressionString;
         this.definition = definition;
-        this.statistics = new DataStatistics(this, statistics);
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), statistics);
         this.node = node;
 
         // Extract data

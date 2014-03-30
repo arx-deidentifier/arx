@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.deidentifier.arx.DataStatistics.EquivalenceClassStatistics;
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 
 
 /**
@@ -34,13 +35,13 @@ public class DataHandleSubset extends DataHandle {
      * @param subset
      * @param eqStatistics
      */
-    public DataHandleSubset(DataHandle source, DataSubset subset, EquivalenceClassStatistics eqStatistics) {
+    public DataHandleSubset(DataHandle source, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        this.statistics = new DataStatistics(this, eqStatistics);
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), eqStatistics);
     }
 
     @Override
