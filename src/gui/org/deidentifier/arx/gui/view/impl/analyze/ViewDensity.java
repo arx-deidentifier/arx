@@ -44,28 +44,28 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ViewDensity extends Panel implements IView {
 
-    /** Static stuff*/
-    private static final int           MAX_SIZE     = 500;
-    /** Static stuff*/
-    private static final long          serialVersionUID  = 5938131772944084967L;
-    /** The bridge */
-    private final Composite     bridge;
-    /** The bridge */
-    private final Frame         frame;
-    /** Internal stuff */
-    private final Controller    controller;
-    /** Internal stuff */
-    private final ModelPart     reset;
-    /** Internal stuff */
-    private final ModelPart     target;
-    /** Internal stuff */
-    private Model               model;
-    /** Internal stuff */
-    private AnalysisContext     context          = new AnalysisContext();
+    /** Static stuff */
+    private static final int  MAX_SIZE         = 500;
+    /** Static stuff */
+    private static final long serialVersionUID = 5938131772944084967L;
     /** The background color */
-    private Color               background       = null;
+    private Color             background       = null;
+    /** The bridge */
+    private final Composite   bridge;
+    /** Internal stuff */
+    private AnalysisContext   context          = new AnalysisContext();
+    /** Internal stuff */
+    private final Controller  controller;
+    /** The bridge */
+    private final Frame       frame;
+    /** Internal stuff */
+    private Model             model;
     /** Renderer */
-    private HeatmapRenderer renderer         = null;
+    private HeatmapRenderer   renderer         = null;
+    /** Internal stuff */
+    private final ModelPart   reset;
+    /** Internal stuff */
+    private final ModelPart   target;
 
 	/**
 	 * Creates a new density plot
