@@ -18,13 +18,18 @@
 
 package org.deidentifier.arx;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides access to the data types supported by the ARX framework
@@ -388,7 +393,7 @@ public abstract class DataType<T> implements Serializable {
             }
         }
     }
-
+    
     /**
      * Base class for string types
      * @author Fabian Prasser
@@ -427,7 +432,7 @@ public abstract class DataType<T> implements Serializable {
 
         @Override
         public String parse(String s) {
-        	return s;
+            return s;
         }
         
         @Override
@@ -447,12 +452,150 @@ public abstract class DataType<T> implements Serializable {
 
         @Override
         public String format(String s){
-        	return s;
+            return s;
         }
 
         @Override
         public boolean isValid(String s) {
             return true;
+        }
+    }
+    
+    /**
+     * Base class for ordered string types
+     * @author Fabian Prasser
+     */
+    public static class ARXOrderedString extends DataType<String> {
+        
+        private static final long serialVersionUID = -830897705078418835L;
+        
+        private Map<String, Integer> order;
+        
+        /**
+         * Creates a new instance
+         */
+        private ARXOrderedString(){
+            this.order = null;
+        }
+        
+        /**
+         * Creates a new instance
+         * @param format Ordered list of string separated by line feeds
+         */
+        private ARXOrderedString(String format){
+            try {
+                this.order = new HashMap<String, Integer>(); 
+                BufferedReader reader = new BufferedReader(new StringReader(format));
+                int index = 0;
+                String line = reader.readLine();
+                while (line != null) {
+                    if (this.order.put(line, index) != null) {
+                        throw new IllegalArgumentException("Duplicate value '"+line+"'");
+                    }
+                    line = reader.readLine();
+                    index++;
+                }
+                reader.close();
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Error reading input data");
+            }
+        }
+
+        /**
+         * Creates a new instance
+         * @param format Ordered list of strings
+         */
+        private ARXOrderedString(String[] format){
+            this.order = new HashMap<String, Integer>(); 
+            for (int i=0; i< format.length; i++){
+                if (this.order.put(format[i], i) != null) {
+                    throw new IllegalArgumentException("Duplicate value '"+format[i]+"'");
+                }
+            }
+        }
+
+        /**
+         * Creates a new instance
+         * @param format Ordered list of strings
+         */
+        private ARXOrderedString(List<String> format){
+            this.order = new HashMap<String, Integer>(); 
+            for (int i=0; i< format.size(); i++){
+                if (this.order.put(format.get(i), i) != null) {
+                    throw new IllegalArgumentException("Duplicate value '"+format.get(i)+"'");
+                }
+            }
+        }
+        
+        /** The description of the data type*/
+        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()){
+            
+            private static final long serialVersionUID = -6300869938311742699L;
+            @Override public DataType<String> newInstance() { return ORDERED_STRING; }
+            @Override public DataType<String> newInstance(String format) {return ORDERED_STRING(format);}
+        };
+        
+        @Override
+        public DataType<String> clone() {
+            return this;
+        }
+        
+        @Override
+        public int compare(final String s1, final String s2) {
+            if (order != null){
+                return order.get(s1).compareTo(order.get(s2));
+            } else {
+                return s1.compareTo(s2);
+            }
+            
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) { return true; }
+            if (obj == null) { return false; }
+            if (getClass() != obj.getClass()) { return false; }
+            return true;
+        }
+
+        @Override
+        public String parse(String s) {
+            if (order != null && !order.containsKey(s)) {
+                throw new IllegalArgumentException("Unknown string '"+s+"'");
+            }
+        	return s;
+        }
+        
+        @Override
+        public DataTypeDescription<String> getDescription(){
+            return description;
+        }
+
+        @Override
+        public int hashCode() {
+            return ARXOrderedString.class.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+            return "OrderedString";
+        }
+
+        @Override
+        public String format(String s){
+            if (order != null && !order.containsKey(s)) {
+                throw new IllegalArgumentException("Unknown string '"+s+"'");
+            }
+        	return s;
+        }
+
+        @Override
+        public boolean isValid(String s) {
+            if (order != null && !order.containsKey(s)) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 
@@ -554,9 +697,42 @@ public abstract class DataType<T> implements Serializable {
     /** A string data type */
     public static final DataType<String>             STRING  = new ARXString();
 
+    /** A ordered string data type */
+    public static final DataType<String>             ORDERED_STRING  = new ARXOrderedString();
+
     /** Provides a list of all available data types */
     public static final List<DataTypeDescription<?>> LIST    = listDataTypes();
-
+    
+    /**
+     * A ordered string type with given format. 
+     * 
+     * @param format List of ordered strings
+     * @return
+     */
+    public static final DataType<String> ORDERED_STRING(final List<String> format) {
+        return new ARXOrderedString(format);
+    }
+    
+    /**
+     * A ordered string type with given format. 
+     * 
+     * @param format List of ordered strings
+     * @return
+     */
+    public static final DataType<String> ORDERED_STRING(final String[] format) {
+        return new ARXOrderedString(format);
+    }
+    
+    /**
+     * A ordered string type with given format. 
+     * 
+     * @param format List of ordered strings separated by line feeds
+     * @return
+     */
+    public static final DataType<String> ORDERED_STRING(final String format) {
+        return new ARXOrderedString(format);
+    }
+    
     /**
      * A date data type with given format
      * 
@@ -612,6 +788,7 @@ public abstract class DataType<T> implements Serializable {
     private static final List<DataTypeDescription<?>> listDataTypes(){
         List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
         list.add(STRING.getDescription());
+        list.add(ORDERED_STRING.getDescription());
         list.add(DATE.getDescription());
         list.add(DECIMAL.getDescription());
         list.add(INTEGER.getDescription());
