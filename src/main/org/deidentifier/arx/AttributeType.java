@@ -35,7 +35,7 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
  * 
  * @author Prasser, Kohlmayer
  */
-public class AttributeType implements Serializable {
+public class AttributeType implements Serializable, Cloneable {
     
     private static final long serialVersionUID = -7358540408016873823L;
 
