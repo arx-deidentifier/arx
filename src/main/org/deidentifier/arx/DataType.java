@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -465,7 +467,7 @@ public abstract class DataType<T> implements Serializable {
      * Base class for ordered string types
      * @author Fabian Prasser
      */
-    public static class ARXOrderedString extends DataType<String> {
+    public static class ARXOrderedString extends DataType<String> implements DataTypeWithFormat {
         
         private static final long serialVersionUID = -830897705078418835L;
         
@@ -483,21 +485,25 @@ public abstract class DataType<T> implements Serializable {
          * @param format Ordered list of string separated by line feeds
          */
         private ARXOrderedString(String format){
-            try {
-                this.order = new HashMap<String, Integer>(); 
-                BufferedReader reader = new BufferedReader(new StringReader(format));
-                int index = 0;
-                String line = reader.readLine();
-                while (line != null) {
-                    if (this.order.put(line, index) != null) {
-                        throw new IllegalArgumentException("Duplicate value '"+line+"'");
+            if (format.equals("")) {
+                this.order = null;
+            } else {
+                try {
+                    this.order = new HashMap<String, Integer>(); 
+                    BufferedReader reader = new BufferedReader(new StringReader(format));
+                    int index = 0;
+                    String line = reader.readLine();
+                    while (line != null) {
+                        if (this.order.put(line, index) != null) {
+                            throw new IllegalArgumentException("Duplicate value '"+line+"'");
+                        }
+                        line = reader.readLine();
+                        index++;
                     }
-                    line = reader.readLine();
-                    index++;
+                    reader.close();
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error reading input data");
                 }
-                reader.close();
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Error reading input data");
             }
         }
 
@@ -506,10 +512,14 @@ public abstract class DataType<T> implements Serializable {
          * @param format Ordered list of strings
          */
         private ARXOrderedString(String[] format){
-            this.order = new HashMap<String, Integer>(); 
-            for (int i=0; i< format.length; i++){
-                if (this.order.put(format[i], i) != null) {
-                    throw new IllegalArgumentException("Duplicate value '"+format[i]+"'");
+            if (format.length == 0) {
+                this.order = null;
+            } else {
+                this.order = new HashMap<String, Integer>(); 
+                for (int i=0; i< format.length; i++){
+                    if (this.order.put(format[i], i) != null) {
+                        throw new IllegalArgumentException("Duplicate value '"+format[i]+"'");
+                    }
                 }
             }
         }
@@ -519,10 +529,14 @@ public abstract class DataType<T> implements Serializable {
          * @param format Ordered list of strings
          */
         private ARXOrderedString(List<String> format){
-            this.order = new HashMap<String, Integer>(); 
-            for (int i=0; i< format.size(); i++){
-                if (this.order.put(format.get(i), i) != null) {
-                    throw new IllegalArgumentException("Duplicate value '"+format.get(i)+"'");
+            if (format.size()==0) {
+                this.order = null;
+            } else {
+                this.order = new HashMap<String, Integer>(); 
+                for (int i=0; i< format.size(); i++){
+                    if (this.order.put(format.get(i), i) != null) {
+                        throw new IllegalArgumentException("Duplicate value '"+format.get(i)+"'");
+                    }
                 }
             }
         }
@@ -596,6 +610,27 @@ public abstract class DataType<T> implements Serializable {
             } else {
                 return true;
             }
+        }
+
+        @Override
+        public String getFormat() {
+            if (order == null) return "";
+            List<String> list = new ArrayList<String>();
+            list.addAll(order.keySet());
+            Collections.sort(list, new Comparator<String>(){
+                @Override
+                public int compare(String arg0, String arg1) {
+                    return order.get(arg0).compareTo(order.get(arg1));
+                } 
+            });
+            StringBuilder b = new StringBuilder();
+            for (int i=0; i<list.size(); i++) {
+                b.append(list.get(i));
+                if (i<list.size()-1) {
+                    b.append("\n");
+                }
+            }
+            return b.toString();
         }
     }
 
