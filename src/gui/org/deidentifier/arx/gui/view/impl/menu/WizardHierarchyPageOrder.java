@@ -248,7 +248,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
         // TODO: Ugly
         try {
             for (String value : values){
-                type.fromString(value);
+                type.parse(value);
             }
             return true;
         } catch (Exception e){

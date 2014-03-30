@@ -116,7 +116,7 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDate) {
-            return ((ARXDate)type).fromString(value);
+            return ((ARXDate)type).parse(value);
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -145,9 +145,9 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).fromString(value);
+            return ((ARXDecimal)type).parse(value);
         } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value);
+            return ((ARXInteger)type).parse(value);
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -167,9 +167,9 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXDecimal) {
-            return ((ARXDecimal)type).fromString(value).floatValue();
+            return ((ARXDecimal)type).parse(value).floatValue();
         } else if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value).floatValue();
+            return ((ARXInteger)type).parse(value).floatValue();
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -197,7 +197,7 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value).intValue();
+            return ((ARXInteger)type).parse(value).intValue();
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
@@ -217,7 +217,7 @@ public abstract class DataHandle{
         String value = getValue(row, col);
         DataType<?> type = getDataType(getAttributeName(col));
         if (type instanceof ARXInteger) {
-            return ((ARXInteger)type).fromString(value);
+            return ((ARXInteger)type).parse(value);
         } else {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }

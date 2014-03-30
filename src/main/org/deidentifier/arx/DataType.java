@@ -100,7 +100,7 @@ public abstract class DataType<T> implements Serializable {
         }
         
         @Override
-        public Date fromString(String s) {
+        public Date parse(String s) {
         	try {
 				return format.parse(s);
 			} catch (ParseException e) {
@@ -130,7 +130,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public String toString(Date s){
+        public String format(Date s){
         	return format.format(s);
         }
     }
@@ -185,7 +185,7 @@ public abstract class DataType<T> implements Serializable {
         
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
-            return fromString(s1).compareTo(fromString(s2));
+            return parse(s1).compareTo(parse(s2));
         }
 
         @Override
@@ -200,7 +200,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public Double fromString(String s) {
+        public Double parse(String s) {
             if (format==null){
                 return Double.valueOf(s);
             } else {
@@ -234,7 +234,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public String toString(Double s){
+        public String format(Double s){
             if (format==null){
                 return String.valueOf(s);
             } else {
@@ -293,7 +293,7 @@ public abstract class DataType<T> implements Serializable {
         
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
-            return fromString(s1).compareTo(fromString(s2));
+            return parse(s1).compareTo(parse(s2));
         }
 
         @Override
@@ -308,7 +308,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public Long fromString(String s) {
+        public Long parse(String s) {
             if (format==null){
                 return Long.valueOf(s);
             } else {
@@ -342,7 +342,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public String toString(Long s){
+        public String format(Long s){
             if (format==null){
                 return String.valueOf(s);
             } else {
@@ -388,7 +388,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public String fromString(String s) {
+        public String parse(String s) {
         	return s;
         }
         
@@ -408,7 +408,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public String toString(String s){
+        public String format(String s){
         	return s;
         }
     }
@@ -643,7 +643,7 @@ public abstract class DataType<T> implements Serializable {
      * @param s
      * @return
      */
-    public abstract T fromString(String s);
+    public abstract T parse(String s);
 
     /**
      * Returns a description of the data type
@@ -656,5 +656,5 @@ public abstract class DataType<T> implements Serializable {
      * @param t
      * @return
      */
-    public abstract String toString(T t);
+    public abstract String format(T t);
 }

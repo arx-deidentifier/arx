@@ -313,7 +313,7 @@ public class MainWindow implements IView {
                 }
                 for (final String value : values) {
                     try {
-                        type.fromString(value);
+                        type.parse(value);
                     } catch (final Exception e) {
                         return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
                     }
