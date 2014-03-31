@@ -38,7 +38,7 @@ abstract public class ImportAdapter implements Iterator<String[]> {
 
         for (Column column : getColumns()) {
 
-                result.add(column.getDatatype());
+            result.add(column.getDatatype());
 
         }
 
