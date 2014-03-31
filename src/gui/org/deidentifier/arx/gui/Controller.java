@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -670,6 +671,21 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows an input dialog for ordering data items
+     * @param title The dialog's title
+     * @param text The dialog's text
+     * @param type The data type
+     * @param values The values 
+     */
+    public boolean showOrderValuesDialog(final String title,
+                                      final String text,
+                                      final DataType<?> type,
+                                      final String[] values) {
+        
+        return main.showOrderValuesDialog(title, text, type, values);
+    }
+
+    /**
      * Shows a dialog for selecting a format string for a data type
      * @param title The dialog's title
      * @param text The dialog's text
@@ -686,6 +702,23 @@ public class Controller implements IView {
         
         return main.showFormatInputDialog(title, text, preselected, type, values);
     }
+
+    /**
+     * Shows a dialog for selecting a format string for a data type
+     * @param title The dialog's title
+     * @param text The dialog's text
+     * @param type The description of the data type for which to choose a format string
+     * @param values The values to check the format string against
+     * @return The format string, or <code>null</code> if no format was (or could be) selected 
+     */
+    public String actionShowFormatInputDialog(final String title,
+                                              final String text,
+                                              final DataTypeDescription<?> type,
+                                              final String[] values) {
+        
+        return main.showFormatInputDialog(title, text, null, type, Arrays.asList(values));
+    }
+
     /**
      * Shows a dialog for selecting a format string for a data type
      * @param title The dialog's title

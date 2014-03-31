@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -230,10 +231,20 @@ public class ViewAttributeDefinition implements IView {
                         DataType<?> type;
 
                         // Open format dialog
-                        if (description.hasFormat()) {
+                        if (description.getLabel().equals("OrderedString")) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValues());
+                            String[] array = getValuesAsArray();
+                            boolean ok = controller.showOrderValuesDialog(text1, text2, DataType.STRING, array);
+                            if (!ok) {
+                                type = DataType.STRING;
+                            } else {
+                                type = DataType.ORDERED_STRING(array);
+                            }
+                        } else if (description.hasFormat()) {
+                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValuesAsList());
                             if (format == null) {
                                 type = DataType.STRING;
                             } else {
@@ -241,7 +252,7 @@ public class ViewAttributeDefinition implements IView {
                             }
                         } else {
                             type = description.newInstance();
-                            if (!isValidDataType(type, getValues())) {
+                            if (!isValidDataType(type, getValuesAsList())) {
                                 type = DataType.STRING;
                             }
                         }
@@ -348,20 +359,23 @@ public class ViewAttributeDefinition implements IView {
         }
         throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
     }
-    
     /**
-     * Create an iterator over the values in the column for this attribute
+     * Create an array of the values in the column for this attribute
      * 
      * @return
      */
-    private Collection<String> getValues() {
-
+    private String[] getValuesAsArray() {
         final DataHandle h = model.getInputConfig().getInput().getHandle();
-        final List<String> vals = new ArrayList<String>();
-        for (final String s : h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute))) {
-            vals.add(s);
-        }
-        return vals;
+        return h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute));
+    }
+    
+    /**
+     * Create a collection of the values in the column for this attribute
+     * 
+     * @return
+     */
+    private Collection<String> getValuesAsList() {
+        return Arrays.asList(getValuesAsArray());
     }
 
     /**

@@ -40,11 +40,12 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
+import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
-import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.worker.Worker;
@@ -272,6 +273,24 @@ public class MainWindow implements IView {
 		t.printStackTrace(pw);
 		final String trace = sw.toString();
 		showErrorDialog(header, message, trace);
+    }
+
+    /**
+     * Shows an input dialog for ordering data items
+     * @param header
+     * @param text
+     * @param type
+     * @param values
+     * @return
+     */
+    public boolean showOrderValuesDialog(final String header,
+                                        final String text,
+                                        final DataType<?> type,
+                                        final String[] values) {
+        
+        // Open dialog
+        int status = new DialogOrderSelection(shell, values, type, controller).open();
+        return (status == Window.OK);
     }
 
     /**
