@@ -1,6 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
@@ -354,10 +355,25 @@ public class ColumnPage extends WizardPage {
         btnUp.setEnabled(false);
         btnUp.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * Swaps the current element with the one above
+             *
+             * This makes also sure that the button is disabled once the top is
+             * reached by notifying the appropriate selection listener.
+             */
             @Override
             public void widgetSelected(SelectionEvent e) {
 
-                // Dummy
+                int current = table.getSelectionIndex();
+
+                if (current > 0) {
+
+                    List<WizardColumn> columns = wizardImport.getData().getWizardColumns();
+                    Collections.swap(columns, current, current - 1);
+                    checkboxTableViewer.setInput(columns);
+                    table.notifyListeners(SWT.Selection, null);
+
+                }
 
             }
 
@@ -370,10 +386,25 @@ public class ColumnPage extends WizardPage {
         btnDown.setEnabled(false);
         btnDown.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * Swaps the current element with the one below
+             *
+             * This makes also sure that the button is disabled once the bottom
+             * is reached by notifying the appropriate selection listener.
+             */
             @Override
             public void widgetSelected(SelectionEvent e) {
 
-                // Dummy
+                int current = table.getSelectionIndex();
+
+                if (current < table.getItemCount() - 1) {
+
+                    List<WizardColumn> columns = wizardImport.getData().getWizardColumns();
+                    Collections.swap(columns, current, current + 1);
+                    checkboxTableViewer.setInput(columns);
+                    table.notifyListeners(SWT.Selection, null);
+
+                }
 
             }
 
