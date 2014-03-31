@@ -43,7 +43,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
-import org.deidentifier.arx.gui.view.impl.menu.DialogFormatSelection;
+import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
@@ -342,7 +342,7 @@ public class MainWindow implements IView {
         formats.addAll(description.getExampleFormats());
         
         // Open dialog
-        final DialogFormatSelection dlg = new DialogFormatSelection(shell,
+        final DialogComboSelection dlg = new DialogComboSelection(shell,
                                                                     header,
                                                                     text,
                                                                     formats.toArray(new String[]{}),

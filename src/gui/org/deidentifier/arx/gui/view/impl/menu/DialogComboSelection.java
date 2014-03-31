@@ -41,11 +41,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A selection dialog for format strings. 
+ * A selection dialog for elements from a combo box. 
  * 
  * @author Fabian Prasser
  */
-public class DialogFormatSelection extends Dialog {
+public class DialogComboSelection extends Dialog {
     /**
      * The title of the dialog.
      */
@@ -113,12 +113,12 @@ public class DialogFormatSelection extends Dialog {
      * @param validator
      *            an input validator, or <code>null</code> if none
      */
-    public DialogFormatSelection(Shell parentShell,
-                                 String dialogTitle,
-                                 String dialogMessage,
-                                 String[] choices,
-                                 String initialValue,
-                                 IInputValidator validator) {
+    public DialogComboSelection(Shell parentShell,
+                                String dialogTitle,
+                                String dialogMessage,
+                                String[] choices,
+                                String initialValue,
+                                IInputValidator validator) {
         super(parentShell);
         this.title = dialogTitle;
         message = dialogMessage;
