@@ -614,9 +614,9 @@ public class ColumnPage extends WizardPage {
 
             List<String> labels = new ArrayList<String>();
 
-            for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
+            for (DataTypeDescription<?> description : DataType.LIST) {
 
-                labels.add(DataTypeDescription.getLabel());
+                labels.add(description.getLabel());
 
             }
 
