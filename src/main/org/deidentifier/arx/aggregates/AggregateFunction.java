@@ -18,6 +18,7 @@
 package org.deidentifier.arx.aggregates;
 
 import java.text.ParseException;
+import java.util.Arrays;
 
 import org.deidentifier.arx.DataType;
 
@@ -59,8 +60,9 @@ public abstract class AggregateFunction<T extends DataType<?>> {
 
     /** 
      * An aggregate function that returns a set of the prefixes of the data values 
+     * @param length The length of the prefixes
      */
-    public static final AggregateFunction<DataType<?>> PREFIX(final int length){
+    public static final AggregateFunction<DataType<?>> SET_OF_PREFIXES(final int length){
         
         return new AggregateFunction<DataType<?>>(){
             @Override
@@ -79,11 +81,66 @@ public abstract class AggregateFunction<T extends DataType<?>> {
     }
     
     /** 
-     * An aggregate function that returns a set of the prefixes 
+     * An aggregate function that returns a set of prefixes 
      * of length 1 of the data values 
      */
-    public static final AggregateFunction<DataType<?>> PREFIX = PREFIX(1);
+    public static final AggregateFunction<DataType<?>> SET_OF_PREFIXES = SET_OF_PREFIXES(1);
 
+    /** 
+     * An aggregate function that returns a set of prefixes 
+     * of length 1 of the data values 
+     */
+    public static final AggregateFunction<DataType<?>> COMMON_PREFIX = COMMON_PREFIX('*');
+
+
+    /** 
+     * An aggregate function that returns a common prefix 
+     * @param redaction A character that should be used for redacting the remaining characters, or
+     *                  <code> null</code>, if no redaction is to be performed.
+     */
+    public static final AggregateFunction<DataType<?>> COMMON_PREFIX(final Character redaction){
+        return new AggregateFunction<DataType<?>>(){
+            
+            @Override
+            public String aggregate(String[] values, DataType<?> type) {
+                
+                // Determine length
+                int length = Integer.MIN_VALUE;
+                if (redaction != null) {
+                    for (String s : values) {
+                        length = Math.max(length, s.length());
+                    }
+                }
+                
+                // Determine largest common prefix
+                int position = 0;
+                boolean found = true;
+                outer: while (found) {
+                    char c = values[0].charAt(position);
+                    for (int i = 1; i < values.length; i++) {
+                        if (values[i].charAt(position) != c) {
+                            found = false;
+                            break outer;
+                        }
+                    }
+                    position++;
+                }
+                position--;
+                char[] result;
+                if (redaction != null){
+                    result = new char[length];
+                    Arrays.fill(result, position+1, length-1, redaction);
+                } else {
+                    result = new char[position+1];
+                }
+                for (int i=0; i<=position; i++) {
+                    result[i] = values[0].charAt(i);
+                }
+                return new String(result);
+            }
+        };
+    }
+    
     /** 
      * An aggregate function that returns an interval [min, max] 
      */

@@ -40,11 +40,12 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
+import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
-import org.deidentifier.arx.gui.view.impl.menu.DialogFormatSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.worker.Worker;
@@ -275,6 +276,28 @@ public class MainWindow implements IView {
     }
 
     /**
+     * Shows an input dialog for ordering data items
+     * @param header
+     * @param text
+     * @param type
+     * @param values
+     * @return
+     */
+    public String[] showOrderValuesDialog(final String header,
+                                          final String text,
+                                          final DataType<?> type,
+                                          final String[] values) {
+        
+        // Open dialog
+        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
+        if (dlg.open() == Window.OK) {
+            return dlg.getResult();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Shows an input dialog for selecting formats string for data types
      * @param header
      * @param text
@@ -342,7 +365,7 @@ public class MainWindow implements IView {
         formats.addAll(description.getExampleFormats());
         
         // Open dialog
-        final DialogFormatSelection dlg = new DialogFormatSelection(shell,
+        final DialogComboSelection dlg = new DialogComboSelection(shell,
                                                                     header,
                                                                     text,
                                                                     formats.toArray(new String[]{}),

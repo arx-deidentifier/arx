@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,7 +28,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.DataType.DataTypeDescription;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -45,6 +48,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * This view displays basic attribute information.
@@ -71,6 +75,7 @@ public class ViewAttributeDefinition implements IView {
 
     private final Controller             controller;
     private final Combo                  dataTypeCombo;
+    private final Text                   dataTypeText;
     private final ViewHierarchy          editor;
     private final Image                  IMAGE_IDENTIFYING;
     private final Image                  IMAGE_INSENSITIVE;
@@ -117,7 +122,7 @@ public class ViewAttributeDefinition implements IView {
         final Composite type = new Composite(group, SWT.NULL);
         type.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout typeInputGridLayout = new GridLayout();
-        typeInputGridLayout.numColumns = 4;
+        typeInputGridLayout.numColumns = 6;
         type.setLayout(typeInputGridLayout);
 
         final IView outer = this;
@@ -226,31 +231,49 @@ public class ViewAttributeDefinition implements IView {
                         DataType<?> type;
 
                         // Open format dialog
-                        if (description.hasFormat()) {
+                        if (description.getLabel().equals("OrderedString")) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValues());
+                            String[] array = controller.actionShowOrderValuesDialog(text1, text2, DataType.STRING, getValuesAsArray());
+                            if (array == null) {
+                                type = DataType.STRING;
+                            } else {
+                                type = DataType.ORDERED_STRING(array);
+                                if (!isValidDataType(type, getValuesAsList())) {
+                                    type = DataType.STRING;
+                                }
+                            }
+                        } else if (description.hasFormat()) {
+                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValuesAsList());
                             if (format == null) {
                                 type = DataType.STRING;
-                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
                             } else {
                                 type = description.newInstance(format);
                             }
                         } else {
                             type = description.newInstance();
-                            if (!isValidDataType(type, getValues())) {
+                            if (!isValidDataType(type, getValuesAsList())) {
                                 type = DataType.STRING;
-                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
                             }
                         }
 
                         // Set and update
                         model.getInputConfig().getInput().getDefinition().setDataType(attribute, type);
+                        updateDataType();
                         controller.update(new ModelEvent(outer, ModelPart.DATA_TYPE, attribute));
                     }
                 }
             }
         });
+
+        final Label kLabel3 = new Label(type, SWT.PUSH);
+        kLabel3.setText(Resources.getMessage("AttributeDefinitionView.10")); //$NON-NLS-1$
+        dataTypeText = new Text(type, SWT.READ_ONLY | SWT.BORDER);
+        dataTypeText.setLayoutData(SWTUtil.createFillGridData());
+        dataTypeText.setEditable(false);
+        dataTypeText.setText("");
 
         // Editor hierarchy
         editor = new ViewHierarchy(group, attribute, controller);
@@ -275,7 +298,7 @@ public class ViewAttributeDefinition implements IView {
 
     @Override
     public void reset() {
-        // Nothing to do
+        dataTypeText.setText("");
     }
 
     @Override
@@ -338,20 +361,23 @@ public class ViewAttributeDefinition implements IView {
         }
         throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
     }
-    
     /**
-     * Create an iterator over the values in the column for this attribute
+     * Create an array of the values in the column for this attribute
      * 
      * @return
      */
-    private Collection<String> getValues() {
-
+    private String[] getValuesAsArray() {
         final DataHandle h = model.getInputConfig().getInput().getHandle();
-        final List<String> vals = new ArrayList<String>();
-        for (final String s : h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute))) {
-            vals.add(s);
-        }
-        return vals;
+        return h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute));
+    }
+    
+    /**
+     * Create a collection of the values in the column for this attribute
+     * 
+     * @return
+     */
+    private Collection<String> getValuesAsList() {
+        return Arrays.asList(getValuesAsArray());
     }
 
     /**
@@ -361,15 +387,12 @@ public class ViewAttributeDefinition implements IView {
      * @return
      */
     private boolean isValidDataType(DataType<?> type, Collection<String> values){
-        // TODO: Ugly
-        try {
-            for (String value : values){
-                type.parse(value);
+        for (String value : values){
+            if (!type.isValid(value)) {
+                return false;
             }
-            return true;
-        } catch (Exception e){
-            return false;
         }
+        return true;
     }
 
     /** 
@@ -402,6 +425,20 @@ public class ViewAttributeDefinition implements IView {
                                     .getDataType(attribute);
         
         dataTypeCombo.select(getIndexOfDataType(dtype));
+        
+        if (!(dtype instanceof ARXOrderedString) && 
+            dtype.getDescription().hasFormat()) {
+            
+            DataTypeWithFormat dtwf = (DataTypeWithFormat)dtype;
+            String format = dtwf.getFormat();
+            if (format==null) {
+                dataTypeText.setText("Default");
+            } else {
+                dataTypeText.setText(format);
+            }
+        } else {
+            dataTypeText.setText("Default");
+        }
     }
 
     /**

@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 
 /**
@@ -32,9 +31,39 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public class HierarchyBuilderIntervalBased<T extends DataType<?>> implements Serializable {
+public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends HierarchyBuilderGroupingBased<T> {
     
     private static final long serialVersionUID = 3663874945543082808L;
+
+    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
+    
+    /**
+     * Creates a new instance
+     * @param type
+     */
+    public HierarchyBuilderIntervalBased(T type) {
+        super(type);
+    }
+
+    /**
+     * Adds the given fanout
+     * @param fanout
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> add(Interval<T> fanout) {
+        this.intervals.add(fanout);
+        return this;
+    }
+
+    /**
+     * Removes the given fanout
+     * @param fanout
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> remove(Interval<T> fanout) {
+        this.intervals.remove(fanout);
+        return this;
+    }
 
     /**
      * This class represents an interval
@@ -44,30 +73,64 @@ public class HierarchyBuilderIntervalBased<T extends DataType<?>> implements Ser
         
         private static final long serialVersionUID = 5985820929677249525L;
         
-        private List<Interval<T>> children;
-        private T type;
         private String min;
         private String max;
         private AggregateFunction<T> function;
 
-        public Interval(String min, String max, T type, AggregateFunction<T> function, List<Interval<T>> children) {
+        /**
+         * Creates a new instance
+         * @param min
+         * @param max
+         * @param function
+         */
+        public Interval(String min, String max, AggregateFunction<T> function) {
             this.min = min;
             this.max = max;
-            this.type = type;
             this.function = function;
-            this.children = children;
         }
 
-        public Interval(String min, String max, T type, AggregateFunction<T> function) {
-            this(min, max, type, function, new ArrayList<Interval<T>>());
+        /**
+         * @return the min
+         */
+        public String getMin() {
+            return min;
         }
-        
-        public void add(Interval<T> child){
-            this.children.add(child);
+
+        /**
+         * @return the max
+         */
+        public String getMax() {
+            return max;
+        }
+
+        /**
+         * @return the function
+         */
+        public AggregateFunction<T> getFunction() {
+            return function;
         }
     }
     
-    public Hierarchy create(String[] data, T type, Interval<T> interval){
+    @Override
+    protected int getBaseLevel() {
+        return 0;
+    }
+
+    @Override
+    protected String getBaseLabel(int index) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected void prepare() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected String internalIsValid() {
+        // TODO Auto-generated method stub
         return null;
     }
 }
