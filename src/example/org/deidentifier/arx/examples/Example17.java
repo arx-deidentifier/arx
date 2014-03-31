@@ -86,5 +86,8 @@ public class Example17 extends Example {
         DataHandle handle = data.getHandle();
         double value1 = handle.getDouble(2, 2);
         Date value2 = handle.getDate(2, 5);
+        
+        System.out.println("Double: "+value1);
+        System.out.println("Date: "+value2);
     }
 }
