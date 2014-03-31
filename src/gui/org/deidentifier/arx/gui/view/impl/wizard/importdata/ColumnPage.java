@@ -616,6 +616,15 @@ public class ColumnPage extends WizardPage {
 
             for (DataTypeDescription<?> description : DataType.LIST) {
 
+                /*
+                 * Remove OrderedString from list of choices for now
+                 */
+                if (description.newInstance().getClass() == DataType.ORDERED_STRING.getClass()) {
+
+                    continue;
+
+                }
+
                 labels.add(description.getLabel());
 
             }
