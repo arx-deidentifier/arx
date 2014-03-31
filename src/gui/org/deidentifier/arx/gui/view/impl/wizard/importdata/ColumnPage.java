@@ -274,13 +274,13 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                DataType<?> column = ((WizardColumn) element).getColumn().getDatatype();
+                DataType<?> datatype = ((WizardColumn) element).getColumn().getDatatype();
 
-                for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
+                for (DataTypeDescription<?> description : DataType.LIST) {
 
-                    if (DataTypeDescription.newInstance().getClass() == column.getClass()) {
+                    if (description.newInstance().getClass() == datatype.getClass()) {
 
-                        return DataTypeDescription.getLabel();
+                        return description.getLabel();
 
                     }
 
@@ -661,9 +661,9 @@ public class ColumnPage extends WizardPage {
 
             int i = 0;
 
-            for (DataTypeDescription<?> DataTypeDescription : DataType.LIST) {
+            for (DataTypeDescription<?> description : DataType.LIST) {
 
-                if (DataTypeDescription.newInstance().getClass() == datatype.getClass()) {
+                if (description.newInstance().getClass() == datatype.getClass()) {
 
                     return i;
 
