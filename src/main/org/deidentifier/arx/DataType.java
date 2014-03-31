@@ -92,7 +92,11 @@ public abstract class DataType<T> implements Serializable {
 
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
-            return format.parse(s1).compareTo(format.parse(s2));
+            try {
+                return format.parse(s1).compareTo(format.parse(s2));
+            } catch (Exception e){
+                throw new IllegalArgumentException("Invalid value", e);
+            }
         }
 
         @Override
@@ -202,7 +206,11 @@ public abstract class DataType<T> implements Serializable {
         
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
-            return parse(s1).compareTo(parse(s2));
+            try {
+                return parse(s1).compareTo(parse(s2));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid value", e);
+            }
         }
 
         @Override
@@ -324,7 +332,11 @@ public abstract class DataType<T> implements Serializable {
         
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
-            return parse(s1).compareTo(parse(s2));
+            try {
+                return parse(s1).compareTo(parse(s2));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid value", e);
+            }
         }
 
         @Override
@@ -557,7 +569,11 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public int compare(final String s1, final String s2) {
             if (order != null){
-                return order.get(s1).compareTo(order.get(s2));
+                try {
+                    return order.get(s1).compareTo(order.get(s2));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Invalid value", e);
+                }
             } else {
                 return s1.compareTo(s2);
             }

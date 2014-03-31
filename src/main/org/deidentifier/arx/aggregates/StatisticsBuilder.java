@@ -132,8 +132,13 @@ public class StatisticsBuilder {
 
             // Create base order
             Set<String> baseSet = new HashSet<String>();
+            DataType<?> baseType = handle.getBaseDataType(attribute);
             for (int i = 0; i < _hierarchy.length; i++) {
-                baseSet.add(_hierarchy[i][0]);
+                String element = _hierarchy[i][0];
+                // Make sure that only elements from the hierarchy
+                // are added that are included in the data
+                // TODO: Calling isValid is only a work-around
+                if (baseType.isValid(element)) baseSet.add(element);
             }
             String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
             sort(baseArray, handle.getBaseDataType(attribute));
@@ -145,9 +150,11 @@ public class StatisticsBuilder {
             // Build higher level order from base order
             for (int i = 0; i < _hierarchy.length; i++) {
                 if (!order.containsKey(_hierarchy[i][level])) {
-                    int position = baseOrder.get(_hierarchy[i][0]);
-                    order.put(_hierarchy[i][level], position);
-                    max = Math.max(position, max) + 1;
+                    Integer position = baseOrder.get(_hierarchy[i][0]);
+                    if (position != null) {
+                        order.put(_hierarchy[i][level], position);
+                        max = Math.max(position, max) + 1;
+                    }
                 }
             }
             
