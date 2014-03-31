@@ -118,7 +118,7 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public boolean isValid(String s) {
             try {
-                format.format(s);
+                format.parse(s);
                 return true;
             } catch (Exception e){
                 return false;
@@ -235,7 +235,7 @@ public abstract class DataType<T> implements Serializable {
                 if (format==null){
                     Double.valueOf(s);
                 } else {
-                    format.format(s);
+                    format.parse(s);
                 }
                 return true;
             } catch (Exception e){
@@ -387,7 +387,7 @@ public abstract class DataType<T> implements Serializable {
                 if (format==null){
                     Long.valueOf(s);
                 } else {
-                    format.format(s);
+                    format.parse(s);
                 }
                 return true;
             } catch (Exception e){
