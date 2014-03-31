@@ -236,8 +236,6 @@ public class ViewAttributeDefinition implements IView {
                             final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValues());
                             if (format == null) {
                                 type = DataType.STRING;
-                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
-                                dataTypeText.setText("Default");
                             } else {
                                 type = description.newInstance(format);
                             }
@@ -245,13 +243,12 @@ public class ViewAttributeDefinition implements IView {
                             type = description.newInstance();
                             if (!isValidDataType(type, getValues())) {
                                 type = DataType.STRING;
-                                dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
-                                dataTypeText.setText("Default");
                             }
                         }
 
                         // Set and update
                         model.getInputConfig().getInput().getDefinition().setDataType(attribute, type);
+                        updateDataType();
                         controller.update(new ModelEvent(outer, ModelPart.DATA_TYPE, attribute));
                     }
                 }
@@ -264,7 +261,6 @@ public class ViewAttributeDefinition implements IView {
         dataTypeText.setLayoutData(SWTUtil.createFillGridData());
         dataTypeText.setEditable(false);
         dataTypeText.setText("");
-        dataTypeText.setEnabled(false);
 
         // Editor hierarchy
         editor = new ViewHierarchy(group, attribute, controller);
