@@ -596,15 +596,19 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Indicates that all enabled cells within this column can be edited
-         *
-         * @param column The column that the editor should be returned for
+         * Indicates that enabled cells within this column can be edited
          */
         @Override
-        protected boolean canEdit(Object arg0)
+        protected boolean canEdit(Object column)
         {
 
-            return true;
+            if (((WizardColumn) column).isEnabled()) {
+
+                return true;
+
+            }
+
+            return false;
 
         }
 
