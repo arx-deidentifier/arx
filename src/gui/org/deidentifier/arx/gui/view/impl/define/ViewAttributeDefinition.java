@@ -424,7 +424,7 @@ public class ViewAttributeDefinition implements IView {
         
         dataTypeCombo.select(getIndexOfDataType(dtype));
         
-        if (dtype instanceof ARXOrderedString || 
+        if (!(dtype instanceof ARXOrderedString) && 
             dtype.getDescription().hasFormat()) {
             
             DataTypeWithFormat dtwf = (DataTypeWithFormat)dtype;
