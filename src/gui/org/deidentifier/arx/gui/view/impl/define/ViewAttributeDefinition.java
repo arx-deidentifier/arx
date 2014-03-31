@@ -234,9 +234,8 @@ public class ViewAttributeDefinition implements IView {
                         if (description.getLabel().equals("OrderedString")) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            String[] array = getValuesAsArray();
-                            boolean ok = controller.showOrderValuesDialog(text1, text2, DataType.STRING, array);
-                            if (!ok) {
+                            String[] array = controller.actionShowOrderValuesDialog(text1, text2, DataType.STRING, getValuesAsArray());
+                            if (array == null) {
                                 type = DataType.STRING;
                             } else {
                                 type = DataType.ORDERED_STRING(array);

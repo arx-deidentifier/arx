@@ -283,14 +283,18 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public boolean showOrderValuesDialog(final String header,
-                                        final String text,
-                                        final DataType<?> type,
-                                        final String[] values) {
+    public String[] showOrderValuesDialog(final String header,
+                                          final String text,
+                                          final DataType<?> type,
+                                          final String[] values) {
         
         // Open dialog
-        int status = new DialogOrderSelection(shell, values, type, controller).open();
-        return (status == Window.OK);
+        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
+        if (dlg.open() == Window.OK) {
+            return dlg.getResult();
+        } else {
+            return null;
+        }
     }
 
     /**

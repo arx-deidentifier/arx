@@ -677,10 +677,10 @@ public class Controller implements IView {
      * @param type The data type
      * @param values The values 
      */
-    public boolean showOrderValuesDialog(final String title,
-                                      final String text,
-                                      final DataType<?> type,
-                                      final String[] values) {
+    public String[] actionShowOrderValuesDialog(final String title,
+                                                final String text,
+                                                final DataType<?> type,
+                                                final String[] values) {
         
         return main.showOrderValuesDialog(title, text, type, values);
     }
