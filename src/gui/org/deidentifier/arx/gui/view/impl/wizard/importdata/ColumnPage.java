@@ -621,7 +621,6 @@ public class ColumnPage extends WizardPage {
             }
 
             choices = labels.toArray(new String[labels.size()]);
-
             editor = new ComboBoxCellEditor(viewer.getTable(), choices, SWT.READ_ONLY);
 
         }
