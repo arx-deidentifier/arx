@@ -237,6 +237,7 @@ public class ViewAttributeDefinition implements IView {
                             if (format == null) {
                                 type = DataType.STRING;
                                 dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
+                                dataTypeText.setText("Default");
                             } else {
                                 type = description.newInstance(format);
                             }
@@ -245,6 +246,7 @@ public class ViewAttributeDefinition implements IView {
                             if (!isValidDataType(type, getValues())) {
                                 type = DataType.STRING;
                                 dataTypeCombo.select(getIndexOfDataType(DataType.STRING));
+                                dataTypeText.setText("Default");
                             }
                         }
 
@@ -257,7 +259,7 @@ public class ViewAttributeDefinition implements IView {
         });
 
         final Label kLabel3 = new Label(type, SWT.PUSH);
-        kLabel3.setText(Resources.getMessage("AttributeDefinitionView.11")); //$NON-NLS-1$
+        kLabel3.setText(Resources.getMessage("AttributeDefinitionView.10")); //$NON-NLS-1$
         dataTypeText = new Text(type, SWT.READ_ONLY | SWT.BORDER);
         dataTypeText.setLayoutData(SWTUtil.createFillGridData());
         dataTypeText.setEditable(false);
