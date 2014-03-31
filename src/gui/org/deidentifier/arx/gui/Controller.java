@@ -255,8 +255,6 @@ public class Controller implements IView {
         // Break if no output
         if (model.getOutput() == null) return;
 
-        // TODO: Make sure that statistics are updated as well
-        
         // Update
         boolean val = !model.getViewConfig().isSubset();
         this.model.getViewConfig().setSubset(val);
@@ -650,17 +648,17 @@ public class Controller implements IView {
     }
 
     /**
-     * Shows the "debug" dialog
-     */
-    public void actionMenuHelpDebug() {
-        main.showDebugDialog();
-    }
-
-    /**
      * Shows the "about" dialog
      */
     public void actionMenuHelpAbout() {
         main.showAboutDialog();
+    }
+
+    /**
+     * Shows the "debug" dialog
+     */
+    public void actionMenuHelpDebug() {
+        main.showDebugDialog();
     }
 
     /**
@@ -671,36 +669,28 @@ public class Controller implements IView {
     }
 
     /**
-     * Shows an input dialog for ordering data items
-     * @param title The dialog's title
-     * @param text The dialog's text
-     * @param type The data type
-     * @param values The values 
+     * Shows an error dialog
+     * @param header
+     * @param text
      */
-    public String[] actionShowOrderValuesDialog(final String title,
-                                                final String text,
-                                                final DataType<?> type,
-                                                final String[] values) {
-        
-        return main.showOrderValuesDialog(title, text, type, values);
+    public void actionShowErrorDialog(final String header, final String text, final Throwable t) {
+        main.showErrorDialog(header, text, t);
     }
 
     /**
      * Shows a dialog for selecting a format string for a data type
      * @param title The dialog's title
      * @param text The dialog's text
-     * @param preselected A preselected format string
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
     public String actionShowFormatInputDialog(final String title,
                                               final String text,
-                                              final String preselected,
                                               final DataTypeDescription<?> type,
                                               final Collection<String> values) {
         
-        return main.showFormatInputDialog(title, text, preselected, type, values);
+        return main.showFormatInputDialog(title, text, null, type, values);
     }
 
     /**
@@ -723,25 +713,26 @@ public class Controller implements IView {
      * Shows a dialog for selecting a format string for a data type
      * @param title The dialog's title
      * @param text The dialog's text
+     * @param preselected A preselected format string
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
     public String actionShowFormatInputDialog(final String title,
                                               final String text,
+                                              final String preselected,
                                               final DataTypeDescription<?> type,
                                               final Collection<String> values) {
         
-        return main.showFormatInputDialog(title, text, null, type, values);
+        return main.showFormatInputDialog(title, text, preselected, type, values);
     }
 
     /**
-     * Shows an error dialog
-     * @param header
-     * @param text
+     * Shows a help dialog
+     * @param id
      */
-    public void actionShowErrorDialog(final String header, final String text, final Throwable t) {
-        main.showErrorDialog(header, text, t);
+    public void actionShowHelpDialog(String id) {
+        main.showHelpDialog(id);
     }
 
     /**
@@ -751,14 +742,6 @@ public class Controller implements IView {
      */
     public void actionShowInfoDialog(final String header, final String text) {
         main.showInfoDialog(header, text);
-    }
-
-    /**
-     * Shows a help dialog
-     * @param id
-     */
-    public void actionShowHelpDialog(String id) {
-        main.showHelpDialog(id);
     }
 
     /**
@@ -784,6 +767,22 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows an input dialog for ordering data items
+     * @param title The dialog's title
+     * @param text The dialog's text
+     * @param type The data type
+     * @param values The values 
+     */
+    public String[] actionShowOrderValuesDialog(final String title,
+                                                final String text,
+                                                final DataType<?> type,
+                                                final String[] values) {
+        
+        return main.showOrderValuesDialog(title, text, type, values);
+    }
+
+
+    /**
      * Shows a progress dialog
      * @param text
      * @param worker
@@ -802,6 +801,15 @@ public class Controller implements IView {
     public boolean actionShowQuestionDialog(final String header,
                                             final String text) {
         return main.showQuestionDialog(header, text);
+    }
+
+    /**
+     * Internal method for showing a "save file" dialog
+     * @param filter
+     * @return
+     */
+    public String actionShowSaveFileDialog(String filter) {
+        return main.showSaveFileDialog(filter);
     }
 
     /**
@@ -912,6 +920,14 @@ public class Controller implements IView {
     }
 
     /**
+     * Returns debug data
+     * @return
+     */
+    public String getDebugData(){
+        return this.debug.getData(model);
+    }
+
+    /**
      * Returns the popup
      * @return
      */
@@ -945,7 +961,7 @@ public class Controller implements IView {
             listeners.remove(listener);
         }
     }
-
+    
     @Override
     public void reset() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -954,7 +970,7 @@ public class Controller implements IView {
             }
         }
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
         final Map<ModelPart, Set<IView>> dlisteners = getListeners();
@@ -966,15 +982,7 @@ public class Controller implements IView {
             }
         }
     }
-    
-    /**
-     * Returns debug data
-     * @return
-     */
-    public String getDebugData(){
-        return this.debug.getData(model);
-    }
-    
+
     /**
      * Internal method for importing data
      * @param path
@@ -1210,15 +1218,6 @@ public class Controller implements IView {
             main.showErrorDialog(Resources.getMessage("Controller.89"), Resources.getMessage("Controller.90"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
-    }
-
-    /**
-     * Internal method for showing a "save file" dialog
-     * @param filter
-     * @return
-     */
-    private String actionShowSaveFileDialog(String filter) {
-        return main.showSaveFileDialog(filter);
     }
 
     /**

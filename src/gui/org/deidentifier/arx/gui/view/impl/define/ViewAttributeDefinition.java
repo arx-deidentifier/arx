@@ -239,6 +239,9 @@ public class ViewAttributeDefinition implements IView {
                                 type = DataType.STRING;
                             } else {
                                 type = DataType.ORDERED_STRING(array);
+                                if (!isValidDataType(type, getValuesAsList())) {
+                                    type = DataType.STRING;
+                                }
                             }
                         } else if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
