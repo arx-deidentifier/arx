@@ -17,11 +17,8 @@
  */
 package org.deidentifier.arx.aggregates;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 
 /**
@@ -32,38 +29,50 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public class HierarchyBuilderOrderBased<T extends DataType<?>> implements Serializable {
+public class HierarchyBuilderOrderBased<T extends DataType<?>> extends HierarchyBuilderGroupingBased<T> {
 
     private static final long serialVersionUID = -2749758635401073668L;
-
+    
+    private Comparator<?> comparator;
     /**
-     * This class represents a fanout parameter
-     * @author Fabian Prasser
+     * Creates a new instance
+     * @param type The data type is also used for ordering data items
      */
-    public static class Fanout<T extends DataType<?>> implements Serializable {
-        
-        private static final long serialVersionUID = -3702096214015259350L;
-        
-        private List<Fanout<T>> children = new ArrayList<Fanout<T>>();
-        private int fanout;
-        private AggregateFunction<T> function;
-        
-        public Fanout(int fanout, AggregateFunction<T> function, List<Fanout<T>> children) {
-            this.fanout = fanout;
-            this.function = function;
-            this.children = children;
-        }
-
-        public Fanout(int fanout, AggregateFunction<T> function) {
-            this(fanout, function, new ArrayList<Fanout<T>>());
-        }
-        
-        public void add(Fanout<T> child){
-            this.children.add(child);
-        }
+    public HierarchyBuilderOrderBased(T type) {
+        super(type);
+        this.comparator = null;
+    }
+    
+    /**
+     * Creates a new instance
+     * @param type The data type
+     * @param comparator Use this comparator for ordering data items
+     */
+    public HierarchyBuilderOrderBased(T type, Comparator<?> comparator) {
+        super(type);
+        this.comparator = comparator;
+    }
+    
+    @Override
+    protected int getBaseLevel() {
+        return 1;
     }
 
-    public Hierarchy create(String[] data, T type, Fanout<T> fanout){
+    @Override
+    protected String getBaseLabel(int index) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected void prepare() {
+        // TODO Auto-generated method stub
+        DataType<?> type = super.getType();
+    }
+    
+    @Override
+    protected String internalIsValid() {
+        // TODO Auto-generated method stub
         return null;
     }
 }
