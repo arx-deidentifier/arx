@@ -27,7 +27,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.DataType.DataTypeDescription;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -45,6 +47,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * This view displays basic attribute information.
@@ -71,6 +74,7 @@ public class ViewAttributeDefinition implements IView {
 
     private final Controller             controller;
     private final Combo                  dataTypeCombo;
+    private final Text                   dataTypeText;
     private final ViewHierarchy          editor;
     private final Image                  IMAGE_IDENTIFYING;
     private final Image                  IMAGE_INSENSITIVE;
@@ -117,7 +121,7 @@ public class ViewAttributeDefinition implements IView {
         final Composite type = new Composite(group, SWT.NULL);
         type.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout typeInputGridLayout = new GridLayout();
-        typeInputGridLayout.numColumns = 4;
+        typeInputGridLayout.numColumns = 6;
         type.setLayout(typeInputGridLayout);
 
         final IView outer = this;
@@ -252,6 +256,14 @@ public class ViewAttributeDefinition implements IView {
             }
         });
 
+        final Label kLabel3 = new Label(type, SWT.PUSH);
+        kLabel3.setText(Resources.getMessage("AttributeDefinitionView.11")); //$NON-NLS-1$
+        dataTypeText = new Text(type, SWT.READ_ONLY | SWT.BORDER);
+        dataTypeText.setLayoutData(SWTUtil.createFillGridData());
+        dataTypeText.setEditable(false);
+        dataTypeText.setText("");
+        dataTypeText.setEnabled(false);
+
         // Editor hierarchy
         editor = new ViewHierarchy(group, attribute, controller);
 
@@ -275,7 +287,7 @@ public class ViewAttributeDefinition implements IView {
 
     @Override
     public void reset() {
-        // Nothing to do
+        dataTypeText.setText("");
     }
 
     @Override
@@ -361,15 +373,12 @@ public class ViewAttributeDefinition implements IView {
      * @return
      */
     private boolean isValidDataType(DataType<?> type, Collection<String> values){
-        // TODO: Ugly
-        try {
-            for (String value : values){
-                type.parse(value);
+        for (String value : values){
+            if (!type.isValid(value)) {
+                return false;
             }
-            return true;
-        } catch (Exception e){
-            return false;
         }
+        return true;
     }
 
     /** 
@@ -402,6 +411,20 @@ public class ViewAttributeDefinition implements IView {
                                     .getDataType(attribute);
         
         dataTypeCombo.select(getIndexOfDataType(dtype));
+        
+        if (dtype instanceof ARXOrderedString || 
+            dtype.getDescription().hasFormat()) {
+            
+            DataTypeWithFormat dtwf = (DataTypeWithFormat)dtype;
+            String format = dtwf.getFormat();
+            if (format==null) {
+                dataTypeText.setText("Default");
+            } else {
+                dataTypeText.setText(format);
+            }
+        } else {
+            dataTypeText.setText("Default");
+        }
     }
 
     /**
