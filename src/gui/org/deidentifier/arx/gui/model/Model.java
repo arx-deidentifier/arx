@@ -88,8 +88,10 @@ public class Model implements Serializable {
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
     private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
     
-    private boolean                               showVisualization    = true;
+    private Map<String, Boolean>                  showVisualization    = null;
     private int                                   hideVisualizationAt  = 5000000;
+    
+    private boolean                               debugEnabled         = false;
     
 	public Model(final String name, final String description) {
 		this.name = name;
@@ -97,10 +99,34 @@ public class Model implements Serializable {
 		setModified();
 	}
 	
-	public boolean isShowVisualization(){
-	    return this.showVisualization;
+	public boolean isDebugEnabled() {
+	    return debugEnabled;
 	}
 	
+	public void setDebugEnabled(boolean value){
+	    this.debugEnabled = value;
+	    this.setModified();
+	}
+	
+	public boolean isVisualized(String attribute){
+	    if (this.showVisualization == null) {
+	        return true;
+	    } else {
+	        Boolean val = showVisualization.get(attribute);
+	        if (val == null) return true;
+	        else return val;
+	    }
+	}
+
+    public void setVisualized(String attribute, boolean value){
+        if (this.showVisualization == null) {
+            this.showVisualization = new HashMap<String, Boolean>();
+        }
+        boolean old = this.isVisualized(attribute);
+        this.showVisualization.put(attribute, value);
+        if (old != value) this.setModified();
+    }
+    
 	public int getHideVisualizationAt(){
 	    return this.hideVisualizationAt;
 	}
@@ -110,11 +136,6 @@ public class Model implements Serializable {
         this.setModified();
     }
     
-	public void setShowVisualization(boolean show) {
-	    this.showVisualization = show;
-	    this.setModified();
-	}
-
 	public ARXAnonymizer createAnonymizer() {
 	    
 		// Initialize anonymizer

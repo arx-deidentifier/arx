@@ -51,4 +51,13 @@ public class ModelEvent {
         this.data = data;
         this.source = source;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "[part=" + part + ", source=" + source.getClass().getSimpleName()+"@" + source.hashCode() + ", data=" +
+                data.getClass().getSimpleName()+"@" + data.hashCode() + "]";
+    }
 }

@@ -44,6 +44,7 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
 
     private Image      image;
     private Controller controller;
+    private Text       data;
 
     /**
      * Constructor
@@ -70,6 +71,18 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
 
         // Create OK Button
         parent.setLayoutData(SWTUtil.createFillGridData());
+        
+        final Button ceButton = createButton(parent,
+                                             Integer.MAX_VALUE,
+                                             "Clear events", false); //$NON-NLS-1$
+        ceButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                controller.actionClearEventLog();
+                data.setText(controller.getDebugData());
+            }
+        });
+        
         final Button okButton = createButton(parent,
                                              Window.OK,
                                              "OK", true); //$NON-NLS-1$
@@ -87,8 +100,7 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
         parent.setLayout(new GridLayout());
 
         // License
-        final Text data = new Text(parent, SWT.NONE | SWT.MULTI |
-                                              SWT.V_SCROLL | SWT.BORDER);
+        data = new Text(parent, SWT.NONE | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         data.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
         data.setText(controller.getDebugData());
         final GridData d = SWTUtil.createFillGridData();

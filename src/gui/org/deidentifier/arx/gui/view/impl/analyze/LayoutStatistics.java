@@ -22,10 +22,13 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class LayoutStatistics implements ILayout {
 
@@ -34,14 +37,26 @@ public class LayoutStatistics implements ILayout {
     private static final String TAB_PROPERTIES   = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
     private final ComponentTitledFolder     folder;
+    private final ToolItem                  enable;
+    private final Image                     enabled;
+    private final Image                     disabled;
+    
 
     public LayoutStatistics(final Composite parent,
                             final Controller controller,
                             final ModelPart target,
                             final ModelPart reset) {
 
+        this.enabled = controller.getResources().getImage("tick.png");
+        this.disabled = controller.getResources().getImage("cross.png");
+
+        // Create enable/disable button
+        final String label = Resources.getMessage("StatisticsView.3");
+        ComponentTitleBar bar = new ComponentTitleBar("id-50");
+        bar.add(label, enabled, new Runnable() { @Override public void run() { toggle(); }});
+        
         // Create the tab folder
-        folder = new ComponentTitledFolder(parent, controller, null, "id-50");
+        folder = new ComponentTitledFolder(parent, controller, bar, null);
         final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
         item1.setLayout(new FillLayout());
         final Composite item2 = folder.createItem(TAB_HEATMAP, null);
@@ -49,7 +64,8 @@ public class LayoutStatistics implements ILayout {
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
         item3.setLayout(new FillLayout());
         folder.setSelection(0);
-
+        this.enable = folder.getBarItem(label);
+        
         // Create the views
         new ViewDistribution(item1, controller, target, reset);
         new ViewDensity(item2, controller, target, reset);
@@ -70,5 +86,13 @@ public class LayoutStatistics implements ILayout {
 
     public void setSelectionIdex(final int index) {
         folder.setSelection(index);
+    }
+    
+    private void toggle(){
+        if (enable.getImage() == enabled) {
+            enable.setImage(disabled);
+        } else {
+            enable.setImage(enabled);
+        }
     }
 }
