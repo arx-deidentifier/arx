@@ -58,7 +58,10 @@ public class ModelEvent {
      */
     @Override
     public String toString() {
-        return "[part=" + part + ", source=" + source.getClass().getSimpleName()+"@" + source.hashCode() + ", data=" +
-                data.getClass().getSimpleName()+"@" + data.hashCode() + "]";
+        String sourceLabel = "NULL";
+        if (source != null) sourceLabel = source.getClass().getSimpleName()+"@" + source.hashCode();
+        String dataLabel = "NULL";
+        if (data != null) dataLabel = data.getClass().getSimpleName()+"@" + data.hashCode();
+        return "[part=" + part + ", source=" + sourceLabel + ", data=" + dataLabel + "]";
     }
 }
