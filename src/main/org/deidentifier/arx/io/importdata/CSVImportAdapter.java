@@ -103,9 +103,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      */
     @Override
     public boolean hasNext() {
-
         return it.hasNext() && (config.getColumns().size() != 0);
-
     }
 
     /**
@@ -126,31 +124,20 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
             int i = 0;
 
             for (Column column : config.getColumns()) {
-
                 if (!config.isContainsHeader()) {
-
                     header[i] = "Column #" + column.getIndex();
-
                 } else {
-
                     header[i] = lastRow[column.getIndex()];
-
                 }
 
                 if (column.getName() != null) {
-
                     header[i] = column.getName();
-
                 }
-
+                
                 column.setName(header[i]);
-
                 i++;
-
             }
-
             return header;
-
         }
 
         lastRow = it.next();
