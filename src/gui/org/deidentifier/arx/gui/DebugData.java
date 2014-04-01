@@ -54,7 +54,9 @@ public class DebugData {
             builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle()));
             builder.append("   * Output: ").append(getDebugData("             ", model.getOutput()));
         }
-        
+        builder.append("Visualization\n");
+        builder.append(" - Hidden   : ").append(model.isShowVisualization()).append("\n");
+        builder.append(" - Hidden at: ").append(model.getHideVisualizationAt()).append("\n");
         return builder.toString();
     }
     
