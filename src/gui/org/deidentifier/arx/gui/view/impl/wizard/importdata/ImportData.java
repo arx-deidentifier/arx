@@ -19,12 +19,12 @@ public class ImportData {
     /**
      * Possible sources for importing data
      */
-    public enum sources {CSV, JDBC, XLS};
+    public enum DataSourceType {CSV, JDBC, XLS};
 
     /**
      * Actual source data should be imported from
      */
-    private sources source;
+    private DataSourceType source;
 
     /**
      * List of detected columns to be imported
@@ -168,7 +168,7 @@ public class ImportData {
     /**
      * @return {@link #source}
      */
-    public sources getSource()
+    public DataSourceType getSource()
     {
 
         return source;
@@ -178,7 +178,7 @@ public class ImportData {
     /**
      * @param source {@link #source}
      */
-    public void setSource(sources source)
+    public void setSource(DataSourceType source)
     {
 
         this.source = source;

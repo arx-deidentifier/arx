@@ -12,8 +12,10 @@ import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.importdata.CSVConfiguration;
 import org.deidentifier.arx.io.importdata.CSVImportAdapter;
 import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -302,9 +304,13 @@ public class CsvPage extends WizardPage {
         /*
          * Create import adapter and pass detected columns to it
          */
-        CSVImportAdapter importAdapter = new CSVImportAdapter(location, separator, containsHeader);
-        importAdapter.setColumns(columns);
-
+        CSVConfiguration config = new CSVConfiguration(location, separator, containsHeader);
+        for (Column c : columns) {
+            config.addColumn(c);
+        }
+        
+        DataSourceImportAdapter importAdapter = DataSourceImportAdapter.create(config);
+        
         /*
          * Get up to {ImportData#previewDataMaxLines} lines for previewing
          */
