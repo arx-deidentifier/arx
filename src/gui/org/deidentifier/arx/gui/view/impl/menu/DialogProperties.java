@@ -413,7 +413,23 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
                 model.setMaxNodesInViewer(Integer.valueOf(s));
             }
         });
+        final IntegerValidator v5 = new IntegerValidator(0, Integer.MAX_VALUE);
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.27"), Resources.getMessage("PropertyDialog.28"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+            @Override
+            public boolean accepts(final String s) {
+                return v5.validate(s);
+            }
 
+            @Override
+            public String getValue() {
+                return String.valueOf(model.getHideVisualizationAt());
+            }
+
+            @Override
+            public void setValue(final String s) {
+                model.setHideVisualizationAt(Integer.valueOf(s));
+            }
+        });
         // Return
         return result;
     }
