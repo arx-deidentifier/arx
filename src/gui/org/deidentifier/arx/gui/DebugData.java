@@ -63,12 +63,8 @@ public class DebugData {
         }
         builder.append("\n");
         builder.append("Visualization\n");
+        builder.append(" - Hidden   : ").append(model.isVisualizationEnabled()).append("\n");
         builder.append(" - Hidden at: ").append(model.getHideVisualizationAt()).append("\n");
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        for (int i=0; i<handle.getNumColumns(); i++) {
-            String attr = handle.getAttributeName(i);
-            builder.append(" - ").append(attr).append(": ").append(model.isVisualized(attr)).append("\n");   
-        }
         builder.append("\n");
         builder.append("Event log\n");
         if (eventBuffer.isEmpty()) {

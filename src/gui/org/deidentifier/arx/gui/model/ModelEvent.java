@@ -37,7 +37,8 @@ public class ModelEvent {
         HIERARCHY,
         CRITERION_DEFINITION,
         RESEARCH_SUBSET,
-        VIEW_CONFIG
+        VIEW_CONFIG,
+        VISUALIZATION
     }
 
     public final ModelPart   part;

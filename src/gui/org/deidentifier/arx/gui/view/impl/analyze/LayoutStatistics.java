@@ -18,10 +18,15 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
+import java.io.IOException;
+
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,18 +35,30 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class LayoutStatistics implements ILayout {
+/**
+ * Layouts the visualization and allows enabling/disabling them
+ * @author Fabian Prasser
+ */
+public class LayoutStatistics implements ILayout, IView {
 
     private static final String TAB_DISTRIBUTION = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
     private static final String TAB_HEATMAP      = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
     private static final String TAB_PROPERTIES   = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
-    private final ComponentTitledFolder     folder;
-    private final ToolItem                  enable;
-    private final Image                     enabled;
-    private final Image                     disabled;
-    
+    private final ComponentTitledFolder folder;
+    private final ToolItem              enable;
+    private final Image                 enabled;
+    private final Image                 disabled;
+    private final Controller            controller;
+    private Model model = null;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     * @param target
+     * @param reset
+     */
     public LayoutStatistics(final Composite parent,
                             final Controller controller,
                             final ModelPart target,
@@ -49,11 +66,18 @@ public class LayoutStatistics implements ILayout {
 
         this.enabled = controller.getResources().getImage("tick.png");
         this.disabled = controller.getResources().getImage("cross.png");
+        this.controller = controller;
+        
+        controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.VISUALIZATION, this);
 
         // Create enable/disable button
         final String label = Resources.getMessage("StatisticsView.3");
         ComponentTitleBar bar = new ComponentTitleBar("id-50");
-        bar.add(label, enabled, new Runnable() { @Override public void run() { toggle(); }});
+        bar.add(label, disabled, true, new Runnable() { @Override public void run() {
+            toggleEnabled();
+            toggleImage(); 
+        }});
         
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null);
@@ -65,6 +89,7 @@ public class LayoutStatistics implements ILayout {
         item3.setLayout(new FillLayout());
         folder.setSelection(0);
         this.enable = folder.getBarItem(label);
+        this.enable.setEnabled(false);
         
         // Create the views
         new ViewDistribution(item1, controller, target, reset);
@@ -88,11 +113,43 @@ public class LayoutStatistics implements ILayout {
         folder.setSelection(index);
     }
     
-    private void toggle(){
-        if (enable.getImage() == enabled) {
-            enable.setImage(disabled);
-        } else {
+    private void toggleEnabled() {
+        this.model.setVisualizationEnabled(this.enable.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, enable.getSelection()));
+    }
+    
+    private void toggleImage(){
+        if (enable.getSelection()) {
             enable.setImage(enabled);
+        } else {
+            enable.setImage(disabled);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        // Nothing to do
+    }
+
+    @Override
+    public void reset() {
+        model = null;
+        enable.setSelection(true);
+        enable.setImage(enabled);
+        enable.setEnabled(false);
+    }
+
+    @Override
+    public void update(ModelEvent event) {
+
+        if (event.part == ModelPart.MODEL) {
+            this.model = (Model)event.data;
+            this.enable.setEnabled(true);
+            this.enable.setSelection(model.isVisualizationEnabled());
+            this.toggleImage();
+        } else if (event.part == ModelPart.VISUALIZATION) {
+            this.enable.setSelection(model.isVisualizationEnabled());
+            this.toggleImage();
         }
     }
 }

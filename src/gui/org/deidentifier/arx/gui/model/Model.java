@@ -88,7 +88,7 @@ public class Model implements Serializable {
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
     private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
     
-    private Map<String, Boolean>                  showVisualization    = null;
+    private Boolean                               showVisualization    = true;
     private int                                   hideVisualizationAt  = 5000000;
     
     private boolean                               debugEnabled         = false;
@@ -108,23 +108,17 @@ public class Model implements Serializable {
 	    this.setModified();
 	}
 	
-	public boolean isVisualized(String attribute){
+	public boolean isVisualizationEnabled(){
 	    if (this.showVisualization == null) {
 	        return true;
 	    } else {
-	        Boolean val = showVisualization.get(attribute);
-	        if (val == null) return true;
-	        else return val;
+	        return this.showVisualization;
 	    }
 	}
 
-    public void setVisualized(String attribute, boolean value){
-        if (this.showVisualization == null) {
-            this.showVisualization = new HashMap<String, Boolean>();
-        }
-        boolean old = this.isVisualized(attribute);
-        this.showVisualization.put(attribute, value);
-        if (old != value) this.setModified();
+    public void setVisualizationEnabled(boolean value){
+        this.showVisualization = value;
+        this.setModified();
     }
     
 	public int getHideVisualizationAt(){
