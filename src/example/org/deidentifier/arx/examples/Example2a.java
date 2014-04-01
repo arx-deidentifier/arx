@@ -26,10 +26,11 @@ public class Example2a extends Example {
 
         try {
 
-            // Define input adapter
+            // Define configuration for CSV file
             CSVConfiguration importConfig = new CSVConfiguration("data/test.csv", ';', true);
 
-            // Define columns (index, name (optional) and datatype)
+            // Add columns (index, name and datatype) to configuration
+            // The name is optional and can be detected/assigned automatically
             importConfig.addColumn(new Column(0, "Alter", DataType.INTEGER));
             importConfig.addColumn(new Column(1, DataType.STRING));
             importConfig.addColumn(new Column(2, DataType.STRING));
