@@ -158,6 +158,7 @@ public class ViewDistribution implements IView {
     public void update(final ModelEvent event) {
 
         if (event.part == ModelPart.OUTPUT) {
+            
             if (chart != null) chart.setEnabled(true);
             clearCache();
             update();
@@ -187,6 +188,7 @@ public class ViewDistribution implements IView {
             this.attribute = (String) event.data;
             if (chart != null) chart.setEnabled(true);
             update();
+            
         } else if (event.part == ModelPart.DATA_TYPE) {
 
             this.cache.remove((String) event.data);
@@ -194,6 +196,7 @@ public class ViewDistribution implements IView {
                 if (chart != null) chart.setEnabled(true);
                 update();
             }
+            
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 
             this.attribute = (String) event.data;
@@ -201,7 +204,9 @@ public class ViewDistribution implements IView {
             update();
              
         } else if (event.part == ModelPart.VISUALIZATION) {
+            
             update();
+            
         } else if (event.part == ModelPart.VIEW_CONFIG) {
             
             if (chart != null) chart.setEnabled(true);
