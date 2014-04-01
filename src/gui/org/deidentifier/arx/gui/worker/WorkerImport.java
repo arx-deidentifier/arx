@@ -18,14 +18,12 @@
 
 package org.deidentifier.arx.gui.worker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
+import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -34,54 +32,44 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WorkerImport extends Worker<Data> {
 
-	/** The path*/
-    private final String     path;
-    /** The separator*/
-    private final char       separator;
-    /** The stop flag*/
-    private volatile boolean stop = false;
+    /** The path */
+    private final DataSourceConfiguration config;
+    /** The stop flag */
+    private volatile boolean              stop = false;
 
     /**
      * Creates a new instance
      * @param path
      * @param separator
      */
-    public WorkerImport(final String path, final char separator) {
-        this.path = path;
-        this.separator = separator;
+    public WorkerImport(final DataSourceConfiguration config) {
+        this.config = config;
     }
 
     @Override
-    public void
-            run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                            InterruptedException {
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
+                                                        InterruptedException {
 
         arg0.beginTask(Resources.getMessage("WorkerImport.0"), 100); //$NON-NLS-1$
 
-        // Create input stream
-        final File file = new File(path);
-        final long size = file.length();
-        FileInputStream in = null;
+        final DataSourceImportAdapter adapter;
         try {
-            in = new FileInputStream(file);
-        } catch (final FileNotFoundException e) {
+            adapter = DataSourceImportAdapter.create(config);
+        } catch (final Exception e) {
             error = e;
             arg0.done();
             return;
         }
 
         // Track progress
-        final CountingInputStream cin = new CountingInputStream(in);
         final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                while ((cin.getByteCount() != size) && !stop) {
-                    final int value = (int) (((double) cin.getByteCount() / (double) size) * 100d);
-                    arg0.worked(Math.min(value, 99));
-                    try {
-                        Thread.sleep(10);
-                    } catch (final InterruptedException e) {
-                    }
+                int progress = 0;
+                while (progress < 100 && !stop) {
+                    progress = adapter.getProgress();
+                    arg0.worked(Math.min(progress, 99));
+                    try { Thread.sleep(10); } catch (final InterruptedException e) {/* Ignore*/ }
                 }
             }
         });
@@ -90,7 +78,7 @@ public class WorkerImport extends Worker<Data> {
 
         // Load the data
         try {
-            result = Data.create(cin, separator);
+            result = Data.create(adapter);
             arg0.beginTask(Resources.getMessage("WorkerImport.1"), 1); //$NON-NLS-1$
             result.getHandle(); // Prepare the handle
             stop = true;

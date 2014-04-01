@@ -66,6 +66,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
 import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportDataWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -74,7 +75,10 @@ import org.deidentifier.arx.gui.worker.WorkerLoad;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
+import org.deidentifier.arx.io.importdata.CSVConfiguration;
+import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 
 import cern.colt.Swapper;
 
@@ -517,20 +521,12 @@ public class Controller implements IView {
             return;
         }
 
-        // Check
-        final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
-        if (path == null) { return; }
-
-        // Separator
-        final DialogSeparator dialog = new DialogSeparator(main.getShell(),
-                                                           this,
-                                                           path,
-                                                           true);
-        dialog.create();
-        if (dialog.open() == Window.CANCEL) {
-            return;
-        } else {
-            actionImportData(path, dialog.getSeparator());
+        ImportDataWizard wizard = new ImportDataWizard(this, model);
+        new WizardDialog(main.getShell(), wizard).open();
+        
+        DataSourceConfiguration config = wizard.getResult();
+        if (config != null) {
+            actionImportData(config);
         }
     }
 
@@ -833,20 +829,16 @@ public class Controller implements IView {
     public void actionSubsetFile() {
 
         // Check
-        final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
-        if (path == null) { return; }
 
-        // Separator
-        final DialogSeparator dialog = new DialogSeparator(main.getShell(),
-                                                           this,
-                                                           path,
-                                                           true);
-        dialog.create();
-        if (dialog.open() == Window.CANCEL) {
+        ImportDataWizard wizard = new ImportDataWizard(this, model);
+        new WizardDialog(main.getShell(), wizard).open();
+        
+        DataSourceConfiguration config = wizard.getResult();
+        if (config == null) {
             return;
-        } 
-   
-        final WorkerImport worker = new WorkerImport(path, dialog.getSeparator());
+        }
+        
+        final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -996,9 +988,9 @@ public class Controller implements IView {
      * @param path
      * @param separator
      */
-    private void actionImportData(final String path, final char separator) {
+    private void actionImportData(DataSourceConfiguration config) {
 
-        final WorkerImport worker = new WorkerImport(path, separator);
+        final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1024,7 +1016,13 @@ public class Controller implements IView {
         }
         model.getInputConfig().setResearchSubset(subset);
         model.getInputConfig().setInput(data);
-        model.setInputBytes(new File(path).length());
+        
+        // TODO: Fix this
+        if (config instanceof CSVConfiguration){
+            model.setInputBytes(new File(((CSVConfiguration)config).getFile()).length());
+        } else {
+            model.setInputBytes(0);
+        }
 
         // Create definition
         final DataDefinition definition = data.getDefinition();
@@ -1034,10 +1032,6 @@ public class Controller implements IView {
                                              .getHandle()
                                              .getAttributeName(i),
                                         AttributeType.INSENSITIVE_ATTRIBUTE);
-            definition.setDataType(model.getInputConfig()
-                                        .getInput()
-                                        .getHandle()
-                                        .getAttributeName(i), DataType.STRING);
         }
         
         model.resetCriteria();

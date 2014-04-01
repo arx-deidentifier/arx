@@ -55,15 +55,15 @@ public class DebugData {
         builder.append(" - Data\n");
         builder.append("   * Input : ").append(getDebugData(model.getInputConfig().getInput().getDefinition()));
         builder.append(" - Input\n");
-        builder.append("   * Input : ").append(getDebugData("             ", model.getInputConfig().getInput().getHandle()));
+        builder.append("   * Input : ").append(getDebugData("             ", model.getInputConfig().getInput().getHandle(), false));
         if (model.getOutput() != null) {
             builder.append(" - Output\n");
-            builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle()));
-            builder.append("   * Output: ").append(getDebugData("             ", model.getOutput()));
+            builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle(), false));
+            builder.append("   * Output: ").append(getDebugData("             ", model.getOutput(), false));
         }
         builder.append("\n");
         builder.append("Visualization\n");
-        builder.append(" - Hidden   : ").append(model.isVisualizationEnabled()).append("\n");
+        builder.append(" - Hidden   : ").append(!model.isVisualizationEnabled()).append("\n");
         builder.append(" - Hidden at: ").append(model.getHideVisualizationAt()).append("\n");
         builder.append("\n");
         builder.append("Event log\n");
@@ -84,7 +84,7 @@ public class DebugData {
      * @param handle
      * @return
      */
-    private String getDebugData(String prefix, DataHandle handle){
+    private String getDebugData(String prefix, DataHandle handle, boolean view){
         
         StringBuilder builder = new StringBuilder();
         builder.append("DataHandle@").append(handle.hashCode());
@@ -94,8 +94,8 @@ public class DebugData {
             builder.append("\n");
             builder.append(prefix).append("DataDefinition@").append(handle.getDefinition().hashCode());
             builder.append(handle.getDefinition().isLocked() ? " [Locked]\n" : "\n");
-            if (!(handle instanceof DataHandleSubset)) {
-                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView()));
+            if (!view) {
+                builder.append(prefix).append("View").append(getDebugData(prefix+"View", handle.getView(), true));
             }
         }  
         return builder.toString();

@@ -22,11 +22,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
+import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 
 /**
  * Represents input data for the ARX framework
@@ -166,6 +171,32 @@ public abstract class Data {
     }
 
     /**
+     * Creates a new data object from a given import adapter
+     * 
+     * @param adapter An adapter
+     * @return A Data object
+     */
+    public static Data create(final DataSourceImportAdapter adapter) {
+
+        Data data = new IterableData(adapter);
+        
+        // TODO: This is ugly
+        Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
+        List<Column> columns = adapter.getConfig().getColumns();
+        for (int i=0; i<columns.size(); i++){
+            types.put(i, columns.get(i).getDatatype());
+        }
+        DataHandle handle = data.getHandle();
+        for (int i=0; i<handle.getNumColumns(); i++) {
+            String attribute = handle.getAttributeName(i);
+            data.getDefinition().setDataType(attribute, types.get(i));
+        }
+
+        // Return
+        return data;
+    }
+
+    /**
      * Creates a new data object from an iterator over tuples
      * 
      * @param iterator
@@ -200,6 +231,35 @@ public abstract class Data {
     public static Data
             create(final String path, final char separator) throws IOException {
         return new IterableData(new CSVDataInput(path, separator).iterator());
+    }
+
+    /**
+     * Creates a new data object from an import Adapter
+     *
+     * @param config The config that should be used to import data
+     *
+     * @return Data object as described by ImportAdapter
+     *
+     * @throws IOException
+     */
+    public static Data create(final DataSourceConfiguration config) throws IOException {
+
+        final Data data = new IterableData(DataSourceImportAdapter.create(config));
+
+        // TODO: This is ugly
+        Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
+        List<Column> columns = config.getColumns();
+        for (int i=0; i<columns.size(); i++){
+            types.put(i, columns.get(i).getDatatype());
+        }
+        DataHandle handle = data.getHandle();
+        for (int i=0; i<handle.getNumColumns(); i++) {
+            String attribute = handle.getAttributeName(i);
+            data.getDefinition().setDataType(attribute, types.get(i));
+        }
+
+        // Return
+        return data;
     }
 
     /**
