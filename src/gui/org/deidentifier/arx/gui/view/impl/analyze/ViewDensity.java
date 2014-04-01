@@ -84,6 +84,7 @@ public class ViewDensity extends Panel implements IView {
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.VISUALIZATION, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -165,9 +166,6 @@ public class ViewDensity extends Panel implements IView {
         if (event.part == reset) {
             reset();
             
-        } else if (event.part == target) {
-            update();
-            
         } else if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
             this.model.resetAttributePair();
@@ -175,13 +173,12 @@ public class ViewDensity extends Panel implements IView {
             this.context.setTarget(target);
             reset();
 
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            update();
+        } else if (event.part == target ||
+                   event.part == ModelPart.SELECTED_ATTRIBUTE ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE ||
+                   event.part == ModelPart.VIEW_CONFIG ||
+                   event.part == ModelPart.VISUALIZATION) {
             
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            update();
-            
-        } else if (event.part == ModelPart.VIEW_CONFIG) {
             update();
         }
     }
@@ -199,6 +196,11 @@ public class ViewDensity extends Panel implements IView {
      * Redraws the plot
      */
     private void update() {
+
+        if (model != null && !model.isVisualizationEnabled()) {
+            reset();
+            return;
+        }
 
         if (model != null &&
             model.getAttributePair() != null &&

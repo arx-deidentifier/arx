@@ -18,10 +18,14 @@
 
 package org.deidentifier.arx.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelEvent;
 
 /**
  * Class for creating debug data
@@ -29,6 +33,9 @@ import org.deidentifier.arx.gui.model.Model;
  *
  */
 public class DebugData {
+    
+    private static final int MAX_BUFFER_SIZE = 1000;
+    private List<String> eventBuffer = new ArrayList<String>();
     
     /**
      * Returns some debug data
@@ -54,9 +61,20 @@ public class DebugData {
             builder.append("   * Input : ").append(getDebugData("             ", model.getOutputConfig().getInput().getHandle()));
             builder.append("   * Output: ").append(getDebugData("             ", model.getOutput()));
         }
+        builder.append("\n");
         builder.append("Visualization\n");
-        builder.append(" - Hidden   : ").append(model.isShowVisualization()).append("\n");
+        builder.append(" - Hidden   : ").append(model.isVisualizationEnabled()).append("\n");
         builder.append(" - Hidden at: ").append(model.getHideVisualizationAt()).append("\n");
+        builder.append("\n");
+        builder.append("Event log\n");
+        if (eventBuffer.isEmpty()) {
+            builder.append(" - Empty\n");
+        } else {
+            for (String s : eventBuffer){
+                builder.append(s).append("\n");
+            }
+        }
+        
         return builder.toString();
     }
     
@@ -94,6 +112,23 @@ public class DebugData {
         builder.append("DataDefinition@").append(definition.hashCode());
         builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
         return builder.toString();
+    }
+
+    /**
+     * Adds an event to the buffer
+     * @param event
+     */
+    public void add(ModelEvent event) {
+        this.eventBuffer.add(event.toString());
+        if (this.eventBuffer.size() > MAX_BUFFER_SIZE) {
+            this.eventBuffer.remove(0);
+        }
+    }
+
+    /**
+     * Clears the event log
+     */
+    public void clearEventLog() {
+        this.eventBuffer.clear();
     }    
-    
 }

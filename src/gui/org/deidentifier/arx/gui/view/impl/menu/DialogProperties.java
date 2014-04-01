@@ -378,6 +378,17 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
                 model.setSnapshotSizeSnapshot(Double.valueOf(s));
             }
         });
+        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.29")) { //$NON-NLS-1$ //$NON-NLS-2$
+            @Override
+            public Boolean getValue() {
+                return model.isDebugEnabled();
+            }
+
+            @Override
+            public void setValue(final Boolean s) {
+                model.setDebugEnabled(s);
+            }
+        });
 
         // Viewer category
         final IntegerValidator v4 = new IntegerValidator(0, 10000);

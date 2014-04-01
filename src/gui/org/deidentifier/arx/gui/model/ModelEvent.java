@@ -37,7 +37,8 @@ public class ModelEvent {
         HIERARCHY,
         CRITERION_DEFINITION,
         RESEARCH_SUBSET,
-        VIEW_CONFIG
+        VIEW_CONFIG,
+        VISUALIZATION
     }
 
     public final ModelPart   part;
@@ -50,5 +51,14 @@ public class ModelEvent {
         this.part = target;
         this.data = data;
         this.source = source;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "[part=" + part + ", source=" + source.getClass().getSimpleName()+"@" + source.hashCode() + ", data=" +
+                data.getClass().getSimpleName()+"@" + data.hashCode() + "]";
     }
 }

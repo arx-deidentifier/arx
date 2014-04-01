@@ -648,7 +648,7 @@ public class Controller implements IView {
      * Shows the "debug" dialog
      */
     public void actionMenuHelpDebug() {
-        main.showDebugDialog();
+        if (model != null && model.isDebugEnabled()) main.showDebugDialog();
     }
 
     /**
@@ -916,6 +916,13 @@ public class Controller implements IView {
     public String getDebugData(){
         return this.debug.getData(model);
     }
+    
+    /**
+     * Clears the event log
+     */
+    public void actionClearEventLog(){
+        this.debug.clearEventLog();
+    }
 
     /**
      * Returns the popup
@@ -963,6 +970,7 @@ public class Controller implements IView {
     
     @Override
     public void update(final ModelEvent event) {
+        if (model != null && model.isDebugEnabled()) this.debug.add(event);
         final Map<ModelPart, Set<IView>> dlisteners = getListeners();
         if (dlisteners.get(event.part) != null) {
             for (final IView listener : dlisteners.get(event.part)) {
