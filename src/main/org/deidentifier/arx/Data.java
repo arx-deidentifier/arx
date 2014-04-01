@@ -182,8 +182,9 @@ public abstract class Data {
         
         // TODO: This is ugly
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
-        for (Column column : adapter.getConfig().getColumns()) {
-            types.put(column.getIndex(), column.getDatatype());
+        List<Column> columns = adapter.getConfig().getColumns();
+        for (int i=0; i<columns.size(); i++){
+            types.put(i, columns.get(i).getDatatype());
         }
         DataHandle handle = data.getHandle();
         for (int i=0; i<handle.getNumColumns(); i++) {
@@ -247,15 +248,16 @@ public abstract class Data {
 
         // TODO: This is ugly
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
-        for (Column column : config.getColumns()) {
-            types.put(column.getIndex(), column.getDatatype());
+        List<Column> columns = config.getColumns();
+        for (int i=0; i<columns.size(); i++){
+            types.put(i, columns.get(i).getDatatype());
         }
         DataHandle handle = data.getHandle();
         for (int i=0; i<handle.getNumColumns(); i++) {
             String attribute = handle.getAttributeName(i);
             data.getDefinition().setDataType(attribute, types.get(i));
         }
-        
+
         // Return
         return data;
     }
