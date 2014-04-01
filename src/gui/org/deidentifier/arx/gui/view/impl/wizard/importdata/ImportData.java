@@ -148,7 +148,7 @@ public class ImportData {
     /**
      * @return {@link #firstRowContainsHeader}
      */
-    public boolean getfirstRowContainsHeader()
+    public boolean getFirstRowContainsHeader()
     {
 
         return firstRowContainsHeader;
