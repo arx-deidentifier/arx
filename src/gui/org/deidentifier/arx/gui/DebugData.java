@@ -63,7 +63,7 @@ public class DebugData {
         }
         builder.append("\n");
         builder.append("Visualization\n");
-        builder.append(" - Hidden   : ").append(model.isVisualizationEnabled()).append("\n");
+        builder.append(" - Hidden   : ").append(!model.isVisualizationEnabled()).append("\n");
         builder.append(" - Hidden at: ").append(model.getHideVisualizationAt()).append("\n");
         builder.append("\n");
         builder.append("Event log\n");
