@@ -88,6 +88,9 @@ public class Model implements Serializable {
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
     private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
 
+    private boolean                               showVisualization    = true;
+    private int                                   hideVisualizationAt  = 5000000;
+
     private ModelJdbc jdbc = new ModelJdbc();
 
 
@@ -102,6 +105,24 @@ public class Model implements Serializable {
 		this.name = name;
 		this.description = description;
 		setModified();
+	}
+	
+	public boolean isShowVisualization(){
+	    return this.showVisualization;
+	}
+	
+	public int getHideVisualizationAt(){
+	    return this.hideVisualizationAt;
+	}
+
+	public void setHideVisualizationAt(int numberOfRows) {
+        this.hideVisualizationAt = numberOfRows;
+        this.setModified();
+    }
+    
+	public void setShowVisualization(boolean show) {
+	    this.showVisualization = show;
+	    this.setModified();
 	}
 
 	public ARXAnonymizer createAnonymizer() {
