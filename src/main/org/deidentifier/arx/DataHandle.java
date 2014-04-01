@@ -552,25 +552,20 @@ public abstract class DataHandle {
                                   final boolean ascending) {
 
         checkRegistry();
-        for (final int index : columns) {
-
-            int cmp = 0;
-            try {
-                cmp = dataTypes[0][index].compare(internalGetValue(row1, index),
-                                                  internalGetValue(row2, index));
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            if (cmp != 0) {
-                if (ascending) {
-                    return -cmp;
-                } else {
-                    return cmp;
+        try {
+            for (int i=0; i<columns.length; i++) {
+                
+                int index = columns[i];
+                int cmp = dataTypes[0][index].compare(internalGetValue(row1, index),
+                                                      internalGetValue(row2, index));
+                if (cmp != 0) {
+                    return ascending ? -cmp : cmp;
                 }
             }
+            return 0;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        return 0;
     }
 
     /**
