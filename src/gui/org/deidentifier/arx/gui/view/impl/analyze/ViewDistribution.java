@@ -90,6 +90,7 @@ public class ViewDistribution implements IView {
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.VISUALIZATION, this);
         controller.addListener(target, this);
         this.controller = controller;
         if (reset != null) {
@@ -199,6 +200,8 @@ public class ViewDistribution implements IView {
             if (chart != null) chart.setEnabled(true);
             update();
              
+        } else if (event.part == ModelPart.VISUALIZATION) {
+            update();
         } else if (event.part == ModelPart.VIEW_CONFIG) {
             
             if (chart != null) chart.setEnabled(true);
@@ -218,6 +221,12 @@ public class ViewDistribution implements IView {
      * Updates the view
      */
     private void update() {
+        
+        if (model != null && !model.isVisualizationEnabled()) {
+            clearCache();
+            reset();
+            return;
+        }
 
         // Obtain context
         Context context = acontext.getContext();
