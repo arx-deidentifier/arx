@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class TablePage extends WizardPage {
 
+    @SuppressWarnings("unused")
     private ImportDataWizard wizardImport;
 
     private Table table;
@@ -58,19 +59,7 @@ public class TablePage extends WizardPage {
 
                 setPageComplete(false);
 
-                ((ImportDataColumn)event.getElement()).setEnabled(event.getChecked());
-
-                for (ImportDataColumn column : wizardImport.getData().getWizardColumns()) {
-
-                    if (column.isEnabled()) {
-
-                        setPageComplete(true);
-
-                        return;
-
-                    }
-
-                }
+                // TODO
 
             }
 
@@ -87,9 +76,9 @@ public class TablePage extends WizardPage {
             public String getText(Object element)
             {
 
-                ImportDataColumn column = (ImportDataColumn)element;
+                // TODO
 
-                return column.getName();
+                return "";
 
             }
 
