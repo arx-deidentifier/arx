@@ -85,6 +85,7 @@ public class SourcePage extends WizardPage {
          * Add button for database
          */
         btnDatabase = new Button(container, SWT.RADIO);
+        btnDatabase.setEnabled(false);
         btnDatabase.setText("Database (JDBC)");
         btnDatabase.addSelectionListener(new SelectionAdapter() {
 
@@ -103,6 +104,7 @@ public class SourcePage extends WizardPage {
          * Add button for Excel
          */
         btnXls = new Button(container, SWT.RADIO);
+        btnXls.setEnabled(false);
         btnXls.setText("XLS (Excel)");
         btnXls.addSelectionListener(new SelectionAdapter() {
 
