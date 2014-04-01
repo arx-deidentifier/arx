@@ -239,7 +239,7 @@ public class ImportData {
 
             for (String[] s : getPreviewData()) {
 
-                result.add(s[index]);
+                result.add(s[column.getColumn().getIndex()]);
 
             }
 
