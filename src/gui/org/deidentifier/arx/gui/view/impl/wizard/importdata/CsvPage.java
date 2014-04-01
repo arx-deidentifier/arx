@@ -413,18 +413,18 @@ public class CsvPage extends WizardPage {
 
     class CSVColumnLabelProvider extends ColumnLabelProvider {
 
-        private int column;
+        private int index;
 
-        public CSVColumnLabelProvider(int column) {
+        public CSVColumnLabelProvider(int index) {
 
-            this.column = column;
+            this.index = index;
 
         }
 
         @Override
         public String getText(Object element) {
 
-            return ((String[]) element)[column];
+            return ((String[]) element)[index];
 
         }
 
@@ -433,7 +433,7 @@ public class CsvPage extends WizardPage {
 
             int row = previewData.indexOf(element);
 
-            return "Row: " + (row + 1) + ", Column: " + (column + 1);
+            return "Row: " + (row + 1) + ", Column: " + (index + 1);
 
         }
 
