@@ -361,21 +361,9 @@ public class CsvPage extends WizardPage {
 
         }
 
-        this.wizardImport.getData().setWizardColumns(wizardColumns);
-
-        if (btnContainsHeader.getSelection()) {
-
-            tablePreview.setHeaderVisible(true);
-
-        } else {
-
-            tablePreview.setHeaderVisible(false);
-
-        }
-
+        /* Setup preview table */
         tableViewerPreview.setInput(previewData);
-        wizardImport.getData().setPreviewData(previewData);
-
+        tablePreview.setHeaderVisible(btnContainsHeader.getSelection());
         tablePreview.setVisible(true);
         tablePreview.layout();
         tablePreview.setRedraw(true);
@@ -413,6 +401,7 @@ public class CsvPage extends WizardPage {
         }
 
         wizardImport.getData().setWizardColumns(wizardColumns);
+        wizardImport.getData().setPreviewData(previewData);
         wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
         wizardImport.getData().setFileLocation(comboLocation.getText());
         wizardImport.getData().setCsvSeparator(separators[selection]);
