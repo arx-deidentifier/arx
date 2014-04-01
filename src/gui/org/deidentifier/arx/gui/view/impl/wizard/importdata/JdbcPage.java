@@ -1,6 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.gui.model.ModelJdbc;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -17,6 +16,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class JdbcPage extends WizardPage {
 
+    @SuppressWarnings("unused")
     private ImportDataWizard wizardImport;
 
     private Label lblType;
