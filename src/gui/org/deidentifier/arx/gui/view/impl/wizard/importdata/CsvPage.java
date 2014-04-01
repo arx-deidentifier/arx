@@ -55,6 +55,7 @@ public class CsvPage extends WizardPage {
     private final String[] labels = {";", ",", "|", "Tab"};
     private boolean customSeparator;
 
+    final ArrayList<String[]> previewData = new ArrayList<String[]>();
 
     public CsvPage(ImportDataWizard wizardImport)
     {
@@ -265,7 +266,6 @@ public class CsvPage extends WizardPage {
          */
         final CSVDataInput in = new CSVDataInput(location, separator);
         final Iterator<String[]> it = in.iterator();
-        final ArrayList<String[]> previewData = new ArrayList<String[]>();
         final String[] firstLine;
 
         /*
@@ -339,34 +339,6 @@ public class CsvPage extends WizardPage {
         while (tablePreview.getColumnCount() > 0) {
 
             tablePreview.getColumns()[0].dispose();
-
-        }
-
-        class CSVColumnLabelProvider extends ColumnLabelProvider {
-
-            private int column;
-
-            public CSVColumnLabelProvider(int column) {
-
-                this.column = column;
-
-            }
-
-            @Override
-            public String getText(Object element) {
-
-                return ((String[]) element)[column];
-
-            }
-
-            @Override
-            public String getToolTipText(Object element) {
-
-                int row = previewData.indexOf(element);
-
-                return "Row: " + (row + 1) + ", Column: " + (column + 1);
-
-            }
 
         }
 
@@ -446,6 +418,35 @@ public class CsvPage extends WizardPage {
         wizardImport.getData().setCsvSeparator(separators[selection]);
 
         setPageComplete(true);
+
+    }
+
+
+    class CSVColumnLabelProvider extends ColumnLabelProvider {
+
+        private int column;
+
+        public CSVColumnLabelProvider(int column) {
+
+            this.column = column;
+
+        }
+
+        @Override
+        public String getText(Object element) {
+
+            return ((String[]) element)[column];
+
+        }
+
+        @Override
+        public String getToolTipText(Object element) {
+
+            int row = previewData.indexOf(element);
+
+            return "Row: " + (row + 1) + ", Column: " + (column + 1);
+
+        }
 
     }
 
