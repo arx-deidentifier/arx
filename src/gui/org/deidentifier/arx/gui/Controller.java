@@ -350,11 +350,7 @@ public class Controller implements IView {
                 update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
             }
 
-            // TODO: This is an ugly hack to synchronize the analysis views
-            // Update selected attribute twice
-            update(new ModelEvent(this,
-                                  ModelPart.SELECTED_ATTRIBUTE,
-                                  model.getSelectedAttribute()));
+            // Update selected attribute
             update(new ModelEvent(this,
                                   ModelPart.SELECTED_ATTRIBUTE,
                                   model.getSelectedAttribute()));
