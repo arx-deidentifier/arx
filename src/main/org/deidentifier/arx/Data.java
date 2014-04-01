@@ -169,6 +169,21 @@ public abstract class Data {
     }
 
     /**
+     * Creates a new data object from a given import adapter
+     * 
+     * @param adapter An adapter
+     * @return A Data object
+     */
+    public static Data create(final DataSourceImportAdapter adapter) {
+
+        final Data data = new IterableData(adapter);
+        for (Column column : adapter.getConfig().getColumns()) {
+            data.getDefinition().setDataType(column.getName(), column.getDatatype());
+        }
+        return data;
+    }
+
+    /**
      * Creates a new data object from an iterator over tuples
      * 
      * @param iterator
