@@ -13,7 +13,6 @@ import java.util.Map;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.importdata.CSVConfiguration;
-import org.deidentifier.arx.io.importdata.CSVImportAdapter;
 import org.deidentifier.arx.io.importdata.Column;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
