@@ -1,9 +1,12 @@
 package org.deidentifier.arx.io.importdata;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
+import org.apache.commons.io.input.CountingInputStream;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
 
 /**
@@ -13,34 +16,13 @@ import org.deidentifier.arx.io.CSVDataInput;
  * wrapper around {@link CSVDataInput}, however it is more flexible, as
  * columns can be renamed and selected on an individual basis.
  */
-public class CSVImportAdapter extends ImportAdapter {
-
-    /**
-     * List of columns to be imported
-     *
-     * Each element of this list represents a column to import from. Refer to
-     * {@link Column} for details.
-     *
-     * @note Only columns that are part of this list will be imported from,
-     * any other column will simply be ignored and not be returned.
-     */
-    protected List<Column> columns;
-
-    /**
-     * Name of file to import from
-     */
-    private String file;
-
-    /**
-     * Character that separates the column from each other
-     */
-    private char separator;
-
-    /**
-     * Indicates whether first row contains header with names of columns
-     */
-    private boolean containsHeader;
-
+public class CSVImportAdapter extends DataSourceImportAdapter {
+    
+    private CSVConfiguration config; 
+    private long bytesTotal;
+    private CountingInputStream cin;
+    private DataType<?>[] types;
+    
     /**
      * @see {@link CSVDataInput}
      */
@@ -57,7 +39,7 @@ public class CSVImportAdapter extends ImportAdapter {
      * This keeps track of columns that should be imported, as columns can be
      * selected on an individual basis.
      */
-    private Integer[] indexesToImport;
+    private int[] indexes;
 
     /**
      * Contains the last row as returned by {@link CSVDataInput#iterator()}
@@ -78,132 +60,37 @@ public class CSVImportAdapter extends ImportAdapter {
     private boolean firstRowReturned = false;
 
     /**
-     * Creates a new instance of this object with the given parameters
-     *
-     * The first line is read in order to get the number of columns within the
-     * CSV file. This is stored within {@link #lastRow}. Exceptions are thrown
-     * in case the file doesn't contain any useful information.
-     *
-     * @param file {@link #file}
-     * @param separator {@link #separator}
-     * @param containsHeader {@link #containsHeader}
-     * @throws Exception In case file is invalid
+     * Creates a new instance
+     * @param config
      */
-    public CSVImportAdapter(String file, char separator, boolean containsHeader) throws Exception {
+    protected CSVImportAdapter(CSVConfiguration config) throws IOException{
 
-        this.file = file;
-        this.separator = separator;
-        this.containsHeader = containsHeader;
+        super(config);
+        this.config = config;
+        this.bytesTotal = new File(config.getFile()).length();
 
-        /*
-         * Get CSV iterator
-         */
-        in = new CSVDataInput(file, separator);
+        // Prepare
+        this.indexes = getIndexesToImport();
+        this.types = getColumnDatatypes();
+
+        // Track progress
+        cin = new CountingInputStream(new FileInputStream(new File(config.getFile())));
+        
+        /* Get CSV iterator */
+        in = new CSVDataInput(cin, config.getSeparator());
         it = in.iterator();
 
-        /*
-         * Check whether first row exists
-         */
+        /* Check whether first row exists */
         if (it.hasNext()) {
-
             lastRow = it.next();
-
-            if (containsHeader) {
-
-                if (!it.hasNext()) {
-
-                    throw new Exception("CSV contains nothing but header");
-
+            if (config.isContainsHeader()) {
+                if (!it.hasNext()) { 
+                    throw new IOException("CSV contains nothing but header");
                 }
-
             }
-
         } else {
-
-            throw new Exception("CSV file contains no data");
-
+            throw new IOException("CSV file contains no data");
         }
-
-    }
-
-    /**
-     * @return {@link #file}
-     */
-    public String getFile() {
-
-        return file;
-
-    }
-
-    /**
-     * @return {@link #separator}
-     */
-    public char getSeparator() {
-
-        return separator;
-
-    }
-
-    /**
-     * @return {@link #containsHeader}
-     */
-    public boolean getContainsHeader() {
-
-        return containsHeader;
-
-    }
-
-    /**
-     * Sets the list of columns to actually import from
-     *
-     * @param columns List of columns to import from
-     *
-     * @exception In case list is empty or something has already been returned
-     *
-     * @see {@link #column}
-     */
-    @Override
-    public void setColumns(List<Column> columns) throws Exception {
-
-        if (columns.isEmpty()) {
-
-            throw new Exception("Empty column list");
-
-        }
-
-        if (firstRowReturned) {
-
-            throw new Exception("Can't be changed anymore");
-
-        }
-
-        /*
-         * Get indexes to import from {@see #indexesToImport}
-         */
-
-        ArrayList<Integer> listIndexesToImport = new ArrayList<Integer>();
-
-        for(Column column : columns) {
-
-            listIndexesToImport.add(column.getIndex());
-
-        }
-
-        Integer[] integerArray = new Integer[listIndexesToImport.size()];
-
-        this.columns = columns;
-        this.indexesToImport = listIndexesToImport.toArray(integerArray);
-
-    }
-
-    /**
-     * @return {@link #columns}
-     */
-    @Override
-    public List<Column> getColumns() {
-
-        return columns;
-
     }
 
     /**
@@ -217,7 +104,7 @@ public class CSVImportAdapter extends ImportAdapter {
     @Override
     public boolean hasNext() {
 
-        return it.hasNext() && (columns.size() != 0);
+        return it.hasNext() && (config.getColumns().size() != 0);
 
     }
 
@@ -226,7 +113,7 @@ public class CSVImportAdapter extends ImportAdapter {
      *
      * The returned element is sorted as defined by {@link Column#index} and
      * contains as many elements as there are columns selected to import from
-     * {@link #indexesToImport}. The first row {@link #firstRowReturned}
+     * {@link #indexes}. The first row {@link #firstRowReturned}
      * contains the names of the columns.
      */
     @Override
@@ -238,9 +125,9 @@ public class CSVImportAdapter extends ImportAdapter {
             String[] header = lastRow;
             int i = 0;
 
-            for (Column column : columns) {
+            for (Column column : config.getColumns()) {
 
-                if (!containsHeader) {
+                if (!config.isContainsHeader()) {
 
                     header[i] = "Column #" + column.getIndex();
 
@@ -267,17 +154,14 @@ public class CSVImportAdapter extends ImportAdapter {
         }
 
         lastRow = it.next();
-        int i = 0;
-        String[] result = new String[indexesToImport.length];
-
-        for (Integer index : indexesToImport) {
-
-            result[i++] = lastRow[index];
-
+        String[] result = new String[indexes.length];
+        for (int i=0; i<indexes.length; i++){
+            result[i] = lastRow[indexes[i]];
+            if (!types[i].isValid(result[i])) {
+                throw new IllegalArgumentException("Data value does not match data type");
+            }
         }
-
         return result;
-
     }
 
     /**
@@ -285,9 +169,13 @@ public class CSVImportAdapter extends ImportAdapter {
      */
     @Override
     public void remove() {
-
-        return;
-
+        throw new UnsupportedOperationException();
     }
 
+    @Override
+    public int getProgress() {
+        if (cin==null) return 0;
+        long bytesRead = cin.getByteCount();
+        return (int)((double)bytesRead / (double)bytesTotal * 100d);
+    }
 }

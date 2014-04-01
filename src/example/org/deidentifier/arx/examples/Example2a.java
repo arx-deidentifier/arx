@@ -11,8 +11,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.importdata.CSVImportAdapter;
+import org.deidentifier.arx.io.importdata.CSVConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 
 /**
  * This class implements an example on how to use the API to import data from
@@ -29,19 +30,15 @@ public class Example2a extends Example {
         try {
 
             // Define input adapter
-            CSVImportAdapter adapter = new CSVImportAdapter("data/test.csv", ';', true);
+            CSVConfiguration importConfig = new CSVConfiguration("data/test.csv", ';', true);
 
             // Define columns (index, name (optional) and datatype)
-            List<Column> columns = new ArrayList<Column>();
-            columns.add(new Column(0, "Alter", DataType.INTEGER));
-            columns.add(new Column(1, DataType.STRING));
-            columns.add(new Column(2, DataType.STRING));
-
-            // Apply column definitions to adapter
-            adapter.setColumns(columns);
+            importConfig.addColumn(new Column(0, "Alter", DataType.INTEGER));
+            importConfig.addColumn(new Column(1, DataType.STRING));
+            importConfig.addColumn(new Column(2, DataType.STRING));
 
             // Create data object
-            final Data data = Data.create(adapter);
+            final Data data = Data.create(importConfig);
 
             // Define attribute hierarchies
             data.getDefinition()

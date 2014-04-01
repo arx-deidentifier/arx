@@ -2,7 +2,10 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.sources;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.DataSourceType;
+import org.deidentifier.arx.io.importdata.CSVConfiguration;
+import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -161,17 +164,17 @@ public class ImportDataWizard extends Wizard {
 
         if (currentPage == sourcePage) {
 
-            sources src = data.getSource();
+            DataSourceType src = data.getSource();
 
-            if (src == sources.CSV) {
+            if (src == DataSourceType.CSV) {
 
                 return csvPage;
 
-            } else if (src == sources.JDBC) {
+            } else if (src == DataSourceType.JDBC) {
 
                 return jdbcPage;
 
-            } else if (src == sources.XLS) {
+            } else if (src == DataSourceType.XLS) {
 
                 return xlsPage;
 
@@ -215,18 +218,39 @@ public class ImportDataWizard extends Wizard {
         return this.currentPage == previewPage;
 
     }
+    
+    DataSourceConfiguration result = null;
 
-    /**
-     * Gets executed once the finish button was clicked.
-     *
-     * TODO Implement actual import of data
-     */
     @Override
     public boolean performFinish()
     {
-
+        if (data.getSource() == DataSourceType.CSV) {
+            try {
+                CSVConfiguration config = new CSVConfiguration(data.getFileLocation(),
+                                                                data.getCsvSeparator(),
+                                                                data.getFirstRowContainsHeader());
+                
+                for (Column c : data.getEnabledColumns()) {
+                    config.addColumn(c);
+                }
+                
+                this.result = config;
+            } catch (Exception e) {
+                // TODO: There should be no need to catch exceptions
+                this.result = null;
+            }
+            
+        } else {
+            // TODO: Implement
+        }
         return true;
-
     }
-
+    
+    /**
+     * Returns the result
+     * @return
+     */
+    public DataSourceConfiguration getResult() {
+        return result;
+    }
 }
