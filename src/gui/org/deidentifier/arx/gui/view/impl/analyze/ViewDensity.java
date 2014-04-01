@@ -25,6 +25,7 @@ import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.IOException;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
@@ -218,7 +219,6 @@ public class ViewDensity extends Panel implements IView {
             String attribute2 = model.getAttributePair()[1];
             int column1 = handle.getColumnIndexOf(attribute1);
             int column2 = handle.getColumnIndexOf(attribute2);
-            
             renderer.updateData(model.getAttributePair()[0],
                                 model.getAttributePair()[1],
                                 handle.getStatistics().getContingencyTable(column1, MAX_SIZE, 

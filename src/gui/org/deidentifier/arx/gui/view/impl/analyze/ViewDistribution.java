@@ -17,6 +17,7 @@
  */
 package org.deidentifier.arx.gui.view.impl.analyze;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

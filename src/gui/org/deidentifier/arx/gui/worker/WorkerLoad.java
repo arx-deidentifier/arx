@@ -506,6 +506,12 @@ public class WorkerLoad extends Worker<Model> {
         // Read input
         config.setInput(Data.create(zip.getInputStream(entry),
                                     model.getSeparator()));
+        
+        // Disable visualization
+        if (model.getHideVisualizationAt() > 0 &&
+            config.getInput().getHandle().getNumRows() > model.getHideVisualizationAt()) {
+            model.setVisualizationEnabled(false);
+        }
 
         // And encode
         config.getInput().getHandle();

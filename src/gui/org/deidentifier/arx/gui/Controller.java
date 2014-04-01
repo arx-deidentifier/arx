@@ -1011,6 +1011,12 @@ public class Controller implements IView {
         final Data data = worker.getResult();
         model.reset();
         
+        // Disable visualization
+        if (model.getHideVisualizationAt() > 0 &&
+            data.getHandle().getNumRows() > model.getHideVisualizationAt()) {
+            model.setVisualizationEnabled(false);
+        }
+        
         // Create a research subset containing all rows
         RowSet subset = RowSet.create(data);
         for (int i=0; i<subset.length(); i++){
