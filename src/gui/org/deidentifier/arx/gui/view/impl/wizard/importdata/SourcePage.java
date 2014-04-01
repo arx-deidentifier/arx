@@ -17,6 +17,14 @@ import org.eclipse.swt.widgets.Composite;
  * from. Once the user makes a choice, it is stored stored using
  * {@link ImportData#setSourceType(SourceType)} and the page is marked as
  * completed.
+ *
+ * These source types are supported:
+ *
+ * <ul>
+ *  <li>{@link CsvPage} CSV</li>
+ *  <li>{@link JdbcPage} Database (JDBC)</li>
+ *  <li>{@link XlsPage} Excel (XLS)</li>
+ * </ul>
  */
 public class SourcePage extends WizardPage {
 

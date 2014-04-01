@@ -17,15 +17,9 @@ import org.eclipse.jface.wizard.Wizard;
  * step. All necessary information is asked for (e.g. source type, appropriate
  * details for each source, etc.), too.
  *
- * Multiple source types are supported:
- *
- * <ul>
- *  <li>{@link CsvPage} CSV</li>
- *  <li>{@link JdbcPage} Database (JDBC)</li>
- *  <li>{@link XlsPage} Excel (XLS)</li>
- * </ul>
- *
- * Refer to appropriate page(s) for more details about a specific source type.
+ * Refer to {@link SourcePage} for details about which source types are
+ * supported and to the appropriate page(s) itself for more details about a
+ * specific source type.
  */
 public class ImportDataWizard extends Wizard {
 
