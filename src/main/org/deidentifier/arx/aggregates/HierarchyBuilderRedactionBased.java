@@ -21,8 +21,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 
 /**
  * This class enables building hierarchies for categorical and non-categorical values
- * by redaction. Data items are 1) aligned left-to-right or right-to-left, 2) differences in
- * length are filled with a padding character, 3) the equally long values are redacted character by character
+ * using redaction. Data items are 1) aligned left-to-right or right-to-left, 2) differences in
+ * length are filled with a padding character, 3) then, equally long values are redacted character by character
  * from left-to-right or right-to-left.
  * 
  * @author Fabian Prasser

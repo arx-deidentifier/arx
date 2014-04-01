@@ -33,16 +33,45 @@ import org.deidentifier.arx.DataType;
  */
 public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends HierarchyBuilderGroupingBased<T> {
     
+    public static enum DynamicAdjustment{
+        OUT_OF_BOUNDS_LABEL,
+        SNAP_TO_BOUNDS
+    }
+    
     private static final long serialVersionUID = 3663874945543082808L;
 
     private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
-    
+    private String min;
+    private String max;
+    private double epsilon = 0;
+    private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
+
     /**
      * Creates a new instance
+     * @param min
+     * @param max
+     * @param type
+     * @param epsilon
+     * @param adjustment
+     */
+    public HierarchyBuilderIntervalBased(String min, String max, T type, double epsilon, DynamicAdjustment adjustment) {
+        super(type);
+        this.min = min;
+        this.max = max;
+        this.epsilon = epsilon;
+        this.adjustment = adjustment;
+    }
+
+    /**
+     * Creates a new instance
+     * @param min
+     * @param max
      * @param type
      */
-    public HierarchyBuilderIntervalBased(T type) {
+    public HierarchyBuilderIntervalBased(String min, String max, T type) {
         super(type);
+        this.min = min;
+        this.max = max;
     }
 
     /**
