@@ -415,6 +415,7 @@ public class CsvPage extends WizardPage {
 
         private int index;
 
+
         public CSVColumnLabelProvider(int index) {
 
             this.index = index;
