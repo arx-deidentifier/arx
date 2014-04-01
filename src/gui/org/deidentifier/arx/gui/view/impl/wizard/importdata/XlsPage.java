@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.deidentifier.arx.DataType.ARXString;
+import org.deidentifier.arx.io.importdata.Column;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -243,20 +244,20 @@ public class XlsPage extends WizardPage {
 
             }
 
-            ArrayList<ImportDataColumn> columns = new ArrayList<ImportDataColumn>();
+            ArrayList<WizardColumn> columns = new ArrayList<WizardColumn>();
 
             int index = 0;
             for (final Cell c : result.get(0)) {
 
-                ImportDataColumn column = new ImportDataColumn(false, "", new ARXString());
+                WizardColumn column = new WizardColumn(new Column(index, new ARXString()));
 
                 if (btnContainsHeader.getSelection()) {
 
-                    column.setName(c.getStringCellValue());
+                    column.getColumn().setName(c.getStringCellValue());
 
                 } else {
 
-                    column.setName("Column #" + index);
+                    column.getColumn().setName("Column #" + index);
 
                 }
 
@@ -264,7 +265,7 @@ public class XlsPage extends WizardPage {
 
             }
 
-            wizardImport.getData().setColumns(columns);
+            wizardImport.getData().setWizardColumns(columns);
 
         } catch (IOException e) {
 
