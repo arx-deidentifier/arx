@@ -11,26 +11,26 @@ import org.eclipse.jface.wizard.Wizard;
 
 
 /**
- * Wizard guiding the user through the process of importing data into the GUI
+ * Wizard guiding the user through the process of importing data
  *
  * The user is taken through the process of importing data into the GUI step by
- * step. This includes the selection of the data source as well as the inquiry
- * for all of the information coming along with it.
+ * step. All necessary information is asked for (e.g. source type, appropriate
+ * details for each source, etc.), too.
  *
- * Multiple sources are supported for the import are supported:
+ * Multiple source types are supported:
  *
  * <ul>
  *  <li>{@link CsvPage} CSV</li>
  *  <li>{@link JdbcPage} Database (JDBC)</li>
- *  <li>{@link XlsPage} Excel</li>
+ *  <li>{@link XlsPage} Excel (XLS)</li>
  * </ul>
  *
- * Refer to appropriate page(s) for more details about a specific source.
+ * Refer to appropriate page(s) for more details about a specific source type.
  */
 public class ImportDataWizard extends Wizard {
 
     /**
-     * Object storing data gathered by the wizard
+     * Reference to container storing all the data gathered by the wizard
      */
     private ImportData data = new ImportData();
 
@@ -58,10 +58,19 @@ public class ImportDataWizard extends Wizard {
     /**
      * Holds reference to the page currently being shown
      *
-     * This is set within {@link #getNextPage(IWizardPage)} and later used by
-     * {@link #canFinish()}.
+     * This is set within {@link #getNextPage(IWizardPage)} and later on used
+     * by {@link #canFinish()} to determine whether the wizard can be finished.
      */
     private IWizardPage currentPage;
+
+    /**
+     * Configuration representing all of the choices that were made
+     *
+     * This configuration is the result of the whole wizard process. It will be
+     * created once the wizard is about to finish {@link #performFinish()} and
+     * can be accessed by {@link #getResultingConfiguration()}.
+     */
+    private DataSourceConfiguration configuration = null;
 
 
     /**
@@ -110,12 +119,12 @@ public class ImportDataWizard extends Wizard {
     }
 
     /**
-     * Adds pages to the wizard.
+     * Adds all of the available pages to the wizard
      *
      * @note Note that for reasons of simplicity all pages are directly added
      * here. The page ordering is handled by {@link #getNextPage(IWizardPage)}.
      *
-     * TODO Add pages in a more elegant way
+     * TODO Add pages in a more elegant way, e.g. using an array and loop
      */
     @Override
     public void addPages()
@@ -145,13 +154,13 @@ public class ImportDataWizard extends Wizard {
     }
 
     /**
-     * Handles the correct ordering of wizard pages.
+     * Handles the correct ordering of wizard pages
      *
-     * As {@link #addPage(IWizardPage)} simply adds all of the wizard pages,
-     * this method makes sure that the correct one is shown next. The process
-     * flow depends upon the selected source and the <code>currentPage</code>.
+     * This method makes sure that the correct page is shown once the user hits
+     * the "next" button. The page flow depends <code>currentPage</code> and
+     * the selected {@link ImportData#getSourceType() sourceType}.
      *
-     * @param currentPage The page currently being shown
+     * @param currentPage The page that is currently being shown
      *
      * @return The page that will be shown next
      *
@@ -207,10 +216,13 @@ public class ImportDataWizard extends Wizard {
     }
 
     /**
-     * Indicates whether finish button should be clickable.
+     * Determines when the wizard should be finishable
      *
-     * The wizard can only be finished after the user has seen the preview on
-     * the {@link #previewPage}.
+     * The wizard can only be finished on the
+     * {@link #previewPage preview page}. This makes sure that the user is
+     * signs off on the settings previously made.
+     *
+     * @see {@link #performFinish()}
      */
     @Override
     public boolean canFinish() {
@@ -218,39 +230,70 @@ public class ImportDataWizard extends Wizard {
         return this.currentPage == previewPage;
 
     }
-    
-    DataSourceConfiguration result = null;
 
+    /**
+     * Gets executed once the wizard is about to finish
+     *
+     * This will build an appropriate {@link DataSourceConfiguration} object,
+     * depending upon the {@link ImportData#getSourceType() source type} and
+     * the choices the user made during the process of the wizard.
+     *
+     * {@link #configuration} will hold a reference of the object. This can be
+     * retrieved later on by {@link #getResultingConfiguration()}.
+     *
+     * @see {@link #getResultingConfiguration()}
+     */
     @Override
     public boolean performFinish()
     {
+
         if (data.getSourceType() == SourceType.CSV) {
+
             try {
-                CSVConfiguration config = new CSVConfiguration(data.getFileLocation(),
-                                                                data.getCsvSeparator(),
-                                                                data.getFirstRowContainsHeader());
-                
+
+                CSVConfiguration config = new CSVConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
+
                 for (Column c : data.getEnabledColumns()) {
+
                     config.addColumn(c);
+
                 }
-                
-                this.result = config;
+
+                this.configuration = config;
+
             } catch (Exception e) {
+
                 // TODO: There should be no need to catch exceptions
-                this.result = null;
+                this.configuration = null;
+
             }
-            
+
         } else {
+
             // TODO: Implement
+
         }
+
         return true;
+
     }
-    
+
     /**
-     * Returns the result
-     * @return
+     * Returns a reference to DataSourceConfiguration
+     *
+     * The wizard will built an appropriate {@link DataSourceConfiguration}
+     * object once it is about to finish {@link #performFinish()}. This object
+     * can then be retrieved using this method.
+     *
+     * @note Note however, that the return value might be null, when the wizard
+     * wasn't completed successfully.
+     *
+     * @return {@link #configuration} The resulting data source configuration
      */
-    public DataSourceConfiguration getResult() {
-        return result;
+    public DataSourceConfiguration getResultingConfiguration() {
+
+        return configuration;
+
     }
+
 }

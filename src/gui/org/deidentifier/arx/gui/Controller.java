@@ -535,7 +535,7 @@ public class Controller implements IView {
         ImportDataWizard wizard = new ImportDataWizard(this, model);
         new WizardDialog(main.getShell(), wizard).open();
         
-        DataSourceConfiguration config = wizard.getResult();
+        DataSourceConfiguration config = wizard.getResultingConfiguration();
         if (config != null) {
             actionImportData(config);
         }
@@ -844,7 +844,7 @@ public class Controller implements IView {
         ImportDataWizard wizard = new ImportDataWizard(this, model);
         new WizardDialog(main.getShell(), wizard).open();
         
-        DataSourceConfiguration config = wizard.getResult();
+        DataSourceConfiguration config = wizard.getResultingConfiguration();
         if (config == null) {
             return;
         }
