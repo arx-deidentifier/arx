@@ -27,7 +27,11 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
         }
     }
 
+    /** The config*/
     private List<Column> columns = null;
+    
+    /** The config*/
+    private DataSourceConfiguration config = null;
     
     /**
      * Creates a new instance
@@ -35,7 +39,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      */
     protected DataSourceImportAdapter(DataSourceConfiguration config){
         this.columns = config.getColumns();
-
+        this.config = config;
         if (this.columns.isEmpty()) {
             throw new IllegalArgumentException("No columns specified");
         }
@@ -77,4 +81,12 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      * @return
      */
     public abstract int getProgress();
+
+    /**
+     * Returns the configuration
+     * @return
+     */
+    public DataSourceConfiguration getConfig() {
+        return config;
+    }
 }

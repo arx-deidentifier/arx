@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.DataType;
@@ -18,9 +19,16 @@ import org.deidentifier.arx.io.CSVDataInput;
  */
 public class CSVImportAdapter extends DataSourceImportAdapter {
     
-    private CSVConfiguration config; 
+    /** TODO */
+    private CSVConfiguration config;
+    
+    /** TODO */
     private long bytesTotal;
+    
+    /** TODO */
     private CountingInputStream cin;
+    
+    /** TODO */
     private DataType<?>[] types;
     
     /**
@@ -47,7 +55,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      * This row needs to be further processed, e.g. to return only selected
      * columns.
      */
-    private String[] lastRow;
+    private String[] row;
 
     /**
      * Indicates whether the first row has already been returned
@@ -57,7 +65,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      * assigned explicitly, this is either the value of the file itself,
      * the value defined by the user, or a default value.
      */
-    private boolean firstRowReturned = false;
+    private boolean headerReturned = false;
 
     /**
      * Creates a new instance
@@ -82,8 +90,8 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
 
         /* Check whether first row exists */
         if (it.hasNext()) {
-            lastRow = it.next();
-            if (config.isContainsHeader()) {
+            row = it.next();
+            if (config.fileContainsHeader()) {
                 if (!it.hasNext()) { 
                     throw new IOException("CSV contains nothing but header");
                 }
@@ -103,7 +111,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      */
     @Override
     public boolean hasNext() {
-        return it.hasNext() && (config.getColumns().size() != 0);
+        return row != null;
     }
 
     /**
@@ -111,44 +119,77 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      *
      * The returned element is sorted as defined by {@link Column#index} and
      * contains as many elements as there are columns selected to import from
-     * {@link #indexes}. The first row {@link #firstRowReturned}
+     * {@link #indexes}. The first row {@link #headerReturned}
      * contains the names of the columns.
      */
     @Override
     public String[] next() {
 
-        if (!firstRowReturned) {
-
-            firstRowReturned = true;
-            String[] header = lastRow;
-            int i = 0;
-
-            for (Column column : config.getColumns()) {
-                if (!config.isContainsHeader()) {
-                    header[i] = "Column #" + column.getIndex();
-                } else {
-                    header[i] = lastRow[column.getIndex()];
-                }
-
-                if (column.getName() != null) {
-                    header[i] = column.getName();
-                }
-                
-                column.setName(header[i]);
-                i++;
-            }
-            return header;
-        }
-
-        lastRow = it.next();
+        // Create header
+        if (!headerReturned) {
+            headerReturned = true;
+            return createHeader();
+        } 
+        
+        // Create row
         String[] result = new String[indexes.length];
         for (int i=0; i<indexes.length; i++){
-            result[i] = lastRow[indexes[i]];
+            result[i] = row[indexes[i]];
             if (!types[i].isValid(result[i])) {
                 throw new IllegalArgumentException("Data value does not match data type");
             }
         }
+        
+
+        // Fetch next row
+        if (it.hasNext()) {
+            row = it.next();
+        } else {
+            row = null;
+        }
+        
+        // Return
         return result;
+    }
+
+    /**
+     * Creates the header
+     * @return
+     */
+    private String[] createHeader() {
+
+        // Init
+        String[] header = new String[config.getColumns().size()];
+        List<Column> columns = config.getColumns();
+        
+        // Create header
+        for (int i=0, len=columns.size(); i<len; i++) {
+            
+            Column column = columns.get(i);
+            if (!config.fileContainsHeader()) {
+                header[i] = "Column #" + column.getIndex();
+            } else {
+                header[i] = row[column.getIndex()];
+            }
+
+            if (column.getName() != null) {
+                header[i] = column.getName();
+            }
+
+            column.setName(header[i]);
+        }
+
+        // Fetch next row
+        if (config.fileContainsHeader()) {
+            if (it.hasNext()) {
+                row = it.next();
+            } else {
+                row = null;
+            }
+        }
+
+        // Return header
+        return header;
     }
 
     /**

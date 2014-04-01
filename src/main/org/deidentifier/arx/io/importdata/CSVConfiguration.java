@@ -46,7 +46,7 @@ public class CSVConfiguration extends DataSourceConfiguration{
     /**
      * @return the containsHeader
      */
-    public boolean isContainsHeader() {
+    public boolean fileContainsHeader() {
         return containsHeader;
     }
 }
