@@ -22,8 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
@@ -176,10 +178,20 @@ public abstract class Data {
      */
     public static Data create(final DataSourceImportAdapter adapter) {
 
-        final Data data = new IterableData(adapter);
+        Data data = new IterableData(adapter);
+        
+        // TODO: This is ugly
+        Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
         for (Column column : adapter.getConfig().getColumns()) {
-            data.getDefinition().setDataType(column.getName(), column.getDatatype());
+            types.put(column.getIndex(), column.getDatatype());
         }
+        DataHandle handle = data.getHandle();
+        for (int i=0; i<handle.getNumColumns(); i++) {
+            String attribute = handle.getAttributeName(i);
+            data.getDefinition().setDataType(attribute, types.get(i));
+        }
+
+        // Return
         return data;
     }
 
@@ -232,9 +244,19 @@ public abstract class Data {
     public static Data create(final DataSourceConfiguration config) throws IOException {
 
         final Data data = new IterableData(DataSourceImportAdapter.create(config));
+
+        // TODO: This is ugly
+        Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
         for (Column column : config.getColumns()) {
-            data.getDefinition().setDataType(column.getName(), column.getDatatype());
+            types.put(column.getIndex(), column.getDatatype());
         }
+        DataHandle handle = data.getHandle();
+        for (int i=0; i<handle.getNumColumns(); i++) {
+            String attribute = handle.getAttributeName(i);
+            data.getDefinition().setDataType(attribute, types.get(i));
+        }
+        
+        // Return
         return data;
     }
 

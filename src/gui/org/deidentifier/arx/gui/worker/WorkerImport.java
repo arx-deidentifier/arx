@@ -18,10 +18,8 @@
 
 package org.deidentifier.arx.gui.worker;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.importdata.DataSourceConfiguration;

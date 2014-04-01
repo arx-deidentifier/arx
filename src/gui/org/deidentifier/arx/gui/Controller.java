@@ -1026,10 +1026,6 @@ public class Controller implements IView {
                                              .getHandle()
                                              .getAttributeName(i),
                                         AttributeType.INSENSITIVE_ATTRIBUTE);
-            definition.setDataType(model.getInputConfig()
-                                        .getInput()
-                                        .getHandle()
-                                        .getAttributeName(i), DataType.STRING);
         }
         
         model.resetCriteria();
