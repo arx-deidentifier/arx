@@ -69,8 +69,7 @@ public abstract class DataType<T> implements Serializable {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
          */
         private ARXDate() {
-            string = "dd.MM.yyyy";
-            format = new SimpleDateFormat(string);
+            this("Default");
         }
 
         /**
@@ -79,11 +78,15 @@ public abstract class DataType<T> implements Serializable {
          * @param format
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
          */
-        private ARXDate(final String format) {
-            this.format = new SimpleDateFormat(format);
-            this.string = format;
+        private ARXDate(final String formatString) {
+            if (format == null || format.equals("Default")) {
+                string = "dd.MM.yyyy";
+                format = new SimpleDateFormat(string);
+            } else {
+                this.format = new SimpleDateFormat(formatString);
+                this.string = formatString;
+            }
         }
-
 
         @Override
         public DataType<Date> clone() {
@@ -114,15 +117,15 @@ public abstract class DataType<T> implements Serializable {
         public Date parse(String s) {
         	try {
 				return format.parse(s);
-			} catch (ParseException e) {
-				throw new RuntimeException(e);
-			}
+        	} catch (Exception e) {
+                throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
+            }
         }
 
         @Override
         public boolean isValid(String s) {
             try {
-                format.parse(s);
+                parse(s);
                 return true;
             } catch (Exception e){
                 return false;
@@ -179,8 +182,7 @@ public abstract class DataType<T> implements Serializable {
         private String        string;
         
         private ARXDecimal(){
-            this.format = null;
-            this.string = null;
+            this("Default");
         }
         
         /**
@@ -190,12 +192,12 @@ public abstract class DataType<T> implements Serializable {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
         private ARXDecimal(String format){
-            if (format != null){
-                this.format = new DecimalFormat(format);
-                this.string = format;
-            } else {
+            if (format == null || format.equals("Default")){
                 this.format = null;
                 this.string = null;
+            } else {
+                this.format = new DecimalFormat(format);
+                this.string = format;
             }
         }
         
@@ -209,7 +211,7 @@ public abstract class DataType<T> implements Serializable {
             try {
                 return parse(s1).compareTo(parse(s2));
             } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid value", e);
+                throw new IllegalArgumentException("Invalid value: '"+s1+"' or: '"+s2+"'", e);
             }
         }
 
@@ -226,25 +228,21 @@ public abstract class DataType<T> implements Serializable {
 
         @Override
         public Double parse(String s) {
-            if (format==null){
-                return Double.valueOf(s);
-            } else {
-                try {
+            try {
+                if (format == null) {
+                    return Double.valueOf(s);
+                } else {
                     return format.parse(s).doubleValue();
-                } catch (ParseException e) {
-                    throw new NumberFormatException(e.getMessage());
                 }
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
 
         @Override
         public boolean isValid(String s) {
             try {
-                if (format==null){
-                    Double.valueOf(s);
-                } else {
-                    format.parse(s);
-                }
+                parse(s);
                 return true;
             } catch (Exception e){
                 return false;
@@ -305,8 +303,7 @@ public abstract class DataType<T> implements Serializable {
         private String        string;
         
         private ARXInteger(){
-            this.format = null;
-            this.string = null;
+            this("Default");
         }
         
         /**
@@ -316,12 +313,12 @@ public abstract class DataType<T> implements Serializable {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
          */
         private ARXInteger(String format){
-            if (format != null){
-                this.format = new DecimalFormat(format);
-                this.string = format;
-            } else {
+            if (format == null || format.equals("Default")){
                 this.format = null;
                 this.string = null;   
+            } else {
+                this.format = new DecimalFormat(format);
+                this.string = format;
             }
         }
         
@@ -335,7 +332,7 @@ public abstract class DataType<T> implements Serializable {
             try {
                 return parse(s1).compareTo(parse(s2));
             } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid value", e);
+                throw new IllegalArgumentException(e.getMessage() + ": " + s1 +" or: " + s2, e);
             }
         }
 
@@ -352,14 +349,14 @@ public abstract class DataType<T> implements Serializable {
 
         @Override
         public Long parse(String s) {
-            if (format==null){
-                return Long.valueOf(s);
-            } else {
-                try {
+            try {
+                if (format == null) {
+                    return Long.valueOf(s);
+                } else {
                     return format.parse(s).longValue();
-                } catch (ParseException e) {
-                    throw new NumberFormatException(e.getMessage());
                 }
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
 
@@ -396,11 +393,7 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public boolean isValid(String s) {
             try {
-                if (format==null){
-                    Long.valueOf(s);
-                } else {
-                    format.parse(s);
-                }
+                parse(s);
                 return true;
             } catch (Exception e){
                 return false;
@@ -489,7 +482,7 @@ public abstract class DataType<T> implements Serializable {
          * Creates a new instance
          */
         private ARXOrderedString(){
-            this.order = null;
+            this("Default");
         }
         
         /**
@@ -497,7 +490,7 @@ public abstract class DataType<T> implements Serializable {
          * @param format Ordered list of string separated by line feeds
          */
         private ARXOrderedString(String format){
-            if (format.equals("")) {
+            if (format==null || format.equals("Default") || format.equals("")) {
                 this.order = null;
             } else {
                 try {
