@@ -1,8 +1,6 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -13,7 +11,6 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.importdata.CSVConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
-import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 
 /**
  * This class implements an example on how to use the API to import data from
