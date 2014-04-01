@@ -1,6 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.DataSourceType;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * This page provides means to select the source the user wants to import data
  * from. Once the user makes a choice, it is stored stored within
- * {@link ImportDataWizard#data} and the page is marked as completed.
+ * {@link ImportData#setSourceType(SourceType)} and the page is marked as completed.
  */
 public class SourcePage extends WizardPage {
 
@@ -73,7 +73,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(DataSourceType.CSV);
+                wizardImport.getData().setSourceType(SourceType.CSV);
 
                 setPageComplete(true);
 
@@ -92,7 +92,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(DataSourceType.JDBC);
+                wizardImport.getData().setSourceType(SourceType.JDBC);
 
                 setPageComplete(true);
 
@@ -111,7 +111,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(DataSourceType.XLS);
+                wizardImport.getData().setSourceType(SourceType.XLS);
 
                 setPageComplete(true);
 

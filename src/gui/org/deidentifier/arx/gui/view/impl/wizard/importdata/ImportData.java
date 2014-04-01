@@ -7,31 +7,39 @@ import org.deidentifier.arx.io.importdata.Column;
 
 
 /**
- * Contains data gathered by the wizard and offers means to access it
+ * Stores all of the data gathered by the wizard and offers means to access it
  *
- * This object is accessible to all pages of the wizard and can be used to set
- * or retrieve data.
+ * This object is accessible to all pages of the wizard and can be used to
+ * store and/or retrieve data. It is mainly used to exchange data between
+ * multiple wizard pages.
  *
  * TODO Change to more elegant implementation (i.e. general key value storage)
  */
 public class ImportData {
 
     /**
-     * Possible sources for importing data
+     * Possible sources for importing data from
+     *
+     * @see {@link sourceType}
      */
-    public enum DataSourceType {CSV, JDBC, XLS};
+    public enum SourceType {CSV, JDBC, XLS};
 
     /**
      * Actual source data should be imported from
      */
-    private DataSourceType source;
+    private SourceType sourceType;
 
     /**
-     * List of detected columns to be imported
+     * List of columns used throughout the wizard
      *
-     * Each column is represented by {@link Column}.
+     * This contains a list of all the columns that were detected and is
+     * used through the whole wizard. Note however, that not all of the columns
+     * here will necessarily be imported from, as columns can be disabled on an
+     * individual basis {@link WizardColumn#setEnabled(boolean)}.
+     *
+     * Each column itself is represented by {@link WizardColumn}.
      */
-    private List<WizardColumn> columns;
+    private List<WizardColumn> wizardColumns;
 
     /**
      * Location of file to import from
@@ -45,47 +53,37 @@ public class ImportData {
 
     /**
      * Indicates whether first row contains header
+     *
+     * In case of CSV and XLS files the first row might contain a header
+     * describing the column. This makes sure that the appropriate row is not
+     * considered to be data.
      */
     private boolean firstRowContainsHeader = true;
 
     /**
-     * Index of sheet to import from (in case of Excel import)
+     * Index of sheet to import from (in case of XLS import)
+     *
+     * @see {@link SourceType#XLS}
      */
     private int xlsSheetIndex;
 
     /**
      * Preview data
+     *
+     * For reasons of simplicity and performance data is imported rather early
+     * on in the wizard and stored here. This makes sure that
+     * {@link PreviewPage} doesn't need to know anything about the source type
+     * the data is coming from.
+     *
+     * It will contain up to {@link #previewDataMaxLines} lines of data.
      */
     private List<String[]> previewData;
 
     /**
-     * Maximum number of lines to be loaded for preview
+     * Maximum number of lines to be loaded for preview purposes
      */
     public static final int previewDataMaxLines = 25;
 
-    /**
-     * Indicates whether wizard was finished completely
-     */
-    private boolean wizardFinished;
-
-
-    /**
-     * @return {@link #wizardFinished}
-     */
-    public boolean isWizardFinished() {
-
-        return wizardFinished;
-
-    }
-
-    /**
-     * @param {@link #wizardFinished}
-     */
-    public void setWizardFinished(boolean wizardFinished) {
-
-        this.wizardFinished = wizardFinished;
-
-    }
 
     /**
      * @return {@link #xlsSheetIndex}
@@ -166,47 +164,47 @@ public class ImportData {
     }
 
     /**
-     * @return {@link #source}
+     * @return {@link #sourceType}
      */
-    public DataSourceType getSource()
+    public SourceType getSourceType()
     {
 
-        return source;
+        return sourceType;
 
     }
 
     /**
-     * @param source {@link #source}
+     * @param source {@link #sourceType}
      */
-    public void setSource(DataSourceType source)
+    public void setSourceType(SourceType sourceType)
     {
 
-        this.source = source;
+        this.sourceType = sourceType;
 
     }
 
     /**
-     * @return {@link #columns}
+     * @return {@link #wizardColumns}
      */
     public List<WizardColumn> getWizardColumns()
     {
 
-        return columns;
+        return wizardColumns;
 
     }
 
     /**
-     * @param columns {@link #columns}
+     * @param columns {@link #wizardColumns}
      */
     public void setWizardColumns(List<WizardColumn> columns)
     {
 
-        this.columns = columns;
+        this.wizardColumns = columns;
 
     }
 
     /**
-     * @param columns {@link #previewData}
+     * @param wizardColumns {@link #previewData}
      */
     public void setPreviewData(List<String[]> previewData) {
 
@@ -226,14 +224,19 @@ public class ImportData {
     /**
      * Returns a list of strings containing the data for the given column
      *
-     * @param column Column the data should be returned for
+     * This will only return the {@link #previewData} for the given column
+     * rather than all of the preview data.
+     *
+     * @param column Column the preview data should be returned for
      *
      * @return Data for the given column
+     *
+     * @see {@link #getPreviewData()}
      */
-    public List<String> getPreviewData(WizardColumn column) throws Exception {
+    public List<String> getPreviewData(WizardColumn column) {
 
         List<String> result = new ArrayList<String>();
-        int index = columns.indexOf(column);
+        int index = wizardColumns.indexOf(column);
 
         if (index != -1) {
 
@@ -245,7 +248,7 @@ public class ImportData {
 
         } else {
 
-            throw new Exception("Column not part of preview data");
+            throw new IllegalArgumentException("Column not part of preview data");
 
         }
 
@@ -254,20 +257,20 @@ public class ImportData {
     }
 
     /**
-     * Returns a list of {@link Column} with elements that are enabled
+     * Returns list of enabled columns
      *
-     * {@link WizardColumn} is a wrapper for the wizard. These elements can
-     * be disabled by the user. This method will only return those elements
-     * that are enabled.
+     * This iterates over {@link #wizardColumns} and returns only the columns
+     * that are enabled {@link WizardColumn#isEnabled()}. Columns that have
+     * been disabled by the user will not be returned.
      *
-     * @return {@link Column} List of enabled elements
+     * @return {@link Column} List of enabled columns
      */
     public List<Column> getEnabledColumns()
     {
 
         List<Column> result = new ArrayList<Column>();
 
-        for (WizardColumn column : columns) {
+        for (WizardColumn column : wizardColumns) {
 
             if (column.isEnabled()) {
 

@@ -2,7 +2,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.DataSourceType;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
 import org.deidentifier.arx.io.importdata.CSVConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
@@ -164,17 +164,17 @@ public class ImportDataWizard extends Wizard {
 
         if (currentPage == sourcePage) {
 
-            DataSourceType src = data.getSource();
+            SourceType src = data.getSourceType();
 
-            if (src == DataSourceType.CSV) {
+            if (src == SourceType.CSV) {
 
                 return csvPage;
 
-            } else if (src == DataSourceType.JDBC) {
+            } else if (src == SourceType.JDBC) {
 
                 return jdbcPage;
 
-            } else if (src == DataSourceType.XLS) {
+            } else if (src == SourceType.XLS) {
 
                 return xlsPage;
 
@@ -224,7 +224,7 @@ public class ImportDataWizard extends Wizard {
     @Override
     public boolean performFinish()
     {
-        if (data.getSource() == DataSourceType.CSV) {
+        if (data.getSourceType() == SourceType.CSV) {
             try {
                 CSVConfiguration config = new CSVConfiguration(data.getFileLocation(),
                                                                 data.getCsvSeparator(),
