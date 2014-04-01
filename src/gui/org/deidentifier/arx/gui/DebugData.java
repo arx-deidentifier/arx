@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataHandleSubset;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 
@@ -64,7 +63,7 @@ public class DebugData {
         builder.append("\n");
         builder.append("Visualization\n");
         builder.append(" - Hidden   : ").append(!model.isVisualizationEnabled()).append("\n");
-        builder.append(" - Hidden at: ").append(model.getHideVisualizationAt()).append("\n");
+        builder.append(" - Hidden at: ").append(model.getMaximalSizeForComplexOperations()).append("\n");
         builder.append("\n");
         builder.append("Event log\n");
         if (eventBuffer.isEmpty()) {

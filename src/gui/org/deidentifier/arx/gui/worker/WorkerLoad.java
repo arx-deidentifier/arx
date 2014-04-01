@@ -508,8 +508,8 @@ public class WorkerLoad extends Worker<Model> {
                                     model.getSeparator()));
         
         // Disable visualization
-        if (model.getHideVisualizationAt() > 0 &&
-            config.getInput().getHandle().getNumRows() > model.getHideVisualizationAt()) {
+        if (model.getMaximalSizeForComplexOperations() > 0 &&
+            config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
 

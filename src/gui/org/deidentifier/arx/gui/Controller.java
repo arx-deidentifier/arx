@@ -127,8 +127,15 @@ public class Controller implements IView {
         if (worker.getResult() != null) {
         	this.model.setOutput(worker.getResult(), model.getSelectedNode());
             this.update(new ModelEvent(this, ModelPart.OUTPUT, worker.getResult()));
-            this.model.getViewConfig().setMode(Mode.GROUPED);
-            this.updateViewConfig(true);
+            
+            // Do not sort if dataset is too large
+            if (model.getMaximalSizeForComplexOperations() == 0 ||
+                model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
+                this.model.getViewConfig().setMode(Mode.GROUPED);
+                this.updateViewConfig(true);
+            } else {
+                this.model.getViewConfig().setMode(Mode.UNSORTED);
+            }
             this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
         }
     }
@@ -338,9 +345,17 @@ public class Controller implements IView {
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
-                this.model.getViewConfig().setMode(Mode.GROUPED);
-                this.updateViewConfig(true);
+                
+                // Do not sort if dataset is too large
+                if (model.getMaximalSizeForComplexOperations() == 0 ||
+                    model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
+                    this.model.getViewConfig().setMode(Mode.GROUPED);
+                    this.updateViewConfig(true);
+                } else {
+                    this.model.getViewConfig().setMode(Mode.UNSORTED);
+                }
                 this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+                
             } else {
                 // Select bottom node
                 model.setOutput(null, null);
@@ -1000,8 +1015,8 @@ public class Controller implements IView {
         model.reset();
         
         // Disable visualization
-        if (model.getHideVisualizationAt() > 0 &&
-            data.getHandle().getNumRows() > model.getHideVisualizationAt()) {
+        if (model.getMaximalSizeForComplexOperations() > 0 &&
+            data.getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
         

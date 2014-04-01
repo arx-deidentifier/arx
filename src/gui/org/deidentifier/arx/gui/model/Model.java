@@ -89,7 +89,7 @@ public class Model implements Serializable {
     private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
 
     private Boolean                               showVisualization    = true;
-    private int                                   hideVisualizationAt  = 5000000;
+    private int                                   maximalSizeForComplexOperations  = 5000000;
 
     private boolean                               debugEnabled         = false;
 
@@ -131,12 +131,12 @@ public class Model implements Serializable {
         this.setModified();
     }
     
-	public int getHideVisualizationAt(){
-	    return this.hideVisualizationAt;
+	public int getMaximalSizeForComplexOperations(){
+	    return this.maximalSizeForComplexOperations;
 	}
 
-	public void setHideVisualizationAt(int numberOfRows) {
-        this.hideVisualizationAt = numberOfRows;
+	public void setMaximalSizeForComplexOperations(int numberOfRows) {
+        this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
     

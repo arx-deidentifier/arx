@@ -433,12 +433,12 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
 
             @Override
             public String getValue() {
-                return String.valueOf(model.getHideVisualizationAt());
+                return String.valueOf(model.getMaximalSizeForComplexOperations());
             }
 
             @Override
             public void setValue(final String s) {
-                model.setHideVisualizationAt(Integer.valueOf(s));
+                model.setMaximalSizeForComplexOperations(Integer.valueOf(s));
             }
         });
         // Return
