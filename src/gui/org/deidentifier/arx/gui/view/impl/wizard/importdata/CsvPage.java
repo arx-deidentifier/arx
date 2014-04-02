@@ -216,6 +216,7 @@ public class CsvPage extends WizardPage {
         lblSeparator.setText("Separator");
 
         /* Separator combobox */
+        /* TODO: Fix bug(s) when separator is selected multiple times */
         comboSeparator = new Combo(container, SWT.READ_ONLY);
 
         /* Add labels */
