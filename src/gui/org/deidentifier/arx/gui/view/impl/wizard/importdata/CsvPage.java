@@ -105,7 +105,7 @@ public class CsvPage extends WizardPage {
      * Indicates whether separator was detected automatically or by the user
      *
      * The separator will usually be detected automatically
-     * {@link #detectSeparator(String)}. In case the user selected another
+     * {@link #detectSeparator()}. In case the user selected another
      * separator by hand, this flag will be set to true, making sure the rest
      * of the logic knows about it.
      */
@@ -298,13 +298,11 @@ public class CsvPage extends WizardPage {
      * and tries to detect the used separator by counting how often each of
      * the available {@link #separators} is used.
      *
-     * @param file Location of the file
-     *
      * @throws IOException In case file couldn't be accessed successfully
      */
-    private void detectSeparator(final String file) throws IOException {
+    private void detectSeparator() throws IOException {
 
-        final BufferedReader r = new BufferedReader(new FileReader(new File(file)));
+        final BufferedReader r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
         int count = 0;
         final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 
@@ -516,7 +514,7 @@ public class CsvPage extends WizardPage {
 
             if (!customSeparator) {
 
-                detectSeparator(comboLocation.getText());
+                detectSeparator();
                 comboSeparator.select(selection);
 
             }
