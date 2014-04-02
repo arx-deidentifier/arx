@@ -12,32 +12,48 @@ import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 
 /**
- * Adapter for CSV files
+ * Import adapter for CSV files
  *
- * This adapter can be used to import from a CSV file. It is basically a
- * wrapper around {@link CSVDataInput}, however it is more flexible, as
- * columns can be renamed and selected on an individual basis.
+ * This adapter can import data from a CSV file. The CSV file itself is
+ * described by an appropriate {@link CSVFileConfiguration} object. Internally
+ * this class makes use of {@link CSVDataInput} to read the CSV file on a line
+ * by line basis. A counting input stream (@link CountingInputStream} is used
+ * in order for {@link #getProgress() to be able to return the percentage of
+ * data that has already been processed.
  */
 public class CSVImportAdapter extends DataSourceImportAdapter {
-    
-    /** TODO */
+
+    /**
+     * The configuration describing the CSV file being used
+     */
     private CSVFileConfiguration config;
-    
-    /** TODO */
+
+    /**
+     * The size of the CSV file
+     */
     private long bytesTotal;
-    
-    /** TODO */
+
+    /**
+     * Counting input stream
+     *
+     * This is used within {@link #getProgress()} to be able to know how many
+     * bytes have already been processed.
+     */
     private CountingInputStream cin;
-    
-    /** TODO */
+
+    /**
+     * Array of datatypes describing the columns
+     */
     private DataType<?>[] types;
-    
+
     /**
      * @see {@link CSVDataInput}
      */
     private CSVDataInput in;
 
     /**
+     * Actual iterator used to go through data within CSV file
+     *
      * @see {@link CSVDataInput#iterator()}
      */
     private Iterator<String[]> it;
@@ -45,16 +61,16 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
     /**
      * Indexes of columns that should be imported
      *
-     * This keeps track of columns that should be imported, as columns can be
-     * selected on an individual basis.
+     * This keeps track of columns that should be imported, as not all columns
+     * will necessarily be imported.
      */
     private int[] indexes;
 
     /**
      * Contains the last row as returned by {@link CSVDataInput#iterator()}
      *
-     * This row needs to be further processed, e.g. to return only selected
-     * columns.
+     * @note This row cannot be simply returned, but needs to be further
+     * processed, e.g. to return only selected columns.
      */
     private String[] row;
 
@@ -68,9 +84,13 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      */
     private boolean headerReturned = false;
 
+
     /**
-     * Creates a new instance
-     * @param config
+     * Creates a new instance of this object with given configuration
+     *
+     * @param config {@link #config}
+     *
+     * @throws IOException In case file doesn't contain actual data
      */
     protected CSVImportAdapter(CSVFileConfiguration config) throws IOException{
 
@@ -78,41 +98,51 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         this.config = config;
         this.bytesTotal = new File(config.getFileLocation()).length();
 
-        // Prepare
+        /* Preparation work */
         this.indexes = getIndexesToImport();
         this.types = getColumnDatatypes();
 
-        // Track progress
+        /* Used to keep track of progress */
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
-        
+
         /* Get CSV iterator */
         in = new CSVDataInput(cin, config.getSeparator());
         it = in.iterator();
 
-        /* Check whether first row exists */
+        /* Check whether there is actual data within the CSV file */
         if (it.hasNext()) {
+
             row = it.next();
+
             if (config.getContainsHeader()) {
-                if (!it.hasNext()) { 
+
+                if (!it.hasNext()) {
+
                     throw new IOException("CSV contains nothing but header");
+
                 }
+
             }
+
         } else {
+
             throw new IOException("CSV file contains no data");
+
         }
+
     }
 
     /**
      * Indicates whether there is another element to return
      *
-     * This returns true when the CSV file has another line and there are
-     * actually columns to import from {@link #columns}.
-     *
-     * @return Boolean value, see above
+     * This returns true when the CSV file has another line, which would be
+     * assigned to {@link #row} during the last iteration of {@link #next()}.
      */
     @Override
     public boolean hasNext() {
+
         return row != null;
+
     }
 
     /**
@@ -120,77 +150,115 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      *
      * The returned element is sorted as defined by {@link Column#index} and
      * contains as many elements as there are columns selected to import from
-     * {@link #indexes}. The first row {@link #headerReturned}
-     * contains the names of the columns.
+     * {@link #indexes}. The first row will always contain the names of the
+     * columns. {@link #headerReturned} is used to keep track of that.
+     *
+     * @throws IllegalArgumentException In case defined datatypes don't match
      */
     @Override
     public String[] next() {
 
-        // Create header
+        /* Check whether header was already returned */
         if (!headerReturned) {
+
             headerReturned = true;
             return createHeader();
-        } 
-        
-        // Create row
-        String[] result = new String[indexes.length];
-        for (int i=0; i<indexes.length; i++){
-            result[i] = row[indexes[i]];
-            if (!types[i].isValid(result[i])) {
-                throw new IllegalArgumentException("Data value does not match data type");
-            }
-        }
-        
 
-        // Fetch next row
-        if (it.hasNext()) {
-            row = it.next();
-        } else {
-            row = null;
         }
-        
-        // Return
+
+        /* Create regular row */
+        String[] result = new String[indexes.length];
+        for (int i=0; i<indexes.length; i++) {
+
+            result[i] = row[indexes[i]];
+
+            if (!types[i].isValid(result[i])) {
+
+                throw new IllegalArgumentException("Data value does not match data type");
+
+            }
+
+        }
+
+        /* Fetches the next row, which will be used in next iteration */
+        if (it.hasNext()) {
+
+            row = it.next();
+
+        } else {
+
+            row = null;
+
+        }
+
+        /* Return resulting row */
         return result;
+
     }
 
     /**
-     * Creates the header
-     * @return
+     * Creates the header row
+     *
+     * This returns a string array with the names of the columns that will be
+     * returned later on by iterating over this object. Depending upon the
+     * configuration {@link CSVFileConfiguration#getContainsHeader()} and
+     * whether or not names have been assigned explicitly either the
+     * appropriate values will be returned, or names will be made up on the
+     * fly following the pattern "Column #x", where x is incremented for each
+     * column.
      */
     private String[] createHeader() {
 
-        // Init
+        /* Initialization */
         String[] header = new String[config.getColumns().size()];
         List<Column> columns = config.getColumns();
-        
-        // Create header
-        for (int i=0, len=columns.size(); i<len; i++) {
-            
+
+        /* Create header */
+        for (int i = 0, len = columns.size(); i < len; i++) {
+
             Column column = columns.get(i);
-            if (!config.getContainsHeader()) {
-                header[i] = "Column #" + column.getIndex();
-            } else {
+
+            if (config.getContainsHeader()) {
+
+                /* Assign name of CSV file itself */
                 header[i] = row[column.getIndex()];
+
+            } else {
+
+                /* Nothing defined in CSV file, build name manually */
+                header[i] = "Column #" + column.getIndex();
+
             }
 
             if (column.getName() != null) {
+
+                /* Name has been assigned explicitly */
                 header[i] = column.getName();
+
             }
 
             column.setName(header[i]);
+
         }
 
-        // Fetch next row
+        /* Fetch next row in preparation for next iteration */
         if (config.getContainsHeader()) {
+
             if (it.hasNext()) {
+
                 row = it.next();
+
             } else {
+
                 row = null;
+
             }
+
         }
 
-        // Return header
+        /* Return header */
         return header;
+
     }
 
     /**
@@ -198,13 +266,31 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      */
     @Override
     public void remove() {
+
         throw new UnsupportedOperationException();
+
     }
 
+    /**
+     * Returns the percentage of data that has already been returned
+     *
+     * This divides the amount of bytes that have already been read by the
+     * amount of total bytes and casts the result into a percentage.
+     */
     @Override
     public int getProgress() {
-        if (cin==null) return 0;
+
+        /* Check whether stream has been opened already at all */
+        if (cin == null) {
+
+            return 0;
+
+        }
+
         long bytesRead = cin.getByteCount();
+
         return (int)((double)bytesRead / (double)bytesTotal * 100d);
+
     }
+
 }
