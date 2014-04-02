@@ -36,12 +36,14 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Column overview page
  *
- * This pages gives the user an overview of the columns, allows him to change
- * the name and datatype of each column and whether or not it should actually
- * be imported.
+ * This pages gives the user an overview of the detected columns and allows him
+ * to change things around. First of all columns can be enabled or disabled
+ * on an individual basis. Secondly the order of the columns can be changed
+ * around. Furthermore a data type along with a format string can be defined
+ * for each column.
  *
- * The columns need to be stored within {{@link ImportDataWizard#data} and
- * every change is written back to this object.
+ * A single column is represented by {@link WizardColumn}, the list of all
+ * detected columns can be accessed by {@link ImportData#getWizardColumns()}.
  */
 public class ColumnPage extends WizardPage {
 
@@ -50,9 +52,7 @@ public class ColumnPage extends WizardPage {
      */
     private ImportDataWizard wizardImport;
 
-    /*
-     * Widgets
-     */
+    /* Widgets */
     private Table table;
     private CheckboxTableViewer checkboxTableViewer;
     private TableColumn tblclmnName;
@@ -70,6 +70,7 @@ public class ColumnPage extends WizardPage {
      * Indicator for the next action of {@link ColumnEnabledSelectionListener}
      */
     private boolean selectAll = false;
+
 
     /**
      * Creates a new instance of this page and sets its title and description
@@ -99,15 +100,13 @@ public class ColumnPage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(2, false));
 
-        /*
-         * TableViewer for the columns with a checkbox in each row
-         */
+        /* TableViewer for the columns with a checkbox in each row */
         checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
         checkboxTableViewer.setCheckStateProvider(new ICheckStateProvider() {
 
             /**
-             * No element should be grayed out
+             * No column should be grayed out
              */
             @Override
             public boolean isGrayed(Object column)
@@ -132,10 +131,12 @@ public class ColumnPage extends WizardPage {
         checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
 
             /**
-             * Sets the status of the given item
+             * Sets the enabled status for the given item
              *
-             * Furthermore marks the page as completed once at least one item
-             * is selected.
+             * Using {@link WizardColumn#setEnabled(boolean)} this method will
+             * set the enabled flag for the given column. Furthermore it makes
+             * sure the page is marked as complete once at least one item is
+             * selected.
              */
             @Override
             public void checkStateChanged(CheckStateChangedEvent event)
@@ -161,20 +162,23 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Actual table for {@link #checkboxTableViewer}
-         */
+        /* Actual table for {@link #checkboxTableViewer} */
         table = checkboxTableViewer.getTable();
         table.setHeaderVisible(true);
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
         table.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * Makes the buttons for column reordering (un)clickable
+             *
+             * This checks the current selection and will enable and/or
+             * disable the {@link #btnUp} and {@link #btnDown} if either
+             * the first or last item is currently selected.
+             */
             @Override
             public void widgetSelected(SelectionEvent e) {
 
-                /*
-                 * Check for first item
-                 */
+                /* Check for first item */
                 if (table.getSelectionIndex() == 0) {
 
                     btnUp.setEnabled(false);
@@ -185,9 +189,7 @@ public class ColumnPage extends WizardPage {
 
                 }
 
-                /*
-                 * Check for last item
-                 */
+                /* Check for last item */
                 if (table.getSelectionIndex() == table.getItemCount() - 1) {
 
                     btnDown.setEnabled(false);
@@ -202,14 +204,12 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Pseudo column to make checkboxes appear in a cell
-         */
+        /* Empty column to make checkboxes appear in an own cell */
         tableViewerColumnEnabled = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnEnabled.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Always empty as the cells should only contain the checkbox
+             * Cells within this column should always be empty
              */
             @Override
             public String getText(Object element)
@@ -221,24 +221,20 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Actual column for {@link tableViewerColumnEnabled}
-         */
+        /* Actual column for {@link tableViewerColumnEnabled} */
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
         tblclmnEnabled.setToolTipText("Deselect all");
         tblclmnEnabled.setText("DA");
         tblclmnEnabled.setWidth(40);
         tblclmnEnabled.addSelectionListener(new ColumnEnabledSelectionListener());
 
-        /*
-         * Column containing the names
-         */
+        /* Column containing the names */
         tableViewerColumnName = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnName.setEditingSupport(new NameEditingSupport(checkboxTableViewer));
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Gets name of cells from  {@link WizardColumn#getColumn()}
+             * Gets name of cells from  {@link Column#getName()}
              */
             @Override
             public String getText(Object element)
@@ -252,23 +248,21 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Actual column for {@link tableViewerColumnName}
-         */
+        /* Actual column for {@link tableViewerColumnName} */
         tblclmnName = tableViewerColumnName.getColumn();
         tblclmnName.setToolTipText("Name of the column");
         tblclmnName.setWidth(300);
         tblclmnName.setText("Name");
 
-        /*
-         * Column containing the datatypes
-         */
+        /* Column containing the datatypes */
         tableViewerColumnDatatype = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnDatatype.setEditingSupport(new DatatypeEditingSupport(checkboxTableViewer));
         tableViewerColumnDatatype.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Gets datatype of cells from {@link WizardColumn#getDatatype()}
+             * Gets string representation for given datatype of column
+             *
+             * Internally it makes use of {@link Column#getDatatype()}.
              */
             @Override
             public String getText(Object element)
@@ -292,29 +286,24 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Actual column for {@link tableViewerColumnDatatype}
-         */
+        /* Actual column for {@link tableViewerColumnDatatype} */
         tblclmnDatatype = tableViewerColumnDatatype.getColumn();
         tblclmnDatatype.setToolTipText("Datatype of the column");
         tblclmnDatatype.setWidth(120);
         tblclmnDatatype.setText("Datatype");
 
-        /*
-         * Column containing the format of the format
-         */
+        /* Column containing the format of the format */
         tableViewerColumnFormat = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         tableViewerColumnFormat.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Returns datatype format of cells
+             * Returns format string of datatype for column
              *
-             * This retrieves the datatype for each cell by invoking
-             * {@link WizardColumn#getColumn()} and returns the format
-             * {@link DataTypeWithFormat#getFormat()} of it for each column
-             * that actually has a datatype format defined. In case of simple
-             * datatypes without a format specifier an empty string gets
-             * returned.
+             * This retrieves the used format string of the chosen datatype for
+             * each column.
+             *
+             * @note In case of simple datatypes without a format specifier an
+             * empty string is returned.
              *
              * @param element Column in question
              */
@@ -336,18 +325,14 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Actual column for {@link tableViewerColumnFormat}
-         */
+        /* Actual column for {@link tableViewerColumnFormat} */
         tblclmnFormat = tableViewerColumnFormat.getColumn();
         tblclmnFormat.setWidth(120);
         tblclmnFormat.setToolTipText("Format of the associated datatype");
         tblclmnFormat.setWidth(100);
         tblclmnFormat.setText("Format");
 
-        /*
-         * Buttons to move columns up or down
-         */
+        /* Buttons to move columns up or down */
         btnUp = new Button(container, SWT.NONE);
         btnUp.setText("Move up");
         btnUp.setImage(wizardImport.getController().getResources().getImage("arrow_up.png"));
