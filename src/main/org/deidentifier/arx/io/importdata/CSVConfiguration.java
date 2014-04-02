@@ -3,7 +3,7 @@ package org.deidentifier.arx.io.importdata;
 /**
  * Configuration describing a CSV file
  */
-public class CSVConfiguration extends DataSourceConfiguration{
+public class CSVConfiguration extends DataSourceConfiguration {
 
     /**
      * Location of file to import from

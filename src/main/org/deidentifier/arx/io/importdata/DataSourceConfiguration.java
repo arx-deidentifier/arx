@@ -3,33 +3,48 @@ package org.deidentifier.arx.io.importdata;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract superclass for all data configurations
+ *
+ * Such a configuration contains characteristics that are needed to access
+ * the data. This abstract superclass defines properties that all of them have
+ * in common, i.e. a notion of columns, which can be added and retrieved.
+ */
 public abstract class DataSourceConfiguration {
 
     /**
      * List of columns to be imported
      *
-     * Each element of this list represents a column to import from. Refer to
-     * {@link Column} for details.
+     * Each element of this list represents a single column to import from.
+     * Refer to {@link Column} for details. Columns can be added by invoking
+     * {@link #addColumn(Column)} and retrieved by {@link #getColumns()}.
      *
      * @note Only columns that are part of this list will be imported from,
-     * any other column will simply be ignored and not be returned.
+     * any other column will simply be ignored.
      */
     protected List<Column> columns = new ArrayList<Column>();
 
+
     /**
-     * Adds a column actually import from
+     * Adds a single column to import from
      *
-     * @param column A column
+     * @param column A single column to import from
      */
     public void addColumn(Column column) throws Exception {
+
         this.columns.add(column);
+
     }
 
     /**
-     * Returns all columns
-     * @return
+     * Returns all added columns
+     *
+     * @return {@link #columns}
      */
     public List<Column> getColumns() {
+
         return columns;
+
     }
+
 }
