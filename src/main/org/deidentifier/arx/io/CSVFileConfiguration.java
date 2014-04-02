@@ -4,7 +4,7 @@ package org.deidentifier.arx.io;
 /**
  * Configuration describing a CSV file
  */
-public class CSVFileConfiguration extends DataSourceFileConfiguration implements ICanContainHeader {
+public class CSVFileConfiguration extends DataSourceFileConfiguration implements IDataSourceCanContainHeader {
 
     /**
      * Character that separates the columns from each other
@@ -14,7 +14,7 @@ public class CSVFileConfiguration extends DataSourceFileConfiguration implements
     /**
      * Indicates whether first row contains header (names of columns)
      *
-     * @see {@link ICanContainHeader}
+     * @see {@link IDataSourceCanContainHeader}
      */
     private boolean containsHeader;
 
