@@ -67,11 +67,13 @@ public class ViewHierarchy implements IView {
     private static final String ITEM_ALL  = Resources.getMessage("HierarchyView.0"); //$NON-NLS-1$
 
     /** Editors cell color */
-    private static final Color  COLOR     = Display.getCurrent()
-                                                   .getSystemColor(SWT.COLOR_GRAY);
+    private static final Color  COLOR     = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 
     /** Editors table */
     private Table               table;
+    
+    /** Table editor*/
+    private TableEditor         editor;
 
     /** Controller */
     private Controller          controller;
@@ -112,7 +114,7 @@ public class ViewHierarchy implements IView {
     public ViewHierarchy(final Composite parent, final String attribute) {
 
         this.attribute = attribute;
-        editable = false;
+        this.editable = false;
         create(parent);
 
     }
@@ -144,6 +146,7 @@ public class ViewHierarchy implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+        if (!base.isDisposed()) base.dispose();
     }
 
     @Override
@@ -159,6 +162,7 @@ public class ViewHierarchy implements IView {
     public void setHierarchy(final AttributeType.Hierarchy type) {
 
         hierarchy = type.getHierarchy();
+        
         table.setRedraw(false);
 
         for (final TableColumn t : table.getColumns()) {
@@ -198,7 +202,7 @@ public class ViewHierarchy implements IView {
         table.setRedraw(true);
         table.redraw();
 
-        pushHierarchy();
+        updateGlobalHierarchy();
     }
 
     /**
@@ -240,8 +244,272 @@ public class ViewHierarchy implements IView {
             }
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             if (event.data.equals(this.attribute)) {
-                pushHierarchy();
+                updateGlobalHierarchy();
             }
+        }
+    }
+
+    /**
+     * Clears the hierarchy
+     */
+    private void actionClear() {
+        
+        if (null == targetColumn) { return; }
+        
+        base.setRedraw(false);
+        setHierarchy(Hierarchy.create());
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetColumn = null;
+        targetRow = null;
+    }
+    
+    // Deletes a column
+    private void actionDeleteColumn() {
+        
+        if (null == targetColumn) { return; }
+        
+        base.setRedraw(false);
+        int index = table.indexOf(targetColumn);
+        TableColumn toRemove = table.getColumn(index);
+        toRemove.dispose();
+        updateColumnTitles();
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetColumn = null;
+        updateLocalHierarchy();
+    }
+    
+    /**
+     * Deletes a row
+     */
+    private void actionDeleteRow() {
+        
+        if (null == targetRow) { return; }
+        
+        base.setRedraw(false);
+        int index = table.indexOf(targetRow);
+        TableItem toRemove = table.getItem(index);
+        toRemove.dispose();
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetRow = null;
+        updateLocalHierarchy();
+    }
+
+    /**
+     * Inserts a column
+     */
+    private void actionInsertColumn() {
+        
+        int index = table.getColumnCount();
+        if (targetColumn != null) {
+            index = table.indexOf(targetColumn) + 1;
+        }
+        
+        base.setRedraw(false);
+        TableColumn newColumn = new TableColumn(table, SWT.NONE, index);
+        newColumn.setWidth(60);
+        updateColumnTitles();
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetColumn = null;
+        updateLocalHierarchy();
+    }
+
+    /**
+     * Inserts a row
+     */
+    private void actionInsertRow() {
+        
+        int index = table.getItemCount();
+        if (targetRow != null) {
+            index = table.indexOf(targetRow) + 1;
+        }
+        
+        base.setRedraw(false);
+        TableItem newItem = new TableItem(table, SWT.NONE, index);
+        newItem.setBackground(COLOR);
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetRow = null;
+        updateLocalHierarchy();
+    }
+
+    /**
+     * Double click action, potentially activates the table cell editor
+     * @param location
+     */
+    private void actionMouseDoubleClick(final Point location) {
+        final Rectangle clientArea = table.getClientArea();
+        int index = table.getTopIndex();
+        while (index < table.getItemCount()) {
+            boolean visible = false;
+            final TableItem item = table.getItem(index);
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                final Rectangle rect = item.getBounds(i);
+                if (rect.contains(location)) {
+                    final int column = i;
+                    final Text text = new Text(table, SWT.NONE);
+                    final int row = index;
+                    final Listener textListener = new Listener() {
+                        @Override
+                        public void handleEvent(final Event e) {
+                            switch (e.type) {
+                            case SWT.FocusOut: {
+                                item.setText(column, text.getText());
+                                hierarchy[row][column] = text.getText();
+                                text.dispose();
+                                break;
+                            }
+                            case SWT.Traverse: {
+                                switch (e.detail) {
+                                case SWT.TRAVERSE_RETURN:
+                                    item.setText(column,
+                                                 text.getText());
+                                    hierarchy[row][column] = text.getText();
+                                case SWT.TRAVERSE_ESCAPE: {
+                                    text.dispose();
+                                    e.doit = false;
+                                }
+                                }
+                                break;
+                            }
+                            }
+                        }
+                    };
+                    text.addListener(SWT.FocusOut, textListener);
+                    text.addListener(SWT.Traverse, textListener);
+                    editor.setEditor(text, item, i);
+                    text.setText(item.getText(i));
+                    text.selectAll();
+                    text.setFocus();
+                    return;
+                }
+                if (!visible && rect.intersects(clientArea)) {
+                    visible = true;
+                }
+            }
+            if (!visible) { return; }
+            index++;
+        }
+    }
+    /**
+     * Called when the right button is clicked on the table
+     * @param location
+     */
+    private void actionMouseDown(Point location) {
+        targetRow = null;
+        targetColumn = null;
+        targetRow = table.getItem(location);
+        if (targetRow == null) { return; }
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            if (targetRow.getBounds(i).contains(location)) {
+                targetColumn = table.getColumn(i);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Moves an element down
+     */
+    private void actionMoveDown() {
+        if (null == targetRow) { return; }
+
+        int index = table.indexOf(targetRow);
+        if (index >= (table.getItemCount() - 1)) { return; }
+
+        table.setRedraw(false);
+        TableItem o1 = table.getItems()[index];
+        TableItem o2 = table.getItems()[index + 1];
+        
+        TableItem n1 = new TableItem(table, SWT.NONE, index);
+        n1.setBackground(COLOR);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            n1.setText(i, o1.getText(i));
+        }
+
+        TableItem n2 = new TableItem(table, SWT.NONE, index);
+        n2.setBackground(COLOR);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            n2.setText(i, o2.getText(i));
+        }
+
+        o1.dispose();
+        o2.dispose();
+
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetRow = null;
+        updateLocalHierarchy();
+    }
+
+    /**
+     * Moves an element up
+     */
+    private void actionMoveUp() {
+        if (null == targetRow) { return; }
+
+        final int index = table.indexOf(targetRow);
+        if (index <= 0) { return; }
+
+        table.setRedraw(false);
+        final TableItem o1 = table.getItems()[index - 1];
+        final TableItem o2 = table.getItems()[index];
+
+        final TableItem n1 = new TableItem(table, SWT.NONE, index);
+        n1.setBackground(COLOR);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            n1.setText(i, o1.getText(i));
+        }
+
+        final TableItem n2 = new TableItem(table, SWT.NONE, index);
+        n2.setBackground(COLOR);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            n2.setText(i, o2.getText(i));
+        }
+
+        o1.dispose();
+        o2.dispose();
+
+        base.setRedraw(true);
+        base.redraw();
+        
+        targetRow = null;
+        updateLocalHierarchy();
+    }
+
+    /**
+     * Renames an item
+     */
+    private void actionRenameItem() {
+        if (null == targetColumn) { return; }
+        if (null == targetRow) { return; }
+        final int index = table.indexOf(targetColumn);
+
+        final String oldValue = targetRow.getText(index);
+        final String newValue = controller.actionShowInputDialog(Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
+
+        if (newValue != null) {
+            int row = 0;
+            for (final TableItem i : table.getItems()) {
+                if (i.getText(index).equals(oldValue)) {
+                    i.setText(index, newValue);
+                }
+                if (hierarchy[row][index].equals(oldValue)) {
+                    hierarchy[row][index] = newValue;
+                }
+                row++;
+            }
+            table.redraw();
+            updateColumnTitles();
         }
     }
 
@@ -251,435 +519,218 @@ public class ViewHierarchy implements IView {
      */
     private void create(final Composite parent) {
 
-        base = new Composite(parent, SWT.NONE);
-        final GridData bottomLayoutData = SWTUtil.createFillGridData();
+        // Create base composite
+        this.base = new Composite(parent, SWT.NONE);
+        GridData bottomLayoutData = SWTUtil.createFillGridData();
         bottomLayoutData.grabExcessVerticalSpace = true;
-        final GridLayout bottomLayout = new GridLayout();
+        GridLayout bottomLayout = new GridLayout();
         bottomLayout.numColumns = 1;
-        base.setLayout(bottomLayout);
-        base.setLayoutData(bottomLayoutData);
+        this.base.setLayout(bottomLayout);
+        this.base.setLayoutData(bottomLayoutData);
 
-        final Label l = new Label(base, SWT.NONE);
-        l.setText(Resources.getMessage("HierarchyView.2") + attribute + Resources.getMessage("HierarchyView.3")); //$NON-NLS-1$ //$NON-NLS-2$
+        // Create label
+        Label l = new Label(base, SWT.NONE);
+        l.setText(Resources.getMessage("HierarchyView.2") + attribute + //$NON-NLS-1$  
+                  Resources.getMessage("HierarchyView.3")); //$NON-NLS-2$
 
-        table = new Table(base, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-        final TableColumn newColumn = new TableColumn(table, SWT.NONE, 0);
-        newColumn.setWidth(60);
-        table.redraw();
-        updateColumnTitles();
+        // Create table
+        int flags = SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION;
+        flags |= editable ? SWT.VIRTUAL : 0;
+        this.table = new Table(base, flags);
+        this.table.setLinesVisible(true);
+        this.table.setHeaderVisible(true);
+        this.table.setLayoutData(SWTUtil.createFillGridData());
 
+        // Insert one empty column
+        TableColumn column = new TableColumn(table, SWT.NONE, 0);
+        column.setWidth(60);
+        this.table.redraw();
+        this.updateColumnTitles();
+
+        // Create the menu and editing controls
         if (editable) {
+            createMenu();
+        }
+    }
 
-            final Composite bottom = new Composite(base, SWT.NONE);
-            bottom.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-            final GridLayout layout = new GridLayout();
-            layout.numColumns = 4;
-            bottom.setLayout(layout);
+    /**
+     * Creates all components required for making the table editable
+     */
+    private void createMenu() {
+        
+        // Create bottom composite
+        final Composite bottom = new Composite(base, SWT.NONE);
+        bottom.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = 4;
+        bottom.setLayout(layout);
 
-            final Label l1 = new Label(bottom, SWT.NONE);
-            l1.setText(Resources.getMessage("HierarchyView.4")); //$NON-NLS-1$
-            min = new Combo(bottom, SWT.READ_ONLY);
-            min.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-            min.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(final SelectionEvent arg0) {
-                    if (updateMin()) controller.update(new ModelEvent(this,
+        // Insert min button
+        Label l1 = new Label(bottom, SWT.NONE);
+        l1.setText(Resources.getMessage("HierarchyView.4")); //$NON-NLS-1$
+        this.min = new Combo(bottom, SWT.READ_ONLY);
+        this.min.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.min.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if (updateMin()) controller.update(new ModelEvent(this,
+                                                   ModelPart.ATTRIBUTE_TYPE,
+                                                   attribute));
+            }
+        });
+
+        // Insert max button
+        Label l2 = new Label(bottom, SWT.NONE);
+        l2.setText(Resources.getMessage("HierarchyView.6")); //$NON-NLS-1$
+        this.max = new Combo(bottom, SWT.READ_ONLY);
+        this.max.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.max.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if (updateMax()) controller.update(new ModelEvent(this,
                                                        ModelPart.ATTRIBUTE_TYPE,
                                                        attribute));
-                }
-            });
-
-            final Label l2 = new Label(bottom, SWT.NONE);
-            l2.setText(Resources.getMessage("HierarchyView.6")); //$NON-NLS-1$
-            max = new Combo(bottom, SWT.READ_ONLY);
-            max.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-            max.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(final SelectionEvent arg0) {
-                    if (updateMax()) controller.update(new ModelEvent(this,
-                                                           ModelPart.ATTRIBUTE_TYPE,
-                                                           attribute));
-                }
-            });
-        }
-
-        init();
-    }
-    
-    /**
-     * Updates the min generalization level
-     * @return
-     */
-    private boolean updateMin() {
-        if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
-            if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
-                min.select(max.getSelectionIndex() + 1);
-            } else {
-                if (model != null) {
-                    String val = min.getItem(min.getSelectionIndex());
-                    if (val.equals(ITEM_ALL)) {
-                        val = "1"; //$NON-NLS-1$
-                    }
-                    model.getInputConfig()
-                         .getInput()
-                         .getDefinition()
-                         .setMinimumGeneralization(attribute,
-                                                   Integer.valueOf(val) - 1);
-                    return true;
-                }
             }
-        }
-        return false;
-    }
-    
-    /**
-     * Updates the max generalization level
-     * @return
-     */
-    private boolean updateMax(){
-        if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
-            if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
-                max.select(min.getSelectionIndex() - 1);
-            } else {
-                if (model != null) {
-                    String val = max.getItem(max.getSelectionIndex());
-                    if (val.equals(ITEM_ALL)) {
-                        val = String.valueOf(max.getItem(max.getSelectionIndex() - 1));
-                    }
-                    model.getInputConfig()
-                         .getInput()
-                         .getDefinition()
-                         .setMaximumGeneralization(attribute,
-                                                   Integer.valueOf(val) - 1);
-                    return true;
-                } 
-            }
-        } 
-        return false;
-    }
-
-    /**
-     * Initializes the view
-     */
-    private void init() {
-        table.setLinesVisible(true);
-        table.setHeaderVisible(true);
-        table.setLayoutData(SWTUtil.createFillGridData());
-
+        });
+ 
         // Saved the reference to the selected row and/or column
-        if (editable) {
-            table.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseDown(final MouseEvent e) {
-                    if (e.button != 3) { return; }
-                    targetRow = null;
-                    targetColumn = null;
-                    final Point point = new Point(e.x, e.y);
-                    targetRow = table.getItem(point);
-                    if (targetRow == null) { return; }
-                    for (int i = 0; i < table.getColumnCount(); i++) {
-                        if (targetRow.getBounds(i).contains(point)) {
-                            targetColumn = table.getColumn(i);
-                            break;
-                        }
-                    }
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(final MouseEvent e) {
+                if (e.button == 3) { 
+                    actionMouseDown(new Point(e.x, e.y));
                 }
-            });
-        }
+            }
+        });
 
         // Creates the editors menu
         final Menu menu = new Menu(table);
-        if (editable) {
-            table.setMenu(menu);
-        }
-
+        table.setMenu(menu);
+        
+        // Insert row action
         final MenuItem insertRow = new MenuItem(menu, SWT.NONE);
-
+        insertRow.setText(Resources.getMessage("HierarchyView.7")); //$NON-NLS-1$
         insertRow.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                int index = table.getItemCount();
-                if (targetRow != null) {
-                    index = table.indexOf(targetRow) + 1;
-                }
-                final TableItem newItem = new TableItem(table, SWT.NONE, index);
-                newItem.setBackground(COLOR);
-                targetRow = null;
-
-                // TODO: No need to rebuild the whole array
-                updateHierarchy();
+                actionInsertRow();
             }
         });
 
-        insertRow.setText(Resources.getMessage("HierarchyView.7")); //$NON-NLS-1$
-
+        // Delete row action
         final MenuItem deleteRow = new MenuItem(menu, SWT.NONE);
+        deleteRow.setText(Resources.getMessage("HierarchyView.8")); //$NON-NLS-1$
         deleteRow.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                if (null == targetRow) { return; }
-                final int index = table.indexOf(targetRow);
-                final TableItem toRemove = table.getItem(index);
-                toRemove.dispose();
-                targetRow = null;
-
-                // TODO: No need to rebuild the whole array
-                updateHierarchy();
+                actionDeleteRow();
             }
         });
 
-        deleteRow.setText(Resources.getMessage("HierarchyView.8")); //$NON-NLS-1$
-
+        // Separator
         new MenuItem(menu, SWT.SEPARATOR);
 
+        // Insert column action
         final MenuItem insertColumn = new MenuItem(menu, SWT.NONE);
+        insertColumn.setText(Resources.getMessage("HierarchyView.9")); //$NON-NLS-1$
         insertColumn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                int index = table.getColumnCount();
-                if (targetColumn != null) {
-                    index = table.indexOf(targetColumn) + 1;
-                }
-                final TableColumn newColumn = new TableColumn(table,
-                                                              SWT.NONE,
-                                                              index);
-                newColumn.setWidth(60);
-                table.redraw();
-                updateColumnTitles();
-                targetColumn = null;
-
-                updateHierarchy();
+                actionInsertColumn();
             }
         });
 
-        insertColumn.setText(Resources.getMessage("HierarchyView.9")); //$NON-NLS-1$
-
+        // Delete column action
         final MenuItem deleteColumn = new MenuItem(menu, SWT.NONE);
-
+        deleteColumn.setText(Resources.getMessage("HierarchyView.10")); //$NON-NLS-1$
         deleteColumn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                if (null == targetColumn) { return; }
-                final int index = table.indexOf(targetColumn);
-                final TableColumn toRemove = table.getColumn(index);
-                toRemove.dispose();
-                table.redraw();
-                updateColumnTitles();
-                targetColumn = null;
-
-                updateHierarchy();
+                actionDeleteColumn();
             }
         });
 
-        deleteColumn.setText(Resources.getMessage("HierarchyView.10")); //$NON-NLS-1$
-
+        // Separator
         new MenuItem(menu, SWT.SEPARATOR);
 
+        // Move up
         final MenuItem up = new MenuItem(menu, SWT.NONE);
         up.setText(Resources.getMessage("HierarchyView.11")); //$NON-NLS-1$
         up.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                if (null == targetRow) { return; }
-
-                final int index = table.indexOf(targetRow);
-                if (index <= 0) { return; }
-
-                table.setRedraw(false);
-                final TableItem o1 = table.getItems()[index - 1];
-                final TableItem o2 = table.getItems()[index];
-
-                final TableItem n1 = new TableItem(table, SWT.NONE, index);
-                n1.setBackground(COLOR);
-                for (int i = 0; i < table.getColumnCount(); i++) {
-                    n1.setText(i, o1.getText(i));
-                }
-
-                final TableItem n2 = new TableItem(table, SWT.NONE, index);
-                n2.setBackground(COLOR);
-                for (int i = 0; i < table.getColumnCount(); i++) {
-                    n2.setText(i, o2.getText(i));
-                }
-
-                o1.dispose();
-                o2.dispose();
-
-                table.setRedraw(true);
-                targetRow = null;
-
-                // TODO: No need to rebuild the whole array
-                updateHierarchy();
+                actionMoveUp();
             }
         });
 
+        // Move down
         final MenuItem down = new MenuItem(menu, SWT.NONE);
         down.setText(Resources.getMessage("HierarchyView.12")); //$NON-NLS-1$
         down.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                if (null == targetRow) { return; }
-
-                final int index = table.indexOf(targetRow);
-                if (index >= (table.getItemCount() - 1)) { return; }
-
-                table.setRedraw(false);
-                final TableItem o1 = table.getItems()[index];
-                final TableItem o2 = table.getItems()[index + 1];
-
-                final TableItem n1 = new TableItem(table, SWT.NONE, index);
-                n1.setBackground(COLOR);
-                for (int i = 0; i < table.getColumnCount(); i++) {
-                    n1.setText(i, o1.getText(i));
-                }
-
-                final TableItem n2 = new TableItem(table, SWT.NONE, index);
-                n2.setBackground(COLOR);
-                for (int i = 0; i < table.getColumnCount(); i++) {
-                    n2.setText(i, o2.getText(i));
-                }
-
-                o1.dispose();
-                o2.dispose();
-
-                table.setRedraw(true);
-                targetRow = null;
-                targetRow = null;
-
-                // TODO: No need to rebuild the whole array
-                updateHierarchy();
+                actionMoveDown();
             }
         });
 
+        // Separator
         new MenuItem(menu, SWT.SEPARATOR);
 
-        final MenuItem renameColumn = new MenuItem(menu, SWT.NONE);
-
-        renameColumn.addSelectionListener(new SelectionAdapter() {
+        // Rename item action
+        final MenuItem renameItem = new MenuItem(menu, SWT.NONE);
+        renameItem.setText(Resources.getMessage("HierarchyView.15")); //$NON-NLS-1$
+        renameItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                if (null == targetColumn) { return; }
-                if (null == targetRow) { return; }
-                final int index = table.indexOf(targetColumn);
-
-                final String oldValue = targetRow.getText(index);
-                final String newValue = controller.actionShowInputDialog(Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
-
-                if (newValue != null) {
-                    int row = 0;
-                    for (final TableItem i : table.getItems()) {
-                        if (i.getText(index).equals(oldValue)) {
-                            i.setText(index, newValue);
-                        }
-                        if (hierarchy[row][index].equals(oldValue)) {
-                            hierarchy[row][index] = newValue;
-                        }
-                        row++;
-                    }
-                    table.redraw();
-                    updateColumnTitles();
-                }
+                actionRenameItem();
             }
         });
 
-        renameColumn.setText(Resources.getMessage("HierarchyView.15")); //$NON-NLS-1$
-
+        // Separator
         new MenuItem(menu, SWT.SEPARATOR);
-
+        
+        // Action clear
         final MenuItem clear = new MenuItem(menu, SWT.NONE);
-
+        clear.setText(Resources.getMessage("HierarchyView.16")); //$NON-NLS-1$
         clear.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                if (null == targetColumn) { return; }
-                setHierarchy(Hierarchy.create());
-                base.redraw();
-                targetColumn = null;
-                targetRow = null;
+                actionClear();
             }
         });
 
-        clear.setText(Resources.getMessage("HierarchyView.16")); //$NON-NLS-1$
-
-        // Settings labels data
-        final GridData combo_data = new GridData();
-        combo_data.heightHint = 16;
-        combo_data.widthHint = 60;
-
-        if (editable) {
-            // The table editor
-            final TableEditor editor = new TableEditor(table);
-            editor.horizontalAlignment = SWT.LEFT;
-            editor.grabHorizontal = true;
+        // Create table editor
+            this.editor = new TableEditor(table);
+            this.editor.horizontalAlignment = SWT.LEFT;
+            this.editor.grabHorizontal = true;
 
             // Make table editable
             table.addListener(SWT.MouseDoubleClick, new Listener() {
                 @Override
                 public void handleEvent(final Event event) {
-                    final Rectangle clientArea = table.getClientArea();
-                    final Point pt = new Point(event.x, event.y);
-                    int index = table.getTopIndex();
-                    while (index < table.getItemCount()) {
-                        boolean visible = false;
-                        final TableItem item = table.getItem(index);
-                        for (int i = 0; i < table.getColumnCount(); i++) {
-                            final Rectangle rect = item.getBounds(i);
-                            if (rect.contains(pt)) {
-                                final int column = i;
-                                final Text text = new Text(table, SWT.NONE);
-                                final int row = index;
-                                final Listener textListener = new Listener() {
-                                    @Override
-                                    public void handleEvent(final Event e) {
-                                        switch (e.type) {
-                                        case SWT.FocusOut: {
-                                            item.setText(column, text.getText());
-                                            hierarchy[row][column] = text.getText();
-                                            text.dispose();
-                                            break;
-                                        }
-                                        case SWT.Traverse: {
-                                            switch (e.detail) {
-                                            case SWT.TRAVERSE_RETURN:
-                                                item.setText(column,
-                                                             text.getText());
-                                                hierarchy[row][column] = text.getText();
-                                            case SWT.TRAVERSE_ESCAPE: {
-                                                text.dispose();
-                                                e.doit = false;
-                                            }
-                                            }
-                                            break;
-                                        }
-                                        }
-                                    }
-                                };
-                                text.addListener(SWT.FocusOut, textListener);
-                                text.addListener(SWT.Traverse, textListener);
-                                editor.setEditor(text, item, i);
-                                text.setText(item.getText(i));
-                                text.selectAll();
-                                text.setFocus();
-                                return;
-                            }
-                            if (!visible && rect.intersects(clientArea)) {
-                                visible = true;
-                            }
-                        }
-                        if (!visible) { return; }
-                        index++;
-                    }
+                    actionMouseDoubleClick(new Point(event.x, event.y));
                 }
             });
+    }
+
+    /** Updates the titles of the columns after an event */
+    private void updateColumnTitles() {
+        int idx = 0;
+        for (final TableColumn col : table.getColumns()) {
+            idx++;
+            col.setText(Resources.getMessage("HierarchyView.17") + idx); //$NON-NLS-1$
         }
     }
 
     /**
-     * TODO: This is a dirty hack to push the hierarchies into
-     * the definition. It is triggered by a change event on the
-     * attribute type 
+     * Updates the global hierarchy definition
      */
-    private void pushHierarchy() {
+    private void updateGlobalHierarchy() {
 
+        // TODO: This is a dirty hack to push the hierarchies into
+        // the definition. It is triggered by a change event on the
+        // attribute type 
+        
         updateMinAndMax();
 
         if (model == null) { return; }
@@ -713,19 +764,10 @@ public class ViewHierarchy implements IView {
         }
     }
 
-    /** Updates the titles of the columns after an event */
-    private void updateColumnTitles() {
-        int idx = 0;
-        for (final TableColumn col : table.getColumns()) {
-            idx++;
-            col.setText(Resources.getMessage("HierarchyView.17") + idx); //$NON-NLS-1$
-        }
-    }
-
     /**
      * Updates the hierarchy
      */
-    private void updateHierarchy() {
+    private void updateLocalHierarchy() {
         final int rows = table.getItemCount();
         final int cols = table.getColumnCount();
         final String[][] s = new String[rows][cols];
@@ -737,7 +779,59 @@ public class ViewHierarchy implements IView {
             idx++;
         }
         hierarchy = s;
-        pushHierarchy();
+        updateGlobalHierarchy();
+    }
+
+    /**
+     * Updates the max generalization level
+     * @return
+     */
+    private boolean updateMax(){
+        if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
+            if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
+                max.select(min.getSelectionIndex() - 1);
+            } else {
+                if (model != null) {
+                    String val = max.getItem(max.getSelectionIndex());
+                    if (val.equals(ITEM_ALL)) {
+                        val = String.valueOf(max.getItem(max.getSelectionIndex() - 1));
+                    }
+                    model.getInputConfig()
+                         .getInput()
+                         .getDefinition()
+                         .setMaximumGeneralization(attribute,
+                                                   Integer.valueOf(val) - 1);
+                    return true;
+                } 
+            }
+        } 
+        return false;
+    }
+
+    /**
+     * Updates the min generalization level
+     * @return
+     */
+    private boolean updateMin() {
+        if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
+            if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
+                min.select(max.getSelectionIndex() + 1);
+            } else {
+                if (model != null) {
+                    String val = min.getItem(min.getSelectionIndex());
+                    if (val.equals(ITEM_ALL)) {
+                        val = "1"; //$NON-NLS-1$
+                    }
+                    model.getInputConfig()
+                         .getInput()
+                         .getDefinition()
+                         .setMinimumGeneralization(attribute,
+                                                   Integer.valueOf(val) - 1);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
