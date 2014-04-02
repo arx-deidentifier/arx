@@ -506,6 +506,7 @@ public class StatisticsBuilder {
      * @return
      */
     private String[] getScaledValues(String[] values, double factor) {
+        AggregateFunction<String> function = AggregateFunction.SET(DataType.STRING);
         String[] result = new String[(int)Math.round(factor * (double)values.length)];
         int previous = -1;
         List<String> toAggregate = new ArrayList<String>();
@@ -514,7 +515,7 @@ public class StatisticsBuilder {
             if (index == previous) {
                 toAggregate.add(values[i]);
             } else if (previous != -1){
-                result[previous] = AggregateFunction.SET.aggregate(toAggregate.toArray(new String[toAggregate.size()]), DataType.STRING);
+                result[previous] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
                 toAggregate.clear();
                 previous = index;
             }
