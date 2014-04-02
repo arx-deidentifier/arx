@@ -162,6 +162,7 @@ public class ViewHierarchy implements IView {
     public void setHierarchy(final AttributeType.Hierarchy type) {
 
         hierarchy = type.getHierarchy();
+        if (table.isDisposed()) return;
         
         table.setRedraw(false);
 
