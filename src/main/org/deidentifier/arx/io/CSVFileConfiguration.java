@@ -1,4 +1,5 @@
-package org.deidentifier.arx.io.importdata;
+package org.deidentifier.arx.io;
+
 
 /**
  * Configuration describing a CSV file

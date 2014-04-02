@@ -1,4 +1,4 @@
-package org.deidentifier.arx.io.importdata;
+package org.deidentifier.arx.io;
 
 
 /**

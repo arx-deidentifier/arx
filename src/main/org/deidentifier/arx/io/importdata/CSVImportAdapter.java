@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.CSVFileConfiguration;
 
 /**
  * Adapter for CSV files

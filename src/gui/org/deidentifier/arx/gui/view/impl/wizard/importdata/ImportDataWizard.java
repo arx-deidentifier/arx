@@ -3,9 +3,9 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
-import org.deidentifier.arx.io.importdata.CSVFileConfiguration;
+import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
-import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 

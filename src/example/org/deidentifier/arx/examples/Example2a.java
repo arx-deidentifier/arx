@@ -9,7 +9,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.importdata.CSVFileConfiguration;
+import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 
 /**

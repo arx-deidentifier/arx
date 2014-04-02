@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.DataSourceConfiguration;
 
 /**
  * Base adapter that all implementations need to extend
