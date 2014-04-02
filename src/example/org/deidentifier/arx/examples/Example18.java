@@ -21,6 +21,7 @@ package org.deidentifier.arx.examples;
 import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.DynamicAdjustment;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
@@ -51,7 +52,11 @@ public class Example18 extends Example {
     private static void interval() {
 
         HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
-                0l, 99l, DataType.INTEGER, 0l, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+                            0l, 99l, DataType.INTEGER, 0l, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+        
+        builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
+        builder.addInterval(0l, 20l);
+        builder.addInterval(20l, 33l);
         
         printArray(builder.create(getExampleData()).getHierarchy());
     }

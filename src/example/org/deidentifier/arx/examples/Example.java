@@ -128,7 +128,7 @@ public abstract class Example {
             }
             System.out.print("}");
             if (j<array.length-1) {
-                System.out.print(",");
+                System.out.print(",\n");
             }
         }
         System.out.println("}");
