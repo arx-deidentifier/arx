@@ -75,14 +75,14 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
 
         super(config);
         this.config = config;
-        this.bytesTotal = new File(config.getFile()).length();
+        this.bytesTotal = new File(config.getFileLocation()).length();
 
         // Prepare
         this.indexes = getIndexesToImport();
         this.types = getColumnDatatypes();
 
         // Track progress
-        cin = new CountingInputStream(new FileInputStream(new File(config.getFile())));
+        cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
         
         /* Get CSV iterator */
         in = new CSVDataInput(cin, config.getSeparator());
@@ -91,7 +91,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         /* Check whether first row exists */
         if (it.hasNext()) {
             row = it.next();
-            if (config.fileContainsHeader()) {
+            if (config.containsHeader()) {
                 if (!it.hasNext()) { 
                     throw new IOException("CSV contains nothing but header");
                 }
@@ -166,7 +166,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         for (int i=0, len=columns.size(); i<len; i++) {
             
             Column column = columns.get(i);
-            if (!config.fileContainsHeader()) {
+            if (!config.containsHeader()) {
                 header[i] = "Column #" + column.getIndex();
             } else {
                 header[i] = row[column.getIndex()];
@@ -180,7 +180,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         }
 
         // Fetch next row
-        if (config.fileContainsHeader()) {
+        if (config.containsHeader()) {
             if (it.hasNext()) {
                 row = it.next();
             } else {

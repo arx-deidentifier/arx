@@ -1030,7 +1030,7 @@ public class Controller implements IView {
         
         // TODO: Fix this
         if (config instanceof CSVConfiguration){
-            model.setInputBytes(new File(((CSVConfiguration)config).getFile()).length());
+            model.setInputBytes(new File(((CSVConfiguration)config).getFileLocation()).length());
         } else {
             model.setInputBytes(0);
         }

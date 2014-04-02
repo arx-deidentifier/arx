@@ -1,52 +1,66 @@
 package org.deidentifier.arx.io.importdata;
 
+/**
+ * Configuration describing a CSV file
+ */
 public class CSVConfiguration extends DataSourceConfiguration{
 
     /**
-     * Name of file to import from
+     * Location of file to import from
      */
-    private String file;
+    private String fileLocation;
 
     /**
-     * Character that separates the column from each other
+     * Character that separates the columns from each other
      */
     private char separator;
 
     /**
-     * Indicates whether first row contains header with names of columns
+     * Indicates whether first row contains header (names of columns)
      */
     private boolean containsHeader;
 
+
     /**
-     * Creates a new instance
-     * @param file
-     * @param separator
-     * @param containsHeader
+     * Creates a new instance of this object
+     *
+     * @param fileLocation {@link #fileLocation}
+     * @param separator {@link #separator}
+     * @param containsHeader {@link #containsHeader}
      */
-    public CSVConfiguration(String file, char separator, boolean containsHeader) {
-        this.file = file;
+    public CSVConfiguration(String fileLocation, char separator, boolean containsHeader) {
+
+        this.fileLocation = fileLocation;
         this.separator = separator;
         this.containsHeader = containsHeader;
+
     }
 
     /**
-     * @return the file
+     * @return {@link #fileLocation}
      */
-    public String getFile() {
-        return file;
+    public String getFileLocation() {
+
+        return fileLocation;
+
     }
 
     /**
-     * @return the separator
+     * @return {@link #separator}
      */
     public char getSeparator() {
+
         return separator;
+
     }
 
     /**
-     * @return the containsHeader
+     * @return {@link #containsHeader}
      */
-    public boolean fileContainsHeader() {
+    public boolean containsHeader() {
+
         return containsHeader;
+
     }
+
 }
