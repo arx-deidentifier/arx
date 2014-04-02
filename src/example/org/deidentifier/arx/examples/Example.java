@@ -114,7 +114,31 @@ public abstract class Example {
      * Prints java array
      * @param iterator
      */
-    protected static void printArray(Iterator<String[]> iterator) {
+    protected static void printArray(String[][] array) {
+        System.out.print("{");
+        for (int j=0; j<array.length; j++){
+            String[] next = array[j];
+            System.out.print("{");
+            for (int i = 0; i < next.length; i++) {
+                String string = next[i];
+                System.out.print("\"" + string + "\"");
+                if (i < next.length - 1) {
+                    System.out.print(",");
+                }
+            }
+            System.out.print("}");
+            if (j<array.length-1) {
+                System.out.print(",");
+            }
+        }
+        System.out.println("}");
+    }
+    
+    /**
+     * Prints java array
+     * @param iterator
+     */
+    protected static void printIterator(Iterator<String[]> iterator) {
         System.out.print("{");
         while (iterator.hasNext()) {
             System.out.print("{");
@@ -140,6 +164,6 @@ public abstract class Example {
      */
     protected static void printHandle(DataHandle handle) {
         final Iterator<String[]> itHandle = handle.iterator();
-        printArray(itHandle);
+        printIterator(itHandle);
     }
 }

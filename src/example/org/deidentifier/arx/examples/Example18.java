@@ -42,11 +42,11 @@ public class Example18 extends Example {
         
         redaction();
     }
-
+    
     /**
-     * Exemplifies the use of the redaction-based builder
+     * Exemplifies the use of the interval-based builder
      */
-    private static void redaction() {
+    private static void interval() {
 
         String[] input = new String[100];
         for (int i=0; i< input.length; i++){
@@ -62,5 +62,32 @@ public class Example18 extends Example {
         for (String[] line : h.getHierarchy()) {
             System.out.println(Arrays.toString(line));
         }
+    }
+
+    /**
+     * Exemplifies the use of the redaction-based builder
+     */
+    private static void redaction() {
+
+        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
+                                                                                    Order.RIGHT_TO_LEFT,
+                                                                                    ' ', '*');
+        
+        Hierarchy h = builder.create(getExampleData());
+        
+        printArray(h.getHierarchy());
+    }
+    
+    /**
+     * Returns example data
+     * @return
+     */
+    private static String[] getExampleData(){
+
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+            result[i] = String.valueOf(i);
+        }
+        return result;
     }
 }
