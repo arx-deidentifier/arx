@@ -332,7 +332,7 @@ public class ColumnPage extends WizardPage {
         tblclmnFormat.setWidth(100);
         tblclmnFormat.setText("Format");
 
-        /* Buttons to move columns up or down */
+        /* Buttons to move column up */
         btnUp = new Button(container, SWT.NONE);
         btnUp.setText("Move up");
         btnUp.setImage(wizardImport.getController().getResources().getImage("arrow_up.png"));
@@ -364,6 +364,7 @@ public class ColumnPage extends WizardPage {
 
         });
 
+        /* Buttons to move column down */
         btnDown = new Button(container, SWT.NONE);
         btnDown.setText("Move down");
         btnDown.setImage(wizardImport.getController().getResources().getImage("arrow_down.png"));
@@ -395,15 +396,13 @@ public class ColumnPage extends WizardPage {
 
         });
 
-        /*
-         * Wait for at least one column to be enabled
-         */
+        /* Wait for at least one column to be enabled */
         setPageComplete(false);
 
     }
 
     /**
-     * Adds input to table once page gets visible
+     * Adds input to table viewer once page gets visible
      */
     @Override
     public void setVisible(boolean visible)
@@ -421,16 +420,18 @@ public class ColumnPage extends WizardPage {
     }
 
     /**
-     * Listens for click events of the "enabled" column
+     * Listener for click events of the "enabled" column
      *
      * By clicking on the column all items can be selected and/or deselected
-     * at once. The action depends upon {@link ColumnPage#selectAll}.
+     * at once. The result of the action depends upon {@link #selectAll}.
      */
     private final class ColumnEnabledSelectionListener extends SelectionAdapter {
 
         /**
-         * Iterates through all of the items and invokes
-         * {@link #setChecked(int, Boolean)} to all of them. Furthermore the
+         * (Un)checks all of the items at once
+         *
+         * This iterates through all of the items and invokes
+         * {@link #setChecked(int, Boolean)} for all of them. Furthermore the
          * tooltip is changed appropriately.
          */
         @Override
@@ -489,17 +490,15 @@ public class ColumnPage extends WizardPage {
 
 
     /**
-     * Implements the editing support for name column within the column page
+     * Implements the editing support for name column
      *
-     * This allows to change the name of columns with the column page
-     * {@link ColumnPage}. The modifications are performed within a simple text
-     * field {@link TextCellEditor}. The name itself is stored with the
-     * appropriate {@link WizardColumn#column} object.
+     * This allows to change the name of columns. The modifications are
+     * performed within a simple text field {@link TextCellEditor}.
      */
     public class NameEditingSupport extends EditingSupport {
 
         /**
-         * Actual editor
+         * Reference to actual editor
          */
         private TextCellEditor editor;
 
@@ -519,19 +518,22 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Indicate that all cells within this column can be edited
+         * Indicates that enabled cells within this column can be edited
          */
         @Override
-        protected boolean canEdit(Object arg0)
+        protected boolean canEdit(Object column)
         {
 
-            return true;
+            if (((WizardColumn) column).isEnabled()) {
+
+                return true;
+
+            }
+
+            return false;
 
         }
 
-        /**
-         * Returns a reference to {@link #editor}.
-         */
         @Override
         protected CellEditor getCellEditor(Object arg0)
         {
@@ -541,7 +543,7 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Gets name of column ({@link WizardColumn#getColumn()})
+         * Retrieves name of column ({@link Column#getName()})
          */
         @Override
         protected Object getValue(Object arg0)
@@ -552,7 +554,7 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Sets name of column ({@link WizardColumn#getColumn()})
+         * Sets name for given column ({@link Column#setName(String)})
          */
         @Override
         protected void setValue(Object element, Object value)
@@ -569,20 +571,21 @@ public class ColumnPage extends WizardPage {
     /**
      * Implements editing support for datatype column within the column page
      *
-     * This allows to change the datatype of columns with the column page
-     * {@link ColumnPage}. The modifications are performed with a combo box
-     * {@link ComboBoxCellEditor}. The datatype itself is stored with the
-     * appropriate {@link WizardColumn} object.
+     * This allows to change the datatype of columns. The modifications are
+     * performed with a combo box {@link ComboBoxCellEditor}.
      */
     public class DatatypeEditingSupport extends EditingSupport {
 
         /**
-         * Actual editor
+         * Reference to actual editor
          */
         private ComboBoxCellEditor editor;
 
         /**
          * Allowed values for the user to choose from
+         *
+         * This array contains all of the choices the user can make. The array
+         * gets populated during runtime.
          */
         private String[] choices;
 
@@ -601,9 +604,7 @@ public class ColumnPage extends WizardPage {
 
             for (DataTypeDescription<?> description : DataType.LIST) {
 
-                /*
-                 * Remove OrderedString from list of choices for now
-                 */
+                /* Remove OrderedString from list of choices for now */
                 if (description.newInstance().getClass() == DataType.ORDERED_STRING.getClass()) {
 
                     continue;
@@ -647,6 +648,9 @@ public class ColumnPage extends WizardPage {
 
         }
 
+        /**
+         * Returns current index of {@link #choices} for given column datatype
+         */
         @Override
         protected Object getValue(Object element)
         {
@@ -672,6 +676,17 @@ public class ColumnPage extends WizardPage {
 
         }
 
+        /**
+         * Applies datatype choice made by the user
+         *
+         * If a datatype, which requires a format string, was selected an input
+         * dialog will be shown {@link actionShowFormatInputDialog}. Otherwise
+         * the choice is directly applied. THe input dialog itself will make
+         * sure that the format string is valid for the datatype. This method
+         * on the other hand will try to apply the format string to the
+         * available preview data {@link ImportData#getPreviewData()} making
+         * sure that it matches. In case of an error the choice is discarded.
+         */
         @Override
         protected void setValue(Object element, Object value)
         {
@@ -729,25 +744,19 @@ public class ColumnPage extends WizardPage {
 
                         } else {
 
-                            /*
-                             *  Invalid string or aborted by user
-                             */
+                            /* Invalid string or aborted by user */
                             return;
 
                         }
 
                     } else {
 
-                        /*
-                         * Datatype has no format
-                         */
+                        /* Datatype has no format */
                         datatype = description.newInstance();
 
                     }
 
-                    /*
-                     * Apply datatype
-                     */
+                    /* Apply datatype */
                     column.setDatatype(datatype);
                     getViewer().update(element, null);
 
