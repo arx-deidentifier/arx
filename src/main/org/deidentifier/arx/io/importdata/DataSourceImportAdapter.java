@@ -42,7 +42,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
 
         if (config instanceof CSVFileConfiguration) {
 
-            return new CSVImportAdapter((CSVFileConfiguration)config);
+            return new CSVFileImportAdapter((CSVFileConfiguration)config);
 
         } else {
 

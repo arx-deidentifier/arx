@@ -21,7 +21,7 @@ import org.deidentifier.arx.io.CSVFileConfiguration;
  * in order for {@link #getProgress() to be able to return the percentage of
  * data that has already been processed.
  */
-public class CSVImportAdapter extends DataSourceImportAdapter {
+public class CSVFileImportAdapter extends DataSourceImportAdapter {
 
     /**
      * The configuration describing the CSV file being used
@@ -92,7 +92,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      *
      * @throws IOException In case file doesn't contain actual data
      */
-    protected CSVImportAdapter(CSVFileConfiguration config) throws IOException{
+    protected CSVFileImportAdapter(CSVFileConfiguration config) throws IOException{
 
         super(config);
         this.config = config;
