@@ -28,9 +28,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class SourcePage extends WizardPage {
 
-    /*
-     * Widgets
-     */
+    /* Widgets */
     private Button btnCsv;
     private Button btnJdbc;
     private Button btnXls;
@@ -72,9 +70,7 @@ public class SourcePage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        /*
-         * Add button for CSV
-         */
+        /* Add button for CSV */
         btnCsv = new Button(container, SWT.RADIO);
         btnCsv.setText("CSV");
         btnCsv.addSelectionListener(new SelectionAdapter() {
@@ -89,9 +85,7 @@ public class SourcePage extends WizardPage {
 
         });
 
-        /*
-         * Add button for JDBC
-         */
+        /* Add button for JDBC */
         btnJdbc = new Button(container, SWT.RADIO);
         btnJdbc.setEnabled(false);
         btnJdbc.setText("Database (JDBC)");
@@ -107,9 +101,7 @@ public class SourcePage extends WizardPage {
 
         });
 
-        /*
-         * Add button for Excel
-         */
+        /* Add button for Excel */
         btnXls = new Button(container, SWT.RADIO);
         btnXls.setEnabled(false);
         btnXls.setText("XLS (Excel)");
@@ -125,9 +117,7 @@ public class SourcePage extends WizardPage {
 
         });
 
-        /*
-         * Mark page as incomplete until a button is pressed
-         */
+        /* Mark page as incomplete until a button is pressed */
         setPageComplete(false);
 
     }
