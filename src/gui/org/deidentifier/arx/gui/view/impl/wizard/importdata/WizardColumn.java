@@ -34,7 +34,7 @@ public class WizardColumn {
     public WizardColumn(Column column)
     {
 
-        this(true, column);
+        this(column, true);
 
     }
 
@@ -43,7 +43,7 @@ public class WizardColumn {
      *
      * @param column Column that should be wrapped around
      */
-    public WizardColumn(boolean enabled, Column column)
+    public WizardColumn(Column column, boolean enabled)
     {
 
         setEnabled(enabled);
