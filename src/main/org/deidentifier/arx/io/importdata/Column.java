@@ -7,35 +7,35 @@ import org.deidentifier.arx.DataType;
  * Represents a single data column
  *
  * This represents a single column that will be imported from. Each column
- * consists of an {@link #index}, {@link #name} and {@link #datatype}.
+ * consists of an {@link #index}, {@link #name} and {@link #dataType}.
  */
 public class Column {
 
     /**
-     * Index of column, starting with 0
+     * Index of column
      *
-     * This is primarily used by file base adapters, e.g. CSV and XLS and
-     * describes the number of the column within each row.
+     * @note Counting starts at 0, which would be the first column
      */
     private int index;
 
     /**
-     * Name of the column
+     * Name of column
      */
     private String name;
 
     /**
-     * Datatype of the column
+     * Datatype of column
      */
-    private DataType<?> datatype;
+    private DataType<?> dataType;
 
 
     /**
      * Creates a new instance of this object with the given parameters
      *
+     * This does not assign a name to the column.
+     *
      * @param index {@link #index}
-     * @param index {@link #name}
-     * @param datatype {@link #datatype}
+     * @param datatype {@link #dataType}
      */
     public Column(int index, DataType<?> datatype) {
 
@@ -47,14 +47,14 @@ public class Column {
      * Creates a new instance of this object with the given parameters
      *
      * @param index {@link #index}
-     * @param index {@link #name}
-     * @param datatype {@link #datatype}
+     * @param name {@link #name}
+     * @param dataType {@link #dataType}
      */
-    public Column(int index, String name, DataType<?> datatype) {
+    public Column(int index, String name, DataType<?> dataType) {
 
         setIndex(index);
         setName(name);
-        setDatatype(datatype);
+        setDataType(dataType);
 
     }
 
@@ -79,22 +79,22 @@ public class Column {
     }
 
     /**
-     * @return {@link #datatype}
+     * @return {@link #dataType}
      */
-    public DataType<?> getDatatype()
+    public DataType<?> getDataType()
     {
 
-        return datatype;
+        return dataType;
 
     }
 
     /**
-     * @param datatype {@link #datatype}
+     * @param dataType {@link #dataType}
      */
-    public void setDatatype(DataType<?> datatype)
+    public void setDataType(DataType<?> dataType)
     {
 
-        this.datatype = datatype;
+        this.dataType = dataType;
 
     }
 
@@ -117,12 +117,23 @@ public class Column {
     }
 
     /**
-     * @return String representation of a column
+     * @return String representation of this class
+     *
+     * This will output all of the properties assigned to an object. It will
+     * leave out the name if no name is set.
      */
     @Override
     public String toString() {
 
-        return "Column [index=" + index + ", name=" + name + ", datatype=" + datatype + "]";
+        if (name != null) {
+
+            return "Column [index: " + index + ", name: " + name + ", datatype: " + dataType + "]";
+
+        } else {
+
+            return "Column [index: " + index + ", datatype: " + dataType + "]";
+
+        }
 
     }
 

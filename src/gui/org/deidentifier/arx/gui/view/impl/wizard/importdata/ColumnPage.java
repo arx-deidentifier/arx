@@ -262,13 +262,13 @@ public class ColumnPage extends WizardPage {
             /**
              * Gets string representation for given datatype of column
              *
-             * Internally it makes use of {@link Column#getDatatype()}.
+             * Internally it makes use of {@link Column#getDataType()}.
              */
             @Override
             public String getText(Object element)
             {
 
-                DataType<?> datatype = ((WizardColumn) element).getColumn().getDatatype();
+                DataType<?> datatype = ((WizardColumn) element).getColumn().getDataType();
 
                 for (DataTypeDescription<?> description : DataType.LIST) {
 
@@ -311,7 +311,7 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                DataType<?> column = ((WizardColumn) element).getColumn().getDatatype();
+                DataType<?> column = ((WizardColumn) element).getColumn().getDataType();
 
                 if (column instanceof DataTypeWithFormat) {
 
@@ -655,7 +655,7 @@ public class ColumnPage extends WizardPage {
         protected Object getValue(Object element)
         {
 
-            DataType<?> datatype = ((WizardColumn)element).getColumn().getDatatype();
+            DataType<?> datatype = ((WizardColumn)element).getColumn().getDataType();
 
             int i = 0;
 
@@ -717,12 +717,12 @@ public class ColumnPage extends WizardPage {
                         final Controller controller = wizardImport.getController();
                         String format = null;
 
-                        if (column.getDatatype().getClass() == description.newInstance().getClass()) {
+                        if (column.getDataType().getClass() == description.newInstance().getClass()) {
 
                             format = controller.actionShowFormatInputDialog(
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
-                                ((DataTypeWithFormat)column.getDatatype()).getFormat(),
+                                ((DataTypeWithFormat)column.getDataType()).getFormat(),
                                 description,
                                 previewData
                             );
@@ -757,7 +757,7 @@ public class ColumnPage extends WizardPage {
                     }
 
                     /* Apply datatype */
-                    column.setDatatype(datatype);
+                    column.setDataType(datatype);
                     getViewer().update(element, null);
 
                     return;

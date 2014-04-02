@@ -52,7 +52,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
 
         List<DataType<?>> result = new ArrayList<DataType<?>>();
         for (Column column : columns) {
-            result.add(column.getDatatype());
+            result.add(column.getDataType());
         }
         return result.toArray(new DataType[result.size()]);
     }

@@ -184,7 +184,7 @@ public abstract class Data {
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
         List<Column> columns = adapter.getConfig().getColumns();
         for (int i=0; i<columns.size(); i++){
-            types.put(i, columns.get(i).getDatatype());
+            types.put(i, columns.get(i).getDataType());
         }
         DataHandle handle = data.getHandle();
         for (int i=0; i<handle.getNumColumns(); i++) {
@@ -250,7 +250,7 @@ public abstract class Data {
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
         List<Column> columns = config.getColumns();
         for (int i=0; i<columns.size(); i++){
-            types.put(i, columns.get(i).getDatatype());
+            types.put(i, columns.get(i).getDataType());
         }
         DataHandle handle = data.getHandle();
         for (int i=0; i<handle.getNumColumns(); i++) {
