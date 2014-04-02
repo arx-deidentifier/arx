@@ -33,8 +33,8 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
- * This class implements an example of how to use the API for access to basic statistics 
- * about the data
+ * This class implements an example of how to use the API for creating different
+ * output representations of an input dataset
  * 
  * @author Prasser, Kohlmayer
  */
@@ -100,25 +100,19 @@ public class Example19 extends Example {
             DataHandle top = result.getOutput(topNode);
             DataHandle bottom = result.getOutput(bottomNode);
 
-//            // sort input data
-//            optimal.sort(true, 0);
-//
-//            // sort bottom handle
-//            bottom.sort(false, 2);
-
             // Print input
             System.out.println(" - Input data:");
-            printJava(data.getHandle());
+            printHandle(data.getHandle());
 
             // Print results
             System.out.println(" - Top node data:");
-            printJava(top);
+            printHandle(top);
             
             System.out.println(" - Bottom node data:");
-            printJava(bottom);
+            printHandle(bottom);
 
             System.out.println(" - Optimal data:");
-            printJava(optimal);
+            printHandle(optimal);
 
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);

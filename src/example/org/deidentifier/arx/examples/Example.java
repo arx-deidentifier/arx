@@ -114,7 +114,7 @@ public abstract class Example {
      * Prints java array
      * @param iterator
      */
-    protected static void printJava(Iterator<String[]> iterator) {
+    protected static void printArray(Iterator<String[]> iterator) {
         System.out.print("{");
         while (iterator.hasNext()) {
             System.out.print("{");
@@ -135,11 +135,11 @@ public abstract class Example {
     }
     
     /**
-     * Prints a given datahandle
+     * Prints a given data handle
      * @param handle
      */
-    protected static void printJava(DataHandle handle) {
+    protected static void printHandle(DataHandle handle) {
         final Iterator<String[]> itHandle = handle.iterator();
-        printJava(itHandle);
+        printArray(itHandle);
     }
 }
