@@ -3,7 +3,7 @@ package org.deidentifier.arx.io.importdata;
 /**
  * Configuration describing a CSV file
  */
-public class CSVFileConfiguration extends FileConfiguration implements ICanContainHeader {
+public class CSVFileConfiguration extends DataSourceFileConfiguration implements ICanContainHeader {
 
     /**
      * Character that separates the columns from each other
