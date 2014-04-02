@@ -29,16 +29,16 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public class HierarchyBuilderOrderBased<T extends DataType<?>> extends HierarchyBuilderGroupingBased<T> {
+public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
     private static final long serialVersionUID = -2749758635401073668L;
     
-    private Comparator<?> comparator;
+    private Comparator<T> comparator;
     /**
      * Creates a new instance
      * @param type The data type is also used for ordering data items
      */
-    public HierarchyBuilderOrderBased(T type) {
+    public HierarchyBuilderOrderBased(DataType<T> type) {
         super(type);
         this.comparator = null;
     }
@@ -48,7 +48,7 @@ public class HierarchyBuilderOrderBased<T extends DataType<?>> extends Hierarchy
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
      */
-    public HierarchyBuilderOrderBased(T type, Comparator<?> comparator) {
+    public HierarchyBuilderOrderBased(DataType<T> type, Comparator<T> comparator) {
         super(type);
         this.comparator = comparator;
     }
@@ -67,7 +67,7 @@ public class HierarchyBuilderOrderBased<T extends DataType<?>> extends Hierarchy
     @Override
     protected void prepare() {
         // TODO Auto-generated method stub
-        DataType<?> type = super.getType();
+        DataType<T> type = super.getType();
     }
     
     @Override

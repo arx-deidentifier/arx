@@ -31,7 +31,7 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends HierarchyBuilderGroupingBased<T> {
+public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> {
     
     public static enum DynamicAdjustment{
         OUT_OF_BOUNDS_LABEL,
@@ -40,10 +40,11 @@ public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends Hierar
     
     private static final long serialVersionUID = 3663874945543082808L;
 
+    private AggregateFunction<T> function = null;
     private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
-    private String min;
-    private String max;
-    private double epsilon = 0;
+    private T min;
+    private T max;
+    private T epsilon;
     private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
 
     /**
@@ -54,7 +55,7 @@ public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends Hierar
      * @param epsilon
      * @param adjustment
      */
-    public HierarchyBuilderIntervalBased(String min, String max, T type, double epsilon, DynamicAdjustment adjustment) {
+    public HierarchyBuilderIntervalBased(T min, T max, DataType<T> type, T epsilon, DynamicAdjustment adjustment) {
         super(type);
         this.min = min;
         this.max = max;
@@ -68,19 +69,43 @@ public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends Hierar
      * @param max
      * @param type
      */
-    public HierarchyBuilderIntervalBased(String min, String max, T type) {
+    public HierarchyBuilderIntervalBased(T min, T max, DataType<T> type) {
         super(type);
         this.min = min;
         this.max = max;
     }
+    
+    /**
+     * Defines an aggregate function to be used by all intervals
+     * @param function
+     */
+    public void setAggregateFunction(AggregateFunction<T> function) {
+        this.function = function;
+    }
 
     /**
-     * Adds the given fanout
-     * @param fanout
+     * Adds an interval. Min is exclusive, max is inclusive
+     * @param min
+     * @param max
+     * @param function
      * @return
      */
-    public HierarchyBuilderIntervalBased<T> add(Interval<T> fanout) {
-        this.intervals.add(fanout);
+    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max, AggregateFunction<T> function) {
+        this.intervals.add(new Interval<T>(min, max, function));
+        return this;
+    }
+
+    /**
+     * Adds an interval. Min is exclusive, max is inclusive. Uses the predefined default aggregate function
+     * @param min
+     * @param max
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max) {
+        if (this.function == null) {
+            throw new IllegalStateException("No default aggregate function defined");
+        }
+        this.intervals.add(new Interval<T>(min, max, this.function));
         return this;
     }
 
@@ -98,37 +123,40 @@ public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends Hierar
      * This class represents an interval
      * @author Fabian Prasser
      */
-    public static class Interval<T extends DataType<?>> implements Serializable {
+    public class Interval<T> implements Serializable {
         
         private static final long serialVersionUID = 5985820929677249525L;
         
-        private String min;
-        private String max;
+        /** Min is exclusive */
+        private T min;
+        /** Max is inclusive */
+        private T max;
+        /** The aggregate function*/
         private AggregateFunction<T> function;
 
         /**
-         * Creates a new instance
+         * Creates a new instance. Min is exclusive, max is inclusive
          * @param min
          * @param max
          * @param function
          */
-        public Interval(String min, String max, AggregateFunction<T> function) {
+        public Interval(T min, T max, AggregateFunction<T> function) {
             this.min = min;
             this.max = max;
             this.function = function;
         }
 
         /**
-         * @return the min
+         * @return the min (exclusive)
          */
-        public String getMin() {
+        public T getMin() {
             return min;
         }
 
         /**
-         * @return the max
+         * @return the max (inclusive)
          */
-        public String getMax() {
+        public T getMax() {
             return max;
         }
 
@@ -159,7 +187,7 @@ public class HierarchyBuilderIntervalBased<T extends DataType<?>> extends Hierar
 
     @Override
     protected String internalIsValid() {
-        // TODO Auto-generated method stub
         return null;
+//        for (int i=0; i<Interval)
     }
 }

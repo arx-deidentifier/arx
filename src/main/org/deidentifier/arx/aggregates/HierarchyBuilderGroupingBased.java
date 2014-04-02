@@ -33,16 +33,16 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public abstract class HierarchyBuilderGroupingBased<T extends DataType<?>> implements Serializable {
+public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
 
     private static final long serialVersionUID = 3208791665131141362L;
-    private DataType<?> type;
+    private DataType<T> type;
     
     /**
      * Creates a new instance for the given data type
      * @param type
      */
-    public HierarchyBuilderGroupingBased(T type){
+    public HierarchyBuilderGroupingBased(DataType<T> type){
         this.type = type;
     }
     
@@ -55,7 +55,7 @@ public abstract class HierarchyBuilderGroupingBased<T extends DataType<?>> imple
      * This class represents a level in the hierarchy
      * @author Fabian Prasser
      */
-    public static class HierarchyBuilderLevel<T extends DataType<?>> {
+    public static class HierarchyBuilderLevel<T> {
         
         private List<Fanout<T>> list = new ArrayList<Fanout<T>>();
         private int level;
@@ -100,14 +100,14 @@ public abstract class HierarchyBuilderGroupingBased<T extends DataType<?>> imple
      * This class represents a fanout parameter
      * @author Fabian Prasser
      */
-    public static class Fanout<T extends DataType<?>> implements Serializable {
+    public static class Fanout<T> implements Serializable {
         
         private static final long serialVersionUID = -5767501048737045793L;
         
         private int fanout;
-        private AggregateFunction<T> function;
+        private AggregateFunction<DataType<T>> function;
         
-        public Fanout(int fanout, AggregateFunction<T> function) {
+        public Fanout(int fanout, AggregateFunction<DataType<T>> function) {
             this.fanout = fanout;
             this.function = function;
         }
@@ -122,7 +122,7 @@ public abstract class HierarchyBuilderGroupingBased<T extends DataType<?>> imple
         /**
          * @return the function
          */
-        public AggregateFunction<T> getFunction() {
+        public AggregateFunction<DataType<T>> getFunction() {
             return function;
         }
     }
@@ -178,7 +178,7 @@ public abstract class HierarchyBuilderGroupingBased<T extends DataType<?>> imple
      * Returns the data type
      * @return
      */
-    protected DataType<?> getType(){
+    protected DataType<T> getType(){
         return this.type;
     }
     
