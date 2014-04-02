@@ -19,8 +19,8 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      * @throws IOException 
      */
     public static DataSourceImportAdapter create(DataSourceConfiguration config) throws IOException{
-        if (config instanceof CSVConfiguration){
-            return new CSVImportAdapter((CSVConfiguration)config);
+        if (config instanceof CSVFileConfiguration){
+            return new CSVImportAdapter((CSVFileConfiguration)config);
         } else {
             // TODO: Implement
             return null;

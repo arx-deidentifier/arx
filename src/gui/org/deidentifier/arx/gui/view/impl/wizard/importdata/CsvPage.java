@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.importdata.CSVConfiguration;
+import org.deidentifier.arx.io.importdata.CSVFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -371,7 +371,7 @@ public class CsvPage extends WizardPage {
      * This goes through up to {@link ImportData#previewDataMaxLines} lines
      * within the appropriate file and reads them in. It uses
      * {@link DataSourceImportAdapter} in combination with
-     * {@link CSVConfiguration} to actually read in the data.
+     * {@link CSVFileConfiguration} to actually read in the data.
      *
      * TODO: Don't throw Exception, only IOException if necessary
      */
@@ -414,7 +414,7 @@ public class CsvPage extends WizardPage {
         }
 
         /* Create configuration for CSV file and columns to it */
-        CSVConfiguration config = new CSVConfiguration(location, separator, containsHeader);
+        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
 
         for (Column c : columns) {
 

@@ -9,7 +9,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.importdata.CSVConfiguration;
+import org.deidentifier.arx.io.importdata.CSVFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 
 /**
@@ -27,7 +27,7 @@ public class Example2a extends Example {
         try {
 
             // Define configuration for CSV file
-            CSVConfiguration importConfig = new CSVConfiguration("data/test.csv", ';', true);
+            CSVFileConfiguration importConfig = new CSVFileConfiguration("data/test.csv", ';', true);
 
             // Add columns (index, name and datatype) to configuration
             // The name is optional and can be detected/assigned automatically

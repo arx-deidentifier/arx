@@ -3,7 +3,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
-import org.deidentifier.arx.io.importdata.CSVConfiguration;
+import org.deidentifier.arx.io.importdata.CSVFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -245,7 +245,7 @@ public class ImportDataWizard extends Wizard {
 
             try {
 
-                CSVConfiguration config = new CSVConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
+                CSVFileConfiguration config = new CSVFileConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
 
                 for (Column c : data.getEnabledColumns()) {
 

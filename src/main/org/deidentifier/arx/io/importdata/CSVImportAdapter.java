@@ -20,7 +20,7 @@ import org.deidentifier.arx.io.CSVDataInput;
 public class CSVImportAdapter extends DataSourceImportAdapter {
     
     /** TODO */
-    private CSVConfiguration config;
+    private CSVFileConfiguration config;
     
     /** TODO */
     private long bytesTotal;
@@ -71,7 +71,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
      * Creates a new instance
      * @param config
      */
-    protected CSVImportAdapter(CSVConfiguration config) throws IOException{
+    protected CSVImportAdapter(CSVFileConfiguration config) throws IOException{
 
         super(config);
         this.config = config;
