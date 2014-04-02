@@ -57,8 +57,9 @@ public class Example18 extends Example {
         builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
         builder.addInterval(0l, 20l);
         builder.addInterval(20l, 33l);
-        
-        printArray(builder.create(getExampleData()).getHierarchy());
+
+        builder.create(getExampleData());
+//      printArray(builder.create(getExampleData()).getHierarchy());
     }
 
     /**

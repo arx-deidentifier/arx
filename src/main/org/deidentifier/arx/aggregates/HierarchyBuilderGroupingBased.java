@@ -170,8 +170,10 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
      * @return
      */
     public String isValid() {
-        // Also check: internalIsValid();
-        return "Error";
+        String error = internalIsValid();
+        if (error != null) return error;
+        // TODO: Implement some checks here
+        return null;
     }
     
     /**
@@ -189,6 +191,10 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
      * @return
      */
     public Hierarchy create(String[] data){
+        String error = this.isValid();
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
         this.prepare();
         return null;
     }

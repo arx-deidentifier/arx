@@ -39,6 +39,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
     
     private static final long serialVersionUID = 3663874945543082808L;
+    
+    /** TODO: Is this parameter OK?*/
+    private static final int INDEX_FANOUT = 2;
 
     private AggregateFunction<T> function = null;
     private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
@@ -46,7 +49,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     private T max;
     private T epsilon;
     private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
-
+    private IndexNode<T> index = null; 
+    
     /**
      * Creates a new instance
      * @param min
@@ -84,7 +88,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Adds an interval. Min is exclusive, max is inclusive
+     * Adds an interval. Min is inclusive, max is exclusive
      * @param min
      * @param max
      * @param function
@@ -96,7 +100,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Adds an interval. Min is exclusive, max is inclusive. Uses the predefined default aggregate function
+     * Adds an interval. Min is inclusive, max is exclusive. Uses the predefined default aggregate function
      * @param min
      * @param max
      * @return
@@ -127,15 +131,15 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         private static final long serialVersionUID = 5985820929677249525L;
         
-        /** Min is exclusive */
+        /** Min is inclusive */
         private T min;
-        /** Max is inclusive */
+        /** Max is exclusive */
         private T max;
         /** The aggregate function*/
         private AggregateFunction<T> function;
 
         /**
-         * Creates a new instance. Min is exclusive, max is inclusive
+         * Creates a new instance. Min is inclusive, max is exclusive
          * @param min
          * @param max
          * @param function
@@ -167,7 +171,54 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return function;
         }
     }
-    
+
+    /**
+     * This class represents an node
+     * @author Fabian Prasser
+     */
+    public class IndexNode<T> implements Serializable {
+        
+        private static final long serialVersionUID = 5985820929677249525L;
+
+        /** Min is inclusive */
+        private T                 min;
+        /** Max is exclusive */
+        private T                 max;
+        /** Children */
+        private IndexNode<T>[]    children;
+        /** Leafs */
+        private Interval<T>[]     leafs;
+        /** IsLeaf */
+        private boolean           isLeaf;
+
+        /**
+         * Creates a new instance. Min is inclusive, max is exclusive
+         * @param min
+         * @param max
+         * @param function
+         */
+        public IndexNode(T min, T max, IndexNode<T>[] children) {
+            this.min = min;
+            this.max = max;
+            this.children = children;
+            this.leafs = null;
+            this.isLeaf = false;
+        }
+
+        /**
+         * Creates a new instance. Min is inclusive, max is exclusive
+         * @param min
+         * @param max
+         * @param function
+         */
+        public IndexNode(T min, T max, Interval<T>[] leafs) {
+            this.min = min;
+            this.max = max;
+            this.children = null;
+            this.leafs = leafs;
+            this.isLeaf = true;
+        }
+    }
     @Override
     protected int getBaseLevel() {
         return 0;
@@ -180,14 +231,68 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void prepare() {
-        // TODO Auto-generated method stub
         
+        // Check
+        index = null;
+        String valid = internalIsValid();
+        if (valid != null) {
+            throw new IllegalArgumentException(valid);
+        }
+        
+        // Build leaf level index
+        ArrayList<IndexNode<T>> nodes = new ArrayList<IndexNode<T>>();
+        for (int i=0, len = intervals.size(); i < len; i+=INDEX_FANOUT) {
+            int min = i;
+            int max = Math.min(i+INDEX_FANOUT-1, len-1);
+            
+            List<Interval<T>> leafs = new ArrayList<Interval<T>>();
+            for (int j=min; j<=max; j++) {
+                leafs.add(intervals.get(j));
+            }
+
+            nodes.add(new IndexNode<T>(intervals.get(min).min, 
+                                       intervals.get(max).max,
+                                       leafs.toArray(new Interval[leafs.size()])));
+        }
+
+        // Builder inner nodes
+        while (nodes.size()>1) {
+            nodes.clear();
+            List<IndexNode<T>> current = (List<IndexNode<T>>)nodes.clone();
+            for (int i=0, len = current.size(); i < len; i+=INDEX_FANOUT) {
+                int min = i;
+                int max = Math.min(i+INDEX_FANOUT-1, len-1);
+                
+                List<IndexNode<T>> temp = new ArrayList<IndexNode<T>>();
+                for (int j=min; j<=max; j++) {
+                    temp.add(current.get(j));
+                }
+
+                nodes.add(new IndexNode<T>(intervals.get(min).min, 
+                                           intervals.get(max).max,
+                                           temp.toArray(new Interval[temp.size()])));
+            }
+        }
     }
 
     @Override
     protected String internalIsValid() {
+        
+        if (!intervals.get(0).getMin().equals(min)) {
+            return "Lower bound of first interval must match overall lower bound";
+        }
+        
+        for (int i=1; i<intervals.size(); i++){
+            Interval<T> interval1 = intervals.get(i-1);
+            Interval<T> interval2 = intervals.get(i);
+            
+            if (!interval1.getMax().equals(interval2.getMin())) {
+                return "Gap between interval"+i+" and interval"+(i+1);
+            }
+        }
+        
         return null;
-//        for (int i=0; i<Interval)
     }
 }
