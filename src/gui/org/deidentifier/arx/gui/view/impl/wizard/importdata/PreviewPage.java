@@ -1,7 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import java.util.List;
-
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.io.importdata.Column;
@@ -25,9 +23,11 @@ import org.eclipse.swt.widgets.TableColumn;
  *
  * This page gives the user a preview over the data and how it is about to be
  * imported. Only enabled columns will be displayed
- * {@link ImportDataColumn#enabled}. The datatype of each column will be shown
- * as tooltip. Only up to {@link ImportData#previewDataMaxLines} lines will be
- * shown.
+ * {@link WizardColumn#isEnabled()}. The datatype of each column will be shown
+ * additionally as a tooltip.
+ *
+ * @note Note that only up to {@link ImportData#previewDataMaxLines} lines will
+ * be shown.
  */
 public class PreviewPage extends WizardPage {
 
@@ -36,9 +36,7 @@ public class PreviewPage extends WizardPage {
      */
     private ImportDataWizard wizardImport;
 
-    /*
-     * Widgets
-     */
+    /* Widgets */
     private Table table;
     private TableViewer tableViewer;
 
@@ -62,6 +60,10 @@ public class PreviewPage extends WizardPage {
 
     /**
      * Creates the design of this page
+     *
+     * The page is set to incomplete at this point and will be marked as
+     * complete, once the appropriate table has been rendered. Refer to
+     * {@link #setVisible(boolean)} for details.
      */
     public void createControl(Composite parent)
     {
@@ -84,7 +86,11 @@ public class PreviewPage extends WizardPage {
     }
 
     /**
-     * Adds input to table once page gets visible
+     * Adds input to table once page gets visible to the user
+     *
+     * This retrieves the preview data {@link ImportData#getPreviewData()} and
+     * applies it to the given {@link #tableViewer}. Only columns that have
+     * been enabled will be shown. New names and reordering is also considered.
      */
     @Override
     public void setVisible(boolean visible)
@@ -94,17 +100,18 @@ public class PreviewPage extends WizardPage {
 
         if (visible) {
 
+            /* Disable rendering until everything is finished */
             table.setRedraw(false);
 
+            /* Remove old columns */
             while (table.getColumnCount() > 0) {
 
                 table.getColumns()[0].dispose();
 
             }
 
-            List<Column> columns = wizardImport.getData().getEnabledColumns();
-
-            for (Column column : columns) {
+            /* Add enabled columns with appropriate label providers */
+            for (Column column : wizardImport.getData().getEnabledColumns()) {
 
                 TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
                 tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(column.getIndex()));
@@ -118,12 +125,13 @@ public class PreviewPage extends WizardPage {
 
             }
 
+            /* Apply input to tableViewer */
             tableViewer.setInput(wizardImport.getData().getPreviewData());
 
+            /* Make table visible again */
             table.layout();
             table.setRedraw(true);
 
-            wizardImport.getData().setWizardFinished(true);
             setPageComplete(true);
 
         } else {
@@ -139,33 +147,35 @@ public class PreviewPage extends WizardPage {
      * Returns cell content for each column
      *
      * The data itself comes in form of {@link ImportData#getPreviewData()}.
-     * This class is a wrapper around this list and makes specific fields
-     * available to the column.
+     * This class is a wrapper around the appropriate string arrays and makes
+     * specific fields available to the appropriate column.
      */
     private class PreviewColumnLabelProvider extends ColumnLabelProvider {
 
         /**
          * Column index this provider is meant to be for, starting with 0
          */
-        private int column;
+        private int index;
 
 
         /**
-         * @param column Column index this provider is for
+         * Creates new instance of this object for given index
+         *
+         * @param index Index of column this instance is for
          */
-        public PreviewColumnLabelProvider(int column) {
+        public PreviewColumnLabelProvider(int index) {
 
-            this.column = column;
+            this.index = index;
 
         }
 
         /**
-         * Returns content for this column {@link #column}.
+         * Returns content for this column {@link #index}.
          */
         @Override
         public String getText(Object element) {
 
-            return ((String[]) element)[column];
+            return ((String[]) element)[index];
 
         }
 
@@ -178,10 +188,11 @@ public class PreviewPage extends WizardPage {
         @Override
         public String getToolTipText(Object element) {
 
-            DataType<?> datatype = wizardImport.getData().getWizardColumns().get(column).getColumn().getDatatype();
+            DataType<?> datatype = wizardImport.getData().getWizardColumns().get(index).getColumn().getDatatype();
 
             String result = "Datatype: " + datatype.getDescription().getLabel();
 
+            /* Add format for appropriate data types */
             if (datatype.getDescription().hasFormat()) {
 
                 result += ", format: " + ((DataTypeWithFormat)datatype).getFormat();

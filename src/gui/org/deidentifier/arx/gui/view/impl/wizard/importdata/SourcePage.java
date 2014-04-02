@@ -1,6 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.DataSourceType;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -14,16 +14,23 @@ import org.eclipse.swt.widgets.Composite;
  * Source selection page
  *
  * This page provides means to select the source the user wants to import data
- * from. Once the user makes a choice, it is stored stored within
- * {@link ImportDataWizard#data} and the page is marked as completed.
+ * from. Once the user makes a choice, it is stored stored using
+ * {@link ImportData#setSourceType(SourceType)} and the page is marked as
+ * completed.
+ *
+ * These source types are supported:
+ *
+ * <ul>
+ *  <li>{@link CsvPage} CSV</li>
+ *  <li>{@link JdbcPage} Database (JDBC)</li>
+ *  <li>{@link XlsPage} Excel (XLS)</li>
+ * </ul>
  */
 public class SourcePage extends WizardPage {
 
-    /*
-     * Widgets
-     */
+    /* Widgets */
     private Button btnCsv;
-    private Button btnDatabase;
+    private Button btnJdbc;
     private Button btnXls;
 
     /**
@@ -52,8 +59,8 @@ public class SourcePage extends WizardPage {
      * Creates the design of this page
      *
      * This adds all the controls to the page along with their listeners. It
-     * basically waits for any button to be pressed, which will mark the page
-     * as completed and lets the user proceed to the next page.
+     * basically waits for any radio button to be pressed, which will mark the
+     * page as completed and lets the user proceed to the next page.
      */
     public void createControl(Composite parent)
     {
@@ -63,9 +70,7 @@ public class SourcePage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        /*
-         * Add button for CSV
-         */
+        /* Add button for CSV */
         btnCsv = new Button(container, SWT.RADIO);
         btnCsv.setText("CSV");
         btnCsv.addSelectionListener(new SelectionAdapter() {
@@ -73,36 +78,30 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(DataSourceType.CSV);
-
+                wizardImport.getData().setSourceType(SourceType.CSV);
                 setPageComplete(true);
 
             }
 
         });
 
-        /*
-         * Add button for database
-         */
-        btnDatabase = new Button(container, SWT.RADIO);
-        btnDatabase.setEnabled(false);
-        btnDatabase.setText("Database (JDBC)");
-        btnDatabase.addSelectionListener(new SelectionAdapter() {
+        /* Add button for JDBC */
+        btnJdbc = new Button(container, SWT.RADIO);
+        btnJdbc.setEnabled(false);
+        btnJdbc.setText("Database (JDBC)");
+        btnJdbc.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(DataSourceType.JDBC);
-
+                wizardImport.getData().setSourceType(SourceType.JDBC);
                 setPageComplete(true);
 
             }
 
         });
 
-        /*
-         * Add button for Excel
-         */
+        /* Add button for Excel */
         btnXls = new Button(container, SWT.RADIO);
         btnXls.setEnabled(false);
         btnXls.setText("XLS (Excel)");
@@ -111,17 +110,14 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSource(DataSourceType.XLS);
-
+                wizardImport.getData().setSourceType(SourceType.XLS);
                 setPageComplete(true);
 
             }
 
         });
 
-        /*
-         * Mark page as incomplete until a button is pressed
-         */
+        /* Mark page as incomplete until a button is pressed */
         setPageComplete(false);
 
     }

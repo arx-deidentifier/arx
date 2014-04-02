@@ -3,26 +3,47 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import org.deidentifier.arx.io.importdata.Column;
 
 /**
- * Wrapper for {@link #Column}
+ * Wrapper for {@link Column} used in the wizard context
  *
- * This wraps around {@link #Column} and adds a enabled property
- * {@link #enabled}, which is needed for the wizard, but is not available
- * on an API level.
+ * This is a wrapper for {@link Column}. It essentially adds an property
+ * indicating whether a column is enabled {@link #enabled}.
  */
 public class WizardColumn {
 
+    /**
+     * Indicates whether the given column is enabled
+     *
+     * Columns can be disabled by the user. Once disabled they won't be
+     * imported.
+     */
     private boolean enabled = true;
+
+    /**
+     * The actual column this wraps around
+     */
     private Column column;
 
 
+    /**
+     * Creates a new instance for the given column
+     *
+     * @note This implicitly assumes that the column should be enabled.
+     *
+     * @param column Column that should be wrapped around
+     */
     public WizardColumn(Column column)
     {
 
-        this(true, column);
+        this(column, true);
 
     }
 
-    public WizardColumn(boolean enabled, Column column)
+    /**
+     * Creates a new instance for the given column
+     *
+     * @param column Column that should be wrapped around
+     */
+    public WizardColumn(Column column, boolean enabled)
     {
 
         setEnabled(enabled);
@@ -30,6 +51,9 @@ public class WizardColumn {
 
     }
 
+    /**
+     * @return {@link #enabled}
+     */
     public boolean isEnabled()
     {
 
@@ -37,6 +61,9 @@ public class WizardColumn {
 
     }
 
+    /**
+     * @param enabled {@link #enabled}
+     */
     public void setEnabled(boolean enabled)
     {
 
@@ -44,6 +71,9 @@ public class WizardColumn {
 
     }
 
+    /**
+     * @return {@link #column}
+     */
     public Column getColumn()
     {
 
@@ -51,6 +81,9 @@ public class WizardColumn {
 
     }
 
+    /**
+     * @param enabled {@link #column}
+     */
     public void setColumn(Column column)
     {
 
