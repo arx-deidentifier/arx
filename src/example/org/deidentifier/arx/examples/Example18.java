@@ -19,9 +19,10 @@
 package org.deidentifier.arx.examples;
 
 import java.text.ParseException;
-import java.util.Arrays;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.DynamicAdjustment;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 
@@ -38,9 +39,10 @@ public class Example18 extends Example {
      * @param args The arguments
      * @throws ParseException 
      */
-    public static void main(final String[] args) throws ParseException {
+    public static void main(final String[] args) {
         
         redaction();
+        interval();
     }
     
     /**
@@ -48,20 +50,10 @@ public class Example18 extends Example {
      */
     private static void interval() {
 
-        String[] input = new String[100];
-        for (int i=0; i< input.length; i++){
-            input[i] = String.valueOf(i);
-        }
+        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
+                0l, 99l, DataType.INTEGER, 0l, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
         
-        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
-                                                                                    Order.RIGHT_TO_LEFT,
-                                                                                    ' ', '*');
-        
-        Hierarchy h = builder.create(input);
-        
-        for (String[] line : h.getHierarchy()) {
-            System.out.println(Arrays.toString(line));
-        }
+        printArray(builder.create(getExampleData()).getHierarchy());
     }
 
     /**
@@ -73,9 +65,7 @@ public class Example18 extends Example {
                                                                                     Order.RIGHT_TO_LEFT,
                                                                                     ' ', '*');
         
-        Hierarchy h = builder.create(getExampleData());
-        
-        printArray(h.getHierarchy());
+        printArray(builder.create(getExampleData()).getHierarchy());
     }
     
     /**

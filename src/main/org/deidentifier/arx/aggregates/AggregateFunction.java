@@ -28,133 +28,161 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public abstract class AggregateFunction<T extends DataType<?>> {
+public abstract class AggregateFunction<T> {
 
-    /** 
-     * This function returns an aggregate value
+    /**
+     * An aggregate function that returns a set of all data values
      * 
-     * @param values
-     * @param type
-     * @return
+     * @author Fabian Prasser
      */
-    public abstract String aggregate (String[] values, T type);
-    
-    /** 
-     * An aggregate function that returns a set of all data values 
-     */
-    public static final AggregateFunction<DataType<?>> SET = new AggregateFunction<DataType<?>>(){
+    public static class GenericSet<T> extends AggregateFunction<T> {
+
+        private GenericSet(DataType<T> type) {
+            super(type);
+        }
+
         @Override
-        public String aggregate(String[] values, DataType<?> type) {
+        public String aggregate(String[] values) {
             StringBuilder b = new StringBuilder();
             b.append("{");
-            for (int i=0; i<values.length; i++){
+            for (int i = 0; i < values.length; i++) {
                 b.append(values[i]);
-                if (i < values.length) {
+                if (i < values.length - 1) {
                     b.append(", ");
                 }
             }
             b.append("}");
             return b.toString();
         }
+    }
+
+    /**
+     * An aggregate function that returns a set of the prefixes of the data values
+     * 
+     * @author Fabian Prasser
+     */
+    public static class GenericSetOfPrefixes<T> extends AggregateFunction<T> {
+
+        private int length;
+
+        private GenericSetOfPrefixes(DataType<T> type, int length) {
+            super(type);
+            this.length = length;
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            StringBuilder b = new StringBuilder();
+            for (int i = 0; i < values.length; i++) {
+                int size = Math.min(length, values[i].length());
+                b.append(values[i].substring(0, size));
+                if (i < values.length - 1) {
+                    b.append("-");
+                }
+            }
+            return b.toString();
+        }
+    };
+    
+    /**
+     * An aggregate function that returns an interval consisting of the 
+     * first and the last element following the predefined order 
+     * 
+     * @author Fabian Prasser
+     */
+    public static class GenericBounds<T> extends AggregateFunction<T> {
+
+        private GenericBounds(DataType<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            return new StringBuilder().append("[")
+                    .append(values[0])
+                    .append(", ")
+                    .append(values[values.length - 1])
+                    .append("]")
+                    .toString();
+        }
     };
 
-    /** 
-     * An aggregate function that returns a set of the prefixes of the data values 
-     * @param length The length of the prefixes
+    /**
+     * An aggregate function that returns a common prefix
+     * 
+     * @author Fabian Prasser
      */
-    public static final AggregateFunction<DataType<?>> SET_OF_PREFIXES(final int length){
+    public static class GenericCommonPrefix<T> extends AggregateFunction<T> {
         
-        return new AggregateFunction<DataType<?>>(){
-            @Override
-            public String aggregate(String[] values, DataType<?> type) {
-                StringBuilder b = new StringBuilder();
-                for (int i=0; i<values.length; i++){
-                    int size = Math.min(length, values[i].length());
-                    b.append(values[i].substring(0, size));
-                    if (i < values.length) {
-                        b.append("-");
-                    }
-                }
-                return b.toString();
-            }
-        };
-    }
-    
-    /** 
-     * An aggregate function that returns a set of prefixes 
-     * of length 1 of the data values 
-     */
-    public static final AggregateFunction<DataType<?>> SET_OF_PREFIXES = SET_OF_PREFIXES(1);
+        private Character redaction;
 
-    /** 
-     * An aggregate function that returns a set of prefixes 
-     * of length 1 of the data values 
-     */
-    public static final AggregateFunction<DataType<?>> COMMON_PREFIX = COMMON_PREFIX('*');
+        private GenericCommonPrefix(DataType<T> type, final Character redaction) {
+            super(type);
+            this.redaction = redaction;
+        }
 
-
-    /** 
-     * An aggregate function that returns a common prefix 
-     * @param redaction A character that should be used for redacting the remaining characters, or
-     *                  <code> null</code>, if no redaction is to be performed.
-     */
-    public static final AggregateFunction<DataType<?>> COMMON_PREFIX(final Character redaction){
-        return new AggregateFunction<DataType<?>>(){
-            
-            @Override
-            public String aggregate(String[] values, DataType<?> type) {
-                
-                // Determine length
-                int length = Integer.MIN_VALUE;
-                if (redaction != null) {
-                    for (String s : values) {
-                        length = Math.max(length, s.length());
-                    }
-                }
-                
-                // Determine largest common prefix
-                int position = 0;
-                boolean found = true;
-                outer: while (found) {
-                    char c = values[0].charAt(position);
-                    for (int i = 1; i < values.length; i++) {
-                        if (values[i].charAt(position) != c) {
-                            found = false;
-                            break outer;
-                        }
-                    }
-                    position++;
-                }
-                position--;
-                char[] result;
-                if (redaction != null){
-                    result = new char[length];
-                    Arrays.fill(result, position+1, length-1, redaction);
-                } else {
-                    result = new char[position+1];
-                }
-                for (int i=0; i<=position; i++) {
-                    result[i] = values[0].charAt(i);
-                }
-                return new String(result);
-            }
-        };
-    }
-    
-    /** 
-     * An aggregate function that returns an interval [min, max] 
-     */
-    public static final AggregateFunction<DataType<?>> INTERVAL = new AggregateFunction<DataType<?>>(){
         @Override
-        public String aggregate(String[] values, DataType<?> type) {
+        public String aggregate(String[] values) {
+
+            // Determine length
+            int length = Integer.MIN_VALUE;
+            if (redaction != null) {
+                for (String s : values) {
+                    length = Math.max(length, s.length());
+                }
+            }
+
+            // Determine largest common prefix
+            int position = 0;
+            boolean found = true;
+            outer: while (found) {
+                char c = values[0].charAt(position);
+                for (int i = 1; i < values.length; i++) {
+                    if (values[i].charAt(position) != c) {
+                        found = false;
+                        break outer;
+                    }
+                }
+                position++;
+            }
+            position--;
+            char[] result;
+            if (redaction != null) {
+                result = new char[length];
+                Arrays.fill(result, position + 1, length, redaction);
+            } else {
+                result = new char[position + 1];
+            }
+            for (int i = 0; i <= position; i++) {
+                result[i] = values[0].charAt(i);
+            }
+            return new String(result);
+        }
+    }
+    
+    /**
+     * An aggregate function that returns an interval [min, max] 
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    public static class GenericInterval<T> extends AggregateFunction<T> {
+        
+        private GenericInterval(DataType<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+
             String min = null;
             String max = null;
             for (String value : values) {
                 try {
-                    if (min == null || type.compare(min, value) < 0){
+                    if (min == null || type.compare(min, value) > 0){
                         min = value;
                     }
-                    if (max == null || type.compare(max, value) > 0){
+                    if (max == null || type.compare(max, value) < 0){
                         max = value;
                     }
                 } catch (NumberFormatException | ParseException e) {
@@ -168,21 +196,83 @@ public abstract class AggregateFunction<T extends DataType<?>> {
                                     .append("]")
                                     .toString();
         }
-    };
+    }
+
+    /** The data type*/
+    protected DataType<T> type;
+    
+    /**
+     * Constructor
+     * @param type
+     */
+    protected AggregateFunction(DataType<T> type){
+        this.type = type;
+    }
 
     /** 
+     * This function returns an aggregate value
+     * 
+     * @param values
+     * @param type
+     * @return
+     */
+    public abstract String aggregate (String[] values);
+
+    /** 
+     * An aggregate function that returns a set of all data values 
+     * @param <V>
+     */
+    public static final <V> AggregateFunction<V> SET(DataType<V> type) {
+        return new GenericSet<V>(type);
+    }
+    
+    /** 
+     * An aggregate function that returns a set of the prefixes of the data values. Length is 1
+     * @param <V>
+     */
+    public static final <V> AggregateFunction<V> SET_OF_PREFIXES(DataType<V> type) {
+        return new GenericSetOfPrefixes<V>(type, 1);
+    }
+
+    /** 
+     * An aggregate function that returns a set of the prefixes of the data values
+     * @param <V>
+     * @param length
+     */
+    public static final <V> AggregateFunction<V> SET_OF_PREFIXES(DataType<V> type, int length) {
+        return new GenericSetOfPrefixes<V>(type, length);
+    }
+    
+    /**
+     * An aggregate function that returns a common prefix. The remaining characters will be redacted with
+     * the given character
+     * 
+     * @param redaction
+     */
+    public static final <V> AggregateFunction<V> COMMON_PREFIX(DataType<V> type, Character redaction) {
+        return new GenericCommonPrefix<V>(type, redaction);
+    }
+
+    /**
+     * An aggregate function that returns a common prefix.
+     * 
+     */
+    public static final <V> AggregateFunction<V> COMMON_PREFIX(DataType<V> type) {
+        return new GenericCommonPrefix<V>(type, null);
+    }
+
+    /**
      * An aggregate function that returns an interval consisting of the 
      * first and the last element following the predefined order 
      */
-    public static final AggregateFunction<DataType<?>> BOUNDS = new AggregateFunction<DataType<?>>(){
-        @Override
-        public String aggregate(String[] values, DataType<?> type) {
-              return new StringBuilder().append("[")
-                                        .append(values[0])
-                                        .append(", ")
-                                        .append(values[values.length - 1])
-                                        .append("]")
-                                        .toString();
-        }
-    };
+    public static final <V> AggregateFunction<V> BOUNDS(DataType<V> type) {
+        return new GenericBounds<V>(type);
+    }
+
+    /**
+     * An aggregate function that returns an interval [min, max] 
+     */
+    public static final <V> AggregateFunction<V> INTERVAL(DataType<V> type) {
+        return new GenericInterval<V>(type);
+    }
 }
