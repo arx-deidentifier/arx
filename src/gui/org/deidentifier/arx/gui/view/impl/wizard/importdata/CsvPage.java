@@ -231,7 +231,7 @@ public class CsvPage extends WizardPage {
         comboSeparator.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Set the selection index and customSeparator and evalutes page
+             * Set the selection index and customSeparator and evaluates page
              */
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
