@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract superclass for all data configurations
+ * Abstract base configuration
  *
  * Such a configuration contains characteristics that are needed to access
  * the data. This abstract superclass defines properties that all of them have

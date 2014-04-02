@@ -91,7 +91,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         /* Check whether first row exists */
         if (it.hasNext()) {
             row = it.next();
-            if (config.containsHeader()) {
+            if (config.getContainsHeader()) {
                 if (!it.hasNext()) { 
                     throw new IOException("CSV contains nothing but header");
                 }
@@ -166,7 +166,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         for (int i=0, len=columns.size(); i<len; i++) {
             
             Column column = columns.get(i);
-            if (!config.containsHeader()) {
+            if (!config.getContainsHeader()) {
                 header[i] = "Column #" + column.getIndex();
             } else {
                 header[i] = row[column.getIndex()];
@@ -180,7 +180,7 @@ public class CSVImportAdapter extends DataSourceImportAdapter {
         }
 
         // Fetch next row
-        if (config.containsHeader()) {
+        if (config.getContainsHeader()) {
             if (it.hasNext()) {
                 row = it.next();
             } else {

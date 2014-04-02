@@ -3,12 +3,7 @@ package org.deidentifier.arx.io.importdata;
 /**
  * Configuration describing a CSV file
  */
-public class CSVConfiguration extends DataSourceConfiguration {
-
-    /**
-     * Location of file to import from
-     */
-    private String fileLocation;
+public class CSVConfiguration extends FileConfiguration implements ICanContainHeader {
 
     /**
      * Character that separates the columns from each other
@@ -17,6 +12,8 @@ public class CSVConfiguration extends DataSourceConfiguration {
 
     /**
      * Indicates whether first row contains header (names of columns)
+     *
+     * @see {@link ICanContainHeader}
      */
     private boolean containsHeader;
 
@@ -24,24 +21,15 @@ public class CSVConfiguration extends DataSourceConfiguration {
     /**
      * Creates a new instance of this object
      *
-     * @param fileLocation {@link #fileLocation}
+     * @param fileLocation {@link #setFileLocation(String)}
      * @param separator {@link #separator}
      * @param containsHeader {@link #containsHeader}
      */
     public CSVConfiguration(String fileLocation, char separator, boolean containsHeader) {
 
-        this.fileLocation = fileLocation;
+        setFileLocation(fileLocation);
         this.separator = separator;
         this.containsHeader = containsHeader;
-
-    }
-
-    /**
-     * @return {@link #fileLocation}
-     */
-    public String getFileLocation() {
-
-        return fileLocation;
 
     }
 
@@ -57,7 +45,7 @@ public class CSVConfiguration extends DataSourceConfiguration {
     /**
      * @return {@link #containsHeader}
      */
-    public boolean containsHeader() {
+    public boolean getContainsHeader() {
 
         return containsHeader;
 
