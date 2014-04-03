@@ -18,16 +18,24 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
+import java.awt.AWTEvent;
+import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -36,16 +44,35 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class Popup {
 
-    protected static final long THRESHOLD = 20;
-    protected static final int  WAIT      = 100;
-    private Shell               shell;
-    private Rectangle           bounds    = null;
+    protected static final long                THRESHOLD   = 20;
+    protected static final int                 WAIT        = 100;
+    private Shell                              shell;
+    private Rectangle                          bounds      = null;
+    private org.eclipse.swt.graphics.Rectangle shellBounds = null;
 
     /**
      * Creates a new instance
      * @param parent
      */
     public Popup(final Shell parent) {
+
+        // Listen for mouse down events in SWT components
+        parent.getDisplay().addFilter(SWT.MouseDown, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                mouseDown(event.x, event.y);
+            }
+        });
+
+        // Listen for mouse down in events in AWT components
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            public void eventDispatched(AWTEvent event) {
+                MouseEvent me = (MouseEvent) event;
+                if (event.getID() == MouseEvent.MOUSE_PRESSED) {
+                    mouseDown(me.getX(), me.getY());
+                }
+            }
+        }, AWTEvent.MOUSE_EVENT_MASK);
         
         this.shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
         this.prepare(shell);
@@ -63,6 +90,19 @@ public abstract class Popup {
     }
 
     /**
+     * Mouse down callback
+     * @param x
+     * @param y
+     */
+    private void mouseDown(int x, int y) {
+        if (shellBounds != null) {
+            if (!shellBounds.contains(x, y)) {
+                hide();
+            }
+        }
+    }
+    
+    /**
      * Show the popup
      * @param x
      * @param y
@@ -75,11 +115,11 @@ public abstract class Popup {
                     public void run() {
                         prepareVisible(shell);
                         shell.setLocation(x, y);
-                        org.eclipse.swt.graphics.Rectangle shellRect = shell.getBounds();
-                        bounds = new Rectangle((int)(shellRect.x - THRESHOLD), 
-                                               (int)(shellRect.y - THRESHOLD), 
-                                               (int)(shellRect.width + THRESHOLD * 2), 
-                                               (int)(shellRect.height + THRESHOLD * 2));
+                        shellBounds = shell.getBounds();
+                        bounds = new Rectangle((int)(shellBounds.x - THRESHOLD), 
+                                               (int)(shellBounds.y - THRESHOLD), 
+                                               (int)(shellBounds.width + THRESHOLD * 2), 
+                                               (int)(shellBounds.height + THRESHOLD * 2));
                         shell.setVisible(true);
                     }
                 });
