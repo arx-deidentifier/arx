@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class Popup {
 
-    protected static final long THRESHOLD = 30;
+    protected static final long THRESHOLD = 20;
     protected static final int  WAIT      = 100;
     private Shell               shell;
     private Rectangle           bounds    = null;
