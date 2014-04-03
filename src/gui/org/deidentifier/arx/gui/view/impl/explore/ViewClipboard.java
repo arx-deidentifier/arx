@@ -107,7 +107,7 @@ public class ViewClipboard implements IView {
         });
         
         // Menu
-        this.menu = new Menu(parent.getShell(), SWT.POP_UP);
+        this.menu = new Menu(parent.getShell());
         MenuItem item1 = new MenuItem(menu, SWT.NONE);
         item1.setText(Resources.getMessage("NodeClipboardView.1")); //$NON-NLS-1$
         item1.addSelectionListener(new SelectionAdapter() {
