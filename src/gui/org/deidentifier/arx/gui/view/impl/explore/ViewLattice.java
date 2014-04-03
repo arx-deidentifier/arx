@@ -286,15 +286,7 @@ public class ViewLattice extends Panel implements IView {
                     // Obtain coordinates
                     final ARXNode node = getNode(tooltipX, tooltipY);
                     if (node != null) {
-                        
-                        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
-                        final org.eclipse.swt.graphics.Rectangle bounds = new org.eclipse.swt.graphics.Rectangle((int) dbounds.x, (int) dbounds.y, (int) nodeWidth, (int) nodeHeight);
-                        if (bounds.x < 0) bounds.x=0;
-                        if (bounds.y < 0) bounds.y=0;
-                        
-                        bounds.x = frame.getLocationOnScreen().x + bounds.x;
-                        bounds.y = frame.getLocationOnScreen().y + bounds.y;
-                        controller.getToolTip().setText(createTooltipText(node), bounds);
+                        controller.getToolTip().setText(createTooltipText(node), getBounds(node));
                     }
                 }
             }
@@ -911,9 +903,24 @@ public class ViewLattice extends Panel implements IView {
                 model.setSelectedNode(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
                 repaint();
-                controller.getPopup().show(menu, x, y);
+                controller.getPopup().show(menu, x, y, getBounds(selectedNode));
             }
         });
+    }
+    
+    /**
+     * Returns the on-screen bounds of the given node
+     * @param node
+     * @return
+     */
+    private org.eclipse.swt.graphics.Rectangle getBounds(ARXNode node) {
+        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
+        final org.eclipse.swt.graphics.Rectangle bounds = new org.eclipse.swt.graphics.Rectangle((int) dbounds.x, (int) dbounds.y, (int) nodeWidth, (int) nodeHeight);
+        if (bounds.x < 0) bounds.x=0;
+        if (bounds.y < 0) bounds.y=0;
+        bounds.x = frame.getLocationOnScreen().x + bounds.x;
+        bounds.y = frame.getLocationOnScreen().y + bounds.y;
+        return bounds;
     }
 
     /**

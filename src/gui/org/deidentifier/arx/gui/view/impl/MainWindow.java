@@ -108,7 +108,7 @@ public class MainWindow implements IView {
         shell.setMinimumSize(800, 600);
 
         tooltip = new MainToolTip(shell);
-        popup = new MainPopUp(tooltip);
+        popup = new MainPopUp(shell, tooltip);
 
         // Close listener
         shell.addListener(SWT.Close, new Listener() {

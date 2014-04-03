@@ -18,51 +18,116 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class implements a global popup menu. It is required to ensure
- * consistent design amongst the different SWT/AWT/Swing components.
- * 
+ * This class implements a global tool tip
  * @author Fabian Prasser
  */
 public class MainPopUp {
 
-    private MainToolTip  tooltip;
-    private boolean      visible;
-    private MenuListener listener;
+    private final Shell shell;
+    private final List  list;
+    private Rectangle   bounds   = null;
+    private boolean     visible  = false;
+    private Menu        menu;
+    private long        WAIT     = 100;
+    private MainToolTip tooltip;
 
     /**
-     * Creates a new pop up
-     * 
+     * Creates a new instance
      * @param parent
      */
-    public MainPopUp(final MainToolTip tooltip) {        
+    public MainPopUp(final Shell parent, final MainToolTip tooltip) {        
         this.tooltip = tooltip;
-        this.listener = new MenuAdapter() {
+        shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
+        shell.setLayout(new FillLayout(SWT.VERTICAL));
+        list = new List(shell, SWT.NONE);
+        list.addMouseMoveListener(new MouseMoveListener(){
             @Override
-            public void menuHidden(MenuEvent arg0) {
-                ((Menu) arg0.widget).removeMenuListener(this);
-                setVisible(false);
+            public void mouseMove(MouseEvent event) {
+                
             }
-        };
+        });
+        
+        shell.pack();
+        shell.setVisible(false);
+        
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    synchronized (this) {
+                        if (visible && bounds != null) {
+                            final Point p = MouseInfo.getPointerInfo().getLocation();
+                            if (!bounds.contains(p)) {
+                                Display.getDefault().syncExec(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!shell.getBounds().contains(p.x, p.y)) {
+                                            hide();
+                                       }  
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    try {
+                        Thread.sleep(WAIT);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
-    /**
-     * Returns whether the popup is visible
-     * 
-     * @return
-     */
-    public synchronized boolean isVisible() {
-        return visible;
+    private void show() {
+        synchronized (this) {
+            if (this.menu != null) {
+                Display.getDefault().syncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        tooltip.hide();
+                        list.removeAll();
+                        for (MenuItem item : menu.getItems()) {
+                            list.add(item.getText());
+                        }
+                        shell.pack();
+                        shell.setVisible(true);
+                        visible = true;
+                    }
+                });
+            }
+        }
     }
 
-    private synchronized void setVisible(boolean value) {
-        this.visible = value;
+    protected void hide() {
+        synchronized (this) {
+            Display.getDefault().syncExec(new Runnable() {
+                @Override
+                public void run() {
+                    shell.setVisible(false);
+                    visible = false;
+                    menu = null;
+                    bounds = null;
+                    list.removeAll();
+                }
+            });
+        }
     }
 
     /**
@@ -71,16 +136,16 @@ public class MainPopUp {
      * @param items
      * @param listener
      */
-    public synchronized void show(final Menu menu, final int x, final int y) {
-        setVisible(true);
-        Display.getDefault().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                tooltip.hide();
-                menu.setLocation(x, y);
-                menu.setVisible(true);
-                menu.addMenuListener(listener);
-            }
-        });
+    public synchronized void show(final Menu menu, final int x, final int y, final org.eclipse.swt.graphics.Rectangle bounds) {
+        synchronized (this) {
+            if (this.visible) return;
+            MainPopUp.this.menu = menu;
+            this.shell.setLocation(x, y);
+            MainPopUp.this.bounds = new Rectangle(bounds.x,
+                                                   bounds.y,
+                                                   bounds.width,
+                                                   bounds.height);
+            show();
+        }
     }
 }
