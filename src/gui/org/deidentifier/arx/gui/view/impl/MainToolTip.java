@@ -101,38 +101,44 @@ public class MainToolTip {
         t.start();
     }
 
-    private synchronized void show() {
-        if (this.text != null) {
+    private void show() {
+        synchronized (this) {
+            if (this.text != null) {
+                Display.getDefault().asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        shellText.setText(text);
+                        shell.pack();
+                        shell.setLocation(currentX, currentY);
+                        shell.setVisible(true);
+                        visible = true;
+                    }
+                });
+            }
+        }
+    }
+
+    protected void hide() {
+        synchronized (this) {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    shellText.setText(text);
-                    shell.pack();
-                    shell.setLocation(currentX, currentY);
-                    shell.setVisible(true);
-                    visible = true;
+                    shell.setVisible(false);
+                    visible = false;
+                    text = null;
+                    bounds = null;
+                    currentX = -1;
+                    currentY = -1;
                 }
             });
         }
     }
 
-    protected synchronized void hide() {
-        Display.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                shell.setVisible(false);
-                visible = false;
-                text = null;
-                bounds = null;
-                currentX = -1;
-                currentY = -1;
-            }
-        });
-    }
-
-    public synchronized void setText(String text, org.eclipse.swt.graphics.Rectangle bounds) {
-        if (this.visible) return;
-        this.text = text;
-        this.bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+    public void setText(String text, org.eclipse.swt.graphics.Rectangle bounds) {
+        synchronized (this) {
+            if (this.visible) return;
+            this.text = text;
+            this.bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        }
     }
 }
