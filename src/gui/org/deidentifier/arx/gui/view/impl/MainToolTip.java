@@ -18,13 +18,17 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolTip;
 
 /**
  * This class implements a global tool tip
@@ -32,52 +36,109 @@ import org.eclipse.swt.widgets.Text;
  */
 public class MainToolTip {
 
-    private final Shell shell;
-    private final Text  text;
+    private final Shell   shell;
+    private final Text   shellText;
+    private String        text        = null;
+    private Rectangle     bounds      = null;
+    private boolean       visible     = false;
+    private int           currentX    = -1;
+    private int           currentY    = -1;
+    private long          currentTime = System.currentTimeMillis();
+
+    private long          THRESHOLD   = 1000;
+    private long          WAIT        = 100;
 
     /**
      * Creates a new instance
      * @param parent
      */
     public MainToolTip(final Shell parent) {
+
         shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
         shell.setLayout(new GridLayout());
-        text = new Text(shell, SWT.MULTI);
-        text.setLayoutData(SWTUtil.createFillGridData());
-        text.setBackground(shell.getBackground());
+        shell.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        shellText = new Text(shell, SWT.MULTI);
+        shellText.setLayoutData(SWTUtil.createFillGridData());
+        shellText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        shellText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
         shell.pack();
         shell.setVisible(false);
-        shell.addMouseMoveListener(new MouseMoveListener() {
+        
+        Thread t = new Thread(new Runnable() {
             @Override
-            public void mouseMove(final MouseEvent arg0) {
-                hide();
+            public void run() {
+                while (true) {
+                    synchronized (this) {
+                        if (!visible && bounds != null) {
+                            Point p = MouseInfo.getPointerInfo().getLocation();
+                            if (p.x != currentX || p.y != currentY) {
+                                currentTime = System.currentTimeMillis();
+                                currentX = p.x;
+                                currentY = p.y;
+                            } else {
+                                if (System.currentTimeMillis() - currentTime > THRESHOLD) {
+                                    if (bounds.contains(currentX, currentY)) {
+                                        show();
+                                    }
+                                }
+                            }
+                        }
+                        if (visible && bounds != null) {
+                            Point p = MouseInfo.getPointerInfo().getLocation();
+                            if (!bounds.contains(p)) {
+                                hide();
+                            }
+                        }
+                    }
+                    try {
+                        Thread.sleep(WAIT);
+                    } catch (InterruptedException e) {
+                    }
+                }
             }
         });
+        t.setDaemon(true);
+        t.start();
     }
 
-    /**
-     * Hides the tool tip
-     */
-    public void hide() {
-        shell.setVisible(false);
+    private void show() {
+        synchronized (this) {
+            if (this.text != null) {
+                Display.getDefault().syncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        shellText.setText(text);
+                        shell.pack();
+                        shell.setLocation(currentX, currentY);
+                        shell.setVisible(true);
+                        visible = true;
+                    }
+                });
+            }
+        }
     }
 
-    /**
-     * Sets the text of the tool tip
-     * @param message
-     */
-    public void setText(final String message) {
-        text.setText(message);
-        shell.pack();
+    protected void hide() {
+        synchronized (this) {
+            Display.getDefault().syncExec(new Runnable() {
+                @Override
+                public void run() {
+                    shell.setVisible(false);
+                    visible = false;
+                    text = null;
+                    bounds = null;
+                    currentX = -1;
+                    currentY = -1;
+                }
+            });
+        }
     }
 
-    /**
-     * Shows the tool tip
-     * @param x
-     * @param y
-     */
-    public void show(final int x, final int y) {
-        shell.setLocation(x, y);
-        shell.setVisible(true);
+    public void setText(String text, org.eclipse.swt.graphics.Rectangle bounds) {
+        synchronized (this) {
+            if (this.visible) return;
+            this.text = text;
+            this.bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        }
     }
 }
