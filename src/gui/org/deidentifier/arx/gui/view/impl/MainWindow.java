@@ -108,7 +108,7 @@ public class MainWindow implements IView {
         shell.setMinimumSize(800, 600);
 
         tooltip = new MainToolTip(shell);
-        popup = new MainPopUp(shell);
+        popup = new MainPopUp(tooltip);
 
         // Close listener
         shell.addListener(SWT.Close, new Listener() {
@@ -129,27 +129,27 @@ public class MainWindow implements IView {
         // Create the tab folder
         root = new ComponentTitledFolder(shell, controller, null, "id-70");
         root.setLayoutData(SWTUtil.createFillGridData());
-        
+
         // TODO: Remove? Fixes an SWT Bug!
         // root.setBackground(shell.getBackground());
 
         // Create the subviews
-        Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png"));  //$NON-NLS-1$
+        Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$
         new LayoutDefinition(item1, controller);
-        Composite item2 = root.createItem(TAB_EXPLORE_SEARCHSPACE, controller.getResources().getImage("perspective_explore.png"));  //$NON-NLS-1$
+        Composite item2 = root.createItem(TAB_EXPLORE_SEARCHSPACE, controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$
         new LayoutExplore(item2, controller);
-        Composite item3 = root.createItem(TAB_ANALYZE_DATA, controller.getResources().getImage("perspective_analyze.png"));  //$NON-NLS-1$
+        Composite item3 = root.createItem(TAB_ANALYZE_DATA, controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$
         new LayoutAnalyze(item3, controller);
-        
+
         // Now reset and disable
         controller.reset();
     }
-    
+
     /**
-	 * Adds a listener
-	 * @param event
-	 * @param listener
-	 */
+     * Adds a listener
+     * @param event
+     * @param listener
+     */
     public void addListener(int event, Listener listener) {
         shell.addListener(event, listener);
     }
@@ -158,7 +158,7 @@ public class MainWindow implements IView {
      * Adds a shell listener
      * @param listener
      */
-    public void addShellListener(ShellListener listener){
+    public void addShellListener(ShellListener listener) {
         this.shell.addShellListener(listener);
     }
 
@@ -228,16 +228,16 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an about dialog
      */
-	public void showAboutDialog() {
-		final DialogAbout dialog = new DialogAbout(shell, controller);
+    public void showAboutDialog() {
+        final DialogAbout dialog = new DialogAbout(shell, controller);
         dialog.create();
         dialog.open();
-	}
-    
+    }
+
     /**
      * Shows an error dialog
      * @param header
@@ -248,7 +248,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an error dialog
      * @param header
@@ -260,7 +260,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an error dialog
      * @param header
@@ -268,11 +268,11 @@ public class MainWindow implements IView {
      * @param t
      */
     public void showErrorDialog(final String header, final String message, final Throwable t) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		t.printStackTrace(pw);
-		final String trace = sw.toString();
-		showErrorDialog(header, message, trace);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        final String trace = sw.toString();
+        showErrorDialog(header, message, trace);
     }
 
     /**
@@ -283,11 +283,8 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public String[] showOrderValuesDialog(final String header,
-                                          final String text,
-                                          final DataType<?> type,
-                                          final String[] values) {
-        
+    public String[] showOrderValuesDialog(final String header, final String text, final DataType<?> type, final String[] values) {
+
         // Open dialog
         DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
         if (dlg.open() == Window.OK) {
@@ -306,20 +303,14 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public String showFormatInputDialog(final String header,
-                                        final String text,
-                                        final String preselected,
-                                        final DataTypeDescription<?> description,
-                                        final Collection<String> values) {
+    public String showFormatInputDialog(final String header, final String text, final String preselected, final DataTypeDescription<?> description, final Collection<String> values) {
 
         // Check
-        if (!description.hasFormat()) {
-            throw new RuntimeException("This dialog can only be used for data types with format");
-        }
-        
+        if (!description.hasFormat()) { throw new RuntimeException("This dialog can only be used for data types with format"); }
+
         // Init
         final String DEFAULT = "Default";
-        
+
         // Validator
         final IInputValidator validator = new IInputValidator() {
             @Override
@@ -335,8 +326,7 @@ public class MainWindow implements IView {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
                 }
                 for (final String value : values) {
-                    if (!type.isValid(value)) {
-                        return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
+                    if (!type.isValid(value)) { return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
                     }
                 }
                 return null;
@@ -345,10 +335,9 @@ public class MainWindow implements IView {
 
         // Try to find a valid formatter
         String initial = ""; //$NON-NLS-1$
-        if (preselected != null && validator.isValid(preselected) == null){
+        if (preselected != null && validator.isValid(preselected) == null) {
             initial = preselected;
-        }
-        else if (validator.isValid(DEFAULT) == null) {
+        } else if (validator.isValid(DEFAULT) == null) {
             initial = DEFAULT;
         } else {
             for (final String format : description.getExampleFormats()) {
@@ -358,19 +347,14 @@ public class MainWindow implements IView {
                 }
             }
         }
-        
+
         // Extract list of formats
         List<String> formats = new ArrayList<String>();
         formats.add(DEFAULT);
         formats.addAll(description.getExampleFormats());
-        
+
         // Open dialog
-        final DialogComboSelection dlg = new DialogComboSelection(shell,
-                                                                    header,
-                                                                    text,
-                                                                    formats.toArray(new String[]{}),
-                                                                    initial,
-                                                                    validator);
+        final DialogComboSelection dlg = new DialogComboSelection(shell, header, text, formats.toArray(new String[] {}), initial, validator);
 
         // Return value
         if (dlg.open() == Window.OK) {
@@ -384,11 +368,11 @@ public class MainWindow implements IView {
      * Shows a help dialog
      * @param id
      */
-	public void showHelpDialog(String id) {
+    public void showHelpDialog(String id) {
         final DialogHelp dialog = new DialogHelp(shell, controller, id);
         dialog.create();
         dialog.open();
-	}
+    }
 
     /**
      * Shows an info dialog
@@ -406,15 +390,9 @@ public class MainWindow implements IView {
      * @param initial
      * @return
      */
-    public String showInputDialog(final String header,
-                                  final String text,
-                                  final String initial) {
+    public String showInputDialog(final String header, final String text, final String initial) {
 
-        final InputDialog dlg = new InputDialog(shell,
-                                                header,
-                                                text,
-                                                initial,
-                                                null);
+        final InputDialog dlg = new InputDialog(shell, header, text, initial, null);
         if (dlg.open() == Window.OK) {
             return dlg.getValue();
         } else {
@@ -433,8 +411,8 @@ public class MainWindow implements IView {
         dialog.setFilterIndex(0);
         return dialog.open();
     }
-	
-	/**
+
+    /**
      * Shows a progress dialog
      * @param text
      * @param worker
@@ -458,8 +436,11 @@ public class MainWindow implements IView {
         // Dialog
         final DialogQuery dialog = new DialogQuery(data, shell, query);
         dialog.create();
-        if (dialog.open() != Window.OK) { return null; }
-        else {return dialog.getResult();}
+        if (dialog.open() != Window.OK) {
+            return null;
+        } else {
+            return dialog.getResult();
+        }
     }
 
     /**
@@ -473,10 +454,10 @@ public class MainWindow implements IView {
     }
 
     /**
-	 * Shows a file save dialog
-	 * @param filter
-	 * @return
-	 */
+     * Shows a file save dialog
+     * @param filter
+     * @return
+     */
     public String showSaveFileDialog(String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         dialog.setFilterExtensions(new String[] { filter });
@@ -484,7 +465,7 @@ public class MainWindow implements IView {
         return dialog.open();
     }
 
-	/**
+    /**
      * Shows a dialog for selecting privacy criteria
      * @param others
      * @return
@@ -494,8 +475,11 @@ public class MainWindow implements IView {
         // Dialog
         final DialogCriterionSelection dialog = new DialogCriterionSelection(controller, shell, others);
         dialog.create();
-        if (dialog.open() != Window.OK) { return null; }
-        else {return dialog.getCriterion();}
+        if (dialog.open() != Window.OK) {
+            return null;
+        } else {
+            return dialog.getCriterion();
+        }
     }
 
     @Override

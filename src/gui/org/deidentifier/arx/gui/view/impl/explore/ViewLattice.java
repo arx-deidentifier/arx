@@ -31,6 +31,8 @@ import java.awt.Panel;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -46,6 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -59,7 +62,6 @@ import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
@@ -69,6 +71,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 /**
  * This class implements a view of a lattice
@@ -96,21 +100,21 @@ public class ViewLattice extends Panel implements IView {
         NONE
     }
 
-    public static final org.eclipse.swt.graphics.Color GREEN      = GUIHelper.getColor(50,  205, 50);
-    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN= GUIHelper.getColor(50,  128, 50);
-    public static final org.eclipse.swt.graphics.Color ORANGE     = GUIHelper.getColor(255, 145, 0);
-    public static final org.eclipse.swt.graphics.Color RED        = GUIHelper.getColor(255, 99,  71);
-    public static final org.eclipse.swt.graphics.Color LIGHT_RED  = GUIHelper.getColor(128, 99,  71);
-    public static final org.eclipse.swt.graphics.Color BLUE       = GUIHelper.getColor(0,   0,   255);
-    public static final org.eclipse.swt.graphics.Color YELLOW     = GUIHelper.getColor(255, 215, 0);
+    public static final org.eclipse.swt.graphics.Color GREEN           = GUIHelper.getColor(50, 205, 50);
+    public static final org.eclipse.swt.graphics.Color LIGHT_GREEN     = GUIHelper.getColor(50, 128, 50);
+    public static final org.eclipse.swt.graphics.Color ORANGE          = GUIHelper.getColor(255, 145, 0);
+    public static final org.eclipse.swt.graphics.Color RED             = GUIHelper.getColor(255, 99, 71);
+    public static final org.eclipse.swt.graphics.Color LIGHT_RED       = GUIHelper.getColor(128, 99, 71);
+    public static final org.eclipse.swt.graphics.Color BLUE            = GUIHelper.getColor(0, 0, 255);
+    public static final org.eclipse.swt.graphics.Color YELLOW          = GUIHelper.getColor(255, 215, 0);
 
-    public static final Color                          AWT_GREEN  		= asAWTColor(GREEN);
-    public static final Color                          AWT_LIGHT_GREEN  = asAWTColor(LIGHT_GREEN);
-    public static final Color                          AWT_ORANGE 		= asAWTColor(ORANGE);
-    public static final Color                          AWT_RED    		= asAWTColor(RED);
-    public static final Color                          AWT_LIGHT_RED    = asAWTColor(LIGHT_RED);
-    public static final Color                          AWT_BLUE   		= asAWTColor(BLUE);
-    public static final Color                          AWT_YELLOW 		= asAWTColor(YELLOW);
+    public static final Color                          AWT_GREEN       = asAWTColor(GREEN);
+    public static final Color                          AWT_LIGHT_GREEN = asAWTColor(LIGHT_GREEN);
+    public static final Color                          AWT_ORANGE      = asAWTColor(ORANGE);
+    public static final Color                          AWT_RED         = asAWTColor(RED);
+    public static final Color                          AWT_LIGHT_RED   = asAWTColor(LIGHT_RED);
+    public static final Color                          AWT_BLUE        = asAWTColor(BLUE);
+    public static final Color                          AWT_YELLOW      = asAWTColor(YELLOW);
 
     /**
      * Converts between different implementations of the color class
@@ -121,105 +125,103 @@ public class ViewLattice extends Panel implements IView {
         return new Color(in.getRed(), in.getGreen(), in.getBlue());
     }
 
-    private Model                 model;
+    private Model               model;
 
     /** SVUID */
-    private static final long     serialVersionUID      = 158477251360929026L;
+    private static final long   serialVersionUID      = 158477251360929026L;
     /** Attribute constant */
-    private static final int      ATTRIBUTE_POSITION    = 1;
+    private static final int    ATTRIBUTE_POSITION    = 1;
     /** Attribute constant */
-    private static final int      ATTRIBUTE_LEVEL       = 2;
+    private static final int    ATTRIBUTE_LEVEL       = 2;
     /** Attribute constant */
-    private static final int      ATTRIBUTE_LEVELSIZE   = 3;
+    private static final int    ATTRIBUTE_LEVELSIZE   = 3;
     /** Attribute constant */
-    private static final int      ATTRIBUTE_BOUNDS      = 4;
+    private static final int    ATTRIBUTE_BOUNDS      = 4;
     /** Attribute constant */
-    private static final int      ATTRIBUTE_LABEL       = 5;
+    private static final int    ATTRIBUTE_LABEL       = 5;
 
     /** Attribute constant */
-    private static final int      ATTRIBUTE_VISIBLE     = 6;
+    private static final int    ATTRIBUTE_VISIBLE     = 6;
     /** Time to wait for a tooltip to show */
-    private static final int      TOOLTIP_WAIT          = 1000;
+    private static final int    TOOLTIP_WAIT          = 100;
     /** Global settings */
-    private static final double   NODE_INITIAL_SIZE     = 200d;
+    private static final double NODE_INITIAL_SIZE     = 200d;
     /** Global settings */
-    private static final double   NODE_FRAME_RATIO      = 0.7d;
+    private static final double NODE_FRAME_RATIO      = 0.7d;
     /** Global settings */
-    private static final double   NODE_SIZE_RATIO       = 0.3d;
+    private static final double NODE_SIZE_RATIO       = 0.3d;
     /** Global settings */
-    private static final double   ZOOM_SPEED            = 10d;
+    private static final double ZOOM_SPEED            = 10d;
     /** Global settings */
-    private static final int      MSG_WIDTH             = 300;
+    private static final int    MSG_WIDTH             = 300;
     /** Global settings */
-    private static final int      MSG_HEIGHT            = 100;
+    private static final int    MSG_HEIGHT            = 100;
     /** Global settings */
-    private static final int      MIN_WIDTH             = 2;
+    private static final int    MIN_WIDTH             = 2;
 
     /** Global settings */
-    private static final int      MIN_HEIGHT            = 1;
+    private static final int    MIN_HEIGHT            = 1;
     /** For the current view */
-    private final float           strokeWidthNode       = 0.1f;
+    private final float         strokeWidthNode       = 0.1f;
     /** For the current view */
-    private final float           strokeWidthConnection = 0.1f;
+    private final float         strokeWidthConnection = 0.1f;
     /** For the current view */
-    private double                nodeWidth             = 0f;
+    private double              nodeWidth             = 0f;
 
     /** For the current view */
-    private double                nodeHeight            = 0f;
+    private double              nodeHeight            = 0f;
     /** The lattice to display */
-    private final List<ARXNode>   lattice               = new ArrayList<ARXNode>();
+    private final List<ARXNode> lattice               = new ArrayList<ARXNode>();
     /** The lattice to display */
-    private int                   latticeWidth          = 0;
+    private int                 latticeWidth          = 0;
     /** The lattice to display */
-    private int                   latticeHeight         = 0;
+    private int                 latticeHeight         = 0;
     /** The screen size */
-    private Dimension             screen                = null;
+    private Dimension           screen                = null;
 
     /** The number of nodes */
-    private int                   numNodes              = 0;
+    private int                 numNodes              = 0;
     /** Drag parameters */
-    private int                   dragX                 = 0;
+    private int                 dragX                 = 0;
     /** Drag parameters */
-    private int                   dragY                 = 0;
+    private int                 dragY                 = 0;
     /** Drag parameters */
-    private int                   dragStartX            = 0;
+    private int                 dragStartX            = 0;
     /** Drag parameters */
-    private int                   dragStartY            = 0;
+    private int                 dragStartY            = 0;
 
     /** Drag parameters */
-    private DragType              dragType              = DragType.NONE;
+    private DragType            dragType              = DragType.NONE;
 
     /** The backbuffer for implementing double buffering */
-    private BufferedImage         buffer                = null;
+    private BufferedImage       buffer                = null;
 
     /** The optimum */
-    private ARXNode               optimum;
+    private ARXNode             optimum;
 
     /** The selected node */
-    private ARXNode               selectedNode;
+    private ARXNode             selectedNode;
 
     /** The controller */
-    private final Controller      controller;
+    private final Controller    controller;
 
     /** The bridge */
-    private final Composite       bridge;
+    private final Composite     bridge;
 
     /** The bridge */
-    private final Frame           frame;
-    
+    private final Frame         frame;
+
     /** The tooltip */
-    private int                   tooltipX;
+    private Timer               tooltipTimer          = null;
     /** The tooltip */
-    private int                   tooltipY;
+    private int                 tooltipX              = -1;
     /** The tooltip */
-    private int                   tooltipXOnScreen;
-    /** The tooltip */
-    private int                   tooltipYOnScreen;
-    /** The tooltip */
-    private boolean               tooltipVisible;
-    
+    private int                 tooltipY              = -1;
+
     /** Number format*/
-    private final NumberFormat    format = new DecimalFormat("##0.000"); //$NON-NLS-1$
+    private final NumberFormat  format                = new DecimalFormat("##0.000"); //$NON-NLS-1$
+
+    private final Menu          menu;
 
     /**
      * Creates a new instance
@@ -235,58 +237,71 @@ public class ViewLattice extends Panel implements IView {
         controller.addListener(ModelPart.MODEL, this);
 
         this.controller = controller;
+        
+        // Build bridge
         parent.setLayout(new GridLayout());
         bridge = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND | SWT.EMBEDDED);
         bridge.setLayoutData(SWTUtil.createFillGridData());
+        
+        // Build frame
         frame = SWT_AWT.new_Frame(bridge);
-
         frame.setLayout(new BorderLayout());
         frame.add(this, BorderLayout.CENTER);
         frame.setBackground(Color.WHITE);
-
-        resetBuffer();
-        initializeListeners();
-
-        // The thread that shows tooltips
-        final Thread t = new Thread(new Runnable() {
-            int x = 0;
-            int y = 0;
-
+        
+        // Build menu
+        menu = new Menu(parent.getShell(), SWT.POP_UP);
+        MenuItem item1 = new MenuItem(menu, SWT.NONE);
+        item1.setText(Resources.getMessage("LatticeView.9")); //$NON-NLS-1$
+        item1.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void run() {
-                while (true) {
-                    if ((x != tooltipX) || (y != tooltipY)) {
-                        final ARXNode node = getNode(tooltipX, tooltipY);
-                        Display.getDefault().asyncExec(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!controller.getPopup().isVisible()) {
-                                    x = tooltipX;
-                                    y = tooltipY;
-                                    final MainToolTip tip = controller.getToolTip();
-                                    if (node != null) {
-                                        tip.setText(createTooltipText(node));
-                                        tip.show(tooltipXOnScreen + 1, tooltipYOnScreen + 1);
-                                        tooltipVisible = true;
-                                    } else {
-                                        tip.hide();
-                                        tooltipVisible = false;
-                                    }
-                                }
-                            }
-                        });
-                        repaint();
-                    }
-                    try {
-                        Thread.sleep(TOOLTIP_WAIT);
-                    } catch (final InterruptedException e) {
-                        // Die silently
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.getClipboard().add(selectedNode);
+                controller.update(new ModelEvent(ViewLattice.this, ModelPart.CLIPBOARD, selectedNode));
+                model.setSelectedNode(selectedNode);
+                controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
+                repaint();
+            }
+        });
+        
+        MenuItem item2 = new MenuItem(menu, SWT.NONE);
+        item2.setText(Resources.getMessage("LatticeView.10")); //$NON-NLS-1$
+        item2.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                controller.actionApplySelectedTransformation();
+                model.setSelectedNode(selectedNode);
+                controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
+                repaint();
+            }
+        });
+        
+        // Build timer for tooltip
+        this.tooltipTimer = new Timer(TOOLTIP_WAIT, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                
+                if (tooltipX != -1 && tooltipY != -1) {
+                    // Obtain coordinates
+                    final ARXNode node = getNode(tooltipX, tooltipY);
+                    if (node != null) {
+                        
+                        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
+                        final org.eclipse.swt.graphics.Rectangle bounds = new org.eclipse.swt.graphics.Rectangle((int) dbounds.x, (int) dbounds.y, (int) nodeWidth, (int) nodeHeight);
+                        if (bounds.x < 0) bounds.x=0;
+                        if (bounds.y < 0) bounds.y=0;
+                        
+                        bounds.x = frame.getLocationOnScreen().x + bounds.x;
+                        bounds.y = frame.getLocationOnScreen().y + bounds.y;
+                        controller.getToolTip().setText(createTooltipText(node), bounds);
                     }
                 }
             }
         });
-        t.setDaemon(true);
-        t.start();
+        
+        
+        resetBuffer();
+        initializeListeners();
     }
 
     @Override
@@ -296,17 +311,17 @@ public class ViewLattice extends Panel implements IView {
 
     @Override
     public void paint(final Graphics g) {
-    	if (buffer != null) {
-	        final Graphics bg = buffer.getGraphics();
-	        if (model != null) {
-	            draw(bg);
-	        } else {
-	            bg.setColor(Color.WHITE);
-	            bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-	        }
-	        bg.dispose();
-	        g.drawImage(buffer, 0, 0, this);
-    	}
+        if (buffer != null) {
+            final Graphics bg = buffer.getGraphics();
+            if (model != null) {
+                draw(bg);
+            } else {
+                bg.setColor(Color.WHITE);
+                bg.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+            }
+            bg.dispose();
+            g.drawImage(buffer, 0, 0, this);
+        }
     }
 
     /**
@@ -383,25 +398,20 @@ public class ViewLattice extends Panel implements IView {
      * @param w
      * @param h
      */
-    private void centerText(final String s1,
-                            final Graphics g,
-                            final int x,
-                            final int y,
-                            final int w,
-                            final int h) {
-        
+    private void centerText(final String s1, final Graphics g, final int x, final int y, final int w, final int h) {
+
         // Obtain metrics and data
         final Font f = g.getFont();
         final FontMetrics fm = g.getFontMetrics(f);
         final int ascent = fm.getAscent();
         final int height = fm.getHeight();
-        
+
         // Compute position
         int width1 = 0, x0 = 0, y0 = 0;
         width1 = fm.stringWidth(s1);
         x0 = x + ((w - width1) / 2);
         y0 = y + ((h - height) / 2) + ascent;
-        
+
         // Draw
         g.drawString(s1, x0, y0);
     }
@@ -488,18 +498,13 @@ public class ViewLattice extends Panel implements IView {
     private void drawConnections(final ARXNode node, final Graphics2D g) {
 
         // Obtain coordinates
-        final Bounds center = (Bounds) node.getAttributes()
-                                           .get(ATTRIBUTE_BOUNDS);
+        final Bounds center = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
 
         // Draw
         for (final ARXNode n : node.getSuccessors()) {
             if ((Boolean) n.getAttributes().get(ATTRIBUTE_VISIBLE)) {
-                final Bounds centerN = (Bounds) n.getAttributes()
-                                                 .get(ATTRIBUTE_BOUNDS);
-                g.drawLine((int) center.centerX,
-                           (int) center.centerY,
-                           (int) centerN.centerX,
-                           (int) centerN.centerY);
+                final Bounds centerN = (Bounds) n.getAttributes().get(ATTRIBUTE_BOUNDS);
+                g.drawLine((int) center.centerX, (int) center.centerY, (int) centerN.centerX, (int) centerN.centerY);
             }
         }
     }
@@ -513,31 +518,23 @@ public class ViewLattice extends Panel implements IView {
     private boolean drawNode(final ARXNode node, final Graphics2D g) {
 
         // Obtain coordinates
-        final Bounds dbounds = (Bounds) node.getAttributes()
-                                            .get(ATTRIBUTE_BOUNDS);
-        final Rectangle bounds = new Rectangle((int) dbounds.x,
-                                               (int) dbounds.y,
-                                               (int) nodeWidth,
-                                               (int) nodeHeight);
+        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
+        final Rectangle bounds = new Rectangle((int) dbounds.x, (int) dbounds.y, (int) nodeWidth, (int) nodeHeight);
 
         // Clipping
-        if (!bounds.intersects(new Rectangle(0, 0, screen.width, screen.height))) { 
-            return false; 
-        }
+        if (!bounds.intersects(new Rectangle(0, 0, screen.width, screen.height))) { return false; }
 
         // Degrade if too far away
         if (bounds.width <= 4) {
             g.setColor(getInnerColor(node));
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                               RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
             // Draw real node
         } else {
             final Color c = g.getColor();
             g.setColor(getInnerColor(node));
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                               RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             if (node != selectedNode) {
                 g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
             } else {
@@ -546,8 +543,7 @@ public class ViewLattice extends Panel implements IView {
             final Stroke s = g.getStroke();
             g.setStroke(new BasicStroke(getOuterStrokeWidth(node, bounds.width)));
             g.setColor(getOuterColor(node));
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                               RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (node != selectedNode) {
                 g.drawOval(bounds.x, bounds.y, bounds.width, bounds.height);
             } else {
@@ -557,23 +553,16 @@ public class ViewLattice extends Panel implements IView {
             g.setColor(c);
 
             if (bounds.width >= 20) {
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 final String text = (String) node.getAttributes().get(ATTRIBUTE_LABEL);
                 g.setFont(new Font("Arial", Font.PLAIN, 8)); //$NON-NLS-1$
                 final float factor1 = (bounds.width * 0.7f) / g.getFontMetrics().stringWidth(text);
                 final float factor2 = (bounds.height * 0.7f) / g.getFontMetrics().getHeight();
                 final float factor = Math.min(factor1, factor2);
-                g.setFont(g.getFont().deriveFont(AffineTransform.getScaleInstance(factor,
-                                                                                  factor)));
+                g.setFont(g.getFont().deriveFont(AffineTransform.getScaleInstance(factor, factor)));
 
                 // Scale text to fit and center in r
-                centerText(text,
-                           g,
-                           bounds.x,
-                           bounds.y,
-                           bounds.width,
-                           bounds.height);
+                centerText(text, g, bounds.x, bounds.y, bounds.width, bounds.height);
             }
         }
         return true;
@@ -612,10 +601,7 @@ public class ViewLattice extends Panel implements IView {
         for (final ARXNode node : lattice) {
             final Bounds bounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
             if (bounds == null) { return null; }
-            if ((x >= bounds.x) && (y >= bounds.y) &&
-                (x <= (bounds.x + nodeWidth)) && (y <= (bounds.y + nodeHeight))) { 
-                return node; 
-            }
+            if ((x >= bounds.x) && (y >= bounds.y) && (x <= (bounds.x + nodeWidth)) && (y <= (bounds.y + nodeHeight))) { return node; }
         }
         return null;
     }
@@ -747,19 +733,15 @@ public class ViewLattice extends Panel implements IView {
         for (final ARXNode node : lattice) {
 
             // Node properties
-            final double position = (Integer) node.getAttributes()
-                                                  .get(ATTRIBUTE_POSITION);
-            final double level = (Integer) node.getAttributes()
-                                               .get(ATTRIBUTE_LEVEL);
-            final double levelsize = (Integer) node.getAttributes()
-                                                   .get(ATTRIBUTE_LEVELSIZE);
+            final double position = (Integer) node.getAttributes().get(ATTRIBUTE_POSITION);
+            final double level = (Integer) node.getAttributes().get(ATTRIBUTE_LEVEL);
+            final double levelsize = (Integer) node.getAttributes().get(ATTRIBUTE_LEVELSIZE);
 
             // Level offset
             final double offset = (latticeWidth * width) - (levelsize * width);
 
             // Node boundaries
-            final double centerX = deltaX + (position * width) + (width / 2d) +
-                                   (offset / 2d);
+            final double centerX = deltaX + (position * width) + (width / 2d) + (offset / 2d);
             final double centerY = deltaY + (level * height) + (height / 2d);
             final double x = centerX - (nodeWidth / 2);
             final double y = centerY - (nodeHeight / 2);
@@ -782,7 +764,7 @@ public class ViewLattice extends Panel implements IView {
     private void initializeListeners() {
 
         addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseClicked(final MouseEvent arg0) {
                 if (arg0.getButton() == MouseEvent.BUTTON1) {
@@ -818,20 +800,23 @@ public class ViewLattice extends Panel implements IView {
                 dragType = DragType.NONE;
             }
 
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+                tooltipX = -1;
+                tooltipY = -1;
+            }
         });
         addMouseMotionListener(new MouseMotionAdapter() {
 
             @Override
             public void mouseDragged(final MouseEvent arg0) {
-                tooltip(arg0);
                 final int deltaX = arg0.getX() - dragX;
                 final int deltaY = arg0.getY() - dragY;
                 if (dragType == DragType.MOVE) {
 
                     // Just move the nodes around
                     for (final ARXNode node : lattice) {
-                        final Bounds dbounds = (Bounds) node.getAttributes()
-                                                            .get(ATTRIBUTE_BOUNDS);
+                        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
                         dbounds.centerX += deltaX;
                         dbounds.centerY += deltaY;
                         dbounds.x += deltaX;
@@ -840,8 +825,7 @@ public class ViewLattice extends Panel implements IView {
                 } else if (dragType == DragType.ZOOM) {
 
                     // Ensure min & max zoom
-                    double zoom = -((double) deltaY / (double) screen.height) *
-                                  ZOOM_SPEED;
+                    double zoom = -((double) deltaY / (double) screen.height) * ZOOM_SPEED;
                     final double newWidth = nodeWidth + (zoom * nodeWidth);
                     if (newWidth > screen.width) {
                         zoom = (screen.width - nodeWidth) / nodeWidth;
@@ -863,8 +847,7 @@ public class ViewLattice extends Panel implements IView {
 
                     // Zoom the node positions
                     for (final ARXNode node : lattice) {
-                        final Bounds dbounds = (Bounds) node.getAttributes()
-                                                            .get(ATTRIBUTE_BOUNDS);
+                        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
                         dbounds.centerX -= dragStartX;
                         dbounds.centerX += zoom * dbounds.centerX;
                         dbounds.centerX += dragStartX;
@@ -889,25 +872,12 @@ public class ViewLattice extends Panel implements IView {
 
             @Override
             public void mouseMoved(final MouseEvent e) {
-                tooltip(e);
-            }
-
-            private void tooltip(final MouseEvent e) {
                 tooltipX = e.getX();
                 tooltipY = e.getY();
-                tooltipXOnScreen = e.getXOnScreen();
-                tooltipYOnScreen = e.getYOnScreen();
-                if (tooltipVisible) {
-                    Display.getDefault().asyncExec(new Runnable() {
-                        @Override
-                        public void run() {
-                            controller.getToolTip().hide();
-                            tooltipVisible = false;
-                        }
-                    });
-                }
+                tooltipTimer.restart();
             }
         });
+        
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(final ComponentEvent arg0) {
@@ -939,29 +909,10 @@ public class ViewLattice extends Panel implements IView {
             public void run() {
                 model.setSelectedNode(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
-                final String item1 = Resources.getMessage("LatticeView.9"); //$NON-NLS-1$
-                final String item2 = Resources.getMessage("LatticeView.10"); //$NON-NLS-1$
-                controller.getPopup().setItems(new String[] { item1, item2 }, new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(final SelectionEvent arg0) {
-                        if (arg0.data.equals(item1)) {
-                            model.getClipboard().add(selectedNode);
-                            controller.update(new ModelEvent(ViewLattice.this, ModelPart.CLIPBOARD, selectedNode));
-                            model.setSelectedNode(selectedNode);
-                            controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
-                        } else if (arg0.data.equals(item2)) {
-                            controller.actionApplySelectedTransformation();
-                            model.setSelectedNode(selectedNode);
-                            controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
-                        }
-                    }
-                });
-                controller.getPopup().show(x, y);
-                controller.getToolTip().hide();
+                repaint();
+                controller.getPopup().show(menu, x, y);
             }
         });
-        repaint();
-        return;
     }
 
     /**
@@ -974,9 +925,7 @@ public class ViewLattice extends Panel implements IView {
             @Override
             public void run() {
                 model.setSelectedNode(selectedNode);
-                controller.update(new ModelEvent(ViewLattice.this,
-                                                 ModelPart.SELECTED_NODE,
-                                                 selectedNode));
+                controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
             }
         });
         repaint();
@@ -986,8 +935,6 @@ public class ViewLattice extends Panel implements IView {
      * Resets the buffer
      */
     private void resetBuffer() {
-        buffer = new BufferedImage(Math.max(1, getWidth()),
-                                   Math.max(1, getHeight()),
-                                   BufferedImage.TYPE_INT_RGB);
+        buffer = new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()), BufferedImage.TYPE_INT_RGB);
     }
 }

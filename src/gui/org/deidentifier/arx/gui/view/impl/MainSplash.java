@@ -45,7 +45,6 @@ public class MainSplash extends Frame{
     private final String version = Resources.getVersion();
     private final Image splash = Resources.getSplash();;
 
-    @SuppressWarnings("restriction")
     public MainSplash() throws IOException{
         
         this.setSize(new Dimension(400,240));
@@ -68,17 +67,11 @@ public class MainSplash extends Frame{
         });
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.JWindow#update(java.awt.Graphics)
-     */
     @Override
     public void update(Graphics g) {
         paint(g);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Window#paint(java.awt.Graphics)
-     */
     @Override
     public void paint(Graphics g) {
     	
