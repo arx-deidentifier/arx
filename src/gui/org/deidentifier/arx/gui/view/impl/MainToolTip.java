@@ -104,7 +104,7 @@ public class MainToolTip {
     private void show() {
         synchronized (this) {
             if (this.text != null) {
-                Display.getDefault().asyncExec(new Runnable() {
+                Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
                         shellText.setText(text);
@@ -120,7 +120,7 @@ public class MainToolTip {
 
     protected void hide() {
         synchronized (this) {
-            Display.getDefault().asyncExec(new Runnable() {
+            Display.getDefault().syncExec(new Runnable() {
                 @Override
                 public void run() {
                     shell.setVisible(false);
