@@ -147,6 +147,7 @@ public class ViewClipboard implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 controller.actionApplySelectedTransformation();
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
             }
         });
         
@@ -165,7 +166,7 @@ public class ViewClipboard implements IView {
                         Rectangle bounds = i.getBounds();
                         bounds.x = table.toDisplay(bounds.x, bounds.y).x;
                         bounds.y = table.toDisplay(bounds.x, bounds.y).y;
-                        controller.getPopup().show(menu, point.x, point.y, bounds);
+                        controller.getPopup().show(menu, point.x, point.y);
                     }
                 }
             }

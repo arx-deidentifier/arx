@@ -152,7 +152,7 @@ public class ViewHierarchy implements IView {
     @Override
     public void reset() {
         setHierarchy(Hierarchy.create());
-        base.redraw();
+        if (!base.isDisposed()) base.redraw();
     }
 
     /**

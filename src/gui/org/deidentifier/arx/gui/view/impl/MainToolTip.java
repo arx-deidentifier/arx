@@ -20,12 +20,14 @@ package org.deidentifier.arx.gui.view.impl;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import org.deidentifier.arx.gui.view.SWTUtil;
+import javax.swing.Timer;
+
+import org.deidentifier.arx.gui.view.impl.common.Popup;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -33,126 +35,93 @@ import org.eclipse.swt.widgets.Text;
  * This class implements a global tool tip
  * @author Fabian Prasser
  */
-public class MainToolTip {
+public class MainToolTip extends Popup{
 
-    private final Shell   shell;
-    private final Text   shellText;
-    private MainPopUp popup;
-    private String        text        = null;
-    private Rectangle     bounds      = null;
-    private boolean       visible     = false;
-    private int           currentX    = -1;
-    private int           currentY    = -1;
-    private long          currentTime = System.currentTimeMillis();
+    private static final int TIME   = 1000;
 
-    private long          THRESHOLD   = 1000;
-    private long          WAIT        = 100;
+    private int              oldX;
+    private int              oldY;
+    private long             oldTime;
 
-    public void setPopUp(MainPopUp popup) {
-        this.popup = popup;
-    }
+    private String           string = null;
+    private MainContextMenu  popup  = null;
+    
+    private Text             label;
 
     /**
      * Creates a new instance
      * @param parent
      */
-    public MainToolTip(final Shell parent) {
-        this(parent, null);
+    public MainToolTip(final Shell parent) {      
+        super(parent);
+        new Timer(WAIT, new ActionListener(){
+            @Override public void actionPerformed(ActionEvent e) {
+                if (string != null && !isVisible() && !popup.isVisible()){
+                    Point p = MouseInfo.getPointerInfo().getLocation();
+                    if (p.x != oldX || p.y != oldY) {
+                        oldX = p.x;
+                        oldY = p.y;
+                        oldTime = System.currentTimeMillis();
+                    } else if (System.currentTimeMillis() - oldTime > TIME){
+                         show(oldX, oldY);
+                    }
+                }
+            }
+        }).start();
     }
 
     /**
-     * Creates a new instance
-     * @param parent
+     * Sets the popup
+     * @param popup
      */
-    public MainToolTip(final Shell parent, final MainPopUp popup) {
-
+    public void setPopUp(MainContextMenu popup){
         this.popup = popup;
-        shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
-        shell.setLayout(new GridLayout());
-        shell.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        shellText = new Text(shell, SWT.MULTI);
-        shellText.setLayoutData(SWTUtil.createFillGridData());
-        shellText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        shellText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+    }
+
+    @Override
+    protected void prepareVisible(Shell shell) {
+        label.setText(string);
         shell.pack();
-        shell.setVisible(false);
+    }
+
+    @Override
+    protected void prepare(Shell shell) {
         
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    synchronized (this) {
-                        if (!visible && bounds != null && (MainToolTip.this.popup == null || !MainToolTip.this.popup.isVisible())) {
-                            Point p = MouseInfo.getPointerInfo().getLocation();
-                            if (p.x != currentX || p.y != currentY) {
-                                currentTime = System.currentTimeMillis();
-                                currentX = p.x;
-                                currentY = p.y;
-                            } else {
-                                if (System.currentTimeMillis() - currentTime > THRESHOLD) {
-                                    if (bounds.contains(currentX, currentY)) {
-                                        show();
-                                    }
-                                }
-                            }
-                        }
-                        if (visible && bounds != null) {
-                            Point p = MouseInfo.getPointerInfo().getLocation();
-                            if (!bounds.contains(p)) {
-                                hide();
-                            }
-                        }
-                    }
-                    try {
-                        Thread.sleep(WAIT);
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-        });
-        t.setDaemon(true);
-        t.start();
+        shell.setLayout(new FillLayout());
+        shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        shell.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+        label = new Text(shell, SWT.MULTI);
+        label.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        label.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+        shell.pack();
     }
 
-    private void show() {
-        synchronized (this) {
-            if (this.text != null) {
-                Display.getDefault().syncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        shellText.setText(text);
-                        shell.pack();
-                        shell.setLocation(currentX, currentY);
-                        shell.setVisible(true);
-                        visible = true;
-                    }
-                });
-            }
-        }
+    /**
+     * Sets the options displayed by the popup
+     * 
+     * @param items
+     * @param listener
+     */
+    public void show(final String text) {
+        if (super.isVisible()) return;
+        this.string = text;
     }
-
-    protected void hide() {
-        synchronized (this) {
-            Display.getDefault().syncExec(new Runnable() {
-                @Override
-                public void run() {
-                    shell.setVisible(false);
-                    visible = false;
-                    text = null;
-                    bounds = null;
-                    currentX = -1;
-                    currentY = -1;
-                }
-            });
-        }
+    
+    /**
+     * Hides the tooltip
+     */
+    public void unshow(){
+        if (super.isVisible()) return;
+        this.string = null;
     }
-
-    public void setText(String text, org.eclipse.swt.graphics.Rectangle bounds) {
-        synchronized (this) {
-            if (this.visible) return;
-            this.text = text;
-            this.bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-        }
+    
+    @Override
+    public boolean isVisible() {
+        return super.isVisible();
     }
-
+    
+    @Override
+    public void hide() {
+        super.hide();
+    }
 }

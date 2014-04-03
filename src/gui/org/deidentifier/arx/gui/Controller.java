@@ -58,7 +58,7 @@ import org.deidentifier.arx.gui.model.ModelViewConfig;
 import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.MainPopUp;
+import org.deidentifier.arx.gui.view.impl.MainContextMenu;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
@@ -941,7 +941,7 @@ public class Controller implements IView {
      * Returns the popup
      * @return
      */
-    public MainPopUp getPopup() {
+    public MainContextMenu getPopup() {
         return main.getPopUp();
     }
 

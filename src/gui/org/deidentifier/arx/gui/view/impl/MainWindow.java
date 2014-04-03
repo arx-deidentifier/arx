@@ -83,7 +83,7 @@ public class MainWindow implements IView {
     private final Shell                 shell;
     private final Controller            controller;
     private final MainToolTip           tooltip;
-    private final MainPopUp             popup;
+    private final MainContextMenu             popup;
 
     private final ComponentTitledFolder root;
 
@@ -108,7 +108,7 @@ public class MainWindow implements IView {
         shell.setMinimumSize(800, 600);
 
         tooltip = new MainToolTip(shell);
-        popup = new MainPopUp(shell, tooltip);
+        popup = new MainContextMenu(shell, tooltip);
         tooltip.setPopUp(popup);
 
         // Close listener
@@ -172,7 +172,7 @@ public class MainWindow implements IView {
      * Returns the popup window
      * @return
      */
-    public MainPopUp getPopUp() {
+    public MainContextMenu getPopUp() {
         return popup;
     }
 
