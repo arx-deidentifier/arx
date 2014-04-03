@@ -109,6 +109,7 @@ public class MainWindow implements IView {
 
         tooltip = new MainToolTip(shell);
         popup = new MainPopUp(shell, tooltip);
+        tooltip.setPopUp(popup);
 
         // Close listener
         shell.addListener(SWT.Close, new Listener() {

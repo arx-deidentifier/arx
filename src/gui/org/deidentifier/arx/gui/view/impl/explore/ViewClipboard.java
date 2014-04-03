@@ -162,7 +162,10 @@ public class ViewClipboard implements IView {
                         controller.update(new ModelEvent(ViewClipboard.this, ModelPart.SELECTED_NODE, node));
                         selectedTableItem = i;
                         Point point = table.toDisplay(event.x, event.y);
-                        controller.getPopup().show(menu, point.x, point.y, i.getBounds());
+                        Rectangle bounds = i.getBounds();
+                        bounds.x = table.toDisplay(bounds.x, bounds.y).x;
+                        bounds.y = table.toDisplay(bounds.x, bounds.y).y;
+                        controller.getPopup().show(menu, point.x, point.y, bounds);
                     }
                 }
             }

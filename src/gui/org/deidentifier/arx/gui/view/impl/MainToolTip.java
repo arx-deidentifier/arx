@@ -37,6 +37,7 @@ public class MainToolTip {
 
     private final Shell   shell;
     private final Text   shellText;
+    private MainPopUp popup;
     private String        text        = null;
     private Rectangle     bounds      = null;
     private boolean       visible     = false;
@@ -47,12 +48,25 @@ public class MainToolTip {
     private long          THRESHOLD   = 1000;
     private long          WAIT        = 100;
 
+    public void setPopUp(MainPopUp popup) {
+        this.popup = popup;
+    }
+
     /**
      * Creates a new instance
      * @param parent
      */
     public MainToolTip(final Shell parent) {
+        this(parent, null);
+    }
 
+    /**
+     * Creates a new instance
+     * @param parent
+     */
+    public MainToolTip(final Shell parent, final MainPopUp popup) {
+
+        this.popup = popup;
         shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
         shell.setLayout(new GridLayout());
         shell.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -68,7 +82,7 @@ public class MainToolTip {
             public void run() {
                 while (true) {
                     synchronized (this) {
-                        if (!visible && bounds != null) {
+                        if (!visible && bounds != null && (MainToolTip.this.popup == null || !MainToolTip.this.popup.isVisible())) {
                             Point p = MouseInfo.getPointerInfo().getLocation();
                             if (p.x != currentX || p.y != currentY) {
                                 currentTime = System.currentTimeMillis();
@@ -140,4 +154,5 @@ public class MainToolTip {
             this.bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
         }
     }
+
 }

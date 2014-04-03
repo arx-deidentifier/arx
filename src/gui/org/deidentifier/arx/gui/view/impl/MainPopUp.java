@@ -23,10 +23,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -58,10 +60,21 @@ public class MainPopUp {
         list.addMouseMoveListener(new MouseMoveListener(){
             @Override
             public void mouseMove(MouseEvent event) {
-                
+                int item = event.y / list.getItemHeight();
+                list.setSelection(item);
             }
         });
-        
+        list.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseDown(MouseEvent arg0) {
+                if (list.getSelectionIndex() >= 0){
+                    shell.setVisible(false);
+                    menu.getItem(list.getSelectionIndex()).notifyListeners(SWT.Selection, new Event());
+                    hide();
+                }
+            }
+        });
+        list.add("X");
         shell.pack();
         shell.setVisible(false);
         
@@ -94,6 +107,12 @@ public class MainPopUp {
         t.setDaemon(true);
         t.start();
     }
+    
+    protected boolean isVisible(){
+        synchronized(this){
+            return visible;
+        }
+    }
 
     private void show() {
         synchronized (this) {
@@ -104,9 +123,10 @@ public class MainPopUp {
                         tooltip.hide();
                         list.removeAll();
                         for (MenuItem item : menu.getItems()) {
-                            list.add(item.getText());
+                            list.add("     "+item.getText()+"     ");
                         }
                         shell.pack();
+                        list.setSelection(0);
                         shell.setVisible(true);
                         visible = true;
                     }
@@ -124,7 +144,6 @@ public class MainPopUp {
                     visible = false;
                     menu = null;
                     bounds = null;
-                    list.removeAll();
                 }
             });
         }
