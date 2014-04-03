@@ -66,7 +66,9 @@ public class MainToolTip {
                                 currentY = p.y;
                             } else {
                                 if (System.currentTimeMillis() - currentTime > THRESHOLD) {
-                                    if (bounds.contains(currentX, currentY)) show();
+                                    if (bounds.contains(currentX, currentY)) {
+                                        show();
+                                    }
                                 }
                             }
                         }
