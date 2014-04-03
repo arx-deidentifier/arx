@@ -137,6 +137,7 @@ public abstract class Popup {
                 public void run() {
                     shell.setVisible(false);
                     bounds = null;
+                    shellBounds = null;
                 }
             });
         }
