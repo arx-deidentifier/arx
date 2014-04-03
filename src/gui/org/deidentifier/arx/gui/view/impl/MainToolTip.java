@@ -22,9 +22,12 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
 /**
@@ -33,7 +36,8 @@ import org.eclipse.swt.widgets.ToolTip;
  */
 public class MainToolTip {
 
-    private final ToolTip tip;
+    private final Shell   shell;
+    private final Text   shellText;
     private String        text        = null;
     private Rectangle     bounds      = null;
     private boolean       visible     = false;
@@ -50,8 +54,15 @@ public class MainToolTip {
      */
     public MainToolTip(final Shell parent) {
 
-        tip = new ToolTip(parent, SWT.ICON_INFORMATION);
-        tip.setAutoHide(false);
+        shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
+        shell.setLayout(new GridLayout());
+        shell.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        shellText = new Text(shell, SWT.MULTI);
+        shellText.setLayoutData(SWTUtil.createFillGridData());
+        shellText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        shellText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+        shell.pack();
+        shell.setVisible(false);
         
         Thread t = new Thread(new Runnable() {
             @Override
@@ -95,8 +106,10 @@ public class MainToolTip {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    tip.setMessage(text);
-                    tip.setVisible(true);
+                    shellText.setText(text);
+                    shell.pack();
+                    shell.setLocation(currentX, currentY);
+                    shell.setVisible(true);
                     visible = true;
                 }
             });
@@ -107,7 +120,7 @@ public class MainToolTip {
         Display.getDefault().asyncExec(new Runnable() {
             @Override
             public void run() {
-                tip.setVisible(false);
+                shell.setVisible(false);
                 visible = false;
                 text = null;
                 bounds = null;
