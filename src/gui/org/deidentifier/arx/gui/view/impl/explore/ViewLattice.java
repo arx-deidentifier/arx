@@ -218,9 +218,10 @@ public class ViewLattice extends Panel implements IView {
     /** The tooltip */
     private int                 tooltipY              = -1;
 
-    /** Number format*/
+    /** Number format */
     private final NumberFormat  format                = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
+    /** Context menu*/
     private final Menu          menu;
 
     /**
@@ -250,7 +251,7 @@ public class ViewLattice extends Panel implements IView {
         frame.setBackground(Color.WHITE);
         
         // Build menu
-        menu = new Menu(parent.getShell(), SWT.POP_UP);
+        menu = new Menu(parent.getShell());
         MenuItem item1 = new MenuItem(menu, SWT.NONE);
         item1.setText(Resources.getMessage("LatticeView.9")); //$NON-NLS-1$
         item1.addSelectionListener(new SelectionAdapter() {

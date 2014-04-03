@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 
 /**
- * This class implements a global popup menu. It is required to ensure consistent design
- * amongst the different SWT/AWT/Swing components.
+ * This class implements a global popup menu. It is required to ensure
+ * consistent design amongst the different SWT/AWT/Swing components.
  * 
  * @author Fabian Prasser
  */
@@ -38,14 +38,15 @@ public class MainPopUp {
 
     /**
      * Creates a new pop up
+     * 
      * @param parent
      */
-    public MainPopUp(final MainToolTip tooltip) {
+    public MainPopUp(final MainToolTip tooltip) {        
         this.tooltip = tooltip;
-        this.listener = new MenuAdapter(){
+        this.listener = new MenuAdapter() {
             @Override
             public void menuHidden(MenuEvent arg0) {
-                ((Menu)arg0.widget).removeMenuListener(this);
+                ((Menu) arg0.widget).removeMenuListener(this);
                 setVisible(false);
             }
         };
@@ -53,22 +54,24 @@ public class MainPopUp {
 
     /**
      * Returns whether the popup is visible
+     * 
      * @return
      */
     public synchronized boolean isVisible() {
         return visible;
     }
-    
-    private synchronized void setVisible(boolean value){
+
+    private synchronized void setVisible(boolean value) {
         this.visible = value;
     }
 
     /**
      * Sets the options displayed by the popup
+     * 
      * @param items
      * @param listener
      */
-    public synchronized void show(final Menu menu,  final int x, final int y) {
+    public synchronized void show(final Menu menu, final int x, final int y) {
         setVisible(true);
         Display.getDefault().syncExec(new Runnable() {
             @Override
