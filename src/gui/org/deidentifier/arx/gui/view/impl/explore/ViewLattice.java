@@ -281,7 +281,6 @@ public class ViewLattice extends Panel implements IView {
         this.tooltipTimer = new Timer(TOOLTIP_WAIT, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                
                 if (tooltipX != -1 && tooltipY != -1) {
                     // Obtain coordinates
                     final ARXNode node = getNode(tooltipX, tooltipY);
@@ -291,7 +290,7 @@ public class ViewLattice extends Panel implements IView {
                 }
             }
         });
-        
+        this.tooltipTimer.setRepeats(false);
         
         resetBuffer();
         initializeListeners();
