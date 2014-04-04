@@ -22,10 +22,14 @@ import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Fanout;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.DynamicAdjustment;
+import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
+
+import cern.colt.Arrays;
 
 /**
  * This class implements examples of how to use the builders for generalization hierarchies
@@ -42,24 +46,56 @@ public class Example18 extends Example {
      */
     public static void main(final String[] args) {
         
+        order();
         redaction();
         interval();
     }
-    
+
+    /**
+     * Exemplifies the use of the order-based builder
+     */
+    private static void order() {
+
+        // Create the builder
+        HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(
+                getExampleData(), DataType.INTEGER, false);
+
+        // Define grouping fanouts
+        builder.getLevel(0).add(new Fanout<Long>(10, AggregateFunction.INTERVAL(DataType.INTEGER)));
+        builder.getLevel(1).add(new Fanout<Long>(2, AggregateFunction.INTERVAL(DataType.INTEGER)));
+
+
+        // Print info about resulting groups
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        
+        // Print resulting hierarchy
+        printArray(builder.create().getHierarchy());
+    }
+
     /**
      * Exemplifies the use of the interval-based builder
      */
     private static void interval() {
 
+
+        // Create the builder
         HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
-                            0l, 99l, DataType.INTEGER, 0l, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+                getExampleData(), 0l, 99l, DataType.INTEGER, 0l, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
         
+        // Define base intervals
         builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
         builder.addInterval(0l, 20l);
         builder.addInterval(20l, 33l);
+        
+        // Define grouping fanouts
+        builder.getLevel(0).add(new Fanout<Long>(2, AggregateFunction.INTERVAL(DataType.INTEGER)));
+        builder.getLevel(1).add(new Fanout<Long>(3, AggregateFunction.INTERVAL(DataType.INTEGER)));
 
-        builder.create(getExampleData());
-//      printArray(builder.create(getExampleData()).getHierarchy());
+        // Print info about resulting groups
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        
+        // Print resulting hierarchy
+        printArray(builder.create().getHierarchy());
     }
 
     /**
@@ -67,11 +103,17 @@ public class Example18 extends Example {
      */
     private static void redaction() {
 
-        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
+        // Create the builder
+        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(getExampleData(),
+                                                                                    Order.RIGHT_TO_LEFT,
                                                                                     Order.RIGHT_TO_LEFT,
                                                                                     ' ', '*');
         
-        printArray(builder.create(getExampleData()).getHierarchy());
+        // Print info about resulting groups
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        
+        // Print resulting hierarchy
+        printArray(builder.create().getHierarchy());
     }
     
     /**

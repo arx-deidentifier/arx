@@ -18,8 +18,6 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
-import java.io.IOException;
-
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;

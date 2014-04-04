@@ -25,7 +25,6 @@ import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.IOException;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;

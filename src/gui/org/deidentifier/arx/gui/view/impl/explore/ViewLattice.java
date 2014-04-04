@@ -281,25 +281,19 @@ public class ViewLattice extends Panel implements IView {
         this.tooltipTimer = new Timer(TOOLTIP_WAIT, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                
                 if (tooltipX != -1 && tooltipY != -1) {
-                    // Obtain coordinates
                     final ARXNode node = getNode(tooltipX, tooltipY);
                     if (node != null) {
-                        
-                        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
-                        final org.eclipse.swt.graphics.Rectangle bounds = new org.eclipse.swt.graphics.Rectangle((int) dbounds.x, (int) dbounds.y, (int) nodeWidth, (int) nodeHeight);
-                        if (bounds.x < 0) bounds.x=0;
-                        if (bounds.y < 0) bounds.y=0;
-                        
-                        bounds.x = frame.getLocationOnScreen().x + bounds.x;
-                        bounds.y = frame.getLocationOnScreen().y + bounds.y;
-                        controller.getToolTip().setText(createTooltipText(node), bounds);
+                        controller.getToolTip().show(createTooltipText(node));
+                    } else {
+                        controller.getToolTip().unshow();
                     }
+                } else {
+                    controller.getToolTip().unshow();
                 }
             }
         });
-        
+        this.tooltipTimer.setRepeats(false);
         
         resetBuffer();
         initializeListeners();

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -33,29 +34,49 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
+public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, HierarchyBuilder {
 
-    private static final long serialVersionUID = 3208791665131141362L;
-    private DataType<T> type;
-    
     /**
-     * Creates a new instance for the given data type
-     * @param type
+     * This class represents a fanout parameter
+     * @author Fabian Prasser
      */
-    public HierarchyBuilderGroupingBased(DataType<T> type){
-        this.type = type;
+    public static class Fanout<T> implements Serializable {
+        
+        private static final long serialVersionUID = -5767501048737045793L;
+        
+        private int fanout;
+        private AggregateFunction<T> function;
+        
+        public Fanout(int fanout, AggregateFunction<T> function) {
+            if (fanout<=0) {
+                throw new IllegalArgumentException("Fanout must be >= 0");
+            }
+            if (function==null) {
+                throw new IllegalArgumentException("Function must not be null");
+            }
+            this.fanout = fanout;
+            this.function = function;
+        }
+
+        /**
+         * @return the fanout
+         */
+        public int getFanout() {
+            return fanout;
+        }
+
+        /**
+         * @return the function
+         */
+        public AggregateFunction<T> getFunction() {
+            return function;
+        }
     }
-    
-    /**
-     * All fanouts for each level
-     */
-    private Map<Integer, HierarchyBuilderLevel<T>> fanouts = new HashMap<Integer, HierarchyBuilderLevel<T>>();
-
     /**
      * This class represents a level in the hierarchy
      * @author Fabian Prasser
      */
-    public static class HierarchyBuilderLevel<T> {
+    public class HierarchyBuilderLevel {
         
         private List<Fanout<T>> list = new ArrayList<Fanout<T>>();
         private int level;
@@ -73,9 +94,27 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
          * @param fanout
          * @return
          */
-        public HierarchyBuilderLevel<T> add(Fanout<T> fanout) {
+        public HierarchyBuilderLevel add(Fanout<T> fanout) {
             this.list.add(fanout);
+            setPrepared(false);
             return this;
+        }
+
+        /**
+         * Removes all fanouts on this level
+         * @return
+         */
+        public HierarchyBuilderLevel clear() {
+            this.list.clear();
+            setPrepared(false);
+            return this;
+        }
+        
+        /**
+         * @return the level
+         */
+        public int getLevel() {
+            return level;
         }
 
         /**
@@ -83,86 +122,69 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
          * @param fanout
          * @return
          */
-        public HierarchyBuilderLevel<T> remove(Fanout<T> fanout) {
+        public HierarchyBuilderLevel remove(Fanout<T> fanout) {
             this.list.remove(fanout);
+            setPrepared(false);
             return this;
         }
-
+        
         /**
-         * @return the level
+         * Returns the list
+         * @return
          */
-        public int getLevel() {
-            return level;
+        private List<Fanout<T>> getFanouts(){
+            return this.list;
         }
+    }
+    private static final long serialVersionUID = 3208791665131141362L;
+    private DataType<T> type;
+    
+    private String[] data;
+    
+    private boolean prepared = false;
+    
+    /**
+     * All fanouts for each level
+     */
+    private Map<Integer, HierarchyBuilderLevel> fanouts = new HashMap<Integer, HierarchyBuilderLevel>();
+
+    /**
+     * Creates a new instance for the given data type
+     * @param type
+     */
+    public HierarchyBuilderGroupingBased(String[] data, DataType<T> type){
+        this.type = type;
+        this.data = data;
     }
 
     /**
-     * This class represents a fanout parameter
-     * @author Fabian Prasser
+     * Creates a new hierarchy, based on the predefined specification
+     * @return
      */
-    public static class Fanout<T> implements Serializable {
-        
-        private static final long serialVersionUID = -5767501048737045793L;
-        
-        private int fanout;
-        private AggregateFunction<DataType<T>> function;
-        
-        public Fanout(int fanout, AggregateFunction<DataType<T>> function) {
-            this.fanout = fanout;
-            this.function = function;
-        }
-
-        /**
-         * @return the fanout
-         */
-        public int getFanout() {
-            return fanout;
-        }
-
-        /**
-         * @return the function
-         */
-        public AggregateFunction<DataType<T>> getFunction() {
-            return function;
-        }
+    public Hierarchy create(){
+        if (!prepared) prepare();
+        return null;
     }
+    
+    /**
+     * Return the first level on which grouping is to be performed. Returns 0 for order-based hierarchies and
+     * 1 for interval-based hierarchies
+     * @return
+     */
+    public abstract int getBaseLevel();
     
     /**
      * Returns the given level
      * @param level
+     * @return 
      */
-    public void getLevel(int level){
+    public HierarchyBuilderLevel getLevel(int level){
         if (!this.fanouts.containsKey(level)) {
-            this.fanouts.put(level, new HierarchyBuilderLevel<T>(level));
+            this.fanouts.put(level, new HierarchyBuilderLevel(level));
+            this.setPrepared(false);
         }
+        return this.fanouts.get(level);
     }
-    
-    /**
-     * Returns the first level of the grouping instructions to be used. For order-based hierarchies this will be 1,
-     * for interval-based hierarchies this will be 0.
-     * @return
-     */
-    protected abstract int getBaseLevel();
-    
-    /**
-     * Returns the label for the value at the given index at the first level of generalization
-     * @param index
-     * @return
-     */
-    protected abstract String getBaseLabel(int index);
-    
-    /**
-     * Tells the implementing class to prepare the generalization process, i.e., prepare calls to
-     * <code>prepareBaseLevel()</code>
-     */
-    protected abstract void prepare();
-    
-    /**
-     * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
-     * if not.
-     * @return
-     */
-    protected abstract String internalIsValid();
     
     /**
      * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
@@ -170,10 +192,52 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
      * @return
      */
     public String isValid() {
+        
+        // Check subclass
         String error = internalIsValid();
         if (error != null) return error;
-        // TODO: Implement some checks here
+
+        // Check fanouts
+        int max = 0;
+        for (Entry<Integer, HierarchyBuilderLevel> level : this.fanouts.entrySet()) {
+            if (level.getValue().getFanouts().isEmpty()) {
+                return "No fanout specified on level "+level.getKey();
+            }
+            max = Math.max(level.getKey(), max);
+        }
+        for (int i=0; i<max; i++){
+            if (!this.fanouts.containsKey(i)) {
+                return "Missing specification for level "+i;
+            }
+        }
+        
         return null;
+    }
+    
+    /**
+     * Prepares the builder. Returns a list of the number of equivalence classes per level
+     * @return
+     */
+    public int[] prepare(){
+        String error = this.isValid();
+        if (error != null) {
+            throw new IllegalArgumentException(error);
+        }
+        this.doPrepare();
+        return null;
+    }
+    
+    /**
+     * Tells the implementing class to prepare the generalization process
+     */
+    protected abstract void doPrepare();
+    
+    /**
+     * Returns the data array
+     * @return
+     */
+    protected String[] getData(){
+        return data;
     }
     
     /**
@@ -185,17 +249,17 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable {
     }
     
     /**
-     * Creates a new hierarchy, based on the predefined specification
-     * @param data
-     * @param type
+     * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
+     * if not.
      * @return
      */
-    public Hierarchy create(String[] data){
-        String error = this.isValid();
-        if (error != null) {
-            throw new IllegalArgumentException(error);
-        }
-        this.prepare();
-        return null;
+    protected abstract String internalIsValid();
+    
+    /**
+     * Is this builder prepared allready
+     * @param prepared
+     */
+    protected void setPrepared(boolean prepared){
+        this.prepared = prepared;
     }
 }

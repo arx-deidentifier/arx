@@ -18,6 +18,7 @@
 package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,96 +39,59 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         SNAP_TO_BOUNDS
     }
     
-    private static final long serialVersionUID = 3663874945543082808L;
-    
-    /** TODO: Is this parameter OK?*/
-    private static final int INDEX_FANOUT = 2;
+    /**
+     * This class represents an node
+     * @author Fabian Prasser
+     */
+    public class IndexNode implements Serializable {
+        
+        private static final long serialVersionUID = 5985820929677249525L;
 
-    private AggregateFunction<T> function = null;
-    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
-    private T min;
-    private T max;
-    private T epsilon;
-    private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
-    private IndexNode<T> index = null; 
-    
-    /**
-     * Creates a new instance
-     * @param min
-     * @param max
-     * @param type
-     * @param epsilon
-     * @param adjustment
-     */
-    public HierarchyBuilderIntervalBased(T min, T max, DataType<T> type, T epsilon, DynamicAdjustment adjustment) {
-        super(type);
-        this.min = min;
-        this.max = max;
-        this.epsilon = epsilon;
-        this.adjustment = adjustment;
-    }
+        /** Min is inclusive */
+        private T                 min;
+        /** Max is exclusive */
+        private T                 max;
+        /** Children */
+        private IndexNode[]       children;
+        /** Leafs */
+        private Interval[]        leafs;
+        /** IsLeaf */
+        private boolean           isLeaf;
 
-    /**
-     * Creates a new instance
-     * @param min
-     * @param max
-     * @param type
-     */
-    public HierarchyBuilderIntervalBased(T min, T max, DataType<T> type) {
-        super(type);
-        this.min = min;
-        this.max = max;
-    }
-    
-    /**
-     * Defines an aggregate function to be used by all intervals
-     * @param function
-     */
-    public void setAggregateFunction(AggregateFunction<T> function) {
-        this.function = function;
-    }
-
-    /**
-     * Adds an interval. Min is inclusive, max is exclusive
-     * @param min
-     * @param max
-     * @param function
-     * @return
-     */
-    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max, AggregateFunction<T> function) {
-        this.intervals.add(new Interval<T>(min, max, function));
-        return this;
-    }
-
-    /**
-     * Adds an interval. Min is inclusive, max is exclusive. Uses the predefined default aggregate function
-     * @param min
-     * @param max
-     * @return
-     */
-    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max) {
-        if (this.function == null) {
-            throw new IllegalStateException("No default aggregate function defined");
+        /**
+         * Creates a new instance. Min is inclusive, max is exclusive
+         * @param min
+         * @param max
+         * @param function
+         */
+        public IndexNode(T min, T max, IndexNode[] children) {
+            this.min = min;
+            this.max = max;
+            this.children = children;
+            this.leafs = null;
+            this.isLeaf = false;
         }
-        this.intervals.add(new Interval<T>(min, max, this.function));
-        return this;
-    }
 
-    /**
-     * Removes the given fanout
-     * @param fanout
-     * @return
-     */
-    public HierarchyBuilderIntervalBased<T> remove(Interval<T> fanout) {
-        this.intervals.remove(fanout);
-        return this;
+        /**
+         * Creates a new instance. Min is inclusive, max is exclusive
+         * @param min
+         * @param max
+         * @param function
+         */
+        public IndexNode(T min, T max, Interval[] leafs) {
+            this.min = min;
+            this.max = max;
+            this.children = null;
+            this.leafs = leafs;
+            this.isLeaf = true;
+        }
     }
-
+    
     /**
      * This class represents an interval
      * @author Fabian Prasser
      */
-    public class Interval<T> implements Serializable {
+    public class Interval implements Serializable {
         
         private static final long serialVersionUID = 5985820929677249525L;
         
@@ -145,16 +109,20 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
          * @param function
          */
         public Interval(T min, T max, AggregateFunction<T> function) {
+            if (function==null) {
+                throw new IllegalArgumentException("Function must not be null");
+            }
+            checkInterval(getType(), min, max);
             this.min = min;
             this.max = max;
             this.function = function;
         }
 
         /**
-         * @return the min (exclusive)
+         * @return the function
          */
-        public T getMin() {
-            return min;
+        public AggregateFunction<T> getFunction() {
+            return function;
         }
 
         /**
@@ -165,75 +133,155 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         /**
-         * @return the function
+         * @return the min (exclusive)
          */
-        public AggregateFunction<T> getFunction() {
-            return function;
+        public T getMin() {
+            return min;
         }
+    }
+
+    private static final long serialVersionUID = 3663874945543082808L;
+    /** TODO: Is this parameter OK?*/
+    private static final int INDEX_FANOUT = 2;
+    private AggregateFunction<T> function = null;
+    private List<Interval> intervals = new ArrayList<Interval>();
+    private T min;
+    private T max;
+    private T epsilon; 
+    
+    private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
+
+    private IndexNode index = null;
+    
+    /**
+     * Creates a new instance
+     * @param min
+     * @param max
+     * @param type
+     */
+    public HierarchyBuilderIntervalBased(String[] data, T min, T max, DataType<T> type) {
+        super(data, type);
+        if (function==null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        checkInterval(type, min, max);
+        this.min = min;
+        this.max = max;
     }
 
     /**
-     * This class represents an node
-     * @author Fabian Prasser
+     * Creates a new instance
+     * @param min
+     * @param max
+     * @param type
+     * @param epsilon
+     * @param adjustment
      */
-    public class IndexNode<T> implements Serializable {
-        
-        private static final long serialVersionUID = 5985820929677249525L;
-
-        /** Min is inclusive */
-        private T                 min;
-        /** Max is exclusive */
-        private T                 max;
-        /** Children */
-        private IndexNode<T>[]    children;
-        /** Leafs */
-        private Interval<T>[]     leafs;
-        /** IsLeaf */
-        private boolean           isLeaf;
-
-        /**
-         * Creates a new instance. Min is inclusive, max is exclusive
-         * @param min
-         * @param max
-         * @param function
-         */
-        public IndexNode(T min, T max, IndexNode<T>[] children) {
-            this.min = min;
-            this.max = max;
-            this.children = children;
-            this.leafs = null;
-            this.isLeaf = false;
+    public HierarchyBuilderIntervalBased(String[] data, T min, T max, DataType<T> type, T epsilon, DynamicAdjustment adjustment) {
+        super(data, type);
+        if (function==null) {
+            throw new IllegalArgumentException("Function must not be null");
         }
-
-        /**
-         * Creates a new instance. Min is inclusive, max is exclusive
-         * @param min
-         * @param max
-         * @param function
-         */
-        public IndexNode(T min, T max, Interval<T>[] leafs) {
-            this.min = min;
-            this.max = max;
-            this.children = null;
-            this.leafs = leafs;
-            this.isLeaf = true;
-        }
-    }
-    @Override
-    protected int getBaseLevel() {
-        return 0;
+        checkInterval(type, min, max);
+        this.min = min;
+        this.max = max;
+        this.epsilon = epsilon;
+        this.adjustment = adjustment;
     }
 
+    /**
+     * Adds an interval. Min is inclusive, max is exclusive. Uses the predefined default aggregate function
+     * @param min
+     * @param max
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max) {
+        if (this.function == null) {
+            throw new IllegalStateException("No default aggregate function defined");
+        }
+        checkInterval(getType(), min, max);
+        this.intervals.add(new Interval(min, max, this.function));
+        this.setPrepared(false);
+        return this;
+    }
+    
+    /**
+     * Adds an interval. Min is inclusive, max is exclusive
+     * @param min
+     * @param max
+     * @param function
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max, AggregateFunction<T> function) {
+        if (function==null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        checkInterval(getType(), min, max);
+        this.intervals.add(new Interval(min, max, function));
+        this.setPrepared(false);
+        return this;
+    }
+
+    /**
+     * Adds an interval. Min is inclusive, max is exclusive. Uses the predefined default aggregate function
+     * @param min
+     * @param max
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> clearIntervals() {
+        this.intervals.clear();
+        this.setPrepared(false);
+        return this;
+    }
+
     @Override
-    protected String getBaseLabel(int index) {
-        // TODO Auto-generated method stub
-        return null;
+    public int getBaseLevel() {
+        return 1;
+    }
+
+    /**
+     * Removes the given fanout
+     * @param fanout
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> remove(Interval fanout) {
+        this.intervals.remove(fanout);
+        this.setPrepared(false);
+        return this;
+    }
+
+    /**
+     * Defines an aggregate function to be used by all intervals
+     * @param function
+     */
+    public void setAggregateFunction(AggregateFunction<T> function) {
+        if (function==null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        this.function = function;
+        this.setPrepared(false);
+    }
+    
+    /**
+     * Checks the interval
+     * @param type
+     * @param min
+     * @param max
+     */
+    private void checkInterval(DataType<T> type, T min, T max){
+        try {
+            if (type.compare(type.format(min), type.format(max)) >= 0) {
+                throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void prepare() {
-        
+    protected void doPrepare() {
+
         // Check
         index = null;
         String valid = internalIsValid();
@@ -242,37 +290,37 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         // Build leaf level index
-        ArrayList<IndexNode<T>> nodes = new ArrayList<IndexNode<T>>();
+        ArrayList<IndexNode> nodes = new ArrayList<IndexNode>();
         for (int i=0, len = intervals.size(); i < len; i+=INDEX_FANOUT) {
             int min = i;
             int max = Math.min(i+INDEX_FANOUT-1, len-1);
             
-            List<Interval<T>> leafs = new ArrayList<Interval<T>>();
+            List<Interval> leafs = new ArrayList<Interval>();
             for (int j=min; j<=max; j++) {
                 leafs.add(intervals.get(j));
             }
 
-            nodes.add(new IndexNode<T>(intervals.get(min).min, 
+            nodes.add(new IndexNode(intervals.get(min).min, 
                                        intervals.get(max).max,
-                                       leafs.toArray(new Interval[leafs.size()])));
+                                       (Interval[])leafs.toArray()));
         }
 
         // Builder inner nodes
         while (nodes.size()>1) {
             nodes.clear();
-            List<IndexNode<T>> current = (List<IndexNode<T>>)nodes.clone();
+            List<IndexNode> current = (List<IndexNode>)nodes.clone();
             for (int i=0, len = current.size(); i < len; i+=INDEX_FANOUT) {
                 int min = i;
                 int max = Math.min(i+INDEX_FANOUT-1, len-1);
                 
-                List<IndexNode<T>> temp = new ArrayList<IndexNode<T>>();
+                List<IndexNode> temp = new ArrayList<IndexNode>();
                 for (int j=min; j<=max; j++) {
                     temp.add(current.get(j));
                 }
 
-                nodes.add(new IndexNode<T>(intervals.get(min).min, 
+                nodes.add(new IndexNode(intervals.get(min).min, 
                                            intervals.get(max).max,
-                                           temp.toArray(new Interval[temp.size()])));
+                                           (Interval[])temp.toArray()));
             }
         }
     }
@@ -285,8 +333,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         for (int i=1; i<intervals.size(); i++){
-            Interval<T> interval1 = intervals.get(i-1);
-            Interval<T> interval2 = intervals.get(i);
+            Interval interval1 = intervals.get(i-1);
+            Interval interval2 = intervals.get(i);
             
             if (!interval1.getMax().equals(interval2.getMin())) {
                 return "Gap between interval"+i+" and interval"+(i+1);
