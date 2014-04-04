@@ -17,6 +17,7 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.deidentifier.arx.DataType;
@@ -33,14 +34,30 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
 
     private static final long serialVersionUID = -2749758635401073668L;
     
-    private Comparator<T> comparator;
+    private final Comparator<String> comparator;
+
     /**
      * Creates a new instance
+     * @param data The data items to build a hierarchy for
      * @param type The data type is also used for ordering data items
+     * @param order Should the items be sorted according to the order induced by the data type 
      */
-    public HierarchyBuilderOrderBased(DataType<T> type) {
-        super(type);
-        this.comparator = null;
+    public HierarchyBuilderOrderBased(final String[] data, final DataType<T> type, boolean order) {
+        super(data, type);
+        if (order) {
+            this.comparator = new Comparator<String>(){
+                @Override
+                public int compare(String o1, String o2) {
+                    try {
+                        return type.compare(o1, o2);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+            };
+        } else {
+            this.comparator = null;
+        }
     }
     
     /**
@@ -48,31 +65,34 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
      */
-    public HierarchyBuilderOrderBased(DataType<T> type, Comparator<T> comparator) {
-        super(type);
-        this.comparator = comparator;
+    public HierarchyBuilderOrderBased(final String[] data, final DataType<T> type, final Comparator<T> comparator) {
+        super(data, type);
+        this.comparator = new Comparator<String>(){
+            @Override
+            public int compare(String o1, String o2) {
+                try {
+                    return comparator.compare(type.parse(o1), type.parse(o2));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        };
     }
     
     @Override
-    protected int getBaseLevel() {
-        return 1;
-    }
-
-    @Override
-    protected String getBaseLabel(int index) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected void prepare() {
-        // TODO Auto-generated method stub
-        DataType<T> type = super.getType();
+    public int getBaseLevel() {
+        return 0;
     }
     
+    @Override
+    protected void doPrepare() {
+        if (comparator != null) {
+            Arrays.sort(super.getData(), comparator);
+        }
+    }
+
     @Override
     protected String internalIsValid() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

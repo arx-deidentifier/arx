@@ -17,6 +17,9 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
 /**
@@ -28,24 +31,27 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * @author Fabian Prasser
  *
  */
-public class HierarchyBuilderRedactionBased {
-    
-    private Order aligmentOrder      = Order.LEFT_TO_RIGHT;
-    private Order redactionOrder     = Order.RIGHT_TO_LEFT;
-    private char  redactionCharacter = '*';
-    private char  paddingCharacter   = '*';
+public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
 
     public static enum Order {
         RIGHT_TO_LEFT,
         LEFT_TO_RIGHT
     }
+    private Order          aligmentOrder      = Order.LEFT_TO_RIGHT;
+    private Order          redactionOrder     = Order.RIGHT_TO_LEFT;
+    private char           redactionCharacter = '*';
+    private char           paddingCharacter   = '*';
+    private final String[] data;
+
+    private String[][]     result;
     
     /**
      * Values are aligned left-to-right and redacted right-to-left. Redacted characters
      * are replaced with the given character. The same character is used for padding.
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(char redactionCharacter){
+    public HierarchyBuilderRedactionBased(String[] data, char redactionCharacter){
+        this.data = data;
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
     }
@@ -57,9 +63,11 @@ public class HierarchyBuilderRedactionBased {
      * @param redactionOrder
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(Order alignmentOrder, 
+    public HierarchyBuilderRedactionBased(String[] data, 
+                                          Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char redactionCharacter){
+        this.data = data;
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
         this.aligmentOrder = alignmentOrder;
@@ -74,27 +82,68 @@ public class HierarchyBuilderRedactionBased {
      * @param paddingCharacter
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(Order alignmentOrder, 
+    public HierarchyBuilderRedactionBased(String[] data, 
+                                          Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char paddingCharacter, 
                                           char redactionCharacter){
+        this.data = data;
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = paddingCharacter;
         this.aligmentOrder = alignmentOrder;
         this.redactionOrder = redactionOrder;
     }
-
+    
     /**
      * Creates a new hierarchy, based on the predefined specification
      * @param data
      * @param type
      * @return
      */
-    public Hierarchy create(String[] values){
+    public Hierarchy create(){
         
+        // Check
+        if (result == null) {
+            prepareResult();
+        }
+        
+        // Return
+        return Hierarchy.create(result);
+    }
+
+    /**
+     * Prepares the builder. Returns a list of the number of equivalence classes per level
+     * @return
+     */
+    public int[] prepare(){
+        
+        // Check
+        if (this.result == null) {
+            prepareResult();
+        }
+        
+        // Compute
+        int[] sizes = new int[this.result[0].length];
+        for (int i=0; i < sizes.length; i++){
+            Set<String> set = new HashSet<String>();
+            for (int j=0; j<this.result.length; j++) {
+                set.add(result[j][i]);
+            }
+            sizes[i] = set.size();
+        }
+        
+        // Return
+        return sizes;
+    }
+    
+    /**
+     * Computes the hierarchy
+     */
+    private void prepareResult(){
+
         // Determine length
         int length = Integer.MIN_VALUE;
-        for (String s : values) {
+        for (String s : data) {
             length = Math.max(length, s.length());
         }
         
@@ -104,17 +153,17 @@ public class HierarchyBuilderRedactionBased {
         String padding = paddingBuilder.toString();
 
         // Build list of base strings
-        String[] base = new String[values.length];
-        for (int i=0; i<values.length; i++) {
-            if (values[i].length()<length) {
-                String pad = padding.substring(0, length - values[i].length());
+        String[] base = new String[data.length];
+        for (int i=0; i<data.length; i++) {
+            if (data[i].length()<length) {
+                String pad = padding.substring(0, length - data[i].length());
                 if (aligmentOrder == Order.RIGHT_TO_LEFT) {
-                    base[i] =  pad + values[i];
+                    base[i] =  pad + data[i];
                 } else {
-                    base[i] =  values[i] + pad;
+                    base[i] =  data[i] + pad;
                 }
             } else {
-                base[i] = values[i];
+                base[i] = data[i];
             }
         }
         
@@ -124,10 +173,10 @@ public class HierarchyBuilderRedactionBased {
         String redaction = redactionBuilder.toString();
 
         // Build result
-        String[][] result = new String[base.length][length + 1];
+        this.result = new String[base.length][length + 1];
         for (int i=0; i<base.length; i++){
             result[i] = new String[length + 1];
-            result[i][0] = values[i];
+            result[i][0] = data[i];
             for (int j=1; j<length + 1; j++){
                 String redact = redaction.substring(0, j);
                 if (redactionOrder == Order.RIGHT_TO_LEFT) {
@@ -137,8 +186,5 @@ public class HierarchyBuilderRedactionBased {
                 }
             }
         }
-        
-        // Return
-        return Hierarchy.create(result);
     }
 }
