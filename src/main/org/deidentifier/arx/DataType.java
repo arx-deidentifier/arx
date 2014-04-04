@@ -853,14 +853,31 @@ public abstract class DataType<T> implements Serializable {
      */
     public static interface DataTypeWithRatioScale<T> {
         
-        public String divide(String dividend, String divisor);
-        public String multiply(String multiplicand, String multiplicator);
-        
-        public T divide(T dividend, T divisor);
-        public T multiply(T multiplicand, T multiplicator);
-        public int compare(T t1, T t2);
-        public T subtract(T minuend, T subtrahend);
-        public T add(T augend, T addend);
+        public abstract String divide(String dividend, String divisor);
+
+        public abstract String multiply(String multiplicand,
+                                        String multiplicator);
+
+        public abstract T divide(T dividend, T divisor);
+
+        public abstract T multiply(T multiplicand, T multiplicator);
+
+        public abstract int compare(T t1, T t2);
+
+        public abstract T subtract(T minuend, T subtrahend);
+
+        public abstract T add(T augend, T addend);
+
+        public abstract int compare(String s1, String s2) throws NumberFormatException,
+                                                                 ParseException;
+
+        public abstract T parse(String s);
+
+        public abstract DataTypeDescription<T> getDescription();
+
+        public abstract String format(T t);
+
+        public abstract boolean isValid(String s);
     }
     
     /**
