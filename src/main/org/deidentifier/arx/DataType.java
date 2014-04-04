@@ -204,6 +204,13 @@ public abstract class DataType<T> implements Serializable {
             long d2 = addend.getTime();
             return new Date(d1 + d2);
         }
+
+        @Override
+        public double ratio(Date dividend, Date divisor) {
+            long d1 = dividend.getTime();
+            long d2 = divisor.getTime();
+            return (double)d1 / (double)d2;
+        }
     }
 
     /**
@@ -364,6 +371,11 @@ public abstract class DataType<T> implements Serializable {
         public Double add(Double augend, Double addend) {
             return augend + addend;
         }
+
+        @Override
+        public double ratio(Double dividend, Double divisor) {
+            return dividend / divisor;
+        }
     }
     
     /**
@@ -523,6 +535,11 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public Long add(Long augend, Long addend) {
             return augend + addend;
+        }
+        
+        @Override
+        public double ratio(Long dividend, Long divisor) {
+            return (double)dividend / (double)divisor;
         }
     }
     
@@ -867,6 +884,8 @@ public abstract class DataType<T> implements Serializable {
         public abstract T subtract(T minuend, T subtrahend);
 
         public abstract T add(T augend, T addend);
+        
+        public abstract double ratio(T dividend, T divisor);
 
         public abstract int compare(String s1, String s2) throws NumberFormatException,
                                                                  ParseException;
