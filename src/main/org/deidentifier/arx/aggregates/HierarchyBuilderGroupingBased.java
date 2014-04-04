@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -38,6 +39,28 @@ import org.deidentifier.arx.DataType;
  */
 public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, HierarchyBuilder {
 
+    /**
+     * A group representation to be used by subclasses
+     * @author Fabian Prasser
+     */
+    protected abstract class Group implements Serializable {
+        
+        private static final long serialVersionUID = -7657969446040078411L;
+        
+        private String label;
+        
+        protected Group(String label){
+            this.label = label;
+        }
+        protected String getLabel(){
+            return label;
+        }
+        protected abstract boolean isOutOfBounds();
+        
+        @SuppressWarnings("rawtypes") 
+        protected abstract String getGroupLabel(Set<Group> groups, Fanout fanout);
+    }
+    
     /**
      * This class represents a fanout parameter
      * @author Fabian Prasser
@@ -152,8 +175,9 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
     private static final long serialVersionUID = 3208791665131141362L;
     private DataType<T> type;
     protected AggregateFunction<T> function;
-    private String[] data;
-    private boolean prepared = false;
+    private transient String[] data;
+    private transient boolean prepared = false;
+    private transient List<Group> groups;
     
     /**
      * All fanouts for each level
@@ -164,9 +188,8 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * Creates a new instance for the given data type
      * @param type
      */
-    protected HierarchyBuilderGroupingBased(String[] data, DataType<T> type){
+    protected HierarchyBuilderGroupingBased(DataType<T> type){
         this.type = type;
-        this.data = data;
     }
     
     /**
@@ -185,16 +208,23 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * @return
      */
     public Hierarchy create(){
-        if (!prepared) prepare();
-        return Hierarchy.create(create(3));
+        if (!prepared) {
+            throw new IllegalStateException("Please call prepare() first");
+        }
+        
+        String[][] result = new String[data.length][2];
+        for (int i=0; i<result.length; i++) {
+            result[i] = new String[2];
+            result[i][0] = data[i];
+            result[i][1] = groups.get(i).getLabel();
+        }
+        Hierarchy h = Hierarchy.create(result);
+        
+        this.prepared = false;
+        this.data = null;
+        this.groups = null;
+        return h;
     }
-    
-    /**
-     * Return the first level on which grouping is to be performed. Returns 1 for order-based hierarchies and
-     * 2 for interval-based hierarchies
-     * @return
-     */
-    protected abstract int getBaseLevel();
     
     /**
      * Returns the given level
@@ -237,13 +267,6 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         String error = internalIsValid();
         if (error != null) return error;
         
-        // Check values
-        for (String value : data) {
-            if (!type.isValid(value)) {
-                return "Invalid data item: "+value;
-            }
-        }
-
         // Check fanouts
         int max = 0;
         for (Entry<Integer, Level> level : this.fanouts.entrySet()) {
@@ -265,19 +288,21 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * Prepares the builder. Returns a list of the number of equivalence classes per level
      * @return
      */
-    public int[] prepare(){
+    public int[] prepare(String[] data){
+        this.data = data;
         String error = this.isValid();
         if (error != null) {
             throw new IllegalArgumentException(error);
         }
-        this.doPrepare();
-        return null;
+        this.groups = this.prepareGroups();
+        this.prepared = true;
+        return new int[]{1};
     }
     
     /**
      * Tells the implementing class to prepare the generalization process
      */
-    protected abstract void doPrepare();
+    protected abstract List<Group> prepareGroups();
     
     /**
      * Returns the data array
@@ -296,6 +321,12 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
     }
     
     /**
+     * First level to start aggregating
+     * @return
+     */
+    protected abstract int getBaseLevel();
+    
+    /**
      * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
      * if not.
      * @return
@@ -308,26 +339,8 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      */
     protected void setPrepared(boolean prepared){
         this.prepared = prepared;
-    }
-    
-    /**
-     * To be implement by subclasses. Prepare any level in the output, if needed.
-     * @return
-     */
-    protected abstract String[][] create(String[][] result);
-    
-    /**
-     * Returns an initial multi-dimensional array to represent the hierarchy
-     * @param levels
-     * @return
-     */
-    private String[][] create(int levels){
-        String[][] result = new String[data.length][levels];
-        for (int i=0; i<result.length; i++) {
-            result[i] = new String[levels];
-            result[i][0] = data[i];
+        if (prepared == false) {
+            this.groups = null;
         }
-        result = create(result);
-        return result;
     }
 }

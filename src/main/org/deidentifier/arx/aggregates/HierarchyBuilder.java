@@ -36,5 +36,5 @@ public interface HierarchyBuilder {
      * Prepares the builder. Returns a list of the number of equivalence classes per level
      * @return
      */
-    public int[] prepare();
+    public int[] prepare(String[] data);
 }

@@ -57,8 +57,7 @@ public class Example18 extends Example {
     private static void order() {
 
         // Create the builder
-        HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(
-                getExampleData(), DataType.INTEGER, false);
+        HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(DataType.INTEGER, false);
 
         // Define grouping fanouts
         builder.getLevel(0).addFanout(10, AggregateFunction.INTERVAL(DataType.INTEGER));
@@ -78,7 +77,7 @@ public class Example18 extends Example {
         }
         
         // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
         
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
@@ -92,7 +91,7 @@ public class Example18 extends Example {
 
         // Create the builder
         HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
-                getExampleData(), 0l, 99l, DataType.INTEGER, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+                0l, 99l, DataType.INTEGER, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
         
         // Define base intervals
         builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
@@ -115,7 +114,7 @@ public class Example18 extends Example {
         }
         
         // Print info about resulting levels
-//        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
         
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
@@ -127,13 +126,12 @@ public class Example18 extends Example {
     private static void redaction() {
 
         // Create the builder
-        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(getExampleData(),
-                                                                                    Order.RIGHT_TO_LEFT,
+        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
                                                                                     Order.RIGHT_TO_LEFT,
                                                                                     ' ', '*');
         
         // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
         
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
