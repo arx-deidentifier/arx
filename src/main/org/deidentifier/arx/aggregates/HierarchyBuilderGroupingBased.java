@@ -19,6 +19,8 @@ package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +46,17 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         
         private static final long serialVersionUID = -5767501048737045793L;
         
-        private int fanout;
-        private AggregateFunction<T> function;
+        /** Fanout*/
+        private final int fanout;
+        /** Aggregate function*/
+        private final AggregateFunction<T> function;
         
-        public Fanout(int fanout, AggregateFunction<T> function) {
+        /**
+         * Creates a new instance
+         * @param fanout
+         * @param function
+         */
+        private Fanout(int fanout, AggregateFunction<T> function) {
             if (fanout<=0) {
                 throw new IllegalArgumentException("Fanout must be >= 0");
             }
@@ -76,26 +85,40 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * This class represents a level in the hierarchy
      * @author Fabian Prasser
      */
-    public class HierarchyBuilderLevel {
+    public class Level {
         
-        private List<Fanout<T>> list = new ArrayList<Fanout<T>>();
-        private int level;
+        private final List<Fanout<T>> list = new ArrayList<Fanout<T>>();
+        private final int level;
         
         /**
          * Creates a new instance
          * @param level
          */
-        private HierarchyBuilderLevel(int level) {
+        private Level(int level) {
             this.level = level;
         }
-
+        
         /**
-         * Adds the given fanout
+         * Adds the given fanout with the default aggregate function
          * @param fanout
          * @return
          */
-        public HierarchyBuilderLevel add(Fanout<T> fanout) {
-            this.list.add(fanout);
+        public Level addFanout(int fanout) {
+            if (function == null) {
+                throw new IllegalStateException("No default aggregate function defined");
+            }
+            this.list.add(new Fanout<T>(fanout, function));
+            setPrepared(false);
+            return this;
+        }
+
+        /**
+         * Adds the given fanout with the given aggregate function
+         * @param fanout
+         * @return
+         */
+        public Level addFanout(int fanout, AggregateFunction<T> function) {
+            this.list.add(new Fanout<T>(fanout, function));
             setPrepared(false);
             return this;
         }
@@ -104,7 +127,7 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
          * Removes all fanouts on this level
          * @return
          */
-        public HierarchyBuilderLevel clear() {
+        public Level clearFanouts() {
             this.list.clear();
             setPrepared(false);
             return this;
@@ -118,43 +141,43 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         }
 
         /**
-         * Removes the given fanout
-         * @param fanout
-         * @return
-         */
-        public HierarchyBuilderLevel remove(Fanout<T> fanout) {
-            this.list.remove(fanout);
-            setPrepared(false);
-            return this;
-        }
-        
-        /**
          * Returns the list
          * @return
          */
-        private List<Fanout<T>> getFanouts(){
-            return this.list;
+        @SuppressWarnings("unchecked")
+        public List<Fanout<T>> getFanouts(){
+            return (List<Fanout<T>>)((ArrayList<Fanout<T>>)this.list).clone();
         }
     }
     private static final long serialVersionUID = 3208791665131141362L;
     private DataType<T> type;
-    
+    protected AggregateFunction<T> function;
     private String[] data;
-    
     private boolean prepared = false;
     
     /**
      * All fanouts for each level
      */
-    private Map<Integer, HierarchyBuilderLevel> fanouts = new HashMap<Integer, HierarchyBuilderLevel>();
+    private Map<Integer, Level> fanouts = new HashMap<Integer, Level>();
 
     /**
      * Creates a new instance for the given data type
      * @param type
      */
-    public HierarchyBuilderGroupingBased(String[] data, DataType<T> type){
+    protected HierarchyBuilderGroupingBased(String[] data, DataType<T> type){
         this.type = type;
         this.data = data;
+    }
+    
+    /**
+     * Sets the default aggregate function to be used by all fanouts
+     * @param function
+     */
+    public void setAggregateFunction(AggregateFunction<T> function){
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        this.function = function;
     }
 
     /**
@@ -163,27 +186,44 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      */
     public Hierarchy create(){
         if (!prepared) prepare();
-        return null;
+        return Hierarchy.create(create(3));
     }
     
     /**
-     * Return the first level on which grouping is to be performed. Returns 0 for order-based hierarchies and
-     * 1 for interval-based hierarchies
+     * Return the first level on which grouping is to be performed. Returns 1 for order-based hierarchies and
+     * 2 for interval-based hierarchies
      * @return
      */
-    public abstract int getBaseLevel();
+    protected abstract int getBaseLevel();
     
     /**
      * Returns the given level
      * @param level
      * @return 
      */
-    public HierarchyBuilderLevel getLevel(int level){
+    public Level getLevel(int level){
         if (!this.fanouts.containsKey(level)) {
-            this.fanouts.put(level, new HierarchyBuilderLevel(level));
+            this.fanouts.put(level, new Level(level));
             this.setPrepared(false);
         }
         return this.fanouts.get(level);
+    }
+    
+    /**
+     * Returns all currently defined levels
+     * @return
+     */
+    public List<Level> getLevels(){
+        List<Level> levels = new ArrayList<Level>();
+        levels.addAll(this.fanouts.values());
+        Collections.sort(levels, new Comparator<Level>(){
+            @Override
+            public int compare(Level o1,
+                               Level o2) {
+                return new Integer(o1.getLevel()).compareTo(new Integer(o2.getLevel()));
+            }
+        });
+        return levels;
     }
     
     /**
@@ -196,10 +236,17 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         // Check subclass
         String error = internalIsValid();
         if (error != null) return error;
+        
+        // Check values
+        for (String value : data) {
+            if (!type.isValid(value)) {
+                return "Invalid data item: "+value;
+            }
+        }
 
         // Check fanouts
         int max = 0;
-        for (Entry<Integer, HierarchyBuilderLevel> level : this.fanouts.entrySet()) {
+        for (Entry<Integer, Level> level : this.fanouts.entrySet()) {
             if (level.getValue().getFanouts().isEmpty()) {
                 return "No fanout specified on level "+level.getKey();
             }
@@ -261,5 +308,26 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      */
     protected void setPrepared(boolean prepared){
         this.prepared = prepared;
+    }
+    
+    /**
+     * To be implement by subclasses. Prepare any level in the output, if needed.
+     * @return
+     */
+    protected abstract String[][] create(String[][] result);
+    
+    /**
+     * Returns an initial multi-dimensional array to represent the hierarchy
+     * @param levels
+     * @return
+     */
+    private String[][] create(int levels){
+        String[][] result = new String[data.length][levels];
+        for (int i=0; i<result.length; i++) {
+            result[i] = new String[levels];
+            result[i][0] = data[i];
+        }
+        result = create(result);
+        return result;
     }
 }

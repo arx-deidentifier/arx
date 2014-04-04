@@ -45,10 +45,10 @@ public class Example18 extends Example {
      * @throws ParseException 
      */
     public static void main(final String[] args) {
-        
-        order();
+   
         redaction();
         interval();
+        order();
     }
 
     /**
@@ -61,10 +61,22 @@ public class Example18 extends Example {
                 getExampleData(), DataType.INTEGER, false);
 
         // Define grouping fanouts
-        builder.getLevel(0).add(new Fanout<Long>(10, AggregateFunction.INTERVAL(DataType.INTEGER)));
-        builder.getLevel(1).add(new Fanout<Long>(2, AggregateFunction.INTERVAL(DataType.INTEGER)));
+        builder.getLevel(0).addFanout(10, AggregateFunction.INTERVAL(DataType.INTEGER));
+        builder.getLevel(1).addFanout(2, AggregateFunction.INTERVAL(DataType.INTEGER));
 
-
+        // Alternatively
+        // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
+        // builder.getLevel(0).addFanout(10);
+        // builder.getLevel(1).addFanout(2);
+        
+        // Print specification
+        for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
+            System.out.println("Level " + level.getLevel());
+            for (Fanout<Long> fanout : level.getFanouts()){
+                System.out.println(" - Fanout: " + fanout.getFanout());
+            }
+        }
+        
         // Print info about resulting groups
         System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
         
@@ -80,7 +92,7 @@ public class Example18 extends Example {
 
         // Create the builder
         HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
-                getExampleData(), 0l, 99l, DataType.INTEGER, 0l, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+                getExampleData(), 0l, 99l, DataType.INTEGER, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
         
         // Define base intervals
         builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
@@ -88,11 +100,22 @@ public class Example18 extends Example {
         builder.addInterval(20l, 33l);
         
         // Define grouping fanouts
-        builder.getLevel(0).add(new Fanout<Long>(2, AggregateFunction.INTERVAL(DataType.INTEGER)));
-        builder.getLevel(1).add(new Fanout<Long>(3, AggregateFunction.INTERVAL(DataType.INTEGER)));
+        builder.getLevel(0).addFanout(2);
+        builder.getLevel(1).addFanout(3);
 
-        // Print info about resulting groups
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
+        // Print specification
+        for (HierarchyBuilderIntervalBased<Long>.Interval<Long> interval : builder.getIntervals()){
+            System.out.println("Interval: " + "["+interval.getMin()+":"+interval.getMax()+"]");
+        }
+        for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
+            System.out.println("Level " + level.getLevel());
+            for (Fanout<Long> fanout : level.getFanouts()){
+                System.out.println(" - Fanout: " + fanout.getFanout());
+            }
+        }
+        
+        // Print info about resulting levels
+//        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare()));
         
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());

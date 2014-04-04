@@ -80,8 +80,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     @Override
-    public int getBaseLevel() {
-        return 0;
+    protected String[][] create(String[][] result) {
+        return result;
     }
     
     @Override
@@ -92,7 +92,13 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
 
     @Override
+    protected int getBaseLevel() {
+        return 1;
+    }
+
+    @Override
     protected String internalIsValid() {
         return null;
     }
+    
 }
