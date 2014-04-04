@@ -46,7 +46,7 @@ public abstract class DataType<T> implements Serializable {
      * Base class for date/time types
      * @author Fabian Prasser
      */
-	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat {
+	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat, DataTypeWithRatioScale {
 	
         private static final long serialVersionUID = -1658470914184442833L;
 
@@ -157,13 +157,28 @@ public abstract class DataType<T> implements Serializable {
         public String format(Date s){
         	return format.format(s);
         }
+        
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            long d1 = parse(dividend).getTime();
+            long d2 = parse(divisor).getTime();
+            return format(new Date(d1 / d2));
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            long d1 = parse(multiplicand).getTime();
+            long d2 = parse(multiplicator).getTime();
+            return format(new Date(d1 * d2));
+        }
     }
 
     /**
 	 * Base class for numeric types
 	 * @author Fabian Prasser
 	 */
-    public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat {
+    public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat, DataTypeWithRatioScale {
   
         private static final long serialVersionUID = 7293446977526103610L;
 
@@ -278,13 +293,27 @@ public abstract class DataType<T> implements Serializable {
                 return format.format(s);
             }
         }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            Double d1 = parse(dividend);
+            Double d2 = parse(divisor);
+            return format(d1 / d2);
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            Double d1 = parse(multiplicand);
+            Double d2 = parse(multiplicator);
+            return format(d1 * d2);
+        }
     }
     
     /**
      * Base class for numeric types
      * @author Fabian Prasser
      */
-    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat {
+    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat, DataTypeWithRatioScale  {
         
         private static final long serialVersionUID = -631163546929231044L;
 
@@ -398,6 +427,20 @@ public abstract class DataType<T> implements Serializable {
             } catch (Exception e){
                 return false;
             }
+        }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            Long d1 = parse(dividend);
+            Long d2 = parse(divisor);
+            return format(d1 / d2);
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            Long d1 = parse(multiplicand);
+            Long d2 = parse(multiplicator);
+            return format(d1 * d2);
         }
     }
     
@@ -720,6 +763,17 @@ public abstract class DataType<T> implements Serializable {
         public abstract DataType<T> newInstance(String format);
     }
 
+    /**
+     * An interface for data types with a ratio scale
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    public static interface DataTypeWithRatioScale {
+        public String divide(String dividend, String divisor);
+        public String multiply(String multiplicand, String multiplicator);
+    }
+    
     /**
      * An interface for data types with format
      * @author Fabian Prasser
