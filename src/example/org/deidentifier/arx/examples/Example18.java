@@ -22,7 +22,6 @@ import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
-import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Fanout;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.DynamicAdjustment;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
@@ -49,6 +48,7 @@ public class Example18 extends Example {
         redaction();
         interval();
         order();
+        ldlCholesterol();
     }
 
     /**
@@ -70,10 +70,7 @@ public class Example18 extends Example {
         
         // Print specification
         for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
-            System.out.println("Level " + level.getLevel());
-            for (Fanout<Long> fanout : level.getFanouts()){
-                System.out.println(" - Fanout: " + fanout.getFanout());
-            }
+            System.out.println(level);
         }
         
         // Print info about resulting groups
@@ -104,13 +101,12 @@ public class Example18 extends Example {
 
         // Print specification
         for (HierarchyBuilderIntervalBased<Long>.Interval<Long> interval : builder.getIntervals()){
-            System.out.println("Interval: " + "["+interval.getMin()+":"+interval.getMax()+"]");
+            System.out.println(interval);
         }
+
+        // Print specification
         for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
-            System.out.println("Level " + level.getLevel());
-            for (Fanout<Long> fanout : level.getFanouts()){
-                System.out.println(" - Fanout: " + fanout.getFanout());
-            }
+            System.out.println(level);
         }
         
         // Print info about resulting levels
@@ -138,6 +134,46 @@ public class Example18 extends Example {
     }
     
     /**
+     * Exemplifies the use of the interval-based builder for LDL cholesterol
+     * in mmol/l
+     */
+    private static void ldlCholesterol() {
+
+
+        // Create the builder
+        HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(
+                0d, 10d, DataType.DECIMAL, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+        
+        // Define base intervals
+        builder.addInterval(0d, 1.8d, "very low");
+        builder.addInterval(1.8d, 2.6d, "low");
+        builder.addInterval(2.6d, 3.4d, "normal");
+        builder.addInterval(3.4d, 4.1d, "borderline high");
+        builder.addInterval(4.1d, 4.9d, "high");
+        builder.addInterval(4.9d, 10d, "very high");
+        
+        // Define grouping fanouts
+        builder.getLevel(0).addFanout(2, "low").addFanout(2, "normal").addFanout(2, "high");
+        builder.getLevel(1).addFanout(2, "low-normal").addFanout(1, "high");
+
+        // Print specification
+        for (HierarchyBuilderIntervalBased<Double>.Interval<Double> interval : builder.getIntervals()){
+            System.out.println(interval);
+        }
+
+        // Print specification
+        for (HierarchyBuilderIntervalBased<Double>.Level level : builder.getLevels()) {
+            System.out.println(level);
+        }
+        
+        // Print info about resulting levels
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleLDLData())));
+        
+        // Print resulting hierarchy
+        printArray(builder.create().getHierarchy());
+    }
+
+    /**
      * Returns example data
      * @return
      */
@@ -146,6 +182,19 @@ public class Example18 extends Example {
         String[] result = new String[100];
         for (int i=0; i< result.length; i++){
             result[i] = String.valueOf(i);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns example data
+     * @return
+     */
+    private static String[] getExampleLDLData() {
+
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+            result[i] = String.valueOf(Math.random() * 5d + 0.5d);
         }
         return result;
     }
