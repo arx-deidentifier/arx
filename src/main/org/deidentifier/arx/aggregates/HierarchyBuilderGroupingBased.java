@@ -37,7 +37,7 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, HierarchyBuilder {
+public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<T> implements Serializable {
 
     /**
      * This class represents a fanout parameter
@@ -138,7 +138,7 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
          * @return
          */
         public Level addFanout(int fanout, String label) {
-            this.list.add(new Fanout<T>(fanout, AggregateFunction.CONSTANT(getType(), label)));
+            this.list.add(new Fanout<T>(fanout, AggregateFunction.CONSTANT(getDataType(), label)));
             setPrepared(false);
             return this;
         }
@@ -210,7 +210,7 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
     private Map<Integer, Level> fanouts = new HashMap<Integer, Level>();
     private transient List<Group> groups;
     private transient boolean prepared = false;
-    private DataType<T> type;
+    private DataType<T> datatype;
     
     protected AggregateFunction<T> function;
 
@@ -218,8 +218,9 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * Creates a new instance for the given data type
      * @param type
      */
-    protected HierarchyBuilderGroupingBased(DataType<T> type){
-        this.type = type;
+    protected HierarchyBuilderGroupingBased(Type type, DataType<T> datatype){
+        super(type);
+        this.datatype = datatype;
     }
     
     /**
@@ -351,8 +352,8 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * Returns the data type
      * @return
      */
-    protected DataType<T> getType(){
-        return this.type;
+    protected DataType<T> getDataType(){
+        return this.datatype;
     }
     
     /**

@@ -17,6 +17,10 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +36,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * @author Fabian Prasser
  *
  */
-public class HierarchyBuilderRedactionBased implements HierarchyBuilder, Serializable {
+public class HierarchyBuilderRedactionBased extends HierarchyBuilder<String> implements Serializable {
 
     public static enum Order {
         LEFT_TO_RIGHT,
@@ -53,6 +57,7 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder, Seriali
      * @param redactionCharacter
      */
     public HierarchyBuilderRedactionBased(char redactionCharacter){
+        super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
     }
@@ -67,6 +72,7 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder, Seriali
     public HierarchyBuilderRedactionBased(Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char redactionCharacter){
+        super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
         this.aligmentOrder = alignmentOrder;
@@ -85,6 +91,7 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder, Seriali
                                           Order redactionOrder, 
                                           char paddingCharacter, 
                                           char redactionCharacter){
+        super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = paddingCharacter;
         this.aligmentOrder = alignmentOrder;
@@ -184,6 +191,37 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder, Seriali
                     result[i][j] =  redact + base[i].substring(0, length - j);
                 }
             }
+        }
+    }
+
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static HierarchyBuilderRedactionBased create(String file) throws IOException{
+        return create(new File(file));
+    }
+    
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static HierarchyBuilderRedactionBased create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderRedactionBased result = (HierarchyBuilderRedactionBased)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
         }
     }
 }

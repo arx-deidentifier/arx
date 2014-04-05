@@ -17,6 +17,10 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -86,7 +90,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * @param order Should the items be sorted according to the order induced by the data type 
      */
     public HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
-        super(type);
+        super(Type.ORDER_BASED, type);
         if (order) {
             this.comparator = new Comparator<String>(){
                 @Override
@@ -109,7 +113,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * @param comparator Use this comparator for ordering data items
      */
     public HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
-        super(type);
+        super(Type.ORDER_BASED, type);
         this.comparator = new Comparator<String>(){
             @Override
             public int compare(String o1, String o2) {
@@ -159,5 +163,35 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
         
         return groups;
+    }
+
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static <T> HierarchyBuilderOrderBased<T> create(String file) throws IOException{
+        return create(new File(file));
+    }
+    
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> HierarchyBuilderOrderBased<T> create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderOrderBased<T> result = (HierarchyBuilderOrderBased<T>)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
+        }
     }
 }
