@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.DataType;
@@ -432,7 +434,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     @SuppressWarnings("unchecked")
-    private Interval<T> getInterval(IndexNode index, String sValue) {
+    private Interval<T> getInterval(IndexNode index, T actualMax, String sValue) {
 
         // Init
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
@@ -447,44 +449,31 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
         }
         
-        // Find interval offset
+        // Find interval
         int iindex = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
-        T lower; 
-        T upper;
-        AggregateFunction<T> function;
-        
-        // Adjust
-        if (iindex < 0) {
+        T offset = type.multiply(type.subtract(index.max, index.min), iindex);
+        Interval<T> interval = query(index, type.subtract(tValue, offset));
+
+        // Check
+        if (interval == null) { throw new IllegalStateException("No interval found for: " + sValue); }
+
+        // Extract values
+        AggregateFunction<T> function = interval.function;
+        T lower = type.add(interval.min, offset);
+        T upper = type.add(interval.max, offset);
+
+        // Adjust largest interval
+        if (type.compare(tValue, max) > 0) {
             if (adjustment != DynamicAdjustment.SNAP_TO_BOUNDS) {
-                throw new IllegalStateException("Value out of bounds: "+sValue);
+                throw new IllegalArgumentException("Value out of bounds: "+sValue);
             } else {
-                lower = min;
-                upper = intervals.get(0).max;
-                function = intervals.get(0).function;
-            }
-        } else {
-            
-            T offset = type.multiply(type.subtract(index.max, index.min), iindex);
-            Interval<T> interval = query(index, type.subtract(tValue, offset));
-            
-            if (interval == null) {
-                throw new IllegalStateException("No interval found for: "+sValue);
-            }
-            
-            function = interval.function;
-            if (interval.equals(intervals.get(0)) && iindex==0) {
-                lower = min;
-                upper = intervals.get(0).max;
-            } else {
-                lower = type.add(interval.min, offset);
-                upper = type.add(interval.max, offset);
-            }
-            
-            if (type.compare(upper, max) > 0) {
-                upper = max;
+                if (type.compare(lower, tValue) <=0 &&
+                    type.compare(upper, tValue) >0) {
+                    upper = actualMax;
+                }
             }
         }
-        
+   
         // Return
         return new Interval<T>((DataType<T>)type, lower, upper, function);
     }
@@ -527,15 +516,17 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
         
         // Determine max and min
+        T actualMin = min;
+        T actualMax = max;
         if (this.adjustment == DynamicAdjustment.SNAP_TO_BOUNDS) {
             for (String value : getData()){
                 T parsedValue = type.parse(value);
                 try {
-                    if (type.compare(min, parsedValue)>0){
-                        min = parsedValue;
+                    if (type.compare(actualMin, parsedValue)>0){
+                        actualMin = parsedValue;
                     }
-                    if (type.compare(max, parsedValue)<0){
-                        max = parsedValue;
+                    if (type.compare(actualMax, parsedValue)<0){
+                        actualMax = parsedValue;
                     }
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Invalid data item: "+value);
@@ -543,20 +534,33 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
         }
         
+        // Create a reference to the intervals, in which the leftmost might be replaced
+        List<Interval<T>> actualIntervals = this.intervals;
+        if (actualMin != min) {
+            actualIntervals = (ArrayList<Interval<T>>)
+                              ((ArrayList<Interval<T>>)this.intervals).clone();
+            Interval<T> first = intervals.get(0);
+            actualIntervals.set(0 ,new Interval<T>((DataType<T>)type,
+                                                   actualMin,
+                                                   first.max,
+                                                   first.function));
+            
+        }
+        
         // Build leaf level index
         ArrayList<IndexNode> nodes = new ArrayList<IndexNode>();
-        for (int i=0, len = intervals.size(); i < len; i+=INDEX_FANOUT) {
+        for (int i=0, len = actualIntervals.size(); i < len; i+=INDEX_FANOUT) {
             int min = i;
             int max = Math.min(i+INDEX_FANOUT-1, len-1);
             
             List<Interval<T>> leafs = new ArrayList<Interval<T>>();
             for (int j=min; j<=max; j++) {
-                leafs.add(intervals.get(j));
+                leafs.add(actualIntervals.get(j));
             }
 
-            nodes.add(new IndexNode(intervals.get(min).min, 
-                                       intervals.get(max).max,
-                                       leafs.toArray(new Interval[leafs.size()])));
+            nodes.add(new IndexNode(actualIntervals.get(min).min, 
+                                    actualIntervals.get(max).max,
+                                    leafs.toArray(new Interval[leafs.size()])));
         }
 
         // Builder inner nodes
@@ -583,9 +587,18 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Replace each value with label
         String[] data = getData();
         List<Group> groups = new ArrayList<Group>();
+        Map<Group, Group> cache = new HashMap<Group, Group>();
         for (int i=0; i<data.length; i++){
-            // TODO: Prevent storing several objects representing the same interval
-            groups.add(getInterval(index, data[i]));
+
+            Group group = getInterval(index, actualMax, data[i]);
+            Group cached = cache.get(group);
+            if (cached != null) {
+                groups.add(cached);
+            }
+            else {
+                cache.put(group, group);
+                groups.add(group);
+            }
         }
         return groups;
     }
