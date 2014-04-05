@@ -196,6 +196,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         @SuppressWarnings("rawtypes") 
         protected abstract String getGroupLabel(Set<Group> groups, Fanout fanout);
+        
         protected String getLabel(){
             return label;
         }
@@ -231,6 +232,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         if (!prepared) {
             throw new IllegalStateException("Please call prepare() first");
         }
+
+        Collections.sort(groups);
         
         String[][] result = new String[data.length][2];
         for (int i=0; i<result.length; i++) {
