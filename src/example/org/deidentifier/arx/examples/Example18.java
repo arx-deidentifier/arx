@@ -48,17 +48,17 @@ public class Example18 extends Example {
      */
     public static void main(final String[] args) {
    
-        redaction();
-        interval();
-        order();
+        redactionBased();
+        intervalBased();
+        orderBased();
         ldlCholesterol();
-        loadstore();
+        loadStore();
     }
 
     /**
      * Shows how to load and store hierarchy specifications
      */
-    private static void loadstore() {
+    private static void loadStore() {
 //        try {
 //            HierarchyBuilderRedactionBased builder1 = null;
 //            builder1.save("test.spec");
@@ -74,7 +74,7 @@ public class Example18 extends Example {
     /**
      * Exemplifies the use of the order-based builder
      */
-    private static void order() {
+    private static void orderBased() {
 
         // Create the builder
         HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(DataType.INTEGER, false);
@@ -113,7 +113,7 @@ public class Example18 extends Example {
     /**
      * Exemplifies the use of the interval-based builder
      */
-    private static void interval() {
+    private static void intervalBased() {
 
 
         // Create the builder
@@ -160,7 +160,7 @@ public class Example18 extends Example {
     /**
      * Exemplifies the use of the redaction-based builder
      */
-    private static void redaction() {
+    private static void redactionBased() {
 
         // Create the builder
         HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
