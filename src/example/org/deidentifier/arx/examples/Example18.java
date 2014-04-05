@@ -68,6 +68,12 @@ public class Example18 extends Example {
         // builder.getLevel(0).addFanout(10);
         // builder.getLevel(1).addFanout(2);
         
+        System.out.println("---------------------");
+        System.out.println("ORDER-BASED HIERARCHY");
+        System.out.println("---------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
         // Print specification
         for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
             System.out.println(level);
@@ -76,8 +82,12 @@ public class Example18 extends Example {
         // Print info about resulting groups
         System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
         
+        System.out.println("");
+        System.out.println("RESULT");
+        
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
+        System.out.println("");
     }
 
     /**
@@ -98,7 +108,14 @@ public class Example18 extends Example {
         // Define grouping fanouts
         builder.getLevel(0).addFanout(2);
         builder.getLevel(1).addFanout(3);
+        
 
+        System.out.println("------------------------");
+        System.out.println("INTERVAL-BASED HIERARCHY");
+        System.out.println("------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
         // Print specification
         for (HierarchyBuilderIntervalBased<Long>.Interval<Long> interval : builder.getIntervals()){
             System.out.println(interval);
@@ -111,9 +128,13 @@ public class Example18 extends Example {
         
         // Print info about resulting levels
         System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
-        
+
+        System.out.println("");
+        System.out.println("RESULT");
+
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
+        System.out.println("");
     }
 
     /**
@@ -125,12 +146,22 @@ public class Example18 extends Example {
         HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
                                                                                     Order.RIGHT_TO_LEFT,
                                                                                     ' ', '*');
+
+        System.out.println("-------------------------");
+        System.out.println("REDACTION-BASED HIERARCHY");
+        System.out.println("-------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
         
         // Print info about resulting groups
         System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
         
+        System.out.println("");
+        System.out.println("RESULT");
+        
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
+        System.out.println("");
     }
     
     /**
@@ -156,6 +187,12 @@ public class Example18 extends Example {
         builder.getLevel(0).addFanout(2, "low").addFanout(2, "normal").addFanout(2, "high");
         builder.getLevel(1).addFanout(2, "low-normal").addFanout(1, "high");
 
+        System.out.println("--------------------------");
+        System.out.println("LDL-CHOLESTEROL HIERARCHY");
+        System.out.println("--------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
         // Print specification
         for (HierarchyBuilderIntervalBased<Double>.Interval<Double> interval : builder.getIntervals()){
             System.out.println(interval);
@@ -169,8 +206,12 @@ public class Example18 extends Example {
         // Print info about resulting levels
         System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleLDLData())));
         
+        System.out.println("");
+        System.out.println("RESULT");
+        
         // Print resulting hierarchy
         printArray(builder.create().getHierarchy());
+        System.out.println("");
     }
 
     /**
