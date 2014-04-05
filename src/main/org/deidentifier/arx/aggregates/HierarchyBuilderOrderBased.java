@@ -44,10 +44,12 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         
         private static final long serialVersionUID = 7224062023293601561L;
         private String[] values;
+        private Integer  order;
 
-        protected CloseElements(String[] values, AggregateFunction<T> function) {
+        protected CloseElements(String[] values, AggregateFunction<T> function, int order) {
             super(function.aggregate(values));
             this.values = values;
+            this.order = order;
         }
 
         @Override
@@ -69,6 +71,12 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
             }
             return fanout.getFunction().aggregate(values.toArray(new String[values.size()]));
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public int compareTo(Group o) {
+            return this.order.compareTo(((CloseElements<T>)o).order);
         }
     }
 
@@ -122,43 +130,21 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         
         List<Fanout<T>> fanouts = super.getLevel(0).getFanouts();
         List<Group> groups = new ArrayList<Group>();
-        int index = 0;
-        int listIndex = 0;
-        int groupSize = 0;
-        Fanout<T> fanout = fanouts.get(0);
         List<String> items = new ArrayList<String>();
         String[] data = getData();
-        while (index < data.length) {
-            
-            groupSize++;
-            items.add(data[index]);
-            
-            if (groupSize==fanout.getFanout()) {
-                CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction());
-                for (int i=0; i<groupSize; i++) {
-                    groups.add(element);
+        int index = 0;
+        outer: while (true) {
+            for (Fanout<T> fanout : fanouts) {
+                for (int i = 0; i<fanout.getFanout(); i++){
+                    items.add(data[index++]);
+                    if (index == data.length) break;
                 }
-                groupSize = 0;
-                listIndex++;
-                if (listIndex < fanouts.size()) {
-                    fanout = fanouts.get(listIndex);
-                } else {
-                    fanout = fanouts.get(0);
-                    listIndex = 0;
-                }
-                items.clear();
-                index++;
-                continue;
-            } else if (index==data.length-1) {
-                CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction());
-                for (int i=0; i<groupSize; i++) {
+                CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction(), index);
+                for (int i=0; i<items.size(); i++) {
                     groups.add(element);
                 }
                 items.clear();
-                break;
-            } else {
-                index++;
-                continue;
+                if (index == data.length) break outer;
             }
         }
         

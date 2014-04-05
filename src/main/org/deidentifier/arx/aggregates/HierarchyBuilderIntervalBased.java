@@ -207,6 +207,25 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
             return fanout.getFunction().aggregate(new String[]{type.format(min), type.format(max)});
         }
+        
+        @Override
+        public String toString(){
+            @SuppressWarnings("unchecked")
+            DataType<T> type = (DataType<T>)getType();
+            return "Interval[min="+type.format(min)+", max="+type.format(max)+", function="+function.toString()+"]";
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public int compareTo(Group arg0) {
+            DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getType();
+            T myMin = min;
+            T otherMin = ((Interval<T>)arg0).min;
+            if (myMin == null && otherMin != null) return -1;
+            else if (myMin != null && otherMin == null) return +1;
+            else if (myMin == null && otherMin == null) return 0;
+            else return type.compare(min, ((Interval<T>)arg0).min);
+        }
     }
 
     private static final long serialVersionUID = 3663874945543082808L;
@@ -294,6 +313,24 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         checkInterval(getType(), min, max);
         this.intervals.add(new Interval<T>(getType(), min, max, function));
+        this.setPrepared(false);
+        return this;
+    }
+
+    /**
+     * Adds an interval. Min is inclusive, max is exclusive. Interval is labeled
+     * with the given string
+     * @param min
+     * @param max
+     * @param label
+     * @return
+     */
+    public HierarchyBuilderIntervalBased<T> addInterval(T min, T max, String label) {
+        if (label==null) {
+            throw new IllegalArgumentException("Label must not be null");
+        }
+        checkInterval(getType(), min, max);
+        this.intervals.add(new Interval<T>(getType(), min, max, AggregateFunction.CONSTANT(getType(), label)));
         this.setPrepared(false);
         return this;
     }
@@ -465,12 +502,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
         // Builder inner nodes
         while (nodes.size()>1) {
-            nodes.clear();
             List<IndexNode> current = (List<IndexNode>)nodes.clone();
+            nodes.clear();
             for (int i=0, len = current.size(); i < len; i+=INDEX_FANOUT) {
                 int min = i;
                 int max = Math.min(i+INDEX_FANOUT-1, len-1);
-                
                 List<IndexNode> temp = new ArrayList<IndexNode>();
                 for (int j=min; j<=max; j++) {
                     temp.add(current.get(j));
@@ -478,7 +514,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
                 nodes.add(new IndexNode(intervals.get(min).min, 
                                            intervals.get(max).max,
-                                           temp.toArray(new Interval[temp.size()])));
+                                           temp.toArray(new HierarchyBuilderIntervalBased.IndexNode[temp.size()])));
             }
         }
         

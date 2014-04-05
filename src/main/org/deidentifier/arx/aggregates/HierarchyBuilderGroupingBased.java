@@ -43,7 +43,7 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * A group representation to be used by subclasses
      * @author Fabian Prasser
      */
-    protected abstract class Group implements Serializable {
+    protected abstract class Group implements Serializable, Comparable<Group> {
         
         private static final long serialVersionUID = -7657969446040078411L;
         
@@ -103,6 +103,11 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         public AggregateFunction<T> getFunction() {
             return function;
         }
+        
+        @Override
+        public String toString(){
+            return "Fanout[length="+fanout+", function="+function.toString()+"]";
+        }
     }
     /**
      * This class represents a level in the hierarchy
@@ -138,10 +143,23 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         /**
          * Adds the given fanout with the given aggregate function
          * @param fanout
+         * @param function
          * @return
          */
         public Level addFanout(int fanout, AggregateFunction<T> function) {
             this.list.add(new Fanout<T>(fanout, function));
+            setPrepared(false);
+            return this;
+        }
+
+        /**
+         * Adds the given fanout. The result will be labeled with the given string
+         * @param fanout
+         * @param label
+         * @return
+         */
+        public Level addFanout(int fanout, String label) {
+            this.list.add(new Fanout<T>(fanout, AggregateFunction.CONSTANT(getType(), label)));
             setPrepared(false);
             return this;
         }
@@ -170,6 +188,18 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         @SuppressWarnings("unchecked")
         public List<Fanout<T>> getFanouts(){
             return (List<Fanout<T>>)((ArrayList<Fanout<T>>)this.list).clone();
+        }
+     
+        @Override
+        public String toString(){
+            StringBuilder b = new StringBuilder();
+            b.append("Level[height="+level+"]\n");
+            for (int i=0, length=list.size(); i<length; i++){
+                Fanout<T> fanout = list.get(i);
+                b.append("   ").append(fanout.toString());
+                if (i<length-1) b.append("\n");
+            }
+            return b.toString();
         }
     }
     private static final long serialVersionUID = 3208791665131141362L;
@@ -219,6 +249,10 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
             result[i][1] = groups.get(i).getLabel();
         }
         Hierarchy h = Hierarchy.create(result);
+        
+        // 1. Obtain list of unique groups
+        // 2. Sort them (they implement comparable)
+        // 3. Perform grouping, but exclude OutOfBounds groups
         
         this.prepared = false;
         this.data = null;
