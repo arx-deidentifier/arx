@@ -34,17 +34,17 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  */
 public class HierarchyBuilderRedactionBased implements HierarchyBuilder, Serializable {
 
-    private static final long serialVersionUID = 3625654600380531803L;
-
     public static enum Order {
-        RIGHT_TO_LEFT,
-        LEFT_TO_RIGHT
+        LEFT_TO_RIGHT,
+        RIGHT_TO_LEFT
     }
 
+    private static final long serialVersionUID = 3625654600380531803L;
+
     private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
-    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
-    private char                 redactionCharacter = '*';
     private char                 paddingCharacter   = '*';
+    private char                 redactionCharacter = '*';
+    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
     private transient String[][] result;
 
     /**

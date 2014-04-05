@@ -52,16 +52,16 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         private static final long serialVersionUID = 5985820929677249525L;
 
-        /** Min is inclusive */
-        private final T             min;
-        /** Max is exclusive */
-        private final T             max;
         /** Children */
         private final IndexNode[]   children;
-        /** Leafs */
-        private final Interval<T>[] leafs;
         /** IsLeaf */
         private final boolean       isLeaf;
+        /** Leafs */
+        private final Interval<T>[] leafs;
+        /** Max is exclusive */
+        private final T             max;
+        /** Min is inclusive */
+        private final T             min;
 
         /**
          * Creates a new instance. Min is inclusive, max is exclusive
@@ -90,6 +90,37 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.leafs = leafs;
             this.isLeaf = true;
         }
+        
+        @Override
+        public String toString(){
+            return toString("");
+        }
+        
+        private String toString(String prefix){
+            final String INTEND = "   ";
+            StringBuilder b = new StringBuilder();
+            DataType<T> type = getType();
+            if (this.isLeaf) {
+                b.append(prefix).append("Leafs[min=");
+                b.append(type.format(min)).append(", max=");
+                b.append(type.format(max)).append("]\n");
+                for (Interval<T> leaf : leafs) {
+                    b.append(prefix).append(INTEND).append("Leaf[min=");
+                    b.append(type.format(leaf.min)).append(", max=");
+                    b.append(type.format(leaf.max)).append(", function=");
+                    b.append(leaf.function).append("]\n");
+                }
+                return b.toString();
+            } else {
+                b.append(prefix).append("Inner[min=");
+                b.append(type.format(min)).append(", max=");
+                b.append(type.format(max)).append("]\n");
+                for (IndexNode child : children) {
+                    b.append(child.toString(prefix+INTEND));
+                }
+                return b.toString();
+            }
+        }
     }
     
     /**
@@ -101,12 +132,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         private static final long serialVersionUID = 5985820929677249525L;
 
-        /** Min is inclusive */
-        private final T min;
-        /** Max is exclusive */
-        private final T max;
         /** The function*/
         private final AggregateFunction<T> function;
+        /** Max is exclusive */
+        private final T max;
+        /** Min is inclusive */
+        private final T min;
 
         /**
          * Constructor for creating out of bounds labels
@@ -133,11 +164,16 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.function = function;
         }
         
-        /**
-         * Is this group out of bounds
-         */
-        protected boolean isOutOfBounds(){
-            return min == null && max == null && function == null;
+        @Override
+        @SuppressWarnings("unchecked")
+        public int compareTo(Group arg0) {
+            DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getType();
+            T myMin = min;
+            T otherMin = ((Interval<T>)arg0).min;
+            if (myMin == null && otherMin != null) return -1;
+            else if (myMin != null && otherMin == null) return +1;
+            else if (myMin == null && otherMin == null) return 0;
+            else return type.compare(min, ((Interval<T>)arg0).min);
         }
         
         /* (non-Javadoc)
@@ -193,6 +229,13 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
 
         @Override
+        public String toString(){
+            @SuppressWarnings("unchecked")
+            DataType<T> type = (DataType<T>)getType();
+            return "Interval[min="+type.format(min)+", max="+type.format(max)+", function="+function.toString()+"]";
+        }
+        
+        @Override
         @SuppressWarnings({ "rawtypes", "unchecked" })
         protected String getGroupLabel(Set<Group> groups, Fanout fanout) {
             DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getType();
@@ -207,43 +250,31 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
             return fanout.getFunction().aggregate(new String[]{type.format(min), type.format(max)});
         }
-        
-        @Override
-        public String toString(){
-            @SuppressWarnings("unchecked")
-            DataType<T> type = (DataType<T>)getType();
-            return "Interval[min="+type.format(min)+", max="+type.format(max)+", function="+function.toString()+"]";
-        }
 
-        @Override
-        @SuppressWarnings("unchecked")
-        public int compareTo(Group arg0) {
-            DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getType();
-            T myMin = min;
-            T otherMin = ((Interval<T>)arg0).min;
-            if (myMin == null && otherMin != null) return -1;
-            else if (myMin != null && otherMin == null) return +1;
-            else if (myMin == null && otherMin == null) return 0;
-            else return type.compare(min, ((Interval<T>)arg0).min);
+        /**
+         * Is this group out of bounds
+         */
+        protected boolean isOutOfBounds(){
+            return min == null && max == null && function == null;
         }
     }
 
-    private static final long serialVersionUID = 3663874945543082808L;
+    /** TODO: Is this parameter OK?*/
+    private static final int INDEX_FANOUT = 2;
     
+    private static final long serialVersionUID = 3663874945543082808L;
+    /** Adjustment*/
+    private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
+    /** Defined intervals*/
+    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
+    /** Max*/
+    private T max;
+    /** Min*/
+    private T min;
     /** OOB label*/
     private final Interval<T> OUT_OF_BOUNDS_MAX;
     /** OOB label*/
     private final Interval<T> OUT_OF_BOUNDS_MIN;
-    /** TODO: Is this parameter OK?*/
-    private static final int INDEX_FANOUT = 2;
-    /** Defined intervals*/
-    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
-    /** Min*/
-    private T min;
-    /** Max*/
-    private T max;
-    /** Adjustment*/
-    private DynamicAdjustment adjustment = DynamicAdjustment.SNAP_TO_BOUNDS;
     
     /**
      * Creates a new instance
@@ -455,6 +486,30 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
     
     @Override
+    protected int getBaseLevel() {
+        return 0;
+    }
+    
+    @Override
+    protected String internalIsValid() {
+        
+        if (!intervals.get(0).getMin().equals(min)) {
+            return "Lower bound of first interval must match overall lower bound";
+        }
+        
+        for (int i=1; i<intervals.size(); i++){
+            Interval<T> interval1 = intervals.get(i-1);
+            Interval<T> interval2 = intervals.get(i);
+            
+            if (!interval1.getMax().equals(interval2.getMin())) {
+                return "Gap between interval"+i+" and interval"+(i+1);
+            }
+        }
+        
+        return null;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     protected List<Group> prepareGroups() {
 
@@ -512,9 +567,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                     temp.add(current.get(j));
                 }
 
-                nodes.add(new IndexNode(intervals.get(min).min, 
-                                           intervals.get(max).max,
-                                           temp.toArray(new HierarchyBuilderIntervalBased.IndexNode[temp.size()])));
+                nodes.add(new IndexNode(current.get(min).min, 
+                                        current.get(max).max,
+                                        temp.toArray(new HierarchyBuilderIntervalBased.IndexNode[temp.size()])));
             }
         }
         
@@ -529,29 +584,5 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             groups.add(getInterval(index, data[i]));
         }
         return groups;
-    }
-    
-    @Override
-    protected String internalIsValid() {
-        
-        if (!intervals.get(0).getMin().equals(min)) {
-            return "Lower bound of first interval must match overall lower bound";
-        }
-        
-        for (int i=1; i<intervals.size(); i++){
-            Interval<T> interval1 = intervals.get(i-1);
-            Interval<T> interval2 = intervals.get(i);
-            
-            if (!interval1.getMax().equals(interval2.getMin())) {
-                return "Gap between interval"+i+" and interval"+(i+1);
-            }
-        }
-        
-        return null;
-    }
-
-    @Override
-    protected int getBaseLevel() {
-        return 0;
     }
 }

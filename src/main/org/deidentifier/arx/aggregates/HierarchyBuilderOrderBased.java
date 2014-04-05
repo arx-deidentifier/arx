@@ -35,16 +35,12 @@ import org.deidentifier.arx.DataType;
  */
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
-    private static final long serialVersionUID = -2749758635401073668L;
-    
-    private final Comparator<String> comparator;
-    
     @SuppressWarnings("hiding")
     protected class CloseElements<T> extends Group {
         
         private static final long serialVersionUID = 7224062023293601561L;
-        private String[] values;
         private Integer  order;
+        private String[] values;
 
         protected CloseElements(String[] values, AggregateFunction<T> function, int order) {
             super(function.aggregate(values));
@@ -53,12 +49,9 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
 
         @Override
-        protected boolean isOutOfBounds() {
-            return false;
-        }
-
-        protected String[] getValues(){
-            return values;
+        @SuppressWarnings("unchecked")
+        public int compareTo(Group o) {
+            return this.order.compareTo(((CloseElements<T>)o).order);
         }
 
         @Override
@@ -73,12 +66,19 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             return fanout.getFunction().aggregate(values.toArray(new String[values.size()]));
         }
 
+        protected String[] getValues(){
+            return values;
+        }
+
         @Override
-        @SuppressWarnings("unchecked")
-        public int compareTo(Group o) {
-            return this.order.compareTo(((CloseElements<T>)o).order);
+        protected boolean isOutOfBounds() {
+            return false;
         }
     }
+    
+    private static final long serialVersionUID = -2749758635401073668L;
+    
+    private final Comparator<String> comparator;
 
     /**
      * Creates a new instance
@@ -123,6 +123,16 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     @Override
+    protected int getBaseLevel() {
+        return 1;
+    }
+
+    @Override
+    protected String internalIsValid() {
+        return null;
+    }
+
+    @Override
     protected List<Group> prepareGroups() {
         if (comparator != null) {
             Arrays.sort(super.getData(), comparator);
@@ -149,15 +159,5 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
         
         return groups;
-    }
-
-    @Override
-    protected String internalIsValid() {
-        return null;
-    }
-
-    @Override
-    protected int getBaseLevel() {
-        return 1;
     }
 }
