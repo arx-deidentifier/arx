@@ -18,13 +18,10 @@
 
 package org.deidentifier.arx.examples;
 
-import java.io.IOException;
 import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
-import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.DynamicAdjustment;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
