@@ -8,6 +8,7 @@ import java.util.List;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.DataSourceConfiguration;
+import org.deidentifier.arx.io.ExcelFileConfiguration;
 
 
 /**
@@ -56,6 +57,10 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
         if (config instanceof CSVFileConfiguration) {
 
             return new CSVFileImportAdapter((CSVFileConfiguration)config);
+
+        } else if (config instanceof ExcelFileConfiguration) {
+
+            return new ExcelFileImportAdapter((ExcelFileConfiguration)config);
 
         } else {
 
