@@ -46,7 +46,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
 
         } else {
 
-            throw new IllegalArgumentException("No ImportAdapter defined for this configuration");
+            throw new IllegalArgumentException("No ImportAdapter defined for this type of configuration");
 
         }
 
