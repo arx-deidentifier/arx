@@ -245,6 +245,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         // 1. Obtain list of unique groups
         // 2. Sort them (they implement comparable)
+        // 3. Handle duplicate labels, two options
         // 3. Perform grouping, but exclude OutOfBounds groups
         
         this.prepared = false;
