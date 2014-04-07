@@ -22,8 +22,9 @@ import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
-import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.DynamicAdjustment;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
@@ -92,7 +93,7 @@ public class Example18 extends Example {
         System.out.println("SPECIFICATION");
         
         // Print specification
-        for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
+        for (Level<Long> level : builder.getLevels()) {
             System.out.println(level);
         }
         
@@ -114,8 +115,7 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
-                0l, 99l, DataType.INTEGER, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(DataType.INTEGER);
         
         // Define base intervals
         builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
@@ -134,12 +134,12 @@ public class Example18 extends Example {
         System.out.println("SPECIFICATION");
         
         // Print specification
-        for (HierarchyBuilderIntervalBased<Long>.Interval<Long> interval : builder.getIntervals()){
+        for (Interval<Long> interval : builder.getIntervals()){
             System.out.println(interval);
         }
 
         // Print specification
-        for (HierarchyBuilderIntervalBased<Long>.Level level : builder.getLevels()) {
+        for (Level<Long> level : builder.getLevels()) {
             System.out.println(level);
         }
         
@@ -189,8 +189,7 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(
-                0d, 10d, DataType.DECIMAL, DynamicAdjustment.OUT_OF_BOUNDS_LABEL);
+        HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(DataType.DECIMAL);
         
         // Define base intervals
         builder.addInterval(0d, 1.8d, "very low");
@@ -211,12 +210,12 @@ public class Example18 extends Example {
         System.out.println("SPECIFICATION");
         
         // Print specification
-        for (HierarchyBuilderIntervalBased<Double>.Interval<Double> interval : builder.getIntervals()){
+        for (Interval<Double> interval : builder.getIntervals()){
             System.out.println(interval);
         }
 
         // Print specification
-        for (HierarchyBuilderIntervalBased<Double>.Level level : builder.getLevels()) {
+        for (Level<Double> level : builder.getLevels()) {
             System.out.println(level);
         }
         

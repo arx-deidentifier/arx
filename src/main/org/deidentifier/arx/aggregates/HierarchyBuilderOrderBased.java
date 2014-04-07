@@ -59,7 +59,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
 
         @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings("rawtypes")
         protected String getGroupLabel(Set<Group> groups, Fanout fanout) {
             List<String> values = new ArrayList<String>();
             for (Group group : groups){
@@ -127,26 +127,24 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     @Override
-    protected int getBaseLevel() {
-        return 1;
-    }
-
-    @Override
-    protected String internalIsValid() {
-        return null;
-    }
-
-    @Override
-    protected List<Group> prepareGroups() {
+    protected Group[][] prepareGroups() {
         if (comparator != null) {
             Arrays.sort(super.getData(), comparator);
         }
+
+        // 1. Obtain list of unique groups
+        // 2. Sort them (they implement comparable)
+        // 3. Handle duplicate labels, two options
+        // 3. Perform grouping, but exclude OutOfBounds groups
         
         List<Fanout<T>> fanouts = super.getLevel(0).getFanouts();
-        List<Group> groups = new ArrayList<Group>();
         List<String> items = new ArrayList<String>();
         String[] data = getData();
         int index = 0;
+        
+        Group[][] result = new Group[data.length][1];
+        int resultIndex = 0;
+        
         outer: while (true) {
             for (Fanout<T> fanout : fanouts) {
                 for (int i = 0; i<fanout.getFanout(); i++){
@@ -155,14 +153,14 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
                 CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction(), index);
                 for (int i=0; i<items.size(); i++) {
-                    groups.add(element);
+                    result[resultIndex++] = new Group[]{element};
                 }
                 items.clear();
                 if (index == data.length) break outer;
             }
         }
         
-        return groups;
+        return result;
     }
 
     /**
