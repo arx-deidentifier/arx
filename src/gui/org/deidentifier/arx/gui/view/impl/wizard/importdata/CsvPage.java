@@ -216,7 +216,6 @@ public class CsvPage extends WizardPage {
         lblSeparator.setText("Separator");
 
         /* Separator combobox */
-        /* TODO: Fix bug(s) when separator is selected multiple times */
         comboSeparator = new Combo(container, SWT.READ_ONLY);
 
         /* Add labels */
@@ -374,6 +373,9 @@ public class CsvPage extends WizardPage {
      * {@link CSVFileConfiguration} to actually read in the data.
      */
     private void readPreview() throws IOException {
+
+        /* Reset preview data */
+        previewData.clear();
 
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
