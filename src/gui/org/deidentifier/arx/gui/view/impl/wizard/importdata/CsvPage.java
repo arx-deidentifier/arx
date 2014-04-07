@@ -372,10 +372,8 @@ public class CsvPage extends WizardPage {
      * within the appropriate file and reads them in. It uses
      * {@link DataSourceImportAdapter} in combination with
      * {@link CSVFileConfiguration} to actually read in the data.
-     *
-     * TODO: Don't throw Exception, only IOException if necessary
      */
-    private void readPreview() throws Exception {
+    private void readPreview() throws IOException {
 
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
@@ -442,7 +440,7 @@ public class CsvPage extends WizardPage {
         /* Check whether there is actual any data */
         if (previewData.size() == 0) {
 
-            throw new Exception("No preview data in file");
+            throw new IOException("No preview data in file");
 
         }
 

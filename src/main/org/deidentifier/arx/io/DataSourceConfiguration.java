@@ -32,7 +32,7 @@ public abstract class DataSourceConfiguration {
      *
      * @param column A single column to import from
      */
-    public void addColumn(Column column) throws Exception {
+    public void addColumn(Column column) {
 
         this.columns.add(column);
 
