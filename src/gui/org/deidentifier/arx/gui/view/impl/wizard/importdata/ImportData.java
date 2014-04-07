@@ -61,11 +61,11 @@ public class ImportData {
     private boolean firstRowContainsHeader = true;
 
     /**
-     * Index of sheet to import from (in case of XLS import)
+     * Index of sheet to import from (in case of Excel import)
      *
      * @see {@link SourceType#EXCEL}
      */
-    private int xlsSheetIndex;
+    private int excelSheetIndex;
 
     /**
      * Preview data
@@ -86,20 +86,20 @@ public class ImportData {
 
 
     /**
-     * @return {@link #xlsSheetIndex}
+     * @return {@link #excelSheetIndex}
      */
-    public int getXlsSheetIndex() {
+    public int getExcelSheetIndex() {
 
-        return xlsSheetIndex;
+        return excelSheetIndex;
 
     }
 
     /**
-     * @param {@link #xlsSheetIndex}
+     * @param excelSheetIndex {@link #excelSheetIndex}
      */
-    public void setXlsSheetIndex(int xlsSheetIndex) {
+    public void setExcelSheetIndex(int excelSheetIndex) {
 
-        this.xlsSheetIndex = xlsSheetIndex;
+        this.excelSheetIndex = excelSheetIndex;
 
     }
 

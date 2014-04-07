@@ -127,7 +127,7 @@ public class ExcelPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setXlsSheetIndex(comboSheets.getSelectionIndex());
+                wizardImport.getData().setExcelSheetIndex(comboSheets.getSelectionIndex());
                 readPreview();
 
                 setPageComplete(true);
