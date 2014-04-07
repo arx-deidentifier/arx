@@ -1,18 +1,19 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.io.ExcelFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -36,13 +37,13 @@ import org.eclipse.swt.widgets.TableColumn;
 
 
 /**
- * CSV page
+ * Excel page
  *
- * This page offers means to import data from a CSV file. It contains
- * mechanisms to select such a file, and offers the user the ability to define
- * the separator and whether or not the first row contains a header describing
- * each column. A live preview makes sure the user will immediately see whether
- * or not his choices make any sense.
+ * This page offers means to import data from an Excel file. It contains
+ * mechanisms to select such a file, and offers the user the ability to choose
+ * the sheet to import from and whether or not the first row contains a header
+ * describing each column. A live preview makes sure the user will immediately
+ * see whether or not his choices make any sense.
  *
  * All of the data gathered on this page is stored within {@link ImportData}.
  *
@@ -52,10 +53,10 @@ import org.eclipse.swt.widgets.TableColumn;
  *  <li>{@link ImportData#setWizardColumns(List)}</li>
  *  <li>{@link ImportData#setFirstRowContainsHeader(boolean)</li>
  *  <li>{@link ImportData#setFileLocation(String)}</li>
- *  <li>{@link ImportData#setCsvSeparator(char)}</li>
+ *  <li>{@link ImportData#setExcelSheetIndex(int)}</li>
  * </ul>
  */
-public class CsvPage extends WizardPage {
+public class ExcelPage extends WizardPage {
 
     /**
      * Reference to the wizard containing this page
@@ -72,46 +73,22 @@ public class CsvPage extends WizardPage {
     private Combo comboLocation;
     private Button btnChoose;
     private Button btnContainsHeader;
-    private Combo comboSeparator;
-    private Label lblSeparator;
+    private Combo comboSheet;
+    private Label lblSheet;
     private Table tablePreview;
     private TableViewer tableViewerPreview;
 
     /**
-     * Currently selected separator (index)
-     *
-     * @see {@link #separators}
+     * Preview data
      */
-    private int selection;
+    ArrayList<String[]> previewData = new ArrayList<String[]>();
 
     /**
-     * Supported separators
+     * Workbook
      *
-     * @note This are the separators itself. The appropriate combobox will
-     * display the {@link #labels} instead.
-     *
-     * @see {@link #labels}
+     * Either HSSFWorkbook or XSSFWorkbook, depending upon file type
      */
-    private final char[] separators = {';', ',', '|', '\t'};
-
-    /**
-     * Labels for separators defined in {@link #separators}
-     *
-     * @see {@link #separators}
-     */
-    private final String[] labels = {";", ",", "|", "Tab"};
-
-    /**
-     * Indicates whether separator was detected automatically or by the user
-     *
-     * The separator will usually be detected automatically
-     * {@link #detectSeparator()}. In case the user selected another
-     * separator by hand, this flag will be set to true, making sure the rest
-     * of the logic knows about it.
-     */
-    private boolean customSeparator;
-
-    final ArrayList<String[]> previewData = new ArrayList<String[]>();
+    private Workbook workbook;
 
 
     /**
@@ -119,12 +96,12 @@ public class CsvPage extends WizardPage {
      *
      * @param wizardImport Reference to wizard containing this page
      */
-    public CsvPage(ImportDataWizard wizardImport)
+    public ExcelPage(ImportDataWizard wizardImport)
     {
 
-        super("WizardImportCsvPage");
+        super("WizardImportExcelPage");
 
-        setTitle("CSV");
+        setTitle("Excel");
         setDescription("Please provide the information requested below");
         this.wizardImport = wizardImport;
 
@@ -155,13 +132,30 @@ public class CsvPage extends WizardPage {
         comboLocation.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Resets {@link customSeparator} and evaluates page
+             * Reads the sheets and selects active one
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                customSeparator = false;
-                evaluatePage();
+                /* Try to read in sheets */
+                try {
+
+                    readSheets();
+
+                } catch (IOException e) {
+
+                    setErrorMessage("Couldn't read sheets from file");
+
+                }
+
+                /* Make widgets visible */
+                comboSheet.setVisible(true);
+                lblSheet.setVisible(true);
+                btnContainsHeader.setVisible(true);
+
+                /* Select active sheet and notify comboSheet about change */
+                comboSheet.select(workbook.getActiveSheetIndex());
+                comboSheet.notifyListeners(SWT.Selection, null);
 
             }
 
@@ -173,22 +167,19 @@ public class CsvPage extends WizardPage {
         btnChoose.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Opens a file selection dialog for CSV files
+             * Opens a file selection dialog for Excel files
              *
-             * If a valid CSV file was selected, it is added to
-             * {@link #comboLocation} when it wasn't already there. It is then
-             * preselected within {@link #comboLocation} and the page is
-             * evaluated {@see #evaluatePage}.
+             * Both XLS and XLSX files can be selected. If a valid file was
+             * selected, it is added to {@link #comboLocation} when it wasn't
+             * already there. In either case it gets preselected.
              *
              * @see {@link Controller#actionShowOpenFileDialog(String)}
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                setPageComplete(false);
-                setErrorMessage(null);
-
-                final String path = wizardImport.getController().actionShowOpenFileDialog("*.csv");
+                /* Open file dialog */
+                final String path = wizardImport.getController().actionShowOpenFileDialog("*.xls;*.xlsx");
 
                 if (path == null) {
 
@@ -196,48 +187,39 @@ public class CsvPage extends WizardPage {
 
                 }
 
+                /* Check whether path was already added */
                 if (comboLocation.indexOf(path) == -1) {
 
                     comboLocation.add(path, 0);
 
                 }
 
+                /* Select path and notify comboLocation about change */
                 comboLocation.select(comboLocation.indexOf(path));
-                customSeparator = false;
-                evaluatePage();
+                comboLocation.notifyListeners(SWT.Selection, null);
 
             }
 
         });
 
-        /* Separator label */
-        lblSeparator = new Label(container, SWT.NONE);
-        lblSeparator.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblSeparator.setText("Separator");
+        /* Sheet label */
+        lblSheet = new Label(container, SWT.NONE);
+        lblSheet.setVisible(false);
+        lblSheet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblSheet.setText("Sheet");
 
-        /* Separator combobox */
-        /* TODO: Fix bug(s) when separator is selected multiple times */
-        comboSeparator = new Combo(container, SWT.READ_ONLY);
-
-        /* Add labels */
-        for (final String s : labels) {
-
-            comboSeparator.add(s);
-
-        }
-
-        comboSeparator.select(selection);
-        comboSeparator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboSeparator.addSelectionListener(new SelectionAdapter() {
+        /* Sheet combobox */
+        comboSheet = new Combo(container, SWT.READ_ONLY);
+        comboSheet.setVisible(false);
+        comboSheet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboSheet.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Set the selection index and customSeparator and evaluates page
+             * (Re-)Evaluate page
              */
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
 
-                selection = comboSeparator.getSelectionIndex();
-                customSeparator = true;
                 evaluatePage();
 
             }
@@ -250,12 +232,13 @@ public class CsvPage extends WizardPage {
 
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
+        btnContainsHeader.setVisible(false);
         btnContainsHeader.setText("First row contains column names");
         btnContainsHeader.setSelection(true);
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Evaluates page with each change
+             * (Re-)Evaluate page
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
@@ -266,10 +249,9 @@ public class CsvPage extends WizardPage {
 
         });
 
-        /* Place holder */
+        /* Place holders */
         new Label(container, SWT.NONE);
 
-        /* Place holders */
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);
@@ -292,131 +274,85 @@ public class CsvPage extends WizardPage {
     }
 
     /**
-     * Tries to detect the separator used within this file
+     * Reads in the available sheets from file
      *
-     * This goes through up to {@link ImportData#previewDataMaxLines} lines
-     * and tries to detect the used separator by counting how often each of
-     * the available {@link #separators} is used.
-     *
-     * @throws IOException In case file couldn't be accessed successfully
+     * This reads in the available sheets from the file chosen at
+     * {@link #comboLocation} and adds them as items to {@link #comboSheet}.
      */
-    private void detectSeparator() throws IOException {
+    private void readSheets() throws IOException {
 
-        final BufferedReader r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
-        int count = 0;
-        final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        /* Remove previous items */
+        comboSheet.removeAll();
 
-        String line = r.readLine();
+        /* Get workbook */
+        try {
 
-        /* Iterate over data */
-        while ((count < ImportData.previewDataMaxLines) && (line != null)) {
+            workbook = WorkbookFactory.create(new FileInputStream(comboLocation.getText()));
 
-            final char[] a = line.toCharArray();
+        } catch (InvalidFormatException e) {
 
-            /* Iterate over line character by character */
-            for (final char c : a) {
-
-                /* Iterate over separators and put matches into hash map */
-                for (int i = 0; i < separators.length; i++) {
-
-                    if (c == separators[i]) {
-
-                        if (!map.containsKey(i)) {
-
-                            map.put(i, 0);
-
-                        }
-
-                        map.put(i, map.get(i) + 1);
-
-                    }
-
-                }
-
-            }
-
-            line = r.readLine();
-
-            count++;
+            throw new IOException("Couldn't open file");
 
         }
 
-        r.close();
+        /* Add all sheets to combo */
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
 
-        if (map.isEmpty()) {
-
-            return;
-
-        }
-
-        int max = Integer.MIN_VALUE;
-
-        /* Check which separator was used the most */
-        for (final int key : map.keySet()) {
-
-            if (map.get(key) > max) {
-
-                max = map.get(key);
-                selection = key;
-
-            }
+            comboSheet.add(workbook.getSheetName(i));
 
         }
 
     }
-
+    
     /**
      * Reads in preview data
      *
      * This goes through up to {@link ImportData#previewDataMaxLines} lines
      * within the appropriate file and reads them in. It uses
      * {@link DataSourceImportAdapter} in combination with
-     * {@link CSVFileConfiguration} to actually read in the data.
+     * {@link ExcelFileConfiguration} to actually read in the data.
      */
     private void readPreview() throws IOException {
 
+        /* Reset preview data */
+        previewData.clear();
+
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
-        final char separator = separators[selection];
+        final int sheetIndex = comboSheet.getSelectionIndex();
         final boolean containsHeader = btnContainsHeader.getSelection();
 
         /* Variables needed for processing */
-        final CSVDataInput in = new CSVDataInput(location, separator);
-        final Iterator<String[]> it = in.iterator();
-        final String[] firstLine;
+        Sheet sheet = workbook.getSheetAt(sheetIndex);
+        Iterator<Row> rowIterator = sheet.iterator();
+        ExcelFileConfiguration config = new ExcelFileConfiguration(location, sheetIndex, containsHeader);
+        wizardColumns = new ArrayList<WizardColumn>();
 
-        /* Check whether there is at least one line in file and retrieve it */
-        if (it.hasNext()) {
+        /* Check whether there is at least one row in sheet and retrieve it */
+        if (!rowIterator.hasNext()) {
 
-            firstLine = it.next();
-
-        } else {
-
-            throw new IOException("No data in file");
+            throw new IOException("Sheet contains no rows");
 
         }
 
-        /* Initialize {@link #allColumns} */
-        wizardColumns = new ArrayList<WizardColumn>();
-        List<Column> columns = new ArrayList<Column>();
+        /* Get first row */
+        Row firstRow = rowIterator.next();
 
-        /* Iterate over columns and add it to {@link #allColumns} */
-        for (int i = 0; i < firstLine.length; i++) {
+        /* Check whether there is at least one column in row */
+        if (firstRow.getPhysicalNumberOfCells() < 1) {
+
+            throw new IOException("First row contains no data");
+
+        }
+
+        /* Iterate over columns and add them */
+        for (int i = 0; i < firstRow.getPhysicalNumberOfCells(); i++) {
 
             Column column = new Column(i, DataType.STRING);
             WizardColumn wizardColumn = new WizardColumn(column);
 
             wizardColumns.add(wizardColumn);
-            columns.add(column);
-
-        }
-
-        /* Create configuration for CSV file and columns to it */
-        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
-
-        for (Column c : columns) {
-
-            config.addColumn(c);
+            config.addColumn(column);
 
         }
 
@@ -432,21 +368,15 @@ public class CsvPage extends WizardPage {
 
         }
 
-        in.close();
-
         /* Remove first entry as it always contains name of columns */
         previewData.remove(0);
 
         /* Check whether there is actual any data */
         if (previewData.size() == 0) {
 
-            throw new IOException("No preview data in file");
+            throw new IOException("No actual data in file");
 
         }
-
-        /*
-         * Show preview in appropriate table
-         */
 
         /* Disable redrawing once redesign is finished */
         tablePreview.setRedraw(false);
@@ -462,7 +392,7 @@ public class CsvPage extends WizardPage {
         for (WizardColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(column.getColumn().getIndex()));
+            tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(column.getColumn().getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
@@ -490,7 +420,10 @@ public class CsvPage extends WizardPage {
     /**
      * Evaluates the page
      *
-     * This checks whether the current settings on the page make any sense.
+     * This checks whether the current settings on the page make any sense
+     * and applies them appropriately. It basically checks tries to read in
+     * the preview data {@link #readPreview()}.
+     *
      * If everything is fine, the settings are being put into the appropriate
      * data container {@link ImportData} and the  current page is marked as
      * complete by invoking {@link #setPageComplete(boolean)}. Otherwise an
@@ -510,13 +443,6 @@ public class CsvPage extends WizardPage {
 
         try {
 
-            if (!customSeparator) {
-
-                detectSeparator();
-                comboSeparator.select(selection);
-
-            }
-
             readPreview();
 
         } catch (Exception e) {
@@ -528,25 +454,28 @@ public class CsvPage extends WizardPage {
         }
 
         /* Put data into container */
-        wizardImport.getData().setWizardColumns(wizardColumns);
-        wizardImport.getData().setPreviewData(previewData);
-        wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
-        wizardImport.getData().setFileLocation(comboLocation.getText());
-        wizardImport.getData().setCsvSeparator(separators[selection]);
+        ImportData data = wizardImport.getData();
 
+        data.setWizardColumns(wizardColumns);
+        data.setPreviewData(previewData);
+        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
+        data.setFileLocation(comboLocation.getText());
+        data.setExcelSheetIndex(comboSheet.getSelectionIndex());
+
+        /* Mark page as completed */
         setPageComplete(true);
 
     }
 
     /**
-     * Label provider for CSV columns
+     * Label provider for Excel columns
      *
      * A new instance of this object will be initiated for each column of
      * {@link tableViewerPreview}. This class holds the index of the
      * appropriate column {@link #index}, making sure they will return the
      * correct value for each column.
      */
-    class CSVColumnLabelProvider extends ColumnLabelProvider {
+    class ExcelColumnLabelProvider extends ColumnLabelProvider {
 
         /**
          * Index of the column this instance is representing
@@ -559,7 +488,7 @@ public class CsvPage extends WizardPage {
          *
          * @param index Index the instance should be created for
          */
-        public CSVColumnLabelProvider(int index) {
+        public ExcelColumnLabelProvider(int index) {
 
             this.index = index;
 
