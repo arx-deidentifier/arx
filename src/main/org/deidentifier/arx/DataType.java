@@ -217,6 +217,12 @@ public abstract class DataType<T> implements Serializable {
             long d1 = multiplicand.getTime();
             return new Date(d1 * multiplicator);
         }
+        
+        @Override
+        public Date multiply(Date multiplicand, double multiplicator) {
+            long d1 = multiplicand.getTime();
+            return new Date((long)((double)d1 * multiplicator));
+        }
     }
 
     /**
@@ -359,6 +365,11 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
+        public Double multiply(Double multiplicand, int multiplicator) {
+            return multiplicand * multiplicator;
+        }
+
+        @Override
         public Double multiply(Double multiplicand, Double multiplicator) {
             return multiplicand * multiplicator;
         }
@@ -384,7 +395,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public Double multiply(Double multiplicand, int multiplicator) {
+        public Double multiply(Double multiplicand, double multiplicator) {
             return multiplicand * multiplicator;
         }
     }
@@ -556,6 +567,10 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public Long multiply(Long multiplicand, int multiplicator) {
             return multiplicand * multiplicator;
+        }
+        @Override
+        public Long multiply(Long multiplicand, double multiplicator) {
+            return (long)((double)multiplicand * multiplicator);
         }
     }
     
@@ -894,6 +909,8 @@ public abstract class DataType<T> implements Serializable {
         public abstract T divide(T dividend, T divisor);
 
         public abstract T multiply(T multiplicand, T multiplicator);
+        
+        public abstract T multiply(T multiplicand, double multiplicator);
         
         public abstract T multiply(T multiplicand, int multiplicator);
 

@@ -24,6 +24,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Adjustment;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
@@ -48,8 +49,10 @@ public class Example18 extends Example {
    
         redactionBased();
         intervalBased();
+        intervalBased2();
         orderBased();
         ldlCholesterol();
+        ldlCholesterolOOB();
         loadStore();
     }
 
@@ -115,10 +118,13 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(DataType.INTEGER);
+        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
+                                                          DataType.INTEGER,
+                                                          new Adjustment<Long>(0l,-5l,Long.MIN_VALUE),
+                                                          new Adjustment<Long>(94l,97l,Long.MAX_VALUE));
         
         // Define base intervals
-        builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
+        builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER, true, false));
         builder.addInterval(0l, 20l);
         builder.addInterval(20l, 33l);
         
@@ -144,7 +150,56 @@ public class Example18 extends Example {
         }
         
         // Print info about resulting levels
-        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleData())));
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleDataOOD())));
+
+        System.out.println("");
+        System.out.println("RESULT");
+
+        // Print resulting hierarchy
+        printArray(builder.create().getHierarchy());
+        System.out.println("");
+    }
+
+    /**
+     * Exemplifies the use of the interval-based builder
+     */
+    private static void intervalBased2() {
+
+
+        // Create the builder
+        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
+                                                          DataType.INTEGER,
+                                                          new Adjustment<Long>(0l,0l,Long.MIN_VALUE),
+                                                          new Adjustment<Long>(100l,100l,Long.MAX_VALUE));
+        
+        // Define base intervals
+        builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER, true, false));
+        builder.addInterval(0l, 20l);
+        builder.addInterval(20l, 33l);
+        
+        // Define grouping fanouts
+        builder.getLevel(0).addFanout(2);
+        builder.getLevel(1).addFanout(3);
+        
+
+        System.out.println("------------------------");
+        System.out.println("INTERVAL-BASED HIERARCHY");
+        System.out.println("------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
+        // Print specification
+        for (Interval<Long> interval : builder.getIntervals()){
+            System.out.println(interval);
+        }
+
+        // Print specification
+        for (Level<Long> level : builder.getLevels()) {
+            System.out.println(level);
+        }
+        
+        // Print info about resulting levels
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleDataOOD())));
 
         System.out.println("");
         System.out.println("RESULT");
@@ -231,6 +286,57 @@ public class Example18 extends Example {
     }
 
     /**
+     * Exemplifies the use of the interval-based builder for LDL cholesterol
+     * in mmol/l in which the bound is dynamically extended to include all values
+     */
+    private static void ldlCholesterolOOB() {
+
+
+        // Create the builder
+        HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(DataType.DECIMAL,
+                                                                                new Adjustment<Double>(0d, -2d, -5d),
+                                                                                new Adjustment<Double>(10d, 13d, 15d));
+        
+        // Define base intervals
+        builder.addInterval(0d, 1.8d, "very low");
+        builder.addInterval(1.8d, 2.6d, "low");
+        builder.addInterval(2.6d, 3.4d, "normal");
+        builder.addInterval(3.4d, 4.1d, "borderline high");
+        builder.addInterval(4.1d, 4.9d, "high");
+        builder.addInterval(4.9d, 10d, "very high");
+        
+        // Define grouping fanouts
+        builder.getLevel(0).addFanout(2, "low").addFanout(2, "normal").addFanout(2, "high");
+        builder.getLevel(1).addFanout(2, "low-normal").addFanout(1, "high");
+
+        System.out.println("--------------------------");
+        System.out.println("LDL-CHOLESTEROL HIERARCHY");
+        System.out.println("--------------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
+        // Print specification
+        for (Interval<Double> interval : builder.getIntervals()){
+            System.out.println(interval);
+        }
+
+        // Print specification
+        for (Level<Double> level : builder.getLevels()) {
+            System.out.println(level);
+        }
+        
+        // Print info about resulting levels
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleLDLDataOOB())));
+        
+        System.out.println("");
+        System.out.println("RESULT");
+        
+        // Print resulting hierarchy
+        printArray(builder.create().getHierarchy());
+        System.out.println("");
+    }
+    
+    /**
      * Returns example data
      * @return
      */
@@ -247,12 +353,40 @@ public class Example18 extends Example {
      * Returns example data
      * @return
      */
+    private static String[] getExampleDataOOD(){
+
+        String[] result = new String[110];
+        for (int i=0; i< result.length; i++){
+            result[i] = String.valueOf(i-10);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns example data
+     * @return
+     */
     private static String[] getExampleLDLData() {
 
         String[] result = new String[100];
         for (int i=0; i< result.length; i++){
             result[i] = String.valueOf(Math.random() * 5d + 0.5d);
         }
+        return result;
+    }
+
+    /**
+     * Returns example data
+     * @return
+     */
+    private static String[] getExampleLDLDataOOB() {
+
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+            result[i] = String.valueOf(Math.random() * 20d + -5d);
+        }
+        result[99] = "14.999999999";
+        result[98] = "-5";
         return result;
     }
 }

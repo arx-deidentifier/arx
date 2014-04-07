@@ -59,7 +59,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         private U snapBound;
         /** Bound*/
         private U labelBound;
-
+            
         /**
          * Creates a new instance
          * @param repeatBound
@@ -213,6 +213,13 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         private final T min;
         /** The builder*/
         private final HierarchyBuilderGroupingBased<T> builder;
+        /** Null for normal intervals, true if <min, false if >max*/
+        private final Boolean lower;
+        
+        /** Left neighbor*/
+        private transient Interval<T> left;
+        /** Right neighbor*/
+        private transient Interval<T> right;
 
         /**
          * Constructor for creating out of bounds labels
@@ -220,11 +227,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
          */
         private Interval(HierarchyBuilderGroupingBased<T> builder, boolean lower, T value) {
             super(lower ? "<" + ((DataType<T>)builder.getDataType()).format(value) : 
-                          ">" + ((DataType<T>)builder.getDataType()).format(value));
+                          ">=" + ((DataType<T>)builder.getDataType()).format(value));
             this.builder = builder;
             this.min = null;
             this.max = null;
             this.function = null;
+            this.lower = lower;
         }
 
         /**
@@ -239,6 +247,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.min = min;
             this.max = max;
             this.function = function;
+            this.lower = false;
         }
         
         @Override
@@ -249,7 +258,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             T otherMin = ((Interval<T>)arg0).min;
             if (myMin == null && otherMin != null) return -1;
             else if (myMin != null && otherMin == null) return +1;
-            else if (myMin == null && otherMin == null) return 0;
+            else if (myMin == null && otherMin == null) {
+                if (lower && !((Interval<T>)arg0).lower) return -1;
+                else if (!lower && ((Interval<T>)arg0).lower) return +1;
+                else return 0;
+            }
             else return type.compare(min, ((Interval<T>)arg0).min);
         }
         
@@ -266,6 +279,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (max == null) {
                 if (other.max != null) return false;
             } else if (!max.equals(other.max)) return false;
+            if (lower == null) {
+                if (other.lower != null) return false;
+            } else if (lower != other.lower) return false;
             if (min == null) {
                 if (other.min != null) return false;
             } else if (!min.equals(other.min)) return false;
@@ -302,6 +318,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             int result = 1;
             result = prime * result + ((max == null) ? 0 : max.hashCode());
             result = prime * result + ((min == null) ? 0 : min.hashCode());
+            result = prime * result + ((lower == null) ? 0 : lower.hashCode());
             return result;
         }
 
@@ -332,6 +349,34 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
          */
         protected boolean isOutOfBounds(){
             return min == null && max == null && function == null;
+        }
+
+        /**
+         * @return the left
+         */
+        private Interval<T> getLeft() {
+            return left;
+        }
+
+        /**
+         * @param left the left to set
+         */
+        private void setLeft(Interval<T> left) {
+            this.left = left;
+        }
+
+        /**
+         * @return the right
+         */
+        private Interval<T> getRight() {
+            return right;
+        }
+
+        /**
+         * @param right the right to set
+         */
+        private void setRight(Interval<T> right) {
+            this.right = right;
         }
     }
 
@@ -495,6 +540,49 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Init
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
         T tValue = type.parse(sValue);
+        Interval<T> interval = getInterval(index, type, tValue);
+        
+        // Handle < min
+        if (type.compare(tValue, intervals.get(0).min) < 0) {
+            if (type.compare(tValue, lowerAdjustment.labelBound) < 0){
+                throw new IllegalArgumentException("Value out of range: "+sValue + "<" + type.format(lowerAdjustment.labelBound));
+            } else if (type.compare(tValue, lowerAdjustment.snapBound) < 0){
+                return new Interval<T>(this, true, lowerAdjustment.snapBound);
+            } else if (type.compare(tValue, lowerAdjustment.repeatBound) < 0){
+                Interval<T> result = getInterval(index, type, lowerAdjustment.repeatBound);
+                return new Interval<T>(this, (DataType<T>)type, lowerAdjustment.snapBound, result.max, result.function);
+            } 
+        }
+        
+        // Handle > max
+        if (type.compare(tValue, intervals.get(intervals.size() - 1).max) >= 0) {
+            if (type.compare(tValue, upperAdjustment.labelBound) >= 0){
+                throw new IllegalArgumentException("Value out of range: "+sValue + ">" + type.format(upperAdjustment.labelBound));
+            } else if (type.compare(tValue, upperAdjustment.snapBound) >= 0){
+                return new Interval<T>(this, false, upperAdjustment.snapBound);
+            } else if (type.compare(tValue, upperAdjustment.repeatBound) >= 0){
+                Interval<T> result = getInterval(index, type, upperAdjustment.repeatBound);
+                // Ugly hack to get interval left of the current one
+                T point = type.subtract(upperAdjustment.repeatBound, type.multiply(type.subtract(result.max, result.min), 0.5d));
+                result = getInterval(index, type, point);
+                return new Interval<T>(this, (DataType<T>)type, result.min, upperAdjustment.snapBound, result.function);
+            }
+        }
+
+        // Adjust
+        if (type.compare(interval.min, lowerAdjustment.snapBound) < 0) {
+            interval = new Interval<T>(this, (DataType<T>)type, lowerAdjustment.snapBound, interval.max, interval.function);
+        }
+        if (type.compare(interval.max, upperAdjustment.snapBound) > 0) {
+            interval = new Interval<T>(this, (DataType<T>)type, interval.min, upperAdjustment.snapBound, interval.function);
+        }
+        
+        // Return
+        return interval;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Interval<T> getInterval(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
 
         // Find interval
         int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
@@ -502,13 +590,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         Interval<T> interval = query(index, type.subtract(tValue, offset));
 
         // Check
-        if (interval == null) { throw new IllegalStateException("No interval found for: " + sValue); }
+        if (interval == null) { throw new IllegalStateException("No interval found for: " + type.format(tValue)); }
         
+        // Create first result interval
         T lower = type.add(interval.min, offset);
         T upper = type.add(interval.max, offset);
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public String isValid() {
@@ -573,6 +662,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         if (valid != null) {
             throw new IllegalArgumentException(valid);
         }
+        
+        // Build ring
+        for (int i=1; i<intervals.size()-1; i++){
+            intervals.get(i).setRight(intervals.get(i+1));
+            intervals.get(i).setLeft(intervals.get(i-1));
+        }
+        intervals.get(0).setLeft(intervals.get(intervals.size()-1));
+        intervals.get(intervals.size()-1).setRight(intervals.get(0));
         
         // Create adjustments
         Adjustment<T> lowerAdjustment = new Adjustment<T>(null, null, null);

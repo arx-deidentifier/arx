@@ -212,8 +212,13 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericInterval<T> extends AggregateFunction<T> {
         
-        private GenericInterval(DataType<T> type) {
+        private final boolean lowerIncluded;
+        private final boolean upperIncluded;
+        
+        private GenericInterval(DataType<T> type, boolean lowerIncluded, boolean upperIncluded) {
             super(type);
+            this.lowerIncluded = lowerIncluded;
+            this.upperIncluded = upperIncluded;
         }
 
         @Override
@@ -233,11 +238,11 @@ public abstract class AggregateFunction<T> {
                     throw new RuntimeException(e);
                 }
             }
-          return new StringBuilder().append("[")
+          return new StringBuilder().append(lowerIncluded ? "[" : "]")
                                     .append(min)
                                     .append(", ")
                                     .append(max)
-                                    .append("]")
+                                    .append(upperIncluded ? "]" : "[")
                                     .toString();
         }
         
@@ -325,7 +330,14 @@ public abstract class AggregateFunction<T> {
      * An aggregate function that returns an interval [min, max] 
      */
     public static final <V> AggregateFunction<V> INTERVAL(DataType<V> type) {
-        return new GenericInterval<V>(type);
+        return new GenericInterval<V>(type, true, true);
+    }
+
+    /**
+     * An aggregate function that returns an interval [min, max] 
+     */
+    public static final <V> AggregateFunction<V> INTERVAL(DataType<V> type, boolean lowerIncluded, boolean upperIncluded) {
+        return new GenericInterval<V>(type, lowerIncluded, upperIncluded);
     }
 
     /**
