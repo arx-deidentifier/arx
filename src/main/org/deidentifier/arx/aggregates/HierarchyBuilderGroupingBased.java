@@ -245,14 +245,22 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             throw new IllegalStateException("Please call prepare() first");
         }
 
+        // Add input data
         String[][] result = new String[groups.length][groups[0].length + 1];
         for (int i=0; i<result.length; i++) {
             result[i] = new String[groups[0].length + 1];
             result[i][0] = data[i];
-            for (int j=0; j<groups[0].length; j++){
-                result[i][j+1] = groups[i][j].getLabel();
+        }
+        
+        // Add levels
+        for (int i=0; i<result[0].length - 1; i++){
+            Map<String, Map<Group, String>> multiplicities = new HashMap<String, Map<Group, String>>();
+            for (int j=0; j<result.length; j++){
+                result[j][i + 1] = getLabel(multiplicities, groups[j][i]);
             }
         }
+        
+        
         Hierarchy h = Hierarchy.create(result);
         
         this.prepared = false;
@@ -261,6 +269,32 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         return h;
     }
     
+    /**
+     * Returns the label for a given group. Makes sure that no labels are returned twice
+     * @param multiplicities
+     * @param group
+     * @return
+     */
+    private String getLabel(Map<String, Map<Group, String>> multiplicities, Group group) {
+        String label = group.getLabel();
+        Map<Group, String> map = multiplicities.get(label);
+        if (map == null) {
+            map = new HashMap<Group, String>();
+            map.put(group, label);
+            multiplicities.put(label, map);
+            return label;
+        } else {
+            String storedLabel = map.get(group);
+            if (storedLabel != null) {
+                return storedLabel;
+            } else {
+                label +="-"+map.size();
+                map.put(group, label);
+                return label;
+            }
+        }
+    }
+
     /**
      * Returns the given level
      * @param level
@@ -330,8 +364,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         this.groups = prepareGroups();
         this.prepared = true;
         
+       // TODO: This assumes that input data does not contain duplicates
         int[] result = new int[this.groups[0].length + 1];
-        result[0] = data.length; // TODO: This assumes that data does not contain duplicates
+        result[0] = data.length; 
         for (int i=0; i<result.length - 1; i++){
             Set<Group> set = new HashSet<Group>();
             for (int j=0; j<this.groups.length; j++){
