@@ -46,7 +46,7 @@ public abstract class DataType<T> implements Serializable {
      * Base class for date/time types
      * @author Fabian Prasser
      */
-	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat {
+	public static class ARXDate extends DataType<Date> implements DataTypeWithFormat, DataTypeWithRatioScale<Date> {
 	
         private static final long serialVersionUID = -1658470914184442833L;
 
@@ -157,13 +157,73 @@ public abstract class DataType<T> implements Serializable {
         public String format(Date s){
         	return format.format(s);
         }
+        
+        @Override
+        public String divide(String dividend, String divisor) {
+            long d1 = parse(dividend).getTime();
+            long d2 = parse(divisor).getTime();
+            return format(new Date(d1 / d2));
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            long d1 = parse(multiplicand).getTime();
+            long d2 = parse(multiplicator).getTime();
+            return format(new Date(d1 * d2));
+        }
+
+        @Override
+        public Date divide(Date dividend, Date divisor) {
+            long d1 = dividend.getTime();
+            long d2 = divisor.getTime();
+            return new Date(d1 / d2);
+        }
+
+        @Override
+        public Date multiply(Date multiplicand, Date multiplicator) {
+            long d1 = multiplicand.getTime();
+            long d2 = multiplicator.getTime();
+            return new Date(d1 * d2);
+        }
+
+        @Override
+        public int compare(Date t1, Date t2) {
+            return t1.compareTo(t2);
+        }
+
+        @Override
+        public Date subtract(Date minuend, Date subtrahend) {
+            long d1 = minuend.getTime();
+            long d2 = subtrahend.getTime();
+            return new Date(d1 - d2);
+        }
+
+        @Override
+        public Date add(Date augend, Date addend) {
+            long d1 = augend.getTime();
+            long d2 = addend.getTime();
+            return new Date(d1 + d2);
+        }
+
+        @Override
+        public double ratio(Date dividend, Date divisor) {
+            long d1 = dividend.getTime();
+            long d2 = divisor.getTime();
+            return (double)d1 / (double)d2;
+        }
+
+        @Override
+        public Date multiply(Date multiplicand, int multiplicator) {
+            long d1 = multiplicand.getTime();
+            return new Date(d1 * multiplicator);
+        }
     }
 
     /**
 	 * Base class for numeric types
 	 * @author Fabian Prasser
 	 */
-    public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat {
+    public static class ARXDecimal extends DataType<Double> implements DataTypeWithFormat, DataTypeWithRatioScale<Double> {
   
         private static final long serialVersionUID = 7293446977526103610L;
 
@@ -278,13 +338,62 @@ public abstract class DataType<T> implements Serializable {
                 return format.format(s);
             }
         }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            Double d1 = parse(dividend);
+            Double d2 = parse(divisor);
+            return format(d1 / d2);
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            Double d1 = parse(multiplicand);
+            Double d2 = parse(multiplicator);
+            return format(d1 * d2);
+        }
+
+        @Override
+        public Double divide(Double dividend, Double divisor) {
+            return dividend / divisor;
+        }
+
+        @Override
+        public Double multiply(Double multiplicand, Double multiplicator) {
+            return multiplicand * multiplicator;
+        }
+
+        @Override
+        public int compare(Double t1, Double t2) {
+            return t1.compareTo(t2);
+        }
+
+        @Override
+        public Double subtract(Double minuend, Double subtrahend) {
+            return minuend - subtrahend;
+        }
+
+        @Override
+        public Double add(Double augend, Double addend) {
+            return augend + addend;
+        }
+
+        @Override
+        public double ratio(Double dividend, Double divisor) {
+            return dividend / divisor;
+        }
+
+        @Override
+        public Double multiply(Double multiplicand, int multiplicator) {
+            return multiplicand * multiplicator;
+        }
     }
     
     /**
      * Base class for numeric types
      * @author Fabian Prasser
      */
-    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat {
+    public static class ARXInteger extends DataType<Long> implements DataTypeWithFormat, DataTypeWithRatioScale<Long>  {
         
         private static final long serialVersionUID = -631163546929231044L;
 
@@ -398,6 +507,55 @@ public abstract class DataType<T> implements Serializable {
             } catch (Exception e){
                 return false;
             }
+        }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            Long d1 = parse(dividend);
+            Long d2 = parse(divisor);
+            return format(d1 / d2);
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            Long d1 = parse(multiplicand);
+            Long d2 = parse(multiplicator);
+            return format(d1 * d2);
+        }
+
+        @Override
+        public Long divide(Long dividend, Long divisor) {
+            return (long)Math.round((double)dividend / (double)divisor);
+        }
+
+        @Override
+        public Long multiply(Long multiplicand, Long multiplicator) {
+            return (long)Math.round((double)multiplicand * (double)multiplicator);
+        }
+
+        @Override
+        public int compare(Long t1, Long t2) {
+            return t1.compareTo(t2);
+        }
+
+        @Override
+        public Long subtract(Long minuend, Long subtrahend) {
+            return minuend - subtrahend;
+        }
+
+        @Override
+        public Long add(Long augend, Long addend) {
+            return augend + addend;
+        }
+        
+        @Override
+        public double ratio(Long dividend, Long divisor) {
+            return (double)dividend / (double)divisor;
+        }
+
+        @Override
+        public Long multiply(Long multiplicand, int multiplicator) {
+            return multiplicand * multiplicator;
         }
     }
     
@@ -720,6 +878,45 @@ public abstract class DataType<T> implements Serializable {
         public abstract DataType<T> newInstance(String format);
     }
 
+    /**
+     * An interface for data types with a ratio scale
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    public static interface DataTypeWithRatioScale<T> {
+        
+        public abstract String divide(String dividend, String divisor);
+
+        public abstract String multiply(String multiplicand,
+                                        String multiplicator);
+
+        public abstract T divide(T dividend, T divisor);
+
+        public abstract T multiply(T multiplicand, T multiplicator);
+        
+        public abstract T multiply(T multiplicand, int multiplicator);
+
+        public abstract int compare(T t1, T t2);
+
+        public abstract T subtract(T minuend, T subtrahend);
+
+        public abstract T add(T augend, T addend);
+        
+        public abstract double ratio(T dividend, T divisor);
+
+        public abstract int compare(String s1, String s2) throws NumberFormatException,
+                                                                 ParseException;
+
+        public abstract T parse(String s);
+
+        public abstract DataTypeDescription<T> getDescription();
+
+        public abstract String format(T t);
+
+        public abstract boolean isValid(String s);
+    }
+    
     /**
      * An interface for data types with format
      * @author Fabian Prasser

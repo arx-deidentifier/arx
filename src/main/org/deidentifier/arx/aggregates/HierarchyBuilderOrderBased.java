@@ -17,8 +17,15 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 import org.deidentifier.arx.DataType;
 
@@ -32,18 +39,58 @@ import org.deidentifier.arx.DataType;
  */
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
+    @SuppressWarnings("hiding")
+    protected class CloseElements<T> extends Group {
+        
+        private static final long serialVersionUID = 7224062023293601561L;
+        private Integer  order;
+        private String[] values;
+
+        protected CloseElements(String[] values, AggregateFunction<T> function, int order) {
+            super(function.aggregate(values));
+            this.values = values;
+            this.order = order;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public int compareTo(Group o) {
+            return this.order.compareTo(((CloseElements<T>)o).order);
+        }
+
+        @Override
+        @SuppressWarnings("rawtypes")
+        protected String getGroupLabel(Set<Group> groups, Fanout fanout) {
+            List<String> values = new ArrayList<String>();
+            for (Group group : groups){
+                for (String s : ((CloseElements)group).getValues()) {
+                    values.add(s);
+                }
+            }
+            return fanout.getFunction().aggregate(values.toArray(new String[values.size()]));
+        }
+
+        protected String[] getValues(){
+            return values;
+        }
+
+        @Override
+        protected boolean isOutOfBounds() {
+            return false;
+        }
+    }
+    
     private static final long serialVersionUID = -2749758635401073668L;
     
     private final Comparator<String> comparator;
 
     /**
      * Creates a new instance
-     * @param data The data items to build a hierarchy for
      * @param type The data type is also used for ordering data items
      * @param order Should the items be sorted according to the order induced by the data type 
      */
-    public HierarchyBuilderOrderBased(final String[] data, final DataType<T> type, boolean order) {
-        super(data, type);
+    public HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
+        super(Type.ORDER_BASED, type);
         if (order) {
             this.comparator = new Comparator<String>(){
                 @Override
@@ -65,8 +112,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
      */
-    public HierarchyBuilderOrderBased(final String[] data, final DataType<T> type, final Comparator<T> comparator) {
-        super(data, type);
+    public HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
+        super(Type.ORDER_BASED, type);
         this.comparator = new Comparator<String>(){
             @Override
             public int compare(String o1, String o2) {
@@ -80,19 +127,69 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     @Override
-    public int getBaseLevel() {
-        return 0;
-    }
-    
-    @Override
-    protected void doPrepare() {
+    protected Group[][] prepareGroups() {
         if (comparator != null) {
             Arrays.sort(super.getData(), comparator);
         }
+
+        // 1. Obtain list of unique groups
+        // 2. Sort them (they implement comparable)
+        // 3. Handle duplicate labels, two options
+        // 3. Perform grouping, but exclude OutOfBounds groups
+        
+        List<Fanout<T>> fanouts = super.getLevel(0).getFanouts();
+        List<String> items = new ArrayList<String>();
+        String[] data = getData();
+        int index = 0;
+        
+        Group[][] result = new Group[data.length][1];
+        int resultIndex = 0;
+        
+        outer: while (true) {
+            for (Fanout<T> fanout : fanouts) {
+                for (int i = 0; i<fanout.getFanout(); i++){
+                    items.add(data[index++]);
+                    if (index == data.length) break;
+                }
+                CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction(), index);
+                for (int i=0; i<items.size(); i++) {
+                    result[resultIndex++] = new Group[]{element};
+                }
+                items.clear();
+                if (index == data.length) break outer;
+            }
+        }
+        
+        return result;
     }
 
-    @Override
-    protected String internalIsValid() {
-        return null;
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static <T> HierarchyBuilderOrderBased<T> create(String file) throws IOException{
+        return create(new File(file));
+    }
+    
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> HierarchyBuilderOrderBased<T> create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderOrderBased<T> result = (HierarchyBuilderOrderBased<T>)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
+        }
     }
 }

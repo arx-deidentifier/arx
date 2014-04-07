@@ -20,6 +20,19 @@ import org.deidentifier.arx.io.DataSourceConfiguration;
 abstract public class DataSourceImportAdapter implements Iterator<String[]> {
 
     /**
+     * Array of datatypes describing the columns
+     */
+    protected DataType<?>[] dataTypes;
+
+    /**
+     * Indexes of columns that should be imported
+     *
+     * This keeps track of columns that should be imported, as not all columns
+     * will necessarily be imported.
+     */
+    protected int[] indexes;
+
+    /**
      * Data source configuration used to import actual data
      */
     private DataSourceConfiguration config = null;

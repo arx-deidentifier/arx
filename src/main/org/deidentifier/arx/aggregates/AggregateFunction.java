@@ -29,6 +29,30 @@ import org.deidentifier.arx.DataType;
  * @param <T>
  */
 public abstract class AggregateFunction<T> {
+    /**
+     * An aggregate function that returns a constant value
+     * 
+     * @author Fabian Prasser
+     */
+    public static class GenericConstant<T> extends AggregateFunction<T> {
+
+        private String value;
+        
+        private GenericConstant(DataType<T> type, String value) {
+            super(type);
+            this.value = value;
+        }
+
+        @Override
+        public String aggregate(String[] values) {
+            return value;
+        }
+        
+        @Override
+        public String toString(){
+            return "Constant[value="+value+"]";
+        }
+    }
 
     /**
      * An aggregate function that returns a set of all data values
@@ -53,6 +77,11 @@ public abstract class AggregateFunction<T> {
             }
             b.append("}");
             return b.toString();
+        }
+        
+        @Override
+        public String toString(){
+            return "Set";
         }
     }
 
@@ -82,6 +111,11 @@ public abstract class AggregateFunction<T> {
             }
             return b.toString();
         }
+        
+        @Override
+        public String toString(){
+            return "SetOfPrefixes[length="+length+"]";
+        }
     };
     
     /**
@@ -104,6 +138,11 @@ public abstract class AggregateFunction<T> {
                     .append(values[values.length - 1])
                     .append("]")
                     .toString();
+        }
+        
+        @Override
+        public String toString(){
+            return "Bounds";
         }
     };
 
@@ -158,6 +197,11 @@ public abstract class AggregateFunction<T> {
             }
             return new String(result);
         }
+        
+        @Override
+        public String toString(){
+            return "CommonPrefix";
+        }
     }
     
     /**
@@ -196,6 +240,11 @@ public abstract class AggregateFunction<T> {
                                     .append("]")
                                     .toString();
         }
+        
+        @Override
+        public String toString(){
+            return "Interval";
+        }
     }
 
     /** The data type*/
@@ -217,6 +266,9 @@ public abstract class AggregateFunction<T> {
      * @return
      */
     public abstract String aggregate (String[] values);
+    
+    @Override
+    public abstract String toString ();
 
     /** 
      * An aggregate function that returns a set of all data values 
@@ -274,5 +326,12 @@ public abstract class AggregateFunction<T> {
      */
     public static final <V> AggregateFunction<V> INTERVAL(DataType<V> type) {
         return new GenericInterval<V>(type);
+    }
+
+    /**
+     * An aggregate function that returns a constant value
+     */
+    public static final <V> AggregateFunction<V> CONSTANT(DataType<V> type, String value) {
+        return new GenericConstant<V>(type, value);
     }
 }

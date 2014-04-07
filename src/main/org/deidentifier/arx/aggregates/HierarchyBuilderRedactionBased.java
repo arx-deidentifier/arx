@@ -17,6 +17,11 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,27 +36,28 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * @author Fabian Prasser
  *
  */
-public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
+public class HierarchyBuilderRedactionBased extends HierarchyBuilder<String> implements Serializable {
 
     public static enum Order {
-        RIGHT_TO_LEFT,
-        LEFT_TO_RIGHT
+        LEFT_TO_RIGHT,
+        RIGHT_TO_LEFT
     }
-    private Order          aligmentOrder      = Order.LEFT_TO_RIGHT;
-    private Order          redactionOrder     = Order.RIGHT_TO_LEFT;
-    private char           redactionCharacter = '*';
-    private char           paddingCharacter   = '*';
-    private final String[] data;
 
-    private String[][]     result;
-    
+    private static final long serialVersionUID = 3625654600380531803L;
+
+    private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
+    private char                 paddingCharacter   = '*';
+    private char                 redactionCharacter = '*';
+    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
+    private transient String[][] result;
+
     /**
      * Values are aligned left-to-right and redacted right-to-left. Redacted characters
      * are replaced with the given character. The same character is used for padding.
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(String[] data, char redactionCharacter){
-        this.data = data;
+    public HierarchyBuilderRedactionBased(char redactionCharacter){
+        super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
     }
@@ -63,11 +69,10 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
      * @param redactionOrder
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(String[] data, 
-                                          Order alignmentOrder, 
+    public HierarchyBuilderRedactionBased(Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char redactionCharacter){
-        this.data = data;
+        super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
         this.aligmentOrder = alignmentOrder;
@@ -82,12 +87,11 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
      * @param paddingCharacter
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(String[] data, 
-                                          Order alignmentOrder, 
+    public HierarchyBuilderRedactionBased(Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char paddingCharacter, 
                                           char redactionCharacter){
-        this.data = data;
+        super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = paddingCharacter;
         this.aligmentOrder = alignmentOrder;
@@ -104,22 +108,24 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
         
         // Check
         if (result == null) {
-            prepareResult();
+            throw new IllegalArgumentException("Please call prepare() first");
         }
         
         // Return
-        return Hierarchy.create(result);
+        Hierarchy h = Hierarchy.create(result);
+        this.result = null;
+        return h;
     }
 
     /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level
      * @return
      */
-    public int[] prepare(){
+    public int[] prepare(String[] data){
         
         // Check
         if (this.result == null) {
-            prepareResult();
+            prepareResult(data);
         }
         
         // Compute
@@ -139,7 +145,7 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
     /**
      * Computes the hierarchy
      */
-    private void prepareResult(){
+    private void prepareResult(String[] data){
 
         // Determine length
         int length = Integer.MIN_VALUE;
@@ -185,6 +191,37 @@ public class HierarchyBuilderRedactionBased implements HierarchyBuilder{
                     result[i][j] =  redact + base[i].substring(0, length - j);
                 }
             }
+        }
+    }
+
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static HierarchyBuilderRedactionBased create(String file) throws IOException{
+        return create(new File(file));
+    }
+    
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static HierarchyBuilderRedactionBased create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderRedactionBased result = (HierarchyBuilderRedactionBased)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
         }
     }
 }

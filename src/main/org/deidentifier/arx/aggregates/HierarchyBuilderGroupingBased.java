@@ -19,10 +19,14 @@ package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -34,20 +38,27 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, HierarchyBuilder {
+public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<T> implements Serializable {
 
     /**
      * This class represents a fanout parameter
      * @author Fabian Prasser
      */
-    public static class Fanout<T> implements Serializable {
+    public static class Fanout<U> implements Serializable {
         
         private static final long serialVersionUID = -5767501048737045793L;
         
-        private int fanout;
-        private AggregateFunction<T> function;
+        /** Fanout*/
+        private final int fanout;
+        /** Aggregate function*/
+        private final AggregateFunction<U> function;
         
-        public Fanout(int fanout, AggregateFunction<T> function) {
+        /**
+         * Creates a new instance
+         * @param fanout
+         * @param function
+         */
+        private Fanout(int fanout, AggregateFunction<U> function) {
             if (fanout<=0) {
                 throw new IllegalArgumentException("Fanout must be >= 0");
             }
@@ -68,35 +79,74 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         /**
          * @return the function
          */
-        public AggregateFunction<T> getFunction() {
+        public AggregateFunction<U> getFunction() {
             return function;
         }
+        
+        @Override
+        public String toString(){
+            return "Fanout[length="+fanout+", function="+function.toString()+"]";
+        }
     }
+    
     /**
      * This class represents a level in the hierarchy
      * @author Fabian Prasser
      */
-    public class HierarchyBuilderLevel {
+    public static class Level<U> implements Serializable{
         
-        private List<Fanout<T>> list = new ArrayList<Fanout<T>>();
-        private int level;
+        private static final long serialVersionUID = 1410005675926162598L;
+        /** Level*/
+        private final int level;
+        /** List of fanouts*/
+        private final List<Fanout<U>> list = new ArrayList<Fanout<U>>();
+        /** Builder*/
+        private final HierarchyBuilderGroupingBased<U> builder;
         
         /**
          * Creates a new instance
          * @param level
          */
-        private HierarchyBuilderLevel(int level) {
+        private Level(HierarchyBuilderGroupingBased<U> builder, int level) {
             this.level = level;
+            this.builder = builder;
         }
-
+        
         /**
-         * Adds the given fanout
+         * Adds the given fanout with the default aggregate function
          * @param fanout
          * @return
          */
-        public HierarchyBuilderLevel add(Fanout<T> fanout) {
-            this.list.add(fanout);
-            setPrepared(false);
+        public Level<U> addFanout(int fanout) {
+            if (builder.getDefaultAggregateFunction() == null) {
+                throw new IllegalStateException("No default aggregate function defined");
+            }
+            this.list.add(new Fanout<U>(fanout, builder.getDefaultAggregateFunction()));
+            builder.setPrepared(false);
+            return this;
+        }
+
+        /**
+         * Adds the given fanout with the given aggregate function
+         * @param fanout
+         * @param function
+         * @return
+         */
+        public Level<U> addFanout(int fanout, AggregateFunction<U> function) {
+            this.list.add(new Fanout<U>(fanout, function));
+            builder.setPrepared(false);
+            return this;
+        }
+
+        /**
+         * Adds the given fanout. The result will be labeled with the given string
+         * @param fanout
+         * @param label
+         * @return
+         */
+        public Level<U> addFanout(int fanout, String label) {
+            this.list.add(new Fanout<U>(fanout, AggregateFunction.CONSTANT(builder.getDataType(), label)));
+            builder.setPrepared(false);
             return this;
         }
 
@@ -104,27 +154,9 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
          * Removes all fanouts on this level
          * @return
          */
-        public HierarchyBuilderLevel clear() {
+        public Level<U> clearFanouts() {
             this.list.clear();
-            setPrepared(false);
-            return this;
-        }
-        
-        /**
-         * @return the level
-         */
-        public int getLevel() {
-            return level;
-        }
-
-        /**
-         * Removes the given fanout
-         * @param fanout
-         * @return
-         */
-        public HierarchyBuilderLevel remove(Fanout<T> fanout) {
-            this.list.remove(fanout);
-            setPrepared(false);
+            builder.setPrepared(false);
             return this;
         }
         
@@ -132,58 +164,131 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
          * Returns the list
          * @return
          */
-        private List<Fanout<T>> getFanouts(){
-            return this.list;
+        @SuppressWarnings("unchecked")
+        public List<Fanout<U>> getFanouts(){
+            return (List<Fanout<U>>)((ArrayList<Fanout<U>>)this.list).clone();
+        }
+
+        /**
+         * @return the level
+         */
+        public int getLevel() {
+            return level;
+        }
+     
+        @Override
+        public String toString(){
+            StringBuilder b = new StringBuilder();
+            b.append("Level[height="+level+"]\n");
+            for (int i=0, length=list.size(); i<length; i++){
+                Fanout<U> fanout = list.get(i);
+                b.append("   ").append(fanout.toString());
+                if (i<length-1) b.append("\n");
+            }
+            return b.toString();
         }
     }
-    private static final long serialVersionUID = 3208791665131141362L;
-    private DataType<T> type;
-    
-    private String[] data;
-    
-    private boolean prepared = false;
     
     /**
-     * All fanouts for each level
+     * A group representation to be used by subclasses
+     * @author Fabian Prasser
      */
-    private Map<Integer, HierarchyBuilderLevel> fanouts = new HashMap<Integer, HierarchyBuilderLevel>();
+    protected abstract static class Group implements Serializable, Comparable<Group> {
+        
+        private static final long serialVersionUID = -7657969446040078411L;
+        
+        private String label;
+        
+        protected Group(String label){
+            this.label = label;
+        }
+        @SuppressWarnings("rawtypes") 
+        protected abstract String getGroupLabel(Set<Group> groups, Fanout fanout);
+        
+        protected String getLabel(){
+            return label;
+        }
+        
+        protected abstract boolean isOutOfBounds();
+    }
+    
+    private static final long serialVersionUID = 3208791665131141362L;
+    /** The data array*/
+    private transient String[] data;
+    /** All fanouts for each level */
+    private Map<Integer, Level<T>> fanouts = new HashMap<Integer, Level<T>>();
+    /** The groups on the first level*/
+    private transient Group[][] groups;
+    /** Are we ready to go*/
+    private transient boolean prepared = false;
+    /** The data type*/
+    private DataType<T> datatype;
+    /** The default aggregate function, might be null*/
+    private AggregateFunction<T> function;
 
     /**
      * Creates a new instance for the given data type
      * @param type
      */
-    public HierarchyBuilderGroupingBased(String[] data, DataType<T> type){
-        this.type = type;
-        this.data = data;
+    protected HierarchyBuilderGroupingBased(Type type, DataType<T> datatype){
+        super(type);
+        this.datatype = datatype;
     }
-
+    
     /**
      * Creates a new hierarchy, based on the predefined specification
      * @return
      */
     public Hierarchy create(){
-        if (!prepared) prepare();
-        return null;
+        
+        if (!prepared) {
+            throw new IllegalStateException("Please call prepare() first");
+        }
+
+        String[][] result = new String[groups.length][groups[0].length + 1];
+        for (int i=0; i<result.length; i++) {
+            result[i] = new String[groups[0].length + 1];
+            result[i][0] = data[i];
+            for (int j=0; j<groups[0].length; j++){
+                result[i][j+1] = groups[i][j].getLabel();
+            }
+        }
+        Hierarchy h = Hierarchy.create(result);
+        
+        this.prepared = false;
+        this.data = null;
+        this.groups = null;
+        return h;
     }
-    
-    /**
-     * Return the first level on which grouping is to be performed. Returns 0 for order-based hierarchies and
-     * 1 for interval-based hierarchies
-     * @return
-     */
-    public abstract int getBaseLevel();
     
     /**
      * Returns the given level
      * @param level
      * @return 
      */
-    public HierarchyBuilderLevel getLevel(int level){
+    public Level<T> getLevel(int level){
         if (!this.fanouts.containsKey(level)) {
-            this.fanouts.put(level, new HierarchyBuilderLevel(level));
+            this.fanouts.put(level, new Level<T>(this, level));
             this.setPrepared(false);
         }
         return this.fanouts.get(level);
+    }
+
+    /**
+     * Returns all currently defined levels
+     * @return
+     */
+    public List<Level<T>> getLevels(){
+        List<Level<T>> levels = new ArrayList<Level<T>>();
+        levels.addAll(this.fanouts.values());
+        Collections.sort(levels, new Comparator<Level<T>>(){
+            @Override
+            public int compare(Level<T> o1,
+                               Level<T> o2) {
+                return new Integer(o1.getLevel()).compareTo(new Integer(o2.getLevel()));
+            }
+        });
+        return levels;
     }
     
     /**
@@ -193,13 +298,9 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      */
     public String isValid() {
         
-        // Check subclass
-        String error = internalIsValid();
-        if (error != null) return error;
-
         // Check fanouts
         int max = 0;
-        for (Entry<Integer, HierarchyBuilderLevel> level : this.fanouts.entrySet()) {
+        for (Entry<Integer, Level<T>> level : this.fanouts.entrySet()) {
             if (level.getValue().getFanouts().isEmpty()) {
                 return "No fanout specified on level "+level.getKey();
             }
@@ -207,6 +308,8 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
         }
         for (int i=0; i<max; i++){
             if (!this.fanouts.containsKey(i)) {
+                return "Missing specification for level "+i;
+            } else if (this.fanouts.get(i).getFanouts().isEmpty()) {
                 return "Missing specification for level "+i;
             }
         }
@@ -218,19 +321,37 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * Prepares the builder. Returns a list of the number of equivalence classes per level
      * @return
      */
-    public int[] prepare(){
+    public int[] prepare(String[] data){
+        this.data = data;
         String error = this.isValid();
         if (error != null) {
             throw new IllegalArgumentException(error);
         }
-        this.doPrepare();
-        return null;
+        this.groups = prepareGroups();
+        this.prepared = true;
+        
+        int[] result = new int[this.groups[0].length + 1];
+        result[0] = data.length; // TODO: This assumes that data does not contain duplicates
+        for (int i=0; i<result.length - 1; i++){
+            Set<Group> set = new HashSet<Group>();
+            for (int j=0; j<this.groups.length; j++){
+                set.add(groups[j][i]);
+            }
+            result[i + 1] = set.size();
+        }
+        return result;
     }
     
     /**
-     * Tells the implementing class to prepare the generalization process
+     * Sets the default aggregate function to be used by all fanouts
+     * @param function
      */
-    protected abstract void doPrepare();
+    public void setAggregateFunction(AggregateFunction<T> function){
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        this.function = function;
+    }
     
     /**
      * Returns the data array
@@ -244,16 +365,22 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      * Returns the data type
      * @return
      */
-    protected DataType<T> getType(){
-        return this.type;
+    protected DataType<T> getDataType(){
+        return this.datatype;
     }
     
     /**
-     * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
-     * if not.
+     * Returns the default aggregate function
      * @return
      */
-    protected abstract String internalIsValid();
+    protected AggregateFunction<T> getDefaultAggregateFunction(){
+        return this.function;
+    }
+    
+    /**
+     * Tells the implementing class to prepare the generalization process
+     */
+    protected abstract Group[][] prepareGroups();
     
     /**
      * Is this builder prepared allready
@@ -261,5 +388,8 @@ public abstract class HierarchyBuilderGroupingBased<T> implements Serializable, 
      */
     protected void setPrepared(boolean prepared){
         this.prepared = prepared;
+        if (prepared == false) {
+            this.groups = null;
+        }
     }
 }

@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 
@@ -42,11 +41,6 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
     private CountingInputStream cin;
 
     /**
-     * Array of datatypes describing the columns
-     */
-    private DataType<?>[] types;
-
-    /**
      * @see {@link CSVDataInput}
      */
     private CSVDataInput in;
@@ -57,14 +51,6 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
      * @see {@link CSVDataInput#iterator()}
      */
     private Iterator<String[]> it;
-
-    /**
-     * Indexes of columns that should be imported
-     *
-     * This keeps track of columns that should be imported, as not all columns
-     * will necessarily be imported.
-     */
-    private int[] indexes;
 
     /**
      * Contains the last row as returned by {@link CSVDataInput#iterator()}
@@ -100,7 +86,7 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
 
         /* Preparation work */
         this.indexes = getIndexesToImport();
-        this.types = getColumnDatatypes();
+        this.dataTypes = getColumnDatatypes();
 
         /* Used to keep track of progress */
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
@@ -172,7 +158,7 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
 
             result[i] = row[indexes[i]];
 
-            if (!types[i].isValid(result[i])) {
+            if (!dataTypes[i].isValid(result[i])) {
 
                 throw new IllegalArgumentException("Data value does not match data type");
 
