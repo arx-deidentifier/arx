@@ -185,9 +185,6 @@ public class CsvPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                setPageComplete(false);
-                setErrorMessage(null);
-
                 final String path = wizardImport.getController().actionShowOpenFileDialog("*.csv");
 
                 if (path == null) {
@@ -203,8 +200,7 @@ public class CsvPage extends WizardPage {
                 }
 
                 comboLocation.select(comboLocation.indexOf(path));
-                customSeparator = false;
-                evaluatePage();
+                comboLocation.notifyListeners(SWT.Selection, null);
 
             }
 
