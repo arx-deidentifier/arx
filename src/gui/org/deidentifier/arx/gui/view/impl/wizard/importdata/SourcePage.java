@@ -103,7 +103,6 @@ public class SourcePage extends WizardPage {
 
         /* Add button for Excel */
         btnExcel = new Button(container, SWT.RADIO);
-        btnExcel.setEnabled(false);
         btnExcel.setText("XLS (Excel)");
         btnExcel.addSelectionListener(new SelectionAdapter() {
 
