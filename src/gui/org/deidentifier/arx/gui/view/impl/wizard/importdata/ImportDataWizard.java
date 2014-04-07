@@ -47,7 +47,7 @@ public class ImportDataWizard extends Wizard {
     private PreviewPage previewPage;
     private JdbcPage jdbcPage;
     private TablePage tablePage;
-    private XlsPage xlsPage;
+    private ExcelPage xlsPage;
 
     /**
      * Holds reference to the page currently being shown
@@ -142,7 +142,7 @@ public class ImportDataWizard extends Wizard {
         tablePage = new TablePage(this);
         addPage(tablePage);
 
-        xlsPage = new XlsPage(this);
+        xlsPage = new ExcelPage(this);
         addPage(xlsPage);
 
     }

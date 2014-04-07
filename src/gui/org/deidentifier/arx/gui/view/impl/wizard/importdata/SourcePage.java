@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
  * <ul>
  *  <li>{@link CsvPage} CSV</li>
  *  <li>{@link JdbcPage} Database (JDBC)</li>
- *  <li>{@link XlsPage} Excel (XLS)</li>
+ *  <li>{@link ExcelPage} Excel (XLS, XLSX)</li>
  * </ul>
  */
 public class SourcePage extends WizardPage {
@@ -31,7 +31,7 @@ public class SourcePage extends WizardPage {
     /* Widgets */
     private Button btnCsv;
     private Button btnJdbc;
-    private Button btnXls;
+    private Button btnExcel;
 
     /**
      * Reference to the wizard containing this page
@@ -102,10 +102,10 @@ public class SourcePage extends WizardPage {
         });
 
         /* Add button for Excel */
-        btnXls = new Button(container, SWT.RADIO);
-        btnXls.setEnabled(false);
-        btnXls.setText("XLS (Excel)");
-        btnXls.addSelectionListener(new SelectionAdapter() {
+        btnExcel = new Button(container, SWT.RADIO);
+        btnExcel.setEnabled(false);
+        btnExcel.setText("XLS (Excel)");
+        btnExcel.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {

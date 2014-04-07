@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 
-public class XlsPage extends WizardPage {
+public class ExcelPage extends WizardPage {
 
     private ImportDataWizard wizardImport;
 
@@ -41,7 +41,7 @@ public class XlsPage extends WizardPage {
     private static final int PREVIEWLINES = 5;
 
 
-    public XlsPage(ImportDataWizard wizardImport)
+    public ExcelPage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportXlsPage");
