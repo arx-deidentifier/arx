@@ -1,19 +1,27 @@
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
-import org.deidentifier.arx.DataType.ARXString;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.io.ExcelFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,73 +32,154 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 
+/**
+ * Excel page
+ *
+ * This page offers means to import data from an Excel file. It contains
+ * mechanisms to select such a file, and offers the user the ability to choose
+ * the sheet to import from and whether or not the first row contains a header
+ * describing each column. A live preview makes sure the user will immediately
+ * see whether or not his choices make any sense.
+ *
+ * All of the data gathered on this page is stored within {@link ImportData}.
+ *
+ * This includes:
+ *
+ * <ul>
+ *  <li>{@link ImportData#setWizardColumns(List)}</li>
+ *  <li>{@link ImportData#setFirstRowContainsHeader(boolean)</li>
+ *  <li>{@link ImportData#setFileLocation(String)}</li>
+ *  <li>{@link ImportData#setExcelSheetIndex(int)}</li>
+ * </ul>
+ */
 public class ExcelPage extends WizardPage {
 
+    /**
+     * Reference to the wizard containing this page
+     */
     private ImportDataWizard wizardImport;
 
+    /**
+     * Columns detected by this page and passed on to {@link ImportData}
+     */
+    private ArrayList<WizardColumn> wizardColumns;
+
+    /* Widgets */
     private Label lblLocation;
     private Combo comboLocation;
     private Button btnChoose;
     private Button btnContainsHeader;
+    private Combo comboSheet;
     private Label lblSheet;
-    private Combo comboSheets;
-    private ComboViewer comboViewerSheets;
+    private Table tablePreview;
+    private TableViewer tableViewerPreview;
 
-    private static final int PREVIEWLINES = 5;
+    /**
+     * Preview data
+     */
+    ArrayList<String[]> previewData = new ArrayList<String[]>();
+
+    /**
+     * Workbook
+     *
+     * Either HSSFWorkbook or XSSFWorkbook, depending upon file type
+     */
+    private Workbook workbook;
 
 
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public ExcelPage(ImportDataWizard wizardImport)
     {
 
-        super("WizardImportXlsPage");
+        super("WizardImportExcelPage");
 
-        setTitle("XLS");
+        setTitle("Excel");
         setDescription("Please provide the information requested below");
-
         this.wizardImport = wizardImport;
 
     }
 
+    /**
+     * Creates the design of this page
+     *
+     * This adds all the controls to the page along with their listeners.
+     *
+     * @note {@link #tablePreview} is not visible until a file is loaded.
+     */
     public void createControl(Composite parent)
     {
 
         Composite container = new Composite(parent, SWT.NULL);
-
         setControl(container);
         container.setLayout(new GridLayout(3, false));
 
+        /* Location label */
         lblLocation = new Label(container, SWT.NONE);
         lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblLocation.setText("Location");
 
+        /* Combo box for selection of file */
         comboLocation = new Combo(container, SWT.READ_ONLY);
         comboLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         comboLocation.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * Reads the sheets and selects active one
+             */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setFileLocation(comboLocation.getText());
+                /* Try to read in sheets */
+                try {
 
-                readSheets();
+                    readSheets();
+
+                } catch (IOException e) {
+
+                    setErrorMessage("Couldn't read sheets from file");
+
+                }
+
+                /* Make widgets visible */
+                comboSheet.setVisible(true);
+                lblSheet.setVisible(true);
+                btnContainsHeader.setVisible(true);
+
+                /* Select active sheet and notify comboSheet about change */
+                comboSheet.select(workbook.getActiveSheetIndex());
+                comboSheet.notifyListeners(SWT.Selection, null);
 
             }
 
         });
 
+        /* Button to open file selection dialog */
         btnChoose = new Button(container, SWT.NONE);
         btnChoose.setText("Browse...");
         btnChoose.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * Opens a file selection dialog for Excel files
+             *
+             * Both XLS and XLSX files can be selected. If a valid file was
+             * selected, it is added to {@link #comboLocation} when it wasn't
+             * already there. In either case it gets preselected.
+             *
+             * @see {@link Controller#actionShowOpenFileDialog(String)}
+             */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                setPageComplete(false);
-                setErrorMessage(null);
-
-                final String path = wizardImport.getController().actionShowOpenFileDialog("*.xls");
+                /* Open file dialog */
+                final String path = wizardImport.getController().actionShowOpenFileDialog("*.xls;*.xlsx");
 
                 if (path == null) {
 
@@ -98,180 +187,335 @@ public class ExcelPage extends WizardPage {
 
                 }
 
+                /* Check whether path was already added */
                 if (comboLocation.indexOf(path) == -1) {
 
                     comboLocation.add(path, 0);
 
                 }
 
+                /* Select path and notify comboLocation about change */
                 comboLocation.select(comboLocation.indexOf(path));
-                wizardImport.getData().setFileLocation(comboLocation.getText());
-
-                readSheets();
+                comboLocation.notifyListeners(SWT.Selection, null);
 
             }
 
         });
 
+        /* Sheet label */
         lblSheet = new Label(container, SWT.NONE);
+        lblSheet.setVisible(false);
         lblSheet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblSheet.setText("Sheet");
 
-        comboViewerSheets = new ComboViewer(container, SWT.READ_ONLY);
-        comboViewerSheets.setContentProvider(new ArrayContentProvider());
+        /* Sheet combobox */
+        comboSheet = new Combo(container, SWT.READ_ONLY);
+        comboSheet.setVisible(false);
+        comboSheet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboSheet.addSelectionListener(new SelectionAdapter() {
 
-        comboSheets = comboViewerSheets.getCombo();
-        comboSheets.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboSheets.addSelectionListener(new SelectionAdapter() {
-
+            /**
+             * (Re-)Evaluate page
+             */
             @Override
-            public void widgetSelected(SelectionEvent arg0) {
+            public void widgetSelected(final SelectionEvent arg0) {
 
-                wizardImport.getData().setExcelSheetIndex(comboSheets.getSelectionIndex());
-                readPreview();
-
-                setPageComplete(true);
+                evaluatePage();
 
             }
 
         });
 
+        /* Place holders */
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);
 
+        /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
+        btnContainsHeader.setVisible(false);
         btnContainsHeader.setText("First row contains column names");
         btnContainsHeader.setSelection(true);
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * (Re-)Evaluate page
+             */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
-                readPreview();
+                evaluatePage();
 
             }
 
         });
 
+        /* Place holders */
         new Label(container, SWT.NONE);
 
+        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);
+
+        /* Preview table viewer */
+        tableViewerPreview = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewerPreview.setContentProvider(new ArrayContentProvider());
+
+        /* Actual table for {@link #tableViewerPreview} */
+        tablePreview = tableViewerPreview.getTable();
+        GridData gd_tablePreview = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+        gd_tablePreview.heightHint = 150;
+        tablePreview.setLayoutData(gd_tablePreview);
+        tablePreview.setLinesVisible(true);
+        tablePreview.setVisible(false);
+
+        /* Set page to incomplete by default */
         setPageComplete(false);
 
     }
 
-    private void readSheets() {
+    /**
+     * Reads in the available sheets from file
+     *
+     * This reads in the available sheets from the file chosen at
+     * {@link #comboLocation} and adds them as items to {@link #comboSheet}.
+     */
+    private void readSheets() throws IOException {
 
-        setErrorMessage(null);
+        /* Remove previous items */
+        comboSheet.removeAll();
 
-        ArrayList<String> sheets = new ArrayList<String>();
-
+        /* Get workbook */
         try {
 
-            FileInputStream file = new FileInputStream(new File(comboLocation.getText()));
-            HSSFWorkbook workbook = new HSSFWorkbook(file);
+            workbook = WorkbookFactory.create(new FileInputStream(comboLocation.getText()));
 
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+        } catch (InvalidFormatException e) {
 
-                sheets.add(workbook.getSheetName(i));
+            throw new IOException("Couldn't open file");
+
+        }
+
+        /* Add all sheets to combo */
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+
+            comboSheet.add(workbook.getSheetName(i));
+
+        }
+
+    }
+    
+    /**
+     * Reads in preview data
+     *
+     * This goes through up to {@link ImportData#previewDataMaxLines} lines
+     * within the appropriate file and reads them in. It uses
+     * {@link DataSourceImportAdapter} in combination with
+     * {@link ExcelFileConfiguration} to actually read in the data.
+     */
+    private void readPreview() throws IOException {
+
+        /* Reset preview data */
+        previewData.clear();
+
+        /* Parameters from the user interface */
+        final String location = comboLocation.getText();
+        final int sheetIndex = comboSheet.getSelectionIndex();
+        final boolean containsHeader = btnContainsHeader.getSelection();
+
+        /* Variables needed for processing */
+        Sheet sheet = workbook.getSheetAt(sheetIndex);
+        Iterator<Row> rowIterator = sheet.iterator();
+        ExcelFileConfiguration config = new ExcelFileConfiguration(location, sheetIndex, containsHeader);
+        wizardColumns = new ArrayList<WizardColumn>();
+
+        /* Check whether there is at least one row in sheet and retrieve it */
+        if (!rowIterator.hasNext()) {
+
+            throw new IOException("Sheet contains no rows");
+
+        }
+
+        /* Get first row */
+        Row firstRow = rowIterator.next();
+
+        /* Check whether there is at least one column in row */
+        if (firstRow.getPhysicalNumberOfCells() < 1) {
+
+            throw new IOException("First row contains no data");
+
+        }
+
+        /* Iterate over columns and add them */
+        for (int i = 0; i < firstRow.getPhysicalNumberOfCells(); i++) {
+
+            Column column = new Column(i, DataType.STRING);
+            WizardColumn wizardColumn = new WizardColumn(column);
+
+            wizardColumns.add(wizardColumn);
+            config.addColumn(column);
+
+        }
+
+        /* Create adapter to import data with given configuration */
+        DataSourceImportAdapter importAdapter = DataSourceImportAdapter.create(config);
+
+        /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
+        int count = 0;
+        while (importAdapter.hasNext() && (count <= ImportData.previewDataMaxLines)) {
+
+            previewData.add(importAdapter.next());
+            count++;
+
+        }
+
+        /* Remove first entry as it always contains name of columns */
+        previewData.remove(0);
+
+        /* Check whether there is actual any data */
+        if (previewData.size() == 0) {
+
+            throw new IOException("No actual data in file");
+
+        }
+
+        /* Disable redrawing once redesign is finished */
+        tablePreview.setRedraw(false);
+
+        /* Remove all of the old columns */
+        while (tablePreview.getColumnCount() > 0) {
+
+            tablePreview.getColumns()[0].dispose();
+
+        }
+
+        /* Add new columns */
+        for (WizardColumn column : wizardColumns) {
+
+            TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
+            tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(column.getColumn().getIndex()));
+
+            TableColumn tableColumn = tableViewerColumn.getColumn();
+            tableColumn.setWidth(100);
+
+            if (btnContainsHeader.getSelection()) {
+
+                tableColumn.setText(column.getColumn().getName());
+                tableColumn.setToolTipText("Column #" + column.getColumn().getIndex());
 
             }
 
-            file.close();
-
-        } catch (IOException e) {
-
-            setErrorMessage("Error accessing file");
-
-            return;
+            ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
 
         }
 
-        if (sheets.size() == 0) {
-
-            setErrorMessage("File doesn't contain any sheets");
-
-            return;
-
-        }
-
-        comboViewerSheets.setInput(sheets);
+        /* Setup preview table */
+        tableViewerPreview.setInput(previewData);
+        tablePreview.setHeaderVisible(btnContainsHeader.getSelection());
+        tablePreview.setVisible(true);
+        tablePreview.layout();
+        tablePreview.setRedraw(true);
 
     }
 
-    private void readPreview() {
+    /**
+     * Evaluates the page
+     *
+     * This checks whether the current settings on the page make any sense
+     * and applies them appropriately. It basically checks tries to read in
+     * the preview data {@link #readPreview()}.
+     *
+     * If everything is fine, the settings are being put into the appropriate
+     * data container {@link ImportData} and the  current page is marked as
+     * complete by invoking {@link #setPageComplete(boolean)}. Otherwise an
+     * error message is set, which will make sure the user is informed about
+     * the reason for the error.
+     */
+    private void evaluatePage() {
 
+        setPageComplete(false);
         setErrorMessage(null);
 
-        ArrayList<ArrayList<Cell>> result = new ArrayList<ArrayList<Cell>>();
+        if (comboLocation.getText().equals("")) {
+
+            return;
+
+        }
 
         try {
 
-            FileInputStream file = new FileInputStream(new File(comboLocation.getText()));
-            HSSFWorkbook workbook = new HSSFWorkbook(file);
+            readPreview();
 
-            HSSFSheet sheet = workbook.getSheetAt(comboSheets.getSelectionIndex());
-            Iterator<Row> rowIterator = sheet.iterator();
+        } catch (Exception e) {
 
-            int count = 0;
-
-            while (rowIterator.hasNext() && (count < PREVIEWLINES)) {
-
-                ArrayList<Cell> cells = new ArrayList<Cell>();
-
-                Row row = rowIterator.next();
-                Iterator<Cell> cellIterator = row.cellIterator();
-
-                while(cellIterator.hasNext()) {
-
-                    cells.add(cellIterator.next());
-
-                }
-
-                result.add(cells);
-
-                count++;
-
-            }
-
-            file.close();
-
-            if (result.size() == 0 || result.get(0).size() == 0) {
-
-                setErrorMessage("Sheet doesn't contain any data");
-
-                return;
-
-            }
-
-            ArrayList<WizardColumn> columns = new ArrayList<WizardColumn>();
-
-            int index = 0;
-            for (final Cell c : result.get(0)) {
-
-                WizardColumn column = new WizardColumn(new Column(index, new ARXString()));
-
-                if (btnContainsHeader.getSelection()) {
-
-                    column.getColumn().setName(c.getStringCellValue());
-
-                } else {
-
-                    column.getColumn().setName("Column #" + index);
-
-                }
-
-                columns.add(column);
-
-            }
-
-            wizardImport.getData().setWizardColumns(columns);
-
-        } catch (IOException e) {
-
-            setErrorMessage("Error accessing file");
+            setErrorMessage("Error while trying to access the file");
 
             return;
+
+        }
+
+        /* Put data into container */
+        ImportData data = wizardImport.getData();
+
+        data.setWizardColumns(wizardColumns);
+        data.setPreviewData(previewData);
+        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
+        data.setFileLocation(comboLocation.getText());
+        data.setExcelSheetIndex(comboSheet.getSelectionIndex());
+
+        /* Mark page as completed */
+        setPageComplete(true);
+
+    }
+
+    /**
+     * Label provider for Excel columns
+     *
+     * A new instance of this object will be initiated for each column of
+     * {@link tableViewerPreview}. This class holds the index of the
+     * appropriate column {@link #index}, making sure they will return the
+     * correct value for each column.
+     */
+    class ExcelColumnLabelProvider extends ColumnLabelProvider {
+
+        /**
+         * Index of the column this instance is representing
+         */
+        private int index;
+
+
+        /**
+         * Creates new instance of this class for the given index
+         *
+         * @param index Index the instance should be created for
+         */
+        public ExcelColumnLabelProvider(int index) {
+
+            this.index = index;
+
+        }
+
+        /**
+         * Returns the string value for the given column
+         */
+        @Override
+        public String getText(Object element) {
+
+            return ((String[]) element)[index];
+
+        }
+
+        /**
+         * Returns tooltip for each element of given column
+         *
+         * The tooltip contains the current row as well as the column index
+         * itself.
+         */
+        @Override
+        public String getToolTipText(Object element) {
+
+            int row = previewData.indexOf(element);
+
+            return "Row: " + (row + 1) + ", Column: " + (index + 1);
 
         }
 

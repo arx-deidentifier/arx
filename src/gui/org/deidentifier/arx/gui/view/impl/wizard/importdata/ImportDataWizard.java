@@ -5,6 +5,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.DataSourceConfiguration;
+import org.deidentifier.arx.io.ExcelFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -243,28 +244,21 @@ public class ImportDataWizard extends Wizard {
 
         if (data.getSourceType() == SourceType.CSV) {
 
-            try {
+            configuration = new CSVFileConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
 
-                CSVFileConfiguration config = new CSVFileConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
+        } else if (data.getSourceType() == SourceType.EXCEL) {
 
-                for (Column c : data.getEnabledColumns()) {
-
-                    config.addColumn(c);
-
-                }
-
-                this.configuration = config;
-
-            } catch (Exception e) {
-
-                // TODO: There should be no need to catch exceptions
-                this.configuration = null;
-
-            }
+            configuration = new ExcelFileConfiguration(data.getFileLocation(), data.getExcelSheetIndex(), data.getFirstRowContainsHeader());
 
         } else {
 
-            // TODO: Implement
+            throw new RuntimeException("File configuration not supported");
+
+        }
+
+        for (Column c : data.getEnabledColumns()) {
+
+            configuration.addColumn(c);
 
         }
 
