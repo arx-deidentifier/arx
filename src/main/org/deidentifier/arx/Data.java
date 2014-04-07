@@ -1,6 +1,7 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
  * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
-import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 
 /**
@@ -184,7 +185,7 @@ public abstract class Data {
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
         List<Column> columns = adapter.getConfig().getColumns();
         for (int i=0; i<columns.size(); i++){
-            types.put(i, columns.get(i).getDatatype());
+            types.put(i, columns.get(i).getDataType());
         }
         DataHandle handle = data.getHandle();
         for (int i=0; i<handle.getNumColumns(); i++) {
@@ -250,7 +251,7 @@ public abstract class Data {
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
         List<Column> columns = config.getColumns();
         for (int i=0; i<columns.size(); i++){
-            types.put(i, columns.get(i).getDatatype());
+            types.put(i, columns.get(i).getDataType());
         }
         DataHandle handle = data.getHandle();
         for (int i=0; i<handle.getNumColumns(); i++) {

@@ -1,11 +1,31 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * Copyright (C) 2014 Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
-import org.deidentifier.arx.io.importdata.CSVConfiguration;
+import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.DataSourceConfiguration;
+import org.deidentifier.arx.io.ExcelFileConfiguration;
 import org.deidentifier.arx.io.importdata.Column;
-import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -47,7 +67,7 @@ public class ImportDataWizard extends Wizard {
     private PreviewPage previewPage;
     private JdbcPage jdbcPage;
     private TablePage tablePage;
-    private XlsPage xlsPage;
+    private ExcelPage xlsPage;
 
     /**
      * Holds reference to the page currently being shown
@@ -142,7 +162,7 @@ public class ImportDataWizard extends Wizard {
         tablePage = new TablePage(this);
         addPage(tablePage);
 
-        xlsPage = new XlsPage(this);
+        xlsPage = new ExcelPage(this);
         addPage(xlsPage);
 
     }
@@ -177,7 +197,7 @@ public class ImportDataWizard extends Wizard {
 
                 return jdbcPage;
 
-            } else if (src == SourceType.XLS) {
+            } else if (src == SourceType.EXCEL) {
 
                 return xlsPage;
 
@@ -243,28 +263,21 @@ public class ImportDataWizard extends Wizard {
 
         if (data.getSourceType() == SourceType.CSV) {
 
-            try {
+            configuration = new CSVFileConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
 
-                CSVConfiguration config = new CSVConfiguration(data.getFileLocation(), data.getCsvSeparator(), data.getFirstRowContainsHeader());
+        } else if (data.getSourceType() == SourceType.EXCEL) {
 
-                for (Column c : data.getEnabledColumns()) {
-
-                    config.addColumn(c);
-
-                }
-
-                this.configuration = config;
-
-            } catch (Exception e) {
-
-                // TODO: There should be no need to catch exceptions
-                this.configuration = null;
-
-            }
+            configuration = new ExcelFileConfiguration(data.getFileLocation(), data.getExcelSheetIndex(), data.getFirstRowContainsHeader());
 
         } else {
 
-            // TODO: Implement
+            throw new RuntimeException("File configuration not supported");
+
+        }
+
+        for (Column c : data.getEnabledColumns()) {
+
+            configuration.addColumn(c);
 
         }
 

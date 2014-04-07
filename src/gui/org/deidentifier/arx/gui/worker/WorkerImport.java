@@ -1,6 +1,7 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
  * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
+import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.core.runtime.IProgressMonitor;
 

@@ -1,3 +1,22 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * Copyright (C) 2014 Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.util.ArrayList;
@@ -22,7 +41,7 @@ public class ImportData {
      *
      * @see {@link sourceType}
      */
-    public enum SourceType {CSV, JDBC, XLS};
+    public enum SourceType {CSV, JDBC, EXCEL};
 
     /**
      * Actual source data should be imported from
@@ -61,11 +80,11 @@ public class ImportData {
     private boolean firstRowContainsHeader = true;
 
     /**
-     * Index of sheet to import from (in case of XLS import)
+     * Index of sheet to import from (in case of Excel import)
      *
-     * @see {@link SourceType#XLS}
+     * @see {@link SourceType#EXCEL}
      */
-    private int xlsSheetIndex;
+    private int excelSheetIndex;
 
     /**
      * Preview data
@@ -86,20 +105,20 @@ public class ImportData {
 
 
     /**
-     * @return {@link #xlsSheetIndex}
+     * @return {@link #excelSheetIndex}
      */
-    public int getXlsSheetIndex() {
+    public int getExcelSheetIndex() {
 
-        return xlsSheetIndex;
+        return excelSheetIndex;
 
     }
 
     /**
-     * @param {@link #xlsSheetIndex}
+     * @param excelSheetIndex {@link #excelSheetIndex}
      */
-    public void setXlsSheetIndex(int xlsSheetIndex) {
+    public void setExcelSheetIndex(int excelSheetIndex) {
 
-        this.xlsSheetIndex = xlsSheetIndex;
+        this.excelSheetIndex = excelSheetIndex;
 
     }
 
