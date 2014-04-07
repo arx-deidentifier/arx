@@ -24,8 +24,9 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 
@@ -43,40 +44,26 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     protected class CloseElements<T> extends Group {
         
         private static final long serialVersionUID = 7224062023293601561L;
-        private Integer  order;
         private String[] values;
 
-        protected CloseElements(String[] values, AggregateFunction<T> function, int order) {
+        protected CloseElements(String[] values, AggregateFunction<T> function) {
             super(function.aggregate(values));
             this.values = values;
-            this.order = order;
         }
 
-        @Override
-        @SuppressWarnings("unchecked")
-        public int compareTo(Group o) {
-            return this.order.compareTo(((CloseElements<T>)o).order);
-        }
-
-        @Override
         @SuppressWarnings("rawtypes")
-        protected String getGroupLabel(Set<Group> groups, Fanout fanout) {
+        protected CloseElements merge(List<CloseElements<T>> list, AggregateFunction<T> function) {
             List<String> values = new ArrayList<String>();
-            for (Group group : groups){
+            for (CloseElements group : list){
                 for (String s : ((CloseElements)group).getValues()) {
                     values.add(s);
                 }
             }
-            return fanout.getFunction().aggregate(values.toArray(new String[values.size()]));
+            return new CloseElements<T>(values.toArray(new String[values.size()]), function);
         }
 
         protected String[] getValues(){
             return values;
-        }
-
-        @Override
-        protected boolean isOutOfBounds() {
-            return false;
         }
     }
     
@@ -126,41 +113,108 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         };
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     protected Group[][] prepareGroups() {
         if (comparator != null) {
             Arrays.sort(super.getData(), comparator);
         }
 
-        // 1. Obtain list of unique groups
-        // 2. Sort them (they implement comparable)
-        // 3. Handle duplicate labels, two options
-        // 3. Perform grouping, but exclude OutOfBounds groups
-        
         List<Fanout<T>> fanouts = super.getLevel(0).getFanouts();
         List<String> items = new ArrayList<String>();
+        
+        // Prepare
         String[] data = getData();
+        List<Group[]> result = new ArrayList<Group[]>();
         int index = 0;
-        
-        Group[][] result = new Group[data.length][1];
         int resultIndex = 0;
+        int groupCount = 0;
         
-        outer: while (true) {
-            for (Fanout<T> fanout : fanouts) {
-                for (int i = 0; i<fanout.getFanout(); i++){
-                    items.add(data[index++]);
-                    if (index == data.length) break;
+        // Break if no fanouts specified
+        if (!super.getLevels().isEmpty() &&
+            !super.getLevel(0).getFanouts().isEmpty()) {
+            
+            // Create first column
+            Group[] first = new Group[data.length];
+            outer: while (true) {
+                for (Fanout<T> fanout : fanouts) {
+                    for (int i = 0; i<fanout.getFanout(); i++){
+                        items.add(data[index++]);
+                        if (index == data.length) break;
+                    }
+                    CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction());
+                    for (int i=0; i<items.size(); i++) {
+                        first[resultIndex++] = element;
+                    }
+                    items.clear();
+                    if (index == data.length) break outer;
                 }
-                CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction(), index);
-                for (int i=0; i<items.size(); i++) {
-                    result[resultIndex++] = new Group[]{element};
-                }
-                items.clear();
-                if (index == data.length) break outer;
             }
+            result.add(first);
+            
+            // Build higher-level columns
+            for (int i=1; i<super.getLevels().size(); i++){
+                
+                // Break if done
+                if (groupCount==1) break;
+                
+                // Prepare
+                groupCount = 0;
+                fanouts = super.getLevel(i).getFanouts();
+                Map<Group, Group> map = new HashMap<Group, Group>();
+                List<Group> list = new ArrayList<Group>();
+                Group[] column = result.get(i-1);
+                for (int j=0; j<column.length; j++){
+                    if (!map.containsKey(column[j])) {
+                        map.put(column[j], column[j]);
+                        list.add(column[j]);
+                    }
+                }
+                
+                // Build
+                index = 0;
+                resultIndex = 0;
+                List<CloseElements<T>> gItems = new ArrayList<CloseElements<T>>();
+                outer: while (true) {
+                    for (Fanout<T> fanout : fanouts) {
+                        for (int j = 0; j<fanout.getFanout(); j++){
+                            gItems.add((CloseElements<T>)list.get(index++));
+                            if (index == list.size()) break;
+                        }
+                        CloseElements<T> element = gItems.get(0).merge(gItems, fanout.getFunction());
+                        groupCount++;
+                        for (int j=0; j<gItems.size(); j++) {
+                            map.put(gItems.get(j), element);
+                        }
+                        
+                        gItems.clear();
+                        if (index == list.size()) break outer;
+                    }
+                }
+                
+                // Store
+                Group[] ccolumn = new Group[data.length];
+                for (int j=0; j<column.length; j++){
+                    ccolumn[j] = map.get(column[j]);
+                }
+                result.add(ccolumn);
+            }
+        } else {
+            groupCount = data.length;
         }
         
-        return result;
+        // Add one last column if more than one group left
+        if (groupCount>1) {
+            Group[] column = new Group[data.length];
+            CloseElements<T> element = new CloseElements<T>(new String[]{}, AggregateFunction.CONSTANT(getDataType(), "*"));
+            for (int i=0; i<column.length; i++){
+                column[i] = element;
+            }
+            result.add(column);
+        }
+        
+        // Return
+        return result.toArray(new Group[0][0]);
     }
 
     /**

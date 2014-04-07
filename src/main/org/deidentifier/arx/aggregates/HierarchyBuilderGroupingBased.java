@@ -193,7 +193,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * A group representation to be used by subclasses
      * @author Fabian Prasser
      */
-    protected abstract static class Group implements Serializable, Comparable<Group> {
+    protected abstract static class Group implements Serializable {
         
         private static final long serialVersionUID = -7657969446040078411L;
         
@@ -202,14 +202,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         protected Group(String label){
             this.label = label;
         }
-        @SuppressWarnings("rawtypes") 
-        protected abstract String getGroupLabel(Set<Group> groups, Fanout fanout);
-        
         protected String getLabel(){
             return label;
         }
-        
-        protected abstract boolean isOutOfBounds();
     }
     
     private static final long serialVersionUID = 3208791665131141362L;
@@ -246,9 +241,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         // Add input data
-        String[][] result = new String[groups.length][groups[0].length + 1];
+        String[][] result = new String[data.length][groups.length + 1];
         for (int i=0; i<result.length; i++) {
-            result[i] = new String[groups[0].length + 1];
+            result[i] = new String[groups.length + 1];
             result[i][0] = data[i];
         }
         
@@ -256,7 +251,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         for (int i=0; i<result[0].length - 1; i++){
             Map<String, Map<Group, String>> multiplicities = new HashMap<String, Map<Group, String>>();
             for (int j=0; j<result.length; j++){
-                result[j][i + 1] = getLabel(multiplicities, groups[j][i]);
+                result[j][i + 1] = getLabel(multiplicities, groups[i][j]);
             }
         }
         
@@ -269,32 +264,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         return h;
     }
     
-    /**
-     * Returns the label for a given group. Makes sure that no labels are returned twice
-     * @param multiplicities
-     * @param group
-     * @return
-     */
-    private String getLabel(Map<String, Map<Group, String>> multiplicities, Group group) {
-        String label = group.getLabel();
-        Map<Group, String> map = multiplicities.get(label);
-        if (map == null) {
-            map = new HashMap<Group, String>();
-            map.put(group, label);
-            multiplicities.put(label, map);
-            return label;
-        } else {
-            String storedLabel = map.get(group);
-            if (storedLabel != null) {
-                return storedLabel;
-            } else {
-                label +="-"+map.size();
-                map.put(group, label);
-                return label;
-            }
-        }
-    }
-
     /**
      * Returns the given level
      * @param level
@@ -324,7 +293,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         });
         return levels;
     }
-    
+
     /**
      * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
      * if not.
@@ -336,7 +305,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         int max = 0;
         for (Entry<Integer, Level<T>> level : this.fanouts.entrySet()) {
             if (level.getValue().getFanouts().isEmpty()) {
-                return "No fanout specified on level "+level.getKey();
+                if (level.getKey() < this.fanouts.size()-1) {
+                    return "No fanout specified on level "+level.getKey();
+                }
             }
             max = Math.max(level.getKey(), max);
         }
@@ -365,12 +336,12 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         this.prepared = true;
         
        // TODO: This assumes that input data does not contain duplicates
-        int[] result = new int[this.groups[0].length + 1];
+        int[] result = new int[this.groups.length + 1];
         result[0] = data.length; 
         for (int i=0; i<result.length - 1; i++){
             Set<Group> set = new HashSet<Group>();
-            for (int j=0; j<this.groups.length; j++){
-                set.add(groups[j][i]);
+            for (int j=0; j<this.groups[i].length; j++){
+                set.add(groups[i][j]);
             }
             result[i + 1] = set.size();
         }
@@ -386,6 +357,32 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             throw new IllegalArgumentException("Function must not be null");
         }
         this.function = function;
+    }
+    
+    /**
+     * Returns the label for a given group. Makes sure that no labels are returned twice
+     * @param multiplicities
+     * @param group
+     * @return
+     */
+    private String getLabel(Map<String, Map<Group, String>> multiplicities, Group group) {
+        String label = group.getLabel();
+        Map<Group, String> map = multiplicities.get(label);
+        if (map == null) {
+            map = new HashMap<Group, String>();
+            map.put(group, label);
+            multiplicities.put(label, map);
+            return label;
+        } else {
+            String storedLabel = map.get(group);
+            if (storedLabel != null) {
+                return storedLabel;
+            } else {
+                label +="-"+map.size();
+                map.put(group, label);
+                return label;
+            }
+        }
     }
     
     /**

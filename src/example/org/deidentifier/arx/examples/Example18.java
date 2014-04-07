@@ -83,6 +83,8 @@ public class Example18 extends Example {
         // Define grouping fanouts
         builder.getLevel(0).addFanout(10, AggregateFunction.INTERVAL(DataType.INTEGER));
         builder.getLevel(1).addFanout(2, AggregateFunction.INTERVAL(DataType.INTEGER));
+        // builder.getLevel(2).addFanout(5, AggregateFunction.INTERVAL(DataType.INTEGER));
+        // builder.getLevel(3).addFanout(5, AggregateFunction.INTERVAL(DataType.INTEGER));
 
         // Alternatively
         // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
