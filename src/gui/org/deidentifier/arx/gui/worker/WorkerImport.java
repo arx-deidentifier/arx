@@ -22,7 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
+import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.core.runtime.IProgressMonitor;
 

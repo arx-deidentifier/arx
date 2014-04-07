@@ -117,7 +117,7 @@ public class PreviewPage extends WizardPage {
                 tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(column.getIndex()));
 
                 TableColumn tblclmnColumn = tableViewerColumn.getColumn();
-                tblclmnColumn.setToolTipText("Datatype: " + column.getDatatype());
+                tblclmnColumn.setToolTipText("Datatype: " + column.getDataType());
                 tblclmnColumn.setWidth(100);
                 tblclmnColumn.setText(column.getName());
 
@@ -188,7 +188,7 @@ public class PreviewPage extends WizardPage {
         @Override
         public String getToolTipText(Object element) {
 
-            DataType<?> datatype = wizardImport.getData().getWizardColumns().get(index).getColumn().getDatatype();
+            DataType<?> datatype = wizardImport.getData().getWizardColumns().get(index).getColumn().getDataType();
 
             String result = "Datatype: " + datatype.getDescription().getLabel();
 
