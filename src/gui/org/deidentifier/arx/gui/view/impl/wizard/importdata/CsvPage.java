@@ -190,6 +190,7 @@ public class CsvPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
+                /* Open file dialog */
                 final String path = wizardImport.getController().actionShowOpenFileDialog("*.csv");
 
                 if (path == null) {
@@ -198,12 +199,14 @@ public class CsvPage extends WizardPage {
 
                 }
 
+                /* Check whether path was already added */
                 if (comboLocation.indexOf(path) == -1) {
 
                     comboLocation.add(path, 0);
 
                 }
 
+                /* Select path and notify comboLocation about change */
                 comboLocation.select(comboLocation.indexOf(path));
                 comboLocation.notifyListeners(SWT.Selection, null);
 
@@ -233,7 +236,7 @@ public class CsvPage extends WizardPage {
         comboSeparator.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Set the selection index and customSeparator and evaluates page
+             * Set selection index and customSeparator and (re-)evaluates page
              */
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -258,7 +261,7 @@ public class CsvPage extends WizardPage {
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Evaluates page with each change
+             * (Re-)Evaluate page
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
@@ -390,6 +393,8 @@ public class CsvPage extends WizardPage {
         final CSVDataInput in = new CSVDataInput(location, separator);
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
+        wizardColumns = new ArrayList<WizardColumn>();
+        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {
@@ -402,10 +407,6 @@ public class CsvPage extends WizardPage {
 
         }
 
-        /* Initialize {@link #allColumns} */
-        wizardColumns = new ArrayList<WizardColumn>();
-        List<Column> columns = new ArrayList<Column>();
-
         /* Iterate over columns and add it to {@link #allColumns} */
         for (int i = 0; i < firstLine.length; i++) {
 
@@ -413,16 +414,7 @@ public class CsvPage extends WizardPage {
             WizardColumn wizardColumn = new WizardColumn(column);
 
             wizardColumns.add(wizardColumn);
-            columns.add(column);
-
-        }
-
-        /* Create configuration for CSV file and columns to it */
-        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
-
-        for (Column c : columns) {
-
-            config.addColumn(c);
+            config.addColumn(column);
 
         }
 
@@ -534,12 +526,15 @@ public class CsvPage extends WizardPage {
         }
 
         /* Put data into container */
-        wizardImport.getData().setWizardColumns(wizardColumns);
-        wizardImport.getData().setPreviewData(previewData);
-        wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
-        wizardImport.getData().setFileLocation(comboLocation.getText());
-        wizardImport.getData().setCsvSeparator(separators[selection]);
+        ImportData data = wizardImport.getData();
 
+        data.setWizardColumns(wizardColumns);
+        data.setPreviewData(previewData);
+        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
+        data.setFileLocation(comboLocation.getText());
+        data.setCsvSeparator(separators[selection]);
+
+        /* Mark page as completed */
         setPageComplete(true);
 
     }
