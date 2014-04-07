@@ -30,8 +30,8 @@ public class SourcePage extends WizardPage {
 
     /* Widgets */
     private Button btnCsv;
-    private Button btnJdbc;
     private Button btnExcel;
+    private Button btnJdbc;
 
     /**
      * Reference to the wizard containing this page
@@ -85,6 +85,21 @@ public class SourcePage extends WizardPage {
 
         });
 
+        /* Add button for Excel */
+        btnExcel = new Button(container, SWT.RADIO);
+        btnExcel.setText("Excel (XLS, XLSX)");
+        btnExcel.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                wizardImport.getData().setSourceType(SourceType.EXCEL);
+                setPageComplete(true);
+
+            }
+
+        });
+
         /* Add button for JDBC */
         btnJdbc = new Button(container, SWT.RADIO);
         btnJdbc.setEnabled(false);
@@ -95,21 +110,6 @@ public class SourcePage extends WizardPage {
             public void widgetSelected(SelectionEvent arg0) {
 
                 wizardImport.getData().setSourceType(SourceType.JDBC);
-                setPageComplete(true);
-
-            }
-
-        });
-
-        /* Add button for Excel */
-        btnExcel = new Button(container, SWT.RADIO);
-        btnExcel.setText("Excel (XLS, XLSX)");
-        btnExcel.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-
-                wizardImport.getData().setSourceType(SourceType.EXCEL);
                 setPageComplete(true);
 
             }
