@@ -52,6 +52,16 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
      */
     private boolean headerReturned = false;
 
+    /**
+     * Number of rows within the specified sheet
+     */
+    private int totalRows;
+
+    /**
+     * Current row {@link lastRow} is referencing
+     */
+    private int currentRow = 0;
+
 
     /**
      * Creates a new instance of this object with given configuration
@@ -95,6 +105,9 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
         Sheet sheet = workbook.getSheetAt(config.getSheetIndex());
         rowIterator = sheet.iterator();
+
+        /* Get total number of rows */
+        totalRows = sheet.getPhysicalNumberOfRows();
 
         /* Check whether there is actual data within the file */
         if (rowIterator.hasNext()) {
@@ -176,6 +189,7 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
         if (rowIterator.hasNext()) {
 
             lastRow = rowIterator.next();
+            currentRow++;
 
         } else {
 
@@ -240,6 +254,7 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
             if (rowIterator.hasNext()) {
 
                 lastRow = rowIterator.next();
+                currentRow++;
 
             } else {
 
@@ -267,12 +282,15 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
     /**
      * Returns the percentage of data that has already been returned
      *
-     * TODO: Implement
+     * The basis for this calculation is the row currently being accessed.
+     *
+     * @see {@link #currentRow}
+     * @see {@link #totalRows}
      */
     @Override
     public int getProgress() {
 
-        return 0;
+        return (int)((double)currentRow / (double)totalRows * 100d);
 
     }
 
