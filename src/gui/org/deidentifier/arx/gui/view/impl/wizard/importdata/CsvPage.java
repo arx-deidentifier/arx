@@ -160,6 +160,11 @@ public class CsvPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
+                /* Make widgets visible */
+                lblSeparator.setVisible(true);
+                comboSeparator.setVisible(true);
+                btnContainsHeader.setVisible(true);
+
                 customSeparator = false;
                 evaluatePage();
 
@@ -208,11 +213,13 @@ public class CsvPage extends WizardPage {
 
         /* Separator label */
         lblSeparator = new Label(container, SWT.NONE);
+        lblSeparator.setVisible(false);
         lblSeparator.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblSeparator.setText("Separator");
 
         /* Separator combobox */
         comboSeparator = new Combo(container, SWT.READ_ONLY);
+        comboSeparator.setVisible(false);
 
         /* Add labels */
         for (final String s : labels) {
@@ -245,6 +252,7 @@ public class CsvPage extends WizardPage {
 
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
+        btnContainsHeader.setVisible(false);
         btnContainsHeader.setText("First row contains column names");
         btnContainsHeader.setSelection(true);
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
