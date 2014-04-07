@@ -43,12 +43,18 @@ public class CSVFileConfiguration extends DataSourceFileConfiguration implements
 
     }
 
-    /**
-     * @return {@link #containsHeader}
-     */
+    @Override
     public boolean getContainsHeader() {
 
         return containsHeader;
+
+    }
+
+    @Override
+    public void setContainsHeader(boolean containsHeader)
+    {
+
+        this.containsHeader = containsHeader;
 
     }
 

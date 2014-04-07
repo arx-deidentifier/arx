@@ -21,4 +21,9 @@ public interface IDataSourceCanContainHeader {
      */
     public boolean getContainsHeader();
 
+    /**
+     * @param containsHeader Whether or not a header is contained
+     */
+    public void setContainsHeader(boolean containsHeader);
+
 }
