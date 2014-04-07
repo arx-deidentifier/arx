@@ -109,7 +109,7 @@ public class SourcePage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                wizardImport.getData().setSourceType(SourceType.XLS);
+                wizardImport.getData().setSourceType(SourceType.EXCEL);
                 setPageComplete(true);
 
             }

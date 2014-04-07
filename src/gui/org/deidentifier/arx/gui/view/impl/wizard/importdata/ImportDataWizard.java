@@ -177,7 +177,7 @@ public class ImportDataWizard extends Wizard {
 
                 return jdbcPage;
 
-            } else if (src == SourceType.XLS) {
+            } else if (src == SourceType.EXCEL) {
 
                 return xlsPage;
 

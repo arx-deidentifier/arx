@@ -22,7 +22,7 @@ public class ImportData {
      *
      * @see {@link sourceType}
      */
-    public enum SourceType {CSV, JDBC, XLS};
+    public enum SourceType {CSV, JDBC, EXCEL};
 
     /**
      * Actual source data should be imported from
@@ -63,7 +63,7 @@ public class ImportData {
     /**
      * Index of sheet to import from (in case of XLS import)
      *
-     * @see {@link SourceType#XLS}
+     * @see {@link SourceType#EXCEL}
      */
     private int xlsSheetIndex;
 
