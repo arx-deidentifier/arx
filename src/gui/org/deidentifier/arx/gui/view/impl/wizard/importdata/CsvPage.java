@@ -1,3 +1,22 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * Copyright (C) 2014 Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.io.BufferedReader;
@@ -160,6 +179,11 @@ public class CsvPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
+                /* Make widgets visible */
+                lblSeparator.setVisible(true);
+                comboSeparator.setVisible(true);
+                btnContainsHeader.setVisible(true);
+
                 customSeparator = false;
                 evaluatePage();
 
@@ -185,9 +209,7 @@ public class CsvPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                setPageComplete(false);
-                setErrorMessage(null);
-
+                /* Open file dialog */
                 final String path = wizardImport.getController().actionShowOpenFileDialog("*.csv");
 
                 if (path == null) {
@@ -196,15 +218,16 @@ public class CsvPage extends WizardPage {
 
                 }
 
+                /* Check whether path was already added */
                 if (comboLocation.indexOf(path) == -1) {
 
                     comboLocation.add(path, 0);
 
                 }
 
+                /* Select path and notify comboLocation about change */
                 comboLocation.select(comboLocation.indexOf(path));
-                customSeparator = false;
-                evaluatePage();
+                comboLocation.notifyListeners(SWT.Selection, null);
 
             }
 
@@ -212,12 +235,13 @@ public class CsvPage extends WizardPage {
 
         /* Separator label */
         lblSeparator = new Label(container, SWT.NONE);
+        lblSeparator.setVisible(false);
         lblSeparator.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblSeparator.setText("Separator");
 
         /* Separator combobox */
-        /* TODO: Fix bug(s) when separator is selected multiple times */
         comboSeparator = new Combo(container, SWT.READ_ONLY);
+        comboSeparator.setVisible(false);
 
         /* Add labels */
         for (final String s : labels) {
@@ -231,7 +255,7 @@ public class CsvPage extends WizardPage {
         comboSeparator.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Set the selection index and customSeparator and evaluates page
+             * Set selection index and customSeparator and (re-)evaluates page
              */
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -250,12 +274,13 @@ public class CsvPage extends WizardPage {
 
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
+        btnContainsHeader.setVisible(false);
         btnContainsHeader.setText("First row contains column names");
         btnContainsHeader.setSelection(true);
         btnContainsHeader.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Evaluates page with each change
+             * (Re-)Evaluate page
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
@@ -375,6 +400,9 @@ public class CsvPage extends WizardPage {
      */
     private void readPreview() throws IOException {
 
+        /* Reset preview data */
+        previewData.clear();
+
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
         final char separator = separators[selection];
@@ -384,6 +412,8 @@ public class CsvPage extends WizardPage {
         final CSVDataInput in = new CSVDataInput(location, separator);
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
+        wizardColumns = new ArrayList<WizardColumn>();
+        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {
@@ -396,10 +426,6 @@ public class CsvPage extends WizardPage {
 
         }
 
-        /* Initialize {@link #allColumns} */
-        wizardColumns = new ArrayList<WizardColumn>();
-        List<Column> columns = new ArrayList<Column>();
-
         /* Iterate over columns and add it to {@link #allColumns} */
         for (int i = 0; i < firstLine.length; i++) {
 
@@ -407,16 +433,7 @@ public class CsvPage extends WizardPage {
             WizardColumn wizardColumn = new WizardColumn(column);
 
             wizardColumns.add(wizardColumn);
-            columns.add(column);
-
-        }
-
-        /* Create configuration for CSV file and columns to it */
-        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
-
-        for (Column c : columns) {
-
-            config.addColumn(c);
+            config.addColumn(column);
 
         }
 
@@ -528,12 +545,15 @@ public class CsvPage extends WizardPage {
         }
 
         /* Put data into container */
-        wizardImport.getData().setWizardColumns(wizardColumns);
-        wizardImport.getData().setPreviewData(previewData);
-        wizardImport.getData().setFirstRowContainsHeader(btnContainsHeader.getSelection());
-        wizardImport.getData().setFileLocation(comboLocation.getText());
-        wizardImport.getData().setCsvSeparator(separators[selection]);
+        ImportData data = wizardImport.getData();
 
+        data.setWizardColumns(wizardColumns);
+        data.setPreviewData(previewData);
+        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
+        data.setFileLocation(comboLocation.getText());
+        data.setCsvSeparator(separators[selection]);
+
+        /* Mark page as completed */
         setPageComplete(true);
 
     }
