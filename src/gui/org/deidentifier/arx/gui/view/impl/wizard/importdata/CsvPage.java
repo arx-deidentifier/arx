@@ -537,9 +537,9 @@ public class CsvPage extends WizardPage {
 
             readPreview();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
 
-            setErrorMessage("Error while trying to access the file");
+            setErrorMessage(e.getMessage());
 
             return;
 
