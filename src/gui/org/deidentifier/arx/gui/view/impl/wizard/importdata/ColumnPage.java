@@ -253,10 +253,26 @@ public class ColumnPage extends WizardPage {
 
             /**
              * Gets name of cells from  {@link Column#getName()}
+             *
+             * This also makes sure that all column names are unique using
+             * {@link #uniqueColumnNames()}. In case there are duplicates it
+             * sets an error message.
              */
             @Override
             public String getText(Object element)
             {
+
+                if (!uniqueColumnNames()) {
+
+                    setErrorMessage("Column names need to be unique");
+                    setPageComplete(false);
+
+                } else {
+
+                    setErrorMessage(null);
+                    setPageComplete(true);
+
+                }
 
                 WizardColumn column = (WizardColumn)element;
 
@@ -416,6 +432,32 @@ public class ColumnPage extends WizardPage {
 
         /* Wait for at least one column to be enabled */
         setPageComplete(false);
+
+    }
+
+    /**
+     * Checks whether column names are unique
+     *
+     * @return True if column names are unique, false otherwise
+     */
+    protected boolean uniqueColumnNames()
+    {
+
+        for (WizardColumn c1 : wizardImport.getData().getWizardColumns()) {
+
+            for (WizardColumn c2 : wizardImport.getData().getWizardColumns()) {
+
+                if (c1 != c2 && c1.getColumn().getName().equals(c2.getColumn().getName())) {
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+        return true;
 
     }
 
