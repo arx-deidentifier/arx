@@ -34,7 +34,16 @@ public abstract class EditorString implements IEditor<String> {
     private final String  label;
     private final boolean multi;
     private final Button  ok;
-
+    private Text text;
+    
+    public EditorString(Composite composite) {
+        this.category = null;
+        this.label = null;
+        this.multi = false;
+        this.ok = null;
+        this.createControl(composite);
+    }
+    
     public EditorString(final String category,
                         final String label,
                         final Button ok,
@@ -47,26 +56,26 @@ public abstract class EditorString implements IEditor<String> {
 
     @Override
     public void createControl(final Composite parent) {
-        final Text result;
+        
         final GridData ldata = SWTUtil.createFillHorizontallyGridData();
         if (multi) {
-            result = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+            text = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
             ldata.heightHint = 100;
         } else {
-            result = new Text(parent, SWT.SINGLE | SWT.BORDER);
+            text = new Text(parent, SWT.SINGLE | SWT.BORDER);
         }
 
-        result.setText(getValue());
+        text.setText(getValue());
 
-        result.setLayoutData(ldata);
-        result.addModifyListener(new ModifyListener() {
+        text.setLayoutData(ldata);
+        text.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(final ModifyEvent arg0) {
-                if (accepts(result.getText())) {
-                    setValue(result.getText());
-                    ok.setEnabled(true);
+                if (accepts(text.getText())) {
+                    setValue(text.getText());
+                    if (ok != null) ok.setEnabled(true);
                 } else {
-                    ok.setEnabled(false);
+                    if (ok != null) ok.setEnabled(false);
                 }
             }
         });
@@ -80,5 +89,12 @@ public abstract class EditorString implements IEditor<String> {
     @Override
     public String getLabel() {
         return label;
+    }
+    
+    /**
+     * Update
+     */
+    public void update(){
+        if (text!=null) text.setText(getValue());
     }
 }
