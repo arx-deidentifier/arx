@@ -32,7 +32,7 @@ import org.deidentifier.arx.DataType;
 
 /**
  * This class enables building hierarchies for categorical and non-categorical values
- * by ordering the data items and merging them according to given fanout parameters
+ * by ordering the data items and merging into groups with predefined sizes
  * 
  * @author Fabian Prasser
  *
@@ -41,7 +41,7 @@ import org.deidentifier.arx.DataType;
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
     @SuppressWarnings("hiding")
-    protected class CloseElements<T> extends Group {
+    protected class CloseElements<T> extends AbstractGroup {
         
         private static final long serialVersionUID = 7224062023293601561L;
         private String[] values;
@@ -115,34 +115,34 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     
     @SuppressWarnings("unchecked")
     @Override
-    protected Group[][] prepareGroups() {
+    protected AbstractGroup[][] prepareGroups() {
         if (comparator != null) {
             Arrays.sort(super.getData(), comparator);
         }
 
-        List<Fanout<T>> fanouts = super.getLevel(0).getFanouts();
+        List<Group<T>> groups = super.getLevel(0).getGroups();
         List<String> items = new ArrayList<String>();
         
         // Prepare
         String[] data = getData();
-        List<Group[]> result = new ArrayList<Group[]>();
+        List<AbstractGroup[]> result = new ArrayList<AbstractGroup[]>();
         int index = 0;
         int resultIndex = 0;
         int groupCount = 0;
         
-        // Break if no fanouts specified
+        // Break if no groups specified
         if (!super.getLevels().isEmpty() &&
-            !super.getLevel(0).getFanouts().isEmpty()) {
+            !super.getLevel(0).getGroups().isEmpty()) {
             
             // Create first column
-            Group[] first = new Group[data.length];
+            AbstractGroup[] first = new AbstractGroup[data.length];
             outer: while (true) {
-                for (Fanout<T> fanout : fanouts) {
-                    for (int i = 0; i<fanout.getFanout(); i++){
+                for (Group<T> group : groups) {
+                    for (int i = 0; i<group.getSize(); i++){
                         items.add(data[index++]);
                         if (index == data.length) break;
                     }
-                    CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), fanout.getFunction());
+                    CloseElements<T> element = new CloseElements<T>(items.toArray(new String[items.size()]), group.getFunction());
                     for (int i=0; i<items.size(); i++) {
                         first[resultIndex++] = element;
                     }
@@ -160,10 +160,10 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 
                 // Prepare
                 groupCount = 0;
-                fanouts = super.getLevel(i).getFanouts();
-                Map<Group, Group> map = new HashMap<Group, Group>();
-                List<Group> list = new ArrayList<Group>();
-                Group[] column = result.get(i-1);
+                groups = super.getLevel(i).getGroups();
+                Map<AbstractGroup, AbstractGroup> map = new HashMap<AbstractGroup, AbstractGroup>();
+                List<AbstractGroup> list = new ArrayList<AbstractGroup>();
+                AbstractGroup[] column = result.get(i-1);
                 for (int j=0; j<column.length; j++){
                     if (!map.containsKey(column[j])) {
                         map.put(column[j], column[j]);
@@ -176,12 +176,12 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 resultIndex = 0;
                 List<CloseElements<T>> gItems = new ArrayList<CloseElements<T>>();
                 outer: while (true) {
-                    for (Fanout<T> fanout : fanouts) {
-                        for (int j = 0; j<fanout.getFanout(); j++){
+                    for (Group<T> group : groups) {
+                        for (int j = 0; j<group.getSize(); j++){
                             gItems.add((CloseElements<T>)list.get(index++));
                             if (index == list.size()) break;
                         }
-                        CloseElements<T> element = gItems.get(0).merge(gItems, fanout.getFunction());
+                        CloseElements<T> element = gItems.get(0).merge(gItems, group.getFunction());
                         groupCount++;
                         for (int j=0; j<gItems.size(); j++) {
                             map.put(gItems.get(j), element);
@@ -193,7 +193,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
                 
                 // Store
-                Group[] ccolumn = new Group[data.length];
+                AbstractGroup[] ccolumn = new AbstractGroup[data.length];
                 for (int j=0; j<column.length; j++){
                     ccolumn[j] = map.get(column[j]);
                 }
@@ -205,7 +205,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         
         // Add one last column if more than one group left
         if (groupCount>1) {
-            Group[] column = new Group[data.length];
+            AbstractGroup[] column = new AbstractGroup[data.length];
             CloseElements<T> element = new CloseElements<T>(new String[]{}, AggregateFunction.CONSTANT(getDataType(), "*"));
             for (int i=0; i<column.length; i++){
                 column[i] = element;
@@ -214,7 +214,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
         
         // Return
-        return result.toArray(new Group[0][0]);
+        return result.toArray(new AbstractGroup[0][0]);
     }
 
     /**

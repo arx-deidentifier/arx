@@ -200,7 +200,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * This class represents an interval
      * @author Fabian Prasser
      */
-    public static class Interval<T> extends Group {
+    public static class Interval<T> extends AbstractGroup {
         
         private static final long serialVersionUID = 5985820929677249525L;
 
@@ -612,7 +612,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     
     @Override
     @SuppressWarnings("unchecked")
-    protected Group[][] prepareGroups() {
+    protected AbstractGroup[][] prepareGroups() {
 
         // Check
         String valid = isValid();
@@ -694,19 +694,19 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
         // Prepare
         String[] data = getData();
-        List<Group[]> result = new ArrayList<Group[]>();
+        List<AbstractGroup[]> result = new ArrayList<AbstractGroup[]>();
         
         // Create first column
-        Map<Group, Group> cache = new HashMap<Group, Group>();
-        Group[] first = new Group[data.length];
+        Map<AbstractGroup, AbstractGroup> cache = new HashMap<AbstractGroup, AbstractGroup>();
+        AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
             first[i] = getGroup(cache, getInterval(index, data[i], lowerAdjustment, upperAdjustment));
         }
         result.add(first);
         
         // Create other columns
-        List<Fanout<T>> fanouts = super.getLevel(0).getFanouts();
-        if (!fanouts.isEmpty()) {
+        List<Group<T>> groups = super.getLevel(0).getGroups();
+        if (!groups.isEmpty()) {
 
             // Prepare
             List<Interval<T>> newIntervals = new ArrayList<Interval<T>>();
@@ -716,12 +716,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             T width = type.subtract(intervals.get(intervals.size() - 1).max, intervals.get(0).min);
 
             // Merge intervals
-            for (Fanout<T> fanout : fanouts) {
+            for (Group<T> group : groups) {
                 
                 // Find min and max
                 T min = null;
                 T max = null;
-                for (int i = 0; i < fanout.getFanout(); i++) {
+                for (int i = 0; i < group.getSize(); i++) {
                     Interval<T> current = intervals.get(intervalIndex++);
                     T offset = type.multiply(width, multiplier);
                     T cMin = type.add(current.min, offset);
@@ -744,7 +744,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 }
                 
                 // Add interval
-                newIntervals.add(new Interval<T>(this, getDataType(), min, max, fanout.getFunction()));
+                newIntervals.add(new Interval<T>(this, getDataType(), min, max, group.getFunction()));
             }
 
             // Compute next column
@@ -756,21 +756,21 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
 
             for (int i=1; i<super.getLevels().size(); i++){
-                for (Fanout<T> sfanout : super.getLevel(i).getFanouts()) {
-                    builder.getLevel(i-1).addFanout(sfanout.getFanout(), sfanout.getFunction());
+                for (Group<T> sgroup : super.getLevel(i).getGroups()) {
+                    builder.getLevel(i-1).addGroup(sgroup.getSize(), sgroup.getFunction());
                 }
             }
             
             // Copy data
             builder.prepare(data);
-            Group[][] columns = builder.prepareGroups();
-            for (Group[] column : columns) {
+            AbstractGroup[][] columns = builder.prepareGroups();
+            for (AbstractGroup[] column : columns) {
                 result.add(column);
             }
         } else {
             if (cache.size()>1) {
-                Group[] column = new Group[data.length];
-                @SuppressWarnings("serial") Group element = new Group("*"){};
+                AbstractGroup[] column = new AbstractGroup[data.length];
+                @SuppressWarnings("serial") AbstractGroup element = new AbstractGroup("*"){};
                 for (int i=0; i<column.length; i++){
                     column[i] = element;
                 }
@@ -779,7 +779,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         // Return
-        return result.toArray(new Group[0][0]);
+        return result.toArray(new AbstractGroup[0][0]);
     }
 
     /**
@@ -788,8 +788,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param interval
      * @return
      */
-    private Group getGroup(Map<Group, Group> cache, Interval<T> interval) {
-        Group cached = cache.get(interval);
+    private AbstractGroup getGroup(Map<AbstractGroup, AbstractGroup> cache, Interval<T> interval) {
+        AbstractGroup cached = cache.get(interval);
         if (cached != null) {
             return cached;
         } else {

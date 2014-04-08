@@ -200,7 +200,11 @@ public abstract class AggregateFunction<T> {
         
         @Override
         public String toString(){
-            return "CommonPrefix";
+            if (redaction == null){
+                return "CommonPrefix";
+            } else {
+                return "CommonPrefix[redaction="+redaction+"]";
+            }
         }
     }
     

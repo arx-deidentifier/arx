@@ -44,12 +44,12 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * This class represents a fanout parameter
      * @author Fabian Prasser
      */
-    public static class Fanout<U> implements Serializable {
+    public static class Group<U> implements Serializable {
         
         private static final long serialVersionUID = -5767501048737045793L;
         
         /** Fanout*/
-        private final int fanout;
+        private final int size;
         /** Aggregate function*/
         private final AggregateFunction<U> function;
         
@@ -58,22 +58,22 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
          * @param fanout
          * @param function
          */
-        private Fanout(int fanout, AggregateFunction<U> function) {
+        private Group(int fanout, AggregateFunction<U> function) {
             if (fanout<=0) {
-                throw new IllegalArgumentException("Fanout must be >= 0");
+                throw new IllegalArgumentException("Size must be >= 0");
             }
             if (function==null) {
                 throw new IllegalArgumentException("Function must not be null");
             }
-            this.fanout = fanout;
+            this.size = fanout;
             this.function = function;
         }
 
         /**
-         * @return the fanout
+         * @return the size
          */
-        public int getFanout() {
-            return fanout;
+        public int getSize() {
+            return size;
         }
 
         /**
@@ -85,7 +85,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         @Override
         public String toString(){
-            return "Fanout[length="+fanout+", function="+function.toString()+"]";
+            return "Group[length="+size+", function="+function.toString()+"]";
         }
     }
     
@@ -98,8 +98,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         private static final long serialVersionUID = 1410005675926162598L;
         /** Level*/
         private final int level;
-        /** List of fanouts*/
-        private final List<Fanout<U>> list = new ArrayList<Fanout<U>>();
+        /** List of groups*/
+        private final List<Group<U>> list = new ArrayList<Group<U>>();
         /** Builder*/
         private final HierarchyBuilderGroupingBased<U> builder;
         
@@ -113,48 +113,48 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         
         /**
-         * Adds the given fanout with the default aggregate function
+         * Adds the given group with the default aggregate function
          * @param fanout
          * @return
          */
-        public Level<U> addFanout(int fanout) {
+        public Level<U> addGroup(int fanout) {
             if (builder.getDefaultAggregateFunction() == null) {
                 throw new IllegalStateException("No default aggregate function defined");
             }
-            this.list.add(new Fanout<U>(fanout, builder.getDefaultAggregateFunction()));
+            this.list.add(new Group<U>(fanout, builder.getDefaultAggregateFunction()));
             builder.setPrepared(false);
             return this;
         }
 
         /**
-         * Adds the given fanout with the given aggregate function
+         * Adds the given group with the given aggregate function
          * @param fanout
          * @param function
          * @return
          */
-        public Level<U> addFanout(int fanout, AggregateFunction<U> function) {
-            this.list.add(new Fanout<U>(fanout, function));
+        public Level<U> addGroup(int fanout, AggregateFunction<U> function) {
+            this.list.add(new Group<U>(fanout, function));
             builder.setPrepared(false);
             return this;
         }
 
         /**
-         * Adds the given fanout. The result will be labeled with the given string
+         * Adds the given group. The result will be labeled with the given string
          * @param fanout
          * @param label
          * @return
          */
-        public Level<U> addFanout(int fanout, String label) {
-            this.list.add(new Fanout<U>(fanout, AggregateFunction.CONSTANT(builder.getDataType(), label)));
+        public Level<U> addGroup(int fanout, String label) {
+            this.list.add(new Group<U>(fanout, AggregateFunction.CONSTANT(builder.getDataType(), label)));
             builder.setPrepared(false);
             return this;
         }
 
         /**
-         * Removes all fanouts on this level
+         * Removes all groups on this level
          * @return
          */
-        public Level<U> clearFanouts() {
+        public Level<U> clearGroups() {
             this.list.clear();
             builder.setPrepared(false);
             return this;
@@ -165,8 +165,8 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
          * @return
          */
         @SuppressWarnings("unchecked")
-        public List<Fanout<U>> getFanouts(){
-            return (List<Fanout<U>>)((ArrayList<Fanout<U>>)this.list).clone();
+        public List<Group<U>> getGroups(){
+            return (List<Group<U>>)((ArrayList<Group<U>>)this.list).clone();
         }
 
         /**
@@ -181,7 +181,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             StringBuilder b = new StringBuilder();
             b.append("Level[height="+level+"]\n");
             for (int i=0, length=list.size(); i<length; i++){
-                Fanout<U> fanout = list.get(i);
+                Group<U> fanout = list.get(i);
                 b.append("   ").append(fanout.toString());
                 if (i<length-1) b.append("\n");
             }
@@ -193,13 +193,13 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * A group representation to be used by subclasses
      * @author Fabian Prasser
      */
-    protected abstract static class Group implements Serializable {
+    protected abstract static class AbstractGroup implements Serializable {
         
         private static final long serialVersionUID = -7657969446040078411L;
         
         private String label;
         
-        protected Group(String label){
+        protected AbstractGroup(String label){
             this.label = label;
         }
         protected String getLabel(){
@@ -211,9 +211,9 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     /** The data array*/
     private transient String[] data;
     /** All fanouts for each level */
-    private Map<Integer, Level<T>> fanouts = new HashMap<Integer, Level<T>>();
+    private Map<Integer, Level<T>> groups = new HashMap<Integer, Level<T>>();
     /** The groups on the first level*/
-    private transient Group[][] groups;
+    private transient AbstractGroup[][] abstractGroups;
     /** Are we ready to go*/
     private transient boolean prepared = false;
     /** The data type*/
@@ -241,17 +241,17 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         // Add input data
-        String[][] result = new String[data.length][groups.length + 1];
+        String[][] result = new String[data.length][abstractGroups.length + 1];
         for (int i=0; i<result.length; i++) {
-            result[i] = new String[groups.length + 1];
+            result[i] = new String[abstractGroups.length + 1];
             result[i][0] = data[i];
         }
         
         // Add levels
         for (int i=0; i<result[0].length - 1; i++){
-            Map<String, Map<Group, String>> multiplicities = new HashMap<String, Map<Group, String>>();
+            Map<String, Map<AbstractGroup, String>> multiplicities = new HashMap<String, Map<AbstractGroup, String>>();
             for (int j=0; j<result.length; j++){
-                result[j][i + 1] = getLabel(multiplicities, groups[i][j]);
+                result[j][i + 1] = getLabel(multiplicities, abstractGroups[i][j]);
             }
         }
         
@@ -260,7 +260,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         this.prepared = false;
         this.data = null;
-        this.groups = null;
+        this.abstractGroups = null;
         return h;
     }
     
@@ -270,11 +270,11 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * @return 
      */
     public Level<T> getLevel(int level){
-        if (!this.fanouts.containsKey(level)) {
-            this.fanouts.put(level, new Level<T>(this, level));
+        if (!this.groups.containsKey(level)) {
+            this.groups.put(level, new Level<T>(this, level));
             this.setPrepared(false);
         }
-        return this.fanouts.get(level);
+        return this.groups.get(level);
     }
 
     /**
@@ -283,7 +283,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     public List<Level<T>> getLevels(){
         List<Level<T>> levels = new ArrayList<Level<T>>();
-        levels.addAll(this.fanouts.values());
+        levels.addAll(this.groups.values());
         Collections.sort(levels, new Comparator<Level<T>>(){
             @Override
             public int compare(Level<T> o1,
@@ -303,18 +303,18 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         // Check fanouts
         int max = 0;
-        for (Entry<Integer, Level<T>> level : this.fanouts.entrySet()) {
-            if (level.getValue().getFanouts().isEmpty()) {
-                if (level.getKey() < this.fanouts.size()-1) {
-                    return "No fanout specified on level "+level.getKey();
+        for (Entry<Integer, Level<T>> level : this.groups.entrySet()) {
+            if (level.getValue().getGroups().isEmpty()) {
+                if (level.getKey() < this.groups.size()-1) {
+                    return "No group specified on level "+level.getKey();
                 }
             }
             max = Math.max(level.getKey(), max);
         }
         for (int i=0; i<max; i++){
-            if (!this.fanouts.containsKey(i)) {
+            if (!this.groups.containsKey(i)) {
                 return "Missing specification for level "+i;
-            } else if (this.fanouts.get(i).getFanouts().isEmpty()) {
+            } else if (this.groups.get(i).getGroups().isEmpty()) {
                 return "Missing specification for level "+i;
             }
         }
@@ -332,16 +332,16 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         if (error != null) {
             throw new IllegalArgumentException(error);
         }
-        this.groups = prepareGroups();
+        this.abstractGroups = prepareGroups();
         this.prepared = true;
         
        // TODO: This assumes that input data does not contain duplicates
-        int[] result = new int[this.groups.length + 1];
+        int[] result = new int[this.abstractGroups.length + 1];
         result[0] = data.length; 
         for (int i=0; i<result.length - 1; i++){
-            Set<Group> set = new HashSet<Group>();
-            for (int j=0; j<this.groups[i].length; j++){
-                set.add(groups[i][j]);
+            Set<AbstractGroup> set = new HashSet<AbstractGroup>();
+            for (int j=0; j<this.abstractGroups[i].length; j++){
+                set.add(abstractGroups[i][j]);
             }
             result[i + 1] = set.size();
         }
@@ -365,11 +365,11 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * @param group
      * @return
      */
-    private String getLabel(Map<String, Map<Group, String>> multiplicities, Group group) {
+    private String getLabel(Map<String, Map<AbstractGroup, String>> multiplicities, AbstractGroup group) {
         String label = group.getLabel();
-        Map<Group, String> map = multiplicities.get(label);
+        Map<AbstractGroup, String> map = multiplicities.get(label);
         if (map == null) {
-            map = new HashMap<Group, String>();
+            map = new HashMap<AbstractGroup, String>();
             map.put(group, label);
             multiplicities.put(label, map);
             return label;
@@ -412,7 +412,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     /**
      * Tells the implementing class to prepare the generalization process
      */
-    protected abstract Group[][] prepareGroups();
+    protected abstract AbstractGroup[][] prepareGroups();
     
     /**
      * Is this builder prepared allready
@@ -421,7 +421,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     protected void setPrepared(boolean prepared){
         this.prepared = prepared;
         if (prepared == false) {
-            this.groups = null;
+            this.abstractGroups = null;
         }
     }
 }
