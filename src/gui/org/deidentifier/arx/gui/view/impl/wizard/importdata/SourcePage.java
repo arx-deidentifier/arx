@@ -1,3 +1,22 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * Copyright (C) 2014 Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
@@ -23,15 +42,15 @@ import org.eclipse.swt.widgets.Composite;
  * <ul>
  *  <li>{@link CsvPage} CSV</li>
  *  <li>{@link JdbcPage} Database (JDBC)</li>
- *  <li>{@link XlsPage} Excel (XLS)</li>
+ *  <li>{@link ExcelPage} Excel (XLS, XLSX)</li>
  * </ul>
  */
 public class SourcePage extends WizardPage {
 
     /* Widgets */
     private Button btnCsv;
+    private Button btnExcel;
     private Button btnJdbc;
-    private Button btnXls;
 
     /**
      * Reference to the wizard containing this page
@@ -85,6 +104,21 @@ public class SourcePage extends WizardPage {
 
         });
 
+        /* Add button for Excel */
+        btnExcel = new Button(container, SWT.RADIO);
+        btnExcel.setText("Excel (XLS, XLSX)");
+        btnExcel.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                wizardImport.getData().setSourceType(SourceType.EXCEL);
+                setPageComplete(true);
+
+            }
+
+        });
+
         /* Add button for JDBC */
         btnJdbc = new Button(container, SWT.RADIO);
         btnJdbc.setEnabled(false);
@@ -95,22 +129,6 @@ public class SourcePage extends WizardPage {
             public void widgetSelected(SelectionEvent arg0) {
 
                 wizardImport.getData().setSourceType(SourceType.JDBC);
-                setPageComplete(true);
-
-            }
-
-        });
-
-        /* Add button for Excel */
-        btnXls = new Button(container, SWT.RADIO);
-        btnXls.setEnabled(false);
-        btnXls.setText("XLS (Excel)");
-        btnXls.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-
-                wizardImport.getData().setSourceType(SourceType.XLS);
                 setPageComplete(true);
 
             }

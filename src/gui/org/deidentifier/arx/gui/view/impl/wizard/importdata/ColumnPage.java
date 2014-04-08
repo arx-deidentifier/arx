@@ -1,3 +1,21 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import java.util.ArrayList;
@@ -262,13 +280,13 @@ public class ColumnPage extends WizardPage {
             /**
              * Gets string representation for given datatype of column
              *
-             * Internally it makes use of {@link Column#getDatatype()}.
+             * Internally it makes use of {@link Column#getDataType()}.
              */
             @Override
             public String getText(Object element)
             {
 
-                DataType<?> datatype = ((WizardColumn) element).getColumn().getDatatype();
+                DataType<?> datatype = ((WizardColumn) element).getColumn().getDataType();
 
                 for (DataTypeDescription<?> description : DataType.LIST) {
 
@@ -311,7 +329,7 @@ public class ColumnPage extends WizardPage {
             public String getText(Object element)
             {
 
-                DataType<?> column = ((WizardColumn) element).getColumn().getDatatype();
+                DataType<?> column = ((WizardColumn) element).getColumn().getDataType();
 
                 if (column instanceof DataTypeWithFormat) {
 
@@ -655,7 +673,7 @@ public class ColumnPage extends WizardPage {
         protected Object getValue(Object element)
         {
 
-            DataType<?> datatype = ((WizardColumn)element).getColumn().getDatatype();
+            DataType<?> datatype = ((WizardColumn)element).getColumn().getDataType();
 
             int i = 0;
 
@@ -717,12 +735,12 @@ public class ColumnPage extends WizardPage {
                         final Controller controller = wizardImport.getController();
                         String format = null;
 
-                        if (column.getDatatype().getClass() == description.newInstance().getClass()) {
+                        if (column.getDataType().getClass() == description.newInstance().getClass()) {
 
                             format = controller.actionShowFormatInputDialog(
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
-                                ((DataTypeWithFormat)column.getDatatype()).getFormat(),
+                                ((DataTypeWithFormat)column.getDataType()).getFormat(),
                                 description,
                                 previewData
                             );
@@ -757,7 +775,7 @@ public class ColumnPage extends WizardPage {
                     }
 
                     /* Apply datatype */
-                    column.setDatatype(datatype);
+                    column.setDataType(datatype);
                     getViewer().update(element, null);
 
                     return;

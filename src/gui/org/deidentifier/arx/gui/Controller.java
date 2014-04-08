@@ -1,6 +1,7 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
  * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,8 +76,8 @@ import org.deidentifier.arx.gui.worker.WorkerLoad;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
-import org.deidentifier.arx.io.importdata.CSVConfiguration;
-import org.deidentifier.arx.io.importdata.DataSourceConfiguration;
+import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 
@@ -1029,8 +1030,8 @@ public class Controller implements IView {
         model.getInputConfig().setInput(data);
         
         // TODO: Fix this
-        if (config instanceof CSVConfiguration){
-            model.setInputBytes(new File(((CSVConfiguration)config).getFile()).length());
+        if (config instanceof CSVFileConfiguration){
+            model.setInputBytes(new File(((CSVFileConfiguration)config).getFileLocation()).length());
         } else {
             model.setInputBytes(0);
         }
