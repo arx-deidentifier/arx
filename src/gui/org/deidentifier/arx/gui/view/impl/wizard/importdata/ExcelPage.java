@@ -464,7 +464,7 @@ public class ExcelPage extends WizardPage {
 
             readPreview();
 
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
 
             setErrorMessage(e.getMessage());
 
