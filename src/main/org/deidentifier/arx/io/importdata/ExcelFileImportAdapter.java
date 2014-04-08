@@ -242,15 +242,17 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
             Column column = columns.get(i);
 
-            if (config.getContainsHeader()) {
+            lastRow.getCell(column.getIndex()).setCellType(Cell.CELL_TYPE_STRING);
+            String name = lastRow.getCell(column.getIndex()).getStringCellValue();
+
+            if (config.getContainsHeader() && !name.equals("")) {
 
                 /* Assign name of file itself */
-                lastRow.getCell(column.getIndex()).setCellType(Cell.CELL_TYPE_STRING);
-                header[i] = lastRow.getCell(column.getIndex()).getStringCellValue();
+                header[i] = name;
 
             } else {
 
-                /* Nothing defined in CSV file, build name manually */
+                /* Nothing defined in header (or empty), build name manually */
                 header[i] = "Column #" + column.getIndex();
 
             }
