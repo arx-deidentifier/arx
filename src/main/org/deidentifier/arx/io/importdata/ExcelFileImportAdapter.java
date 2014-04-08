@@ -80,6 +80,15 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
      */
     private int currentRow = 0;
 
+    /**
+     * Holds the number of columns
+     *
+     * This is set in the first iteration and is checked against in every
+     * other iteration. Once a row contains more columns that this, an
+     * exception is thrown.
+     */
+    private int numberOfColumns;
+
 
     /**
      * Creates a new instance of this object with given configuration
@@ -189,6 +198,13 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
         }
 
+        /* Check whether number of columns is too big */
+        if (lastRow.getPhysicalNumberOfCells() > numberOfColumns) {
+
+            throw new IllegalArgumentException("Number of columns in row " + currentRow + " is too big");
+
+        }
+
         /* Create regular row */
         String[] result = new String[indexes.length];
         for (int i = 0; i < indexes.length; i++) {
@@ -284,6 +300,9 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
             }
 
         }
+
+        /* Store number of columns */
+        numberOfColumns = header.length;
 
         /* Return header */
         return header;
