@@ -452,6 +452,7 @@ public class ExcelPage extends WizardPage {
 
         setPageComplete(false);
         setErrorMessage(null);
+        tablePreview.setVisible(false);
 
         if (comboLocation.getText().equals("")) {
 
