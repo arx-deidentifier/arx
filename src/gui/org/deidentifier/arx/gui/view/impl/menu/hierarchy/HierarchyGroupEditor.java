@@ -2,7 +2,6 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyDrawingContext.GroupContext;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
 import org.eclipse.swt.widgets.Composite;
 

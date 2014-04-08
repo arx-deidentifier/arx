@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyDrawingContext.ComponentContext;
 
 public class HierarchyModel<T> implements IUpdateable{
     

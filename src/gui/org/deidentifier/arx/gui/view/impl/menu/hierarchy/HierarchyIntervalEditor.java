@@ -2,10 +2,8 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyDrawingContext.IntervalContext;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabItem;
 
 public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> implements IUpdateable{
     

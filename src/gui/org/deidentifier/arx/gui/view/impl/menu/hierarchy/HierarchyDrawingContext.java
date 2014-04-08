@@ -52,6 +52,7 @@ public class HierarchyDrawingContext<T> {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
+            @SuppressWarnings("rawtypes")
             IntervalContext other = (IntervalContext) obj;
             if (interval == null) {
                 if (other.interval != null) return false;
@@ -76,6 +77,7 @@ public class HierarchyDrawingContext<T> {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
+            @SuppressWarnings("rawtypes")
             GroupContext other = (GroupContext) obj;
             if (group == null) {
                 if (other.group != null) return false;
