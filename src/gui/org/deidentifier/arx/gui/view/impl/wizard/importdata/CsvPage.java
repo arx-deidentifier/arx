@@ -518,6 +518,7 @@ public class CsvPage extends WizardPage {
 
         setPageComplete(false);
         setErrorMessage(null);
+        tablePreview.setVisible(false);
 
         if (comboLocation.getText().equals("")) {
 
