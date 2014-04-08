@@ -121,6 +121,7 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
         }
 
+        workbook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
         Sheet sheet = workbook.getSheetAt(config.getSheetIndex());
         rowIterator = sheet.iterator();
 
