@@ -53,6 +53,17 @@ public abstract class DataSourceConfiguration {
      */
     public void addColumn(Column column) {
 
+        for (Column c : columns) {
+
+            if (column.getName() != null && c.getName() != null &&
+                c.getName().equals(column.getName())) {
+
+                throw new IllegalArgumentException("Column names need to be unique");
+
+            }
+
+        }
+
         this.columns.add(column);
 
     }
