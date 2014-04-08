@@ -81,8 +81,8 @@ public class Example18 extends Example {
         HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(DataType.INTEGER, false);
 
         // Define grouping fanouts
-        builder.getLevel(0).addFanout(10, AggregateFunction.INTERVAL(DataType.INTEGER));
-        builder.getLevel(1).addFanout(2, AggregateFunction.INTERVAL(DataType.INTEGER));
+        builder.getLevel(0).addGroup(10, AggregateFunction.INTERVAL(DataType.INTEGER));
+        builder.getLevel(1).addGroup(2, AggregateFunction.INTERVAL(DataType.INTEGER));
         // builder.getLevel(2).addFanout(5, AggregateFunction.INTERVAL(DataType.INTEGER));
         // builder.getLevel(3).addFanout(5, AggregateFunction.INTERVAL(DataType.INTEGER));
 
@@ -131,8 +131,8 @@ public class Example18 extends Example {
         builder.addInterval(20l, 33l);
         
         // Define grouping fanouts
-        builder.getLevel(0).addFanout(2);
-        builder.getLevel(1).addFanout(3);
+        builder.getLevel(0).addGroup(2);
+        builder.getLevel(1).addGroup(3);
         
 
         System.out.println("------------------------");
@@ -180,8 +180,8 @@ public class Example18 extends Example {
         builder.addInterval(20l, 33l);
         
         // Define grouping fanouts
-        builder.getLevel(0).addFanout(2);
-        builder.getLevel(1).addFanout(3);
+        builder.getLevel(0).addGroup(2);
+        builder.getLevel(1).addGroup(3);
         
 
         System.out.println("------------------------");
@@ -257,8 +257,8 @@ public class Example18 extends Example {
         builder.addInterval(4.9d, 10d, "very high");
         
         // Define grouping fanouts
-        builder.getLevel(0).addFanout(2, "low").addFanout(2, "normal").addFanout(2, "high");
-        builder.getLevel(1).addFanout(2, "low-normal").addFanout(1, "high");
+        builder.getLevel(0).addGroup(2, "low").addGroup(2, "normal").addGroup(2, "high");
+        builder.getLevel(1).addGroup(2, "low-normal").addGroup(1, "high");
 
         System.out.println("--------------------------");
         System.out.println("LDL-CHOLESTEROL HIERARCHY");
@@ -308,8 +308,8 @@ public class Example18 extends Example {
         builder.addInterval(4.9d, 10d, "very high");
         
         // Define grouping fanouts
-        builder.getLevel(0).addFanout(2, "low").addFanout(2, "normal").addFanout(2, "high");
-        builder.getLevel(1).addFanout(2, "low-normal").addFanout(1, "high");
+        builder.getLevel(0).addGroup(2, "low").addGroup(2, "normal").addGroup(2, "high");
+        builder.getLevel(1).addGroup(2, "low-normal").addGroup(1, "high");
 
         System.out.println("--------------------------");
         System.out.println("LDL-CHOLESTEROL HIERARCHY");
