@@ -55,6 +55,12 @@ public abstract class DataSourceConfiguration {
 
         for (Column c : columns) {
 
+            if (column.getIndex() == c.getIndex()) {
+
+                throw new IllegalArgumentException("Column for this index already assigned");
+
+            }
+
             if (column.getName() != null && c.getName() != null &&
                 c.getName().equals(column.getName())) {
 
