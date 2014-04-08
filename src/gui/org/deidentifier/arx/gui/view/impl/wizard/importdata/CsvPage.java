@@ -518,6 +518,7 @@ public class CsvPage extends WizardPage {
 
         setPageComplete(false);
         setErrorMessage(null);
+        tablePreview.setVisible(false);
 
         if (comboLocation.getText().equals("")) {
 
@@ -536,9 +537,9 @@ public class CsvPage extends WizardPage {
 
             readPreview();
 
-        } catch (Exception e) {
+        } catch (IOException | IllegalArgumentException e) {
 
-            setErrorMessage("Error while trying to access the file");
+            setErrorMessage(e.getMessage());
 
             return;
 

@@ -223,14 +223,15 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
 
             Column column = columns.get(i);
 
-            if (config.getContainsHeader()) {
+            /* Check whether there is a header, which is not empty */
+            if (config.getContainsHeader() && !row[column.getIndex()].equals("")) {
 
                 /* Assign name of CSV file itself */
                 header[i] = row[column.getIndex()];
 
             } else {
 
-                /* Nothing defined in CSV file, build name manually */
+                /* Nothing defined in header (or empty), build name manually */
                 header[i] = "Column #" + column.getIndex();
 
             }

@@ -80,6 +80,15 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
      */
     private int currentRow = 0;
 
+    /**
+     * Holds the number of columns
+     *
+     * This is set in the first iteration and is checked against in every
+     * other iteration. Once a row contains more columns that this, an
+     * exception is thrown.
+     */
+    private int numberOfColumns;
+
 
     /**
      * Creates a new instance of this object with given configuration
@@ -121,6 +130,7 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
         }
 
+        workbook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
         Sheet sheet = workbook.getSheetAt(config.getSheetIndex());
         rowIterator = sheet.iterator();
 
@@ -188,6 +198,13 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
         }
 
+        /* Check whether number of columns is too big */
+        if (lastRow.getPhysicalNumberOfCells() > numberOfColumns) {
+
+            throw new IllegalArgumentException("Number of columns in row " + currentRow + " is too big");
+
+        }
+
         /* Create regular row */
         String[] result = new String[indexes.length];
         for (int i = 0; i < indexes.length; i++) {
@@ -242,15 +259,17 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
             Column column = columns.get(i);
 
-            if (config.getContainsHeader()) {
+            lastRow.getCell(column.getIndex()).setCellType(Cell.CELL_TYPE_STRING);
+            String name = lastRow.getCell(column.getIndex()).getStringCellValue();
+
+            if (config.getContainsHeader() && !name.equals("")) {
 
                 /* Assign name of file itself */
-                lastRow.getCell(column.getIndex()).setCellType(Cell.CELL_TYPE_STRING);
-                header[i] = lastRow.getCell(column.getIndex()).getStringCellValue();
+                header[i] = name;
 
             } else {
 
-                /* Nothing defined in CSV file, build name manually */
+                /* Nothing defined in header (or empty), build name manually */
                 header[i] = "Column #" + column.getIndex();
 
             }
@@ -281,6 +300,9 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
             }
 
         }
+
+        /* Store number of columns */
+        numberOfColumns = header.length;
 
         /* Return header */
         return header;

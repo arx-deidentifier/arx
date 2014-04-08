@@ -309,7 +309,7 @@ public class ExcelPage extends WizardPage {
 
         } catch (InvalidFormatException e) {
 
-            throw new IOException("Couldn't open file");
+            throw new IOException("File format invalid");
 
         }
 
@@ -349,7 +349,7 @@ public class ExcelPage extends WizardPage {
         /* Check whether there is at least one row in sheet and retrieve it */
         if (!rowIterator.hasNext()) {
 
-            throw new IOException("Sheet contains no rows");
+            throw new IOException("Sheet contains no actual data");
 
         }
 
@@ -452,6 +452,7 @@ public class ExcelPage extends WizardPage {
 
         setPageComplete(false);
         setErrorMessage(null);
+        tablePreview.setVisible(false);
 
         if (comboLocation.getText().equals("")) {
 
@@ -463,9 +464,9 @@ public class ExcelPage extends WizardPage {
 
             readPreview();
 
-        } catch (Exception e) {
+        } catch (IOException | IllegalArgumentException e) {
 
-            setErrorMessage("Error while trying to access the file");
+            setErrorMessage(e.getMessage());
 
             return;
 
