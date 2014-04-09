@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
@@ -11,30 +12,37 @@ public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> imple
     private final HierarchyModel<T> model;
     private final EditorString editorMin;
     private final EditorString editorMax;
+    private final DataTypeWithRatioScale<T> type;
     
+    @SuppressWarnings("unchecked")
     public HierarchyIntervalEditor(final Composite parent,
                                    final HierarchyModel<T> model) {
-        super(parent, model, true);
+        super(parent, model, false);
         this.model = model;
+        this.type = (DataTypeWithRatioScale<T>)model.type;
         createLabel(composite, "Min:");
+        
         editorMin = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
                 if (interval==null) return false;
-                return model.type.isValid(s);
+                if (!type.isValid(s)) return false;
+                T value = type.parse(s);
+                if (type.compare(value, interval.max) > 0) return false;
+                else return true;
             }
 
             @Override
             public String getValue() {
                 if (interval==null) return "";
-                else return model.type.format(interval.min);
+                else return type.format(interval.min);
             }
 
             @Override
             public void setValue(final String s) {
                 if (interval!=null){
-                    if (interval.min != model.type.parse(s)){
-                        interval.min = model.type.parse(s);
+                    if (interval.min != type.parse(s)){
+                        interval.min = type.parse(s);
                         model.update(HierarchyIntervalEditor.this);
                     }
                 }
@@ -43,23 +51,27 @@ public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> imple
         
         createLabel(composite, "Max:");
         editorMax = new EditorString(composite) {
+            
             @Override
             public boolean accepts(final String s) {
                 if (interval==null) return false;
-                return model.type.isValid(s);
+                if (!type.isValid(s)) return false;
+                T value = type.parse(s);
+                if (type.compare(value, interval.min) < 0) return false;
+                else return true;
             }
 
             @Override
             public String getValue() {
                 if (interval==null) return "";
-                else return model.type.format(interval.max);
+                else return type.format(interval.max);
             }
 
             @Override
             public void setValue(final String s) {
                 if (interval!=null){
-                    if (interval.max != model.type.parse(s)){
-                        interval.max = model.type.parse(s);
+                    if (interval.max != type.parse(s)){
+                        interval.max = type.parse(s);
                         model.update(HierarchyIntervalEditor.this);
                     }
                 }
@@ -71,14 +83,29 @@ public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> imple
     @Override
     public void update() {
         if (model.selected instanceof HierarchyInterval){
+            
             this.interval = (HierarchyInterval<T>)model.selected;
+            super.setSource(this.interval);
+            super.update();
+            this.editorMin.update();
+            this.editorMax.update();
+            
+            if (model.isFirst(this.interval)){
+                SWTUtil.enable(editorMin.getControl());
+            } else {
+                SWTUtil.disable(editorMin.getControl());
+            }
+            if (model.isLast(this.interval)){
+                SWTUtil.enable(editorMax.getControl());
+            } else {
+                SWTUtil.disable(editorMax.getControl());
+            }
+            SWTUtil.enable(getEditor().getControl());
         } else {
             this.interval = null;
+            SWTUtil.disable(editorMin.getControl());
+            SWTUtil.disable(editorMax.getControl());
+            SWTUtil.disable(getEditor().getControl());
         }
-        super.update();
-        this.editorMin.update();
-        this.editorMax.update();
-        if (interval==null) SWTUtil.disable(composite);
-        else SWTUtil.enable(composite);
     }
 }

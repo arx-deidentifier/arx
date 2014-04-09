@@ -20,12 +20,14 @@ package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IEditor;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 public abstract class EditorString implements IEditor<String> {
@@ -64,17 +66,17 @@ public abstract class EditorString implements IEditor<String> {
         } else {
             text = new Text(parent, SWT.SINGLE | SWT.BORDER);
         }
-
         text.setText(getValue());
-
         text.setLayoutData(ldata);
         text.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(final ModifyEvent arg0) {
                 if (accepts(text.getText())) {
                     setValue(text.getText());
+                    text.setForeground(GUIHelper.COLOR_BLACK);
                     if (ok != null) ok.setEnabled(true);
                 } else {
+                    text.setForeground(GUIHelper.COLOR_RED);
                     if (ok != null) ok.setEnabled(false);
                 }
             }
@@ -96,5 +98,9 @@ public abstract class EditorString implements IEditor<String> {
      */
     public void update(){
         if (text!=null) text.setText(getValue());
+    }
+
+    public Control getControl() {
+        return text;
     }
 }

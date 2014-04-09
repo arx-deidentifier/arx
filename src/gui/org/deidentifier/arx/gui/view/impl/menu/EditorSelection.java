@@ -25,6 +25,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 public abstract class EditorSelection implements IEditor<String> {
 
@@ -91,5 +92,9 @@ public abstract class EditorSelection implements IEditor<String> {
      */
     public void update(){
         if (combo!=null) combo.select(indexOf(getValue()));
+    }
+    
+    public Control getControl(){
+        return combo;
     }
 }

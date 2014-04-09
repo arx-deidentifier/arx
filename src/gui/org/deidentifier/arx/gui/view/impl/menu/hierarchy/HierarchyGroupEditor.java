@@ -13,7 +13,7 @@ public class HierarchyGroupEditor<T> extends HierarchyFunctionEditor<T> implemen
 
     public HierarchyGroupEditor(final Composite parent,
                                 final HierarchyModel<T> model) {
-        super(parent, model, true);
+        super(parent, model, false);
         this.model = model;
         createLabel(composite, "Size:");
         this.editor = new EditorString(composite) {
@@ -21,8 +21,8 @@ public class HierarchyGroupEditor<T> extends HierarchyFunctionEditor<T> implemen
             public boolean accepts(final String s) {
                 if (group==null) return false;
                 try {
-                    Integer.parseInt(s);
-                    return true;
+                    int i = Integer.parseInt(s);
+                    return i>0;
                 } catch (NumberFormatException e) {
                     return false;
                 }
@@ -39,7 +39,6 @@ public class HierarchyGroupEditor<T> extends HierarchyFunctionEditor<T> implemen
                 if (group!=null){
                     if (group.size != Integer.valueOf(s)){
                         group.size = Integer.valueOf(s);
-                        System.out.println("Setting group size to:"+s);
                         model.update(HierarchyGroupEditor.this);
                     }
                 }
@@ -51,13 +50,18 @@ public class HierarchyGroupEditor<T> extends HierarchyFunctionEditor<T> implemen
     @Override
     public void update() {
         if (model.selected instanceof HierarchyGroup){
+            super.setSource(this.group);
+            super.update();
             this.group = (HierarchyGroup<T>)model.selected;
+            this.editor.update();
+            SWTUtil.enable(editor.getControl());
+            SWTUtil.enable(getEditor().getControl());
         } else {
             this.group = null;
+            this.editor.update();
+            SWTUtil.disable(editor.getControl());
+            SWTUtil.disable(getEditor().getControl());
         }
-        super.update();
-        this.editor.update();
-        if (group==null) SWTUtil.disable(composite);
-        else SWTUtil.enable(composite);
+        
     }
 }

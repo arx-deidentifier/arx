@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -27,7 +28,8 @@ public class HierarchyEditor<T> implements IUpdateable {
     private Composite                    canvascomposite;
     private ScrolledComposite            scrolledcomposite;
     private TabFolder                    folder;
-
+    private HierarchyEditorMenu<T>       menu;
+    
     /**
      * Creates a new instance
      * @param parent
@@ -59,6 +61,7 @@ public class HierarchyEditor<T> implements IUpdateable {
         
         this.canvascomposite.addMouseListener(new MouseAdapter(){
             @Override public void mouseUp(MouseEvent arg0) {
+                
                 if (HierarchyEditor.this.model.context.select(arg0.x, arg0.y)){
                     HierarchyEditor.this.model.update(HierarchyEditor.this);
                     canvascomposite.redraw();
@@ -70,15 +73,23 @@ public class HierarchyEditor<T> implements IUpdateable {
                         else folder.setSelection(1);
                     }
                 }
+
+                if ((arg0.stateMask & SWT.BUTTON3) != 0 && HierarchyEditor.this.model.selected != null){
+                    menu.show(arg0.x, arg0.y);
+                }
             }
         });
         
-        folder = new TabFolder(composite, SWT.BORDER);
-        folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        createGeneralTab(folder);
-        if (model.showIntervals) createBoundsTab(folder);
-        if (model.showIntervals) createIntervalTab(folder);
-        createGroupTab(folder);
+        this.menu = new HierarchyEditorMenu<T>(composite, model);
+        
+        this.folder = new TabFolder(composite, SWT.BORDER);
+        this.folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.createGeneralTab(folder);
+        if (model.showIntervals) this.createBoundsTab(folder);
+        if (model.showIntervals) this.createIntervalTab(folder);
+        this.createGroupTab(folder);
+        
+        this.model.update();
     }
     
     private void createGroupTab(TabFolder tabFolder) {
@@ -96,7 +107,7 @@ public class HierarchyEditor<T> implements IUpdateable {
         tabItem1.setText("General");
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(1, false));
-        new HierarchyFunctionEditor<T>(parent, model, false);
+        new HierarchyFunctionEditor<T>(parent, model, true);
         tabItem1.setControl(parent);
     }
 

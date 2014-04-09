@@ -213,6 +213,23 @@ public class SWTUtil {
         setEnabled(elem, false);
     }
 
+
+    /**
+     * Disables the control
+     * @param elem
+     */
+    public static void disable(final Control elem) {
+        elem.setEnabled(false);
+    }
+
+    /**
+     * Enables the control
+     * @param elem
+     */
+    public static void enable(final Control elem) {
+        elem.setEnabled(true);
+    }
+
     /**
      * Enables the composite and its children
      * @param elem

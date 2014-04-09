@@ -15,9 +15,8 @@ import org.eclipse.swt.widgets.Shell;
 public class HierarchyWizard {
     
     HierarchyWizard(final Shell shell){
-        HierarchyModel<Long> model = new HierarchyModel<Long>();
-        model.type = DataType.INTEGER;
-        model.function = AggregateFunction.INTERVAL(model.type, true, false);
+        HierarchyModel<Long> model = new HierarchyModel<Long>(DataType.INTEGER, true);
+        model.intervals.clear();
         model.intervals.add(new HierarchyInterval<Long>(0l, 1l, model.function));
         model.intervals.add(new HierarchyInterval<Long>(1l, 3l, model.function));
         model.intervals.add(new HierarchyInterval<Long>(3l, 5l, model.function));

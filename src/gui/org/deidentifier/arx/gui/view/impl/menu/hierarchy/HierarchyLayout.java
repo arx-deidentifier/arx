@@ -17,13 +17,11 @@ public class HierarchyLayout<T> {
     }
 
     /**
-     * This is so ugly
+     * Computes the cardinalities of the optimal number of elements per hierarchy level
      * @return
      */
     public int[] layout() {
 
-        long time = System.currentTimeMillis();
-        
         // Size of the solution
         int size = model.showIntervals ? 1 + model.groups.size() : model.groups.size();
         
@@ -102,8 +100,6 @@ public class HierarchyLayout<T> {
                 }
             }
         }
-        
-        System.out.println("Layouting: "+(System.currentTimeMillis() - time));
         
         // Return
         if (!pretty) {

@@ -223,6 +223,16 @@ public abstract class DataType<T> implements Serializable {
             long d1 = multiplicand.getTime();
             return new Date((long)((double)d1 * multiplicator));
         }
+
+        @Override
+        public Date getMinimum() {
+            return new Date(Long.MIN_VALUE);
+        }
+
+        @Override
+        public Date getMaximum() {
+            return new Date(Long.MAX_VALUE);
+        }
     }
 
     /**
@@ -398,6 +408,16 @@ public abstract class DataType<T> implements Serializable {
         public Double multiply(Double multiplicand, double multiplicator) {
             return multiplicand * multiplicator;
         }
+
+        @Override
+        public Double getMinimum() {
+            return Double.MIN_VALUE;
+        }
+
+        @Override
+        public Double getMaximum() {
+            return Double.MAX_VALUE;
+        }
     }
     
     /**
@@ -571,6 +591,16 @@ public abstract class DataType<T> implements Serializable {
         @Override
         public Long multiply(Long multiplicand, double multiplicator) {
             return (long)((double)multiplicand * multiplicator);
+        }
+
+        @Override
+        public Long getMinimum() {
+            return Long.MIN_VALUE;
+        }
+
+        @Override
+        public Long getMaximum() {
+            return Long.MAX_VALUE;
         }
     }
     
@@ -932,6 +962,10 @@ public abstract class DataType<T> implements Serializable {
         public abstract String format(T t);
 
         public abstract boolean isValid(String s);
+        
+        public T getMinimum();
+        
+        public T getMaximum();
     }
     
     /**

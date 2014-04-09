@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Label;
 
 public class HierarchyFunctionEditor<T> implements IUpdateable {
  
-    protected final Composite composite;
+    protected final Composite                composite;
     private final List<AggregateFunction<T>> functions;
-    private final List<String> labels;
-    private Object source;
-    private final EditorSelection editor;
+    private final List<String>               labels;
+    private Object                           source;
+    private final EditorSelection            editor;
 
     public HierarchyFunctionEditor(final Composite parent,
                                    final HierarchyModel<T> model,
@@ -41,7 +41,7 @@ public class HierarchyFunctionEditor<T> implements IUpdateable {
         addFunction(AggregateFunction.COMMON_PREFIX(model.type));
         addFunction(AggregateFunction.COMMON_PREFIX(model.type, '-'));
         addFunction(AggregateFunction.COMMON_PREFIX(model.type, 'x'));
-        addFunction(AggregateFunction.CONSTANT(model.type, "Parameter"));
+        if (!isGeneral) addFunction(AggregateFunction.CONSTANT(model.type, "Parameter"));
         addFunction(AggregateFunction.INTERVAL(model.type, true, false));
         addFunction(AggregateFunction.SET(model.type));
         addFunction(AggregateFunction.SET_OF_PREFIXES(model.type, 1));
@@ -73,9 +73,7 @@ public class HierarchyFunctionEditor<T> implements IUpdateable {
                         AggregateFunction<T> function = ((HierarchyGroup<T>)source).function;
                         if (function == model.function) return "Default";
                         else return function.toString();
-                    } else {
-                        return null;
-                    }
+                    } 
                 }
                 return null;
             }
@@ -145,5 +143,9 @@ public class HierarchyFunctionEditor<T> implements IUpdateable {
     @Override
     public void update() {
         editor.update();
+    }
+    
+    protected EditorSelection getEditor(){
+        return editor;
     }
 }

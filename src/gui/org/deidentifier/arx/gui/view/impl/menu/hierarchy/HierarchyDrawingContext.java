@@ -33,6 +33,8 @@ public class HierarchyDrawingContext<T> {
         public boolean   enabled;
         public String    label;
         public String    bounds;
+        public T         min;
+        public T         max;
     }
 
     public static class IntervalContext<T> extends ComponentContext<T> {
@@ -90,6 +92,8 @@ public class HierarchyDrawingContext<T> {
     private final List<IntervalContext<T>>    intervals = new ArrayList<IntervalContext<T>>();
     private final List<List<GroupContext<T>>> groups    = new ArrayList<List<GroupContext<T>>>();
     private final HierarchyLayout<T>          layout;
+    private final List<IntervalContext<T>>    renderedIntervals = new ArrayList<IntervalContext<T>>();
+    private final List<List<GroupContext<T>>> renderedGroups    = new ArrayList<List<GroupContext<T>>>();
     
 
     public HierarchyDrawingContext(HierarchyModel<T> model) {
@@ -141,9 +145,14 @@ public class HierarchyDrawingContext<T> {
         
         // Create groups
         int shift = model.showIntervals ? 1 : 0;
-        int offset = 0;
         for (int i=0; i<model.groups.size(); i++){
             groups.add(new ArrayList<GroupContext<T>>());
+            int offset = 0;
+            
+            if (model.showIntervals && i>0) {
+                width = dtype.subtract(groups.get(i-1).get(groups.get(i-1).size()-1).max, groups.get(i-1).get(0).min);
+            }
+            
             for (int j=0; j < factors[i+shift]; j++) {
                 List<HierarchyGroup<T>> list = model.groups.get(i);
                 HierarchyGroup<T> group = list.get(j % list.size());
@@ -152,22 +161,38 @@ public class HierarchyDrawingContext<T> {
                 element.enabled = j < list.size();
                 
                 if (layout.isPretty() && model.showIntervals){
-                    HierarchyInterval<T> iv1 = model.intervals.get(offset % model.intervals.size());
+                    
+                    T min = null;
+                    T max = null;
                     T scale1 = null;
-                    if (offset >= model.intervals.size()) {
-                        int factor = offset / model.intervals.size();
-                        scale1 = dtype.multiply(width, factor);
-                    }
-                    offset += group.size;
-                    HierarchyInterval<T> iv2 = model.intervals.get(offset % model.intervals.size());
                     T scale2 = null;
-                    if (offset >= model.intervals.size()) {
-                        int factor = offset / model.intervals.size();
-                        scale2 = dtype.multiply(width, factor);
+                    
+                    if (i==0) {
+                        min = model.intervals.get(offset % model.intervals.size()).min;
+                        if (offset >= model.intervals.size()) {
+                            int factor = offset / model.intervals.size();
+                            scale1 = dtype.multiply(width, factor);
+                        }
+                        offset += group.size;
+                        max = model.intervals.get((offset-1)% model.intervals.size()).max;
+                        if (offset >= model.intervals.size()) {
+                            int factor = (offset -1) / model.intervals.size();
+                            scale2 = dtype.multiply(width, factor);
+                        }
+                    } else {
+                        min = groups.get(i-1).get(offset % groups.get(i-1).size()).min;
+                        if (offset >= groups.get(i-1).size()) {
+                            int factor = offset / groups.get(i-1).size();
+                            scale1 = dtype.multiply(width, factor);
+                        }
+                        offset += group.size;
+                        max = groups.get(i-1).get((offset-1) % groups.get(i-1).size()).max;
+                        if (offset >= groups.get(i-1).size()) {
+                            int factor = (offset -1) / groups.get(i-1).size();
+                            scale2 = dtype.multiply(width, factor);
+                        }
                     }
                     
-                    T min = iv1.min;
-                    T max = iv2.max;
                     if (scale1 != null){
                         min = dtype.add(scale1, min);
                     } 
@@ -178,6 +203,8 @@ public class HierarchyDrawingContext<T> {
                     element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"[";
                     String[] values = {dtype.format(min), dtype.format(max)};
                     element.label = group.function.aggregate(values);
+                    element.min = min;
+                    element.max = max;
                 } else {
                     element.bounds = String.valueOf(group.size); 
                     element.label = group.function.toString();
@@ -247,6 +274,11 @@ public class HierarchyDrawingContext<T> {
             }
             left += fanoutTotalWidth.get(i) + OFFSET;
         }
+        
+        renderedIntervals.clear();
+        renderedIntervals.addAll(intervals);
+        renderedGroups.clear();
+        renderedGroups.addAll(groups);
     }
     
 
