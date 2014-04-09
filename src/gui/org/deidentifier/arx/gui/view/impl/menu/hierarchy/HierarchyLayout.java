@@ -7,11 +7,10 @@ import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.Hierarch
 
 public class HierarchyLayout<T> {
 
-    public static final int                    PRETTY_THRESHOLD    = 100;
-    public static final int                    LAYOUT_COMPLEXITY   = 1000000;
+    public static final int   PRETTY_THRESHOLD = 100;
 
     private HierarchyModel<T> model;
-    private boolean pretty = true;
+    private boolean           pretty           = true;
     
     public HierarchyLayout(HierarchyModel<T> model){
         this.model = model;
@@ -22,48 +21,95 @@ public class HierarchyLayout<T> {
      * @return
      */
     public int[] layout() {
-        
-        // Find max factor to test for
-        int size = model.showIntervals ? 1 + model.groups.size() : model.groups.size();
-        int[] result = new int[size];
-        int factor = (int)Math.floor(Math.pow(LAYOUT_COMPLEXITY, 1d / (double)size));
-        
+
         long time = System.currentTimeMillis();
         
-        // Compute base sizes and return if factor is 0
+        // Size of the solution
+        int size = model.showIntervals ? 1 + model.groups.size() : model.groups.size();
+        
+        // Init elements, sum, cardinality
+        int[] sum = new int[size];
+        int[] pointer = new int[size];
+        int[] cardinality = new int[size];
         int[] base = new int[size];
-        if (model.showIntervals) base[0] = model.intervals.size();
-        for (int i=0; i<model.groups.size(); i++){
-            if (model.showIntervals) base[1+i] = model.groups.get(i).size();
-            else base[i] = model.groups.get(i).size();
-        }
-        if (factor==0) return base;
+        int[][] elements = new int[size][];
         
-        // Provide arrays with heights
-        int[][] heights = new int[result.length][factor];
-        for (int i=0; i<result.length; i++){
-            heights[i] = new int[factor];
-            if (model.showIntervals && i==0) Arrays.fill(heights[i], 1);
-        }
-    
-        // Perform testing
-        int[] array = layout(result, base, new int[result.length], heights, factor, 0);
-        System.out.println("Layouting: "+(System.currentTimeMillis() - time));
-        System.out.println("Solution found: "+(array != null));
-        if ((array != null)) System.out.println("Solution: "+Arrays.toString(array));
+        // Init from intervals
+        if (model.showIntervals) {
+            elements[0] = new int[model.intervals.size()];
+            Arrays.fill(elements[0], 1);
+            cardinality[0] = model.intervals.size();
+            sum[0] = model.intervals.size();
+        } 
         
-        if (array == null){
-            pretty = false;
-            return base;
+        // Init from groups
+        for (int i=0; i < model.groups.size(); i++){
+            
+            // Prepare
+            int index = model.showIntervals ? i +1 : i;
+            List<HierarchyGroup<T>> groups = model.groups.get(i);
+            
+            // Prepare cardinality
+            cardinality[index] = groups.size();
+            
+            // Prepare elements and sum
+            int[] array = new int[groups.size()];
+            elements[index] = array;
+            for (int j=0; j<array.length; j++){
+                array[j] = groups.get(j).size;
+                sum[index]+=groups.get(j).size;
+            }
         }
-        else {
-            for (int i : array) {
-                if (i>PRETTY_THRESHOLD) {
-                    pretty = false;
-                    return base;
+        
+        // Prepare base cardinality
+        System.arraycopy(cardinality, 0, base, 0, base.length);
+        
+        // Prepare flags
+        boolean repeat = true;
+        pretty = true;
+        
+        // Repeat
+        while (repeat) {
+            
+            // Do not repeat
+            repeat = false;
+            
+            // Sweep right to left
+            for (int i=cardinality.length-1; i>0; i--){
+                while (cardinality[i-1] < sum[i]) {
+                    repeat = true;
+                    sum[i-1]+=elements[i-1][pointer[i-1]++];
+                    if (pointer[i-1]==base[i-1]) pointer[i-1]=0;
+                    cardinality[i-1]++;
                 }
             }
-            return array;
+            
+            // Sweep left to right
+            for (int i=0; i<cardinality.length-1; i++){
+                while (cardinality[i] > sum[i+1]) {
+                    repeat = true;
+                    sum[i+1]+=elements[i+1][pointer[i+1]++];
+                    if (pointer[i+1]==base[i+1]) pointer[i+1]=0;
+                    cardinality[i+1]++;
+                }
+            }
+            
+            // Check if still pretty
+            for (int i=0; i<cardinality.length; i++){
+                if (cardinality[i] > PRETTY_THRESHOLD) {
+                    pretty = false;
+                    repeat = false;
+                }
+            }
+        }
+        
+        System.out.println("Layouting: "+(System.currentTimeMillis() - time));
+        
+        // Return
+        if (!pretty) {
+            return base;
+        } else {
+            return cardinality;
         }
     }
     
@@ -74,110 +120,4 @@ public class HierarchyLayout<T> {
     public boolean isPretty(){
         return pretty;
     }
-
-    /**
-     * This is so ugly
-     * @param result
-     * @param base
-     * @param check
-     * @param heights
-     * @param factor
-     * @param index
-     * @return
-     */
-    private int[] layout(int[] result, int[] base, int[] check, int[][] heights, int factor, int index) {
-        
-        if (index==result.length) {
-            
-            if (model.showIntervals) {
-                // Check whether it is a solution
-                check[0] = result[0];
-                for (int j=0; j<check.length-1; j++){
-                    
-                    check[j+1] = 0;
-                    int leftIndex = 0;
-                    int rightIndex = 0;
-                    
-                    // For each column, compute the row height by iterating over all fanouts
-                    for (int i=0; i<result[j+1]; i++){
-                        List<HierarchyGroup<T>> list = model.groups.get(j);
-                        HierarchyGroup<T> fanout = list.get(rightIndex % list.size());
-                        
-                        // Add heights based on heights of left neighbors
-                        int height = 0;
-                        for (int k=0; k<fanout.size; k++){
-                            height += heights[j][leftIndex % result[j]]; 
-                            leftIndex++;
-                        }
-                        
-                        if (rightIndex == heights[j+1].length) return null;
-                        
-                        // Store height and count
-                        check[j+1]+=height;
-                        heights[j+1][rightIndex]=height;
-                        rightIndex++;
-                    }
-                }
-            } else {
-                // Check whether it is a solution
-                for (int j=0; j<check.length; j++){
-                    
-                    check[j] = 0;
-                    int leftIndex = 0;
-                    int rightIndex = 0;
-                    
-                    // For each column, compute the row height by iterating over all fanouts
-                    for (int i=0; i<result[j]; i++){
-                        List<HierarchyGroup<T>> list = model.groups.get(j);
-                        HierarchyGroup<T> fanout = list.get(rightIndex % list.size());
-                        
-                        // Add heights based on heights of left neighbors
-                        int height = 0;
-                        for (int k=0; k<fanout.size; k++){
-                            if (j==0){
-                                height += 1;
-                            } else {
-                                height += heights[j-1][leftIndex % result[j-1]]; 
-                                leftIndex++;
-                            }
-                        }
-                        
-                        if (rightIndex == heights[j].length) return null;
-                        
-                        // Store height and count
-                        check[j]+=height;
-                        heights[j][rightIndex]=height;
-                        rightIndex++;
-                    }
-                }
-            }
-            
-            // Check whether all values are equal
-            int min = Integer.MAX_VALUE;
-            int max = Integer.MIN_VALUE;
-            for (int i : check) {
-                min = Math.min(min, i);
-                max = Math.max(max, i);
-            }
-            if (min==max) return result;
-            else return null;
-            
-        } else {
-            
-            // Enumerate
-            for (int j=0; j<=factor; j++){
-                
-                // Call
-                result[index] = base[index] + j;
-                int[] array = layout(result, base, check, heights, factor, index+1);
-                
-                // Check
-                if (array != null) return array;
-            }
-            
-            // Nothing found
-            return null;
-        }
-    }
-
 }
