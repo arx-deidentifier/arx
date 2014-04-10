@@ -54,13 +54,13 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
         this.model = model;
         this.model.register(this);
         if (!lower) {
-            this.range = model.getUpperAdjustment();
+            this.range = model.getUpperRange();
             createRepeat(model, lower, range);
             createSnap(model, lower, range);
             createLabel(model, lower, range);
         }
         else {
-            this.range = model.getLowerAdjustment();
+            this.range = model.getLowerRange();
             createLabel(model, lower, range);
             createSnap(model, lower, range);
             createRepeat(model, lower, range);

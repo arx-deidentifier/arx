@@ -309,7 +309,7 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
     /**
      * @return the lower
      */
-    public HierarchyWizardGroupingRange<T> getLowerAdjustment() {
+    public HierarchyWizardGroupingRange<T> getLowerRange() {
         return lower;
     }
     
@@ -330,7 +330,7 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
     /**
      * @return the upper
      */
-    public HierarchyWizardGroupingRange<T> getUpperAdjustment() {
+    public HierarchyWizardGroupingRange<T> getUpperRange() {
         return upper;
     }
 
