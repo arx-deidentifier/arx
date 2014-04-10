@@ -135,7 +135,13 @@ public class HierarchyWizardGroupingEditorMenu<T> {
             this.addRight.setEnabled(true);
             
         } else if (model.getSelectedElement() instanceof HierarchyWizardGroupingGroup){
-            this.remove.setEnabled(true);
+            if (model.isShowIntervals() && 
+                model.getGroups().size()==1 && 
+                model.getGroups().get(0).size()==1) {
+                this.remove.setEnabled(false);
+            } else {
+                this.remove.setEnabled(true);
+            }
             this.addBefore.setEnabled(true);
             this.addAfter.setEnabled(true);
             this.addRight.setEnabled(true);
