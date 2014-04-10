@@ -44,7 +44,9 @@ import org.eclipse.swt.widgets.ToolItem;
  * @author Fabian Prasser
  */
 public abstract class ViewData implements IView {
-
+    
+    private final Image                IMAGE_ASCENDING;
+    private final Image                IMAGE_DESCENDING;
     private final Image                IMAGE_INSENSITIVE;
     private final Image                IMAGE_SENSITIVE;
     private final Image                IMAGE_QUASI_IDENTIFYING;
@@ -79,18 +81,30 @@ public abstract class ViewData implements IView {
         this.controller = controller;
         
         // Load images
-        IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
+        IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png");   //$NON-NLS-1$
+        IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png");  //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png");  //$NON-NLS-1$
+        IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png");     //$NON-NLS-1$
+        IMAGE_ASCENDING         = controller.getResources().getImage("sort_ascending.png"); //$NON-NLS-1$
+        IMAGE_DESCENDING        = controller.getResources().getImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
         ComponentTitleBar bar = new ComponentTitleBar("id-140");
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
-                controller.getResources().getImage("sort_column.png"),
+                IMAGE_ASCENDING,
                 new Runnable() {
                     @Override
                     public void run() {
+                        model.getViewConfig().setSortOrder(true);
+                        actionSort();
+                    }
+                });
+        bar.add(Resources.getMessage("DataView.4"), //$NON-NLS-1$ 
+                IMAGE_DESCENDING,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        model.getViewConfig().setSortOrder(false);
                         actionSort();
                     }
                 });

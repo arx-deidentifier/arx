@@ -34,23 +34,18 @@ public class ModelViewConfig implements Serializable {
     private Mode              mode             = Mode.UNSORTED;
     private String            attribute        = null;
     private boolean           subset           = false;
-    private boolean           inputSortOrder   = false;
-    private boolean           outputSortOrder  = false;
+    private boolean           sortOrder        = true;
     private boolean           changed          = false;
 
-    public boolean getSortOrder(){
-        
-        if (mode == Mode.SORTED_INPUT) {
-            inputSortOrder = !inputSortOrder;
+    public void setSortOrder(boolean order){
+        if (order != sortOrder) {
             changed = true;
-            return inputSortOrder;
-        } else if (mode == Mode.SORTED_OUTPUT) {
-            outputSortOrder = !outputSortOrder;
-            changed = true;
-            return outputSortOrder;
-        } else {
-            throw new IllegalStateException("Sort order not available");
+            sortOrder = order;
         }
+    }
+    
+    public boolean getSortOrder(){
+        return sortOrder;
     }
 
     public String getAttribute() {
