@@ -1276,9 +1276,9 @@ public class Controller implements IView {
      */
     private void updateViewConfig(boolean force) {
         
-        if (!force && !model.isViewConfigChanged()) return;
-        
         ModelViewConfig config = model.getViewConfig();
+        
+        if (!force && !config.isChanged()) return;
         
         DataHandle handle = (config.getMode() == Mode.SORTED_INPUT) ? 
                             model.getInputConfig().getInput().getHandle() : 
@@ -1298,7 +1298,7 @@ public class Controller implements IView {
 					model.getInputConfig().getResearchSubset().swap(arg0, arg1);
 				}
         	};
-            handle.sort(swapper, true, handle.getColumnIndexOf(config.getAttribute()));
+            handle.sort(swapper, config.getSortOrder(), handle.getColumnIndexOf(config.getAttribute()));
             model.setGroups(null);
             
         } else {

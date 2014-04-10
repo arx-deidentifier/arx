@@ -87,7 +87,6 @@ public class Model implements Serializable {
     private String                                query                = ""; //$NON-NLS-1$
     private String                                subsetOrigin         = "All"; //$NON-NLS-1$
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
-    private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
 
     private Boolean                               showVisualization    = true;
     private int                                   maximalSizeForComplexOperations  = 5000000;
@@ -378,7 +377,6 @@ public class Model implements Serializable {
 	}
 
 	public ModelViewConfig getViewConfig() {
-        oldViewConfig = viewConfig.clone();
         return this.viewConfig;
     }
 
@@ -405,10 +403,6 @@ public class Model implements Serializable {
 	public boolean isValidLatticeSize() {
 		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
 	}
-
-	public boolean isViewConfigChanged(){
-        return (!oldViewConfig.equals(viewConfig));
-    }
 
 	public void reset() {
 		// TODO: Need to reset more fields
