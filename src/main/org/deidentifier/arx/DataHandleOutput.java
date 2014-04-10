@@ -408,10 +408,12 @@ public class DataHandleOutput extends DataHandle {
             
             int cmp = 0;
             try {
-                cmp = dataTypes[attributeType][indexMap].compare(internalGetValue(row1,
-                                                                                  index),
-                                                                 internalGetValue(row2,
-                                                                                  index));
+                String s1 = internalGetValue(row1, index);
+                String s2 = internalGetValue(row2, index);
+                cmp = (s1 == suppressionString && s2 == suppressionString) ? 0
+                        : (s1 == suppressionString ? +1
+                                : (s2 == suppressionString ? -1
+                                        : dataTypes[attributeType][indexMap].compare(s1, s2)));
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }

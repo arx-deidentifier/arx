@@ -123,7 +123,7 @@ public class StatisticsBuilder {
 
         // Sort by data type
         if (_hierarchy == null || level==0){
-            sort(list, datatype);
+            sort(list, datatype, handle.getSuppressionString());
         // Sort by hierarchy and data type
         } else {
             // Build order directly from the hierarchy
@@ -141,7 +141,7 @@ public class StatisticsBuilder {
                 if (baseType.isValid(element)) baseSet.add(element);
             }
             String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
-            sort(baseArray, handle.getBaseDataType(attribute));
+            sort(baseArray, handle.getBaseDataType(attribute), handle.getSuppressionString());
             Map<String, Integer> baseOrder = new HashMap<String, Integer>();
             for (int i = 0; i < baseArray.length; i++) {
                 baseOrder.put(baseArray[i], i);
@@ -529,13 +529,19 @@ public class StatisticsBuilder {
      * @param array
      * @param type
      */
-    private void sort(final String[] array, final DataType<?> type){
+    private void sort(final String[] array, final DataType<?> type, final String suppressionString){
         GenericSorting.mergeSort(0, array.length, new IntComparator(){
+            
             @Override
             public int compare(int arg0, int arg1) {
                 try {
-                    return type.compare(array[arg0], array[arg1]);
-                } catch (NumberFormatException | ParseException e) {
+                    String s1 = array[arg0];
+                    String s2 = array[arg1];
+                    return (s1 == suppressionString && s2 == suppressionString) ? 0
+                            : (s1 == suppressionString ? +1
+                                    : (s2 == suppressionString ? -1
+                                            : type.compare(s1, s2)));
+                } catch (IllegalArgumentException | ParseException e) {
                     throw new RuntimeException("Some values seem to not conform to the data type", e);
                 }
             }
