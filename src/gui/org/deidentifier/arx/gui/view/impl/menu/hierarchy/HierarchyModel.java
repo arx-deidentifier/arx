@@ -8,8 +8,20 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.AggregateFunction;
 
+/**
+ * This class implements the model of the hierarchy editor
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyModel<T> implements IUpdateable{
     
+    /**
+     * This class represents an adjustment
+     * @author Fabian Prasser
+     *
+     * @param <U>
+     */
     public static class HierarchyAdjustment<U> {
         public U repeat;
         public U snap;
@@ -36,6 +48,12 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
 
+    /**
+     * This class represents a group
+     * @author Fabian Prasser
+     *
+     * @param <U>
+     */
     public static class HierarchyGroup<U> {
         public int size;
         public AggregateFunction<U> function;
@@ -46,6 +64,12 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
     
+    /**
+     * This class represents an interval
+     * @author Fabian Prasser
+     *
+     * @param <U>
+     */
     public static class HierarchyInterval<U> {
         public U min;
         public U max;
@@ -58,17 +82,32 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
 
-    public List<HierarchyInterval<T>>    intervals     = new ArrayList<HierarchyInterval<T>>();
-    public List<List<HierarchyGroup<T>>> groups        = new ArrayList<List<HierarchyGroup<T>>>();
-    public DataType<T>                   type;
-    public boolean                       showIntervals = true;
-    public AggregateFunction<T>          function;
-    public HierarchyAdjustment<T>        lower         = null;
-    public HierarchyAdjustment<T>        upper         = null;
-    public Object                        selected      = null;
-    public HierarchyDrawingContext<T>    context       = new HierarchyDrawingContext<T>(this);
-    private List<IUpdateable>            components    = new ArrayList<IUpdateable>();
+    /** Var*/
+    private List<HierarchyInterval<T>>    intervals     = new ArrayList<HierarchyInterval<T>>();
+    /** Var*/
+    private List<List<HierarchyGroup<T>>> groups        = new ArrayList<List<HierarchyGroup<T>>>();
+    /** Var*/
+    private DataType<T>                   type;
+    /** Var*/
+    private boolean                       showIntervals = true;
+    /** Var*/
+    private AggregateFunction<T>          function;
+    /** Var*/
+    private HierarchyAdjustment<T>        lower         = null;
+    /** Var*/
+    private HierarchyAdjustment<T>        upper         = null;
+    /** Var */
+    private Object                        selected      = null;
+    /** Var */
+    private HierarchyRenderer<T>          renderer      = new HierarchyRenderer<T>(this);
+    /** Var */
+    private List<IUpdateable>             components    = new ArrayList<IUpdateable>();
 
+    /**
+     * Creates a new instance
+     * @param type
+     * @param intervals
+     */
     @SuppressWarnings("unchecked")
     public HierarchyModel(DataType<T> type, boolean intervals){
         this.type = type;
@@ -89,23 +128,64 @@ public class HierarchyModel<T> implements IUpdateable{
         }
         this.update();
     }
+    
+    /**
+     * Returns the default aggregate function
+     * @return
+     */
+    public AggregateFunction<T> getDefaultFunction(){
+        return this.function;
+    }
+    
+    /**
+     * Sets the default aggregate function
+     * @param function
+     */
+    public void setDefaultFunction(AggregateFunction<T> function){
+        AggregateFunction<T> old = this.function;
+        this.function = function;
+        // Update
+        for (HierarchyInterval<T> interval : intervals) {
+            if (interval.function == old){
+                interval.function = function;
+            }
+        }
+        for (List<HierarchyGroup<T>> list : groups) {
+            for (HierarchyGroup<T> group : list) {
+                if (group.function == old){
+                    group.function = function;
+                }
+            }
+        }
+    }
 
-    public void update(IUpdateable component){
-        context.update();
+    /**
+     * Update all UI components, apart from the sender
+     * @param sender
+     */
+    public void update(IUpdateable sender){
+        renderer.update();
         for (IUpdateable c : components){
-            if (c != component) {
+            if (c != sender) {
                 c.update();
             }
         }
     }
     
+    /**
+     * Update all UI components
+     */
     public void update(){
-        context.update();
+        renderer.update();
         for (IUpdateable c : components){
             c.update();
         }
     }
     
+    /**
+     * Registers a part of the UI
+     * @param component
+     */
     public void register(IUpdateable component){
         this.components.add(component);
     }
@@ -143,6 +223,10 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
 
+    /**
+     * Adds an element after the given one
+     * @param selected
+     */
     @SuppressWarnings("unchecked")
     public void addAfter(Object selected) {
         if (selected instanceof HierarchyInterval){
@@ -165,6 +249,10 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
 
+    /**
+     * Adds an element before the given one
+     * @param selected
+     */
     @SuppressWarnings("unchecked")
     public void addBefore(Object selected) {
         if (selected instanceof HierarchyInterval){
@@ -187,6 +275,10 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
 
+    /**
+     * Adds a column
+     * @param selected
+     */
     public void addRight(Object selected) {
         int index = 0;
         if (selected instanceof HierarchyGroup){
@@ -203,14 +295,28 @@ public class HierarchyModel<T> implements IUpdateable{
         update();
     }
     
+    /**
+     * Is this the first interval
+     * @param interval
+     * @return
+     */
     public boolean isFirst(HierarchyInterval<T> interval){
         return intervals.indexOf(interval) == 0;
     }
     
+    /**
+     * Is this the last interval
+     * @param interval
+     * @return
+     */
     public boolean isLast(HierarchyInterval<T> interval){
         return intervals.indexOf(interval) == intervals.size()-1;
     }
 
+    /**
+     * Merges the interval down
+     * @param selected
+     */
     public void mergeDown(Object selected) {
         if (selected instanceof HierarchyInterval){
             int index = intervals.indexOf(selected);
@@ -226,6 +332,10 @@ public class HierarchyModel<T> implements IUpdateable{
         }
     }
 
+    /**
+     * Merges the interval up
+     * @param selected
+     */
     public void mergeUp(Object selected) {
         if (selected instanceof HierarchyInterval){
             int index = intervals.indexOf(selected);
@@ -239,5 +349,83 @@ public class HierarchyModel<T> implements IUpdateable{
                 update();
             }
         }
+    }
+
+    /**
+     * Adds an interval
+     */
+    public void addInterval(HierarchyInterval<T> i) {
+        intervals.add(i);
+    }
+
+    /**
+     * @return the intervals
+     */
+    public List<HierarchyInterval<T>> getIntervals() {
+        return intervals;
+    }
+
+    /**
+     * @return the groups
+     */
+    public List<List<HierarchyGroup<T>>> getGroups() {
+        return groups;
+    }
+
+    /**
+     * Adds groups
+     */
+    public void addGroups(List<HierarchyGroup<T>> list) {
+        groups.add(list);
+    }
+
+    /**
+     * @return the type
+     */
+    public DataType<T> getDataType() {
+        return type;
+    }
+
+    /**
+     * @return the showIntervals
+     */
+    public boolean isShowIntervals() {
+        return showIntervals;
+    }
+
+    /**
+     * @return the lower
+     */
+    public HierarchyAdjustment<T> getLowerAdjustment() {
+        return lower;
+    }
+
+    /**
+     * @return the upper
+     */
+    public HierarchyAdjustment<T> getUpperAdjustment() {
+        return upper;
+    }
+
+    /**
+     * @return the selected
+     */
+    public Object getSelectedElement() {
+        return selected;
+    }
+
+    /**
+     * @return the renderer
+     */
+    public HierarchyRenderer<T> getRenderer() {
+        return renderer;
+    }
+
+    /**
+     * Updates the selected element
+     * @param selected
+     */
+    public void setSelectedElement(Object selected) {
+        this.selected = selected;
     }
 }

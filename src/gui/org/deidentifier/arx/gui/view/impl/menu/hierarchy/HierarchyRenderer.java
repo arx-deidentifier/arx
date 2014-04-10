@@ -14,18 +14,37 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
-public class HierarchyDrawingContext<T> {
+/**
+ * Renders the content
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
+public class HierarchyRenderer<T> {
 
+    /** Constants*/
     public static final Font                   FONT                = getFont();
+    /** Constants*/
     public static final int                    OFFSET              = 10;
+    /** Constants*/
     public static final int                    INTERVAL_HEIGHT     = 20;
-
+    /** Constants*/
     public static final Color                  DISABLED_FOREGROUND = GUIHelper.COLOR_GRAY;
+    /** Constants*/
     public static final Color                  DISABLED_BACKGROUND = GUIHelper.getColor(230, 230, 230);
+    /** Constants*/
     public static final Color                  NORMAL_FOREGROUND   = GUIHelper.COLOR_BLACK;
+    /** Constants*/
     public static final Color                  NORMAL_BACKGROUND   = GUIHelper.COLOR_WHITE;
+    /** Constants*/
     public static final Color                  SELECTED_BACKGROUND = GUIHelper.COLOR_YELLOW;
 
+    /**
+     * Base class for rendering contexts
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
     public abstract static class ComponentContext<T> {
         public Rectangle rectangle1;
         public Rectangle rectangle2;
@@ -37,6 +56,12 @@ public class HierarchyDrawingContext<T> {
         public T         max;
     }
 
+    /**
+     * A rendering context for an interval
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
     public static class IntervalContext<T> extends ComponentContext<T> {
         public HierarchyInterval<T> interval;
         public T                    offset;
@@ -63,6 +88,12 @@ public class HierarchyDrawingContext<T> {
         }
     }
 
+    /**
+     * A rendering context for a group
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
     public static class GroupContext<T> extends ComponentContext<T> {
         public HierarchyGroup<T> group;
 
@@ -88,47 +119,66 @@ public class HierarchyDrawingContext<T> {
         }
     }
 
-    private final HierarchyModel<T>           model;
-    private final List<IntervalContext<T>>    intervals = new ArrayList<IntervalContext<T>>();
-    private final List<List<GroupContext<T>>> groups    = new ArrayList<List<GroupContext<T>>>();
-    private final HierarchyLayout<T>          layout;
+    /** Var */
+    private final List<IntervalContext<T>>    intervals         = new ArrayList<IntervalContext<T>>();
+    /** Var */
+    private final List<List<GroupContext<T>>> groups            = new ArrayList<List<GroupContext<T>>>();
+    /** Var */
     private final List<IntervalContext<T>>    renderedIntervals = new ArrayList<IntervalContext<T>>();
+    /** Var */
     private final List<List<GroupContext<T>>> renderedGroups    = new ArrayList<List<GroupContext<T>>>();
     
-
-    public HierarchyDrawingContext(HierarchyModel<T> model) {
+    /** Var */
+    private final HierarchyLayout<T>          layout;
+    /** Var */
+    private final HierarchyModel<T>           model;
+    
+    
+    /**
+     * Creates a new instance
+     * @param model
+     */
+    public HierarchyRenderer(HierarchyModel<T> model) {
         this.model = model;
         this.layout = new HierarchyLayout<T>(model);
     }    
     
+    /**
+     * Updates the drawing context
+     */
     public void update(){
         
+        // Init
+        boolean showIntervals = model.isShowIntervals();
+        List<HierarchyInterval<T>> modelIntervals = model.getIntervals();
+        List<List<HierarchyGroup<T>>> modelGroups = model.getGroups();
+        
         // Prepare
-        if (model.showIntervals) intervals.clear();
+        if (showIntervals) intervals.clear();
         groups.clear();
         @SuppressWarnings("unchecked")
-        DataTypeWithRatioScale<T> dtype = (DataTypeWithRatioScale<T>)model.type;
+        DataTypeWithRatioScale<T> dtype = (DataTypeWithRatioScale<T>)model.getDataType();
         
         // Layout
         int[] factors = layout.layout();
         T width = null;
-        if (model.showIntervals) {
-            width = dtype.subtract(model.intervals.get(model.intervals.size()-1).max, model.intervals.get(0).min);
+        if (showIntervals) {
+            width = dtype.subtract(modelIntervals.get(modelIntervals.size()-1).max, modelIntervals.get(0).min);
         }
         
         // Create intervals
-        if (model.showIntervals) {
+        if (showIntervals) {
             for (int i=0; i < factors[0]; i++) {
-                HierarchyInterval<T> interval = model.intervals.get(i % model.intervals.size());
+                HierarchyInterval<T> interval = modelIntervals.get(i % modelIntervals.size());
                 IntervalContext<T> element = new IntervalContext<T>();
-                if (i<model.intervals.size()) {
+                if (i<modelIntervals.size()) {
                     element.offset = null;
                 } else {
-                    int factor = i / model.intervals.size();
+                    int factor = i / modelIntervals.size();
                     element.offset = dtype.multiply(width, factor);
                 }
                 element.depth = 0;
-                element.enabled = i < model.intervals.size();
+                element.enabled = i < modelIntervals.size();
                 T min = interval.min;
                 T max = interval.max;
                 if (element.offset != null){
@@ -144,23 +194,23 @@ public class HierarchyDrawingContext<T> {
         }
         
         // Create groups
-        int shift = model.showIntervals ? 1 : 0;
-        for (int i=0; i<model.groups.size(); i++){
+        int shift = showIntervals ? 1 : 0;
+        for (int i=0; i<modelGroups.size(); i++){
             groups.add(new ArrayList<GroupContext<T>>());
             int offset = 0;
             
-            if (model.showIntervals && i>0) {
+            if (showIntervals && i>0) {
                 width = dtype.subtract(groups.get(i-1).get(groups.get(i-1).size()-1).max, groups.get(i-1).get(0).min);
             }
             
             for (int j=0; j < factors[i+shift]; j++) {
-                List<HierarchyGroup<T>> list = model.groups.get(i);
+                List<HierarchyGroup<T>> list = modelGroups.get(i);
                 HierarchyGroup<T> group = list.get(j % list.size());
                 GroupContext<T> element = new GroupContext<T>();
                 element.depth = i + 1;
                 element.enabled = j < list.size();
                 
-                if (layout.isPretty() && model.showIntervals){
+                if (layout.isPretty() && showIntervals){
                     
                     T min = null;
                     T max = null;
@@ -168,15 +218,15 @@ public class HierarchyDrawingContext<T> {
                     T scale2 = null;
                     
                     if (i==0) {
-                        min = model.intervals.get(offset % model.intervals.size()).min;
-                        if (offset >= model.intervals.size()) {
-                            int factor = offset / model.intervals.size();
+                        min = modelIntervals.get(offset % modelIntervals.size()).min;
+                        if (offset >= modelIntervals.size()) {
+                            int factor = offset / modelIntervals.size();
                             scale1 = dtype.multiply(width, factor);
                         }
                         offset += group.size;
-                        max = model.intervals.get((offset-1)% model.intervals.size()).max;
-                        if (offset >= model.intervals.size()) {
-                            int factor = (offset -1) / model.intervals.size();
+                        max = modelIntervals.get((offset-1)% modelIntervals.size()).max;
+                        if (offset >= modelIntervals.size()) {
+                            int factor = (offset -1) / modelIntervals.size();
                             scale2 = dtype.multiply(width, factor);
                         }
                     } else {
@@ -225,7 +275,7 @@ public class HierarchyDrawingContext<T> {
         int intervalLabelWidth = 0;
         int intervalBoundWidth = 0;
         int intervalTotalWidth = 0;
-        if (model.showIntervals) {
+        if (model.isShowIntervals()) {
             intervalLabelWidth = getRequiredLabelWidth(gc, intervals) + OFFSET;
             intervalBoundWidth = getRequiredBoundWidth(gc, intervals) + OFFSET;
             intervalTotalWidth = intervalLabelWidth + intervalBoundWidth;
@@ -244,7 +294,7 @@ public class HierarchyDrawingContext<T> {
         }
         
         int top = OFFSET;
-        if (model.showIntervals) {
+        if (model.isShowIntervals()) {
             for (IntervalContext<T> context : intervals){
                 context.rectangle1 = new Rectangle(OFFSET, top, intervalBoundWidth, INTERVAL_HEIGHT);
                 context.rectangle2 = new Rectangle(OFFSET + intervalBoundWidth, top, intervalLabelWidth, INTERVAL_HEIGHT);
@@ -335,11 +385,11 @@ public class HierarchyDrawingContext<T> {
                 }
             }
         }
-        if (result != model.selected) {
-            model.selected = result;
+        if (result != model.getSelectedElement()) {
+            model.setSelectedElement(result);
             return true;
         } else {
-            model.selected = result;
+            model.setSelectedElement(result);
             return false;
         }
     }
@@ -350,7 +400,7 @@ public class HierarchyDrawingContext<T> {
      */
     public List<ComponentContext<T>> getComponents(){
         List<ComponentContext<T>> result = new ArrayList<ComponentContext<T>>();
-        if (model.showIntervals) result.addAll(intervals);
+        if (model.isShowIntervals()) result.addAll(intervals);
         for (List<GroupContext<T>> list : groups){
             result.addAll(list);
         }

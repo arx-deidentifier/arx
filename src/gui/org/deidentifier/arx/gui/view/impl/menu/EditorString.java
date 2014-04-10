@@ -97,7 +97,12 @@ public abstract class EditorString implements IEditor<String> {
      * Update
      */
     public void update(){
-        if (text!=null) text.setText(getValue());
+        if (text!=null){
+            String value = getValue();
+            if (!text.getText().equals(value)) {
+                text.setText(value);
+            }
+        }
     }
 
     public Control getControl() {

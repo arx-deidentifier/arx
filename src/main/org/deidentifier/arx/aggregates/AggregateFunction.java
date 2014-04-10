@@ -81,6 +81,11 @@ public abstract class AggregateFunction<T> {
         public AggregateFunctionWithParameter<T> newInstance(String parameter) {
             return new GenericConstant<T>(this.type, parameter);
         }
+
+        @Override
+        public String toLabel() {
+            return "Constant value";
+        }
     }
 
     /**
@@ -111,6 +116,11 @@ public abstract class AggregateFunction<T> {
         @Override
         public String toString(){
             return "Set";
+        }
+
+        @Override
+        public String toLabel() {
+            return "Set of values";
         }
     }
 
@@ -164,6 +174,11 @@ public abstract class AggregateFunction<T> {
         public AggregateFunctionWithParameter<T> newInstance(String parameter) {
             return new GenericSetOfPrefixes<T>(this.type, Integer.parseInt(parameter));
         }
+
+        @Override
+        public String toLabel() {
+            return "Set of prefixes";
+        }
     };
     
     /**
@@ -191,6 +206,11 @@ public abstract class AggregateFunction<T> {
         @Override
         public String toString(){
             return "Bounds";
+        }
+
+        @Override
+        public String toLabel() {
+            return "Bounding values";
         }
     };
 
@@ -257,18 +277,24 @@ public abstract class AggregateFunction<T> {
 
         @Override
         public String getParameter() {
-            return String.valueOf(redaction);
+            if (redaction == null) return null;
+            else return String.valueOf(redaction);
         }
 
         @Override
         public boolean acceptsParameter(String parameter) {
-            return parameter == null || parameter.length()==1;
+            return parameter == null || parameter.length()<=1;
         }
 
         @Override
         public AggregateFunctionWithParameter<T> newInstance(String parameter) {
-            if (parameter == null) new GenericCommonPrefix<T>(this.type, null);
-            return new GenericCommonPrefix<T>(this.type, parameter.toCharArray()[0]);
+            if (parameter == null || parameter.length()==0) return new GenericCommonPrefix<T>(this.type, null);
+            else return new GenericCommonPrefix<T>(this.type, parameter.toCharArray()[0]);
+        }
+
+        @Override
+        public String toLabel() {
+            return "Common prefix";
         }
     }
     
@@ -318,6 +344,11 @@ public abstract class AggregateFunction<T> {
         public String toString(){
             return "Interval";
         }
+
+        @Override
+        public String toLabel() {
+            return "Interval";
+        }
     }
 
     /** The data type*/
@@ -354,6 +385,12 @@ public abstract class AggregateFunction<T> {
     @Override
     public abstract String toString ();
 
+    /**
+     * Returns a label
+     * @return
+     */
+    public abstract String toLabel();
+    
     /** 
      * An aggregate function that returns a set of all data values 
      * @param <V>

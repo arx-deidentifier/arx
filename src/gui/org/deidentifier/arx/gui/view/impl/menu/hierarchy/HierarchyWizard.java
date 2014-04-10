@@ -12,25 +12,30 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * Just a test class
+ * @author Fabian Prasser
+ *
+ */
 public class HierarchyWizard {
     
     HierarchyWizard(final Shell shell){
         HierarchyModel<Long> model = new HierarchyModel<Long>(DataType.INTEGER, true);
-        model.intervals.clear();
-        model.intervals.add(new HierarchyInterval<Long>(0l, 1l, model.function));
-        model.intervals.add(new HierarchyInterval<Long>(1l, 3l, model.function));
-        model.intervals.add(new HierarchyInterval<Long>(3l, 5l, model.function));
-        model.intervals.add(new HierarchyInterval<Long>(5l, 9l, model.function));
-        model.intervals.add(new HierarchyInterval<Long>(9l, 13l, model.function));
-        model.intervals.add(new HierarchyInterval<Long>(13l, 15l, model.function));
+        model.getIntervals().clear();
+        model.addInterval(new HierarchyInterval<Long>(0l, 1l, model.getDefaultFunction()));
+        model.addInterval(new HierarchyInterval<Long>(1l, 3l, model.getDefaultFunction()));
+        model.addInterval(new HierarchyInterval<Long>(3l, 5l, model.getDefaultFunction()));
+        model.addInterval(new HierarchyInterval<Long>(5l, 9l, model.getDefaultFunction()));
+        model.addInterval(new HierarchyInterval<Long>(9l, 13l, model.getDefaultFunction()));
+        model.addInterval(new HierarchyInterval<Long>(13l, 15l, model.getDefaultFunction()));
         List<HierarchyGroup<Long>> level1 = new ArrayList<HierarchyGroup<Long>>();
-        model.groups.add(level1);
-        level1.add(new HierarchyGroup<Long>(2, model.function));
-        level1.add(new HierarchyGroup<Long>(3, model.function));
+        model.addGroups(level1);
+        level1.add(new HierarchyGroup<Long>(2, model.getDefaultFunction()));
+        level1.add(new HierarchyGroup<Long>(3, model.getDefaultFunction()));
         level1.add(new HierarchyGroup<Long>(4, AggregateFunction.CONSTANT(DataType.INTEGER, "TESTESTESTEST")));
         List<HierarchyGroup<Long>> level2 = new ArrayList<HierarchyGroup<Long>>();
-        model.groups.add(level2);
-        level2.add(new HierarchyGroup<Long>(2, model.function));
+        model.addGroups(level2);
+        level2.add(new HierarchyGroup<Long>(2, model.getDefaultFunction()));
         model.update();
         
         GridLayout layout = SWTUtil.createGridLayout(1);

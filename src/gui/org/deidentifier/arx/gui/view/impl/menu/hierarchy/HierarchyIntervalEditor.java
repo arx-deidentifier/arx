@@ -1,27 +1,55 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
+import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyFunctionEditor.IHierarchyFunctionEditorParent;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
-public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> implements IUpdateable{
+/**
+ * An editor for intervals
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
+public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFunctionEditorParent<T>{
     
-    private HierarchyInterval<T> interval = null;
-    private final HierarchyModel<T> model;
-    private final EditorString editorMin;
-    private final EditorString editorMax;
-    private final DataTypeWithRatioScale<T> type;
-    
+    /** Var */
+    private HierarchyInterval<T>             interval = null;
+    /** Var */
+    private final HierarchyModel<T>          model;
+    /** Var */
+    private final EditorString               editorMin;
+    /** Var */
+    private final EditorString               editorMax;
+    /** Var */
+    private final DataTypeWithRatioScale<T>  type;
+    /** Var */
+    private final HierarchyFunctionEditor<T> editorFunction;
+
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param model
+     */
     @SuppressWarnings("unchecked")
     public HierarchyIntervalEditor(final Composite parent,
                                    final HierarchyModel<T> model) {
-        super(parent, model, false);
         this.model = model;
-        this.type = (DataTypeWithRatioScale<T>)model.type;
-        createLabel(composite, "Min:");
+        this.model.register(this);
+        this.type = (DataTypeWithRatioScale<T>)model.getDataType();
+
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        composite.setLayout(SWTUtil.createGridLayout(2, false));
+        this.editorFunction = new HierarchyFunctionEditor<T>(this, model, composite, false);
         
+        createLabel(composite, "Min:");
         editorMin = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
@@ -79,14 +107,28 @@ public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> imple
         };
     }
 
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(string);
+        GridData data = SWTUtil.createFillVerticallyGridData();
+        data.verticalAlignment = SWT.CENTER;
+        label.setLayoutData(data);
+        return label;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public void update() {
-        if (model.selected instanceof HierarchyInterval){
+        if (model.getSelectedElement() instanceof HierarchyInterval){
             
-            this.interval = (HierarchyInterval<T>)model.selected;
-            super.setSource(this.interval);
-            super.update();
+            this.interval = (HierarchyInterval<T>)model.getSelectedElement();
+            this.editorFunction.setFunction(this.interval.function);
             this.editorMin.update();
             this.editorMax.update();
             
@@ -100,12 +142,22 @@ public class HierarchyIntervalEditor<T> extends HierarchyFunctionEditor<T> imple
             } else {
                 SWTUtil.disable(editorMax.getControl());
             }
-            SWTUtil.enable(getEditor().getControl());
         } else {
             this.interval = null;
+            this.editorFunction.setFunction(null);
             SWTUtil.disable(editorMin.getControl());
             SWTUtil.disable(editorMax.getControl());
-            SWTUtil.disable(getEditor().getControl());
         }
+    }
+
+    @Override
+    public void setFunction(AggregateFunction<T> function) {
+        if (this.interval == null) return;
+        if (editorFunction.isDefaultFunction(function)) {
+            this.interval.function = model.getDefaultFunction();
+        } else {
+            this.interval.function = function;
+        }
+        model.update(this);
     }
 }

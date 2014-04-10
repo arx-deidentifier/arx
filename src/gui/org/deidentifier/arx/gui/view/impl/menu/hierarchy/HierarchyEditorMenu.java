@@ -9,18 +9,38 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+/**
+ * The editor's menu
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyEditorMenu<T> {
 
+    /** Var*/
     private final Composite         composite;
+    /** Var*/
     private final Menu              menu;
+    /** Var*/
     private final MenuItem          addBefore;
+    /** Var*/
     private final MenuItem          addAfter;
+    /** Var*/
     private final MenuItem          mergeUp;
+    /** Var*/
     private final MenuItem          mergeDown;
+    /** Var*/
     private final MenuItem          remove;
+    /** Var*/
     private final MenuItem          addRight;
+    /** Var*/
     private final HierarchyModel<T> model;
 
+    /**
+     * Creates a new instance
+     * @param composite
+     * @param model
+     */
     public HierarchyEditorMenu(final Composite composite, 
                                final HierarchyModel<T> model) {
         
@@ -32,7 +52,7 @@ public class HierarchyEditorMenu<T> {
         this.remove.setText("Remove");
         this.remove.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                model.remove(model.selected);
+                model.remove(model.getSelectedElement());
             }
         });
         
@@ -42,7 +62,7 @@ public class HierarchyEditorMenu<T> {
         this.addBefore.setText("Add before");
         this.addBefore.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                model.addBefore(model.selected);
+                model.addBefore(model.getSelectedElement());
             }
         });
         
@@ -50,7 +70,7 @@ public class HierarchyEditorMenu<T> {
         this.addAfter.setText("Add after");
         this.addAfter.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                model.addAfter(model.selected);
+                model.addAfter(model.getSelectedElement());
             }
         });
 
@@ -60,7 +80,7 @@ public class HierarchyEditorMenu<T> {
         this.mergeDown.setText("Merge down");
         this.mergeDown.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                model.mergeDown(model.selected);
+                model.mergeDown(model.getSelectedElement());
             }
         });
         
@@ -68,7 +88,7 @@ public class HierarchyEditorMenu<T> {
         this.mergeUp.setText("Merge up");
         this.mergeUp.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                model.mergeUp(model.selected);
+                model.mergeUp(model.getSelectedElement());
             }
         });
         
@@ -78,7 +98,7 @@ public class HierarchyEditorMenu<T> {
         this.addRight.setText("Add right");
         this.addRight.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                model.addRight(model.selected);
+                model.addRight(model.getSelectedElement());
             }
         });
         
@@ -87,24 +107,24 @@ public class HierarchyEditorMenu<T> {
     @SuppressWarnings("unchecked")
     public void show(int x, int y){
         
-        if (model.selected == null){
+        if (model.getSelectedElement() == null){
             return;
         }
         
-        if (model.selected instanceof HierarchyInterval){
-            if (model.intervals.size()==1) {
+        if (model.getSelectedElement() instanceof HierarchyInterval){
+            if (model.getIntervals().size()==1) {
                 this.remove.setEnabled(false);
             } else {
                 this.remove.setEnabled(true);
             }
-            if (model.isFirst((HierarchyInterval<T>)model.selected)) {
+            if (model.isFirst((HierarchyInterval<T>)model.getSelectedElement())) {
                 this.addBefore.setEnabled(true);
                 this.mergeDown.setEnabled(false);
             } else {
                 this.addBefore.setEnabled(false);
                 this.mergeDown.setEnabled(true);
             }
-            if (model.isLast((HierarchyInterval<T>)model.selected)) {
+            if (model.isLast((HierarchyInterval<T>)model.getSelectedElement())) {
                 this.addAfter.setEnabled(true);
                 this.mergeUp.setEnabled(false);
             } else {
@@ -114,7 +134,7 @@ public class HierarchyEditorMenu<T> {
                 
             this.addRight.setEnabled(true);
             
-        } else if (model.selected instanceof HierarchyGroup){
+        } else if (model.getSelectedElement() instanceof HierarchyGroup){
             this.remove.setEnabled(true);
             this.addBefore.setEnabled(true);
             this.addAfter.setEnabled(true);

@@ -91,7 +91,16 @@ public abstract class EditorSelection implements IEditor<String> {
      * Update
      */
     public void update(){
-        if (combo!=null) combo.select(indexOf(getValue()));
+        if (combo!=null){
+            int index = indexOf(getValue());
+            if (index != combo.getSelectionIndex()){
+                if (index == -1){
+                    combo.deselect(combo.getSelectionIndex());
+                } else {
+                    combo.select(index);
+                }
+            }
+        }
     }
     
     public Control getControl(){

@@ -1,9 +1,11 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyDrawingContext.ComponentContext;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyDrawingContext.GroupContext;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyDrawingContext.IntervalContext;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyRenderer.ComponentContext;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyRenderer.GroupContext;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyRenderer.IntervalContext;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyFunctionEditor.IHierarchyFunctionEditorParent;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
 import org.eclipse.swt.SWT;
@@ -17,17 +19,28 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-public class HierarchyEditor<T> implements IUpdateable {
+/**
+ * The general editor for hierarchies
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
+public class HierarchyEditor<T> implements IUpdateable, IHierarchyFunctionEditorParent<T> {
 
+    /** Var*/
     private HierarchyModel<T>            model;
+    /** Var*/
     private Composite                    composite;
+    /** Var*/
     private Composite                    canvascomposite;
+    /** Var*/
     private ScrolledComposite            scrolledcomposite;
+    /** Var*/
     private TabFolder                    folder;
+    /** Var*/
     private HierarchyEditorMenu<T>       menu;
     
     /**
@@ -62,19 +75,19 @@ public class HierarchyEditor<T> implements IUpdateable {
         this.canvascomposite.addMouseListener(new MouseAdapter(){
             @Override public void mouseUp(MouseEvent arg0) {
                 
-                if (HierarchyEditor.this.model.context.select(arg0.x, arg0.y)){
+                if (HierarchyEditor.this.model.getRenderer().select(arg0.x, arg0.y)){
                     HierarchyEditor.this.model.update(HierarchyEditor.this);
                     canvascomposite.redraw();
-                    Object selected = HierarchyEditor.this.model.selected;
+                    Object selected = HierarchyEditor.this.model.getSelectedElement();
                     if (selected instanceof HierarchyInterval){
-                        if (HierarchyEditor.this.model.showIntervals) folder.setSelection(2);
+                        if (HierarchyEditor.this.model.isShowIntervals()) folder.setSelection(2);
                     } else if (selected instanceof HierarchyGroup){
-                        if (HierarchyEditor.this.model.showIntervals) folder.setSelection(3);
+                        if (HierarchyEditor.this.model.isShowIntervals()) folder.setSelection(3);
                         else folder.setSelection(1);
                     }
                 }
 
-                if ((arg0.stateMask & SWT.BUTTON3) != 0 && HierarchyEditor.this.model.selected != null){
+                if ((arg0.stateMask & SWT.BUTTON3) != 0 && HierarchyEditor.this.model.getSelectedElement() != null){
                     menu.show(arg0.x, arg0.y);
                 }
             }
@@ -85,13 +98,17 @@ public class HierarchyEditor<T> implements IUpdateable {
         this.folder = new TabFolder(composite, SWT.BORDER);
         this.folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.createGeneralTab(folder);
-        if (model.showIntervals) this.createBoundsTab(folder);
-        if (model.showIntervals) this.createIntervalTab(folder);
+        if (model.isShowIntervals()) this.createBoundsTab(folder);
+        if (model.isShowIntervals()) this.createIntervalTab(folder);
         this.createGroupTab(folder);
         
         this.model.update();
     }
     
+    /**
+     * Create a tab
+     * @param tabFolder
+     */
     private void createGroupTab(TabFolder tabFolder) {
         TabItem tabItem3 = new TabItem(tabFolder, SWT.NULL);
         tabItem3.setText("Group");
@@ -102,15 +119,25 @@ public class HierarchyEditor<T> implements IUpdateable {
         
     }
 
+    /**
+     * Create a tab
+     * @param tabFolder
+     */
     private void createGeneralTab(TabFolder tabFolder) {
         TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
         tabItem1.setText("General");
         Composite parent = new Composite(tabFolder, SWT.NULL);
-        parent.setLayout(SWTUtil.createGridLayout(1, false));
-        new HierarchyFunctionEditor<T>(parent, model, true);
+        parent.setLayout(SWTUtil.createGridLayout(2, false));
+        parent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        HierarchyFunctionEditor<T> editor = new HierarchyFunctionEditor<T>(this, model, parent, true);
+        editor.setFunction(model.getDefaultFunction());
         tabItem1.setControl(parent);
     }
 
+    /**
+     * Create a tab
+     * @param tabFolder
+     */
     private void createIntervalTab(TabFolder tabFolder) {
         TabItem tabItem2 = new TabItem(tabFolder, SWT.NULL);
         tabItem2.setText("Interval");
@@ -120,6 +147,10 @@ public class HierarchyEditor<T> implements IUpdateable {
         tabItem2.setControl(parent);
     }
 
+    /**
+     * Create a tab
+     * @param tabFolder
+     */
     private void createBoundsTab(TabFolder tabFolder) {
         TabItem tabItem4 = new TabItem(tabFolder, SWT.NULL);
         tabItem4.setText("Bounds");
@@ -144,18 +175,18 @@ public class HierarchyEditor<T> implements IUpdateable {
      */
     protected void paint(GC gc) {
         
-        model.context.update(gc);
+        model.getRenderer().update(gc);
         
-        for (ComponentContext<T> component : model.context.getComponents()) {
+        for (ComponentContext<T> component : model.getRenderer().getComponents()) {
             
-            Color foreground = HierarchyDrawingContext.NORMAL_FOREGROUND;
+            Color foreground = HierarchyRenderer.NORMAL_FOREGROUND;
             Color background = isSelected(component) ? 
-                               HierarchyDrawingContext.SELECTED_BACKGROUND : 
-                               HierarchyDrawingContext.NORMAL_BACKGROUND;
+                               HierarchyRenderer.SELECTED_BACKGROUND : 
+                               HierarchyRenderer.NORMAL_BACKGROUND;
             
             if (!component.enabled) {
-                foreground = HierarchyDrawingContext.DISABLED_FOREGROUND;
-                background = HierarchyDrawingContext.DISABLED_BACKGROUND;
+                foreground = HierarchyRenderer.DISABLED_FOREGROUND;
+                background = HierarchyRenderer.DISABLED_BACKGROUND;
             }
 
             gc.setBackground(background);
@@ -170,15 +201,20 @@ public class HierarchyEditor<T> implements IUpdateable {
             gc.setForeground(background);
             drawString(gc, component.label, component.rectangle2);
         }
-        scrolledcomposite.setMinSize(model.context.getMinSize());
+        scrolledcomposite.setMinSize(model.getRenderer().getMinSize());
     }
     
+    /**
+     * Is the component selected
+     * @param component
+     * @return
+     */
     private boolean isSelected(ComponentContext<T> component) {
-        if (model.selected == null) return false;
+        if (model.getSelectedElement() == null) return false;
         if (component instanceof IntervalContext) {
-            return ((IntervalContext<T>)component).interval.equals(model.selected);
+            return ((IntervalContext<T>)component).interval.equals(model.getSelectedElement());
         } else {
-            return ((GroupContext<T>)component).group.equals(model.selected);
+            return ((GroupContext<T>)component).group.equals(model.getSelectedElement());
         }
     }
 
@@ -189,7 +225,7 @@ public class HierarchyEditor<T> implements IUpdateable {
      * @param r
      */
     private void drawString(GC gc, String string, Rectangle r) {
-        gc.setFont(HierarchyDrawingContext.FONT);
+        gc.setFont(HierarchyRenderer.FONT);
         Point extent = gc.textExtent(string);
         int xx = r.x + (r.width - extent.x) / 2;
         int yy = r.y + (r.height - extent.y) / 2;
@@ -199,5 +235,11 @@ public class HierarchyEditor<T> implements IUpdateable {
     @Override
     public void update() {
         this.canvascomposite.redraw();
+    }
+
+    @Override
+    public void setFunction(AggregateFunction<T> function) {
+        model.setDefaultFunction(function);
+        model.update();
     }
 }

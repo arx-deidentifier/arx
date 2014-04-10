@@ -12,18 +12,35 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * Editor for adjustments
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyAdjustmentEditor<T> implements IUpdateable {
 
-    private final Group composite;
-    private final boolean lower;
+    /** Var */
+    private final Group                     composite;
+    /** Var */
     private final DataTypeWithRatioScale<T> type;
-    private final HierarchyModel<T> model;
-    private final HierarchyAdjustment<T> adjustment;
-    
-    private EditorString repeat;
-    private EditorString snap;
-    private EditorString label;
+    /** Var */
+    private final HierarchyModel<T>         model;
+    /** Var */
+    private final HierarchyAdjustment<T>    adjustment;
+    /** Var */
+    private EditorString                    repeat;
+    /** Var */
+    private EditorString                    snap;
+    /** Var */
+    private EditorString                    label;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param model
+     * @param lower
+     */
     @SuppressWarnings("unchecked")
     public HierarchyAdjustmentEditor(final Composite parent,
                                      final HierarchyModel<T> model,
@@ -33,24 +50,29 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
         this.composite.setText(lower ? "Lower bound" : "Upper bound");
         this.composite.setLayout(SWTUtil.createGridLayout(2, false));
         this.composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.lower = lower;
-        this.type = (DataTypeWithRatioScale<T>)model.type;
+        this.type = (DataTypeWithRatioScale<T>)model.getDataType();
         this.model = model;
         this.model.register(this);
         if (!lower) {
-            this.adjustment = model.upper;
+            this.adjustment = model.getUpperAdjustment();
             createRepeat(model, lower, adjustment);
             createSnap(model, lower, adjustment);
             createLabel(model, lower, adjustment);
         }
         else {
-            this.adjustment = model.lower;
+            this.adjustment = model.getLowerAdjustment();
             createLabel(model, lower, adjustment);
             createSnap(model, lower, adjustment);
             createRepeat(model, lower, adjustment);
         }
     }
 
+    /**
+     * Create the label editor
+     * @param model
+     * @param lower
+     * @param adjustment
+     */
     private void createLabel(final HierarchyModel<T> model,
                              final boolean lower,
                              final HierarchyAdjustment<T> adjustment) {
@@ -101,6 +123,12 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
         };
     }
 
+    /**
+     * Create the snap editor
+     * @param model
+     * @param lower
+     * @param adjustment
+     */
     private void createSnap(final HierarchyModel<T> model,
                             final boolean lower,
                             final HierarchyAdjustment<T> adjustment) {
@@ -152,6 +180,12 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
         };
     }
 
+    /**
+     * Create the repeat editor
+     * @param model
+     * @param lower
+     * @param adjustment
+     */
     private void createRepeat(final HierarchyModel<T> model,
                               final boolean lower,
                               final HierarchyAdjustment<T> adjustment) {
@@ -203,6 +237,12 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
         };
     }
 
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
     private Label createLabel(Composite composite, String string) {
         Label label = new Label(composite, SWT.NONE);
         label.setText(string);

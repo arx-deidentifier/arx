@@ -1,22 +1,49 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyFunctionEditor.IHierarchyFunctionEditorParent;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
-public class HierarchyGroupEditor<T> extends HierarchyFunctionEditor<T> implements IUpdateable{
+/**
+ * Editor for groups
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
+public class HierarchyGroupEditor<T> implements IUpdateable, IHierarchyFunctionEditorParent<T>{
     
-    private HierarchyGroup<T> group = null;
-    private final EditorString editor;
-    private final HierarchyModel<T> model;
+    /** Var */
+    private HierarchyGroup<T>                group = null;
+    /** Var */
+    private final EditorString               editorSize;
+    /** Var */
+    private final HierarchyModel<T>          model;
+    /** Var */
+    private final HierarchyFunctionEditor<T> editorFunction;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param model
+     */
     public HierarchyGroupEditor(final Composite parent,
                                 final HierarchyModel<T> model) {
-        super(parent, model, false);
         this.model = model;
+        this.model.register(this);
+        
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(SWTUtil.createGridLayout(2, false));    
+        composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.editorFunction = new HierarchyFunctionEditor<T>(this, model, composite, false);
+
         createLabel(composite, "Size:");
-        this.editor = new EditorString(composite) {
+        this.editorSize = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
                 if (group==null) return false;
@@ -46,22 +73,45 @@ public class HierarchyGroupEditor<T> extends HierarchyFunctionEditor<T> implemen
         };
     }
 
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(string);
+        GridData data = SWTUtil.createFillVerticallyGridData();
+        data.verticalAlignment = SWT.CENTER;
+        label.setLayoutData(data);
+        return label;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public void update() {
-        if (model.selected instanceof HierarchyGroup){
-            super.setSource(this.group);
-            super.update();
-            this.group = (HierarchyGroup<T>)model.selected;
-            this.editor.update();
-            SWTUtil.enable(editor.getControl());
-            SWTUtil.enable(getEditor().getControl());
+        if (model.getSelectedElement() instanceof HierarchyGroup){
+            this.group = (HierarchyGroup<T>)model.getSelectedElement();
+            this.editorFunction.setFunction(group.function);
+            this.editorSize.update();
+            SWTUtil.enable(editorSize.getControl());
         } else {
             this.group = null;
-            this.editor.update();
-            SWTUtil.disable(editor.getControl());
-            SWTUtil.disable(getEditor().getControl());
+            this.editorFunction.setFunction(null);
+            this.editorSize.update();
+            SWTUtil.disable(editorSize.getControl());
         }
-        
+    }
+
+    @Override
+    public void setFunction(AggregateFunction<T> function) {
+        if (this.group == null) return;
+        if (editorFunction.isDefaultFunction(function)) {
+            this.group.function = model.getDefaultFunction();
+        } else {
+            this.group.function = function;
+        }
+        model.update(this);
     }
 }

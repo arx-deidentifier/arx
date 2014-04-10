@@ -4,14 +4,29 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
 
+/**
+ * 
+ * Layouts the tree shown in the wizard
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyLayout<T> {
 
-    public static final int   PRETTY_THRESHOLD = 100;
+    /** Constant */
+    public static final int         PRETTY_THRESHOLD = 100;
 
-    private HierarchyModel<T> model;
-    private boolean           pretty           = true;
-    
+    /** Var */
+    private final HierarchyModel<T> model;
+    /** Var */
+    private boolean                 pretty           = true;
+
+    /**
+     * Creates a new instance
+     * @param model
+     */
     public HierarchyLayout(HierarchyModel<T> model){
         this.model = model;
     }
@@ -21,9 +36,14 @@ public class HierarchyLayout<T> {
      * @return
      */
     public int[] layout() {
+        
+        // Init
+        boolean showIntervals = model.isShowIntervals();
+        List<HierarchyInterval<T>> intervals = model.getIntervals();
+        List<List<HierarchyGroup<T>>> groups = model.getGroups();
 
         // Size of the solution
-        int size = model.showIntervals ? 1 + model.groups.size() : model.groups.size();
+        int size = showIntervals ? 1 + groups.size() : groups.size();
         
         // Init elements, sum, cardinality
         int[] sum = new int[size];
@@ -33,29 +53,29 @@ public class HierarchyLayout<T> {
         int[][] elements = new int[size][];
         
         // Init from intervals
-        if (model.showIntervals) {
-            elements[0] = new int[model.intervals.size()];
+        if (showIntervals) {
+            elements[0] = new int[intervals.size()];
             Arrays.fill(elements[0], 1);
-            cardinality[0] = model.intervals.size();
-            sum[0] = model.intervals.size();
+            cardinality[0] = intervals.size();
+            sum[0] = intervals.size();
         } 
         
         // Init from groups
-        for (int i=0; i < model.groups.size(); i++){
+        for (int i=0; i < groups.size(); i++){
             
             // Prepare
-            int index = model.showIntervals ? i +1 : i;
-            List<HierarchyGroup<T>> groups = model.groups.get(i);
+            int index = showIntervals ? i +1 : i;
+            List<HierarchyGroup<T>> groups2 = groups.get(i);
             
             // Prepare cardinality
-            cardinality[index] = groups.size();
+            cardinality[index] = groups2.size();
             
             // Prepare elements and sum
-            int[] array = new int[groups.size()];
+            int[] array = new int[groups2.size()];
             elements[index] = array;
             for (int j=0; j<array.length; j++){
-                array[j] = groups.get(j).size;
-                sum[index]+=groups.get(j).size;
+                array[j] = groups2.get(j).size;
+                sum[index]+=groups2.get(j).size;
             }
         }
         

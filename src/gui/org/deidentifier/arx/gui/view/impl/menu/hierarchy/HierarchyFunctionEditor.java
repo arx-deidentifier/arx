@@ -3,149 +3,216 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionWithParameter;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorSelection;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-public class HierarchyFunctionEditor<T> implements IUpdateable {
- 
-    protected final Composite                composite;
+/**
+ * Editor for functions
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
+public class HierarchyFunctionEditor<T> {
+    
+    /**
+     * Tiny callback for parents
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    public static interface IHierarchyFunctionEditorParent<T> {
+        public void setFunction(AggregateFunction<T> function);
+    }
+    
+    /** Var*/
+    private final AggregateFunction<T>       defaultFunction;
+    /** Var*/
     private final List<AggregateFunction<T>> functions;
+    /** Var*/
     private final List<String>               labels;
-    private Object                           source;
-    private final EditorSelection            editor;
+    /** Var*/
+    private final EditorSelection            editor1;
+    /** Var*/
+    private final EditorString               editor2;
+    /** Var*/
+    private AggregateFunction<T>             function = null;
+    /** Var*/
+    private final HierarchyModel<T>          model;
+    /** Var*/
+    private final boolean                    general;
 
-    public HierarchyFunctionEditor(final Composite parent,
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param model
+     * @param composite
+     * @param general
+     */
+    public HierarchyFunctionEditor(final IHierarchyFunctionEditorParent<T> parent,
                                    final HierarchyModel<T> model,
-                                   final boolean isGeneral) {
+                                   final Composite composite,
+                                   final boolean general) {
 
-        this.composite = new Composite(parent, SWT.NONE);
-        this.composite.setLayout(SWTUtil.createGridLayout(2, false));
-        this.composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        model.register(this);
+        DataType<T> type = model.getDataType();
+        this.general = general;
         this.functions = new ArrayList<AggregateFunction<T>>();
         this.labels = new ArrayList<String>();
+        this.model = model;
+        this.defaultFunction = new AggregateFunction<T>(type){
+            @Override public String aggregate(String[] values) {return null;}
+            @Override public String toString() {return "Default";}
+            @Override public String toLabel() {return "Default";}
+        };
         
-        if (isGeneral) {
-            functions.add(null);
-            labels.add("Default");
-        }
+        if (!general) {
+            this.createEntry(this.defaultFunction);
+            this.createEntry(AggregateFunction.CONSTANT(type, ""));
+        } 
         
-        addFunction(AggregateFunction.BOUNDS(model.type));
-        addFunction(AggregateFunction.COMMON_PREFIX(model.type));
-        addFunction(AggregateFunction.COMMON_PREFIX(model.type, '-'));
-        addFunction(AggregateFunction.COMMON_PREFIX(model.type, 'x'));
-        if (!isGeneral) addFunction(AggregateFunction.CONSTANT(model.type, "Parameter"));
-        addFunction(AggregateFunction.INTERVAL(model.type, true, false));
-        addFunction(AggregateFunction.SET(model.type));
-        addFunction(AggregateFunction.SET_OF_PREFIXES(model.type, 1));
-        addFunction(AggregateFunction.SET_OF_PREFIXES(model.type, 2));
-        addFunction(AggregateFunction.SET_OF_PREFIXES(model.type, 3));
-        addFunction(AggregateFunction.SET_OF_PREFIXES(model.type, 4));
-        addFunction(AggregateFunction.SET_OF_PREFIXES(model.type, 5));
+        this.createEntry(AggregateFunction.BOUNDS(type));
+        this.createEntry(AggregateFunction.COMMON_PREFIX(type));
+        this.createEntry(AggregateFunction.INTERVAL(type, true, false));
+        this.createEntry(AggregateFunction.SET(type));
+        this.createEntry(AggregateFunction.SET_OF_PREFIXES(type, 1));
         
 
         createLabel(composite, "Aggregate function:");
-        editor = new EditorSelection(composite, labels.toArray(new String[labels.size()])) {
+        this.editor1 = new EditorSelection(composite, labels.toArray(new String[labels.size()])) {
             @Override
             public boolean accepts(final String s) {
                 return labels.contains(s);
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public String getValue() {
-                if (isGeneral){
-                    return model.function.toString();
+                if (function == null){
+                    return null;
                 }
-                if (source != null){
-                    if (source instanceof HierarchyInterval){
-                        AggregateFunction<T> function = ((HierarchyInterval<T>)source).function;
-                        if (function == model.function) return "Default";
-                        else return function.toString();
-                    } else if (source instanceof HierarchyGroup){
-                        AggregateFunction<T> function = ((HierarchyGroup<T>)source).function;
-                        if (function == model.function) return "Default";
-                        else return function.toString();
-                    } 
-                }
-                return null;
+                else return function.toLabel();
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public void setValue(final String s) {
-                AggregateFunction<T> function = functions.get(labels.indexOf(s));
-                if (isGeneral){
-                    if (function != null && function != model.function){
-                        model.function = function;
-                        model.update(HierarchyFunctionEditor.this);
-                    }
+                function = functions.get(labels.indexOf(s));
+                HierarchyFunctionEditor.this.update();
+                parent.setFunction(function);
+            }
+        };
+
+        createLabel(composite, "Function Parameter:");
+        this.editor2 = new EditorString(composite) {
+            @Override
+            public boolean accepts(String s) {
+                if (s=="") s = null;
+                if (function == null) return false;
+                if (!function.hasParameter()) return false;
+                else return ((AggregateFunctionWithParameter<T>)function).acceptsParameter(s);
+            }
+
+            @Override
+            public String getValue() {
+                if (function == null) return "";
+                if (!function.hasParameter()) return "";
+                else {
+                    String param = ((AggregateFunctionWithParameter<T>)function).getParameter();
+                    if (param == null) return "";
+                    else return param;
                 }
-                if (source != null){
-                    if (source instanceof HierarchyInterval){
-                        if (function != null) {
-                            if (((HierarchyInterval<T>)source).function != function) {
-                                ((HierarchyInterval<T>)source).function = function;
-                                model.update(HierarchyFunctionEditor.this);
-                            }
-                        }
-                        else {
-                            if (((HierarchyInterval<T>)source).function != model.function) {
-                                ((HierarchyInterval<T>)source).function = model.function;
-                                model.update(HierarchyFunctionEditor.this);
-                            }
-                        }
-                        model.update(HierarchyFunctionEditor.this);
-                    }else if (source instanceof HierarchyGroup){
-                        if (function != null){
-                            if (((HierarchyGroup<T>)source).function != function){
-                                ((HierarchyGroup<T>)source).function = function;
-                                model.update(HierarchyFunctionEditor.this);
-                            }
-                        }
-                        else{
-                            if (((HierarchyGroup<T>)source).function != model.function){
-                                ((HierarchyGroup<T>)source).function = model.function;
-                                model.update(HierarchyFunctionEditor.this);
-                            }
-                        }
-                    }
+            }
+
+            @Override
+            public void setValue(String s) {
+                if (s=="") s = null;
+                if (function == null) return;
+                if (!function.hasParameter()) return;
+                else {
+                    function = ((AggregateFunctionWithParameter<T>)function).newInstance(s);
+                    parent.setFunction(function);
                 }
             }
         };
     }
-
-    private void addFunction(AggregateFunction<T> function) {
-        this.functions.add(function);
-        this.labels.add(function.toString());
+    
+    /**
+     * Returns the default function
+     * @return
+     */
+    public AggregateFunction<T> getDefaultFunction(){
+        return this.defaultFunction;
+    }
+    
+    /**
+     * Returns whether this is the default function
+     * @param function
+     * @return
+     */
+    public boolean isDefaultFunction(AggregateFunction<T> function){
+        return this.defaultFunction == function;
     }
 
-    protected Label createLabel(Composite composite, String string) {
+    /**
+     * Creates a function entry
+     * @param function
+     */
+    private void createEntry(AggregateFunction<T> function) {
+        this.functions.add(function);
+        this.labels.add(function.toLabel());
+    }
+
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
         Label label = new Label(composite, SWT.NONE);
         label.setText(string);
-        GridData data = SWTUtil.createFillVerticallyGridData();
+        GridData data = SWTUtil.createFillHorizontallyGridData();
+        data.grabExcessHorizontalSpace = false;
         data.verticalAlignment = SWT.CENTER;
         label.setLayoutData(data);
         return label;
     }
     
-    public void setSource(Object object){
-        this.source = object;
-    }
-
-    @Override
-    public void update() {
-        editor.update();
+    /**
+     * Sets the function to display
+     * @param function
+     */
+    public void setFunction(AggregateFunction<T> function){
+        if (!general && function == model.getDefaultFunction()){
+            function = defaultFunction;
+        }
+        this.function = function;
+        this.update();
     }
     
-    protected EditorSelection getEditor(){
-        return editor;
+    /**
+     * Updates all editors
+     */
+    public void update() {
+
+        // Update editors
+        editor1.update();
+        editor2.update();
+        if (this.function != null){
+            SWTUtil.enable(editor1.getControl());
+            if (this.function.hasParameter()){
+                SWTUtil.enable(editor2.getControl());
+            } else {
+                SWTUtil.disable(editor2.getControl());
+            }
+        } else {
+            SWTUtil.disable(editor1.getControl());
+            SWTUtil.disable(editor2.getControl());
+        }
     }
 }
