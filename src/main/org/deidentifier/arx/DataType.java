@@ -298,7 +298,7 @@ public abstract class DataType<T> implements Serializable {
             try {
                 return parse(s1).compareTo(parse(s2));
             } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid value: '"+s1+"' or: '"+s2+"'", e);
+                throw new IllegalArgumentException("Invalid value: '"+s1+"' or '"+s2+"'", e);
             }
         }
 
@@ -483,7 +483,7 @@ public abstract class DataType<T> implements Serializable {
             try {
                 return parse(s1).compareTo(parse(s2));
             } catch (Exception e) {
-                throw new IllegalArgumentException(e.getMessage() + ": " + s1 +" or: " + s2, e);
+                throw new IllegalArgumentException(e.getMessage() + ": " + s1 +" or " + s2, e);
             }
         }
 
