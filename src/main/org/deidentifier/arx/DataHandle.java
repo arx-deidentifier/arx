@@ -471,7 +471,8 @@ public abstract class DataHandle {
      */
     protected void checkRegistry() {
         if (registry == null) {
-            throw new RuntimeException("This data handle is orphaned");
+            throw new RuntimeException("This data handle ("+this.getClass().getSimpleName()+"@"+
+                                       this.hashCode()+") is orphaned");
         }
     }
 

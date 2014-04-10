@@ -130,7 +130,7 @@ public class ComponentDataTable implements IComponent {
      * @return
      */
     private NatTable createTable(final Composite parent) {
-        final IDataProvider provider = new DataTableHandleDataProvider(null, context);
+        final IDataProvider provider = new DataTableHandleDataProvider(context);
         gridLayer = new DataTableGridLayerStack(provider, table, context);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
@@ -277,8 +277,8 @@ public class ComponentDataTable implements IComponent {
     public void reset() {
         this.table.setRedraw(false);
         this.context.getImages().clear();
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(null, context), table, context);
         this.context.reset();
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -313,7 +313,7 @@ public class ComponentDataTable implements IComponent {
         this.table.setRedraw(false);
         this.context.setHandle(handle);
         this.context.setArray(null);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(handle, context), table, context);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();

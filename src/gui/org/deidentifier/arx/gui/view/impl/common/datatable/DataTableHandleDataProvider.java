@@ -29,7 +29,6 @@ import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
  */
 public class DataTableHandleDataProvider implements IDataProvider {
 
-    private final DataHandle       data;
     private final DataTableContext context;
 
     /**
@@ -37,19 +36,20 @@ public class DataTableHandleDataProvider implements IDataProvider {
      * @param data
      * @param context
      */
-    public DataTableHandleDataProvider(final DataHandle data, final DataTableContext context) {
-        this.data = data;
+    public DataTableHandleDataProvider(final DataTableContext context) {
         this.context = context;
     }
 
     @Override
     public int getColumnCount() {
+        DataHandle data = context.getHandle();
         if (data == null || data.isOrphaned()) { return 0; }
         return data.getNumColumns() + (context.getRows() != null ? 1 : 0);
     }
 
     @Override
     public Object getDataValue(int arg0, int arg1) {
+        DataHandle data = context.getHandle();
         if (data == null) { return null; }
         RowSet rows = context.getRows();
         if (rows == null) {
@@ -68,6 +68,7 @@ public class DataTableHandleDataProvider implements IDataProvider {
 
     @Override
     public int getRowCount() {
+        DataHandle data = context.getHandle();
         if (data == null || data.isOrphaned()) { return 0; }
         return data.getNumRows();
     }
