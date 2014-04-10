@@ -48,7 +48,6 @@ public class ViewDataInput extends ViewData {
 
         // Register
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
-        controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
@@ -156,6 +155,7 @@ public class ViewDataInput extends ViewData {
             // Redraw
             table.setEnabled(true);
             table.redraw();
+            this.enableSorting();
 
         } else if (event.part == ModelPart.RESEARCH_SUBSET) {
             

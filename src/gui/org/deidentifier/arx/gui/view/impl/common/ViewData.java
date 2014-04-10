@@ -54,6 +54,8 @@ public abstract class ViewData implements IView {
 
     private final ToolItem             groupsButton;
     private final ToolItem             subsetButton;
+    private final ToolItem             ascendingButton;
+    private final ToolItem             descendingButton;
 
     protected final ComponentDataTable table;
     protected final Controller         controller;
@@ -75,7 +77,9 @@ public abstract class ViewData implements IView {
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
+        controller.addListener(ModelPart.INPUT, this);
         
         // Store
         this.controller = controller;
@@ -153,6 +157,10 @@ public abstract class ViewData implements IView {
         this.groupsButton.setEnabled(false);
         this.subsetButton = folder.getBarItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
         this.subsetButton.setEnabled(false);
+        this.ascendingButton = folder.getBarItem(Resources.getMessage("DataView.1")); //$NON-NLS-1$
+        this.ascendingButton.setEnabled(false);
+        this.descendingButton = folder.getBarItem(Resources.getMessage("DataView.4")); //$NON-NLS-1$
+        this.descendingButton.setEnabled(false);
     }
     
     /**
@@ -239,6 +247,16 @@ public abstract class ViewData implements IView {
         table.reset();
         groupsButton.setEnabled(false);
         subsetButton.setEnabled(false);
+        ascendingButton.setEnabled(false);
+        descendingButton.setEnabled(false);
+    }
+    
+    /**
+     * Enable sorting
+     */
+    protected void enableSorting(){
+        ascendingButton.setEnabled(true);
+        descendingButton.setEnabled(true);
     }
     
 

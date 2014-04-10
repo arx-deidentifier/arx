@@ -45,10 +45,6 @@ public class ViewDataOutput extends ViewData {
                          final Controller controller) {
         
         super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1
-
-        // Register
-        controller.addListener(ModelPart.INPUT, this);
-        controller.addListener(ModelPart.OUTPUT, this);
     }
     
     @Override
@@ -148,6 +144,7 @@ public class ViewDataOutput extends ViewData {
             // Redraw
             table.setEnabled(true);
             table.redraw();
+            this.enableSorting();
 
         } else if (event.part == ModelPart.RESEARCH_SUBSET) {
             
