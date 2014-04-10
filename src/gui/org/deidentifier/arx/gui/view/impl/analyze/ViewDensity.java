@@ -33,6 +33,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -208,7 +209,12 @@ public class ViewDensity extends Panel implements IView {
             model.getAttributePair()[1] != null) {
 
             // Obtain the right handle
-            DataHandle handle = this.context.getContext().handle;
+            Context context = this.context.getContext();
+            if (context==null) {
+                reset();
+                return;
+            }
+            DataHandle handle = context.handle;
             if (handle == null) {
                 reset();
                 return;

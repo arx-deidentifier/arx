@@ -104,6 +104,7 @@ public class AnalysisContext {
             } else {
                 config = model.getInputConfig();
             }
+            if (config.getInput() == null) return null;
             handle = config.getInput().getHandle();
            
         // If output

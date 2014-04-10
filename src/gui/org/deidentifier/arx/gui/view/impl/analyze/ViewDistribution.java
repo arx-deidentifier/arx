@@ -235,6 +235,11 @@ public class ViewDistribution implements IView {
 
         // Obtain context
         Context context = acontext.getContext();
+        if (context==null) {
+            clearCache();
+            reset();
+            return;
+        }
         if (!context.equals(this.context)) {
             this.cache.clear();
             this.context = context;
