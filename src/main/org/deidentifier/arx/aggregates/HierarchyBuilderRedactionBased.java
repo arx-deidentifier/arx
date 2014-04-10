@@ -36,7 +36,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * @author Fabian Prasser
  *
  */
-public class HierarchyBuilderRedactionBased extends HierarchyBuilder<String> implements Serializable {
+public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable {
 
     public static enum Order {
         LEFT_TO_RIGHT,
@@ -200,8 +200,7 @@ public class HierarchyBuilderRedactionBased extends HierarchyBuilder<String> imp
      * @return
      * @throws IOException
      */
-    @SuppressWarnings("unchecked")
-    public static HierarchyBuilderRedactionBased create(String file) throws IOException{
+    public static <T> HierarchyBuilderRedactionBased<T> create(String file) throws IOException{
         return create(new File(file));
     }
     
@@ -212,11 +211,11 @@ public class HierarchyBuilderRedactionBased extends HierarchyBuilder<String> imp
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-    public static HierarchyBuilderRedactionBased create(File file) throws IOException{
+    public static <T> HierarchyBuilderRedactionBased<T> create(File file) throws IOException{
         ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream(new FileInputStream(file));
-            HierarchyBuilderRedactionBased result = (HierarchyBuilderRedactionBased)ois.readObject();
+            HierarchyBuilderRedactionBased<T> result = (HierarchyBuilderRedactionBased<T>)ois.readObject();
             return result;
         } catch (Exception e) {
             throw new IOException(e);
