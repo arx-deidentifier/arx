@@ -297,6 +297,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows an input dialog for selecting formats string for data types
+     * @param shell
      * @param header
      * @param text
      * @param preselected Preselected format string, can be null
@@ -304,7 +305,7 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public String showFormatInputDialog(final String header, final String text, final String preselected, final DataTypeDescription<?> description, final Collection<String> values) {
+    public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final DataTypeDescription<?> description, final Collection<String> values) {
 
         // Check
         if (!description.hasFormat()) { throw new RuntimeException("This dialog can only be used for data types with format"); }

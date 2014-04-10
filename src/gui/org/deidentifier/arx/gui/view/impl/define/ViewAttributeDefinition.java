@@ -246,7 +246,8 @@ public class ViewAttributeDefinition implements IView {
                         } else if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, getValuesAsList());
+                            final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
+                                                                                         text1, text2, description, getValuesAsList());
                             if (format == null) {
                                 type = DataType.STRING;
                             } else {

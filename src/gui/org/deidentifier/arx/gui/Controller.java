@@ -80,6 +80,7 @@ import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import cern.colt.Swapper;
 
@@ -687,38 +688,43 @@ public class Controller implements IView {
 
     /**
      * Shows a dialog for selecting a format string for a data type
+     * @param shell The parent shell
      * @param title The dialog's title
      * @param text The dialog's text
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
-    public String actionShowFormatInputDialog(final String title,
+    public String actionShowFormatInputDialog(final Shell shell,
+                                              final String title,
                                               final String text,
                                               final DataTypeDescription<?> type,
                                               final Collection<String> values) {
         
-        return main.showFormatInputDialog(title, text, null, type, values);
+        return main.showFormatInputDialog(shell, title, text, null, type, values);
     }
 
     /**
      * Shows a dialog for selecting a format string for a data type
+     * @param shell The parent shell
      * @param title The dialog's title
      * @param text The dialog's text
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
-    public String actionShowFormatInputDialog(final String title,
+    public String actionShowFormatInputDialog(final Shell shell,
+                                              final String title,
                                               final String text,
                                               final DataTypeDescription<?> type,
                                               final String[] values) {
         
-        return main.showFormatInputDialog(title, text, null, type, Arrays.asList(values));
+        return main.showFormatInputDialog(shell, title, text, null, type, Arrays.asList(values));
     }
 
     /**
      * Shows a dialog for selecting a format string for a data type
+     * @param shell The parent shell
      * @param title The dialog's title
      * @param text The dialog's text
      * @param preselected A preselected format string
@@ -726,13 +732,14 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected 
      */
-    public String actionShowFormatInputDialog(final String title,
+    public String actionShowFormatInputDialog(final Shell shell,
+                                              final String title,
                                               final String text,
                                               final String preselected,
                                               final DataTypeDescription<?> type,
                                               final Collection<String> values) {
         
-        return main.showFormatInputDialog(title, text, preselected, type, values);
+        return main.showFormatInputDialog(shell, title, text, preselected, type, values);
     }
 
     /**

@@ -145,7 +145,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
                         if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, model.getItems());
+                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, description, model.getItems());
                             if (format == null) {
                                 type = DataType.STRING;
                                 combo.select(getIndexOfDataType(DataType.STRING)+1);

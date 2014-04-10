@@ -780,6 +780,7 @@ public class ColumnPage extends WizardPage {
                         if (column.getDataType().getClass() == description.newInstance().getClass()) {
 
                             format = controller.actionShowFormatInputDialog(
+                                getShell(),
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
                                 ((DataTypeWithFormat)column.getDataType()).getFormat(),
@@ -790,6 +791,7 @@ public class ColumnPage extends WizardPage {
                         } else {
 
                             format = controller.actionShowFormatInputDialog(
+                                getShell(),
                                 "Format string",
                                 "Please provide a format string describing each item of this column",
                                 description,

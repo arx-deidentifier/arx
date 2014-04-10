@@ -411,7 +411,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                         if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(text1, text2, description, elements);
+                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, description, elements);
                             if (format == null) {
                                 type = DataType.STRING;
                                 combo.select(getIndexOfDataType(DataType.STRING)+1);
