@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Rectangle;
  *
  * @param <T>
  */
-public class HierarchyRenderer<T> {
+public class HierarchyWizardGroupingRenderer<T> {
 
     /** Constants*/
     public static final Font                   FONT                = getFont();
@@ -129,18 +129,18 @@ public class HierarchyRenderer<T> {
     private final List<List<GroupContext<T>>> renderedGroups    = new ArrayList<List<GroupContext<T>>>();
     
     /** Var */
-    private final HierarchyLayout<T>          layout;
+    private final HierarchyWizardGroupingLayout<T>          layout;
     /** Var */
-    private final HierarchyModel<T>           model;
+    private final HierarchyWizardGroupingModel<T>           model;
     
     
     /**
      * Creates a new instance
      * @param model
      */
-    public HierarchyRenderer(HierarchyModel<T> model) {
+    public HierarchyWizardGroupingRenderer(HierarchyWizardGroupingModel<T> model) {
         this.model = model;
-        this.layout = new HierarchyLayout<T>(model);
+        this.layout = new HierarchyWizardGroupingLayout<T>(model);
     }    
     
     /**

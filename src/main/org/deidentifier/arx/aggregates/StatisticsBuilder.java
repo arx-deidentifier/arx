@@ -506,7 +506,7 @@ public class StatisticsBuilder {
      * @return
      */
     private String[] getScaledValues(String[] values, double factor) {
-        AggregateFunction<String> function = AggregateFunction.SET(DataType.STRING);
+        AggregateFunction<String> function = AggregateFunction.forType(DataType.STRING).createSetFunction(); 
         String[] result = new String[(int)Math.round(factor * (double)values.length)];
         int previous = -1;
         List<String> toAggregate = new ArrayList<String>();

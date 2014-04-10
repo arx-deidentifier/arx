@@ -206,7 +206,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         // Add one last column if more than one group left
         if (groupCount>1) {
             AbstractGroup[] column = new AbstractGroup[data.length];
-            CloseElements<T> element = new CloseElements<T>(new String[]{}, AggregateFunction.CONSTANT(getDataType(), "*"));
+            CloseElements<T> element = new CloseElements<T>(new String[]{}, AggregateFunction.forType(getDataType()).createConstantFunction("*"));
             for (int i=0; i<column.length; i++){
                 column[i] = element;
             }

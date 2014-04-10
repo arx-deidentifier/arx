@@ -304,7 +304,7 @@ public class ColumnPage extends WizardPage {
 
                 DataType<?> datatype = ((WizardColumn) element).getColumn().getDataType();
 
-                for (DataTypeDescription<?> description : DataType.LIST) {
+                for (DataTypeDescription<?> description : DataType.list()) {
 
                     if (description.newInstance().getClass() == datatype.getClass()) {
 
@@ -662,7 +662,7 @@ public class ColumnPage extends WizardPage {
 
             List<String> labels = new ArrayList<String>();
 
-            for (DataTypeDescription<?> description : DataType.LIST) {
+            for (DataTypeDescription<?> description : DataType.list()) {
 
                 /* Remove OrderedString from list of choices for now */
                 if (description.newInstance().getClass() == DataType.ORDERED_STRING.getClass()) {
@@ -719,7 +719,7 @@ public class ColumnPage extends WizardPage {
 
             int i = 0;
 
-            for (DataTypeDescription<?> description : DataType.LIST) {
+            for (DataTypeDescription<?> description : DataType.list()) {
 
                 if (description.newInstance().getClass() == datatype.getClass()) {
 
@@ -766,7 +766,7 @@ public class ColumnPage extends WizardPage {
 
             }
 
-            for (DataTypeDescription<?> description : DataType.LIST) {
+            for (DataTypeDescription<?> description : DataType.list()) {
 
                 if (description.getLabel().equals(label)) {
 

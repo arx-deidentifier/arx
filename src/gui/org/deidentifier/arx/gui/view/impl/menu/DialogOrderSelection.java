@@ -123,7 +123,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      * @return
      */
     private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.LIST){
+        for (DataTypeDescription<?> desc : DataType.list()){
             if (label.equals(desc.getLabel())){
                 return desc;
             }
@@ -137,7 +137,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      */
     private String[] getDataTypes(){
         ArrayList<String> list = new ArrayList<String>();
-        for (DataTypeDescription<?> desc : DataType.LIST){
+        for (DataTypeDescription<?> desc : DataType.list()){
             if (!desc.getLabel().equals("OrderedString")) {
                 list.add(desc.getLabel());
             }
@@ -152,7 +152,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      */
     private int getIndexOfDataType(DataType<?> type){
         int idx = 0;
-        for (DataTypeDescription<?> desc : DataType.LIST){
+        for (DataTypeDescription<?> desc : DataType.list()){
             if (desc.getLabel().equals(type.getDescription().getLabel())) {
                 return idx;
             }

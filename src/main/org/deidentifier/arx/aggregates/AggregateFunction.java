@@ -31,15 +31,120 @@ import org.deidentifier.arx.DataType;
 public abstract class AggregateFunction<T> {
     
     /**
+     * Returns a builder for the given data type
+     * @param type
+     * @return
+     */
+    public static <T> AggregateFunctionBuilder<T> forType(DataType<T> type){
+        return new AggregateFunctionBuilder<T>(type);
+    }
+    
+    /**
+     * A builder for aggregate functions
+     * 
+     * @author Fabian Prasser
+     *
+     */
+    public static class AggregateFunctionBuilder<T> {
+
+        private DataType<T> type;
+        
+        /**
+         * Creates a new instance
+         * @param type
+         */
+        private AggregateFunctionBuilder(DataType<T> type){
+            this.type = type;
+        }
+        
+
+        /** 
+         * An aggregate function that returns a set of all data values 
+         * @param <V>
+         */
+        public final AggregateFunction<T> createSetFunction() {
+            return new GenericSet<T>(type);
+        }
+        
+        /** 
+         * An aggregate function that returns a set of the prefixes of the data values. Length is 1
+         * @param <T>
+         */
+        public final AggregateFunction<T> createSetOfPrefixesFunction() {
+            return new GenericSetOfPrefixes<T>(type, 1);
+        }
+
+        /** 
+         * An aggregate function that returns a set of the prefixes of the data values
+         * @param <T>
+         * @param length
+         */
+        public final AggregateFunction<T> createSetOfPrefixesFunction(int length) {
+            return new GenericSetOfPrefixes<T>(type, length);
+        }
+        
+        /**
+         * An aggregate function that returns a common prefix. The remaining characters will be redacted with
+         * the given character
+         * 
+         * @param redaction
+         */
+        public final AggregateFunction<T> createPrefixFunction(Character redaction) {
+            return new GenericCommonPrefix<T>(type, redaction);
+        }
+
+        /**
+         * An aggregate function that returns a common prefix.
+         * 
+         */
+        public final AggregateFunction<T> createPrefixFunction() {
+            return new GenericCommonPrefix<T>(type, null);
+        }
+
+        /**
+         * An aggregate function that returns an interval consisting of the 
+         * first and the last element following the predefined order 
+         */
+        public final AggregateFunction<T> createBoundsFunction() {
+            return new GenericBounds<T>(type);
+        }
+
+        /**
+         * An aggregate function that returns an interval [min, max] 
+         */
+        public final AggregateFunction<T> createIntervalFunction() {
+            return new GenericInterval<T>(type, true, true);
+        }
+
+        /**
+         * An aggregate function that returns an interval [min, max] 
+         */
+        public final AggregateFunction<T> createIntervalFunction(boolean lowerIncluded, boolean upperIncluded) {
+            return new GenericInterval<T>(type, lowerIncluded, upperIncluded);
+        }
+
+        /**
+         * An aggregate function that returns a constant value
+         */
+        public final AggregateFunction<T> createConstantFunction(String value) {
+            return new GenericConstant<T>(type, value);
+        }
+    }
+    
+    /**
      * An aggregate function that has a parameter
      * 
      * @author Fabian Prasser
      */
     public static abstract class AggregateFunctionWithParameter<T> extends AggregateFunction<T>{
         
+        /** Creates a new instance*/
         protected AggregateFunctionWithParameter(DataType<T> type) { super(type); }
+        /** Returns the parameter*/
         public abstract String getParameter();
+        /** Returns whether the function accepts this parameter*/
         public abstract boolean acceptsParameter(String parameter);
+        /** Creates a new instance with the given parameter*/
         public abstract AggregateFunctionWithParameter<T> newInstance(String parameter);
     }
     
@@ -52,6 +157,11 @@ public abstract class AggregateFunction<T> {
 
         private String value;
         
+        /**
+         * Creates a new instance
+         * @param type
+         * @param value
+         */
         private GenericConstant(DataType<T> type, String value) {
             super(type);
             this.value = value;
@@ -95,6 +205,10 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericSet<T> extends AggregateFunction<T> {
 
+        /**
+         * Creates a new instance
+         * @param type
+         */
         private GenericSet(DataType<T> type) {
             super(type);
         }
@@ -133,6 +247,11 @@ public abstract class AggregateFunction<T> {
 
         private int length;
 
+        /**
+         * Creates a new instance
+         * @param type
+         * @param length
+         */
         private GenericSetOfPrefixes(DataType<T> type, int length) {
             super(type);
             this.length = length;
@@ -189,6 +308,10 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericBounds<T> extends AggregateFunction<T> {
 
+        /**
+         * Creates a new instance
+         * @param type
+         */
         private GenericBounds(DataType<T> type) {
             super(type);
         }
@@ -223,6 +346,11 @@ public abstract class AggregateFunction<T> {
         
         private Character redaction;
 
+        /**
+         * Creates a new instance
+         * @param type
+         * @param redaction
+         */
         private GenericCommonPrefix(DataType<T> type, final Character redaction) {
             super(type);
             this.redaction = redaction;
@@ -309,6 +437,12 @@ public abstract class AggregateFunction<T> {
         private final boolean lowerIncluded;
         private final boolean upperIncluded;
         
+        /**
+         * Creates a new instance
+         * @param type
+         * @param lowerIncluded
+         * @param upperIncluded
+         */
         private GenericInterval(DataType<T> type, boolean lowerIncluded, boolean upperIncluded) {
             super(type);
             this.lowerIncluded = lowerIncluded;
@@ -390,76 +524,4 @@ public abstract class AggregateFunction<T> {
      * @return
      */
     public abstract String toLabel();
-    
-    /** 
-     * An aggregate function that returns a set of all data values 
-     * @param <V>
-     */
-    public static final <V> AggregateFunction<V> SET(DataType<V> type) {
-        return new GenericSet<V>(type);
-    }
-    
-    /** 
-     * An aggregate function that returns a set of the prefixes of the data values. Length is 1
-     * @param <V>
-     */
-    public static final <V> AggregateFunction<V> SET_OF_PREFIXES(DataType<V> type) {
-        return new GenericSetOfPrefixes<V>(type, 1);
-    }
-
-    /** 
-     * An aggregate function that returns a set of the prefixes of the data values
-     * @param <V>
-     * @param length
-     */
-    public static final <V> AggregateFunction<V> SET_OF_PREFIXES(DataType<V> type, int length) {
-        return new GenericSetOfPrefixes<V>(type, length);
-    }
-    
-    /**
-     * An aggregate function that returns a common prefix. The remaining characters will be redacted with
-     * the given character
-     * 
-     * @param redaction
-     */
-    public static final <V> AggregateFunction<V> COMMON_PREFIX(DataType<V> type, Character redaction) {
-        return new GenericCommonPrefix<V>(type, redaction);
-    }
-
-    /**
-     * An aggregate function that returns a common prefix.
-     * 
-     */
-    public static final <V> AggregateFunction<V> COMMON_PREFIX(DataType<V> type) {
-        return new GenericCommonPrefix<V>(type, null);
-    }
-
-    /**
-     * An aggregate function that returns an interval consisting of the 
-     * first and the last element following the predefined order 
-     */
-    public static final <V> AggregateFunction<V> BOUNDS(DataType<V> type) {
-        return new GenericBounds<V>(type);
-    }
-
-    /**
-     * An aggregate function that returns an interval [min, max] 
-     */
-    public static final <V> AggregateFunction<V> INTERVAL(DataType<V> type) {
-        return new GenericInterval<V>(type, true, true);
-    }
-
-    /**
-     * An aggregate function that returns an interval [min, max] 
-     */
-    public static final <V> AggregateFunction<V> INTERVAL(DataType<V> type, boolean lowerIncluded, boolean upperIncluded) {
-        return new GenericInterval<V>(type, lowerIncluded, upperIncluded);
-    }
-
-    /**
-     * An aggregate function that returns a constant value
-     */
-    public static final <V> AggregateFunction<V> CONSTANT(DataType<V> type, String value) {
-        return new GenericConstant<V>(type, value);
-    }
 }

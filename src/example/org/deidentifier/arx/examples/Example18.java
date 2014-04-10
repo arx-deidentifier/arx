@@ -21,7 +21,6 @@ package org.deidentifier.arx.examples;
 import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Adjustment;
@@ -81,8 +80,8 @@ public class Example18 extends Example {
         HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(DataType.INTEGER, false);
 
         // Define grouping fanouts
-        builder.getLevel(0).addGroup(10, AggregateFunction.INTERVAL(DataType.INTEGER));
-        builder.getLevel(1).addGroup(2, AggregateFunction.INTERVAL(DataType.INTEGER));
+        builder.getLevel(0).addGroup(10, DataType.INTEGER.createAggregate().createIntervalFunction());
+        builder.getLevel(1).addGroup(2, DataType.INTEGER.createAggregate().createIntervalFunction());
         // builder.getLevel(2).addFanout(5, AggregateFunction.INTERVAL(DataType.INTEGER));
         // builder.getLevel(3).addFanout(5, AggregateFunction.INTERVAL(DataType.INTEGER));
 
@@ -126,7 +125,7 @@ public class Example18 extends Example {
                                                           new Adjustment<Long>(94l,97l,Long.MAX_VALUE));
         
         // Define base intervals
-        builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER, true, false));
+        builder.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
         builder.addInterval(0l, 20l);
         builder.addInterval(20l, 33l);
         
@@ -175,7 +174,7 @@ public class Example18 extends Example {
                                                           new Adjustment<Long>(100l,100l,Long.MAX_VALUE));
         
         // Define base intervals
-        builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER, true, false));
+        builder.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
         builder.addInterval(0l, 20l);
         builder.addInterval(20l, 33l);
         

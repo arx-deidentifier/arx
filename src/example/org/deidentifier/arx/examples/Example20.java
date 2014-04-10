@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
 
 /**
  * This class implements examples of how to use aggregate functions
@@ -46,15 +46,16 @@ public class Example20 extends Example {
     }
     
     private static void aggregate(String[] args, DataType<?> type){
+        
+        AggregateFunctionBuilder<?> builder = type.createAggregate();
         System.out.println("Input: "+Arrays.toString(args) + " as "+type.getDescription().getLabel()+"s");
-        System.out.println(" - Set                         :"+AggregateFunction.SET(type).aggregate(args));
-        System.out.println(" - Set of prefixes             :"+AggregateFunction.SET_OF_PREFIXES(type).aggregate(args));
-        System.out.println(" - Set of prefixes of length 2 :"+AggregateFunction.SET_OF_PREFIXES(type, 2).aggregate(args));
-        System.out.println(" - Common prefix               :"+AggregateFunction.COMMON_PREFIX(type).aggregate(args));
-        System.out.println(" - Common prefix with redaction:"+AggregateFunction.COMMON_PREFIX(type, '*').aggregate(args));
-        System.out.println(" - Bounds                      :"+AggregateFunction.BOUNDS(type).aggregate(args));
-        System.out.println(" - Interval                    :"+AggregateFunction.INTERVAL(type).aggregate(args));
-        System.out.println("\n");
-
+        System.out.println(" - Set                         :"+builder.createSetFunction().aggregate(args));
+        System.out.println(" - Set of prefixes             :"+builder.createSetOfPrefixesFunction().aggregate(args));
+        System.out.println(" - Set of prefixes of length 2 :"+builder.createSetOfPrefixesFunction(2).aggregate(args));
+        System.out.println(" - Common prefix               :"+builder.createPrefixFunction().aggregate(args));
+        System.out.println(" - Common prefix with redaction:"+builder.createPrefixFunction('*').aggregate(args));
+        System.out.println(" - Bounds                      :"+builder.createBoundsFunction().aggregate(args));
+        System.out.println(" - Interval                    :"+builder.createIntervalFunction().aggregate(args));
+        System.out.println();
     }
 }

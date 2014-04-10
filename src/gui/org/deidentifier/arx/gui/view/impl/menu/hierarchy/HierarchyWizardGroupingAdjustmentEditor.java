@@ -5,7 +5,7 @@ import java.text.ParseException;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyAdjustment;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyAdjustment;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -18,14 +18,14 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyAdjustmentEditor<T> implements IUpdateable {
+public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWizardGroupingView {
 
     /** Var */
     private final Group                     composite;
     /** Var */
     private final DataTypeWithRatioScale<T> type;
     /** Var */
-    private final HierarchyModel<T>         model;
+    private final HierarchyWizardGroupingModel<T>         model;
     /** Var */
     private final HierarchyAdjustment<T>    adjustment;
     /** Var */
@@ -42,8 +42,8 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
      * @param lower
      */
     @SuppressWarnings("unchecked")
-    public HierarchyAdjustmentEditor(final Composite parent,
-                                     final HierarchyModel<T> model,
+    public HierarchyWizardGroupingAdjustmentEditor(final Composite parent,
+                                     final HierarchyWizardGroupingModel<T> model,
                                      final boolean lower) {
 
         this.composite = new Group(parent, SWT.SHADOW_ETCHED_IN);
@@ -73,7 +73,7 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
      * @param lower
      * @param adjustment
      */
-    private void createLabel(final HierarchyModel<T> model,
+    private void createLabel(final HierarchyWizardGroupingModel<T> model,
                              final boolean lower,
                              final HierarchyAdjustment<T> adjustment) {
         createLabel(composite, "Label:");
@@ -129,7 +129,7 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
      * @param lower
      * @param adjustment
      */
-    private void createSnap(final HierarchyModel<T> model,
+    private void createSnap(final HierarchyWizardGroupingModel<T> model,
                             final boolean lower,
                             final HierarchyAdjustment<T> adjustment) {
         createLabel(composite, "Snap:");
@@ -186,7 +186,7 @@ public class HierarchyAdjustmentEditor<T> implements IUpdateable {
      * @param lower
      * @param adjustment
      */
-    private void createRepeat(final HierarchyModel<T> model,
+    private void createRepeat(final HierarchyWizardGroupingModel<T> model,
                               final boolean lower,
                               final HierarchyAdjustment<T> adjustment) {
         createLabel(composite, "Repeat:");

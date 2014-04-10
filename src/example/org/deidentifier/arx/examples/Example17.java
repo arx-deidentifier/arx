@@ -44,7 +44,7 @@ public class Example17 extends Example {
     public static void main(final String[] args) throws ParseException {
         
         // 1. List all data types
-        for (DataTypeDescription<?> type : DataType.LIST){
+        for (DataTypeDescription<?> type : DataType.list()){
             
             // Print basic information
             System.out.println(" - Label : " + type.getLabel());
@@ -64,7 +64,7 @@ public class Example17 extends Example {
         }
         
         // 2. Obtain specific data type
-        DataTypeDescription<Double> entry = DataType.LIST(Double.class);
+        DataTypeDescription<Double> entry = DataType.list(Double.class);
         
 
         // 3. Obtain data in specific formats
@@ -80,8 +80,8 @@ public class Example17 extends Example {
         data.add("h", "Harry", "48972", "47", "Bulgaria", "1.1.2013");
         data.add("i", "Iris", "48970", "52", "France", "1.1.2013");
         
-        data.getDefinition().setDataType("zip", DataType.DECIMAL("#,##0"));
-        data.getDefinition().setDataType("sen", DataType.DATE("dd.MM.yyyy"));
+        data.getDefinition().setDataType("zip", DataType.createDecimal("#,##0"));
+        data.getDefinition().setDataType("sen", DataType.createDate("dd.MM.yyyy"));
         
         DataHandle handle = data.getHandle();
         double value1 = handle.getDouble(2, 2);

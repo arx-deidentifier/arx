@@ -424,7 +424,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             throw new IllegalArgumentException("Label must not be null");
         }
         checkInterval(getDataType(), min, max);
-        this.intervals.add(new Interval<T>(this, getDataType(), min, max, AggregateFunction.CONSTANT(getDataType(), label)));
+        this.intervals.add(new Interval<T>(this, getDataType(), min, max, 
+                           AggregateFunction.forType(getDataType()).createConstantFunction(label)));
         this.setPrepared(false);
         return this;
     }

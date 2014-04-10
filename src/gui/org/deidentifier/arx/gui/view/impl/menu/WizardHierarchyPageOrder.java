@@ -202,7 +202,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
      * @return
      */
     private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.LIST){
+        for (DataTypeDescription<?> desc : DataType.list()){
             if (label.equals(desc.getLabel())){
                 return desc;
             }
@@ -216,7 +216,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
      */
     private String[] getDataTypes(){
         ArrayList<String> list = new ArrayList<String>();
-        for (DataTypeDescription<?> desc : DataType.LIST){
+        for (DataTypeDescription<?> desc : DataType.list()){
             list.add(desc.getLabel());
         }
         return list.toArray(new String[list.size()]);
@@ -229,7 +229,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
      */
     private int getIndexOfDataType(DataType<?> type){
         int idx = 0;
-        for (DataTypeDescription<?> desc : DataType.LIST){
+        for (DataTypeDescription<?> desc : DataType.list()){
             if (desc.getLabel().equals(type.getDescription().getLabel())) {
                 return idx;
             }

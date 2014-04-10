@@ -14,7 +14,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction;
  *
  * @param <T>
  */
-public class HierarchyModel<T> implements IUpdateable{
+public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingView{
     
     /**
      * This class represents an adjustment
@@ -99,9 +99,9 @@ public class HierarchyModel<T> implements IUpdateable{
     /** Var */
     private Object                        selected      = null;
     /** Var */
-    private HierarchyRenderer<T>          renderer      = new HierarchyRenderer<T>(this);
+    private HierarchyWizardGroupingRenderer<T>          renderer      = new HierarchyWizardGroupingRenderer<T>(this);
     /** Var */
-    private List<IUpdateable>             components    = new ArrayList<IUpdateable>();
+    private List<HierarchyWizardGroupingView>             components    = new ArrayList<HierarchyWizardGroupingView>();
 
     /**
      * Creates a new instance
@@ -109,7 +109,7 @@ public class HierarchyModel<T> implements IUpdateable{
      * @param intervals
      */
     @SuppressWarnings("unchecked")
-    public HierarchyModel(DataType<T> type, boolean intervals){
+    public HierarchyWizardGroupingModel(DataType<T> type, boolean intervals){
         this.type = type;
         this.showIntervals = intervals;
         if (intervals) {
@@ -119,10 +119,10 @@ public class HierarchyModel<T> implements IUpdateable{
                 throw new IllegalArgumentException("Data type with ratio scale is required");
             }
             DataTypeWithRatioScale<T> dtype = (DataTypeWithRatioScale<T>)type;
-            this.function = AggregateFunction.INTERVAL(type, true, false);
+            this.function = AggregateFunction.forType(type).createIntervalFunction(true, false);
             this.intervals.add(new HierarchyInterval<T>(dtype.getMinimum(), dtype.getMaximum(), this.function));
         } else {
-            this.function = AggregateFunction.SET(type);
+            this.function = AggregateFunction.forType(type).createSetFunction();
             this.groups.add(new ArrayList<HierarchyGroup<T>>());
             this.groups.get(0).add(new HierarchyGroup<T>(1, this.function));
         }
@@ -163,9 +163,9 @@ public class HierarchyModel<T> implements IUpdateable{
      * Update all UI components, apart from the sender
      * @param sender
      */
-    public void update(IUpdateable sender){
+    public void update(HierarchyWizardGroupingView sender){
         renderer.update();
-        for (IUpdateable c : components){
+        for (HierarchyWizardGroupingView c : components){
             if (c != sender) {
                 c.update();
             }
@@ -177,7 +177,7 @@ public class HierarchyModel<T> implements IUpdateable{
      */
     public void update(){
         renderer.update();
-        for (IUpdateable c : components){
+        for (HierarchyWizardGroupingView c : components){
             c.update();
         }
     }
@@ -186,7 +186,7 @@ public class HierarchyModel<T> implements IUpdateable{
      * Registers a part of the UI
      * @param component
      */
-    public void register(IUpdateable component){
+    public void register(HierarchyWizardGroupingView component){
         this.components.add(component);
     }
 
@@ -417,7 +417,7 @@ public class HierarchyModel<T> implements IUpdateable{
     /**
      * @return the renderer
      */
-    public HierarchyRenderer<T> getRenderer() {
+    public HierarchyWizardGroupingRenderer<T> getRenderer() {
         return renderer;
     }
 

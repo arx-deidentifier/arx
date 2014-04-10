@@ -3,8 +3,8 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 import java.util.Arrays;
 import java.util.List;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
 
 /**
  * 
@@ -13,13 +13,13 @@ import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.Hierarch
  *
  * @param <T>
  */
-public class HierarchyLayout<T> {
+public class HierarchyWizardGroupingLayout<T> {
 
     /** Constant */
     public static final int         PRETTY_THRESHOLD = 100;
 
     /** Var */
-    private final HierarchyModel<T> model;
+    private final HierarchyWizardGroupingModel<T> model;
     /** Var */
     private boolean                 pretty           = true;
 
@@ -27,7 +27,7 @@ public class HierarchyLayout<T> {
      * Creates a new instance
      * @param model
      */
-    public HierarchyLayout(HierarchyModel<T> model){
+    public HierarchyWizardGroupingLayout(HierarchyWizardGroupingModel<T> model){
         this.model = model;
     }
 

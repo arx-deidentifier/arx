@@ -317,13 +317,13 @@ public class WorkerLoad extends Worker<Model> {
                         } else {
                             config.getInput()
                                   .getDefinition()
-                                  .setDataType(attr, DataType.DATE(dtype));
+                                  .setDataType(attr, DataType.createDate(dtype));
                         }
                     } else if (vocabulary.getVocabularyVersion().equals("2.0")) {
                         
                         // Find matching data type
                         DataType<?> datatype = null;
-                        for (DataTypeDescription<?> description : DataType.LIST) {
+                        for (DataTypeDescription<?> description : DataType.list()) {
                             if (description.getLabel().equals(dtype)){
                                 
                                 // Check format

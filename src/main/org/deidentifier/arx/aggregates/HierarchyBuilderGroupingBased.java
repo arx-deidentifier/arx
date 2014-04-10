@@ -145,7 +145,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
          * @return
          */
         public Level<U> addGroup(int fanout, String label) {
-            this.list.add(new Group<U>(fanout, AggregateFunction.CONSTANT(builder.getDataType(), label)));
+            this.list.add(new Group<U>(fanout, AggregateFunction.forType(builder.getDataType()).createConstantFunction(label)));
             builder.setPrepared(false);
             return this;
         }

@@ -33,6 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.aggregates.AggregateFunction;
+import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
+
 /**
  * This class provides access to the data types supported by the ARX framework
  * 
@@ -57,7 +60,7 @@ public abstract class DataType<T> implements Serializable {
              */
             private static final long serialVersionUID = -1723392257250720908L;
             @Override public DataType<Date> newInstance() { return DATE; }
-            @Override public DataType<Date> newInstance(String format) {return DATE(format);}
+            @Override public DataType<Date> newInstance(String format) {return createDate(format);}
         };
         
         private SimpleDateFormat format;
@@ -250,7 +253,7 @@ public abstract class DataType<T> implements Serializable {
              */
             private static final long serialVersionUID = -3549629178680030868L;
             @Override public DataType<Double> newInstance() { return DECIMAL; }
-            @Override public DataType<Double> newInstance(String format) {return DECIMAL(format);}
+            @Override public DataType<Double> newInstance(String format) {return createDecimal(format);}
         };
         
         private DecimalFormat format;
@@ -435,7 +438,7 @@ public abstract class DataType<T> implements Serializable {
              */
             private static final long serialVersionUID = -4498725217659811835L;
             @Override public DataType<Long> newInstance() { return INTEGER; }
-            @Override public DataType<Long> newInstance(String format) {return INTEGER(format);}
+            @Override public DataType<Long> newInstance(String format) {return createInteger(format);}
         };
         
         private DecimalFormat format;
@@ -754,7 +757,7 @@ public abstract class DataType<T> implements Serializable {
             
             private static final long serialVersionUID = -6300869938311742699L;
             @Override public DataType<String> newInstance() { return ORDERED_STRING; }
-            @Override public DataType<String> newInstance(String format) {return ORDERED_STRING(format);}
+            @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
         };
         
         @Override
@@ -990,9 +993,6 @@ public abstract class DataType<T> implements Serializable {
 
     /** A ordered string data type */
     public static final DataType<String>             ORDERED_STRING  = new ARXOrderedString();
-
-    /** Provides a list of all available data types */
-    public static final List<DataTypeDescription<?>> LIST    = listDataTypes();
     
     /**
      * A ordered string type with given format. 
@@ -1000,7 +1000,7 @@ public abstract class DataType<T> implements Serializable {
      * @param format List of ordered strings
      * @return
      */
-    public static final DataType<String> ORDERED_STRING(final List<String> format) {
+    public static final DataType<String> createOrderedString(final List<String> format) {
         return new ARXOrderedString(format);
     }
     
@@ -1010,7 +1010,7 @@ public abstract class DataType<T> implements Serializable {
      * @param format List of ordered strings
      * @return
      */
-    public static final DataType<String> ORDERED_STRING(final String[] format) {
+    public static final DataType<String> createOrderedString(final String[] format) {
         return new ARXOrderedString(format);
     }
     
@@ -1020,7 +1020,7 @@ public abstract class DataType<T> implements Serializable {
      * @param format List of ordered strings separated by line feeds
      * @return
      */
-    public static final DataType<String> ORDERED_STRING(final String format) {
+    public static final DataType<String> createOrderedString(final String format) {
         return new ARXOrderedString(format);
     }
     
@@ -1031,7 +1031,7 @@ public abstract class DataType<T> implements Serializable {
      * @param format
      * @return
      */
-    public static final DataType<Date> DATE(final String format) {
+    public static final DataType<Date> createDate(final String format) {
         return new ARXDate(format);
     }
     
@@ -1042,7 +1042,7 @@ public abstract class DataType<T> implements Serializable {
      * @param format
      * @return
      */
-    public static final DataType<Double> DECIMAL(final String format) {
+    public static final DataType<Double> createDecimal(final String format) {
         return new ARXDecimal(format);
     }
     
@@ -1053,7 +1053,7 @@ public abstract class DataType<T> implements Serializable {
      * @param format
      * @return
      */
-    public static final DataType<Long> INTEGER(final String format) {
+    public static final DataType<Long> createInteger(final String format) {
         return new ARXInteger(format);
     }
     
@@ -1063,8 +1063,8 @@ public abstract class DataType<T> implements Serializable {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static final <U> DataTypeDescription<U> LIST(Class<U> clazz){
-        for (DataTypeDescription<?> entry : LIST) {
+    public static final <U> DataTypeDescription<U> list(Class<U> clazz){
+        for (DataTypeDescription<?> entry : list()) {
             if (entry.getWrappedClass() == clazz) {
                 return (DataTypeDescription<U>)entry;
             }
@@ -1076,7 +1076,7 @@ public abstract class DataType<T> implements Serializable {
      * Lists all available data types
      * @return
      */
-    private static final List<DataTypeDescription<?>> listDataTypes(){
+    public static final List<DataTypeDescription<?>> list(){
         List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
         list.add(STRING.getDescription());
         list.add(ORDERED_STRING.getDescription());
@@ -1175,4 +1175,12 @@ public abstract class DataType<T> implements Serializable {
      * @return
      */
     public abstract boolean isValid(String s);
+    
+    /**
+     * Returns a new function builder
+     * @return
+     */
+    public AggregateFunctionBuilder<T> createAggregate(){
+        return AggregateFunction.forType(this);
+    }
 }

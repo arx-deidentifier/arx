@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyFunctionEditor<T> {
+public class HierarchyWizardGroupingFunctionEditor<T> {
     
     /**
      * Tiny callback for parents
@@ -45,7 +45,7 @@ public class HierarchyFunctionEditor<T> {
     /** Var*/
     private AggregateFunction<T>             function = null;
     /** Var*/
-    private final HierarchyModel<T>          model;
+    private final HierarchyWizardGroupingModel<T>          model;
     /** Var*/
     private final boolean                    general;
 
@@ -56,8 +56,8 @@ public class HierarchyFunctionEditor<T> {
      * @param composite
      * @param general
      */
-    public HierarchyFunctionEditor(final IHierarchyFunctionEditorParent<T> parent,
-                                   final HierarchyModel<T> model,
+    public HierarchyWizardGroupingFunctionEditor(final IHierarchyFunctionEditorParent<T> parent,
+                                   final HierarchyWizardGroupingModel<T> model,
                                    final Composite composite,
                                    final boolean general) {
 
@@ -74,14 +74,14 @@ public class HierarchyFunctionEditor<T> {
         
         if (!general) {
             this.createEntry(this.defaultFunction);
-            this.createEntry(AggregateFunction.CONSTANT(type, ""));
+            this.createEntry(AggregateFunction.forType(type).createConstantFunction(""));
         } 
         
-        this.createEntry(AggregateFunction.BOUNDS(type));
-        this.createEntry(AggregateFunction.COMMON_PREFIX(type));
-        this.createEntry(AggregateFunction.INTERVAL(type, true, false));
-        this.createEntry(AggregateFunction.SET(type));
-        this.createEntry(AggregateFunction.SET_OF_PREFIXES(type, 1));
+        this.createEntry(AggregateFunction.forType(type).createBoundsFunction());
+        this.createEntry(AggregateFunction.forType(type).createPrefixFunction());
+        this.createEntry(AggregateFunction.forType(type).createIntervalFunction(true, false));
+        this.createEntry(AggregateFunction.forType(type).createSetFunction());
+        this.createEntry(AggregateFunction.forType(type).createSetOfPrefixesFunction(1));
         
 
         createLabel(composite, "Aggregate function:");
@@ -102,7 +102,7 @@ public class HierarchyFunctionEditor<T> {
             @Override
             public void setValue(final String s) {
                 function = functions.get(labels.indexOf(s));
-                HierarchyFunctionEditor.this.update();
+                HierarchyWizardGroupingFunctionEditor.this.update();
                 parent.setFunction(function);
             }
         };

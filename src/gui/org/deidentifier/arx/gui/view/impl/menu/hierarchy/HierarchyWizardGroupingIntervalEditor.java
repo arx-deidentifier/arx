@@ -4,8 +4,8 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -17,12 +17,12 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFunctionEditorParent<T>{
+public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T>{
     
     /** Var */
     private HierarchyInterval<T>             interval = null;
     /** Var */
-    private final HierarchyModel<T>          model;
+    private final HierarchyWizardGroupingModel<T>          model;
     /** Var */
     private final EditorString               editorMin;
     /** Var */
@@ -30,7 +30,7 @@ public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFuncti
     /** Var */
     private final DataTypeWithRatioScale<T>  type;
     /** Var */
-    private final HierarchyFunctionEditor<T> editorFunction;
+    private final HierarchyWizardGroupingFunctionEditor<T> editorFunction;
 
     /**
      * Creates a new instance
@@ -38,8 +38,8 @@ public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFuncti
      * @param model
      */
     @SuppressWarnings("unchecked")
-    public HierarchyIntervalEditor(final Composite parent,
-                                   final HierarchyModel<T> model) {
+    public HierarchyWizardGroupingIntervalEditor(final Composite parent,
+                                   final HierarchyWizardGroupingModel<T> model) {
         this.model = model;
         this.model.register(this);
         this.type = (DataTypeWithRatioScale<T>)model.getDataType();
@@ -47,7 +47,7 @@ public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFuncti
         final Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         composite.setLayout(SWTUtil.createGridLayout(2, false));
-        this.editorFunction = new HierarchyFunctionEditor<T>(this, model, composite, false);
+        this.editorFunction = new HierarchyWizardGroupingFunctionEditor<T>(this, model, composite, false);
         
         createLabel(composite, "Min:");
         editorMin = new EditorString(composite) {
@@ -71,7 +71,7 @@ public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFuncti
                 if (interval!=null){
                     if (interval.min != type.parse(s)){
                         interval.min = type.parse(s);
-                        model.update(HierarchyIntervalEditor.this);
+                        model.update(HierarchyWizardGroupingIntervalEditor.this);
                     }
                 }
             }
@@ -100,7 +100,7 @@ public class HierarchyIntervalEditor<T> implements IUpdateable, IHierarchyFuncti
                 if (interval!=null){
                     if (interval.max != type.parse(s)){
                         interval.max = type.parse(s);
-                        model.update(HierarchyIntervalEditor.this);
+                        model.update(HierarchyWizardGroupingIntervalEditor.this);
                     }
                 }
             }
