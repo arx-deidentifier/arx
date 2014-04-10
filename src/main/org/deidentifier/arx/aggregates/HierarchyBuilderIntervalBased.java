@@ -485,6 +485,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (!interval1.getMax().equals(interval2.getMin())) {
                 return "Gap between " + interval1 + " and " + interval2;
             }
+            
+            if (interval1.getMin().equals(interval2.getMin()) &&
+                interval1.getMax().equals(interval2.getMax())) {
+                return "Repeating intervals " + interval1 + " and " + interval2;
+            }
         }
         
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
