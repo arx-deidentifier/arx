@@ -193,9 +193,12 @@ public class Model implements Serializable {
 
         // Allow adding removing tuples
         if (!config.containsCriterion(DPresence.class)){
-            DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                                  getInputConfig().getResearchSubset());
-            config.addCriterion(new Inclusion(subset));
+            if (getInputConfig() != null && getInputConfig().getInput() != null &&
+                getInputConfig().getResearchSubset() != null) {
+                DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
+                                                      getInputConfig().getResearchSubset());
+                config.addCriterion(new Inclusion(subset));
+            }
         }
 	}
 
