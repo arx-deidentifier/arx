@@ -152,9 +152,15 @@ public class ViewList implements IView {
      */
     private double asRelativeValue(final InformationLoss infoLoss) {
         
-        double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
-        double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
-        return ((infoLoss.getValue() - min) / (max-min)) * 100d;
+        if (model != null && model.getResult() != null && model.getResult().getLattice() != null && 
+            model.getResult().getLattice().getBottom() != null &&
+            model.getResult().getLattice().getTop() != null) {
+                double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
+                double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
+                return ((infoLoss.getValue() - min) / (max-min)) * 100d;
+        } else {
+            return 0;
+        }
     }
 
     /**
