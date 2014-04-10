@@ -419,11 +419,7 @@ public class DataHandleOutput extends DataHandle {
             }
 
             if (cmp != 0) {
-                if (ascending) {
-                    return -cmp;
-                } else {
-                    return cmp;
-                }
+                return ascending ? cmp : -cmp;
             }
         }
         return 0;

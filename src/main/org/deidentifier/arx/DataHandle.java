@@ -559,7 +559,7 @@ public abstract class DataHandle {
                 int cmp = dataTypes[0][index].compare(internalGetValue(row1, index),
                                                       internalGetValue(row2, index));
                 if (cmp != 0) {
-                    return ascending ? -cmp : cmp;
+                    return ascending ? cmp : -cmp;
                 }
             }
             return 0;
