@@ -62,7 +62,7 @@ public class ViewProperties implements IView {
      * @param controller
      */
     public ViewProperties(final Composite parent,
-                              final Controller controller) {
+                          final Controller controller) {
 
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.SELECTED_NODE, this);
@@ -88,6 +88,7 @@ public class ViewProperties implements IView {
      * @return
      */
     private double asRelativeValue(final InformationLoss infoLoss) {
+        if (result == null) return 0;
         double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
         double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
         return ((infoLoss.getValue() - min) / (max - min)) * 100d;

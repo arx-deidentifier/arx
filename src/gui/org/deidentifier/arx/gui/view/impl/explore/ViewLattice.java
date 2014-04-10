@@ -236,6 +236,7 @@ public class ViewLattice extends Panel implements IView {
         controller.addListener(ModelPart.SELECTED_NODE, this);
         controller.addListener(ModelPart.FILTER, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.RESULT, this);
 
         this.controller = controller;
         
@@ -345,6 +346,8 @@ public class ViewLattice extends Panel implements IView {
         if (event.part == ModelPart.SELECTED_NODE) {
             selectedNode = (ARXNode) event.data;
             this.repaint();
+        } else if (event.part == ModelPart.RESULT) {
+            if (model.getResult() == null) reset();
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
         } else if (event.part == ModelPart.FILTER) {

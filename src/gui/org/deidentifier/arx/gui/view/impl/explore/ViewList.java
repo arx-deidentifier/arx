@@ -85,6 +85,7 @@ public class ViewList implements IView {
         controller.addListener(ModelPart.SELECTED_NODE, this);
         controller.addListener(ModelPart.FILTER, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.RESULT, this);
 
         this.controller = controller;
 
@@ -120,18 +121,23 @@ public class ViewList implements IView {
     @Override
     public void reset() {
         table.setRedraw(false);
-        table.clearAll();
+        for (final TableItem i : table.getItems()) {
+            i.dispose();
+        }
+        list.clear();
         table.setRedraw(true);
-
         if (listener != null) {
             table.removeListener(SWT.SetData, listener);
         }
+        SWTUtil.disable(table);
     }
 
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.part == ModelPart.SELECTED_NODE) {
+        if (event.part == ModelPart.RESULT) {
+            if (model.getResult() == null) reset();
+        } else  if (event.part == ModelPart.SELECTED_NODE) {
             // selectedNode = (ARXNode) event.data;
         } else if (event.part == ModelPart.MODEL) {
             reset();
@@ -206,13 +212,16 @@ public class ViewList implements IView {
         
         if (result == null || result.getLattice() == null) return;
         if (filter == null) return;
-
+        
         controller.getResources().getDisplay().asyncExec(new Runnable() {
 
             @Override
             public void run() {
                 table.setRedraw(false);
-                table.clearAll();
+                SWTUtil.enable(table);
+                for (final TableItem i : table.getItems()) {
+                    i.dispose();
+                }
                 list.clear();
                 
                 final ARXLattice l = result.getLattice();
