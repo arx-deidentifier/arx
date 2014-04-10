@@ -1,7 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
-import java.util.Comparator;
-
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -95,9 +93,30 @@ public class HierarchyWizardModel<T> {
         return type.getDescription().getLabel().equals(other.getDescription().getLabel());
     }
     
+    /**
+     * Sets the type
+     * @param type
+     */
     public void setType(Type type){
         if (type != this.type) {
             this.type = type;
+        }
+    }
+    
+    /**
+     * Updates the model with a new specification
+     * @param builder
+     */
+    public void setSpecification(HierarchyBuilder<T> builder) {
+        this.type = builder.getType();
+        if (type == Type.INTERVAL_BASED) {
+            intervalModel = new HierarchyWizardIntervalModel<T>((HierarchyBuilderIntervalBased<T>)builder, intervalModel.getData());
+        } else if (type == Type.ORDER_BASED) {
+            orderModel = new HierarchyWizardOrderModel<T>((HierarchyBuilderOrderBased<T>)builder, orderModel.getData());
+        } else if (type == Type.REDACTION_BASED) {
+            redactionModel = new HierarchyWizardRedactionModel<T>((HierarchyBuilderRedactionBased<T>)builder, redactionModel.getData());
+        } else {
+            throw new RuntimeException("Unknown type of builder");
         }
     }
 }

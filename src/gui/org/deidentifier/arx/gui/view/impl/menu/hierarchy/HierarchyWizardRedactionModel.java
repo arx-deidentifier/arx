@@ -5,13 +5,17 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 
 public class HierarchyWizardRedactionModel<T> {
 
+    private final String[] data;
+    
     public HierarchyWizardRedactionModel(DataType<T> dataType, String[] data) {
-        // TODO Auto-generated constructor stub
+        this.data = data;
     }
 
-    public HierarchyWizardRedactionModel(HierarchyBuilderRedactionBased<T> builder,
-                                         String[] data) {
-        // TODO Auto-generated constructor stub
+    public HierarchyWizardRedactionModel(HierarchyBuilderRedactionBased<T> builder, String[] data) {
+        this.data = data;
     }
 
+    public String[] getData() {
+        return data;
+    }
 }

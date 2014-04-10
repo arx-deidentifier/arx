@@ -777,6 +777,24 @@ public abstract class DataType<T> implements Serializable {
         public String toString() {
             return "OrderedString";
         }
+
+        /**
+         * Returns all elements backing this datatype
+         * @return
+         */
+        public List<String> getElements() {
+            List<String> result = new ArrayList<String>();
+            if (order == null) {
+                return result;
+            }
+            result.addAll(order.keySet());
+            Collections.sort(result, new Comparator<String>(){
+                @Override public int compare(String arg0, String arg1) {
+                    return order.get(arg0).compareTo(order.get(arg1));
+                }
+            });
+            return result;
+        }
     }
     
     /**
