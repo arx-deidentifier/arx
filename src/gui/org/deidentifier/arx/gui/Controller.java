@@ -311,10 +311,8 @@ public class Controller implements IView {
             return;
         }
         
-        // Free resources before anonymizing again
-        model.setResult(null);
-        model.setOutput(null, null);
-
+        actionResetOutput();
+        
         // Run the worker
         final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
@@ -358,20 +356,15 @@ public class Controller implements IView {
                 // Do not sort if dataset is too large
                 if (model.getMaximalSizeForComplexOperations() == 0 ||
                     model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
+                    this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.GROUPED);
                     this.updateViewConfig(true);
                 } else {
+                    this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.UNSORTED);
                 }
                 this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
                 
-            } else {
-                // Select bottom node
-                model.setOutput(null, null);
-                model.setSelectedNode(null);
-                model.setGroups(null);
-                update(new ModelEvent(this, ModelPart.OUTPUT, null));
-                update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
             }
 
             // Update selected attribute
@@ -788,7 +781,6 @@ public class Controller implements IView {
         return main.showOpenFileDialog(filter);
     }
 
-
     /**
      * Shows an input dialog for ordering data items
      * @param title The dialog's title
@@ -803,6 +795,7 @@ public class Controller implements IView {
         
         return main.showOrderValuesDialog(title, text, type, values);
     }
+
 
     /**
      * Shows a progress dialog
@@ -940,7 +933,7 @@ public class Controller implements IView {
             }
         }
     }
-    
+
     /**
      * Returns debug data
      * @return
@@ -948,7 +941,7 @@ public class Controller implements IView {
     public String getDebugData(){
         return this.debug.getData(model);
     }
-
+    
     /**
      * Returns the popup
      * @return
@@ -983,7 +976,7 @@ public class Controller implements IView {
             listeners.remove(listener);
         }
     }
-    
+
     @Override
     public void reset() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1005,7 +998,7 @@ public class Controller implements IView {
             }
         }
     }
-
+    
     /**
      * Internal method for importing data
      * @param path
@@ -1235,6 +1228,27 @@ public class Controller implements IView {
 
         // We just loaded the model, so there are no changes
         model.setUnmodified();
+    }
+
+    /**
+     * Resets the output
+     */
+    private void actionResetOutput() {
+
+        // Reset output
+        model.getViewConfig().setMode(Mode.UNSORTED);
+        model.getViewConfig().setSubset(false);
+        model.setGroups(null);
+        update(new ModelEvent(this, ModelPart.VIEW_CONFIG, null));
+        
+        model.setResult(null);
+        update(new ModelEvent(this, ModelPart.RESULT, null));
+        
+        model.setOutput(null, null);
+        update(new ModelEvent(this, ModelPart.OUTPUT, null));
+        
+        model.setSelectedNode(null);
+        update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
     }
 
     /**

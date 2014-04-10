@@ -246,7 +246,11 @@ public class ViewDistribution implements IView {
         }
 
         // Check
-        if (context.config == null || context.handle == null) { return; }
+        if (context.config == null || context.handle == null) { 
+            clearCache();
+            reset();
+            return; 
+        }
 
         // Update cache
         if (!cache.containsKey(attribute)) {
