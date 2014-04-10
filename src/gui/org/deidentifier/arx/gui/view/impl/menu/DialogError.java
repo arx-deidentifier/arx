@@ -116,10 +116,8 @@ public class DialogError extends TitleAreaDialog implements IDialog {
     	
     	if (message != null){
     		final Label label = new Label(parent, SWT.NONE);
-    		label.setText(message);
-    		final GridData d = SWTUtil.createFillHorizontallyGridData();
-    		d.heightHint = 20;
-    		label.setLayoutData(d); 
+    		label.setText(message.replaceAll(" \\(\\)\\!", "!")); // ;-)
+    		label.setLayoutData(SWTUtil.createFillHorizontallyGridData()); 
     	}
     	if (error != null){
 	        final Text text = new Text(parent, SWT.NONE | SWT.MULTI |
