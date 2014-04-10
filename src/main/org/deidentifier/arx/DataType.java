@@ -43,8 +43,6 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
  */
 public abstract class DataType<T> implements Serializable {
     
-    private static final long serialVersionUID = -4380267779210935078L;
-
     /**
      * Base class for date/time types
      * @author Fabian Prasser
@@ -92,10 +90,22 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
+        public Date add(Date augend, Date addend) {
+            long d1 = augend.getTime();
+            long d2 = addend.getTime();
+            return new Date(d1 + d2);
+        }
+
+        @Override
         public DataType<Date> clone() {
             return new ARXDate(string);
         }
 
+        @Override
+        public int compare(Date t1, Date t2) {
+            return t1.compareTo(t2);
+        }
+        
         @Override
         public int compare(final String s1, final String s2) throws ParseException {
             try {
@@ -103,6 +113,20 @@ public abstract class DataType<T> implements Serializable {
             } catch (Exception e){
                 throw new IllegalArgumentException("Invalid value", e);
             }
+        }
+
+        @Override
+        public Date divide(Date dividend, Date divisor) {
+            long d1 = dividend.getTime();
+            long d2 = divisor.getTime();
+            return new Date(d1 / d2);
+        }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            long d1 = parse(dividend).getTime();
+            long d2 = parse(divisor).getTime();
+            return format(new Date(d1 / d2));
         }
 
         @Override
@@ -117,22 +141,8 @@ public abstract class DataType<T> implements Serializable {
         }
         
         @Override
-        public Date parse(String s) {
-        	try {
-				return format.parse(s);
-        	} catch (Exception e) {
-                throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
-            }
-        }
-
-        @Override
-        public boolean isValid(String s) {
-            try {
-                parse(s);
-                return true;
-            } catch (Exception e){
-                return false;
-            }
+        public String format(Date s){
+        	return format.format(s);
         }
 
         @Override
@@ -146,40 +156,29 @@ public abstract class DataType<T> implements Serializable {
         }
         
         @Override
+        public Date getMaximum() {
+            return new Date(Long.MAX_VALUE);
+        }
+
+        @Override
+        public Date getMinimum() {
+            return new Date(Long.MIN_VALUE);
+        }
+
+        @Override
         public int hashCode() {
             if (string==null) return 0;
             else return string.hashCode();
         }
 
         @Override
-        public String toString() {
-            return "Date(" + string + ")";
-        }
-
-        @Override
-        public String format(Date s){
-        	return format.format(s);
-        }
-        
-        @Override
-        public String divide(String dividend, String divisor) {
-            long d1 = parse(dividend).getTime();
-            long d2 = parse(divisor).getTime();
-            return format(new Date(d1 / d2));
-        }
-
-        @Override
-        public String multiply(String multiplicand, String multiplicator) {
-            long d1 = parse(multiplicand).getTime();
-            long d2 = parse(multiplicator).getTime();
-            return format(new Date(d1 * d2));
-        }
-
-        @Override
-        public Date divide(Date dividend, Date divisor) {
-            long d1 = dividend.getTime();
-            long d2 = divisor.getTime();
-            return new Date(d1 / d2);
+        public boolean isValid(String s) {
+            try {
+                parse(s);
+                return true;
+            } catch (Exception e){
+                return false;
+            }
         }
 
         @Override
@@ -190,8 +189,38 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public int compare(Date t1, Date t2) {
-            return t1.compareTo(t2);
+        public Date multiply(Date multiplicand, double multiplicator) {
+            long d1 = multiplicand.getTime();
+            return new Date((long)((double)d1 * multiplicator));
+        }
+
+        @Override
+        public Date multiply(Date multiplicand, int multiplicator) {
+            long d1 = multiplicand.getTime();
+            return new Date(d1 * multiplicator);
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            long d1 = parse(multiplicand).getTime();
+            long d2 = parse(multiplicator).getTime();
+            return format(new Date(d1 * d2));
+        }
+
+        @Override
+        public Date parse(String s) {
+        	try {
+				return format.parse(s);
+        	} catch (Exception e) {
+                throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
+            }
+        }
+        
+        @Override
+        public double ratio(Date dividend, Date divisor) {
+            long d1 = dividend.getTime();
+            long d2 = divisor.getTime();
+            return (double)d1 / (double)d2;
         }
 
         @Override
@@ -202,39 +231,8 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public Date add(Date augend, Date addend) {
-            long d1 = augend.getTime();
-            long d2 = addend.getTime();
-            return new Date(d1 + d2);
-        }
-
-        @Override
-        public double ratio(Date dividend, Date divisor) {
-            long d1 = dividend.getTime();
-            long d2 = divisor.getTime();
-            return (double)d1 / (double)d2;
-        }
-
-        @Override
-        public Date multiply(Date multiplicand, int multiplicator) {
-            long d1 = multiplicand.getTime();
-            return new Date(d1 * multiplicator);
-        }
-        
-        @Override
-        public Date multiply(Date multiplicand, double multiplicator) {
-            long d1 = multiplicand.getTime();
-            return new Date((long)((double)d1 * multiplicator));
-        }
-
-        @Override
-        public Date getMinimum() {
-            return new Date(Long.MIN_VALUE);
-        }
-
-        @Override
-        public Date getMaximum() {
-            return new Date(Long.MAX_VALUE);
+        public String toString() {
+            return "Date(" + string + ")";
         }
     }
 
@@ -281,10 +279,20 @@ public abstract class DataType<T> implements Serializable {
         }
         
         @Override
+        public Double add(Double augend, Double addend) {
+            return augend + addend;
+        }
+        
+        @Override
         public DataType<Double> clone() {
             return this;
         }
-        
+
+        @Override
+        public int compare(Double t1, Double t2) {
+            return t1.compareTo(t2);
+        }
+
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             try {
@@ -292,6 +300,18 @@ public abstract class DataType<T> implements Serializable {
             } catch (Exception e) {
                 throw new IllegalArgumentException("Invalid value: '"+s1+"' or: '"+s2+"'", e);
             }
+        }
+
+        @Override
+        public Double divide(Double dividend, Double divisor) {
+            return dividend / divisor;
+        }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            Double d1 = parse(dividend);
+            Double d2 = parse(divisor);
+            return format(d1 / d2);
         }
 
         @Override
@@ -303,6 +323,73 @@ public abstract class DataType<T> implements Serializable {
             if (string == null) { if (other.string != null) { return false; }
             } else if (!string.equals(other.string)) { return false; }
             return true;
+        }
+
+        @Override
+        public String format(Double s){
+            if (format==null){
+                return String.valueOf(s);
+            } else {
+                return format.format(s);
+            }
+        }
+
+        @Override
+        public DataTypeDescription<Double> getDescription(){
+            return description;
+        }
+
+        @Override
+        public String getFormat() {
+            return string;
+        }
+
+        @Override
+        public Double getMaximum() {
+            return Double.MAX_VALUE;
+        }
+
+        @Override
+        public Double getMinimum() {
+            return Double.MIN_VALUE;
+        }
+
+        @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
+
+        @Override
+        public boolean isValid(String s) {
+            try {
+                parse(s);
+                return true;
+            } catch (Exception e){
+                return false;
+            }
+        }
+
+        @Override
+        public Double multiply(Double multiplicand, double multiplicator) {
+            return multiplicand * multiplicator;
+        }
+
+        @Override
+        public Double multiply(Double multiplicand, Double multiplicator) {
+            return multiplicand * multiplicator;
+        }
+
+        @Override
+        public Double multiply(Double multiplicand, int multiplicator) {
+            return multiplicand * multiplicator;
+        }
+
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            Double d1 = parse(multiplicand);
+            Double d2 = parse(multiplicator);
+            return format(d1 * d2);
         }
 
         @Override
@@ -319,77 +406,8 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public boolean isValid(String s) {
-            try {
-                parse(s);
-                return true;
-            } catch (Exception e){
-                return false;
-            }
-        }
-
-        @Override
-        public DataTypeDescription<Double> getDescription(){
-            return description;
-        }
-
-        @Override
-        public String getFormat() {
-            return string;
-        }
-
-        @Override
-        public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return "Decimal";
-        }
-
-        @Override
-        public String format(Double s){
-            if (format==null){
-                return String.valueOf(s);
-            } else {
-                return format.format(s);
-            }
-        }
-
-        @Override
-        public String divide(String dividend, String divisor) {
-            Double d1 = parse(dividend);
-            Double d2 = parse(divisor);
-            return format(d1 / d2);
-        }
-
-        @Override
-        public String multiply(String multiplicand, String multiplicator) {
-            Double d1 = parse(multiplicand);
-            Double d2 = parse(multiplicator);
-            return format(d1 * d2);
-        }
-
-        @Override
-        public Double divide(Double dividend, Double divisor) {
+        public double ratio(Double dividend, Double divisor) {
             return dividend / divisor;
-        }
-
-        @Override
-        public Double multiply(Double multiplicand, int multiplicator) {
-            return multiplicand * multiplicator;
-        }
-
-        @Override
-        public Double multiply(Double multiplicand, Double multiplicator) {
-            return multiplicand * multiplicator;
-        }
-
-        @Override
-        public int compare(Double t1, Double t2) {
-            return t1.compareTo(t2);
         }
 
         @Override
@@ -398,31 +416,11 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public Double add(Double augend, Double addend) {
-            return augend + addend;
-        }
-
-        @Override
-        public double ratio(Double dividend, Double divisor) {
-            return dividend / divisor;
-        }
-
-        @Override
-        public Double multiply(Double multiplicand, double multiplicator) {
-            return multiplicand * multiplicator;
-        }
-
-        @Override
-        public Double getMinimum() {
-            return Double.MIN_VALUE;
-        }
-
-        @Override
-        public Double getMaximum() {
-            return Double.MAX_VALUE;
+        public String toString() {
+            return "Decimal";
         }
     }
-    
+
     /**
      * Base class for numeric types
      * @author Fabian Prasser
@@ -466,10 +464,20 @@ public abstract class DataType<T> implements Serializable {
         }
         
         @Override
+        public Long add(Long augend, Long addend) {
+            return augend + addend;
+        }
+        
+        @Override
         public DataType<Long> clone() {
             return this;
         }
-        
+
+        @Override
+        public int compare(Long t1, Long t2) {
+            return t1.compareTo(t2);
+        }
+
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             try {
@@ -477,6 +485,18 @@ public abstract class DataType<T> implements Serializable {
             } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s1 +" or: " + s2, e);
             }
+        }
+
+        @Override
+        public Long divide(Long dividend, Long divisor) {
+            return (long)Math.round((double)dividend / (double)divisor);
+        }
+
+        @Override
+        public String divide(String dividend, String divisor) {
+            Long d1 = parse(dividend);
+            Long d2 = parse(divisor);
+            return format(d1 / d2);
         }
 
         @Override
@@ -488,6 +508,73 @@ public abstract class DataType<T> implements Serializable {
             if (string == null) { if (other.string != null) { return false; }
             } else if (!string.equals(other.string)) { return false; }
             return true;
+        }
+        
+        @Override
+        public String format(Long s){
+            if (format==null){
+                return String.valueOf(s);
+            } else {
+                return format.format(s);
+            }
+        }
+
+        @Override
+        public DataTypeDescription<Long> getDescription(){
+            return description;
+        }
+        
+        @Override
+        public String getFormat() {
+            return string;
+        }
+
+        @Override
+        public Long getMaximum() {
+            return Long.MAX_VALUE;
+        }
+
+        @Override
+        public Long getMinimum() {
+            return Long.MIN_VALUE;
+        }
+
+        @Override
+        public int hashCode() {
+            if (string==null) return 0;
+            else return string.hashCode();
+        }
+
+        @Override
+        public boolean isValid(String s) {
+            try {
+                parse(s);
+                return true;
+            } catch (Exception e){
+                return false;
+            }
+        }
+
+        @Override
+        public Long multiply(Long multiplicand, double multiplicator) {
+            return (long)((double)multiplicand * multiplicator);
+        }
+
+        @Override
+        public Long multiply(Long multiplicand, int multiplicator) {
+            return multiplicand * multiplicator;
+        }
+
+        @Override
+        public Long multiply(Long multiplicand, Long multiplicator) {
+            return (long)Math.round((double)multiplicand * (double)multiplicator);
+        }
+        
+        @Override
+        public String multiply(String multiplicand, String multiplicator) {
+            Long d1 = parse(multiplicand);
+            Long d2 = parse(multiplicator);
+            return format(d1 * d2);
         }
 
         @Override
@@ -502,74 +589,9 @@ public abstract class DataType<T> implements Serializable {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
         }
-
         @Override
-        public DataTypeDescription<Long> getDescription(){
-            return description;
-        }
-
-        @Override
-        public String getFormat() {
-            return string;
-        }
-
-        @Override
-        public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
-        }
-        
-        @Override
-        public String toString() {
-            return "Integer";
-        }
-
-        @Override
-        public String format(Long s){
-            if (format==null){
-                return String.valueOf(s);
-            } else {
-                return format.format(s);
-            }
-        }
-        
-        @Override
-        public boolean isValid(String s) {
-            try {
-                parse(s);
-                return true;
-            } catch (Exception e){
-                return false;
-            }
-        }
-
-        @Override
-        public String divide(String dividend, String divisor) {
-            Long d1 = parse(dividend);
-            Long d2 = parse(divisor);
-            return format(d1 / d2);
-        }
-
-        @Override
-        public String multiply(String multiplicand, String multiplicator) {
-            Long d1 = parse(multiplicand);
-            Long d2 = parse(multiplicator);
-            return format(d1 * d2);
-        }
-
-        @Override
-        public Long divide(Long dividend, Long divisor) {
-            return (long)Math.round((double)dividend / (double)divisor);
-        }
-
-        @Override
-        public Long multiply(Long multiplicand, Long multiplicator) {
-            return (long)Math.round((double)multiplicand * (double)multiplicator);
-        }
-
-        @Override
-        public int compare(Long t1, Long t2) {
-            return t1.compareTo(t2);
+        public double ratio(Long dividend, Long divisor) {
+            return (double)dividend / (double)divisor;
         }
 
         @Override
@@ -578,32 +600,182 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public Long add(Long augend, Long addend) {
-            return augend + addend;
+        public String toString() {
+            return "Integer";
+        }
+    }
+    
+    /**
+     * Base class for ordered string types
+     * @author Fabian Prasser
+     */
+    public static class ARXOrderedString extends DataType<String> implements DataTypeWithFormat {
+        
+        private static final long serialVersionUID = -830897705078418835L;
+        
+        private Map<String, Integer> order;
+        
+        /** The description of the data type*/
+        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()){
+            
+            private static final long serialVersionUID = -6300869938311742699L;
+            @Override public DataType<String> newInstance() { return ORDERED_STRING; }
+            @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
+        };
+        
+        /**
+         * Creates a new instance
+         */
+        private ARXOrderedString(){
+            this("Default");
+        }
+
+        /**
+         * Creates a new instance
+         * @param format Ordered list of strings
+         */
+        private ARXOrderedString(List<String> format){
+            if (format.size()==0) {
+                this.order = null;
+            } else {
+                this.order = new HashMap<String, Integer>(); 
+                for (int i=0; i< format.size(); i++){
+                    if (this.order.put(format.get(i), i) != null) {
+                        throw new IllegalArgumentException("Duplicate value '"+format.get(i)+"'");
+                    }
+                }
+            }
+        }
+
+        /**
+         * Creates a new instance
+         * @param format Ordered list of string separated by line feeds
+         */
+        private ARXOrderedString(String format){
+            if (format==null || format.equals("Default") || format.equals("")) {
+                this.order = null;
+            } else {
+                try {
+                    this.order = new HashMap<String, Integer>(); 
+                    BufferedReader reader = new BufferedReader(new StringReader(format));
+                    int index = 0;
+                    String line = reader.readLine();
+                    while (line != null) {
+                        if (this.order.put(line, index) != null) {
+                            throw new IllegalArgumentException("Duplicate value '"+line+"'");
+                        }
+                        line = reader.readLine();
+                        index++;
+                    }
+                    reader.close();
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error reading input data");
+                }
+            }
+        }
+        
+        /**
+         * Creates a new instance
+         * @param format Ordered list of strings
+         */
+        private ARXOrderedString(String[] format){
+            if (format.length == 0) {
+                this.order = null;
+            } else {
+                this.order = new HashMap<String, Integer>(); 
+                for (int i=0; i< format.length; i++){
+                    if (this.order.put(format[i], i) != null) {
+                        throw new IllegalArgumentException("Duplicate value '"+format[i]+"'");
+                    }
+                }
+            }
         }
         
         @Override
-        public double ratio(Long dividend, Long divisor) {
-            return (double)dividend / (double)divisor;
+        public DataType<String> clone() {
+            return this;
+        }
+        
+        @Override
+        public int compare(final String s1, final String s2) {
+            if (order != null){
+                try {
+                    return order.get(s1).compareTo(order.get(s2));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Invalid value", e);
+                }
+            } else {
+                return s1.compareTo(s2);
+            }
         }
 
         @Override
-        public Long multiply(Long multiplicand, int multiplicator) {
-            return multiplicand * multiplicator;
-        }
-        @Override
-        public Long multiply(Long multiplicand, double multiplicator) {
-            return (long)((double)multiplicand * multiplicator);
-        }
-
-        @Override
-        public Long getMinimum() {
-            return Long.MIN_VALUE;
+        public boolean equals(final Object obj) {
+            if (this == obj) { return true; }
+            if (obj == null) { return false; }
+            if (getClass() != obj.getClass()) { return false; }
+            return true;
         }
 
         @Override
-        public Long getMaximum() {
-            return Long.MAX_VALUE;
+        public String format(String s){
+            if (order != null && !order.containsKey(s)) {
+                throw new IllegalArgumentException("Unknown string '"+s+"'");
+            }
+        	return s;
+        }
+        
+        @Override
+        public DataTypeDescription<String> getDescription(){
+            return description;
+        }
+
+        @Override
+        public String getFormat() {
+            if (order == null) return "";
+            List<String> list = new ArrayList<String>();
+            list.addAll(order.keySet());
+            Collections.sort(list, new Comparator<String>(){
+                @Override
+                public int compare(String arg0, String arg1) {
+                    return order.get(arg0).compareTo(order.get(arg1));
+                } 
+            });
+            StringBuilder b = new StringBuilder();
+            for (int i=0; i<list.size(); i++) {
+                b.append(list.get(i));
+                if (i<list.size()-1) {
+                    b.append("\n");
+                }
+            }
+            return b.toString();
+        }
+        
+        @Override
+        public int hashCode() {
+            return ARXOrderedString.class.hashCode();
+        }
+
+        @Override
+        public boolean isValid(String s) {
+            if (order != null && !order.containsKey(s)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        public String parse(String s) {
+            if (order != null && !order.containsKey(s)) {
+                throw new IllegalArgumentException("Unknown string '"+s+"'");
+            }
+        	return s;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderedString";
         }
     }
     
@@ -644,7 +816,7 @@ public abstract class DataType<T> implements Serializable {
         }
 
         @Override
-        public String parse(String s) {
+        public String format(String s){
             return s;
         }
         
@@ -659,196 +831,22 @@ public abstract class DataType<T> implements Serializable {
         }
         
         @Override
-        public String toString() {
-            return "String";
-        }
-
-        @Override
-        public String format(String s){
-            return s;
-        }
-
-        @Override
         public boolean isValid(String s) {
-            return true;
-        }
-    }
-    
-    /**
-     * Base class for ordered string types
-     * @author Fabian Prasser
-     */
-    public static class ARXOrderedString extends DataType<String> implements DataTypeWithFormat {
-        
-        private static final long serialVersionUID = -830897705078418835L;
-        
-        private Map<String, Integer> order;
-        
-        /**
-         * Creates a new instance
-         */
-        private ARXOrderedString(){
-            this("Default");
-        }
-        
-        /**
-         * Creates a new instance
-         * @param format Ordered list of string separated by line feeds
-         */
-        private ARXOrderedString(String format){
-            if (format==null || format.equals("Default") || format.equals("")) {
-                this.order = null;
-            } else {
-                try {
-                    this.order = new HashMap<String, Integer>(); 
-                    BufferedReader reader = new BufferedReader(new StringReader(format));
-                    int index = 0;
-                    String line = reader.readLine();
-                    while (line != null) {
-                        if (this.order.put(line, index) != null) {
-                            throw new IllegalArgumentException("Duplicate value '"+line+"'");
-                        }
-                        line = reader.readLine();
-                        index++;
-                    }
-                    reader.close();
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Error reading input data");
-                }
-            }
-        }
-
-        /**
-         * Creates a new instance
-         * @param format Ordered list of strings
-         */
-        private ARXOrderedString(String[] format){
-            if (format.length == 0) {
-                this.order = null;
-            } else {
-                this.order = new HashMap<String, Integer>(); 
-                for (int i=0; i< format.length; i++){
-                    if (this.order.put(format[i], i) != null) {
-                        throw new IllegalArgumentException("Duplicate value '"+format[i]+"'");
-                    }
-                }
-            }
-        }
-
-        /**
-         * Creates a new instance
-         * @param format Ordered list of strings
-         */
-        private ARXOrderedString(List<String> format){
-            if (format.size()==0) {
-                this.order = null;
-            } else {
-                this.order = new HashMap<String, Integer>(); 
-                for (int i=0; i< format.size(); i++){
-                    if (this.order.put(format.get(i), i) != null) {
-                        throw new IllegalArgumentException("Duplicate value '"+format.get(i)+"'");
-                    }
-                }
-            }
-        }
-        
-        /** The description of the data type*/
-        private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()){
-            
-            private static final long serialVersionUID = -6300869938311742699L;
-            @Override public DataType<String> newInstance() { return ORDERED_STRING; }
-            @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
-        };
-        
-        @Override
-        public DataType<String> clone() {
-            return this;
-        }
-        
-        @Override
-        public int compare(final String s1, final String s2) {
-            if (order != null){
-                try {
-                    return order.get(s1).compareTo(order.get(s2));
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Invalid value", e);
-                }
-            } else {
-                return s1.compareTo(s2);
-            }
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) { return true; }
-            if (obj == null) { return false; }
-            if (getClass() != obj.getClass()) { return false; }
             return true;
         }
 
         @Override
         public String parse(String s) {
-            if (order != null && !order.containsKey(s)) {
-                throw new IllegalArgumentException("Unknown string '"+s+"'");
-            }
-        	return s;
-        }
-        
-        @Override
-        public DataTypeDescription<String> getDescription(){
-            return description;
+            return s;
         }
 
-        @Override
-        public int hashCode() {
-            return ARXOrderedString.class.hashCode();
-        }
-        
         @Override
         public String toString() {
-            return "OrderedString";
-        }
-
-        @Override
-        public String format(String s){
-            if (order != null && !order.containsKey(s)) {
-                throw new IllegalArgumentException("Unknown string '"+s+"'");
-            }
-        	return s;
-        }
-
-        @Override
-        public boolean isValid(String s) {
-            if (order != null && !order.containsKey(s)) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        @Override
-        public String getFormat() {
-            if (order == null) return "";
-            List<String> list = new ArrayList<String>();
-            list.addAll(order.keySet());
-            Collections.sort(list, new Comparator<String>(){
-                @Override
-                public int compare(String arg0, String arg1) {
-                    return order.get(arg0).compareTo(order.get(arg1));
-                } 
-            });
-            StringBuilder b = new StringBuilder();
-            for (int i=0; i<list.size(); i++) {
-                b.append(list.get(i));
-                if (i<list.size()-1) {
-                    b.append("\n");
-                }
-            }
-            return b.toString();
+            return "String";
         }
     }
-
-	/**
+    
+    /**
      * An entry in the list of available data types
      * @author Fabian Prasser
      * @param <T>
@@ -926,6 +924,14 @@ public abstract class DataType<T> implements Serializable {
         public abstract DataType<T> newInstance(String format);
     }
 
+	/**
+     * An interface for data types with format
+     * @author Fabian Prasser
+     */
+    public static interface DataTypeWithFormat {
+        public abstract String getFormat();
+    }
+
     /**
      * An interface for data types with a ratio scale
      * @author Fabian Prasser
@@ -934,50 +940,44 @@ public abstract class DataType<T> implements Serializable {
      */
     public static interface DataTypeWithRatioScale<T> {
         
-        public abstract String divide(String dividend, String divisor);
-
-        public abstract String multiply(String multiplicand,
-                                        String multiplicator);
-
-        public abstract T divide(T dividend, T divisor);
-
-        public abstract T multiply(T multiplicand, T multiplicator);
-        
-        public abstract T multiply(T multiplicand, double multiplicator);
-        
-        public abstract T multiply(T multiplicand, int multiplicator);
-
-        public abstract int compare(T t1, T t2);
-
-        public abstract T subtract(T minuend, T subtrahend);
-
         public abstract T add(T augend, T addend);
-        
-        public abstract double ratio(T dividend, T divisor);
 
         public abstract int compare(String s1, String s2) throws NumberFormatException,
                                                                  ParseException;
 
-        public abstract T parse(String s);
+        public abstract int compare(T t1, T t2);
+
+        public abstract String divide(String dividend, String divisor);
+        
+        public abstract T divide(T dividend, T divisor);
+        
+        public abstract String format(T t);
 
         public abstract DataTypeDescription<T> getDescription();
 
-        public abstract String format(T t);
+        public T getMaximum();
 
-        public abstract boolean isValid(String s);
-        
         public T getMinimum();
         
-        public T getMaximum();
+        public abstract boolean isValid(String s);
+
+        public abstract String multiply(String multiplicand,
+                                        String multiplicator);
+
+        public abstract T multiply(T multiplicand, double multiplicator);
+
+        public abstract T multiply(T multiplicand, int multiplicator);
+
+        public abstract T multiply(T multiplicand, T multiplicator);
+
+        public abstract T parse(String s);
+        
+        public abstract double ratio(T dividend, T divisor);
+        
+        public abstract T subtract(T minuend, T subtrahend);
     }
     
-    /**
-     * An interface for data types with format
-     * @author Fabian Prasser
-     */
-    public static interface DataTypeWithFormat {
-        public abstract String getFormat();
-    }
+    private static final long serialVersionUID = -4380267779210935078L;
 
     /** A date data type with default format dd.mm.yyyy */
     public static final DataType<Date>               DATE    = new ARXDate();
@@ -993,36 +993,6 @@ public abstract class DataType<T> implements Serializable {
 
     /** A ordered string data type */
     public static final DataType<String>             ORDERED_STRING  = new ARXOrderedString();
-    
-    /**
-     * A ordered string type with given format. 
-     * 
-     * @param format List of ordered strings
-     * @return
-     */
-    public static final DataType<String> createOrderedString(final List<String> format) {
-        return new ARXOrderedString(format);
-    }
-    
-    /**
-     * A ordered string type with given format. 
-     * 
-     * @param format List of ordered strings
-     * @return
-     */
-    public static final DataType<String> createOrderedString(final String[] format) {
-        return new ARXOrderedString(format);
-    }
-    
-    /**
-     * A ordered string type with given format. 
-     * 
-     * @param format List of ordered strings separated by line feeds
-     * @return
-     */
-    public static final DataType<String> createOrderedString(final String format) {
-        return new ARXOrderedString(format);
-    }
     
     /**
      * A date data type with given format
@@ -1057,6 +1027,50 @@ public abstract class DataType<T> implements Serializable {
         return new ARXInteger(format);
     }
     
+    /**
+     * A ordered string type with given format. 
+     * 
+     * @param format List of ordered strings
+     * @return
+     */
+    public static final DataType<String> createOrderedString(final List<String> format) {
+        return new ARXOrderedString(format);
+    }
+    
+    /**
+     * A ordered string type with given format. 
+     * 
+     * @param format List of ordered strings separated by line feeds
+     * @return
+     */
+    public static final DataType<String> createOrderedString(final String format) {
+        return new ARXOrderedString(format);
+    }
+    
+    /**
+     * A ordered string type with given format. 
+     * 
+     * @param format List of ordered strings
+     * @return
+     */
+    public static final DataType<String> createOrderedString(final String[] format) {
+        return new ARXOrderedString(format);
+    }
+    
+    /**
+     * Lists all available data types
+     * @return
+     */
+    public static final List<DataTypeDescription<?>> list(){
+        List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
+        list.add(STRING.getDescription());
+        list.add(ORDERED_STRING.getDescription());
+        list.add(DATE.getDescription());
+        list.add(DECIMAL.getDescription());
+        list.add(INTEGER.getDescription());
+        return list;
+    }
+
     /** 
      * Returns a datatype for the given class
      * @param clazz
@@ -1070,20 +1084,6 @@ public abstract class DataType<T> implements Serializable {
             }
         }
         return null;
-    }
-
-    /**
-     * Lists all available data types
-     * @return
-     */
-    public static final List<DataTypeDescription<?>> list(){
-        List<DataTypeDescription<?>> list = new ArrayList<DataTypeDescription<?>>();
-        list.add(STRING.getDescription());
-        list.add(ORDERED_STRING.getDescription());
-        list.add(DATE.getDescription());
-        list.add(DECIMAL.getDescription());
-        list.add(INTEGER.getDescription());
-        return list;
     }
     
     /**
@@ -1150,24 +1150,25 @@ public abstract class DataType<T> implements Serializable {
     public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
     
     /**
-     * Converts a string into a value
-     * @param s
+     * Returns a new function builder
      * @return
      */
-    public abstract T parse(String s);
+    public AggregateFunctionBuilder<T> createAggregate(){
+        return AggregateFunction.forType(this);
+    }
 
-    /**
-     * Returns a description of the data type
-     * @return
-     */
-    public abstract DataTypeDescription<T> getDescription();
-    
     /**
      * Converts a value into a string
      * @param t
      * @return
      */
     public abstract String format(T t);
+    
+    /**
+     * Returns a description of the data type
+     * @return
+     */
+    public abstract DataTypeDescription<T> getDescription();
 
     /**
      * Checks whether the given string conforms to the data type's format
@@ -1177,10 +1178,9 @@ public abstract class DataType<T> implements Serializable {
     public abstract boolean isValid(String s);
     
     /**
-     * Returns a new function builder
+     * Converts a string into a value
+     * @param s
      * @return
      */
-    public AggregateFunctionBuilder<T> createAggregate(){
-        return AggregateFunction.forType(this);
-    }
+    public abstract T parse(String s);
 }

@@ -118,10 +118,10 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
          * @return
          */
         public Level<U> addGroup(int fanout) {
-            if (builder.getDefaultAggregateFunction() == null) {
+            if (builder.getDefaultFunction() == null) {
                 throw new IllegalStateException("No default aggregate function defined");
             }
-            this.list.add(new Group<U>(fanout, builder.getDefaultAggregateFunction()));
+            this.list.add(new Group<U>(fanout, builder.getDefaultFunction()));
             builder.setPrepared(false);
             return this;
         }
@@ -397,7 +397,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * Returns the data type
      * @return
      */
-    protected DataType<T> getDataType(){
+    public DataType<T> getDataType(){
         return this.datatype;
     }
     
@@ -405,7 +405,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * Returns the default aggregate function
      * @return
      */
-    protected AggregateFunction<T> getDefaultAggregateFunction(){
+    public AggregateFunction<T> getDefaultFunction(){
         return this.function;
     }
     

@@ -3,8 +3,8 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 import java.util.Arrays;
 import java.util.List;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
 
 /**
  * 
@@ -16,12 +16,12 @@ import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGrouping
 public class HierarchyWizardGroupingLayout<T> {
 
     /** Constant */
-    public static final int         PRETTY_THRESHOLD = 100;
+    public static final int                       PRETTY_THRESHOLD = 100;
 
     /** Var */
     private final HierarchyWizardGroupingModel<T> model;
     /** Var */
-    private boolean                 pretty           = true;
+    private boolean                               pretty           = true;
 
     /**
      * Creates a new instance
@@ -32,6 +32,14 @@ public class HierarchyWizardGroupingLayout<T> {
     }
 
     /**
+     * Is the layout pretty
+     * @return
+     */
+    public boolean isPretty(){
+        return pretty;
+    }
+    
+    /**
      * Computes the cardinalities of the optimal number of elements per hierarchy level
      * @return
      */
@@ -39,8 +47,8 @@ public class HierarchyWizardGroupingLayout<T> {
         
         // Init
         boolean showIntervals = model.isShowIntervals();
-        List<HierarchyInterval<T>> intervals = model.getIntervals();
-        List<List<HierarchyGroup<T>>> groups = model.getGroups();
+        List<HierarchyWizardGroupingInterval<T>> intervals = model.getIntervals();
+        List<List<HierarchyWizardGroupingGroup<T>>> groups = model.getGroups();
 
         // Size of the solution
         int size = showIntervals ? 1 + groups.size() : groups.size();
@@ -65,7 +73,7 @@ public class HierarchyWizardGroupingLayout<T> {
             
             // Prepare
             int index = showIntervals ? i +1 : i;
-            List<HierarchyGroup<T>> groups2 = groups.get(i);
+            List<HierarchyWizardGroupingGroup<T>> groups2 = groups.get(i);
             
             // Prepare cardinality
             cardinality[index] = groups2.size();
@@ -127,13 +135,5 @@ public class HierarchyWizardGroupingLayout<T> {
         } else {
             return cardinality;
         }
-    }
-    
-    /**
-     * Is the layout pretty
-     * @return
-     */
-    public boolean isPretty(){
-        return pretty;
     }
 }

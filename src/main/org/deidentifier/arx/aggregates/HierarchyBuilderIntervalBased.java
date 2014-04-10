@@ -41,83 +41,6 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> {
     
     /**
-     * For each direction, this class encapsulates three bounds. Intervals will be repeated until the
-     * repeat-bound is reached. The outmost intervals will than be exptended to the snap-bound. Values between
-     * the snap-bound and the label-bound will be replaced by an out-of-bounds-label. For values larger than
-     * the label-bound exceptions will be raised.
-     * 
-     * @author Fabian Prasser
-     */
-    public static class Adjustment<U> implements Serializable {
-        
-        private static final long serialVersionUID = -5385139177770612960L;
-        
-        /** Bound*/
-        private U repeatBound;
-        /** Bound*/
-        private U snapBound;
-        /** Bound*/
-        private U labelBound;
-            
-        /**
-         * Creates a new instance
-         * @param repeatBound
-         * @param snapBound
-         * @param labelBound
-         */
-        public Adjustment(U repeatBound,
-                          U snapBound,
-                          U labelBound) {
-            
-            this.repeatBound = repeatBound;
-            this.snapBound = snapBound;
-            this.labelBound = labelBound;
-        }
-
-        /**
-         * @return the labelBound
-         */
-        public U getLabelBound() {
-            return labelBound;
-        }
-
-        /**
-         * @return the repeatBound
-         */
-        public U getRepeatBound() {
-            return repeatBound;
-        }
-
-        /**
-         * @return the snapBound
-         */
-        public U getSnapBound() {
-            return snapBound;
-        }
-
-        /**
-         * @param labelBound the labelBound to set
-         */
-        private void setLabelBound(U labelBound) {
-            this.labelBound = labelBound;
-        }
-
-        /**
-         * @param repeatBound the repeatBound to set
-         */
-        private void setRepeatBound(U repeatBound) {
-            this.repeatBound = repeatBound;
-        }
-
-        /**
-         * @param snapBound the snapBound to set
-         */
-        private void setSnapBound(U snapBound) {
-            this.snapBound = snapBound;
-        }
-    }
-    
-    /**
      * This class represents an node
      * @author Fabian Prasser
      */
@@ -306,6 +229,83 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return "Interval[min="+type.format(min)+", max="+type.format(max)+", function="+function.toString()+"]";
         }
     }
+    
+    /**
+     * For each direction, this class encapsulates three bounds. Intervals will be repeated until the
+     * repeat-bound is reached. The outmost intervals will than be exptended to the snap-bound. Values between
+     * the snap-bound and the label-bound will be replaced by an out-of-bounds-label. For values larger than
+     * the label-bound exceptions will be raised.
+     * 
+     * @author Fabian Prasser
+     */
+    public static class Range<U> implements Serializable {
+        
+        private static final long serialVersionUID = -5385139177770612960L;
+        
+        /** Bound*/
+        private U repeatBound;
+        /** Bound*/
+        private U snapBound;
+        /** Bound*/
+        private U labelBound;
+            
+        /**
+         * Creates a new instance
+         * @param repeatBound
+         * @param snapBound
+         * @param labelBound
+         */
+        public Range(U repeatBound,
+                          U snapBound,
+                          U labelBound) {
+            
+            this.repeatBound = repeatBound;
+            this.snapBound = snapBound;
+            this.labelBound = labelBound;
+        }
+
+        /**
+         * @return the labelBound
+         */
+        public U getLabelBound() {
+            return labelBound;
+        }
+
+        /**
+         * @return the repeatBound
+         */
+        public U getRepeatBound() {
+            return repeatBound;
+        }
+
+        /**
+         * @return the snapBound
+         */
+        public U getSnapBound() {
+            return snapBound;
+        }
+
+        /**
+         * @param labelBound the labelBound to set
+         */
+        private void setLabelBound(U labelBound) {
+            this.labelBound = labelBound;
+        }
+
+        /**
+         * @param repeatBound the repeatBound to set
+         */
+        private void setRepeatBound(U repeatBound) {
+            this.repeatBound = repeatBound;
+        }
+
+        /**
+         * @param snapBound the snapBound to set
+         */
+        private void setSnapBound(U snapBound) {
+            this.snapBound = snapBound;
+        }
+    }
 
     /** TODO: Is this parameter OK? */
     private static final int  INDEX_FANOUT     = 2;
@@ -342,10 +342,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         return create(new File(file));
     }
     /** Adjustment */
-    private Adjustment<T>     minAdjustment;
+    private Range<T>     lowerRange;
 
     /** Adjustment */
-    private Adjustment<T>     maxAdjustment;
+    private Range<T>     upperRange;
 
     /** Defined intervals */
     private List<Interval<T>> intervals        = new ArrayList<Interval<T>>();
@@ -359,23 +359,23 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
         }
-        this.minAdjustment = new Adjustment<T>(null, null, null);
-        this.maxAdjustment = new Adjustment<T>(null, null, null);
+        this.lowerRange = new Range<T>(null, null, null);
+        this.upperRange = new Range<T>(null, null, null);
     }
     
     /**
      * Creates a new instance. Data points that are out of range are handled according to the given settings.
      * @param type
-     * @param lowerAdjustment
-     * @param upperAdjustment
+     * @param lowerRange
+     * @param upperRange
      */
-    public HierarchyBuilderIntervalBased(DataType<T> type, Adjustment<T> lowerAdjustment, Adjustment<T> upperAdjustment) {
+    public HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
         }
-        this.minAdjustment = lowerAdjustment;
-        this.maxAdjustment = upperAdjustment;
+        this.lowerRange = lowerRange;
+        this.upperRange = upperRange;
     }
 
     /**
@@ -385,11 +385,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @return
      */
     public HierarchyBuilderIntervalBased<T> addInterval(T min, T max) {
-        if (this.getDefaultAggregateFunction() == null) {
+        if (this.getDefaultFunction() == null) {
             throw new IllegalStateException("No default aggregate function defined");
         }
         checkInterval(getDataType(), min, max);
-        this.intervals.add(new Interval<T>(this, getDataType(), min, max, this.getDefaultAggregateFunction()));
+        this.intervals.add(new Interval<T>(this, getDataType(), min, max, this.getDefaultFunction()));
         this.setPrepared(false);
         return this;
     }
@@ -451,6 +451,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         return (List<Interval<T>>)((ArrayList<T>)this.intervals).clone();
     }
 
+    /**
+     * Returns the lower range
+     * @return
+     */
+    public Range<T> getLowerRange() {
+        return this.lowerRange;
+    }
+    
+    /**
+     * Returns the upper range
+     * @return
+     */
+    public Range<T> getUpperRange() {
+        return this.upperRange;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public String isValid() {
@@ -472,31 +488,31 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
-        if (minAdjustment.getRepeatBound() != null){
-            if (type.compare(minAdjustment.getRepeatBound(), intervals.get(0).min) > 0){
+        if (lowerRange.getRepeatBound() != null){
+            if (type.compare(lowerRange.getRepeatBound(), intervals.get(0).min) > 0){
                 return "Lower repeat bound must be <= lower bound of first interval"; 
             }
-            if (minAdjustment.getSnapBound() != null){
-                if (type.compare(minAdjustment.getSnapBound(), minAdjustment.getRepeatBound()) > 0){
+            if (lowerRange.getSnapBound() != null){
+                if (type.compare(lowerRange.getSnapBound(), lowerRange.getRepeatBound()) > 0){
                     return "Lower snap bound must be <= lower repeat bound"; 
                 }
-                if (minAdjustment.getLabelBound() != null){
-                    if (type.compare(minAdjustment.getLabelBound(), minAdjustment.getSnapBound()) > 0){
+                if (lowerRange.getLabelBound() != null){
+                    if (type.compare(lowerRange.getLabelBound(), lowerRange.getSnapBound()) > 0){
                         return "Lower label bound must be <= lower snap bound"; 
                     }
                 }
             }
         }
-        if (maxAdjustment.getRepeatBound() != null){
-            if (type.compare(maxAdjustment.getRepeatBound(), intervals.get(intervals.size()-1).max) < 0){
+        if (upperRange.getRepeatBound() != null){
+            if (type.compare(upperRange.getRepeatBound(), intervals.get(intervals.size()-1).max) < 0){
                 return "Upper repeat bound must be >= upper bound of first interval"; 
             }
-            if (maxAdjustment.getSnapBound() != null){
-                if (type.compare(maxAdjustment.getSnapBound(), maxAdjustment.getRepeatBound()) < 0){
+            if (upperRange.getSnapBound() != null){
+                if (type.compare(upperRange.getSnapBound(), upperRange.getRepeatBound()) < 0){
                     return "Upper snap bound must be >= upper repeat bound"; 
                 }
-                if (minAdjustment.getLabelBound() != null){
-                    if (type.compare(maxAdjustment.getLabelBound(), maxAdjustment.getSnapBound()) < 0){
+                if (lowerRange.getLabelBound() != null){
+                    if (type.compare(upperRange.getLabelBound(), upperRange.getSnapBound()) < 0){
                         return "Upper label bound must be >= upper snap bound"; 
                     }
                 }
@@ -505,7 +521,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
         return null;
     }
-    
+
     /**
      * Performs the index lookup
      * @param value
@@ -545,6 +561,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             throw new IllegalArgumentException("Invalid data item "+min+" or "+max);
         }
     }
+    
+    /**
+     * Returns the according group from the cache
+     * @param cache
+     * @param interval
+     * @return
+     */
+    private AbstractGroup getGroup(Map<AbstractGroup, AbstractGroup> cache, Interval<T> interval) {
+        AbstractGroup cached = cache.get(interval);
+        if (cached != null) {
+            return cached;
+        } else {
+            cache.put(interval, interval);
+            return interval;
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private Interval<T> getInterval(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
@@ -562,10 +594,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         T upper = type.add(interval.max, offset);
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
     }
-
+    
     @SuppressWarnings("unchecked")
     private Interval<T> getInterval(IndexNode index, String sValue, 
-                                    Adjustment<T> lowerAdjustment, Adjustment<T> upperAdjustment) {
+                                    Range<T> lowerAdjustment, Range<T> upperAdjustment) {
 
         // Init
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
@@ -622,37 +654,37 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         // Create adjustments
-        Adjustment<T> lowerAdjustment = new Adjustment<T>(null, null, null);
-        Adjustment<T> upperAdjustment = new Adjustment<T>(null, null, null);
-        if (minAdjustment.getRepeatBound() != null) {
-            lowerAdjustment.setRepeatBound(minAdjustment.getRepeatBound());
+        Range<T> tempLower = new Range<T>(null, null, null);
+        Range<T> tempUpper = new Range<T>(null, null, null);
+        if (lowerRange.getRepeatBound() != null) {
+            tempLower.setRepeatBound(lowerRange.getRepeatBound());
         } else {
-            lowerAdjustment.setRepeatBound(intervals.get(0).min);
+            tempLower.setRepeatBound(intervals.get(0).min);
         }
-        if (minAdjustment.getSnapBound() != null) {
-            lowerAdjustment.setSnapBound(minAdjustment.getSnapBound());
+        if (lowerRange.getSnapBound() != null) {
+            tempLower.setSnapBound(lowerRange.getSnapBound());
         } else {
-            lowerAdjustment.setSnapBound(lowerAdjustment.getRepeatBound());
+            tempLower.setSnapBound(tempLower.getRepeatBound());
         }
-        if (minAdjustment.getLabelBound() != null) {
-            lowerAdjustment.setLabelBound(minAdjustment.getLabelBound());
+        if (lowerRange.getLabelBound() != null) {
+            tempLower.setLabelBound(lowerRange.getLabelBound());
         } else {
-            lowerAdjustment.setLabelBound(lowerAdjustment.getSnapBound());
+            tempLower.setLabelBound(tempLower.getSnapBound());
         }
-        if (maxAdjustment.getRepeatBound() != null) {
-            upperAdjustment.setRepeatBound(maxAdjustment.getRepeatBound());
+        if (upperRange.getRepeatBound() != null) {
+            tempUpper.setRepeatBound(upperRange.getRepeatBound());
         } else {
-            upperAdjustment.setRepeatBound(intervals.get(intervals.size()-1).max);
+            tempUpper.setRepeatBound(intervals.get(intervals.size()-1).max);
         }
-        if (maxAdjustment.getSnapBound() != null) {
-            upperAdjustment.setSnapBound(maxAdjustment.getSnapBound());
+        if (upperRange.getSnapBound() != null) {
+            tempUpper.setSnapBound(upperRange.getSnapBound());
         } else {
-            upperAdjustment.setSnapBound(upperAdjustment.getRepeatBound());
+            tempUpper.setSnapBound(tempUpper.getRepeatBound());
         }
-        if (maxAdjustment.getLabelBound() != null) {
-            upperAdjustment.setLabelBound(maxAdjustment.getLabelBound());
+        if (upperRange.getLabelBound() != null) {
+            tempUpper.setLabelBound(upperRange.getLabelBound());
         } else {
-            upperAdjustment.setLabelBound(upperAdjustment.getSnapBound());
+            tempUpper.setLabelBound(tempUpper.getSnapBound());
         }
         
         // Build leaf level index
@@ -701,7 +733,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         Map<AbstractGroup, AbstractGroup> cache = new HashMap<AbstractGroup, AbstractGroup>();
         AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
-            first[i] = getGroup(cache, getInterval(index, data[i], lowerAdjustment, upperAdjustment));
+            first[i] = getGroup(cache, getInterval(index, data[i], tempLower, tempUpper));
         }
         result.add(first);
         
@@ -740,8 +772,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 }
 
                 // Make sure that max is <= repeat bound
-                if (type.compare(max, upperAdjustment.getRepeatBound()) > 0){
-                    max = upperAdjustment.getRepeatBound();
+                if (type.compare(max, tempUpper.getRepeatBound()) > 0){
+                    max = tempUpper.getRepeatBound();
                 }
                 
                 // Add interval
@@ -750,8 +782,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
 
             // Compute next column
             HierarchyBuilderIntervalBased<T> builder = new HierarchyBuilderIntervalBased<T>(getDataType(),
-                                                                                            minAdjustment,
-                                                                                            maxAdjustment);
+                                                                                            lowerRange,
+                                                                                            upperRange);
             for (Interval<T> interval : newIntervals) {
                 builder.addInterval(interval.min, interval.max, interval.function);
             }
@@ -781,21 +813,5 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         // Return
         return result.toArray(new AbstractGroup[0][0]);
-    }
-
-    /**
-     * Returns the according group from the cache
-     * @param cache
-     * @param interval
-     * @return
-     */
-    private AbstractGroup getGroup(Map<AbstractGroup, AbstractGroup> cache, Interval<T> interval) {
-        AbstractGroup cached = cache.get(interval);
-        if (cached != null) {
-            return cached;
-        } else {
-            cache.put(interval, interval);
-            return interval;
-        }
     }
 }

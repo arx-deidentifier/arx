@@ -4,7 +4,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -17,11 +17,11 @@ import org.eclipse.swt.widgets.Label;
  * @param <T>
  */
 public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T>{
-    
+
     /** Var */
-    private HierarchyGroup<T>                group = null;
+    private HierarchyWizardGroupingGroup<T>                group = null;
     /** Var */
-    private final EditorString               editorSize;
+    private final EditorString                             editorSize;
     /** Var */
     private final HierarchyWizardGroupingModel<T>          model;
     /** Var */
@@ -73,6 +73,33 @@ public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGro
         };
     }
 
+    @Override
+    public void setFunction(AggregateFunction<T> function) {
+        if (this.group == null) return;
+        if (editorFunction.isDefaultFunction(function)) {
+            this.group.function = model.getDefaultFunction();
+        } else {
+            this.group.function = function;
+        }
+        model.update(this);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public void update() {
+        if (model.getSelectedElement() instanceof HierarchyWizardGroupingGroup){
+            this.group = (HierarchyWizardGroupingGroup<T>)model.getSelectedElement();
+            this.editorFunction.setFunction(group.function);
+            this.editorSize.update();
+            SWTUtil.enable(editorSize.getControl());
+        } else {
+            this.group = null;
+            this.editorFunction.setFunction(null);
+            this.editorSize.update();
+            SWTUtil.disable(editorSize.getControl());
+        }
+    }
+
     /**
      * Creates a label
      * @param composite
@@ -86,32 +113,5 @@ public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGro
         data.verticalAlignment = SWT.CENTER;
         label.setLayoutData(data);
         return label;
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public void update() {
-        if (model.getSelectedElement() instanceof HierarchyGroup){
-            this.group = (HierarchyGroup<T>)model.getSelectedElement();
-            this.editorFunction.setFunction(group.function);
-            this.editorSize.update();
-            SWTUtil.enable(editorSize.getControl());
-        } else {
-            this.group = null;
-            this.editorFunction.setFunction(null);
-            this.editorSize.update();
-            SWTUtil.disable(editorSize.getControl());
-        }
-    }
-
-    @Override
-    public void setFunction(AggregateFunction<T> function) {
-        if (this.group == null) return;
-        if (editorFunction.isDefaultFunction(function)) {
-            this.group.function = model.getDefaultFunction();
-        } else {
-            this.group.function = function;
-        }
-        model.update(this);
     }
 }

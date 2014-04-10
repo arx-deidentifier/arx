@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -21,23 +21,6 @@ import org.eclipse.swt.graphics.Rectangle;
  * @param <T>
  */
 public class HierarchyWizardGroupingRenderer<T> {
-
-    /** Constants*/
-    public static final Font                   FONT                = getFont();
-    /** Constants*/
-    public static final int                    OFFSET              = 10;
-    /** Constants*/
-    public static final int                    INTERVAL_HEIGHT     = 20;
-    /** Constants*/
-    public static final Color                  DISABLED_FOREGROUND = GUIHelper.COLOR_GRAY;
-    /** Constants*/
-    public static final Color                  DISABLED_BACKGROUND = GUIHelper.getColor(230, 230, 230);
-    /** Constants*/
-    public static final Color                  NORMAL_FOREGROUND   = GUIHelper.COLOR_BLACK;
-    /** Constants*/
-    public static final Color                  NORMAL_BACKGROUND   = GUIHelper.COLOR_WHITE;
-    /** Constants*/
-    public static final Color                  SELECTED_BACKGROUND = GUIHelper.COLOR_YELLOW;
 
     /**
      * Base class for rendering contexts
@@ -55,48 +38,28 @@ public class HierarchyWizardGroupingRenderer<T> {
         public T         min;
         public T         max;
     }
-
-    /**
-     * A rendering context for an interval
-     * @author Fabian Prasser
-     *
-     * @param <T>
-     */
-    public static class IntervalContext<T> extends ComponentContext<T> {
-        public HierarchyInterval<T> interval;
-        public T                    offset;
-        
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((interval == null) ? 0 : interval.hashCode());
-            return result;
-        }
- 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            @SuppressWarnings("rawtypes")
-            IntervalContext other = (IntervalContext) obj;
-            if (interval == null) {
-                if (other.interval != null) return false;
-            } else if (!interval.equals(other.interval)) return false;
-            return true;
-        }
-    }
-
     /**
      * A rendering context for a group
      * @author Fabian Prasser
      *
      * @param <T>
      */
-    public static class GroupContext<T> extends ComponentContext<T> {
-        public HierarchyGroup<T> group;
+    public static class RenderedGroup<T> extends ComponentContext<T> {
+        public HierarchyWizardGroupingGroup<T> group;
 
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            @SuppressWarnings("rawtypes")
+            RenderedGroup other = (RenderedGroup) obj;
+            if (group == null) {
+                if (other.group != null) return false;
+            } else if (!group.equals(other.group)) return false;
+            return true;
+        }
+ 
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -104,36 +67,82 @@ public class HierarchyWizardGroupingRenderer<T> {
             result = prime * result + ((group == null) ? 0 : group.hashCode());
             return result;
         }
- 
+    }
+    /**
+     * A rendering context for an interval
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    public static class RenderedInterval<T> extends ComponentContext<T> {
+        public HierarchyWizardGroupingInterval<T> interval;
+        public T                    offset;
+        
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             @SuppressWarnings("rawtypes")
-            GroupContext other = (GroupContext) obj;
-            if (group == null) {
-                if (other.group != null) return false;
-            } else if (!group.equals(other.group)) return false;
+            RenderedInterval other = (RenderedInterval) obj;
+            if (interval == null) {
+                if (other.interval != null) return false;
+            } else if (!interval.equals(other.interval)) return false;
             return true;
         }
+ 
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((interval == null) ? 0 : interval.hashCode());
+            return result;
+        }
+    }
+    /** Constants*/
+    public static final Font                   FONT                = getFont();
+    /** Constants*/
+    public static final int                    OFFSET              = 10;
+    /** Constants*/
+    public static final int                    INTERVAL_HEIGHT     = 20;
+    /** Constants*/
+    public static final Color                  DISABLED_FOREGROUND = GUIHelper.COLOR_GRAY;
+    /** Constants*/
+    public static final Color                  DISABLED_BACKGROUND = GUIHelper.getColor(230, 230, 230);
+
+    /** Constants*/
+    public static final Color                  NORMAL_FOREGROUND   = GUIHelper.COLOR_BLACK;
+
+    /** Constants*/
+    public static final Color                  NORMAL_BACKGROUND   = GUIHelper.COLOR_WHITE;
+
+    /** Constants*/
+    public static final Color                  SELECTED_BACKGROUND = GUIHelper.COLOR_YELLOW;
+
+    /**
+     * Returns the font
+     * @return
+     */
+    private static Font getFont(){
+
+        FontData fontdata = GUIHelper.DEFAULT_FONT.getFontData()[0];
+        fontdata.setHeight(9);
+        return GUIHelper.getFont(fontdata);
     }
 
     /** Var */
-    private final List<IntervalContext<T>>    intervals         = new ArrayList<IntervalContext<T>>();
+    private final List<RenderedInterval<T>>        intervals         = new ArrayList<RenderedInterval<T>>();
     /** Var */
-    private final List<List<GroupContext<T>>> groups            = new ArrayList<List<GroupContext<T>>>();
+    private final List<List<RenderedGroup<T>>>     groups            = new ArrayList<List<RenderedGroup<T>>>();
     /** Var */
-    private final List<IntervalContext<T>>    renderedIntervals = new ArrayList<IntervalContext<T>>();
+    private final List<RenderedInterval<T>>        renderedIntervals = new ArrayList<RenderedInterval<T>>();
     /** Var */
-    private final List<List<GroupContext<T>>> renderedGroups    = new ArrayList<List<GroupContext<T>>>();
-    
+    private final List<List<RenderedGroup<T>>>     renderedGroups    = new ArrayList<List<RenderedGroup<T>>>();
     /** Var */
-    private final HierarchyWizardGroupingLayout<T>          layout;
+    private final HierarchyWizardGroupingLayout<T> layout;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>           model;
-    
-    
+    private final HierarchyWizardGroupingModel<T>  model;
+
     /**
      * Creates a new instance
      * @param model
@@ -141,7 +150,64 @@ public class HierarchyWizardGroupingRenderer<T> {
     public HierarchyWizardGroupingRenderer(HierarchyWizardGroupingModel<T> model) {
         this.model = model;
         this.layout = new HierarchyWizardGroupingLayout<T>(model);
-    }    
+    }
+
+    /**
+     * Returns all components
+     * @return
+     */
+    public List<ComponentContext<T>> getComponents(){
+        List<ComponentContext<T>> result = new ArrayList<ComponentContext<T>>();
+        if (model.isShowIntervals()) result.addAll(intervals);
+        for (List<RenderedGroup<T>> list : groups){
+            result.addAll(list);
+        }
+        return result;
+    }
+    
+
+    /**
+     * Returns the required minimal size
+     * @return
+     */
+    public Point getMinSize() {
+        int minWidth = 0;
+        int minHeight = 0;
+        for (ComponentContext<T> component : getComponents()) {
+            minWidth = Math.max(minWidth, component.rectangle2.x + component.rectangle2.width);
+            minHeight = Math.max(minHeight, component.rectangle2.y + component.rectangle2.height);
+        }
+        return new Point(minWidth + OFFSET, minHeight + OFFSET);
+    }
+
+    /**
+     * Mouse click
+     * @param x
+     * @param y
+     */
+    public boolean select(int x, int y) {
+        Object result = null;
+        for (ComponentContext<T> component : getComponents()) {
+            if (component.enabled) {
+                if (component.rectangle1.contains(x, y) || 
+                    component.rectangle2.contains(x, y)) {
+                    if (component instanceof RenderedInterval) {
+                        result = ((RenderedInterval<T>)component).interval;
+                    } else {
+                        result = ((RenderedGroup<T>)component).group;
+                    }
+                    break;
+                }
+            }
+        }
+        if (result != model.getSelectedElement()) {
+            model.setSelectedElement(result);
+            return true;
+        } else {
+            model.setSelectedElement(result);
+            return false;
+        }
+    }
     
     /**
      * Updates the drawing context
@@ -150,8 +216,8 @@ public class HierarchyWizardGroupingRenderer<T> {
         
         // Init
         boolean showIntervals = model.isShowIntervals();
-        List<HierarchyInterval<T>> modelIntervals = model.getIntervals();
-        List<List<HierarchyGroup<T>>> modelGroups = model.getGroups();
+        List<HierarchyWizardGroupingInterval<T>> modelIntervals = model.getIntervals();
+        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getGroups();
         
         // Prepare
         if (showIntervals) intervals.clear();
@@ -169,8 +235,8 @@ public class HierarchyWizardGroupingRenderer<T> {
         // Create intervals
         if (showIntervals) {
             for (int i=0; i < factors[0]; i++) {
-                HierarchyInterval<T> interval = modelIntervals.get(i % modelIntervals.size());
-                IntervalContext<T> element = new IntervalContext<T>();
+                HierarchyWizardGroupingInterval<T> interval = modelIntervals.get(i % modelIntervals.size());
+                RenderedInterval<T> element = new RenderedInterval<T>();
                 if (i<modelIntervals.size()) {
                     element.offset = null;
                 } else {
@@ -196,7 +262,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         // Create groups
         int shift = showIntervals ? 1 : 0;
         for (int i=0; i<modelGroups.size(); i++){
-            groups.add(new ArrayList<GroupContext<T>>());
+            groups.add(new ArrayList<RenderedGroup<T>>());
             int offset = 0;
             
             if (showIntervals && i>0) {
@@ -204,9 +270,9 @@ public class HierarchyWizardGroupingRenderer<T> {
             }
             
             for (int j=0; j < factors[i+shift]; j++) {
-                List<HierarchyGroup<T>> list = modelGroups.get(i);
-                HierarchyGroup<T> group = list.get(j % list.size());
-                GroupContext<T> element = new GroupContext<T>();
+                List<HierarchyWizardGroupingGroup<T>> list = modelGroups.get(i);
+                HierarchyWizardGroupingGroup<T> group = list.get(j % list.size());
+                RenderedGroup<T> element = new RenderedGroup<T>();
                 element.depth = i + 1;
                 element.enabled = j < list.size();
                 
@@ -285,7 +351,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         List<Integer> fanoutBoundWidth = new ArrayList<Integer>();
         List<Integer> fanoutTotalWidth = new ArrayList<Integer>();
         
-        for (List<GroupContext<T>> list : groups){
+        for (List<RenderedGroup<T>> list : groups){
             int label = getRequiredLabelWidth(gc, list) + OFFSET;
             int bound = getRequiredBoundWidth(gc, list) + OFFSET;
             fanoutLabelWidth.add(label);
@@ -295,7 +361,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         
         int top = OFFSET;
         if (model.isShowIntervals()) {
-            for (IntervalContext<T> context : intervals){
+            for (RenderedInterval<T> context : intervals){
                 context.rectangle1 = new Rectangle(OFFSET, top, intervalBoundWidth, INTERVAL_HEIGHT);
                 context.rectangle2 = new Rectangle(OFFSET + intervalBoundWidth, top, intervalLabelWidth, INTERVAL_HEIGHT);
                 top += INTERVAL_HEIGHT + OFFSET;
@@ -306,15 +372,15 @@ public class HierarchyWizardGroupingRenderer<T> {
         for (int i=0; i<groups.size(); i++){
             top = OFFSET;
             int offset = 0;
-            for (GroupContext<T> context : groups.get(i)) {
+            for (RenderedGroup<T> context : groups.get(i)) {
                 int height = INTERVAL_HEIGHT;
                 if (layout.isPretty()){
                     if (i==0){
                         height = INTERVAL_HEIGHT * context.group.size + OFFSET * (context.group.size - 1);
                     } else {
-                        GroupContext<T> reference1 = groups.get(i-1).get(offset);
+                        RenderedGroup<T> reference1 = groups.get(i-1).get(offset);
                         offset += context.group.size;
-                        GroupContext<T> reference2 = groups.get(i-1).get(offset - 1);
+                        RenderedGroup<T> reference2 = groups.get(i-1).get(offset - 1);
                         height = reference2.rectangle1.y + reference2.rectangle1.height - reference1.rectangle1.y;
                     }
                 }
@@ -331,18 +397,6 @@ public class HierarchyWizardGroupingRenderer<T> {
         renderedGroups.addAll(groups);
     }
     
-
-    @SuppressWarnings("unchecked")
-    private int getRequiredLabelWidth(GC gc, List<?> list){
-        gc.setFont(FONT);
-        int width = 0;
-        for (Object elem : list){
-            
-            width = Math.max(width, gc.textExtent(((ComponentContext<T>)elem).label).x);
-        }
-        return width;
-    }
-
     @SuppressWarnings("unchecked")
     private int getRequiredBoundWidth(GC gc, List<?> list){
         gc.setFont(FONT);
@@ -353,71 +407,15 @@ public class HierarchyWizardGroupingRenderer<T> {
         }
         return width;
     }
-    
-    /**
-     * Returns the font
-     * @return
-     */
-    private static Font getFont(){
 
-        FontData fontdata = GUIHelper.DEFAULT_FONT.getFontData()[0];
-        fontdata.setHeight(9);
-        return GUIHelper.getFont(fontdata);
-    }
-
-    /**
-     * Mouse click
-     * @param x
-     * @param y
-     */
-    public boolean select(int x, int y) {
-        Object result = null;
-        for (ComponentContext<T> component : getComponents()) {
-            if (component.enabled) {
-                if (component.rectangle1.contains(x, y) || 
-                    component.rectangle2.contains(x, y)) {
-                    if (component instanceof IntervalContext) {
-                        result = ((IntervalContext<T>)component).interval;
-                    } else {
-                        result = ((GroupContext<T>)component).group;
-                    }
-                    break;
-                }
-            }
+    @SuppressWarnings("unchecked")
+    private int getRequiredLabelWidth(GC gc, List<?> list){
+        gc.setFont(FONT);
+        int width = 0;
+        for (Object elem : list){
+            
+            width = Math.max(width, gc.textExtent(((ComponentContext<T>)elem).label).x);
         }
-        if (result != model.getSelectedElement()) {
-            model.setSelectedElement(result);
-            return true;
-        } else {
-            model.setSelectedElement(result);
-            return false;
-        }
-    }
-    
-    /**
-     * Returns all components
-     * @return
-     */
-    public List<ComponentContext<T>> getComponents(){
-        List<ComponentContext<T>> result = new ArrayList<ComponentContext<T>>();
-        if (model.isShowIntervals()) result.addAll(intervals);
-        for (List<GroupContext<T>> list : groups){
-            result.addAll(list);
-        }
-        return result;
-    }
-
-    /**
-     * Returns the required minimal size
-     * @return
-     */
-    public Point getMinSize() {
-        int minWidth = 0;
-        int minHeight = 0;
-        for (ComponentContext<T> component : getComponents()) {
-            minWidth = Math.max(minWidth, component.rectangle2.x + component.rectangle2.width);
-            minHeight = Math.max(minHeight, component.rectangle2.y + component.rectangle2.height);
-        }
-        return new Point(minWidth + OFFSET, minHeight + OFFSET);
+        return width;
     }
 }

@@ -23,7 +23,7 @@ import java.text.ParseException;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
-import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Adjustment;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
@@ -121,8 +121,8 @@ public class Example18 extends Example {
         // Create the builder
         HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
                                                           DataType.INTEGER,
-                                                          new Adjustment<Long>(0l,-5l,Long.MIN_VALUE),
-                                                          new Adjustment<Long>(94l,97l,Long.MAX_VALUE));
+                                                          new Range<Long>(0l,-5l,Long.MIN_VALUE),
+                                                          new Range<Long>(94l,97l,Long.MAX_VALUE));
         
         // Define base intervals
         builder.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
@@ -170,8 +170,8 @@ public class Example18 extends Example {
         // Create the builder
         HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
                                                           DataType.INTEGER,
-                                                          new Adjustment<Long>(0l,0l,Long.MIN_VALUE),
-                                                          new Adjustment<Long>(100l,100l,Long.MAX_VALUE));
+                                                          new Range<Long>(0l,0l,Long.MIN_VALUE),
+                                                          new Range<Long>(100l,100l,Long.MAX_VALUE));
         
         // Define base intervals
         builder.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
@@ -295,8 +295,8 @@ public class Example18 extends Example {
 
         // Create the builder
         HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(DataType.DECIMAL,
-                                                                                new Adjustment<Double>(0d, -2d, -5d),
-                                                                                new Adjustment<Double>(10d, 13d, 15d));
+                                                                                new Range<Double>(0d, -2d, -5d),
+                                                                                new Range<Double>(10d, 13d, 15d));
         
         // Define base intervals
         builder.addInterval(0d, 1.8d, "very low");

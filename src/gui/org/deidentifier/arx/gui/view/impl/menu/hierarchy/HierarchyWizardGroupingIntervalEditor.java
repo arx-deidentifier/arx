@@ -5,7 +5,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -18,17 +18,17 @@ import org.eclipse.swt.widgets.Label;
  * @param <T>
  */
 public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T>{
-    
+
     /** Var */
-    private HierarchyInterval<T>             interval = null;
+    private HierarchyWizardGroupingInterval<T>             interval = null;
     /** Var */
     private final HierarchyWizardGroupingModel<T>          model;
     /** Var */
-    private final EditorString               editorMin;
+    private final EditorString                             editorMin;
     /** Var */
-    private final EditorString               editorMax;
+    private final EditorString                             editorMax;
     /** Var */
-    private final DataTypeWithRatioScale<T>  type;
+    private final DataTypeWithRatioScale<T>                type;
     /** Var */
     private final HierarchyWizardGroupingFunctionEditor<T> editorFunction;
 
@@ -107,27 +107,23 @@ public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizard
         };
     }
 
-    /**
-     * Creates a label
-     * @param composite
-     * @param string
-     * @return
-     */
-    private Label createLabel(Composite composite, String string) {
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(string);
-        GridData data = SWTUtil.createFillVerticallyGridData();
-        data.verticalAlignment = SWT.CENTER;
-        label.setLayoutData(data);
-        return label;
+    @Override
+    public void setFunction(AggregateFunction<T> function) {
+        if (this.interval == null) return;
+        if (editorFunction.isDefaultFunction(function)) {
+            this.interval.function = model.getDefaultFunction();
+        } else {
+            this.interval.function = function;
+        }
+        model.update(this);
     }
     
     @SuppressWarnings("unchecked")
     @Override
     public void update() {
-        if (model.getSelectedElement() instanceof HierarchyInterval){
+        if (model.getSelectedElement() instanceof HierarchyWizardGroupingInterval){
             
-            this.interval = (HierarchyInterval<T>)model.getSelectedElement();
+            this.interval = (HierarchyWizardGroupingInterval<T>)model.getSelectedElement();
             this.editorFunction.setFunction(this.interval.function);
             this.editorMin.update();
             this.editorMax.update();
@@ -150,14 +146,18 @@ public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizard
         }
     }
 
-    @Override
-    public void setFunction(AggregateFunction<T> function) {
-        if (this.interval == null) return;
-        if (editorFunction.isDefaultFunction(function)) {
-            this.interval.function = model.getDefaultFunction();
-        } else {
-            this.interval.function = function;
-        }
-        model.update(this);
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(string);
+        GridData data = SWTUtil.createFillVerticallyGridData();
+        data.verticalAlignment = SWT.CENTER;
+        label.setLayoutData(data);
+        return label;
     }
 }

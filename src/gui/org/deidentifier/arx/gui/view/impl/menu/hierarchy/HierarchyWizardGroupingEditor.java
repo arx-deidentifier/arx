@@ -3,11 +3,11 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.ComponentContext;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.GroupContext;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.IntervalContext;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.RenderedGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.RenderedInterval;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
@@ -30,18 +30,18 @@ import org.eclipse.swt.widgets.TabItem;
  */
 public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T> {
 
-    /** Var*/
-    private HierarchyWizardGroupingModel<T>            model;
-    /** Var*/
-    private Composite                    composite;
-    /** Var*/
-    private Composite                    canvascomposite;
-    /** Var*/
-    private ScrolledComposite            scrolledcomposite;
-    /** Var*/
-    private TabFolder                    folder;
-    /** Var*/
-    private HierarchyWizardGroupingEditorMenu<T>       menu;
+    /** Var */
+    private HierarchyWizardGroupingModel<T>      model;
+    /** Var */
+    private Composite                            composite;
+    /** Var */
+    private Composite                            canvascomposite;
+    /** Var */
+    private ScrolledComposite                    scrolledcomposite;
+    /** Var */
+    private TabFolder                            folder;
+    /** Var */
+    private HierarchyWizardGroupingEditorMenu<T> menu;
     
     /**
      * Creates a new instance
@@ -79,9 +79,9 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
                     HierarchyWizardGroupingEditor.this.model.update(HierarchyWizardGroupingEditor.this);
                     canvascomposite.redraw();
                     Object selected = HierarchyWizardGroupingEditor.this.model.getSelectedElement();
-                    if (selected instanceof HierarchyInterval){
+                    if (selected instanceof HierarchyWizardGroupingInterval){
                         if (HierarchyWizardGroupingEditor.this.model.isShowIntervals()) folder.setSelection(2);
-                    } else if (selected instanceof HierarchyGroup){
+                    } else if (selected instanceof HierarchyWizardGroupingGroup){
                         if (HierarchyWizardGroupingEditor.this.model.isShowIntervals()) folder.setSelection(3);
                         else folder.setSelection(1);
                     }
@@ -105,18 +105,37 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
         this.model.update();
     }
     
+    @Override
+    public void setFunction(AggregateFunction<T> function) {
+        model.setDefaultFunction(function);
+        model.update();
+    }
+
+    /**
+     * Set the controls layout data
+     * @param object
+     */
+    public void setLayoutData(Object object){
+        this.composite.setLayoutData(object);
+    }
+
+    @Override
+    public void update() {
+        this.canvascomposite.redraw();
+    }
+
     /**
      * Create a tab
      * @param tabFolder
      */
-    private void createGroupTab(TabFolder tabFolder) {
-        TabItem tabItem3 = new TabItem(tabFolder, SWT.NULL);
-        tabItem3.setText("Group");
+    private void createBoundsTab(TabFolder tabFolder) {
+        TabItem tabItem4 = new TabItem(tabFolder, SWT.NULL);
+        tabItem4.setText("Range");
         Composite parent = new Composite(tabFolder, SWT.NULL);
-        parent.setLayout(SWTUtil.createGridLayout(1, false));
-        new HierarchyWizardGroupingGroupEditor<T>(parent, model);
-        tabItem3.setControl(parent);
-        
+        parent.setLayout(SWTUtil.createGridLayout(2, false));
+        new HierarchyWizardGroupingAdjustmentEditor<T>(parent, model, true);
+        new HierarchyWizardGroupingAdjustmentEditor<T>(parent, model, false);
+        tabItem4.setControl(parent);
     }
 
     /**
@@ -138,6 +157,20 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
      * Create a tab
      * @param tabFolder
      */
+    private void createGroupTab(TabFolder tabFolder) {
+        TabItem tabItem3 = new TabItem(tabFolder, SWT.NULL);
+        tabItem3.setText("Group");
+        Composite parent = new Composite(tabFolder, SWT.NULL);
+        parent.setLayout(SWTUtil.createGridLayout(1, false));
+        new HierarchyWizardGroupingGroupEditor<T>(parent, model);
+        tabItem3.setControl(parent);
+        
+    }
+    
+    /**
+     * Create a tab
+     * @param tabFolder
+     */
     private void createIntervalTab(TabFolder tabFolder) {
         TabItem tabItem2 = new TabItem(tabFolder, SWT.NULL);
         tabItem2.setText("Interval");
@@ -148,25 +181,31 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
     }
 
     /**
-     * Create a tab
-     * @param tabFolder
+     * Draws a string
+     * @param gc
+     * @param string
+     * @param r
      */
-    private void createBoundsTab(TabFolder tabFolder) {
-        TabItem tabItem4 = new TabItem(tabFolder, SWT.NULL);
-        tabItem4.setText("Bounds");
-        Composite parent = new Composite(tabFolder, SWT.NULL);
-        parent.setLayout(SWTUtil.createGridLayout(2, false));
-        new HierarchyWizardGroupingAdjustmentEditor<T>(parent, model, true);
-        new HierarchyWizardGroupingAdjustmentEditor<T>(parent, model, false);
-        tabItem4.setControl(parent);
+    private void drawString(GC gc, String string, Rectangle r) {
+        gc.setFont(HierarchyWizardGroupingRenderer.FONT);
+        Point extent = gc.textExtent(string);
+        int xx = r.x + (r.width - extent.x) / 2;
+        int yy = r.y + (r.height - extent.y) / 2;
+        gc.drawText(string, xx, yy, true);
     }
 
     /**
-     * Set the controls layout data
-     * @param object
+     * Is the component selected
+     * @param component
+     * @return
      */
-    public void setLayoutData(Object object){
-        this.composite.setLayoutData(object);
+    private boolean isSelected(ComponentContext<T> component) {
+        if (model.getSelectedElement() == null) return false;
+        if (component instanceof RenderedInterval) {
+            return ((RenderedInterval<T>)component).interval.equals(model.getSelectedElement());
+        } else {
+            return ((RenderedGroup<T>)component).group.equals(model.getSelectedElement());
+        }
     }
 
     /**
@@ -202,44 +241,5 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
             drawString(gc, component.label, component.rectangle2);
         }
         scrolledcomposite.setMinSize(model.getRenderer().getMinSize());
-    }
-    
-    /**
-     * Is the component selected
-     * @param component
-     * @return
-     */
-    private boolean isSelected(ComponentContext<T> component) {
-        if (model.getSelectedElement() == null) return false;
-        if (component instanceof IntervalContext) {
-            return ((IntervalContext<T>)component).interval.equals(model.getSelectedElement());
-        } else {
-            return ((GroupContext<T>)component).group.equals(model.getSelectedElement());
-        }
-    }
-
-    /**
-     * Draws a string
-     * @param gc
-     * @param string
-     * @param r
-     */
-    private void drawString(GC gc, String string, Rectangle r) {
-        gc.setFont(HierarchyWizardGroupingRenderer.FONT);
-        Point extent = gc.textExtent(string);
-        int xx = r.x + (r.width - extent.x) / 2;
-        int yy = r.y + (r.height - extent.y) / 2;
-        gc.drawText(string, xx, yy, true);
-    }
-
-    @Override
-    public void update() {
-        this.canvascomposite.redraw();
-    }
-
-    @Override
-    public void setFunction(AggregateFunction<T> function) {
-        model.setDefaultFunction(function);
-        model.update();
     }
 }

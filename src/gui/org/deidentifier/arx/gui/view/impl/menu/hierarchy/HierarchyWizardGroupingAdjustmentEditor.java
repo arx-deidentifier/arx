@@ -5,7 +5,7 @@ import java.text.ParseException;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyAdjustment;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingRange;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -21,19 +21,19 @@ import org.eclipse.swt.widgets.Label;
 public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWizardGroupingView {
 
     /** Var */
-    private final Group                     composite;
+    private final Group                           composite;
     /** Var */
-    private final DataTypeWithRatioScale<T> type;
+    private final DataTypeWithRatioScale<T>       type;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>         model;
+    private final HierarchyWizardGroupingModel<T> model;
     /** Var */
-    private final HierarchyAdjustment<T>    adjustment;
+    private final HierarchyWizardGroupingRange<T> range;
     /** Var */
-    private EditorString                    repeat;
+    private EditorString                          repeat;
     /** Var */
-    private EditorString                    snap;
+    private EditorString                          snap;
     /** Var */
-    private EditorString                    label;
+    private EditorString                          label;
 
     /**
      * Creates a new instance
@@ -54,17 +54,39 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
         this.model = model;
         this.model.register(this);
         if (!lower) {
-            this.adjustment = model.getUpperAdjustment();
-            createRepeat(model, lower, adjustment);
-            createSnap(model, lower, adjustment);
-            createLabel(model, lower, adjustment);
+            this.range = model.getUpperAdjustment();
+            createRepeat(model, lower, range);
+            createSnap(model, lower, range);
+            createLabel(model, lower, range);
         }
         else {
-            this.adjustment = model.getLowerAdjustment();
-            createLabel(model, lower, adjustment);
-            createSnap(model, lower, adjustment);
-            createRepeat(model, lower, adjustment);
+            this.range = model.getLowerAdjustment();
+            createLabel(model, lower, range);
+            createSnap(model, lower, range);
+            createRepeat(model, lower, range);
         }
+    }
+
+    @Override
+    public void update() {
+        repeat.update();
+        snap.update();
+        label.update();
+    }
+
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(string);
+        GridData data = SWTUtil.createFillVerticallyGridData();
+        data.verticalAlignment = SWT.CENTER;
+        label.setLayoutData(data);
+        return label;
     }
 
     /**
@@ -75,7 +97,7 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
      */
     private void createLabel(final HierarchyWizardGroupingModel<T> model,
                              final boolean lower,
-                             final HierarchyAdjustment<T> adjustment) {
+                             final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, "Label:");
         label = new EditorString(composite) {
             
@@ -124,63 +146,6 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
     }
 
     /**
-     * Create the snap editor
-     * @param model
-     * @param lower
-     * @param adjustment
-     */
-    private void createSnap(final HierarchyWizardGroupingModel<T> model,
-                            final boolean lower,
-                            final HierarchyAdjustment<T> adjustment) {
-        createLabel(composite, "Snap:");
-        snap = new EditorString(composite) {
-            
-            @Override
-            public boolean accepts(final String s) {
-                return type.isValid(s);
-            }
-
-            @Override
-            public String getValue() {
-                T value = adjustment.snap;
-                if (value == null) return "";
-                else return type.format(value);
-            }
-
-            @Override
-            public void setValue(final String s) {
-                T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.snap)) != 0){
-                        
-                        adjustment.snap = value;
-                        if (lower){
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
-                }
-            }
-        };
-    }
-
-    /**
      * Create the repeat editor
      * @param model
      * @param lower
@@ -188,7 +153,7 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
      */
     private void createRepeat(final HierarchyWizardGroupingModel<T> model,
                               final boolean lower,
-                              final HierarchyAdjustment<T> adjustment) {
+                              final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, "Repeat:");
         repeat = new EditorString(composite) {
             
@@ -238,24 +203,59 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
     }
 
     /**
-     * Creates a label
-     * @param composite
-     * @param string
-     * @return
+     * Create the snap editor
+     * @param model
+     * @param lower
+     * @param adjustment
      */
-    private Label createLabel(Composite composite, String string) {
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(string);
-        GridData data = SWTUtil.createFillVerticallyGridData();
-        data.verticalAlignment = SWT.CENTER;
-        label.setLayoutData(data);
-        return label;
-    }
+    private void createSnap(final HierarchyWizardGroupingModel<T> model,
+                            final boolean lower,
+                            final HierarchyWizardGroupingRange<T> adjustment) {
+        createLabel(composite, "Snap:");
+        snap = new EditorString(composite) {
+            
+            @Override
+            public boolean accepts(final String s) {
+                return type.isValid(s);
+            }
 
-    @Override
-    public void update() {
-        repeat.update();
-        snap.update();
-        label.update();
+            @Override
+            public String getValue() {
+                T value = adjustment.snap;
+                if (value == null) return "";
+                else return type.format(value);
+            }
+
+            @Override
+            public void setValue(final String s) {
+                T value = type.parse(s);
+                try {
+                    if (type.compare(type.format(value), 
+                                     type.format(adjustment.snap)) != 0){
+                        
+                        adjustment.snap = value;
+                        if (lower){
+                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
+                                adjustment.repeat = adjustment.snap;
+                            }
+                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
+                                adjustment.label = adjustment.snap;
+                            }
+                        } else {
+                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
+                                adjustment.repeat = adjustment.snap;
+                            }
+                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
+                                adjustment.label = adjustment.snap;
+                            }
+                        }
+                        
+                        model.update();
+                    }
+                } catch (NumberFormatException | ParseException e) {
+                    // Ignore
+                }
+            }
+        };
     }
 }

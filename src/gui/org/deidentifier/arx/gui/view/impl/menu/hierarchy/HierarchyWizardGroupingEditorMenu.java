@@ -1,7 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -111,20 +111,20 @@ public class HierarchyWizardGroupingEditorMenu<T> {
             return;
         }
         
-        if (model.getSelectedElement() instanceof HierarchyInterval){
+        if (model.getSelectedElement() instanceof HierarchyWizardGroupingInterval){
             if (model.getIntervals().size()==1) {
                 this.remove.setEnabled(false);
             } else {
                 this.remove.setEnabled(true);
             }
-            if (model.isFirst((HierarchyInterval<T>)model.getSelectedElement())) {
+            if (model.isFirst((HierarchyWizardGroupingInterval<T>)model.getSelectedElement())) {
                 this.addBefore.setEnabled(true);
                 this.mergeDown.setEnabled(false);
             } else {
                 this.addBefore.setEnabled(false);
                 this.mergeDown.setEnabled(true);
             }
-            if (model.isLast((HierarchyInterval<T>)model.getSelectedElement())) {
+            if (model.isLast((HierarchyWizardGroupingInterval<T>)model.getSelectedElement())) {
                 this.addAfter.setEnabled(true);
                 this.mergeUp.setEnabled(false);
             } else {
@@ -134,7 +134,7 @@ public class HierarchyWizardGroupingEditorMenu<T> {
                 
             this.addRight.setEnabled(true);
             
-        } else if (model.getSelectedElement() instanceof HierarchyGroup){
+        } else if (model.getSelectedElement() instanceof HierarchyWizardGroupingGroup){
             this.remove.setEnabled(true);
             this.addBefore.setEnabled(true);
             this.addAfter.setEnabled(true);

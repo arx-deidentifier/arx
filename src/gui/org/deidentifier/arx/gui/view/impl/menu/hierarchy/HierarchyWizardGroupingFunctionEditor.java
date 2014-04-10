@@ -31,23 +31,23 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
     public static interface IHierarchyFunctionEditorParent<T> {
         public void setFunction(AggregateFunction<T> function);
     }
-    
-    /** Var*/
-    private final AggregateFunction<T>       defaultFunction;
-    /** Var*/
-    private final List<AggregateFunction<T>> functions;
-    /** Var*/
-    private final List<String>               labels;
-    /** Var*/
-    private final EditorSelection            editor1;
-    /** Var*/
-    private final EditorString               editor2;
-    /** Var*/
-    private AggregateFunction<T>             function = null;
-    /** Var*/
-    private final HierarchyWizardGroupingModel<T>          model;
-    /** Var*/
-    private final boolean                    general;
+
+    /** Var */
+    private final AggregateFunction<T>            defaultFunction;
+    /** Var */
+    private final List<AggregateFunction<T>>      functions;
+    /** Var */
+    private final List<String>                    labels;
+    /** Var */
+    private final EditorSelection                 editor1;
+    /** Var */
+    private final EditorString                    editor2;
+    /** Var */
+    private AggregateFunction<T>                  function = null;
+    /** Var */
+    private final HierarchyWizardGroupingModel<T> model;
+    /** Var */
+    private final boolean                         general;
 
     /**
      * Creates a new instance
@@ -68,8 +68,8 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
         this.model = model;
         this.defaultFunction = new AggregateFunction<T>(type){
             @Override public String aggregate(String[] values) {return null;}
-            @Override public String toString() {return "Default";}
             @Override public String toLabel() {return "Default";}
+            @Override public String toString() {return "Default";}
         };
         
         if (!general) {
@@ -159,31 +159,6 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
     }
 
     /**
-     * Creates a function entry
-     * @param function
-     */
-    private void createEntry(AggregateFunction<T> function) {
-        this.functions.add(function);
-        this.labels.add(function.toLabel());
-    }
-
-    /**
-     * Creates a label
-     * @param composite
-     * @param string
-     * @return
-     */
-    private Label createLabel(Composite composite, String string) {
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(string);
-        GridData data = SWTUtil.createFillHorizontallyGridData();
-        data.grabExcessHorizontalSpace = false;
-        data.verticalAlignment = SWT.CENTER;
-        label.setLayoutData(data);
-        return label;
-    }
-    
-    /**
      * Sets the function to display
      * @param function
      */
@@ -194,7 +169,7 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
         this.function = function;
         this.update();
     }
-    
+
     /**
      * Updates all editors
      */
@@ -214,5 +189,30 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
             SWTUtil.disable(editor1.getControl());
             SWTUtil.disable(editor2.getControl());
         }
+    }
+    
+    /**
+     * Creates a function entry
+     * @param function
+     */
+    private void createEntry(AggregateFunction<T> function) {
+        this.functions.add(function);
+        this.labels.add(function.toLabel());
+    }
+    
+    /**
+     * Creates a label
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(string);
+        GridData data = SWTUtil.createFillHorizontallyGridData();
+        data.grabExcessHorizontalSpace = false;
+        data.verticalAlignment = SWT.CENTER;
+        label.setLayoutData(data);
+        return label;
     }
 }
