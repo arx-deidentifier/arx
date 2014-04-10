@@ -116,6 +116,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         final Text license = new Text(parent, SWT.NONE | SWT.MULTI |
                                               SWT.V_SCROLL | SWT.BORDER);
         license.setText(LICENSE);
+        license.setEditable(false);
         final GridData d = SWTUtil.createFillGridData();
         d.heightHint = 100;
         license.setLayoutData(d);
