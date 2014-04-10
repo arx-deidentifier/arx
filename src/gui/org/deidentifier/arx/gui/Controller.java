@@ -143,6 +143,13 @@ public class Controller implements IView {
     }
 
     /**
+     * Clears the event log
+     */
+    public void actionClearEventLog(){
+        this.debug.clearEventLog();
+    }
+
+    /**
      * Enables and disables a criterion
      * @param criterion
      */
@@ -781,6 +788,7 @@ public class Controller implements IView {
         return main.showOpenFileDialog(filter);
     }
 
+
     /**
      * Shows an input dialog for ordering data items
      * @param title The dialog's title
@@ -795,7 +803,6 @@ public class Controller implements IView {
         
         return main.showOrderValuesDialog(title, text, type, values);
     }
-
 
     /**
      * Shows a progress dialog
@@ -933,20 +940,13 @@ public class Controller implements IView {
             }
         }
     }
-
+    
     /**
      * Returns debug data
      * @return
      */
     public String getDebugData(){
         return this.debug.getData(model);
-    }
-    
-    /**
-     * Clears the event log
-     */
-    public void actionClearEventLog(){
-        this.debug.clearEventLog();
     }
 
     /**
