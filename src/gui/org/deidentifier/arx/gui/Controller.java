@@ -860,7 +860,11 @@ public class Controller implements IView {
         final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            if (worker.getError() instanceof IllegalArgumentException){
+                main.showInfoDialog("Error loading data", worker.getError().getMessage());
+            } else {
+                main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            }
             return;
         }
 
@@ -1012,7 +1016,11 @@ public class Controller implements IView {
         final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            if (worker.getError() instanceof IllegalArgumentException){
+                main.showInfoDialog("Error loading data", worker.getError().getMessage());
+            } else {
+                main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            }
             return;
         }
 
