@@ -879,7 +879,7 @@ public class Controller implements IView {
                                   ModelPart.RESEARCH_SUBSET,
                                   subset.getSet()));
         } catch (IllegalArgumentException e){
-            main.showErrorDialog("Error!", e.getMessage(), e);
+            main.showInfoDialog("Error matching data", worker.getError().getMessage());
         }
     }
 
