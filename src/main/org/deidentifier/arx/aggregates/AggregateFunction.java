@@ -29,12 +29,26 @@ import org.deidentifier.arx.DataType;
  * @param <T>
  */
 public abstract class AggregateFunction<T> {
+    
+    /**
+     * An aggregate function that has a parameter
+     * 
+     * @author Fabian Prasser
+     */
+    public static abstract class AggregateFunctionWithParameter<T> extends AggregateFunction<T>{
+        
+        protected AggregateFunctionWithParameter(DataType<T> type) { super(type); }
+        public abstract String getParameter();
+        public abstract boolean acceptsParameter(String parameter);
+        public abstract AggregateFunctionWithParameter<T> newInstance(String parameter);
+    }
+    
     /**
      * An aggregate function that returns a constant value
      * 
      * @author Fabian Prasser
      */
-    public static class GenericConstant<T> extends AggregateFunction<T> {
+    public static class GenericConstant<T> extends AggregateFunctionWithParameter<T> {
 
         private String value;
         
@@ -51,6 +65,21 @@ public abstract class AggregateFunction<T> {
         @Override
         public String toString(){
             return "Constant[value="+value+"]";
+        }
+
+        @Override
+        public String getParameter() {
+            return value;
+        }
+
+        @Override
+        public boolean acceptsParameter(String parameter) {
+            return parameter != null;
+        }
+
+        @Override
+        public AggregateFunctionWithParameter<T> newInstance(String parameter) {
+            return new GenericConstant<T>(this.type, parameter);
         }
     }
 
@@ -90,7 +119,7 @@ public abstract class AggregateFunction<T> {
      * 
      * @author Fabian Prasser
      */
-    public static class GenericSetOfPrefixes<T> extends AggregateFunction<T> {
+    public static class GenericSetOfPrefixes<T> extends AggregateFunctionWithParameter<T> {
 
         private int length;
 
@@ -115,6 +144,25 @@ public abstract class AggregateFunction<T> {
         @Override
         public String toString(){
             return "SetOfPrefixes[length="+length+"]";
+        }
+
+        @Override
+        public String getParameter() {
+            return String.valueOf(length);
+        }
+
+        @Override
+        public boolean acceptsParameter(String parameter) {
+            try {
+                return Integer.parseInt(parameter) > 0;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        @Override
+        public AggregateFunctionWithParameter<T> newInstance(String parameter) {
+            return new GenericSetOfPrefixes<T>(this.type, Integer.parseInt(parameter));
         }
     };
     
@@ -151,7 +199,7 @@ public abstract class AggregateFunction<T> {
      * 
      * @author Fabian Prasser
      */
-    public static class GenericCommonPrefix<T> extends AggregateFunction<T> {
+    public static class GenericCommonPrefix<T> extends AggregateFunctionWithParameter<T> {
         
         private Character redaction;
 
@@ -205,6 +253,22 @@ public abstract class AggregateFunction<T> {
             } else {
                 return "CommonPrefix[redaction="+redaction+"]";
             }
+        }
+
+        @Override
+        public String getParameter() {
+            return String.valueOf(redaction);
+        }
+
+        @Override
+        public boolean acceptsParameter(String parameter) {
+            return parameter == null || parameter.length()==1;
+        }
+
+        @Override
+        public AggregateFunctionWithParameter<T> newInstance(String parameter) {
+            if (parameter == null) new GenericCommonPrefix<T>(this.type, null);
+            return new GenericCommonPrefix<T>(this.type, parameter.toCharArray()[0]);
         }
     }
     
@@ -275,6 +339,17 @@ public abstract class AggregateFunction<T> {
      * @return
      */
     public abstract String aggregate (String[] values);
+
+    /** 
+     * Returns whether the function accepts a parameter
+     * 
+     * @param values
+     * @param type
+     * @return
+     */
+    public boolean hasParameter() {
+        return (this instanceof AggregateFunctionWithParameter);
+    }
     
     @Override
     public abstract String toString ();
