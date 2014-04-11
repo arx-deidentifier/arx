@@ -85,7 +85,6 @@ public class MainWindow implements IView {
     private final MainToolTip           tooltip;
     private final MainContextMenu       popup;
     private final MainMenu              menu;
-    private final MainToolBar           toolbar;
 
     private final ComponentTitledFolder root;
 
@@ -124,7 +123,7 @@ public class MainWindow implements IView {
 
         // Build menu
         menu = new MainMenu(shell, controller);
-        toolbar = new MainToolBar(shell, controller);
+        new MainToolBar(shell, controller);
 
         // Create shell
         shell.setLayout(SWTUtil.createGridLayout(1));
