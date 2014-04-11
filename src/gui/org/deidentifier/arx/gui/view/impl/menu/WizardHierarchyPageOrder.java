@@ -142,7 +142,21 @@ public class WizardHierarchyPageOrder extends WizardPage {
                         DataTypeDescription<?> description = getDataType(label);
     
                         // Open format dialog
-                        if (description.hasFormat()) {
+
+                        // Open format dialog
+                        if (description.getLabel().equals("OrderedString")) {
+                            final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                            final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                            String[] array = controller.actionShowOrderValuesDialog(text1, text2, DataType.STRING, model.getItems().toArray(new String[]{}));
+                            if (array == null) {
+                                type = DataType.STRING;
+                            } else {
+                                type = DataType.createOrderedString(array);
+                                if (!isValidDataType(type, model.getItems())) {
+                                    type = DataType.STRING;
+                                }
+                            }
+                        } else if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, description, model.getItems());
