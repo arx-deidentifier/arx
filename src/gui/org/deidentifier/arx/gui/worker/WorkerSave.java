@@ -195,8 +195,10 @@ public class WorkerSave extends Worker<Model> {
                 (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
             	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
                 if (t instanceof Hierarchy){
-                	writer.write(vocabulary.getMin(), definition.getMinimumGeneralization(attr));
-                	writer.write(vocabulary.getMax(), definition.getMaximumGeneralization(attr));
+                    Integer min = config.getMinimumGeneralization(attr);
+                    Integer max = config.getMaximumGeneralization(attr);
+                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min));
+                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max));
                 }
             }
             writer.unindent();

@@ -103,7 +103,7 @@ public class ViewHierarchy implements IView {
 
     /** Is the view editable? */
     private boolean             editable  = true;
-
+    
     /**
      * Constructor for not editable views
      * 
@@ -132,7 +132,6 @@ public class ViewHierarchy implements IView {
         // Register
         controller.addListener(ModelPart.HIERARCHY, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 
         this.controller = controller;
         this.attribute = attribute;
@@ -202,7 +201,7 @@ public class ViewHierarchy implements IView {
         table.setRedraw(true);
         table.redraw();
 
-        updateGlobalHierarchy();
+        updateCombos();
     }
 
     /**
@@ -219,9 +218,9 @@ public class ViewHierarchy implements IView {
         if (event.part == ModelPart.HIERARCHY) {
             if (attribute.equals(model.getSelectedAttribute())) {
                 setHierarchy((Hierarchy) event.data);
+                updateCombos();
                 base.setEnabled(true);
                 base.redraw();
-                updateGlobalHierarchy();
             }
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
@@ -229,15 +228,11 @@ public class ViewHierarchy implements IView {
             Hierarchy h = model.getInputConfig().getHierarchy(attribute);
             if (h != null) {
                 setHierarchy(h);
+                updateCombos();
                 base.setEnabled(true);
                 base.redraw();
-                updateGlobalHierarchy();
             } else {
                 reset();
-            }
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            if (event.data.equals(this.attribute)) {
-                updateGlobalHierarchy();
             }
         }
     }
@@ -256,6 +251,11 @@ public class ViewHierarchy implements IView {
         
         targetColumn = null;
         targetRow = null;
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
     
     // Deletes a column
@@ -272,7 +272,11 @@ public class ViewHierarchy implements IView {
         base.redraw();
         
         targetColumn = null;
-        updateLocalHierarchy();
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
     
     /**
@@ -290,7 +294,11 @@ public class ViewHierarchy implements IView {
         base.redraw();
         
         targetRow = null;
-        updateLocalHierarchy();
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
 
     /**
@@ -311,7 +319,11 @@ public class ViewHierarchy implements IView {
         base.redraw();
         
         targetColumn = null;
-        updateLocalHierarchy();
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
 
     /**
@@ -331,7 +343,11 @@ public class ViewHierarchy implements IView {
         base.redraw();
         
         targetRow = null;
-        updateLocalHierarchy();
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
 
     /**
@@ -441,7 +457,11 @@ public class ViewHierarchy implements IView {
         base.redraw();
         
         targetRow = null;
-        updateLocalHierarchy();
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
 
     /**
@@ -476,7 +496,11 @@ public class ViewHierarchy implements IView {
         base.redraw();
         
         targetRow = null;
-        updateLocalHierarchy();
+        updateArray();
+        updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
     }
 
     /**
@@ -566,9 +590,7 @@ public class ViewHierarchy implements IView {
         this.min.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (updateMin()) controller.update(new ModelEvent(this,
-                                                   ModelPart.ATTRIBUTE_TYPE,
-                                                   attribute));
+                pushMin();
             }
         });
 
@@ -580,9 +602,7 @@ public class ViewHierarchy implements IView {
         this.max.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (updateMax()) controller.update(new ModelEvent(this,
-                                                       ModelPart.ATTRIBUTE_TYPE,
-                                                       attribute));
+                pushMax();
             }
         });
  
@@ -693,17 +713,17 @@ public class ViewHierarchy implements IView {
         });
 
         // Create table editor
-            this.editor = new TableEditor(table);
-            this.editor.horizontalAlignment = SWT.LEFT;
-            this.editor.grabHorizontal = true;
+        this.editor = new TableEditor(table);
+        this.editor.horizontalAlignment = SWT.LEFT;
+        this.editor.grabHorizontal = true;
 
-            // Make table editable
-            table.addListener(SWT.MouseDoubleClick, new Listener() {
-                @Override
-                public void handleEvent(final Event event) {
-                    actionMouseDoubleClick(new Point(event.x, event.y));
-                }
-            });
+        // Make table editable
+        table.addListener(SWT.MouseDoubleClick, new Listener() {
+            @Override
+            public void handleEvent(final Event event) {
+                actionMouseDoubleClick(new Point(event.x, event.y));
+            }
+        });
     }
 
     /** Updates the titles of the columns after an event */
@@ -714,25 +734,48 @@ public class ViewHierarchy implements IView {
             col.setText(Resources.getMessage("HierarchyView.17") + idx); //$NON-NLS-1$
         }
     }
+    
+    /**
+     * Returns the index of
+     * @param selection
+     * @return
+     */
+    private int minIndexOf(String selection){
+        for (int i=0; i<min.getItems().length; i++){
+            if (min.getItem(i).equals(selection)) return i;
+        }
+        return -1;
+    }
 
+    /**
+     * Returns the index of
+     * @param selection
+     * @return
+     */
+    private int maxIndexOf(String selection){
+        for (int i=0; i<max.getItems().length; i++){
+            if (max.getItem(i).equals(selection)) return i;
+        }
+        return -1;
+    }
     /**
      * Updates the global hierarchy definition
      */
-    private void updateGlobalHierarchy() {
+    private void pushHierarchy() {
 
         // Just write it to the model
-        updateMinAndMax();
         if (model == null || model.getInputConfig() == null) { return; }
         final Hierarchy h = Hierarchy.create(hierarchy);
         model.getInputConfig().setHierarchy(attribute, h);
-        updateMin();
-        updateMax();
     }
 
     /**
      * Updates the hierarchy
      */
-    private void updateLocalHierarchy() {
+    private void updateArray() {
+        
+
+        // Rebuild the array from the table
         final int rows = table.getItemCount();
         final int cols = table.getColumnCount();
         final String[][] s = new String[rows][cols];
@@ -744,14 +787,51 @@ public class ViewHierarchy implements IView {
             idx++;
         }
         hierarchy = s;
-        updateGlobalHierarchy();
+    }
+    
+    private void updateCombos(){
+        
+        // Check whether min & max are still ok
+        if (model==null || min == null) { return; }
+
+        final List<String> minItems = new ArrayList<String>();
+        final List<String> maxItems = new ArrayList<String>();
+        minItems.add(ITEM_ALL);
+        for (int i = 1; i <= table.getColumnCount(); i++) {
+            minItems.add(String.valueOf(i));
+            maxItems.add(String.valueOf(i));
+        }
+        maxItems.add(ITEM_ALL);
+
+        // Compute from model
+        Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
+        String minSelected = ITEM_ALL;
+        if (minModel != null) minSelected = String.valueOf(minModel+1);
+        int minIndex = minIndexOf(minSelected);
+                
+        Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
+        String maxSelected = ITEM_ALL;
+        if (maxModel != null) maxSelected = String.valueOf(maxModel+1);
+        int maxIndex = maxIndexOf(maxSelected);
+
+        if (minIndex > (maxIndex + 1)) {
+            minIndex = maxIndex + 1;
+        }
+
+        min.setItems(minItems.toArray(new String[] {}));
+        max.setItems(maxItems.toArray(new String[] {}));
+
+        min.select(minIndex);
+        max.select(maxIndex);
+        pushMin();
+        pushMax();
     }
 
     /**
      * Updates the max generalization level
      * @return
      */
-    private boolean updateMax(){
+    private boolean pushMax(){
         if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
             if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
                 max.select(min.getSelectionIndex() - 1);
@@ -759,13 +839,10 @@ public class ViewHierarchy implements IView {
                 if (model != null) {
                     String val = max.getItem(max.getSelectionIndex());
                     if (val.equals(ITEM_ALL)) {
-                        val = String.valueOf(max.getItem(max.getSelectionIndex() - 1));
+                        model.getInputConfig().setMaximumGeneralization(attribute, null);
+                    } else {
+                        model.getInputConfig().setMaximumGeneralization(attribute, Integer.valueOf(val) - 1);
                     }
-                    model.getInputConfig()
-                         .getInput()
-                         .getDefinition()
-                         .setMaximumGeneralization(attribute,
-                                                   Integer.valueOf(val) - 1);
                     return true;
                 } 
             }
@@ -777,7 +854,7 @@ public class ViewHierarchy implements IView {
      * Updates the min generalization level
      * @return
      */
-    private boolean updateMin() {
+    private boolean pushMin() {
         if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
             if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
                 min.select(max.getSelectionIndex() + 1);
@@ -785,57 +862,14 @@ public class ViewHierarchy implements IView {
                 if (model != null) {
                     String val = min.getItem(min.getSelectionIndex());
                     if (val.equals(ITEM_ALL)) {
-                        val = "1"; //$NON-NLS-1$
+                        model.getInputConfig().setMinimumGeneralization(attribute, null);
+                    } else {
+                        model.getInputConfig().setMinimumGeneralization(attribute, Integer.valueOf(val) - 1);
                     }
-                    model.getInputConfig()
-                         .getInput()
-                         .getDefinition()
-                         .setMinimumGeneralization(attribute,
-                                                   Integer.valueOf(val) - 1);
                     return true;
                 }
             }
         }
         return false;
-    }
-
-    /**
-     * Updates the min and max combos
-     */
-    private void updateMinAndMax() {
-        if (min == null) { return; }
-
-        final List<String> minItems = new ArrayList<String>();
-        final List<String> maxItems = new ArrayList<String>();
-        minItems.add(ITEM_ALL);
-        for (int i = 1; i <= table.getColumnCount(); i++) {
-            minItems.add(String.valueOf(i));
-            maxItems.add(String.valueOf(i));
-        }
-        maxItems.add(ITEM_ALL);
-
-        int minIndex = min.getSelectionIndex();
-        if (minIndex >= 0) {
-            final String minSelection = min.getItem(minIndex);
-            minIndex = minItems.indexOf(minSelection);
-        }
-        minIndex = minIndex >= 0 ? minIndex : 0;
-
-        int maxIndex = max.getSelectionIndex();
-        if (maxIndex >= 0) {
-            final String maxSelection = max.getItem(maxIndex);
-            maxIndex = maxItems.indexOf(maxSelection);
-        }
-        maxIndex = maxIndex >= 0 ? maxIndex : maxItems.size() - 1;
-
-        if (minIndex > (maxIndex + 1)) {
-            minIndex = maxIndex + 1;
-        }
-
-        min.setItems(minItems.toArray(new String[] {}));
-        max.setItems(maxItems.toArray(new String[] {}));
-
-        min.select(minIndex);
-        max.select(maxIndex);
     }
 }

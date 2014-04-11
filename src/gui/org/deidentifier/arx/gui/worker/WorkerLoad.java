@@ -407,8 +407,24 @@ public class WorkerLoad extends Worker<Model> {
                         } 
                         definition.setAttributeType(attr, hierarchy);
                         config.setHierarchy(attr, hierarchy); /*For backwards compatibility*/
-                        definition.setMinimumGeneralization(attr,Double.valueOf(min).intValue());
-                        definition.setMaximumGeneralization(attr,Double.valueOf(max).intValue());
+                        if (min.equals("All")) {
+                            config.setMinimumGeneralization(attr, null);
+                            definition.setMinimumGeneralization(attr, 0);
+                        } else {
+                            config.setMinimumGeneralization(attr, Integer.valueOf(min));
+                            definition.setMinimumGeneralization(attr, Integer.valueOf(min));
+                        }
+                        if (max.equals("All")) {
+                            config.setMinimumGeneralization(attr, null);
+                            int length = 0;
+                            if (hierarchy.getHierarchy().length>0) {
+                                length = hierarchy.getHierarchy()[0].length;
+                            }
+                            definition.setMinimumGeneralization(attr, length);
+                        } else {
+                            config.setMaximumGeneralization(attr, Integer.valueOf(max));
+                            definition.setMaximumGeneralization(attr, Integer.valueOf(max));
+                        }
                     } else {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }

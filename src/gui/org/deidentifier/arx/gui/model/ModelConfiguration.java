@@ -35,6 +35,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     private static final long      serialVersionUID = -2887699232096897527L;
 
+    private Map<String, Integer>   min              = new HashMap<String, Integer>();
+    private Map<String, Integer>   max              = new HashMap<String, Integer>();
     private transient Data         input            = null;
     private ARXConfiguration       config           = ARXConfiguration.create();
     private boolean                removeOutliers   = true;
@@ -58,12 +60,62 @@ public class ModelConfiguration implements Serializable, Cloneable {
         final ModelConfiguration c = new ModelConfiguration();
         c.removeOutliers = removeOutliers;
         c.input = input;
+        c.min = new HashMap<String, Integer>(min);
+        c.max = new HashMap<String, Integer>(max);
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
         c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
         return c;
     }
+    
+    /**
+     * Minimum generalization
+     * @param attribute
+     * @param min
+     */
+    public void setMinimumGeneralization(String attribute, Integer min){
+        if (this.min == null) {
+            this.min = new HashMap<String, Integer>();
+        }
+        this.min.put(attribute, min);
+    }
 
+    /**
+     * Maximum generalization
+     * @param attribute
+     * @param min
+     */
+    public void setMaximumGeneralization(String attribute, Integer max){
+        if (this.max == null) {
+            this.max = new HashMap<String, Integer>();
+        }
+        this.max.put(attribute, max);
+    }
+
+    /**
+     * Minimum generalization
+     * @param attribute
+     * @param min
+     */
+    public Integer getMinimumGeneralization(String attribute){
+        if (this.min == null) {
+            return null;
+        }
+        return this.min.get(attribute);
+    }
+
+    /**
+     * Maximum generalization
+     * @param attribute
+     * @param min
+     */
+    public Integer getMaximumGeneralization(String attribute){
+        if (this.max == null) {
+            return null;
+        }
+        return this.max.get(attribute);
+    }
+    
     /**
      * Delegates to an instance of ARXConfiguration
      * @param clazz

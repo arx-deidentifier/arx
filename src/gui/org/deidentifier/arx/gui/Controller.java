@@ -406,6 +406,8 @@ public class Controller implements IView {
         if (i.open(main.getShell())) {
             Hierarchy hierarchy = i.getModel().getHierarchy();
             if (hierarchy != null){
+                model.getInputConfig().setMaximumGeneralization(attr, null);
+                model.getInputConfig().setMinimumGeneralization(attr, null);
                 model.getInputConfig().setHierarchy(attr, hierarchy);
                 update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
             }
@@ -587,7 +589,10 @@ public class Controller implements IView {
             final char separator = dialog.getSeparator();
             final Hierarchy hierarchy = actionImportHierarchy(path, separator);
             if (hierarchy != null) {
-                model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+                String attr = model.getSelectedAttribute();
+                model.getInputConfig().setMaximumGeneralization(attr, null);
+                model.getInputConfig().setMinimumGeneralization(attr, null);
+                model.getInputConfig().setHierarchy(attr, hierarchy);
                 update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
             }
         }

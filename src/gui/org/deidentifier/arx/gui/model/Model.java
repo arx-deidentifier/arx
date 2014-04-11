@@ -130,11 +130,28 @@ public class Model implements Serializable {
 
 		// Initialize the config
 		config.removeAllCriteria();
-		
-		for (String attr : config.getInput().getDefinition().getQuasiIdentifyingAttributes()) {
-		    config.getInput().getDefinition().setAttributeType(attr, config.getHierarchy(attr));
-		}
-		
+
+		// Initialize definition
+        for (String attr : config.getInput().getDefinition().getQuasiIdentifyingAttributes()) {
+            
+            Hierarchy hierarchy = config.getHierarchy(attr);
+            Integer min = config.getMinimumGeneralization(attr);
+            Integer max = config.getMaximumGeneralization(attr);
+            if (min==null){
+                min = 0;
+            }
+            if (max==null) {
+                if (hierarchy.getHierarchy().length==0){
+                    max = 0;
+                } else {
+                    max = hierarchy.getHierarchy()[0].length-1;
+                }
+            }
+            config.getInput().getDefinition().setAttributeType(attr, hierarchy);
+            config.setMinimumGeneralization(attr, min);
+            config.setMaximumGeneralization(attr, max);
+        }
+        
 		if (this.kAnonymityModel != null &&
 		    this.kAnonymityModel.isActive() &&
 		    this.kAnonymityModel.isEnabled()) {
