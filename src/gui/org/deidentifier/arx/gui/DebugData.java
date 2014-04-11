@@ -68,13 +68,15 @@ public class DebugData {
             if (model.getInputConfig() != null){
                 builder.append(" - Input\n");
                 for (Entry<String, Hierarchy> entry : model.getInputConfig().getHierarchies().entrySet()) {
-                    builder.append("   * "+entry.getKey()+": height="+entry.getValue().getHierarchy()[0].length);
+                    builder.append("   * ").append(entry.getKey());
+                    builder.append(": height=").append(entry.getValue().getHierarchy()[0].length).append("\n");
                 }    
             }
             if (model.getOutputConfig() != null){
                 builder.append(" - Input\n");
                 for (Entry<String, Hierarchy> entry : model.getOutputConfig().getHierarchies().entrySet()) {
-                    builder.append("   * "+entry.getKey()+": height="+entry.getValue().getHierarchy()[0].length);
+                    builder.append("   * ").append(entry.getKey());
+                    builder.append(": height=").append(entry.getValue().getHierarchy()[0].length).append("\n");
                 }    
             }
             builder.append("\n");
