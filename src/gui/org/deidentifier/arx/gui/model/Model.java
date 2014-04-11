@@ -219,7 +219,7 @@ public class Model implements Serializable {
 
         // Clone the config
         outputConfig = inputConfig.clone();
-        
+        this.setModified();
 	}
 
 	public ARXAnonymizer getAnonymizer() {
@@ -519,11 +519,15 @@ public class Model implements Serializable {
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
+	
 	public void setPath(final String path) {
 		this.path = path;
+		setModified();
 	}
+	
 	public void setQuery(String query){
         this.query = query;
+        setModified();
     }
 
 	/**

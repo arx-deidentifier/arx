@@ -316,7 +316,6 @@ public class Controller implements IView {
         // Run the worker
         final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
-        model.createClonedConfig();
         
         // Show errors
         if (worker.getError() != null) {
@@ -337,6 +336,7 @@ public class Controller implements IView {
 
             // Retrieve optimal result
             final ARXResult result = worker.getResult();
+            model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clear();
 
@@ -1272,6 +1272,7 @@ public class Controller implements IView {
         update(new ModelEvent(this, ModelPart.VIEW_CONFIG, null));
         
         model.setResult(null);
+        model.setOutputConfig(null);
         update(new ModelEvent(this, ModelPart.RESULT, null));
         
         model.setOutput(null, null);
