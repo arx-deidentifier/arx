@@ -414,7 +414,11 @@ public class WorkerLoad extends Worker<Model> {
                             } catch (final IOException e) {
                                 throw new SAXException(e);
                             }
+                            System.out.print("From file :");
+                        } else {
+                            System.out.print("From model:");
                         }
+                        System.out.println(hierarchy.getHierarchy()[0].length);
                         config.getInput()
                               .getDefinition()
                               .setAttributeType(attr, hierarchy);

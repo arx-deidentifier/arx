@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -226,18 +225,9 @@ public class ViewHierarchy implements IView {
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
         } else if (event.part == ModelPart.INPUT) {
-            final DataDefinition d = model.getInputConfig()
-                                          .getInput()
-                                          .getDefinition();
-            final AttributeType type = d.getAttributeType(attribute);
-            
-            if (type instanceof Hierarchy) {
-                setHierarchy((Hierarchy) type);
-                base.setEnabled(true);
-                base.redraw();
-            } else if ((type == AttributeType.SENSITIVE_ATTRIBUTE) &&
-                       (model.getInputConfig().getHierarchy(attribute) != null)) {
-                setHierarchy(model.getInputConfig().getHierarchy(attribute));
+            Hierarchy h = model.getInputConfig().getHierarchy(attribute);
+            if (h != null) {
+                setHierarchy(h);
                 base.setEnabled(true);
                 base.redraw();
             } else {
