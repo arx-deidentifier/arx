@@ -93,9 +93,6 @@ public class Model implements Serializable {
 
     private boolean                               debugEnabled         = false;
 
-    private ModelJdbc jdbc = new ModelJdbc();
-
-
     public Model(final String name, final String description) {
 		this.name = name;
 		this.description = description;
@@ -245,13 +242,6 @@ public class Model implements Serializable {
 	public ModelConfiguration getInputConfig() {
 		return inputConfig;
 	}
-
-	public ModelJdbc getJdbc()
-    {
-
-        return jdbc;
-
-    }
 
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
