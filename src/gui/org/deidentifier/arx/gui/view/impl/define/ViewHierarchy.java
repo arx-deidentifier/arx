@@ -221,6 +221,7 @@ public class ViewHierarchy implements IView {
                 setHierarchy((Hierarchy) event.data);
                 base.setEnabled(true);
                 base.redraw();
+                updateGlobalHierarchy();
             }
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
@@ -230,6 +231,7 @@ public class ViewHierarchy implements IView {
                 setHierarchy(h);
                 base.setEnabled(true);
                 base.redraw();
+                updateGlobalHierarchy();
             } else {
                 reset();
             }
@@ -723,6 +725,8 @@ public class ViewHierarchy implements IView {
         if (model == null || model.getInputConfig() == null) { return; }
         final Hierarchy h = Hierarchy.create(hierarchy);
         model.getInputConfig().setHierarchy(attribute, h);
+        updateMin();
+        updateMax();
     }
 
     /**
