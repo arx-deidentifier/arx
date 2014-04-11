@@ -792,12 +792,17 @@ public class WorkerLoad extends Worker<Model> {
         xmlReader.parse(inputSource);
 
         // Set lattice
+        int bottomLevel = Integer.MAX_VALUE;
         final ARXNode[][] llevels = new ARXNode[levels.size()][];
         for (final Entry<Integer, List<ARXNode>> e : levels.entrySet()) {
             llevels[e.getKey()] = e.getValue().toArray(new ARXNode[] {});
+            if (!e.getValue().isEmpty()) {
+                bottomLevel = Math.min(e.getKey(), bottomLevel);
+            }
         }
+        
         lattice.access().setLevels(llevels);
-        lattice.access().setBottom(llevels[0][0]);
+        lattice.access().setBottom(llevels[bottomLevel][0]);
         lattice.access().setTop(llevels[llevels.length - 1][0]);
 
         // Return the map
