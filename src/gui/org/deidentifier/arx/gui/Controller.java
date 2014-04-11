@@ -1037,6 +1037,9 @@ public class Controller implements IView {
         reset();
 
         final Data data = worker.getResult();
+        if (model.getOutput() != null) {
+            this.actionResetOutput();
+        }
         model.reset();
         
         // Disable visualization
@@ -1190,7 +1193,7 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.FILTER, tempNodeFilter));
         }
 
-        // Update hierarchies
+        // Update hierarchies and selected attribute
         if (model.getInputConfig() != null &&
             model.getInputConfig().getInput() != null) {
             DataHandle handle = model.getInputConfig().getInput().getHandle();
@@ -1203,25 +1206,10 @@ public class Controller implements IView {
                         update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
                     }
                 }
-            }
-        }
-
-        // Try to trigger some events under MS Windows
-        // TODO: This is ugly!
-        if (model.getInputConfig() != null &&
-            model.getInputConfig().getInput() != null) {
-            DataHandle h = model.getInputConfig().getInput().getHandle();
-            if (h != null) {
-                if (h.getNumColumns() > 0) {
-                    String a = h.getAttributeName(0);
-
-                    // Fire once
-                    model.setSelectedAttribute(a);
-                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, a));
-
-                    // Fire twice
-                    model.setSelectedAttribute(a);
-                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, a));
+                if (handle.getNumColumns() > 0) {
+                    String attribute = handle.getAttributeName(0);
+                    model.setSelectedAttribute(attribute);
+                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
                 }
             }
         }
