@@ -96,50 +96,12 @@ public class Model implements Serializable {
     private ModelJdbc jdbc = new ModelJdbc();
 
 
-    public ModelJdbc getJdbc()
-    {
-
-        return jdbc;
-
-    }
-
-	public Model(final String name, final String description) {
+    public Model(final String name, final String description) {
 		this.name = name;
 		this.description = description;
 		setModified();
 	}
-	
-	public boolean isDebugEnabled() {
-	    return debugEnabled;
-	}
-	
-	public void setDebugEnabled(boolean value){
-	    this.debugEnabled = value;
-	    this.setModified();
-	}
-	
-	public boolean isVisualizationEnabled(){
-	    if (this.showVisualization == null) {
-	        return true;
-	    } else {
-	        return this.showVisualization;
-	    }
-	}
 
-    public void setVisualizationEnabled(boolean value){
-        this.showVisualization = value;
-        this.setModified();
-    }
-    
-	public int getMaximalSizeForComplexOperations(){
-	    return this.maximalSizeForComplexOperations;
-	}
-
-	public void setMaximalSizeForComplexOperations(int numberOfRows) {
-        this.maximalSizeForComplexOperations = numberOfRows;
-        this.setModified();
-    }
-    
 	public ARXAnonymizer createAnonymizer() {
 	    
 		// Initialize anonymizer
@@ -156,7 +118,14 @@ public class Model implements Serializable {
         // Return the anonymizer
 		return anonymizer;
 	}
+	
+	public void createClonedConfig() {
 
+        // Clone the config
+        outputConfig = inputConfig.clone();
+        this.setModified();
+	}
+	
 	public void createCriteria(ModelConfiguration config) {
 
 		// Initialize the config
@@ -200,7 +169,7 @@ public class Model implements Serializable {
             }
         }
 	}
-
+	
 	public ARXConfiguration createSubsetConfig() {
 
 		// Create a temporary config
@@ -214,18 +183,11 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-	
-	public void createClonedConfig() {
 
-        // Clone the config
-        outputConfig = inputConfig.clone();
-        this.setModified();
-	}
-
-	public ARXAnonymizer getAnonymizer() {
+    public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
-
+    
 	public String[] getAttributePair() {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
@@ -234,7 +196,7 @@ public class Model implements Serializable {
 	public Set<ARXNode> getClipboard() {
 		return clipboard;
 	}
-
+    
 	public String getDescription() {
 		return description;
 	}
@@ -247,7 +209,7 @@ public class Model implements Serializable {
 		// TODO: Refactor to colors[groups[row]]
 		return this.groups;
 	}
-
+	
 	/**
 	 * @return the historySize
 	 */
@@ -267,12 +229,23 @@ public class Model implements Serializable {
 		return inputConfig;
 	}
 
+	public ModelJdbc getJdbc()
+    {
+
+        return jdbc;
+
+    }
+
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
 
 	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
 		return lDiversityModel;
+	}
+
+	public int getMaximalSizeForComplexOperations(){
+	    return this.maximalSizeForComplexOperations;
 	}
 
 	public int getMaxNodesInLattice() {
@@ -380,6 +353,10 @@ public class Model implements Serializable {
         return this.viewConfig;
     }
 
+	public boolean isDebugEnabled() {
+	    return debugEnabled;
+	}
+
 	public boolean isModified() {
 		if (inputConfig.isModified()) {
 			return true;
@@ -402,6 +379,14 @@ public class Model implements Serializable {
 
 	public boolean isValidLatticeSize() {
 		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
+	}
+
+	public boolean isVisualizationEnabled(){
+	    if (this.showVisualization == null) {
+	        return true;
+	    } else {
+	        return this.showVisualization;
+	    }
 	}
 
 	public void reset() {
@@ -448,6 +433,11 @@ public class Model implements Serializable {
 		clipboard = set;
 	}
 
+	public void setDebugEnabled(boolean value){
+	    this.debugEnabled = value;
+	    this.setModified();
+	}
+
 	public void setDescription(final String description) {
 		this.description = description;
 		setModified();
@@ -480,6 +470,11 @@ public class Model implements Serializable {
 		inputConfig = config;
 	}
 
+	public void setMaximalSizeForComplexOperations(int numberOfRows) {
+        this.maximalSizeForComplexOperations = numberOfRows;
+        this.setModified();
+    }
+
 	public void setMaxNodesInLattice(final int maxNodesInLattice) {
 		this.maxNodesInLattice = maxNodesInLattice;
 		setModified();
@@ -488,10 +483,6 @@ public class Model implements Serializable {
 	public void setMaxNodesInViewer(final int maxNodesInViewer) {
 		this.maxNodesInViewer = maxNodesInViewer;
 		setModified();
-	}
-
-	private void setModified() {
-		modified = true;
 	}
 
 	public void setName(final String name) {
@@ -516,20 +507,20 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
+
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
-	
+
 	public void setPath(final String path) {
 		this.path = path;
 		setModified();
 	}
-	
 	public void setQuery(String query){
         this.query = query;
         setModified();
     }
-
+	
 	/**
 	 * @param result
 	 *            the result to set
@@ -542,7 +533,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
+	
 	public void setSaved() {
 		modified = false;
 	}
@@ -574,7 +565,7 @@ public class Model implements Serializable {
 		this.separator = separator;
 	}
 
-    /**
+	/**
 	 * @param snapshotSizeDataset
 	 *            the snapshotSizeDataset to set
 	 */
@@ -582,12 +573,12 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-    
-    public void setSnapshotSizeSnapshot(final double snapshotSize) {
+
+	public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-    
+
     public void setSubsetManual(){
         if (!this.subsetOrigin.endsWith("manual")) {
             this.subsetOrigin += " + manual";
@@ -606,7 +597,7 @@ public class Model implements Serializable {
 		this.suppressionString = suppressionString;
 		setModified();
 	}
-
+    
     public void setTime(final long time) {
 		this.time = time;
 	}
@@ -622,4 +613,13 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
+    
+    public void setVisualizationEnabled(boolean value){
+        this.showVisualization = value;
+        this.setModified();
+    }
+
+    private void setModified() {
+		modified = true;
+	}
 }

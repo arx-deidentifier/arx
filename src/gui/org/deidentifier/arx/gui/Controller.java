@@ -384,10 +384,8 @@ public class Controller implements IView {
         } else if (model.getInputConfig().getInput() == null) {
             main.showInfoDialog(Resources.getMessage("Controller.18"), Resources.getMessage("Controller.19")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
-        } else if (!(model.isQuasiIdentifierSelected() || model.isSensitiveAttributeSelected())) {
-            main.showInfoDialog(Resources.getMessage("Controller.20"), Resources.getMessage("Controller.21")); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
-        }
+        } 
+        
         final String attr = model.getSelectedAttribute();
         final int index = model.getInputConfig()
                                .getInput()
@@ -554,10 +552,7 @@ public class Controller implements IView {
         } else if (model.getInputConfig().getInput() == null) {
             main.showInfoDialog(Resources.getMessage("Controller.56"), Resources.getMessage("Controller.57")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
-        } else if (!(model.isQuasiIdentifierSelected() || model.isSensitiveAttributeSelected())) {
-            main.showInfoDialog(Resources.getMessage("Controller.58"), Resources.getMessage("Controller.59")); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
-        }
+        } 
 
         final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
         if (path != null) {
