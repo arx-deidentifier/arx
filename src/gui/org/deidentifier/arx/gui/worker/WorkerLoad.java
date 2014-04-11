@@ -407,6 +407,9 @@ public class WorkerLoad extends Worker<Model> {
                         } 
                         definition.setAttributeType(attr, hierarchy);
                         config.setHierarchy(attr, hierarchy); /*For backwards compatibility*/
+                        
+                        int height = hierarchy.getHierarchy().length>0 ?
+                                     hierarchy.getHierarchy()[0].length : 0;
                         if (min.equals("All")) {
                             config.setMinimumGeneralization(attr, null);
                             definition.setMinimumGeneralization(attr, 0);
@@ -415,16 +418,25 @@ public class WorkerLoad extends Worker<Model> {
                             definition.setMinimumGeneralization(attr, Integer.valueOf(min));
                         }
                         if (max.equals("All")) {
-                            config.setMinimumGeneralization(attr, null);
-                            int length = 0;
-                            if (hierarchy.getHierarchy().length>0) {
-                                length = hierarchy.getHierarchy()[0].length;
-                            }
-                            definition.setMinimumGeneralization(attr, length);
+                            config.setMaximumGeneralization(attr, null);
+                            definition.setMaximumGeneralization(attr, height-1);
                         } else {
                             config.setMaximumGeneralization(attr, Integer.valueOf(max));
                             definition.setMaximumGeneralization(attr, Integer.valueOf(max));
                         }
+
+                        // TODO: For backwards compatibility only
+                        if (vocabulary.getVocabularyVersion().equals("1.0")) {
+                            if (config.getMinimumGeneralization(attr) != null &&
+                                config.getMinimumGeneralization(attr).equals(0)){
+                                config.setMinimumGeneralization(attr, null);
+                            }
+                            if (config.getMaximumGeneralization(attr) != null &&
+                                config.getMaximumGeneralization(attr).equals(height-1)){
+                                config.setMaximumGeneralization(attr, null);
+                            }
+                        }
+                        
                     } else {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }
