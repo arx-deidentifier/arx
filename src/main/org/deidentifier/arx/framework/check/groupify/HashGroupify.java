@@ -331,27 +331,42 @@ public class HashGroupify implements IHashGroupify {
                      numberOfOutlyingTuples += entry.count;
                 } else {
                     averageEquivalenceClassSizeCounter += entry.count;
-                     maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
-                     minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
+                    maximalEquivalenceClassSize = Math.max(maximalEquivalenceClassSize, entry.count);
+                    minimalEquivalenceClassSize = Math.min(minimalEquivalenceClassSize, entry.count);
                  }
              }
              entry = entry.nextOrdered;
          }
         
-         // Compute average
-         averageEquivalenceClassSize = (double) averageEquivalenceClassSizeCounter / 
-                                       (double) (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses);
+        if (minimalEquivalenceClassSize == Integer.MAX_VALUE){
+            minimalEquivalenceClassSize = 0;
+        }
+        
+        if (maximalEquivalenceClassSize == Integer.MIN_VALUE){
+            maximalEquivalenceClassSize = 0;
+        } 
+
+        if (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses == 0){
+            averageEquivalenceClassSize = 0;
+        } else {
+            averageEquivalenceClassSize = (double) averageEquivalenceClassSizeCounter / 
+                                          (double) (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses);
+        }
          
          // Statistics including suppression
          double averageEquivalenceClassSizeAll = averageEquivalenceClassSize;
          int maximalEquivalenceClassSizeAll = maximalEquivalenceClassSize;
          int minimalEquivalenceClassSizeAll = minimalEquivalenceClassSize;
-         if (numberOfOutlyingTuples > 0){
+         if (averageEquivalenceClassSize != 0 && numberOfOutlyingTuples > 0){
              averageEquivalenceClassSizeAll = (double)(averageEquivalenceClassSizeCounter + numberOfOutlyingTuples) /
                                               (double)(numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses + 1);
              
              maximalEquivalenceClassSizeAll = Math.max(maximalEquivalenceClassSize, numberOfOutlyingTuples);
              minimalEquivalenceClassSizeAll = Math.min(minimalEquivalenceClassSize, numberOfOutlyingTuples);
+         } else {
+             averageEquivalenceClassSizeAll = 0;
+             maximalEquivalenceClassSizeAll = 0;
+             minimalEquivalenceClassSizeAll = 0;
          }
          
          // Return
