@@ -511,6 +511,8 @@ public class Model implements Serializable {
 		this.outputNode = node;
 		if (node != null) {
 			outputNodeAsString = Arrays.toString(node.getTransformation());
+		} else {
+		    outputNodeAsString = null;
 		}
 		setModified();
 	}

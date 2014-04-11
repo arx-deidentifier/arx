@@ -364,7 +364,11 @@ public class Controller implements IView {
                     this.model.getViewConfig().setMode(Mode.UNSORTED);
                 }
                 this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
-                
+            } else {
+                model.setOutput(null, null);
+                model.setSelectedNode(null);
+                update(new ModelEvent(this, ModelPart.OUTPUT, null));
+                update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
             }
 
             // Update selected attribute
@@ -1196,7 +1200,7 @@ public class Controller implements IView {
             final DataHandle handle = model.getResult().getOutput(tempSelectedNode, false);
             model.setOutput(handle, tempSelectedNode);
             update(new ModelEvent(this, ModelPart.OUTPUT, handle));
-        }
+        } 
 
         // Update subsets of the model
         if (tempNodeFilter != null) {
