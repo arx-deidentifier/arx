@@ -21,14 +21,12 @@ package org.deidentifier.arx.gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
 
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.io.CSVDataOutput;
 
 /**
  * Class for creating debug data
@@ -70,13 +68,13 @@ public class DebugData {
             if (model.getInputConfig() != null){
                 builder.append(" - Input\n");
                 for (Entry<String, Hierarchy> entry : model.getInputConfig().getHierarchies().entrySet()) {
-                    System.out.println("   * "+entry.getKey()+": height="+entry.getValue().getHierarchy()[0].length);
+                    builder.append("   * "+entry.getKey()+": height="+entry.getValue().getHierarchy()[0].length);
                 }    
             }
             if (model.getOutputConfig() != null){
                 builder.append(" - Input\n");
                 for (Entry<String, Hierarchy> entry : model.getOutputConfig().getHierarchies().entrySet()) {
-                    System.out.println("   * "+entry.getKey()+": height="+entry.getValue().getHierarchy()[0].length);
+                    builder.append("   * "+entry.getKey()+": height="+entry.getValue().getHierarchy()[0].length);
                 }    
             }
             builder.append("\n");
