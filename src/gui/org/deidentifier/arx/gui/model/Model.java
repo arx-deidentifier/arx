@@ -37,6 +37,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.gui.view.impl.wizard.importdata.ModelJdbc;
 
 public class Model implements Serializable {
 
