@@ -68,15 +68,13 @@ public class DebugData {
             if (model.getInputConfig() != null){
                 builder.append(" - Input\n");
                 for (Entry<String, Hierarchy> entry : model.getInputConfig().getHierarchies().entrySet()) {
-                    builder.append("   * ").append(entry.getKey());
-                    builder.append(": height=").append(entry.getValue().getHierarchy()[0].length).append("\n");
+                    builder.append("   * ").append(entry.getKey()).append(": ").append(getDebugData(entry.getValue())).append("\n");
                 }    
             }
             if (model.getOutputConfig() != null){
                 builder.append(" - Input\n");
                 for (Entry<String, Hierarchy> entry : model.getOutputConfig().getHierarchies().entrySet()) {
-                    builder.append("   * ").append(entry.getKey());
-                    builder.append(": height=").append(entry.getValue().getHierarchy()[0].length).append("\n");
+                    builder.append("   * ").append(entry.getKey()).append(": ").append(getDebugData(entry.getValue())).append("\n");
                 }    
             }
             builder.append("\n");
@@ -132,6 +130,17 @@ public class DebugData {
         builder.append("DataDefinition@").append(definition.hashCode());
         builder.append(definition.isLocked() ? " [Locked]\n" : "\n");
         return builder.toString();
+    }
+    
+    /**
+     * Returns a string representation of a hierarchy
+     * @param definition
+     * @return
+     */
+    private String getDebugData(Hierarchy hierarchy){
+        
+        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length==0) return "empty";
+        else return "height="+hierarchy.getHierarchy()[0].length;
     }
 
     /**
