@@ -238,8 +238,13 @@ public class ViewAttributeDefinition implements IView {
                             if (array == null) {
                                 type = DataType.STRING;
                             } else {
-                                type = DataType.createOrderedString(array);
-                                if (!isValidDataType(type, getValuesAsList())) {
+                                try {
+                                    type = DataType.createOrderedString(array);
+                                    if (!isValidDataType(type, getValuesAsList())) {
+                                        type = DataType.STRING;
+                                    }
+                                } catch (Exception e){
+                                    controller.actionShowInfoDialog("Error", "Cannot create data type: "+e.getMessage());
                                     type = DataType.STRING;
                                 }
                             }
