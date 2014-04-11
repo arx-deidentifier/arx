@@ -404,8 +404,11 @@ public class Controller implements IView {
                                                            .getStatistics()
                                                            .getDistinctValues(index));
         if (i.open(main.getShell())) {
-            update(new ModelEvent(this, ModelPart.HIERARCHY, i.getModel()
-                                                              .getHierarchy()));
+            Hierarchy hierarchy = i.getModel().getHierarchy();
+            if (hierarchy != null){
+                model.getInputConfig().setHierarchy(attr, hierarchy);
+                update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+            }
         }
     }
 
@@ -582,8 +585,11 @@ public class Controller implements IView {
             
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final Hierarchy h = actionImportHierarchy(path, separator);
-            if (h != null) update(new ModelEvent(this, ModelPart.HIERARCHY, h));
+            final Hierarchy hierarchy = actionImportHierarchy(path, separator);
+            if (hierarchy != null) {
+                model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+                update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+            }
         }
     }
 
@@ -998,7 +1004,7 @@ public class Controller implements IView {
     
     @Override
     public void update(final ModelEvent event) {
-        if (model != null && model.isDebugEnabled()) this.debug.add(event);
+        if (model != null && model.isDebugEnabled()) this.debug.addEvent(event);
         final Map<ModelPart, Set<IView>> dlisteners = getListeners();
         if (dlisteners.get(event.part) != null) {
             for (final IView listener : dlisteners.get(event.part)) {

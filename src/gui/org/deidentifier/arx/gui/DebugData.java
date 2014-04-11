@@ -138,7 +138,7 @@ public class DebugData {
      * Adds an event to the buffer
      * @param event
      */
-    public void add(ModelEvent event) {
+    public void addEvent(ModelEvent event) {
         this.eventBuffer.add(event.toString());
         if (this.eventBuffer.size() > MAX_BUFFER_SIZE) {
             this.eventBuffer.remove(0);
