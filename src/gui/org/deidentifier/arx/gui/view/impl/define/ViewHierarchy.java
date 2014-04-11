@@ -835,17 +835,16 @@ public class ViewHierarchy implements IView {
         if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
             if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
                 max.select(min.getSelectionIndex() - 1);
-            } else {
-                if (model != null) {
-                    String val = max.getItem(max.getSelectionIndex());
-                    if (val.equals(ITEM_ALL)) {
-                        model.getInputConfig().setMaximumGeneralization(attribute, null);
-                    } else {
-                        model.getInputConfig().setMaximumGeneralization(attribute, Integer.valueOf(val) - 1);
-                    }
-                    return true;
-                } 
             }
+            if (model != null) {
+                String val = max.getItem(max.getSelectionIndex());
+                if (val.equals(ITEM_ALL)) {
+                    model.getInputConfig().setMaximumGeneralization(attribute, null);
+                } else {
+                    model.getInputConfig().setMaximumGeneralization(attribute, Integer.valueOf(val) - 1);
+                }
+                return true;
+            } 
         } 
         return false;
     }
@@ -855,19 +854,19 @@ public class ViewHierarchy implements IView {
      * @return
      */
     private boolean pushMin() {
+        
         if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
             if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
                 min.select(max.getSelectionIndex() + 1);
-            } else {
-                if (model != null) {
-                    String val = min.getItem(min.getSelectionIndex());
-                    if (val.equals(ITEM_ALL)) {
-                        model.getInputConfig().setMinimumGeneralization(attribute, null);
-                    } else {
-                        model.getInputConfig().setMinimumGeneralization(attribute, Integer.valueOf(val) - 1);
-                    }
-                    return true;
+            } 
+            if (model != null) {
+                String val = min.getItem(min.getSelectionIndex());
+                if (val.equals(ITEM_ALL)) {
+                    model.getInputConfig().setMinimumGeneralization(attribute, null);
+                } else {
+                    model.getInputConfig().setMinimumGeneralization(attribute, Integer.valueOf(val) - 1);
                 }
+                return true;
             }
         }
         return false;
