@@ -328,7 +328,7 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         });
 
         // Internals category
-        final IntegerValidator v2 = new IntegerValidator(-1, 1001);
+        final IntegerValidator v2 = new IntegerValidator(0, 1000001);
         result.add(new EditorString(Resources.getMessage("PropertyDialog.16"), Resources.getMessage("PropertyDialog.17"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
