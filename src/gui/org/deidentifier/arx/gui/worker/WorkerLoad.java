@@ -42,6 +42,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
@@ -237,20 +238,20 @@ public class WorkerLoad extends Worker<Model> {
         // Attach data
         if (!output) {
             
+            // Read input, config and definition
         	readInput(config, zip);
             model.setInputConfig(config);
+            readDefinition(config, config.getInput().getDefinition(), prefix, zip);
             
         } else {
+            
+            // Read input, config and definition
             config.setInput(model.getInputConfig().getInput());
             model.setOutputConfig(config);
-        }
-
-        // Attach definition
-        readDefinition(config, prefix, zip);
-
-        if (output) {
-        	
-            // Parse
+            DataDefinition definition = new DataDefinition();
+            readDefinition(config, definition, prefix, zip);
+            
+            // Create Handles
             final String suppressionString = model.getSuppressionString();
             final int historySize = model.getHistorySize();
             final double snapshotSizeSnapshot = model.getSnapshotSizeSnapshot();
@@ -275,7 +276,7 @@ public class WorkerLoad extends Worker<Model> {
             
             // Update model
             model.setResult(new ARXResult(config.getInput().getHandle(),
-                                          config.getInput().getHandle().getDefinition(),
+                                          definition,
                                           lattice,
                                           removeOutliers,
                                           suppressionString,
@@ -302,13 +303,14 @@ public class WorkerLoad extends Worker<Model> {
      * Reads the data definition from the file
      * 
      * @param config
+     * @param definition 
      * @param prefix
      * @param zip
      * @throws IOException
      * @throws SAXException
      */
     private void readDefinition(final ModelConfiguration config,
-                                final String prefix,
+                                final DataDefinition definition, final String prefix,
                                 final ZipFile zip) throws IOException,
                                                           SAXException {
     	
@@ -340,17 +342,11 @@ public class WorkerLoad extends Worker<Model> {
                         
                         // Data type
                         if (dtype.equals(DataType.STRING.toString())) {
-                            config.getInput()
-                                  .getDefinition()
-                                  .setDataType(attr, DataType.STRING);
+                            definition.setDataType(attr, DataType.STRING);
                         } else if (dtype.equals(DataType.DECIMAL.toString())) {
-                            config.getInput()
-                                  .getDefinition()
-                                  .setDataType(attr, DataType.DECIMAL);
+                            definition.setDataType(attr, DataType.DECIMAL);
                         } else {
-                            config.getInput()
-                                  .getDefinition()
-                                  .setDataType(attr, DataType.createDate(dtype));
+                            definition.setDataType(attr, DataType.createDate(dtype));
                         }
                     } else if (vocabulary.getVocabularyVersion().equals("2.0")) {
                         
@@ -378,18 +374,14 @@ public class WorkerLoad extends Worker<Model> {
                         }
                         
                         // Store
-                        config.getInput().getDefinition().setDataType(attr, datatype);
+                        definition.setDataType(attr, datatype);
                     }
 
                     // Attribute type
                     if (atype.equals(AttributeType.IDENTIFYING_ATTRIBUTE.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, AttributeType.IDENTIFYING_ATTRIBUTE);
+                        definition.setAttributeType(attr, AttributeType.IDENTIFYING_ATTRIBUTE);
                     } else if (atype.equals(AttributeType.SENSITIVE_ATTRIBUTE.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
+                        definition.setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
                         if (ref != null){
                             try {
                                 /*For backwards compatibility*/
@@ -402,9 +394,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                         
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
+                        definition.setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(Hierarchy.create().toString())) {
                         Hierarchy hierarchy = config.getHierarchy(attr);
                         /*For backwards compatibility*/
@@ -415,16 +405,10 @@ public class WorkerLoad extends Worker<Model> {
                                 throw new SAXException(e);
                             }
                         } 
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, hierarchy);
+                        definition.setAttributeType(attr, hierarchy);
                         config.setHierarchy(attr, hierarchy); /*For backwards compatibility*/
-                        config.getInput()
-                              .getDefinition()
-                              .setMinimumGeneralization(attr,Double.valueOf(min).intValue());
-                        config.getInput()
-                              .getDefinition()
-                              .setMaximumGeneralization(attr,Double.valueOf(max).intValue());
+                        definition.setMinimumGeneralization(attr,Double.valueOf(min).intValue());
+                        definition.setMaximumGeneralization(attr,Double.valueOf(max).intValue());
                     } else {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }

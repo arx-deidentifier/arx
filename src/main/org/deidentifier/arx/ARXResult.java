@@ -73,7 +73,7 @@ public class ARXResult {
     /**
      * Internal constructor for deserialization
      */
-    public ARXResult(final DataHandle handle,
+    public ARXResult(       final DataHandle handle,
                             final DataDefinition definition,
                             final ARXLattice lattice,
                             final boolean removeOutliers,
@@ -86,7 +86,8 @@ public class ARXResult {
                             final ARXNode optimum,
                             final long time) {
 
-        // Set registry
+        // Set registry and definition
+        ((DataHandleInput)handle).setDefinition(definition);
         handle.getRegistry().createInputSubset(config);
 
         // Set optimum in lattice
