@@ -20,7 +20,6 @@ package org.deidentifier.arx.gui.worker;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -288,7 +287,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max, format;
+            String attr, dtype, atype, min, max, format;
 
             @Override
             protected boolean end(final String uri,
@@ -357,26 +356,14 @@ public class WorkerLoad extends Worker<Model> {
                         config.getInput()
                               .getDefinition()
                               .setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
-                        if (ref != null){
-                            try {
-                                config.setHierarchy(attr, readHierarchy(zip, prefix, ref));
-                            } catch (final IOException e) {
-                                throw new SAXException(e);
-                            }
-                        }
-                        
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
                         config.getInput()
                               .getDefinition()
                               .setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(Hierarchy.create().toString())) {
-                        try {
-                            config.getInput()
-                                  .getDefinition()
-                                  .setAttributeType(attr, readHierarchy(zip, prefix, ref));
-                        } catch (final IOException e) {
-                            throw new SAXException(e);
-                        }
+                        config.getInput()
+                              .getDefinition()
+                              .setAttributeType(attr, config.getHierarchy(attr));
                         config.getInput()
                               .getDefinition()
                               .setMinimumGeneralization(attr,Double.valueOf(min).intValue());
@@ -390,11 +377,9 @@ public class WorkerLoad extends Worker<Model> {
                     attr = null;
                     atype = null;
                     dtype = null;
-                    ref = null;
                     min = null;
                     max = null;
                     format = null;
-                    
                     return true;
 
                 } else if (vocabulary.isName(localName)) {
@@ -410,7 +395,6 @@ public class WorkerLoad extends Worker<Model> {
                     format = payload;
                     return true;
                 } else if (vocabulary.isRef(localName)) {
-                    ref = payload;
                     return true;
                 } else if (vocabulary.isMin(localName)) {
                     min = payload;
@@ -435,7 +419,6 @@ public class WorkerLoad extends Worker<Model> {
                     attr = null;
                     dtype = null;
                     atype = null;
-                    ref = null;
                     min = null;
                     max = null;
                     return true;
@@ -472,24 +455,6 @@ public class WorkerLoad extends Worker<Model> {
         final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
         model.setNodeFilter((ModelNodeFilter) oos.readObject());
         oos.close();
-    }
-
-    /**
-     * Reads the hierarchy from the given location
-     * 
-     * @param zip
-     * @param ref
-     * @return
-     * @throws IOException
-     */
-    private Hierarchy readHierarchy(final ZipFile zip,
-                                    final String prefix,
-                                    final String ref) throws IOException {
-    	
-        final ZipEntry entry = zip.getEntry(prefix + ref);
-        if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.5")); } //$NON-NLS-1$
-        final InputStream is = zip.getInputStream(entry);
-        return Hierarchy.create(is, model.getSeparator());
     }
 
     /**

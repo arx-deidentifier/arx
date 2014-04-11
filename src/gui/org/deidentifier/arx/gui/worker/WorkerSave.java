@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -147,7 +146,7 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
         writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
         writer.indent(vocabulary.getCriteria());
-        if (config.getCriteria().isEmpty()) model.createCriteria(config);
+        if (config.getCriteria().isEmpty()) model.createCriteriaAndDefinition(config);
         for (PrivacyCriterion c : config.getCriteria()) {
         	// TODO: Why this condition?
         	if (c != null && !(c instanceof Inclusion)) {
@@ -419,37 +418,10 @@ public class WorkerSave extends Worker<Model> {
                                   final String prefix,
                                   final ZipOutputStream zip) throws IOException {
 
-        Set<String> done = new HashSet<String>();
-        
-        // Write hierarchies of QIs
-        if (config.getInput() != null) {
-            if (config.getInput().getDefinition() != null) {
-                for (final String a : config.getInput().getDefinition().getQuasiIdentifyingAttributes()) {
-                    final String[][] h = config.getInput().getDefinition().getHierarchy(a);
-                    if (h != null) {
-                        zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(a) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-                        final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-                        out.write(h);
-                        done.add(a);
-                    }
-                }
-            }
-        }
-        
-        // Write hierarchies for sensitive attributes
         for (Entry<String, Hierarchy> entry : config.getHierarchies().entrySet()) {
-
-            final String[][] h = entry.getValue().getHierarchy();
-            String a = entry.getKey();
-            
-            if (!done.contains(a)) {
-    
-                if (h != null) {
-                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(a) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-                    final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-                    out.write(h);
-                }
-            }
+            zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(entry.getKey()) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            out.write(entry.getValue().getHierarchy());
         }
     }
 

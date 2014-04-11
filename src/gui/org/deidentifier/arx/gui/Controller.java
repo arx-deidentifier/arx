@@ -405,7 +405,7 @@ public class Controller implements IView {
                                                            .getDistinctValues(index));
         if (i.open(main.getShell())) {
             update(new ModelEvent(this, ModelPart.HIERARCHY, i.getModel()
-                                                                .getHierarchy()));
+                                                              .getHierarchy()));
         }
     }
 
@@ -582,7 +582,7 @@ public class Controller implements IView {
             
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final AttributeType h = actionImportHierarchy(path, separator);
+            final Hierarchy h = actionImportHierarchy(path, separator);
             if (h != null) update(new ModelEvent(this, ModelPart.HIERARCHY, h));
         }
     }
@@ -1098,7 +1098,7 @@ public class Controller implements IView {
      * @param separator
      * @return
      */
-    private AttributeType actionImportHierarchy(final String path,
+    private Hierarchy actionImportHierarchy(final String path,
                                                 final char separator) {
         try {
             return Hierarchy.create(path, separator);
@@ -1188,6 +1188,22 @@ public class Controller implements IView {
         if (tempNodeFilter != null) {
             model.setNodeFilter(tempNodeFilter);
             update(new ModelEvent(this, ModelPart.FILTER, tempNodeFilter));
+        }
+
+        // Update hierarchies
+        if (model.getInputConfig() != null &&
+            model.getInputConfig().getInput() != null) {
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            if (handle != null) {
+                for (int i=0; i<handle.getNumColumns(); i++){
+                    String attr = handle.getAttributeName(i);
+                    Hierarchy hierarchy = model.getInputConfig().getHierarchy(attr);
+                    if (hierarchy != null){
+                        model.setSelectedAttribute(attr);
+                        update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+                    }
+                }
+            }
         }
 
         // Try to trigger some events under MS Windows

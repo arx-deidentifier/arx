@@ -728,41 +728,11 @@ public class ViewHierarchy implements IView {
      */
     private void updateGlobalHierarchy() {
 
-        // TODO: This is a dirty hack to push the hierarchies into
-        // the definition. It is triggered by a change event on the
-        // attribute type 
-        
+        // Just write it to the model
         updateMinAndMax();
-
-        if (model == null) { return; }
-
-        final DataDefinition definition = model.getInputConfig()
-                                               .getInput()
-                                               .getDefinition();
-
+        if (model == null || model.getInputConfig() == null) { return; }
         final Hierarchy h = Hierarchy.create(hierarchy);
-        
-        // If current attribute is quasi-identifying
-        if (definition.getAttributeType(attribute) instanceof Hierarchy) {
-            model.getInputConfig()
-                 .getInput()
-                 .getDefinition()
-                 .setAttributeType(attribute, h);
-            updateMin();
-            updateMax();
-            controller.update(new ModelEvent(this,
-                                             ModelPart.ATTRIBUTE_TYPE,
-                                             attribute));
-            
-        }
-
-        // If current attribute is sensitive
-        if (definition.getAttributeType(attribute) == AttributeType.SENSITIVE_ATTRIBUTE) {
-            model.getInputConfig().setHierarchy(attribute, h);
-            controller.update(new ModelEvent(this,
-                                             ModelPart.ATTRIBUTE_TYPE,
-                                             attribute));
-        }
+        model.getInputConfig().setHierarchy(attribute, h);
     }
 
     /**

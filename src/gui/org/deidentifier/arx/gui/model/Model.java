@@ -113,7 +113,7 @@ public class Model implements Serializable {
 		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
 		
 		// Add all criteria
-		this.createCriteria(inputConfig);
+		this.createCriteriaAndDefinition(inputConfig);
 
         // Return the anonymizer
 		return anonymizer;
@@ -126,10 +126,14 @@ public class Model implements Serializable {
         this.setModified();
 	}
 	
-	public void createCriteria(ModelConfiguration config) {
+	public void createCriteriaAndDefinition(ModelConfiguration config) {
 
 		// Initialize the config
 		config.removeAllCriteria();
+		
+		for (String attr : config.getInput().getDefinition().getQuasiIdentifyingAttributes()) {
+		    config.getInput().getDefinition().setAttributeType(attr, config.getHierarchy(attr));
+		}
 		
 		if (this.kAnonymityModel != null &&
 		    this.kAnonymityModel.isActive() &&
