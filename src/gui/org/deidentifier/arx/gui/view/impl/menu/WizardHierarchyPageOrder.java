@@ -151,9 +151,16 @@ public class WizardHierarchyPageOrder extends WizardPage {
                             if (array == null) {
                                 type = DataType.STRING;
                             } else {
-                                type = DataType.createOrderedString(array);
-                                if (!isValidDataType(type, model.getItems())) {
+                                try {
+                                    type = DataType.createOrderedString(array);
+                                    if (!isValidDataType(type, model.getItems())) {
+                                        type = DataType.STRING;
+                                        combo.select(getIndexOfDataType(DataType.STRING)+1);
+                                    }
+                                } catch (Exception e){
+                                    controller.actionShowInfoDialog("Error", "Cannot create data type: "+e.getMessage());
                                     type = DataType.STRING;
+                                    combo.select(getIndexOfDataType(DataType.STRING)+1);
                                 }
                             }
                         } else if (description.hasFormat()) {
