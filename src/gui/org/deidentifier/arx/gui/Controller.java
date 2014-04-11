@@ -421,11 +421,12 @@ public class Controller implements IView {
         }
         try {
             final DialogProperties dialog = new DialogProperties(main.getShell(),
-                                                             model);
+                                                                 model);
             dialog.create();
             dialog.open();
 
             // Update the title
+            // TODO: This is not sound
             ((IView) main).update(new ModelEvent(this, ModelPart.MODEL, model));
         } catch (final Exception e) {
             main.showErrorDialog(Resources.getMessage("Controller.24"), Resources.getMessage("Controller.25")); //$NON-NLS-1$ //$NON-NLS-2$
