@@ -562,19 +562,33 @@ public class Controller implements IView {
         final String path = actionShowOpenFileDialog("*.csv"); //$NON-NLS-1$
         if (path != null) {
 
-            // Separator
-            final DialogSeparator dialog = new DialogSeparator(main.getShell(),
-                                                               this,
-                                                               path,
-                                                               false);
-            dialog.create();
-            if (dialog.open() == Window.CANCEL) {
+            // Determine separator
+            DialogSeparator dialog = null;
+            
+            try {
+                dialog = new DialogSeparator(main.getShell(), this, path, false);
+                dialog.create();
+                if (dialog.open() == Window.CANCEL) {
+                    return;
+                }
+            } catch (Throwable error){
+                if (error instanceof RuntimeException){
+                    if (error.getCause() != null) {
+                        error = error.getCause();
+                    }
+                }
+                if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
+                    main.showInfoDialog("Error loading hierarchy", error.getMessage());
+                } else {
+                    main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$ //$NON-NLS-2$
+                }
                 return;
-            } else {
-                final char separator = dialog.getSeparator();
-                final AttributeType h = actionImportHierarchy(path, separator);
-                update(new ModelEvent(this, ModelPart.HIERARCHY, h));
             }
+            
+            // Load hierarchy
+            final char separator = dialog.getSeparator();
+            final AttributeType h = actionImportHierarchy(path, separator);
+            if (h != null) update(new ModelEvent(this, ModelPart.HIERARCHY, h));
         }
     }
 
@@ -1010,10 +1024,16 @@ public class Controller implements IView {
         final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
-            if (worker.getError() instanceof IllegalArgumentException){
-                main.showInfoDialog("Error loading data", worker.getError().getMessage());
+            Throwable error = worker.getError();
+            if (error instanceof RuntimeException){
+                if (error.getCause() != null) {
+                    error = error.getCause();
+                }
+            }
+            if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
+                main.showInfoDialog("Error loading data", error.getMessage());
             } else {
-                main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+                main.showErrorDialog(Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), error); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return;
         }
@@ -1087,8 +1107,17 @@ public class Controller implements IView {
                                                 final char separator) {
         try {
             return Hierarchy.create(path, separator);
-        } catch (final IOException e) {
-            main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78"), e); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (Throwable error) {
+            if (error instanceof RuntimeException){
+                if (error.getCause() != null) {
+                    error = error.getCause();
+                }
+            }
+            if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
+                main.showInfoDialog("Error loading hierarchy", error.getMessage());
+            } else {
+                main.showErrorDialog(Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         }
         return null;
     }

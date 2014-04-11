@@ -538,11 +538,15 @@ public class CsvPage extends WizardPage {
             readPreview();
 
         } catch (IOException | IllegalArgumentException e) {
-
             setErrorMessage(e.getMessage());
-
             return;
-
+        } catch (RuntimeException e) {
+            if (e.getCause()!=null) {
+                setErrorMessage(e.getCause().getMessage());
+            } else {
+                setErrorMessage(e.getMessage());
+            }
+            return;
         }
 
         /* Put data into container */
