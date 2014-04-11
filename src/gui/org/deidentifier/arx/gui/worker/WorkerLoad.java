@@ -418,6 +418,7 @@ public class WorkerLoad extends Worker<Model> {
                         config.getInput()
                               .getDefinition()
                               .setAttributeType(attr, hierarchy);
+                        config.setHierarchy(attr, hierarchy); /*For backwards compatibility*/
                         config.getInput()
                               .getDefinition()
                               .setMinimumGeneralization(attr,Double.valueOf(min).intValue());
