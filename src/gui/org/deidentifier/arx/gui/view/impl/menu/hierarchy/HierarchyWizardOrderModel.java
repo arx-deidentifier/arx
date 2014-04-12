@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
@@ -60,5 +61,10 @@ public class HierarchyWizardOrderModel<T> extends HierarchyWizardGroupingModel<T
 
     public String[] getData() {
         return data;
+    }
+
+    public Hierarchy getHierarchy() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

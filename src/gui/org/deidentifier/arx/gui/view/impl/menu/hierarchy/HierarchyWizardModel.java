@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -46,7 +47,9 @@ public class HierarchyWizardModel<T> {
         
         // Create models
         orderModel = new HierarchyWizardOrderModel<T>(dataType, data);
-        intervalModel = new HierarchyWizardIntervalModel<T>(dataType, data);
+        if (dataType instanceof DataTypeWithRatioScale){
+            intervalModel = new HierarchyWizardIntervalModel<T>(dataType, data);
+        }
         redactionModel = new HierarchyWizardRedactionModel<T>(dataType, data);
         
         // Just guess. This can be changed anyways
@@ -64,7 +67,7 @@ public class HierarchyWizardModel<T> {
         }
         
         // Initialize
-        if (data != null){
+        if (data != null && dataType instanceof DataTypeWithRatioScale){
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> dataTypeWRS = (DataTypeWithRatioScale<T>)dataType; 
             T min = null;
@@ -115,6 +118,22 @@ public class HierarchyWizardModel<T> {
             orderModel = new HierarchyWizardOrderModel<T>((HierarchyBuilderOrderBased<T>)builder, orderModel.getData());
         } else if (type == Type.REDACTION_BASED) {
             redactionModel = new HierarchyWizardRedactionModel<T>((HierarchyBuilderRedactionBased<T>)builder, redactionModel.getData());
+        } else {
+            throw new RuntimeException("Unknown type of builder");
+        }
+    }
+
+    public DataType<T> getDataType() {
+        return this.dataType;
+    }
+
+    public Hierarchy getHierarchy() {
+        if (type == Type.INTERVAL_BASED) {
+            return intervalModel.getHierarchy();
+        } else if (type == Type.REDACTION_BASED) {
+            return redactionModel.getHierarchy();
+        } else if (type == Type.ORDER_BASED) {
+            return orderModel.getHierarchy();
         } else {
             throw new RuntimeException("Unknown type of builder");
         }

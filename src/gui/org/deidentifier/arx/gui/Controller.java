@@ -395,6 +395,21 @@ public class Controller implements IView {
                                .getInput()
                                .getHandle()
                                .getColumnIndexOf(attr);
+        
+        if (false) {
+            DataType<?> type = model.getInputConfig().getInput()
+                                    .getDefinition().getDataType(attr);
+            org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizard<?>
+            wizard = new org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizard(this, attr, type, 
+                                                                                           model.getInputConfig()
+                                                                                           .getInput()
+                                                                                           .getHandle()
+                                                                                           .getStatistics()
+                                                                                           .getDistinctValues(index));
+            wizard.open(main.getShell());
+            return;
+        }
+        
         final WizardHierarchy i = new WizardHierarchy(this,
                                                       attr,
                                                       model.getInputConfig()

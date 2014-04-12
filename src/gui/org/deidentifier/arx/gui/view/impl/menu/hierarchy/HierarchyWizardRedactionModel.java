@@ -1,5 +1,6 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 
@@ -17,5 +18,10 @@ public class HierarchyWizardRedactionModel<T> {
 
     public String[] getData() {
         return data;
+    }
+
+    public Hierarchy getHierarchy() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

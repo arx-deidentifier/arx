@@ -212,6 +212,7 @@ public class HierarchyWizardGroupingRenderer<T> {
     /**
      * Updates the drawing context
      */
+    @SuppressWarnings("unchecked")
     public void update(){
         
         // Init
@@ -222,16 +223,16 @@ public class HierarchyWizardGroupingRenderer<T> {
         // Prepare
         if (showIntervals) intervals.clear();
         groups.clear();
-        @SuppressWarnings("unchecked")
-        DataTypeWithRatioScale<T> dtype = (DataTypeWithRatioScale<T>)model.getDataType();
         
         // Layout
         int[] factors = layout.layout();
         T width = null;
+        DataTypeWithRatioScale<T> dtype = null;
         if (showIntervals) {
+            dtype = (DataTypeWithRatioScale<T>)model.getDataType();
             width = dtype.subtract(modelIntervals.get(modelIntervals.size()-1).max, modelIntervals.get(0).min);
         }
-        
+       
         // Create intervals
         if (showIntervals) {
             for (int i=0; i < factors[0]; i++) {
