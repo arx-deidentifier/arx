@@ -28,6 +28,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.deidentifier.arx.io.ExcelFileConfiguration;
+import org.deidentifier.arx.io.JdbcConfiguration;
 
 
 /**
@@ -69,7 +70,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @return Specific ImportAdapter for given configuration
      *
-     * @throws IOException 
+     * @throws IOException
      */
     public static DataSourceImportAdapter create(DataSourceConfiguration config) throws IOException {
 
@@ -80,6 +81,10 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
         } else if (config instanceof ExcelFileConfiguration) {
 
             return new ExcelFileImportAdapter((ExcelFileConfiguration)config);
+
+        } else if (config instanceof JdbcConfiguration) {
+
+            return new JdbcImportAdapter((JdbcConfiguration)config);
 
         } else {
 
