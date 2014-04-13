@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.io.datasource.Column;
+import org.deidentifier.arx.io.datasource.IndexColumn;
 
 
 /**
@@ -261,7 +262,7 @@ public class ImportData {
 
             for (String[] s : getPreviewData()) {
 
-                result.add(s[column.getColumn().getIndex()]);
+                result.add(s[((IndexColumn) column.getColumn()).getIndex()]); 
 
             }
 

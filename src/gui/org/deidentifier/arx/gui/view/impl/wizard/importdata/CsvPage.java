@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.CSVColumn;
 import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.importdata.ImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -429,7 +431,7 @@ public class CsvPage extends WizardPage {
         /* Iterate over columns and add it to {@link #allColumns} */
         for (int i = 0; i < firstLine.length; i++) {
 
-            Column column = new Column(i, DataType.STRING);
+            Column column = new CSVColumn(i, DataType.STRING);
             WizardColumn wizardColumn = new WizardColumn(column);
 
             wizardColumns.add(wizardColumn);
@@ -479,7 +481,7 @@ public class CsvPage extends WizardPage {
         for (WizardColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(column.getColumn().getIndex()));
+            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(((CSVColumn) column.getColumn()).getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
@@ -487,7 +489,7 @@ public class CsvPage extends WizardPage {
             if (btnContainsHeader.getSelection()) {
 
                 tableColumn.setText(column.getColumn().getAliasName());
-                tableColumn.setToolTipText("Column #" + column.getColumn().getIndex());
+                tableColumn.setToolTipText("Column #" + ((CSVColumn) column.getColumn()).getIndex());
 
             }
 

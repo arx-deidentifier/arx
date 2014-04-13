@@ -168,4 +168,40 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
 
     }
 
+    /**
+     * Adds a single column to import from
+     *
+     * @param column A single column to import from
+     */
+    @Override
+    public void addColumn(Column column) {
+
+        if (!(column instanceof ExcelColumn)) {
+
+            throw new IllegalArgumentException("");
+
+        }
+
+        for (Column c : columns) {
+
+            if (((ExcelColumn) column).getIndex() == ((ExcelColumn) c).getIndex()) {
+
+                throw new IllegalArgumentException("Column for this index already assigned");
+
+            }
+
+            if (column.getAliasName() != null && c.getAliasName() != null &&
+                c.getAliasName().equals(column.getAliasName())) {
+
+                throw new IllegalArgumentException("Column names need to be unique");
+
+            }
+
+        }
+
+        this.columns.add(column);
+
+    }
+
+
 }

@@ -49,28 +49,7 @@ public abstract class Configuration {
      *
      * @param column A single column to import from
      */
-    public void addColumn(Column column) {
-
-        for (Column c : columns) {
-
-            if (column.getIndex() == c.getIndex()) {
-
-                throw new IllegalArgumentException("Column for this index already assigned");
-
-            }
-
-            if (column.getAliasName() != null && c.getAliasName() != null &&
-                c.getAliasName().equals(column.getAliasName())) {
-
-                throw new IllegalArgumentException("Column names need to be unique");
-
-            }
-
-        }
-
-        this.columns.add(column);
-
-    }
+    abstract public void addColumn(Column column);
 
     /**
      * Returns all added columns

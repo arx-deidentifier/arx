@@ -22,12 +22,14 @@ package org.deidentifier.arx.io.importdata;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.CSVColumn;
 import org.deidentifier.arx.io.datasource.Column;
 
 /**
@@ -139,6 +141,36 @@ public class CSVFileImportAdapter extends ImportAdapter {
     }
 
     /**
+     * Returns an array with indexes of columns that should be imported
+     *
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes
+     * of columns that should be imported.
+     *
+     * @return Array containing indexes of columns that should be imported
+     */
+    protected int[] getIndexesToImport(){
+
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for(Column column : config.getColumns()) {
+
+            indexes.add(((CSVColumn) column).getIndex());
+
+        }
+
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+
+            result[i] = indexes.get(i);
+
+        }
+
+        return result;
+
+    }
+
+    /**
      * Indicates whether there is another element to return
      *
      * This returns true when the CSV file has another line, which would be
@@ -225,15 +257,15 @@ public class CSVFileImportAdapter extends ImportAdapter {
             Column column = columns.get(i);
 
             /* Check whether there is a header, which is not empty */
-            if (config.getContainsHeader() && !row[column.getIndex()].equals("")) {
+            if (config.getContainsHeader() && !row[((CSVColumn) column).getIndex()].equals("")) {
 
                 /* Assign name of CSV file itself */
-                header[i] = row[column.getIndex()];
+                header[i] = row[((CSVColumn) column).getIndex()];
 
             } else {
 
                 /* Nothing defined in header (or empty), build name manually */
-                header[i] = "Column #" + column.getIndex();
+                header[i] = "Column #" + ((CSVColumn) column).getIndex();
 
             }
 

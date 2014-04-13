@@ -27,14 +27,7 @@ import org.deidentifier.arx.DataType;
  * This represents a single column that will be imported from. Each column
  * consists of an {@link #index}, {@link #aliasName} and {@link #dataType}.
  */
-public class Column {
-
-    /**
-     * Index of column
-     *
-     * @note Counting starts at 0, which would be the first column
-     */
-    private int index;
+abstract public class Column {
 
     /**
      * Name of column
@@ -50,27 +43,11 @@ public class Column {
     /**
      * Creates a new instance of this object with the given parameters
      *
-     * This does not assign a name to the column.
-     *
-     * @param index {@link #index}
-     * @param datatype {@link #dataType}
-     */
-    public Column(int index, DataType<?> datatype) {
-
-        this(index, null, datatype);
-
-    }
-
-    /**
-     * Creates a new instance of this object with the given parameters
-     *
-     * @param index {@link #index}
      * @param aliasName {@link #aliasName}
      * @param dataType {@link #dataType}
      */
-    public Column(int index, String aliasName, DataType<?> dataType) {
+    public Column(String aliasName, DataType<?> dataType) {
 
-        setIndex(index);
         setAliasName(aliasName);
         setDataType(dataType);
 
@@ -113,24 +90,6 @@ public class Column {
     {
 
         this.dataType = dataType;
-
-    }
-
-    /**
-     * @return {@link #index}
-     */
-    public int getIndex() {
-
-        return index;
-
-    }
-
-    /**
-     * @param index {@link #index}
-     */
-    public void setIndex(int index) {
-
-        this.index = index;
 
     }
 

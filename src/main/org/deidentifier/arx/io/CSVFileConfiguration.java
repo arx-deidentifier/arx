@@ -19,6 +19,8 @@
 
 package org.deidentifier.arx.io;
 
+import org.deidentifier.arx.io.datasource.CSVColumn;
+import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.datasource.FileConfiguration;
 import org.deidentifier.arx.io.datasource.ICanContainHeader;
 
@@ -77,6 +79,41 @@ public class CSVFileConfiguration extends FileConfiguration implements ICanConta
     {
 
         this.containsHeader = containsHeader;
+
+    }
+
+    /**
+     * Adds a single column to import from
+     *
+     * @param column A single column to import from
+     */
+    @Override
+    public void addColumn(Column column) {
+
+        if (!(column instanceof CSVColumn)) {
+
+            throw new IllegalArgumentException("");
+
+        }
+
+        for (Column c : columns) {
+
+            if (((CSVColumn) column).getIndex() == ((CSVColumn) c).getIndex()) {
+
+                throw new IllegalArgumentException("Column for this index already assigned");
+
+            }
+
+            if (column.getAliasName() != null && c.getAliasName() != null &&
+                c.getAliasName().equals(column.getAliasName())) {
+
+                throw new IllegalArgumentException("Column names need to be unique");
+
+            }
+
+        }
+
+        this.columns.add(column);
 
     }
 

@@ -20,6 +20,7 @@ package org.deidentifier.arx.io.importdata;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.deidentifier.arx.io.datasource.Column;
+import org.deidentifier.arx.io.datasource.ExcelColumn;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration.ExcelFileTypes;
 
@@ -162,6 +164,36 @@ public class ExcelFileImportAdapter extends ImportAdapter {
     }
 
     /**
+     * Returns an array with indexes of columns that should be imported
+     *
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes
+     * of columns that should be imported.
+     *
+     * @return Array containing indexes of columns that should be imported
+     */
+    protected int[] getIndexesToImport(){
+
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for(Column column : config.getColumns()) {
+
+            indexes.add(((ExcelColumn) column).getIndex());
+
+        }
+
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+
+            result[i] = indexes.get(i);
+
+        }
+
+        return result;
+
+    }
+
+    /**
      * Indicates whether there is another element to return
      *
      * This returns true when the file contains another line, which could be
@@ -260,8 +292,8 @@ public class ExcelFileImportAdapter extends ImportAdapter {
 
             Column column = columns.get(i);
 
-            lastRow.getCell(column.getIndex()).setCellType(Cell.CELL_TYPE_STRING);
-            String name = lastRow.getCell(column.getIndex()).getStringCellValue();
+            lastRow.getCell(((ExcelColumn) column).getIndex()).setCellType(Cell.CELL_TYPE_STRING);
+            String name = lastRow.getCell(((ExcelColumn) column).getIndex()).getStringCellValue();
 
             if (config.getContainsHeader() && !name.equals("")) {
 
@@ -271,7 +303,7 @@ public class ExcelFileImportAdapter extends ImportAdapter {
             } else {
 
                 /* Nothing defined in header (or empty), build name manually */
-                header[i] = "Column #" + column.getIndex();
+                header[i] = "Column #" + ((ExcelColumn) column).getIndex();
 
             }
 

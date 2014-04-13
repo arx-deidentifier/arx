@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.io.datasource.Column;
+import org.deidentifier.arx.io.datasource.JdbcColumn;
 import org.deidentifier.arx.io.datasource.JdbcConfiguration;
 
 /**
@@ -125,30 +127,34 @@ public class JdbcImportAdapter extends ImportAdapter {
 
     }
 
+
     /**
      * Returns an array with indexes of columns that should be imported
      *
-     * This uses {@link ImportAdapter#getIndexesToImport()} and
-     * increments each element by one, because JDBC starts counting at 1
-     * when referring to columns.
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes
+     * of columns that should be imported.
      *
      * @return Array containing indexes of columns that should be imported
-     *
-     * @see {@link ImportAdapter#getIndexesToImport()}
      */
-    @Override
-    protected int[] getIndexesToImport()
-    {
+    protected int[] getIndexesToImport(){
 
-        int[] indexes = super.getIndexesToImport();
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for(Column column : config.getColumns()) {
 
-        for (int i = 0; i < indexes.length; i++) {
-
-            indexes[i] += 1;
+            indexes.add(((JdbcColumn) column).getIndex());
 
         }
 
-        return indexes;
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+
+            result[i] = indexes.get(i) + 1;
+
+        }
+
+        return result;
 
     }
 
@@ -239,7 +245,7 @@ public class JdbcImportAdapter extends ImportAdapter {
                 try {
 
                     /* +1 offset, because counting in JDBC starts at 1 */
-                    header[i] = resultSet.getMetaData().getColumnName(column.getIndex() + 1);
+                    header[i] = resultSet.getMetaData().getColumnName(((JdbcColumn) column).getIndex() + 1);
 
                 } catch (SQLException e) {
 

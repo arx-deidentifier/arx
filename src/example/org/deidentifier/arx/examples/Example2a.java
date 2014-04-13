@@ -29,7 +29,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.Column;
+import org.deidentifier.arx.io.datasource.CSVColumn;
 
 /**
  * This class implements an example on how to use the API to import data from
@@ -50,9 +50,9 @@ public class Example2a extends Example {
 
             // Add columns (index, name and datatype) to configuration
             // The name is optional and can be detected/assigned automatically
-            importConfig.addColumn(new Column(0, "Alter", DataType.INTEGER));
-            importConfig.addColumn(new Column(1, DataType.STRING));
-            importConfig.addColumn(new Column(2, DataType.STRING));
+            importConfig.addColumn(new CSVColumn(0, "Alter", DataType.INTEGER));
+            importConfig.addColumn(new CSVColumn(1, DataType.STRING));
+            importConfig.addColumn(new CSVColumn(2, DataType.STRING));
 
             // Create data object
             final Data data = Data.create(importConfig);

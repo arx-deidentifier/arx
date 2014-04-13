@@ -107,4 +107,39 @@ public class JdbcConfiguration extends Configuration {
 
     }
 
+    /**
+     * Adds a single column to import from
+     *
+     * @param column A single column to import from
+     */
+    @Override
+    public void addColumn(Column column) {
+
+        if (!(column instanceof JdbcColumn)) {
+
+            throw new IllegalArgumentException("");
+
+        }
+
+        for (Column c : columns) {
+
+            if (((JdbcColumn) column).getIndex() == ((JdbcColumn) c).getIndex()) {
+
+                throw new IllegalArgumentException("Column for this index already assigned");
+
+            }
+
+            if (column.getAliasName() != null && c.getAliasName() != null &&
+                c.getAliasName().equals(column.getAliasName())) {
+
+                throw new IllegalArgumentException("Column names need to be unique");
+
+            }
+
+        }
+
+        this.columns.add(column);
+
+    }
+
 }

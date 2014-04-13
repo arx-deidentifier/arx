@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.io.datasource.Column;
+import org.deidentifier.arx.io.datasource.ExcelColumn;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 import org.deidentifier.arx.io.importdata.ImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -366,7 +367,7 @@ public class ExcelPage extends WizardPage {
         /* Iterate over columns and add them */
         for (int i = 0; i < firstRow.getPhysicalNumberOfCells(); i++) {
 
-            Column column = new Column(i, DataType.STRING);
+            Column column = new ExcelColumn(i, DataType.STRING);
             WizardColumn wizardColumn = new WizardColumn(column);
 
             wizardColumns.add(wizardColumn);
@@ -410,7 +411,7 @@ public class ExcelPage extends WizardPage {
         for (WizardColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(column.getColumn().getIndex()));
+            tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(((ExcelColumn) column.getColumn()).getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
@@ -418,7 +419,7 @@ public class ExcelPage extends WizardPage {
             if (btnContainsHeader.getSelection()) {
 
                 tableColumn.setText(column.getColumn().getAliasName());
-                tableColumn.setToolTipText("Column #" + column.getColumn().getIndex());
+                tableColumn.setToolTipText("Column #" + ((ExcelColumn) column.getColumn()).getIndex());
 
             }
 
