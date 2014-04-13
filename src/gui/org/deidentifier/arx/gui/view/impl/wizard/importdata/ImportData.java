@@ -22,7 +22,7 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.Column;
+import org.deidentifier.arx.io.datasource.Column;
 
 
 /**

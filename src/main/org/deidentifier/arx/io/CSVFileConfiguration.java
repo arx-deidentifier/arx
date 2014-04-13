@@ -19,6 +19,9 @@
 
 package org.deidentifier.arx.io;
 
+import org.deidentifier.arx.io.datasource.DataSourceFileConfiguration;
+import org.deidentifier.arx.io.datasource.IDataSourceCanContainHeader;
+
 
 /**
  * Configuration describing a CSV file

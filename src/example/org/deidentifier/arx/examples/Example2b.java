@@ -27,8 +27,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.Column;
-import org.deidentifier.arx.io.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.Column;
+import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 
 /**
  * This class demonstrates how to use the API to import data from Excel (XLS

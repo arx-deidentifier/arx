@@ -32,7 +32,7 @@ import java.util.Map;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVFileConfiguration;
-import org.deidentifier.arx.io.Column;
+import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
