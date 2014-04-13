@@ -134,25 +134,4 @@ public class Column {
 
     }
 
-    /**
-     * @return String representation of this class
-     *
-     * This will output all of the properties assigned to an object. It will
-     * leave out the name if no name is set.
-     */
-    @Override
-    public String toString() {
-
-        if (aliasName != null) {
-
-            return "Column [index: " + index + ", aliasName: " + aliasName + ", dataType: " + dataType + "]";
-
-        } else {
-
-            return "Column [index: " + index + ", datatype: " + dataType + "]";
-
-        }
-
-    }
-
 }
