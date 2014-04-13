@@ -68,7 +68,7 @@ public class WizardHierarchy extends Wizard implements IWizard {
     }
 
     public boolean open(final Shell shell) {
-        final WizardDialog dialog = new WizardDialog(shell, this);
+        final WizardDialog dialog = new ARXWizardDialog(shell, this);
         this.dialog = dialog;
         return dialog.open() == 0;
     }

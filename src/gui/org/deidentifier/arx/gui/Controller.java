@@ -62,6 +62,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainContextMenu;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.deidentifier.arx.gui.view.impl.menu.ARXWizardDialog;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
@@ -557,8 +558,9 @@ public class Controller implements IView {
             return;
         }
 
+        // TODO: Rework, follow the ARX scheme with Wizard.open()
         ImportDataWizard wizard = new ImportDataWizard(this, model);
-        new WizardDialog(main.getShell(), wizard).open();
+        new ARXWizardDialog(main.getShell(), wizard).open();
         
         DataSourceConfiguration config = wizard.getResultingConfiguration();
         if (config != null) {
