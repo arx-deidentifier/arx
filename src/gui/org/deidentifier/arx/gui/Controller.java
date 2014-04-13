@@ -76,7 +76,7 @@ import org.deidentifier.arx.gui.worker.WorkerLoad;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
-import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.Configuration;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;

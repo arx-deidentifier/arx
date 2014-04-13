@@ -28,8 +28,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.CSVColumn;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
 
 /**
  * This class implements an example on how to use the API to import data from

@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.CSVColumn;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.Column;
 
 /**

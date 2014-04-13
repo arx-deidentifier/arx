@@ -17,12 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io;
+package org.deidentifier.arx.io.datasource;
 
-import org.deidentifier.arx.io.datasource.CSVColumn;
-import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.FileConfiguration;
-import org.deidentifier.arx.io.datasource.ICanContainHeader;
 
 
 /**
