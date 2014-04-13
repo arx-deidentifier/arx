@@ -27,7 +27,7 @@ import java.util.List;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.DataSourceConfiguration;
+import org.deidentifier.arx.io.datasource.Configuration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 import org.deidentifier.arx.io.datasource.JdbcConfiguration;
 
@@ -37,7 +37,7 @@ import org.deidentifier.arx.io.datasource.JdbcConfiguration;
  *
  * This defines properties and methods that all data source import adapters
  * have in common. Data sources itself are described by
- * {@link DataSourceConfiguration}.
+ * {@link Configuration}.
  */
 abstract public class DataSourceImportAdapter implements Iterator<String[]> {
 
@@ -57,7 +57,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
     /**
      * Data source configuration used to import actual data
      */
-    private DataSourceConfiguration config = null;
+    private Configuration config = null;
 
 
     /**
@@ -73,7 +73,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @throws IOException
      */
-    public static DataSourceImportAdapter create(DataSourceConfiguration config) throws IOException {
+    public static DataSourceImportAdapter create(Configuration config) throws IOException {
 
         if (config instanceof CSVFileConfiguration) {
 
@@ -100,7 +100,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @param config {@link #config}
      */
-    protected DataSourceImportAdapter(DataSourceConfiguration config) {
+    protected DataSourceImportAdapter(Configuration config) {
 
         this.config = config;
 
@@ -172,7 +172,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @return {@link #config}
      */
-    public DataSourceConfiguration getConfig() {
+    public Configuration getConfig() {
 
         return config;
 

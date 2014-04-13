@@ -19,14 +19,14 @@
 
 package org.deidentifier.arx.io;
 
-import org.deidentifier.arx.io.datasource.DataSourceFileConfiguration;
-import org.deidentifier.arx.io.datasource.IDataSourceCanContainHeader;
+import org.deidentifier.arx.io.datasource.FileConfiguration;
+import org.deidentifier.arx.io.datasource.ICanContainHeader;
 
 
 /**
  * Configuration describing a CSV file
  */
-public class CSVFileConfiguration extends DataSourceFileConfiguration implements IDataSourceCanContainHeader {
+public class CSVFileConfiguration extends FileConfiguration implements ICanContainHeader {
 
     /**
      * Character that separates the columns from each other
@@ -36,7 +36,7 @@ public class CSVFileConfiguration extends DataSourceFileConfiguration implements
     /**
      * Indicates whether first row contains header (names of columns)
      *
-     * @see {@link IDataSourceCanContainHeader}
+     * @see {@link ICanContainHeader}
      */
     private boolean containsHeader;
 

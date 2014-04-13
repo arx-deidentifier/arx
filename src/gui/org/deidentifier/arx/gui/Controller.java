@@ -77,7 +77,7 @@ import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.DataSourceConfiguration;
+import org.deidentifier.arx.io.datasource.Configuration;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -560,7 +560,7 @@ public class Controller implements IView {
         ImportDataWizard wizard = new ImportDataWizard(this, model);
         new WizardDialog(main.getShell(), wizard).open();
         
-        DataSourceConfiguration config = wizard.getResultingConfiguration();
+        Configuration config = wizard.getResultingConfiguration();
         if (config != null) {
             actionImportData(config);
         }
@@ -892,7 +892,7 @@ public class Controller implements IView {
         ImportDataWizard wizard = new ImportDataWizard(this, model);
         new WizardDialog(main.getShell(), wizard).open();
         
-        DataSourceConfiguration config = wizard.getResultingConfiguration();
+        Configuration config = wizard.getResultingConfiguration();
         if (config == null) {
             return;
         }
@@ -1044,7 +1044,7 @@ public class Controller implements IView {
      * @param path
      * @param separator
      */
-    private void actionImportData(DataSourceConfiguration config) {
+    private void actionImportData(Configuration config) {
 
         final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$

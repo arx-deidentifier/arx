@@ -25,7 +25,7 @@ import java.sql.Connection;
 /**
  * Configuration describing a JDBC source
  */
-public class JdbcConfiguration extends DataSourceConfiguration {
+public class JdbcConfiguration extends Configuration {
 
 
     /**

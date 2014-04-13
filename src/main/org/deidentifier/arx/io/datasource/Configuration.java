@@ -29,7 +29,7 @@ import java.util.List;
  * the data. This abstract superclass defines properties that all of them have
  * in common, i.e. a notion of columns, which can be added and retrieved.
  */
-public abstract class DataSourceConfiguration {
+public abstract class Configuration {
 
     /**
      * List of columns to be imported

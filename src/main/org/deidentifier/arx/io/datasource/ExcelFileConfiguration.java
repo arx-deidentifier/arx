@@ -30,7 +30,7 @@ import org.apache.commons.io.FilenameUtils;
  * sheet index {@link #sheetIndex}, which describes which sheet within the
  * file should be used.
  */
-public class ExcelFileConfiguration extends DataSourceFileConfiguration implements IDataSourceCanContainHeader {
+public class ExcelFileConfiguration extends FileConfiguration implements ICanContainHeader {
 
     /**
      * Valid file types for Excel files
@@ -56,7 +56,7 @@ public class ExcelFileConfiguration extends DataSourceFileConfiguration implemen
     /**
      * Indicates whether first row contains header (names of columns)
      *
-     * @see {@link IDataSourceCanContainHeader}
+     * @see {@link ICanContainHeader}
      */
     private boolean containsHeader;
 

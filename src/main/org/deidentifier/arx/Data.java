@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.DataSourceConfiguration;
+import org.deidentifier.arx.io.datasource.Configuration;
 import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
 
 /**
@@ -243,7 +243,7 @@ public abstract class Data {
      *
      * @throws IOException
      */
-    public static Data create(final DataSourceConfiguration config) throws IOException {
+    public static Data create(final Configuration config) throws IOException {
 
         final Data data = new IterableData(DataSourceImportAdapter.create(config));
 

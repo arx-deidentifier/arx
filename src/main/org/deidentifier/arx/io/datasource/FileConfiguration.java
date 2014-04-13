@@ -25,7 +25,7 @@ package org.deidentifier.arx.io.datasource;
  * File based configurations should extend this class as the notion of a
  * {@link #fileLocation} is common to all of them.
  */
-abstract public class DataSourceFileConfiguration extends DataSourceConfiguration {
+abstract public class FileConfiguration extends Configuration {
 
     /**
      * Location of file

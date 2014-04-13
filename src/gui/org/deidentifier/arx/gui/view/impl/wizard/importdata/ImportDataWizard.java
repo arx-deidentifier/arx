@@ -24,7 +24,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
 import org.deidentifier.arx.io.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.DataSourceConfiguration;
+import org.deidentifier.arx.io.datasource.Configuration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -84,7 +84,7 @@ public class ImportDataWizard extends Wizard {
      * created once the wizard is about to finish {@link #performFinish()} and
      * can be accessed by {@link #getResultingConfiguration()}.
      */
-    private DataSourceConfiguration configuration = null;
+    private Configuration configuration = null;
 
 
     /**
@@ -248,7 +248,7 @@ public class ImportDataWizard extends Wizard {
     /**
      * Gets executed once the wizard is about to finish
      *
-     * This will build an appropriate {@link DataSourceConfiguration} object,
+     * This will build an appropriate {@link Configuration} object,
      * depending upon the {@link ImportData#getSourceType() source type} and
      * the choices the user made during the process of the wizard.
      *
@@ -288,7 +288,7 @@ public class ImportDataWizard extends Wizard {
     /**
      * Returns a reference to DataSourceConfiguration
      *
-     * The wizard will built an appropriate {@link DataSourceConfiguration}
+     * The wizard will built an appropriate {@link Configuration}
      * object once it is about to finish {@link #performFinish()}. This object
      * can then be retrieved using this method.
      *
@@ -297,7 +297,7 @@ public class ImportDataWizard extends Wizard {
      *
      * @return {@link #configuration} The resulting data source configuration
      */
-    public DataSourceConfiguration getResultingConfiguration() {
+    public Configuration getResultingConfiguration() {
 
         return configuration;
 

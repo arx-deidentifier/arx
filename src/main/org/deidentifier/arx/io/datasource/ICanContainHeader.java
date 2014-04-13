@@ -27,7 +27,7 @@ package org.deidentifier.arx.io.datasource;
  *
  * TODO: Add getHeader() method and implement it for CSV and XLS
  */
-public interface IDataSourceCanContainHeader {
+public interface ICanContainHeader {
 
     /**
      * Indicates whether there is header
