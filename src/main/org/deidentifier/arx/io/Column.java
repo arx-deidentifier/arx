@@ -25,7 +25,7 @@ import org.deidentifier.arx.DataType;
  * Represents a single data column
  *
  * This represents a single column that will be imported from. Each column
- * consists of an {@link #index}, {@link #name} and {@link #dataType}.
+ * consists of an {@link #index}, {@link #aliasName} and {@link #dataType}.
  */
 public class Column {
 
@@ -39,7 +39,7 @@ public class Column {
     /**
      * Name of column
      */
-    private String name;
+    private String aliasName;
 
     /**
      * Datatype of column
@@ -65,34 +65,34 @@ public class Column {
      * Creates a new instance of this object with the given parameters
      *
      * @param index {@link #index}
-     * @param name {@link #name}
+     * @param aliasName {@link #aliasName}
      * @param dataType {@link #dataType}
      */
-    public Column(int index, String name, DataType<?> dataType) {
+    public Column(int index, String aliasName, DataType<?> dataType) {
 
         setIndex(index);
-        setName(name);
+        setAliasName(aliasName);
         setDataType(dataType);
 
     }
 
     /**
-     * @return {@link #name}
+     * @return {@link #aliasName}
      */
-    public String getName()
+    public String getAliasName()
     {
 
-        return name;
+        return aliasName;
 
     }
 
     /**
-     * @param name {@link #name}
+     * @param aliasName {@link #aliasName}
      */
-    public void setName(String name)
+    public void setAliasName(String aliasName)
     {
 
-        this.name = name;
+        this.aliasName = aliasName;
 
     }
 
@@ -143,9 +143,9 @@ public class Column {
     @Override
     public String toString() {
 
-        if (name != null) {
+        if (aliasName != null) {
 
-            return "Column [index: " + index + ", name: " + name + ", datatype: " + dataType + "]";
+            return "Column [index: " + index + ", aliasName: " + aliasName + ", dataType: " + dataType + "]";
 
         } else {
 

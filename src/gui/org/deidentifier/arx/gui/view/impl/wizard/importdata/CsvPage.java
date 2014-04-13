@@ -486,7 +486,7 @@ public class CsvPage extends WizardPage {
 
             if (btnContainsHeader.getSelection()) {
 
-                tableColumn.setText(column.getColumn().getName());
+                tableColumn.setText(column.getColumn().getAliasName());
                 tableColumn.setToolTipText("Column #" + column.getColumn().getIndex());
 
             }

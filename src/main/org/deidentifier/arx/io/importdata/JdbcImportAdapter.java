@@ -211,9 +211,9 @@ public class JdbcImportAdapter extends DataSourceImportAdapter {
             Column column = columns.get(i);
 
             /* Check whether name has been assigned explicitly or is nonempty */
-            if (column.getName() != null && !column.getName().equals("")) {
+            if (column.getAliasName() != null && !column.getAliasName().equals("")) {
 
-                header[i] = column.getName();
+                header[i] = column.getAliasName();
 
             } else {
 
@@ -231,7 +231,7 @@ public class JdbcImportAdapter extends DataSourceImportAdapter {
 
             }
 
-            column.setName(header[i]);
+            column.setAliasName(header[i]);
 
         }
 

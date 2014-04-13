@@ -59,8 +59,8 @@ public abstract class DataSourceConfiguration {
 
             }
 
-            if (column.getName() != null && c.getName() != null &&
-                c.getName().equals(column.getName())) {
+            if (column.getAliasName() != null && c.getAliasName() != null &&
+                c.getAliasName().equals(column.getAliasName())) {
 
                 throw new IllegalArgumentException("Column names need to be unique");
 

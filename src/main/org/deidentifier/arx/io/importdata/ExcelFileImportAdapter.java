@@ -275,14 +275,14 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
             }
 
-            if (column.getName() != null) {
+            if (column.getAliasName() != null) {
 
                 /* Name has been assigned explicitly */
-                header[i] = column.getName();
+                header[i] = column.getAliasName();
 
             }
 
-            column.setName(header[i]);
+            column.setAliasName(header[i]);
 
         }
 

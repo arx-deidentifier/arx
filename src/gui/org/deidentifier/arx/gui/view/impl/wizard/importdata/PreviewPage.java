@@ -137,7 +137,7 @@ public class PreviewPage extends WizardPage {
                 TableColumn tblclmnColumn = tableViewerColumn.getColumn();
                 tblclmnColumn.setToolTipText("Datatype: " + column.getDataType());
                 tblclmnColumn.setWidth(100);
-                tblclmnColumn.setText(column.getName());
+                tblclmnColumn.setText(column.getAliasName());
 
                 ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
 
