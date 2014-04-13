@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import org.deidentifier.arx.io.Column;
 import org.deidentifier.arx.io.JdbcConfiguration;
 
 /**

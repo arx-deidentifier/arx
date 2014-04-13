@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.importdata;
+package org.deidentifier.arx.io;
 
 import org.deidentifier.arx.DataType;
 

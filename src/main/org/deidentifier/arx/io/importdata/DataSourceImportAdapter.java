@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.Column;
 import org.deidentifier.arx.io.DataSourceConfiguration;
 import org.deidentifier.arx.io.ExcelFileConfiguration;
 import org.deidentifier.arx.io.JdbcConfiguration;

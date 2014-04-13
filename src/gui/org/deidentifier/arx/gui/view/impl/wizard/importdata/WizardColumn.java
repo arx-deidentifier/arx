@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
-import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.Column;
 
 /**
  * Wrapper for {@link Column} used in the wizard context
