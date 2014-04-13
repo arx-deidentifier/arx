@@ -19,6 +19,8 @@
 package org.deidentifier.arx.io.datasource;
 
 import org.apache.commons.io.FilenameUtils;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.ExcelColumn;
 
 
 /**

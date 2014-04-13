@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.datasource.Configuration;
+import org.deidentifier.arx.io.datasource.column.Column;
 import org.deidentifier.arx.io.importdata.ImportAdapter;
 
 /**

@@ -30,10 +30,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.ExcelColumn;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration.ExcelFileTypes;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.ExcelColumn;
 
 /**
  * Import adapter for Excel files

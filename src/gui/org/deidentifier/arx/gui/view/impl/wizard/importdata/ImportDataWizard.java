@@ -23,9 +23,9 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
 import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.datasource.Configuration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.column.Column;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 

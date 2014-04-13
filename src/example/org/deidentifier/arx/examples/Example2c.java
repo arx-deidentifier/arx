@@ -29,8 +29,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.datasource.JdbcColumn;
 import org.deidentifier.arx.io.datasource.JdbcConfiguration;
+import org.deidentifier.arx.io.datasource.column.JdbcColumn;
 
 /**
  * This class demonstrates how to use the API to import data from a JDBC

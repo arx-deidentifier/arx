@@ -26,10 +26,10 @@ import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.datasource.Configuration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
 import org.deidentifier.arx.io.datasource.JdbcConfiguration;
+import org.deidentifier.arx.io.datasource.column.Column;
 
 
 /**

@@ -20,8 +20,8 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
-import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.IndexColumn;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.IndexColumn;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;

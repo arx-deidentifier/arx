@@ -25,9 +25,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.JdbcColumn;
 import org.deidentifier.arx.io.datasource.JdbcConfiguration;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.JdbcColumn;
 
 /**
  * Import adapter for JDBC

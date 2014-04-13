@@ -19,6 +19,9 @@
 
 package org.deidentifier.arx.io.datasource;
 
+import org.deidentifier.arx.io.datasource.column.CSVColumn;
+import org.deidentifier.arx.io.datasource.column.Column;
+
 
 
 /**

@@ -22,6 +22,8 @@ package org.deidentifier.arx.io.datasource;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.io.datasource.column.Column;
+
 /**
  * Abstract base configuration
  *

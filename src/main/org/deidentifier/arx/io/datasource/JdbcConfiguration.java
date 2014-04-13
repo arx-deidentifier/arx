@@ -21,6 +21,9 @@ package org.deidentifier.arx.io.datasource;
 
 import java.sql.Connection;
 
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.JdbcColumn;
+
 
 /**
  * Configuration describing a JDBC source

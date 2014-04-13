@@ -22,8 +22,8 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.datasource.Column;
-import org.deidentifier.arx.io.datasource.IndexColumn;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.IndexColumn;
 
 
 /**
