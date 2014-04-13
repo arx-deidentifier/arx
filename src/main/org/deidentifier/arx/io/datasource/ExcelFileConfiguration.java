@@ -24,7 +24,7 @@ import org.deidentifier.arx.io.datasource.column.ExcelColumn;
 
 
 /**
- * Configuration describing a Excel files
+ * Configuration describing an Excel file
  *
  * This is used to describe Excel files. Both file types (XLS and XLSX) are
  * supported. The file type can either be detected automatically by the file
@@ -155,6 +155,9 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
 
     }
 
+    /**
+     * @return {@link #containsHeader}
+     */
     @Override
     public boolean getContainsHeader() {
 
@@ -162,6 +165,9 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
 
     }
 
+    /**
+     * @param containsHeader {@link #containsHeader}
+     */
     @Override
     public void setContainsHeader(boolean containsHeader)
     {
@@ -173,14 +179,17 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
     /**
      * Adds a single column to import from
      *
-     * @param column A single column to import from
+     * This makes sure that only {@link ExcelColumn} can be added, otherwise
+     * an {@link IllegalArgumentException} will be thrown.
+     *
+     * @param column A single column to import from, {@link ExcelColumn}
      */
     @Override
     public void addColumn(Column column) {
 
         if (!(column instanceof ExcelColumn)) {
 
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Column needs to be of type ExcelColumn");
 
         }
 
@@ -204,6 +213,5 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
         this.columns.add(column);
 
     }
-
 
 }

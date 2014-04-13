@@ -32,7 +32,7 @@ public class JdbcConfiguration extends Configuration {
 
 
     /**
-     * Reference to connecting
+     * Connection to be used
      *
      * @see {@link #setConnection(Connection)}
      * @see {@link #getConnection()}
@@ -52,7 +52,7 @@ public class JdbcConfiguration extends Configuration {
      * Creates a new instance of this object
      *
      * @param connection {@link #setConnection(Connection)}
-     * @param table {@link #setTab
+     * @param table {@link #setTable(String)}
      */
     public JdbcConfiguration(Connection connection, String table)
     {
@@ -63,8 +63,6 @@ public class JdbcConfiguration extends Configuration {
     }
 
     /**
-     * Sets the connection
-     *
      * @param connection {@link #setConnection(Connection)}
      */
     public void setConnection(Connection connection)
@@ -75,8 +73,6 @@ public class JdbcConfiguration extends Configuration {
     }
 
     /**
-     * Retrieves the used connection
-     *
      * @return {@link #connection}
      */
     public Connection getConnection()
@@ -87,8 +83,6 @@ public class JdbcConfiguration extends Configuration {
     }
 
     /**
-     * Sets the table
-     *
      * @param table {@link #setTable(String)}
      */
     public void setTable(String table)
@@ -99,8 +93,6 @@ public class JdbcConfiguration extends Configuration {
     }
 
     /**
-     * Retrieves the used table
-     *
      * @return {@link #table}
      */
     public String getTable()
@@ -113,7 +105,10 @@ public class JdbcConfiguration extends Configuration {
     /**
      * Adds a single column to import from
      *
-     * @param column A single column to import from
+     * This makes sure that only {@link JdbcColumn} can be added, otherwise
+     * an {@link IllegalArgumentException} will be thrown.
+     *
+     * @param column A single column to import from, {@link JdbcColumn}
      */
     @Override
     public void addColumn(Column column) {

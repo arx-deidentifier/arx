@@ -27,8 +27,7 @@ import org.deidentifier.arx.io.datasource.column.Column;
 /**
  * Abstract base configuration
  *
- * Such a configuration contains characteristics that are needed to access
- * the data. This abstract superclass defines properties that all of them have
+ * This abstract superclass defines properties that all configurations have
  * in common, i.e. a notion of columns, which can be added and retrieved.
  */
 public abstract class Configuration {
@@ -50,6 +49,10 @@ public abstract class Configuration {
      * Adds a single column to import from
      *
      * @param column A single column to import from
+     *
+     * @note This needs to be implemented by the specific configuration class,
+     * as {@link Column} is only an abstract superclass for various kind of
+     * columns.
      */
     abstract public void addColumn(Column column);
 

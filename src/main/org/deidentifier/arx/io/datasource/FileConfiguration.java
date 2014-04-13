@@ -20,7 +20,7 @@ package org.deidentifier.arx.io.datasource;
 
 
 /**
- * Configuration describing files in general
+ * Configuration describing a file in general
  *
  * File based configurations should extend this class as the notion of a
  * {@link #fileLocation} is common to all of them.

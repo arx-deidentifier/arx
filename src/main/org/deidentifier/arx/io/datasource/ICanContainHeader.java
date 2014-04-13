@@ -24,23 +24,22 @@ package org.deidentifier.arx.io.datasource;
  *
  * A header describes the columns itself, e.g. by naming them. Usually it will
  * be the first row, but there might be more complex configurations.
- *
- * TODO: Add getHeader() method and implement it for CSV and XLS
  */
 public interface ICanContainHeader {
 
     /**
-     * Indicates whether there is header
+     * Indicates whether there actually is a header
      *
      * A header is not necessarily mandatory. This returns a boolean value that
-     * describes whether or not the configuration contains a header or not.
+     * describes whether or not the configuration actually contains a header or
+     * not.
      *
-     * @return True if there is header, false otherwise
+     * @return True if there actually is a header, false otherwise
      */
     public boolean getContainsHeader();
 
     /**
-     * @param containsHeader Whether or not a header is contained
+     * @param containsHeader Whether or not a header is actually contained
      */
     public void setContainsHeader(boolean containsHeader);
 

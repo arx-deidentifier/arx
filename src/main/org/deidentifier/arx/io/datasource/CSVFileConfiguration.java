@@ -66,6 +66,9 @@ public class CSVFileConfiguration extends FileConfiguration implements ICanConta
 
     }
 
+    /**
+     * @return {@link #containsHeader}
+     */
     @Override
     public boolean getContainsHeader() {
 
@@ -73,6 +76,9 @@ public class CSVFileConfiguration extends FileConfiguration implements ICanConta
 
     }
 
+    /**
+     * @param containsHeader {@link #containsHeader}
+     */
     @Override
     public void setContainsHeader(boolean containsHeader)
     {
@@ -84,14 +90,17 @@ public class CSVFileConfiguration extends FileConfiguration implements ICanConta
     /**
      * Adds a single column to import from
      *
-     * @param column A single column to import from
+     * This makes sure that only {@link CSVColumn} can be added, otherwise
+     * an {@link IllegalArgumentException} will be thrown.
+     *
+     * @param column A single column to import from, {@link CSVColumn}
      */
     @Override
     public void addColumn(Column column) {
 
         if (!(column instanceof CSVColumn)) {
 
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Column needs to be of type CSVColumn");
 
         }
 
