@@ -45,12 +45,42 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
 
     private static final long serialVersionUID = 3625654600380531803L;
 
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> HierarchyBuilderRedactionBased<T> create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderRedactionBased<T> result = (HierarchyBuilderRedactionBased<T>)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
+        }
+    }
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static <T> HierarchyBuilderRedactionBased<T> create(String file) throws IOException{
+        return create(new File(file));
+    }
     private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
     private char                 paddingCharacter   = '*';
     private char                 redactionCharacter = '*';
-    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
-    private transient String[][] result;
 
+    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
+    
+    private transient String[][] result;
+    
     /**
      * Values are aligned left-to-right and redacted right-to-left. Redacted characters
      * are replaced with the given character. The same character is used for padding.
@@ -78,7 +108,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.aligmentOrder = alignmentOrder;
         this.redactionOrder = redactionOrder;
     }
-    
+
     /**
      * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder. 
      * Redacted characters are replaced with the given character. The padding character is used for padding.
@@ -118,6 +148,38 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
 
     /**
+     * Returns the alignment order
+     * @return
+     */
+    public Order getAligmentOrder() {
+        return aligmentOrder;
+    }
+    
+    /**
+     * Returns the padding character
+     * @return
+     */
+    public char getPaddingCharacter() {
+        return paddingCharacter;
+    }
+
+    /**
+     * Returns the redaction character
+     * @return
+     */
+    public char getRedactionCharacter() {
+        return redactionCharacter;
+    }
+
+    /**
+     * Returns the redaction order
+     * @return
+     */
+    public Order getRedactionOrder() {
+        return redactionOrder;
+    }
+
+    /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level
      * @return
      */
@@ -141,7 +203,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         // Return
         return sizes;
     }
-    
+
     /**
      * Computes the hierarchy
      */
@@ -191,36 +253,6 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
                     result[i][j] =  redact + base[i].substring(0, length - j);
                 }
             }
-        }
-    }
-
-    /**
-     * Loads a builder specification from the given file
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public static <T> HierarchyBuilderRedactionBased<T> create(String file) throws IOException{
-        return create(new File(file));
-    }
-    
-    /**
-     * Loads a builder specification from the given file
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> HierarchyBuilderRedactionBased<T> create(File file) throws IOException{
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new FileInputStream(file));
-            HierarchyBuilderRedactionBased<T> result = (HierarchyBuilderRedactionBased<T>)ois.readObject();
-            return result;
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            if (ois != null) ois.close();
         }
     }
 }

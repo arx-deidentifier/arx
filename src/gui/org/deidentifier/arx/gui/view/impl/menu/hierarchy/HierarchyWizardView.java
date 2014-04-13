@@ -1,10 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 /**
- * Updatable part of the wizard
+ * Updateable part of the wizard
  * @author Fabian Prasser
  */
-public interface HierarchyWizardGroupingView {
+public interface HierarchyWizardView {
     /** Update*/
     public void update();
 }

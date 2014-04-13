@@ -5,7 +5,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -17,12 +17,12 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T>{
+public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T>{
 
     /** Var */
     private HierarchyWizardGroupingInterval<T>             interval = null;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>          model;
+    private final HierarchyWizardModelGrouping<T>          model;
     /** Var */
     private final EditorString                             editorMin;
     /** Var */
@@ -39,7 +39,7 @@ public class HierarchyWizardGroupingIntervalEditor<T> implements HierarchyWizard
      */
     @SuppressWarnings("unchecked")
     public HierarchyWizardGroupingIntervalEditor(final Composite parent,
-                                   final HierarchyWizardGroupingModel<T> model) {
+                                   final HierarchyWizardModelGrouping<T> model) {
         this.model = model;
         this.model.register(this);
         this.type = (DataTypeWithRatioScale<T>)model.getDataType();

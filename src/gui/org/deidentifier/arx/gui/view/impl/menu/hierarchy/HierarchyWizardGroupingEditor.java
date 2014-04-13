@@ -6,8 +6,8 @@ import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGrouping
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.RenderedGroup;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingRenderer.RenderedInterval;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.TabItem;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T> {
+public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T> {
 
     /** Var */
-    private HierarchyWizardGroupingModel<T>      model;
+    private HierarchyWizardModelGrouping<T>      model;
     /** Var */
     private Composite                            composite;
     /** Var */
@@ -48,7 +48,7 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
      * @param parent
      * @param model
      */
-    public HierarchyWizardGroupingEditor(Composite parent, HierarchyWizardGroupingModel<T> model) {
+    public HierarchyWizardGroupingEditor(Composite parent, HierarchyWizardModelGrouping<T> model) {
         
         this.model = model;
         this.model.register(this);
@@ -133,8 +133,8 @@ public class HierarchyWizardGroupingEditor<T> implements HierarchyWizardGrouping
         tabItem4.setText("Range");
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
-        new HierarchyWizardGroupingAdjustmentEditor<T>(parent, model, true);
-        new HierarchyWizardGroupingAdjustmentEditor<T>(parent, model, false);
+        new HierarchyWizardGroupingRangeEditor<T>(parent, model, true);
+        new HierarchyWizardGroupingRangeEditor<T>(parent, model, false);
         tabItem4.setControl(parent);
     }
 

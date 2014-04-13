@@ -45,7 +45,7 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
     /** Var */
     private AggregateFunction<T>                  function = null;
     /** Var */
-    private final HierarchyWizardGroupingModel<T> model;
+    private final HierarchyWizardModelGrouping<T> model;
     /** Var */
     private final boolean                         general;
 
@@ -57,7 +57,7 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
      * @param general
      */
     public HierarchyWizardGroupingFunctionEditor(final IHierarchyFunctionEditorParent<T> parent,
-                                   final HierarchyWizardGroupingModel<T> model,
+                                   final HierarchyWizardModelGrouping<T> model,
                                    final Composite composite,
                                    final boolean general) {
 

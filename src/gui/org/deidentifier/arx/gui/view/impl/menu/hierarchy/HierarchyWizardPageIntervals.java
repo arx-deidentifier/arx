@@ -18,62 +18,37 @@
 
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
-import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 
-public class HierarchyWizardPageIntervals<T> extends WizardPage{
+public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<T> {
 
-    private final HierarchyWizardModel<T> model;
-
-    private Button interval;
-    private Button order;
-    private Button redaction;
+    private final HierarchyWizardModelInterval<T> model;
+    private final Controller controller;
     
-    public HierarchyWizardPageIntervals(final HierarchyWizardModel<T> model) {
-        super(""); //$NON-NLS-1$
-        this.model = model;
-        setTitle(Resources.getMessage("HierarchyWizardPageFanout.1")); //$NON-NLS-1$
-        setDescription(Resources.getMessage("HierarchyWizardPageFanout.2")); //$NON-NLS-1$
+    public HierarchyWizardPageIntervals(final Controller controller,
+                                       final HierarchyWizardModel<T> model, 
+                                       final HierarchyWizardPageFinal<T> finalPage) {
+        super(model.getIntervalModel(), finalPage);
+        this.model = model.getIntervalModel();
+        this.controller = controller;
+        setTitle("Create a hierarchy by defining intervals");
+        setDescription("Specify the parameters");
         setPageComplete(true);
     }
-
-    @Override
-    public boolean canFlipToNextPage() {
-        return isPageComplete();
-    }
-
-    @Override
+    
     public void createControl(final Composite parent) {
-        final Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(SWTUtil.createFillGridData());
-        composite.setLayout(SWTUtil.createGridLayout(1));
         
-        // Create group
-        Group group1 = new Group(composite, SWT.NONE);
-        group1.setLayout(new RowLayout(SWT.VERTICAL));
-        this.interval = new Button(group1, SWT.RADIO);
-        this.interval.setText("Use intervals (for variables with ratio scale)");
-        if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
-            this.interval.setEnabled(false);
-        }
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(SWTUtil.createGridLayout(1, false));
         
-        this.order = new Button(group1, SWT.RADIO);
-        this.order.setText("Use ordering (e.g., for variables with ordinal scale");
-        this.redaction = new Button(group1, SWT.RADIO);
-        this.redaction.setText("Use redaction (e.g., for alphanumeric strings) ");
-        this.redaction.setEnabled(true);
-        setControl(composite);
-    }
+        HierarchyWizardGroupingEditor<Long> component = 
+                new HierarchyWizardGroupingEditor<Long>(composite, 
+                        (HierarchyWizardModelGrouping<Long>) model);
+        component.setLayoutData(SWTUtil.createFillGridData());
 
-    @Override
-    public boolean isPageComplete() {
-        return true;
+        setControl(composite);
     }
 }

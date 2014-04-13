@@ -4,7 +4,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -16,14 +16,14 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T>{
+public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T>{
 
     /** Var */
     private HierarchyWizardGroupingGroup<T>                group = null;
     /** Var */
     private final EditorString                             editorSize;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>          model;
+    private final HierarchyWizardModelGrouping<T>          model;
     /** Var */
     private final HierarchyWizardGroupingFunctionEditor<T> editorFunction;
 
@@ -33,7 +33,7 @@ public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGro
      * @param model
      */
     public HierarchyWizardGroupingGroupEditor(final Composite parent,
-                                final HierarchyWizardGroupingModel<T> model) {
+                                final HierarchyWizardModelGrouping<T> model) {
         this.model = model;
         this.model.register(this);
         

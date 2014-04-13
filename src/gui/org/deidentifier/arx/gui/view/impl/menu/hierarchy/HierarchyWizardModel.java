@@ -1,7 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import java.util.List;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXOrderedString;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
@@ -12,10 +15,11 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 public class HierarchyWizardModel<T> {
 
     private Type type;
-    private HierarchyWizardOrderModel<T>   orderModel;
-    private HierarchyWizardIntervalModel<T>   intervalModel;
-    private HierarchyWizardRedactionModel<T>  redactionModel;
+    private HierarchyWizardModelOrder<T>   orderModel;
+    private HierarchyWizardModelInterval<T>   intervalModel;
+    private HierarchyWizardModelRedaction<T>  redactionModel;
     private final DataType<T> dataType;
+    private final String[] data;
     
     /**
      * Creates a new instance from a given builder
@@ -28,11 +32,11 @@ public class HierarchyWizardModel<T> {
         this(dataType, data);
         this.type = builder.getType();
         if (type == Type.INTERVAL_BASED) {
-            intervalModel = new HierarchyWizardIntervalModel<T>((HierarchyBuilderIntervalBased<T>)builder, data);
+            intervalModel = new HierarchyWizardModelInterval<T>((HierarchyBuilderIntervalBased<T>)builder, data);
         } else if (type == Type.ORDER_BASED) {
-            orderModel = new HierarchyWizardOrderModel<T>((HierarchyBuilderOrderBased<T>)builder, data);
+            orderModel = new HierarchyWizardModelOrder<T>((HierarchyBuilderOrderBased<T>)builder, data);
         } else if (type == Type.REDACTION_BASED) {
-            redactionModel = new HierarchyWizardRedactionModel<T>((HierarchyBuilderRedactionBased<T>)builder, data);
+            redactionModel = new HierarchyWizardModelRedaction<T>((HierarchyBuilderRedactionBased<T>)builder, data);
         } else {
             throw new RuntimeException("Unknown type of builder");
         }
@@ -45,15 +49,18 @@ public class HierarchyWizardModel<T> {
      */
     public HierarchyWizardModel(DataType<T> dataType, String[] data){
         
-        // Create models
-        orderModel = new HierarchyWizardOrderModel<T>(dataType, data);
-        if (dataType instanceof DataTypeWithRatioScale){
-            intervalModel = new HierarchyWizardIntervalModel<T>(dataType, data);
-        }
-        redactionModel = new HierarchyWizardRedactionModel<T>(dataType, data);
-        
-        // Just guess. This can be changed anyways
+        // Store
+        this.data = data;
         this.dataType = dataType;
+        
+        // Create models
+        orderModel = new HierarchyWizardModelOrder<T>(dataType, getOrderData());
+        if (dataType instanceof DataTypeWithRatioScale){
+            intervalModel = new HierarchyWizardModelInterval<T>(dataType, data);
+        }
+        redactionModel = new HierarchyWizardModelRedaction<T>(dataType, data);
+        
+        // Propose a dedicated type of builder
         if (equals(dataType, DataType.DATE)) {
             this.type = Type.INTERVAL_BASED;
         } else if (equals(dataType, DataType.DECIMAL)) {
@@ -87,6 +94,23 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
+     * Returns data for the order-based builder
+     * @param type
+     * @param data
+     * @return
+     */
+    private String[] getOrderData(){
+        if (dataType instanceof ARXOrderedString){
+            ARXOrderedString os = (ARXOrderedString)dataType;
+            List<String> elements = os.getElements();
+            if (elements != null && !elements.isEmpty()) {
+                return elements.toArray(new String[elements.size()]);
+            } 
+        } 
+        return data;
+    }
+    
+    /**
      * Simple comparison of data types
      * @param type
      * @param other
@@ -107,17 +131,25 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
+     * Returns the type
+     * @return
+     */
+    public Type getType(){
+        return this.type;
+    }
+    
+    /**
      * Updates the model with a new specification
      * @param builder
      */
     public void setSpecification(HierarchyBuilder<T> builder) {
         this.type = builder.getType();
         if (type == Type.INTERVAL_BASED) {
-            intervalModel = new HierarchyWizardIntervalModel<T>((HierarchyBuilderIntervalBased<T>)builder, intervalModel.getData());
+            intervalModel = new HierarchyWizardModelInterval<T>((HierarchyBuilderIntervalBased<T>)builder, data);
         } else if (type == Type.ORDER_BASED) {
-            orderModel = new HierarchyWizardOrderModel<T>((HierarchyBuilderOrderBased<T>)builder, orderModel.getData());
+            orderModel = new HierarchyWizardModelOrder<T>((HierarchyBuilderOrderBased<T>)builder, data);
         } else if (type == Type.REDACTION_BASED) {
-            redactionModel = new HierarchyWizardRedactionModel<T>((HierarchyBuilderRedactionBased<T>)builder, redactionModel.getData());
+            redactionModel = new HierarchyWizardModelRedaction<T>((HierarchyBuilderRedactionBased<T>)builder, data);
         } else {
             throw new RuntimeException("Unknown type of builder");
         }
@@ -137,5 +169,17 @@ public class HierarchyWizardModel<T> {
         } else {
             throw new RuntimeException("Unknown type of builder");
         }
+    }
+
+    public HierarchyWizardModelRedaction<T> getRedactionModel() {
+        return redactionModel;
+    }
+
+    public HierarchyWizardModelInterval<T> getIntervalModel() {
+        return intervalModel;
+    }
+
+    public HierarchyWizardModelOrder<T> getOrderModel() {
+        return orderModel;
     }
 }

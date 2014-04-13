@@ -55,17 +55,17 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         /**
          * Creates a new instance
-         * @param fanout
+         * @param size
          * @param function
          */
-        private Group(int fanout, AggregateFunction<U> function) {
-            if (fanout<=0) {
+        private Group(int size, AggregateFunction<U> function) {
+            if (size<=0) {
                 throw new IllegalArgumentException("Size must be >= 0");
             }
             if (function==null) {
                 throw new IllegalArgumentException("Function must not be null");
             }
-            this.size = fanout;
+            this.size = size;
             this.function = function;
         }
 
@@ -114,38 +114,38 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         /**
          * Adds the given group with the default aggregate function
-         * @param fanout
+         * @param size
          * @return
          */
-        public Level<U> addGroup(int fanout) {
+        public Level<U> addGroup(int size) {
             if (builder.getDefaultFunction() == null) {
                 throw new IllegalStateException("No default aggregate function defined");
             }
-            this.list.add(new Group<U>(fanout, builder.getDefaultFunction()));
+            this.list.add(new Group<U>(size, builder.getDefaultFunction()));
             builder.setPrepared(false);
             return this;
         }
 
         /**
          * Adds the given group with the given aggregate function
-         * @param fanout
+         * @param size
          * @param function
          * @return
          */
-        public Level<U> addGroup(int fanout, AggregateFunction<U> function) {
-            this.list.add(new Group<U>(fanout, function));
+        public Level<U> addGroup(int size, AggregateFunction<U> function) {
+            this.list.add(new Group<U>(size, function));
             builder.setPrepared(false);
             return this;
         }
 
         /**
          * Adds the given group. The result will be labeled with the given string
-         * @param fanout
+         * @param size
          * @param label
          * @return
          */
-        public Level<U> addGroup(int fanout, String label) {
-            this.list.add(new Group<U>(fanout, AggregateFunction.forType(builder.getDataType()).createConstantFunction(label)));
+        public Level<U> addGroup(int size, String label) {
+            this.list.add(new Group<U>(size, AggregateFunction.forType(builder.getDataType()).createConstantFunction(label)));
             builder.setPrepared(false);
             return this;
         }

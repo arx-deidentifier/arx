@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -141,13 +141,13 @@ public class HierarchyWizardGroupingRenderer<T> {
     /** Var */
     private final HierarchyWizardGroupingLayout<T> layout;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>  model;
+    private final HierarchyWizardModelGrouping<T>  model;
 
     /**
      * Creates a new instance
      * @param model
      */
-    public HierarchyWizardGroupingRenderer(HierarchyWizardGroupingModel<T> model) {
+    public HierarchyWizardGroupingRenderer(HierarchyWizardModelGrouping<T> model) {
         this.model = model;
         this.layout = new HierarchyWizardGroupingLayout<T>(model);
     }
@@ -218,7 +218,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         // Init
         boolean showIntervals = model.isShowIntervals();
         List<HierarchyWizardGroupingInterval<T>> modelIntervals = model.getIntervals();
-        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getGroups();
+        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getModelGroups();
         
         // Prepare
         if (showIntervals) intervals.clear();

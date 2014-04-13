@@ -3,8 +3,8 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 import java.util.Arrays;
 import java.util.List;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 
 /**
  * 
@@ -19,7 +19,7 @@ public class HierarchyWizardGroupingLayout<T> {
     public static final int                       PRETTY_THRESHOLD = 100;
 
     /** Var */
-    private final HierarchyWizardGroupingModel<T> model;
+    private final HierarchyWizardModelGrouping<T> model;
     /** Var */
     private boolean                               pretty           = true;
 
@@ -27,7 +27,7 @@ public class HierarchyWizardGroupingLayout<T> {
      * Creates a new instance
      * @param model
      */
-    public HierarchyWizardGroupingLayout(HierarchyWizardGroupingModel<T> model){
+    public HierarchyWizardGroupingLayout(HierarchyWizardModelGrouping<T> model){
         this.model = model;
     }
 
@@ -48,7 +48,7 @@ public class HierarchyWizardGroupingLayout<T> {
         // Init
         boolean showIntervals = model.isShowIntervals();
         List<HierarchyWizardGroupingInterval<T>> intervals = model.getIntervals();
-        List<List<HierarchyWizardGroupingGroup<T>>> groups = model.getGroups();
+        List<List<HierarchyWizardGroupingGroup<T>>> groups = model.getModelGroups();
 
         // Size of the solution
         int size = showIntervals ? 1 + groups.size() : groups.size();

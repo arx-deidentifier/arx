@@ -103,6 +103,19 @@ public class ViewHierarchy implements IView {
 
     /** Is the view editable? */
     private boolean             editable  = true;
+
+    /**
+     * Constructor for not editable views
+     * 
+     * @param parent
+     */
+    public ViewHierarchy(final Composite parent) {
+
+        this.attribute = null;
+        this.editable = false;
+        create(parent);
+
+    }
     
     /**
      * Constructor for not editable views
@@ -546,9 +559,11 @@ public class ViewHierarchy implements IView {
         this.base.setLayoutData(bottomLayoutData);
 
         // Create label
-        Label l = new Label(base, SWT.NONE);
-        l.setText(Resources.getMessage("HierarchyView.2") + attribute + //$NON-NLS-1$  
-                  Resources.getMessage("HierarchyView.3")); //$NON-NLS-2$
+        if (attribute != null) {
+            Label l = new Label(base, SWT.NONE);
+            l.setText(Resources.getMessage("HierarchyView.2") + attribute + //$NON-NLS-1$  
+                      Resources.getMessage("HierarchyView.3")); //$NON-NLS-2$
+        }
 
         // Create table
         int flags = SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION;

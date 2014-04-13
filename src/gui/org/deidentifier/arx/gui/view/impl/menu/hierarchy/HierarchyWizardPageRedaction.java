@@ -18,62 +18,143 @@
 
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
-import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
-public class HierarchyWizardPageRedaction<T> extends WizardPage{
+public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<T> {
 
-    private final HierarchyWizardModel<T> model;
-
-    private Button interval;
-    private Button order;
-    private Button redaction;
-    
-    public HierarchyWizardPageRedaction(final HierarchyWizardModel<T> model) {
-        super(""); //$NON-NLS-1$
-        this.model = model;
-        setTitle(Resources.getMessage("HierarchyWizardPageFanout.1")); //$NON-NLS-1$
-        setDescription(Resources.getMessage("HierarchyWizardPageFanout.2")); //$NON-NLS-1$
+    final HierarchyWizardModelRedaction<T> model;
+    public HierarchyWizardPageRedaction(Controller controller, final HierarchyWizardModel<T> model, 
+                                        final HierarchyWizardPageFinal<T> finalPage) {
+        super(model.getRedactionModel(), finalPage);
+        this.model = model.getRedactionModel();
+        setTitle("Create a hierarchy by redacting characters");
+        setDescription("Specify the parameters");
         setPageComplete(true);
     }
-
-    @Override
-    public boolean canFlipToNextPage() {
-        return isPageComplete();
-    }
-
-    @Override
+    
     public void createControl(final Composite parent) {
-        final Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(SWTUtil.createFillGridData());
-        composite.setLayout(SWTUtil.createGridLayout(1));
         
-        // Create group
-        Group group1 = new Group(composite, SWT.NONE);
-        group1.setLayout(new RowLayout(SWT.VERTICAL));
-        this.interval = new Button(group1, SWT.RADIO);
-        this.interval.setText("Use intervals (for variables with ratio scale)");
-        if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
-            this.interval.setEnabled(false);
-        }
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(SWTUtil.createGridLayout(1, false));
         
-        this.order = new Button(group1, SWT.RADIO);
-        this.order.setText("Use ordering (e.g., for variables with ordinal scale");
-        this.redaction = new Button(group1, SWT.RADIO);
-        this.redaction.setText("Use redaction (e.g., for alphanumeric strings) ");
-        this.redaction.setEnabled(true);
+        Group group1 = new Group(composite, SWT.SHADOW_ETCHED_IN);
+        group1.setText("Alignment");
+        group1.setLayout(SWTUtil.createGridLayout(1, false));
+        group1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        final Button buttonLeftAlign = new Button(group1, SWT.RADIO);
+        buttonLeftAlign.setText("Align items to the left");
+        final Button buttonRightAlign = new Button(group1, SWT.RADIO);
+        buttonRightAlign.setText("Align items to the right");
+    
+        Group group2 = new Group(composite, SWT.SHADOW_ETCHED_IN);
+        group2.setText("Redaction");
+        group2.setLayout(SWTUtil.createGridLayout(1, false));
+        group2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        final Button buttonLeftRedact = new Button(group2, SWT.RADIO);
+        buttonLeftRedact.setText("Redact characters left to right");
+        final Button buttonRightRedact = new Button(group2, SWT.RADIO);
+        buttonRightRedact.setText("Redact characters right to left");
+    
+        Group group3 = new Group(composite, SWT.SHADOW_ETCHED_IN);
+        group3.setText("Characters");
+        group3.setLayout(SWTUtil.createGridLayout(2, false));
+        group3.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        Label label1 = new Label(group3, SWT.NONE);
+        label1.setText("Padding character");
+        final Combo comboPaddingChar = new Combo(group3, SWT.READ_ONLY);
+        comboPaddingChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        Label label2 = new Label(group3, SWT.NONE);
+        label2.setText("Redaction character");
+        final Combo comboRedactionChar = new Combo(group3, SWT.READ_ONLY);
+        comboRedactionChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        
+        createItems(comboPaddingChar, true);
+        createItems(comboRedactionChar, false);
+    
+        buttonLeftAlign.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                if (buttonLeftAlign.getSelection()) {
+                    model.setAlignmentOrder(Order.LEFT_TO_RIGHT);
+                }
+            }
+        });
+        buttonRightAlign.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                if (buttonRightAlign.getSelection()) {
+                    model.setAlignmentOrder(Order.RIGHT_TO_LEFT);
+                }
+            }
+        });
+    
+        buttonLeftRedact.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                if (buttonLeftRedact.getSelection()) {
+                    model.setRedactionOrder(Order.LEFT_TO_RIGHT);
+                }
+            }
+        });
+        buttonRightRedact.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                if (buttonRightRedact.getSelection()) {
+                    model.setRedactionOrder(Order.RIGHT_TO_LEFT);
+                }
+            }
+        });
+        
+        comboPaddingChar.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                int index = comboPaddingChar.getSelectionIndex();
+                if (index>=0){
+                    model.setPaddingCharacter(comboPaddingChar.getItem(index).toCharArray()[1]);
+                }
+            }
+        });
+        
+        comboRedactionChar.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                int index = comboRedactionChar.getSelectionIndex();
+                if (index>=0){
+                    model.setRedactionCharacter(comboRedactionChar.getItem(index).toCharArray()[1]);
+                }
+            }
+        });
+        
+        buttonLeftAlign.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
+        buttonRightAlign.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
+        buttonLeftRedact.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
+        buttonRightRedact.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
+    
+        comboPaddingChar.select(indexOf(comboPaddingChar, model.getPaddingCharacter()));
+        comboRedactionChar.select(indexOf(comboRedactionChar, model.getRedactionCharacter()));
+        
         setControl(composite);
     }
 
-    @Override
-    public boolean isPageComplete() {
-        return true;
+    void createItems(Combo combo, boolean padding){
+        if (padding) combo.add("( )");
+        combo.add("(*)");
+        combo.add("(x)");
+        combo.add("(#)");
+        combo.add("(-)");
+    }
+    
+    int indexOf(Combo combo, char value){
+        for (int i=0; i < combo.getItems().length; i++) {
+            if (combo.getItem(i).toCharArray()[1]==value) {
+                return i;
+            }
+        }
+        combo.add("("+String.valueOf(value)+")");
+        return combo.getItemCount()-1;
     }
 }

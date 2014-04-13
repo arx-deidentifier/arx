@@ -20,7 +20,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingView{
+public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardModelAbstract<T>{
     
     /**
      * This class represents a group
@@ -124,7 +124,7 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
     /** Var */
     private HierarchyWizardGroupingRenderer<T>          renderer      = new HierarchyWizardGroupingRenderer<T>(this);
     /** Var */
-    private List<HierarchyWizardGroupingView>           components    = new ArrayList<HierarchyWizardGroupingView>();
+    private List<HierarchyWizardView>           components    = new ArrayList<HierarchyWizardView>();
 
     /**
      * Creates a new instance
@@ -132,7 +132,8 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
      * @param intervals
      */
     @SuppressWarnings("unchecked")
-    public HierarchyWizardGroupingModel(DataType<T> type, boolean intervals){
+    public HierarchyWizardModelGrouping(String[] data, DataType<T> type, boolean intervals){
+        super(data);
         this.type = type;
         this.showIntervals = intervals;
         if (intervals) {
@@ -156,7 +157,8 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
      * Creates a new instance from the given builder
      * @param builder
      */
-    public HierarchyWizardGroupingModel(HierarchyBuilderIntervalBased<T> builder){
+    public HierarchyWizardModelGrouping(String[] data, HierarchyBuilderIntervalBased<T> builder){
+        super(data);
         this.type = builder.getDataType();
         this.showIntervals = true;
         this.lower = new HierarchyWizardGroupingRange<T>(builder.getLowerRange());
@@ -178,7 +180,8 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
      * Creates a new instance from the given builder
      * @param builder
      */
-    public HierarchyWizardGroupingModel(HierarchyBuilderOrderBased<T> builder){
+    public HierarchyWizardModelGrouping(String[] data, HierarchyBuilderOrderBased<T> builder){
+        super(data);
         this.type = builder.getDataType();
         this.showIntervals = false;
         this.function = builder.getDefaultFunction();
@@ -295,10 +298,10 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
     /**
      * @return the groups
      */
-    public List<List<HierarchyWizardGroupingGroup<T>>> getGroups() {
+    public List<List<HierarchyWizardGroupingGroup<T>>> getModelGroups() {
         return groups;
     }
-
+    
     /**
      * @return the intervals
      */
@@ -401,7 +404,7 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
      * Registers a part of the UI
      * @param component
      */
-    public void register(HierarchyWizardGroupingView component){
+    public void register(HierarchyWizardView component){
         this.components.add(component);
     }
 
@@ -472,8 +475,9 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
      * Update all UI components
      */
     public void update(){
+        super.update();
         renderer.update();
-        for (HierarchyWizardGroupingView c : components){
+        for (HierarchyWizardView c : components){
             c.update();
         }
     }
@@ -482,9 +486,9 @@ public class HierarchyWizardGroupingModel<T> implements HierarchyWizardGroupingV
      * Update all UI components, apart from the sender
      * @param sender
      */
-    public void update(HierarchyWizardGroupingView sender){
+    public void update(HierarchyWizardView sender){
         renderer.update();
-        for (HierarchyWizardGroupingView c : components){
+        for (HierarchyWizardView c : components){
             if (c != sender) {
                 c.update();
             }

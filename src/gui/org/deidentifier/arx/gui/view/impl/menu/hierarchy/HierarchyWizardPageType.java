@@ -19,19 +19,17 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 
-public class HierarchyWizardPageType<T> extends WizardPage{
+public class HierarchyWizardPageType<T> extends WizardPage {
 
     private final HierarchyWizardModel<T> model;
 
@@ -40,12 +38,12 @@ public class HierarchyWizardPageType<T> extends WizardPage{
     private Button redaction;
     private IWizardPage next;
     private final HierarchyWizardPageIntervals<T> intervalPage;
-    private final HierarchyWizardPageOrdering<T> orderPage;
+    private final HierarchyWizardPageOrder<T> orderPage;
     private final HierarchyWizardPageRedaction<T> redactionPage;
     
     public HierarchyWizardPageType(final HierarchyWizardModel<T> model,
                                    final HierarchyWizardPageIntervals<T> intervalPage,
-                                   final HierarchyWizardPageOrdering<T> orderPage,
+                                   final HierarchyWizardPageOrder<T> orderPage,
                                    final HierarchyWizardPageRedaction<T> redactionPage) {
         
         super(""); //$NON-NLS-1$
@@ -54,8 +52,8 @@ public class HierarchyWizardPageType<T> extends WizardPage{
         this.intervalPage = intervalPage;
         this.model = model;
         this.next = intervalPage;
-        setTitle(Resources.getMessage("HierarchyWizardPageFanout.1")); //$NON-NLS-1$
-        setDescription(Resources.getMessage("HierarchyWizardPageFanout.2")); //$NON-NLS-1$
+        setTitle("Create a generalization hierarchy");
+        setDescription("Specify the type of hierarchy");
         setPageComplete(true);
     }
 
@@ -68,21 +66,19 @@ public class HierarchyWizardPageType<T> extends WizardPage{
     public void createControl(final Composite parent) {
         final Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(SWTUtil.createFillGridData());
-        composite.setLayout(SWTUtil.createGridLayout(1));
+        composite.setLayout(SWTUtil.createGridLayout(1, false));
         
-        // Create group
-        Group group1 = new Group(composite, SWT.NONE);
-        group1.setLayoutData(SWTUtil.createFillGridData());
-        group1.setLayout(SWTUtil.createGridLayout(1));
-        this.interval = new Button(group1, SWT.RADIO);
+        this.interval = new Button(composite, SWT.RADIO);
         this.interval.setText("Use intervals (for variables with ratio scale)");
         if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
             this.interval.setEnabled(false);
         }
         
-        this.order = new Button(group1, SWT.RADIO);
+        this.order = new Button(composite, SWT.RADIO);
         this.order.setText("Use ordering (e.g., for variables with ordinal scale");
-        this.redaction = new Button(group1, SWT.RADIO);
+        this.order.setEnabled(true);
+        
+        this.redaction = new Button(composite, SWT.RADIO);
         this.redaction.setText("Use redaction (e.g., for alphanumeric strings) ");
         this.redaction.setEnabled(true);
         
@@ -90,33 +86,47 @@ public class HierarchyWizardPageType<T> extends WizardPage{
             @Override public void widgetSelected(SelectionEvent arg0) {
                 if (interval.getSelection()) {
                     next = intervalPage;
+                    model.setType(Type.INTERVAL_BASED);
                 }
             }
         });
 
         this.order.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                if (interval.getSelection()) {
+                if (order.getSelection()) {
                     next = orderPage;
+                    model.setType(Type.ORDER_BASED);
                 }
             }
         });
 
         this.redaction.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                if (interval.getSelection()) {
+                if (redaction.getSelection()) {
                     next = redactionPage;
+                    model.setType(Type.REDACTION_BASED);
                 }
             }
         });
+        
+        interval.setSelection(model.getType() == Type.INTERVAL_BASED);
+        order.setSelection(model.getType() == Type.ORDER_BASED);
+        redaction.setSelection(model.getType() == Type.REDACTION_BASED);
+        
+        switch (model.getType()){
+        case INTERVAL_BASED:  next = intervalPage;  break;
+        case ORDER_BASED:     next = orderPage;     break;
+        case REDACTION_BASED: next = redactionPage; break;
+        default:
+            throw new IllegalStateException("Unknown type of builder");
+        }
         
         setControl(composite);
     }
 
     @Override
     public IWizardPage getNextPage() {
-        // TODO Auto-generated method stub
-        return super.getNextPage();
+        return next;
     }
 
     @Override
