@@ -40,7 +40,7 @@ import org.deidentifier.arx.io.datasource.Column;
  * in order for {@link #getProgress() to be able to return the percentage of
  * data that has already been processed.
  */
-public class CSVFileImportAdapter extends DataSourceImportAdapter {
+public class CSVFileImportAdapter extends ImportAdapter {
 
     /**
      * The configuration describing the CSV file being used

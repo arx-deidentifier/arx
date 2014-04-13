@@ -39,7 +39,7 @@ import org.deidentifier.arx.io.datasource.JdbcConfiguration;
  * have in common. Data sources itself are described by
  * {@link Configuration}.
  */
-abstract public class DataSourceImportAdapter implements Iterator<String[]> {
+abstract public class ImportAdapter implements Iterator<String[]> {
 
     /**
      * Array of datatypes describing the columns
@@ -64,7 +64,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      * Factory method
      *
      * This will return an appropriate ImportAdapter for each implemented
-     * data source {@link DataSourceImportAdapter}. Refer to the specific
+     * data source {@link ImportAdapter}. Refer to the specific
      * ImportAdapter itself for details.
      *
      * @param config {@link #config}
@@ -73,7 +73,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @throws IOException
      */
-    public static DataSourceImportAdapter create(Configuration config) throws IOException {
+    public static ImportAdapter create(Configuration config) throws IOException {
 
         if (config instanceof CSVFileConfiguration) {
 
@@ -100,7 +100,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @param config {@link #config}
      */
-    protected DataSourceImportAdapter(Configuration config) {
+    protected ImportAdapter(Configuration config) {
 
         this.config = config;
 

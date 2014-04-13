@@ -15,7 +15,7 @@ import org.deidentifier.arx.io.datasource.JdbcConfiguration;
  * This adapter can import data from JDBC sources. The source itself is
  * described by an appropriate {@link JdbcConfiguration} object.
  */
-public class JdbcImportAdapter extends DataSourceImportAdapter {
+public class JdbcImportAdapter extends ImportAdapter {
     
     /**
      * The configuration describing the CSV file being used
@@ -110,13 +110,13 @@ public class JdbcImportAdapter extends DataSourceImportAdapter {
     /**
      * Returns an array with indexes of columns that should be imported
      *
-     * This uses {@link DataSourceImportAdapter#getIndexesToImport()} and
+     * This uses {@link ImportAdapter#getIndexesToImport()} and
      * increments each element by one, because JDBC starts counting at 1
      * when referring to columns.
      *
      * @return Array containing indexes of columns that should be imported
      *
-     * @see {@link DataSourceImportAdapter#getIndexesToImport()}
+     * @see {@link ImportAdapter#getIndexesToImport()}
      */
     @Override
     protected int[] getIndexesToImport()

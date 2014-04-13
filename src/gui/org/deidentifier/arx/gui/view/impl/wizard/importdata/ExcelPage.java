@@ -33,7 +33,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.io.datasource.Column;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
-import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
+import org.deidentifier.arx.io.importdata.ImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -327,7 +327,7 @@ public class ExcelPage extends WizardPage {
      *
      * This goes through up to {@link ImportData#previewDataMaxLines} lines
      * within the appropriate file and reads them in. It uses
-     * {@link DataSourceImportAdapter} in combination with
+     * {@link ImportAdapter} in combination with
      * {@link ExcelFileConfiguration} to actually read in the data.
      */
     private void readPreview() throws IOException {
@@ -375,7 +375,7 @@ public class ExcelPage extends WizardPage {
         }
 
         /* Create adapter to import data with given configuration */
-        DataSourceImportAdapter importAdapter = DataSourceImportAdapter.create(config);
+        ImportAdapter importAdapter = ImportAdapter.create(config);
 
         /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
         int count = 0;

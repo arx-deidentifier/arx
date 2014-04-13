@@ -42,7 +42,7 @@ import org.deidentifier.arx.io.datasource.ExcelFileConfiguration.ExcelFileTypes;
  *
  * @see <a href="https://poi.apache.org/">Aapache POI</a>
  */
-public class ExcelFileImportAdapter extends DataSourceImportAdapter {
+public class ExcelFileImportAdapter extends ImportAdapter {
 
     /**
      * The configuration describing the Excel file

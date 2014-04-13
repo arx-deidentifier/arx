@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.datasource.Configuration;
-import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
+import org.deidentifier.arx.io.importdata.ImportAdapter;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -53,9 +53,9 @@ public class WorkerImport extends Worker<Data> {
 
         arg0.beginTask(Resources.getMessage("WorkerImport.0"), 100); //$NON-NLS-1$
 
-        final DataSourceImportAdapter adapter;
+        final ImportAdapter adapter;
         try {
-            adapter = DataSourceImportAdapter.create(config);
+            adapter = ImportAdapter.create(config);
         } catch (final Exception e) {
             error = e;
             arg0.done();
