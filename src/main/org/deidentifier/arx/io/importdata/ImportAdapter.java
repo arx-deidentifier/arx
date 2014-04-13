@@ -36,8 +36,7 @@ import org.deidentifier.arx.io.datasource.column.Column;
  * Base adapter for all data sources
  *
  * This defines properties and methods that all data source import adapters
- * have in common. Data sources itself are described by
- * {@link Configuration}.
+ * have in common. Data sources itself are described by {@link Configuration}.
  */
 abstract public class ImportAdapter implements Iterator<String[]> {
 
@@ -64,8 +63,8 @@ abstract public class ImportAdapter implements Iterator<String[]> {
      * Factory method
      *
      * This will return an appropriate ImportAdapter for each implemented
-     * data source {@link ImportAdapter}. Refer to the specific
-     * ImportAdapter itself for details.
+     * data source {@link ImportAdapter}. Refer to the specific ImportAdapter
+     * itself for details.
      *
      * @param config {@link #config}
      *

@@ -43,7 +43,7 @@ public class JdbcImportAdapter extends ImportAdapter {
     private JdbcConfiguration config;
 
     /**
-     * ResultSet to return
+     * ResultSet containing rows to return
      *
      * @see {@link #next()}
      */
@@ -76,6 +76,8 @@ public class JdbcImportAdapter extends ImportAdapter {
      * @param config {@link #config}
      *
      * @throws IOException In case of communication errors with JDBC
+     *
+     * @todo Fix IOException
      */
     protected JdbcImportAdapter(JdbcConfiguration config) throws IOException
     {
