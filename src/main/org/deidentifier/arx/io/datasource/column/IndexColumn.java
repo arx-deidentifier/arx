@@ -19,24 +19,34 @@
 package org.deidentifier.arx.io.datasource.column;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.io.datasource.ICanContainHeader;
 
 
+/**
+ * Superclass for column types that are only referred to by an index
+ *
+ * @see {@link ExcelColumn}
+ * @see {@link CSVColumn}
+ */
 abstract public class IndexColumn extends Column implements IIndexedColumn {
 
     /**
-     * Index of column
+     * Index this column refers to
      *
-     * @note Counting starts at 0, which would be the first column
+     * @note Counting starts usually at 0
      */
     private int index;
+
 
     /**
      * Creates a new instance of this object with the given parameters
      *
-     * This does not assign a name to the column.
-     *
      * @param index {@link #index}
      * @param datatype {@link #dataType}
+     *
+     * @note This does not assign a name to the column explicitly. The name
+     * will be assigned later on either from a header {@link ICanContainHeader}
+     * or by some automatic naming scheme.
      */
     public IndexColumn(int index, DataType<?> datatype) {
 
@@ -44,6 +54,15 @@ abstract public class IndexColumn extends Column implements IIndexedColumn {
 
     }
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     *
+     * @param index {@link #index}
+     * @param aliasName {@link Column#setAliasName(String)}
+     * @param datatype {@link #dataType}
+     *
+     * @note This does assign an alias name to the column explicitly.
+     */
     public IndexColumn(int index, String aliasName, DataType<?> datatype)
     {
 

@@ -21,24 +21,36 @@ package org.deidentifier.arx.io.datasource.column;
 import org.deidentifier.arx.DataType;
 
 
+/**
+ * Represents a single JDBC data column
+ *
+ * JDBC columns can be referred to by both an index ({@link IIndexColumn})
+ * and by name ({@link INamedColumn}. Use the appropriate constructor that
+ * suits your need.
+ *
+ * @note For now only the index based addressing works
+ *
+ * @warning Don't mix name based and index based addressing
+ *
+ * @todo Implement name based addressing
+ */
 public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
     /**
-     * Index of column
+     * Index this column refers to
      *
-     * @note Counting starts at 0, which would be the first column
+     * @note Counting starts usually at 0
      */
     private int index;
 
+    /**
+     * Name this column refers to
+     */
     private String name;
+
 
     /**
      * Creates a new instance of this object with the given parameters
-     *
-     * This does not assign a name to the column.
-     *
-     * @param index {@link #index}
-     * @param datatype {@link #dataType}
      */
     public JdbcColumn(int index, DataType<?> datatype) {
 
@@ -46,6 +58,9 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
     }
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     */
     public JdbcColumn(int index, String aliasName, DataType<?> datatype)
     {
 
@@ -54,6 +69,9 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
     }
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     */
     public JdbcColumn(String aliasName, DataType<?> datatype)
     {
 
@@ -61,6 +79,9 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
     }
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     */
     public JdbcColumn(String name, String aliasName, DataType<?> datatype)
     {
 
@@ -87,7 +108,9 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
     }
 
-
+    /**
+     * @return {@link #name}
+     */
     @Override
     public String getName()
     {
@@ -96,7 +119,9 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
     }
 
-
+    /**
+     * @param name {@link #name}
+     */
     @Override
     public void setName(String name)
     {

@@ -21,8 +21,18 @@ package org.deidentifier.arx.io.datasource.column;
 import org.deidentifier.arx.DataType;
 
 
+/**
+ * Represents a single CSV data column
+ *
+ * CSV columns are referred to by an index (see {@link IndexColumn}).
+ */
 public class CSVColumn extends IndexColumn {
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     *
+     * @see {@link IndexColumn}
+     */
     public CSVColumn(int index, DataType<?> datatype)
     {
 
@@ -30,6 +40,11 @@ public class CSVColumn extends IndexColumn {
 
     }
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     *
+     * @see {@link IndexColumn}
+     */
     public CSVColumn(int index, String aliasName, DataType<?> datatype)
     {
 

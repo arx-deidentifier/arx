@@ -19,10 +19,19 @@
 package org.deidentifier.arx.io.datasource.column;
 
 
+/**
+ * Interface to be implemented when columns can be referred to by a name
+ */
 public interface INamedColumn {
 
+    /**
+     * Returns the name this column refers to
+     */
     public String getName();
 
+    /**
+     * Sets the name this columns refers to
+     */
     public void setName(String name);
 
 }

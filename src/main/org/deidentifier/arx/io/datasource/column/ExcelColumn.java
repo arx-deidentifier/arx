@@ -21,8 +21,18 @@ package org.deidentifier.arx.io.datasource.column;
 import org.deidentifier.arx.DataType;
 
 
+/**
+ * Represents a single Excel data column
+ *
+ * Excel columns are referred to by an index (see {@link IndexColumn}).
+ */
 public class ExcelColumn extends IndexColumn {
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     *
+     * @see {@link IndexColumn}
+     */
     public ExcelColumn(int index, DataType<?> datatype)
     {
 
@@ -30,6 +40,11 @@ public class ExcelColumn extends IndexColumn {
 
     }
 
+    /**
+     * Creates a new instance of this object with the given parameters
+     *
+     * @see {@link IndexColumn}
+     */
     public ExcelColumn(int index, String aliasName, DataType<?> datatype)
     {
 

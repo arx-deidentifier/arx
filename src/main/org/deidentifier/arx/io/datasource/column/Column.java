@@ -25,12 +25,15 @@ import org.deidentifier.arx.DataType;
  * Represents a single data column
  *
  * This represents a single column that will be imported from. Each column
- * consists of an {@link #index}, {@link #aliasName} and {@link #dataType}.
+ * at least consists of an {@link #aliasName} and {@link #dataType}.
  */
 abstract public class Column {
 
     /**
-     * Name of column
+     * Alias name of column
+     *
+     * @note Note that this is alias name of the column. The original names
+     * might be different in case of {@link INamedColumn}.
      */
     private String aliasName;
 
