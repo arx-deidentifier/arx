@@ -305,6 +305,7 @@ public class JdbcPage extends WizardPage {
 
             }
 
+            wizardImport.getData().setJdbcConnection(connection);
             wizardImport.getData().setJdbcTables(tables);
 
             setPageComplete(true);

@@ -19,6 +19,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +104,16 @@ public class ImportData {
      * List of potential JDBC tables
      */
     private List<String> jdbcTables;
+
+    /**
+     * Name of table selected by user
+     */
+    private String selectedJdbcTable;
+
+    /**
+     * Jdbc connection potentially used throughout the wizard
+     */
+    private Connection jdbcConnection;
 
     /**
      * Maximum number of lines to be loaded for preview purposes
@@ -326,6 +337,46 @@ public class ImportData {
     {
 
         return jdbcTables;
+
+    }
+
+    /**
+     * @param selectedJdbcTable {@link #selectedJdbcTable}
+     */
+    public void setSelectedJdbcTable(String selectedJdbcTable)
+    {
+
+        this.selectedJdbcTable = selectedJdbcTable;
+
+    }
+
+    /**
+     * @return {@link #selectedJdbcTable}
+     */
+    public String getSelectedJdbcTable()
+    {
+
+        return selectedJdbcTable;
+
+    }
+
+    /**
+     * @param connection {@link #jdbcConnection}
+     */
+    public void setJdbcConnection(Connection jdbcConnection)
+    {
+
+        this.jdbcConnection = jdbcConnection;
+
+    }
+
+    /**
+     * @return {@link #jdbcConnection}
+     */
+    public Connection getJdbcConnection()
+    {
+
+        return jdbcConnection;
 
     }
 

@@ -18,11 +18,19 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.io.datasource.column.JdbcColumn;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
@@ -36,15 +44,11 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class TablePage extends WizardPage {
 
-    @SuppressWarnings("unused")
     private ImportDataWizard wizardImport;
 
+    /* Widgets */
     private Table table;
-    private TableViewer checkboxTableViewer;
-    private TableColumn tblclmnName;
-    private TableViewerColumn tableViewerColumnName;
-    private TableColumn tblclmnNumberOfRows;
-    private TableViewerColumn tableViewerNumberOfRows;
+    private TableViewer tableViewer;
 
 
     public TablePage(ImportDataWizard wizardImport)
@@ -67,65 +71,132 @@ public class TablePage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
-        checkboxTableViewer.setContentProvider(new ArrayContentProvider());
-        ((CheckboxTableViewer)checkboxTableViewer).addCheckStateListener(new ICheckStateListener() {
+        tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.setContentProvider(new ArrayContentProvider());
+        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
-            public void checkStateChanged(CheckStateChangedEvent event)
+            public void selectionChanged(SelectionChangedEvent arg0)
             {
 
-                setPageComplete(false);
+                int index = table.getSelectionIndex();
+                String selectedTable = wizardImport.getData().getJdbcTables().get(index);
 
-                // TODO
+                readColumns(selectedTable);
+                readPreview(selectedTable);
+
+                wizardImport.getData().setSelectedJdbcTable(selectedTable);
+                setPageComplete(true);
 
             }
 
         });
 
-        table = checkboxTableViewer.getTable();
-        table.setHeaderVisible(true);
+        table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-        tableViewerColumnName = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+        TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
             public String getText(Object element)
             {
 
-                // TODO
-
-                return "";
+                return (String)element;
 
             }
 
         });
 
-        tblclmnName = tableViewerColumnName.getColumn();
-        tblclmnName.setToolTipText("Name of the column");
-        tblclmnName.setWidth(300);
-        tblclmnName.setText("Name");
-
-        tableViewerNumberOfRows = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        tableViewerNumberOfRows.setLabelProvider(new ColumnLabelProvider() {
-
-            @Override
-            public String getText(Object element)
-            {
-
-                return null;
-
-            }
-
-        });
-
-        tblclmnNumberOfRows = tableViewerNumberOfRows.getColumn();
-        tblclmnNumberOfRows.setToolTipText("Number of rows");
-        tblclmnNumberOfRows.setWidth(100);
-        tblclmnNumberOfRows.setText("# rows");
+        TableColumn tblclmnColumnName = tableViewerColumnName.getColumn();
+        tblclmnColumnName.setWidth(100);
+        tblclmnColumnName.setText("Name");
 
         setPageComplete(false);
+
+    }
+
+    private void readColumns(String selectedTable)
+    {
+
+        Connection connection = wizardImport.getData().getJdbcConnection();
+        List<WizardColumn> columns = new ArrayList<WizardColumn>();
+
+        int i = 0;
+        try {
+
+            ResultSet rs = connection.getMetaData().getColumns(null, null, selectedTable, null);
+
+            while(rs.next()) {
+
+                JdbcColumn column = new JdbcColumn(i++, rs.getString("COLUMN_NAME"), DataType.STRING);
+                columns.add(new WizardColumn(column));
+
+            }
+
+        } catch (SQLException e) {
+
+            setErrorMessage("Couldn't read columns");
+
+        }
+
+        wizardImport.getData().setWizardColumns(columns);
+
+    }
+
+    protected void readPreview(String selectedTable)
+    {
+
+        List<String[]> previewData = new ArrayList<String[]>();
+        Connection connection = wizardImport.getData().getJdbcConnection();
+
+        try {
+
+            Statement statement = connection.createStatement();
+            statement.execute("SELECT * FROM " + selectedTable);
+            ResultSet rs = statement.getResultSet();
+
+            int i = 0;
+            while(rs.next() && i < ImportData.previewDataMaxLines) {
+
+                String[] previewRow = new String[rs.getMetaData().getColumnCount()];
+
+                for (int j = 0; j < previewRow.length; j++) {
+
+                    previewRow[j] = rs.getString(j + 1);
+
+                }
+
+                previewData.add(previewRow);
+                i++;
+
+            }
+
+        } catch (SQLException e) {
+
+            setErrorMessage("Couldn't read preview");
+
+        }
+
+        wizardImport.getData().setPreviewData(previewData);
+
+    }
+
+    @Override
+    public void setVisible(boolean visible)
+    {
+
+        super.setVisible(visible);
+
+        if (visible) {
+
+            tableViewer.setInput(wizardImport.getData().getJdbcTables());
+
+        } else {
+
+            setPageComplete(false);
+
+        }
 
     }
 
