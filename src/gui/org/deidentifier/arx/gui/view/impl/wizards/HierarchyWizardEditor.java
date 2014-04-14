@@ -28,6 +28,8 @@ import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardEditorRenderer.
 import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
 import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -38,7 +40,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 /**
@@ -49,18 +50,18 @@ import org.eclipse.swt.widgets.TabItem;
  */
 public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T> {
 
-    /** Var */
-    private HierarchyWizardModelGrouping<T>      model;
-    /** Var */
-    private Composite                            composite;
-    /** Var */
-    private Composite                            canvascomposite;
-    /** Var */
-    private ScrolledComposite                    scrolledcomposite;
-    /** Var */
-    private TabFolder                            folder;
-    /** Var */
-    private HierarchyWizardEditorMenu<T> menu;
+	/** Var */
+	private HierarchyWizardModelGrouping<T> model;
+	/** Var */
+	private Composite composite;
+	/** Var */
+	private Composite canvascomposite;
+	/** Var */
+	private ScrolledComposite scrolledcomposite;
+	/** Var */
+	private CTabFolder folder;
+	/** Var */
+	private HierarchyWizardEditorMenu<T> menu;
     
     /**
      * Creates a new instance
@@ -115,12 +116,14 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         
         this.menu = new HierarchyWizardEditorMenu<T>(composite, model);
         
-        this.folder = new TabFolder(composite, SWT.BORDER);
+        this.folder = new CTabFolder(composite, SWT.BORDER);
+        this.folder.setSimple(false);
         this.folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.createGeneralTab(folder);
         if (model.isShowIntervals()) this.createBoundsTab(folder);
         if (model.isShowIntervals()) this.createIntervalTab(folder);
         this.createGroupTab(folder);
+        this.folder.setSelection(0);
         
         this.model.update();
     }
@@ -148,8 +151,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      * Create a tab
      * @param tabFolder
      */
-    private void createBoundsTab(TabFolder tabFolder) {
-        TabItem tabItem4 = new TabItem(tabFolder, SWT.NULL);
+    private void createBoundsTab(CTabFolder tabFolder) {
+    	CTabItem tabItem4 = new CTabItem(tabFolder, SWT.NULL);
         tabItem4.setText("Range");
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
@@ -162,8 +165,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      * Create a tab
      * @param tabFolder
      */
-    private void createGeneralTab(TabFolder tabFolder) {
-        TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
+    private void createGeneralTab(CTabFolder tabFolder) {
+    	CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NULL);
         tabItem1.setText("General");
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
@@ -177,8 +180,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      * Create a tab
      * @param tabFolder
      */
-    private void createGroupTab(TabFolder tabFolder) {
-        TabItem tabItem3 = new TabItem(tabFolder, SWT.NULL);
+    private void createGroupTab(CTabFolder tabFolder) {
+    	CTabItem tabItem3 = new CTabItem(tabFolder, SWT.NULL);
         tabItem3.setText("Group");
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(1, false));
@@ -191,8 +194,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      * Create a tab
      * @param tabFolder
      */
-    private void createIntervalTab(TabFolder tabFolder) {
-        TabItem tabItem2 = new TabItem(tabFolder, SWT.NULL);
+    private void createIntervalTab(CTabFolder tabFolder) {
+        CTabItem tabItem2 = new CTabItem(tabFolder, SWT.NULL);
         tabItem2.setText("Interval");
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
