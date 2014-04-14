@@ -41,7 +41,6 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
-import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -234,6 +233,8 @@ public class WorkerSave extends Worker<Model> {
         // Write directly because of size
         final FileBuilder b = new FileBuilder(new OutputStreamWriter(zip));
         final XMLWriter writer = new XMLWriter(b);
+        
+        writer.write(vocabulary.getHeader());
 
         // Build xml
         writer.indent(vocabulary.getLattice());

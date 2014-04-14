@@ -218,4 +218,13 @@ public class XMLWriter {
 		this.append(attribute);
 		this.append(">\n");
 	}
+
+	/**
+	 * Appends the string
+	 * @param string
+	 * @throws IOException 
+	 */
+	public void write(String string) throws IOException {
+		this.append(string);
+	}
 }
