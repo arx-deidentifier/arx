@@ -22,12 +22,15 @@ package org.deidentifier.arx.io.importdata;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.column.CSVColumn;
+import org.deidentifier.arx.io.datasource.column.Column;
 
 /**
  * Import adapter for CSV files
@@ -39,7 +42,7 @@ import org.deidentifier.arx.io.CSVFileConfiguration;
  * in order for {@link #getProgress() to be able to return the percentage of
  * data that has already been processed.
  */
-public class CSVFileImportAdapter extends DataSourceImportAdapter {
+public class CSVFileImportAdapter extends ImportAdapter {
 
     /**
      * The configuration describing the CSV file being used
@@ -138,6 +141,36 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
     }
 
     /**
+     * Returns an array with indexes of columns that should be imported
+     *
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes
+     * of columns that should be imported.
+     *
+     * @return Array containing indexes of columns that should be imported
+     */
+    protected int[] getIndexesToImport(){
+
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for(Column column : config.getColumns()) {
+
+            indexes.add(((CSVColumn) column).getIndex());
+
+        }
+
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+
+            result[i] = indexes.get(i);
+
+        }
+
+        return result;
+
+    }
+
+    /**
      * Indicates whether there is another element to return
      *
      * This returns true when the CSV file has another line, which would be
@@ -224,26 +257,26 @@ public class CSVFileImportAdapter extends DataSourceImportAdapter {
             Column column = columns.get(i);
 
             /* Check whether there is a header, which is not empty */
-            if (config.getContainsHeader() && !row[column.getIndex()].equals("")) {
+            if (config.getContainsHeader() && !row[((CSVColumn) column).getIndex()].equals("")) {
 
                 /* Assign name of CSV file itself */
-                header[i] = row[column.getIndex()];
+                header[i] = row[((CSVColumn) column).getIndex()];
 
             } else {
 
                 /* Nothing defined in header (or empty), build name manually */
-                header[i] = "Column #" + column.getIndex();
+                header[i] = "Column #" + ((CSVColumn) column).getIndex();
 
             }
 
-            if (column.getName() != null) {
+            if (column.getAliasName() != null) {
 
                 /* Name has been assigned explicitly */
-                header[i] = column.getName();
+                header[i] = column.getAliasName();
 
             }
 
-            column.setName(header[i]);
+            column.setAliasName(header[i]);
 
         }
 

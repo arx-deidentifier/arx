@@ -20,6 +20,7 @@ package org.deidentifier.arx.io.importdata;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,8 +30,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.deidentifier.arx.io.ExcelFileConfiguration;
-import org.deidentifier.arx.io.ExcelFileConfiguration.ExcelFileTypes;
+import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.ExcelFileConfiguration.ExcelFileTypes;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.ExcelColumn;
 
 /**
  * Import adapter for Excel files
@@ -41,7 +44,7 @@ import org.deidentifier.arx.io.ExcelFileConfiguration.ExcelFileTypes;
  *
  * @see <a href="https://poi.apache.org/">Aapache POI</a>
  */
-public class ExcelFileImportAdapter extends DataSourceImportAdapter {
+public class ExcelFileImportAdapter extends ImportAdapter {
 
     /**
      * The configuration describing the Excel file
@@ -161,6 +164,36 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
     }
 
     /**
+     * Returns an array with indexes of columns that should be imported
+     *
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes
+     * of columns that should be imported.
+     *
+     * @return Array containing indexes of columns that should be imported
+     */
+    protected int[] getIndexesToImport(){
+
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for(Column column : config.getColumns()) {
+
+            indexes.add(((ExcelColumn) column).getIndex());
+
+        }
+
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+
+            result[i] = indexes.get(i);
+
+        }
+
+        return result;
+
+    }
+
+    /**
      * Indicates whether there is another element to return
      *
      * This returns true when the file contains another line, which could be
@@ -259,8 +292,8 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
 
             Column column = columns.get(i);
 
-            lastRow.getCell(column.getIndex()).setCellType(Cell.CELL_TYPE_STRING);
-            String name = lastRow.getCell(column.getIndex()).getStringCellValue();
+            lastRow.getCell(((ExcelColumn) column).getIndex()).setCellType(Cell.CELL_TYPE_STRING);
+            String name = lastRow.getCell(((ExcelColumn) column).getIndex()).getStringCellValue();
 
             if (config.getContainsHeader() && !name.equals("")) {
 
@@ -270,18 +303,18 @@ public class ExcelFileImportAdapter extends DataSourceImportAdapter {
             } else {
 
                 /* Nothing defined in header (or empty), build name manually */
-                header[i] = "Column #" + column.getIndex();
+                header[i] = "Column #" + ((ExcelColumn) column).getIndex();
 
             }
 
-            if (column.getName() != null) {
+            if (column.getAliasName() != null) {
 
                 /* Name has been assigned explicitly */
-                header[i] = column.getName();
+                header[i] = column.getAliasName();
 
             }
 
-            column.setName(header[i]);
+            column.setAliasName(header[i]);
 
         }
 

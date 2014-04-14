@@ -16,32 +16,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io;
+package org.deidentifier.arx.io.datasource.column;
 
 
 /**
- * Interface for data configurations that can contain a header
- *
- * A header describes the columns itself, e.g. by naming them. Usually it will
- * be the first row, but there might be more complex configurations.
- *
- * TODO: Add getHeader() method and implement it for CSV and XLS
+ * Interface to be implemented when columns can be referred to by an index
  */
-public interface IDataSourceCanContainHeader {
+public interface IIndexedColumn {
 
     /**
-     * Indicates whether there is header
-     *
-     * A header is not necessarily mandatory. This returns a boolean value that
-     * describes whether or not the configuration contains a header or not.
-     *
-     * @return True if there is header, false otherwise
+     * Returns the index this column refers to
      */
-    public boolean getContainsHeader();
+    public int getIndex();
 
     /**
-     * @param containsHeader Whether or not a header is contained
+     * Sets the index this columns refers to
      */
-    public void setContainsHeader(boolean containsHeader);
+    public void setIndex(int index);
 
 }

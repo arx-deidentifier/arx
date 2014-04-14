@@ -26,7 +26,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.datasource.column.Column;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -252,7 +252,7 @@ public class ColumnPage extends WizardPage {
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Gets name of cells from  {@link Column#getName()}
+             * Gets name of cells from  {@link Column#getAliasName()}
              *
              * This also makes sure that all column names are unique using
              * {@link #uniqueColumnNames()}. In case there are duplicates it
@@ -276,7 +276,7 @@ public class ColumnPage extends WizardPage {
 
                 WizardColumn column = (WizardColumn)element;
 
-                return column.getColumn().getName();
+                return column.getColumn().getAliasName();
 
             }
 
@@ -447,7 +447,7 @@ public class ColumnPage extends WizardPage {
 
             for (WizardColumn c2 : wizardImport.getData().getWizardColumns()) {
 
-                if (c1 != c2 && c1.getColumn().getName().equals(c2.getColumn().getName())) {
+                if (c1 != c2 && c1.getColumn().getAliasName().equals(c2.getColumn().getAliasName())) {
 
                     return false;
 
@@ -603,24 +603,24 @@ public class ColumnPage extends WizardPage {
         }
 
         /**
-         * Retrieves name of column ({@link Column#getName()})
+         * Retrieves name of column ({@link Column#getAliasName()})
          */
         @Override
         protected Object getValue(Object arg0)
         {
 
-            return ((WizardColumn)arg0).getColumn().getName();
+            return ((WizardColumn)arg0).getColumn().getAliasName();
 
         }
 
         /**
-         * Sets name for given column ({@link Column#setName(String)})
+         * Sets name for given column ({@link Column#setAliasName(String)})
          */
         @Override
         protected void setValue(Object element, Object value)
         {
 
-            ((WizardColumn)element).getColumn().setName((String)value);
+            ((WizardColumn)element).getColumn().setAliasName((String)value);
             getViewer().update(element, null);
 
         }

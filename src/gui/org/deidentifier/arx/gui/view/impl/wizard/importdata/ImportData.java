@@ -19,10 +19,12 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.IndexColumn;
 
 
 /**
@@ -97,6 +99,21 @@ public class ImportData {
      * It will contain up to {@link #previewDataMaxLines} lines of data.
      */
     private List<String[]> previewData;
+
+    /**
+     * List of potential JDBC tables
+     */
+    private List<String> jdbcTables;
+
+    /**
+     * Name of table selected by user
+     */
+    private String selectedJdbcTable;
+
+    /**
+     * Jdbc connection potentially used throughout the wizard
+     */
+    private Connection jdbcConnection;
 
     /**
      * Maximum number of lines to be loaded for preview purposes
@@ -261,7 +278,7 @@ public class ImportData {
 
             for (String[] s : getPreviewData()) {
 
-                result.add(s[column.getColumn().getIndex()]);
+                result.add(s[((IndexColumn) column.getColumn()).getIndex()]); 
 
             }
 
@@ -300,6 +317,66 @@ public class ImportData {
         }
 
         return result;
+
+    }
+
+    /**
+     * @param jdbcTables {@link #jdbcTables}
+     */
+    public void setJdbcTables(List<String> jdbcTables)
+    {
+
+        this.jdbcTables = jdbcTables;
+
+    }
+
+    /**
+     * @return {@link #jdbcTables}
+     */
+    public List<String> getJdbcTables()
+    {
+
+        return jdbcTables;
+
+    }
+
+    /**
+     * @param selectedJdbcTable {@link #selectedJdbcTable}
+     */
+    public void setSelectedJdbcTable(String selectedJdbcTable)
+    {
+
+        this.selectedJdbcTable = selectedJdbcTable;
+
+    }
+
+    /**
+     * @return {@link #selectedJdbcTable}
+     */
+    public String getSelectedJdbcTable()
+    {
+
+        return selectedJdbcTable;
+
+    }
+
+    /**
+     * @param connection {@link #jdbcConnection}
+     */
+    public void setJdbcConnection(Connection jdbcConnection)
+    {
+
+        this.jdbcConnection = jdbcConnection;
+
+    }
+
+    /**
+     * @return {@link #jdbcConnection}
+     */
+    public Connection getJdbcConnection()
+    {
+
+        return jdbcConnection;
 
     }
 

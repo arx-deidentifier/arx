@@ -19,6 +19,8 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -27,15 +29,15 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
-import org.deidentifier.arx.io.datasource.column.ExcelColumn;
+import org.deidentifier.arx.io.datasource.JdbcConfiguration;
+import org.deidentifier.arx.io.datasource.column.JdbcColumn;
 
 /**
- * This class demonstrates how to use the API to import data from Excel (XLS
- * or XLSX) files. It is loosely based upon {@link Example2a} as the API is
- * quite similar.
+ * This class demonstrates how to use the API to import data from a JDBC
+ * source (MySQL in this case). It is loosely based upon previous examples
+ * ({@link Example2a} and {@link Example2b}) as the API is quite similar.
  */
-public class Example2b extends Example {
+public class Example2c extends Example {
 
     /**
      * Main entry point
@@ -44,15 +46,27 @@ public class Example2b extends Example {
 
         try {
 
-            // Define configuration for Excel file(s)
-            ExcelFileConfiguration importConfig = new ExcelFileConfiguration("data/test.xls", 0, true);
-            //ExcelFileConfiguration importConfig = new ExcelFileConfiguration("data/test.xlsx", 0, true);
+            // JDBC connection
+            // Type: MySQL
+            // Server: localhost
+            // Port: 3306
+            // Database: jdbc
+            // User: jdbc
+            // Password jdbc
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc", "jdbc", "jdbc");
+
+            // Configuration for JDBC source
+            // Table: test
+            JdbcConfiguration importConfig = new JdbcConfiguration(connection, "test");
 
             // Add columns (index, name and datatype) to configuration
             // The name is optional and can be detected/assigned automatically
-            importConfig.addColumn(new ExcelColumn(0, "Alter", DataType.INTEGER));
-            importConfig.addColumn(new ExcelColumn(1, DataType.STRING));
-            importConfig.addColumn(new ExcelColumn(2, DataType.STRING));
+            // Note that some columns are referenced by name, while others by
+            // an index. In is also possible to assign an aliasName!
+            importConfig.addColumn(new JdbcColumn("age", "Alter", DataType.INTEGER));
+            importConfig.addColumn(new JdbcColumn("gender", DataType.STRING));
+            importConfig.addColumn(new JdbcColumn(2, DataType.STRING));
 
             // Create data object
             final Data data = Data.create(importConfig);

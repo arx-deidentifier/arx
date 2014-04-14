@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.DataSourceConfiguration;
-import org.deidentifier.arx.io.importdata.Column;
-import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
+import org.deidentifier.arx.io.datasource.Configuration;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.importdata.ImportAdapter;
 
 /**
  * Represents input data for the ARX framework
@@ -177,7 +177,7 @@ public abstract class Data {
      * @param adapter An adapter
      * @return A Data object
      */
-    public static Data create(final DataSourceImportAdapter adapter) {
+    public static Data create(final ImportAdapter adapter) {
 
         Data data = new IterableData(adapter);
         
@@ -243,9 +243,9 @@ public abstract class Data {
      *
      * @throws IOException
      */
-    public static Data create(final DataSourceConfiguration config) throws IOException {
+    public static Data create(final Configuration config) throws IOException {
 
-        final Data data = new IterableData(DataSourceImportAdapter.create(config));
+        final Data data = new IterableData(ImportAdapter.create(config));
 
         // TODO: This is ugly
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();

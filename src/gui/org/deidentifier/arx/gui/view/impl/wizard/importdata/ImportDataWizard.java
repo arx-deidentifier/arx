@@ -22,10 +22,11 @@ package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceType;
-import org.deidentifier.arx.io.CSVFileConfiguration;
-import org.deidentifier.arx.io.DataSourceConfiguration;
-import org.deidentifier.arx.io.ExcelFileConfiguration;
-import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.Configuration;
+import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.JdbcConfiguration;
+import org.deidentifier.arx.io.datasource.column.Column;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -84,7 +85,7 @@ public class ImportDataWizard extends Wizard {
      * created once the wizard is about to finish {@link #performFinish()} and
      * can be accessed by {@link #getResultingConfiguration()}.
      */
-    private DataSourceConfiguration configuration = null;
+    private Configuration configuration = null;
 
 
     /**
@@ -137,8 +138,6 @@ public class ImportDataWizard extends Wizard {
      *
      * @note Note that for reasons of simplicity all pages are directly added
      * here. The page ordering is handled by {@link #getNextPage(IWizardPage)}.
-     *
-     * TODO Add pages in a more elegant way, e.g. using an array and loop
      */
     @Override
     public void addPages()
@@ -177,8 +176,6 @@ public class ImportDataWizard extends Wizard {
      * @param currentPage The page that is currently being shown
      *
      * @return The page that will be shown next
-     *
-     * TODO Implement in a more elegant way
      */
     @Override
     public IWizardPage getNextPage(IWizardPage currentPage) {
@@ -248,7 +245,7 @@ public class ImportDataWizard extends Wizard {
     /**
      * Gets executed once the wizard is about to finish
      *
-     * This will build an appropriate {@link DataSourceConfiguration} object,
+     * This will build an appropriate {@link Configuration} object,
      * depending upon the {@link ImportData#getSourceType() source type} and
      * the choices the user made during the process of the wizard.
      *
@@ -269,9 +266,13 @@ public class ImportDataWizard extends Wizard {
 
             configuration = new ExcelFileConfiguration(data.getFileLocation(), data.getExcelSheetIndex(), data.getFirstRowContainsHeader());
 
+        } else if (data.getSourceType() == SourceType.JDBC) {
+
+            configuration = new JdbcConfiguration(data.getJdbcConnection(), data.getSelectedJdbcTable());
+
         } else {
 
-            throw new RuntimeException("File configuration not supported");
+            throw new RuntimeException("Configuration type not supported");
 
         }
 
@@ -288,7 +289,7 @@ public class ImportDataWizard extends Wizard {
     /**
      * Returns a reference to DataSourceConfiguration
      *
-     * The wizard will built an appropriate {@link DataSourceConfiguration}
+     * The wizard will built an appropriate {@link Configuration}
      * object once it is about to finish {@link #performFinish()}. This object
      * can then be retrieved using this method.
      *
@@ -297,7 +298,7 @@ public class ImportDataWizard extends Wizard {
      *
      * @return {@link #configuration} The resulting data source configuration
      */
-    public DataSourceConfiguration getResultingConfiguration() {
+    public Configuration getResultingConfiguration() {
 
         return configuration;
 

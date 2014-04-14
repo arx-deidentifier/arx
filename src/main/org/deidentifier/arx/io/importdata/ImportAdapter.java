@@ -25,19 +25,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.io.CSVFileConfiguration;
-import org.deidentifier.arx.io.DataSourceConfiguration;
-import org.deidentifier.arx.io.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.Configuration;
+import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.JdbcConfiguration;
+import org.deidentifier.arx.io.datasource.column.Column;
 
 
 /**
  * Base adapter for all data sources
  *
  * This defines properties and methods that all data source import adapters
- * have in common. Data sources itself are described by
- * {@link DataSourceConfiguration}.
+ * have in common. Data sources itself are described by {@link Configuration}.
  */
-abstract public class DataSourceImportAdapter implements Iterator<String[]> {
+abstract public class ImportAdapter implements Iterator<String[]> {
 
     /**
      * Array of datatypes describing the columns
@@ -55,23 +56,23 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
     /**
      * Data source configuration used to import actual data
      */
-    private DataSourceConfiguration config = null;
+    private Configuration config = null;
 
 
     /**
      * Factory method
      *
      * This will return an appropriate ImportAdapter for each implemented
-     * data source {@link DataSourceImportAdapter}. Refer to the specific
-     * ImportAdapter itself for details.
+     * data source {@link ImportAdapter}. Refer to the specific ImportAdapter
+     * itself for details.
      *
      * @param config {@link #config}
      *
      * @return Specific ImportAdapter for given configuration
      *
-     * @throws IOException 
+     * @throws IOException
      */
-    public static DataSourceImportAdapter create(DataSourceConfiguration config) throws IOException {
+    public static ImportAdapter create(Configuration config) throws IOException {
 
         if (config instanceof CSVFileConfiguration) {
 
@@ -80,6 +81,10 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
         } else if (config instanceof ExcelFileConfiguration) {
 
             return new ExcelFileImportAdapter((ExcelFileConfiguration)config);
+
+        } else if (config instanceof JdbcConfiguration) {
+
+            return new JdbcImportAdapter((JdbcConfiguration)config);
 
         } else {
 
@@ -94,7 +99,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @param config {@link #config}
      */
-    protected DataSourceImportAdapter(DataSourceConfiguration config) {
+    protected ImportAdapter(Configuration config) {
 
         this.config = config;
 
@@ -125,36 +130,6 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns an array with indexes of columns that should be imported
-     *
-     * Only columns listed within {@link #columns} will be imported. This
-     * iterates over the list of columns and returns an array with indexes
-     * of columns that should be imported.
-     *
-     * @return Array containing indexes of columns that should be imported
-     */
-    protected int[] getIndexesToImport(){
-
-        /* Get indexes to import from */
-        ArrayList<Integer> indexes = new ArrayList<Integer>();
-        for(Column column : config.getColumns()) {
-
-            indexes.add(column.getIndex());
-
-        }
-
-        int[] result = new int[indexes.size()];
-        for (int i = 0; i < result.length; i++) {
-
-            result[i] = indexes.get(i);
-
-        }
-
-        return result;
-
-    }
-
-    /**
      * Returns the percentage of data has has already been imported
      *
      * @return Percentage of data already imported, 0 - 100
@@ -166,7 +141,7 @@ abstract public class DataSourceImportAdapter implements Iterator<String[]> {
      *
      * @return {@link #config}
      */
-    public DataSourceConfiguration getConfig() {
+    public Configuration getConfig() {
 
         return config;
 

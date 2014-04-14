@@ -31,9 +31,10 @@ import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.CSVFileConfiguration;
-import org.deidentifier.arx.io.importdata.Column;
-import org.deidentifier.arx.io.importdata.DataSourceImportAdapter;
+import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
+import org.deidentifier.arx.io.datasource.column.CSVColumn;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.importdata.ImportAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -203,8 +204,6 @@ public class CsvPage extends WizardPage {
              * {@link #comboLocation} when it wasn't already there. It is then
              * preselected within {@link #comboLocation} and the page is
              * evaluated {@see #evaluatePage}.
-             *
-             * @see {@link Controller#actionShowOpenFileDialog(String)}
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
@@ -396,7 +395,7 @@ public class CsvPage extends WizardPage {
      *
      * This goes through up to {@link ImportData#previewDataMaxLines} lines
      * within the appropriate file and reads them in. It uses
-     * {@link DataSourceImportAdapter} in combination with
+     * {@link ImportAdapter} in combination with
      * {@link CSVFileConfiguration} to actually read in the data.
      */
     private void readPreview() throws IOException {
@@ -430,7 +429,7 @@ public class CsvPage extends WizardPage {
         /* Iterate over columns and add it to {@link #allColumns} */
         for (int i = 0; i < firstLine.length; i++) {
 
-            Column column = new Column(i, DataType.STRING);
+            Column column = new CSVColumn(i, DataType.STRING);
             WizardColumn wizardColumn = new WizardColumn(column);
 
             wizardColumns.add(wizardColumn);
@@ -439,7 +438,7 @@ public class CsvPage extends WizardPage {
         }
 
         /* Create adapter to import data with given configuration */
-        DataSourceImportAdapter importAdapter = DataSourceImportAdapter.create(config);
+        ImportAdapter importAdapter = ImportAdapter.create(config);
 
         /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
         int count = 0;
@@ -480,15 +479,15 @@ public class CsvPage extends WizardPage {
         for (WizardColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(column.getColumn().getIndex()));
+            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(((CSVColumn) column.getColumn()).getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
 
             if (btnContainsHeader.getSelection()) {
 
-                tableColumn.setText(column.getColumn().getName());
-                tableColumn.setToolTipText("Column #" + column.getColumn().getIndex());
+                tableColumn.setText(column.getColumn().getAliasName());
+                tableColumn.setToolTipText("Column #" + ((CSVColumn) column.getColumn()).getIndex());
 
             }
 

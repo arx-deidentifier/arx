@@ -18,39 +18,84 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard.importdata;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 
+/**
+ * JDBC page
+ *
+ * This page offers means to specify connection details for a database. For
+ * now MySQL, PostgreSQL and SQLite is supported. In case of remote database
+ * types (i.e. MySQL and PostgreSQL) the user is asked for the server and a
+ * username and password. In case of SQLite the user can select any *.db file.
+ *
+ * After ther user specified the details a connection is established and
+ * passed on to {@link ImportData}.
+ *
+ * This includes:
+ *
+ * <ul>
+ *  <li>{@link ImportData#setJdbcConnection(Connection)<li>
+ *  <li>{@link ImportData#setJdbcTables(List)<li>
+ * </ul>
+ */
 public class JdbcPage extends WizardPage {
 
-    @SuppressWarnings("unused")
+    /**
+     * Reference to the wizard containing this page
+     */
     private ImportDataWizard wizardImport;
 
+    /* SWT Widgets */
     private Label lblType;
     private Combo comboType;
-    private Label lblServer;
+    private Composite compositeSwap;
     private Text txtServer;
-    private Label lblUsername;
-    private Text txtUsername;
-    private Label lblPassword;
-    private Text txtPassword;
-    private Label lblDatabase;
-    private Text txtDatabase;
-    private Label lblPort;
+    private StackLayout layout;
+    private Composite compositeRemote;
+    private Composite compositeLocal;
     private Text txtPort;
+    private Text txtUsername;
+    private Text txtPassword;
+    private Text txtDatabase;
+    private Label lblLocation;
+    private Combo comboLocation;
+    private Button btnChoose;
+    private Composite container;
+
+    /* String constants for different database types */
+    private static final String MYSQL = "MySQL";
+    private static final String POSTGRESQL = "PostgreSQL";
+    private static final String SQLITE = "SQLite";
 
 
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public JdbcPage(ImportDataWizard wizardImport)
     {
 
@@ -62,174 +107,405 @@ public class JdbcPage extends WizardPage {
 
     }
 
+    /**
+     * Creates the design of this page
+     *
+     * This adds all the controls to the page along with their listeners.
+     *
+     * @note {@link #compositeSwap} contains the actual text fields. Depending
+     * upon the status of {@link #comboType}, it will either display
+     * {@link #compositeRemote} or {@link #compositeLocal}.
+     */
     public void createControl(Composite parent)
     {
 
-        Composite container = new Composite(parent, SWT.NULL);
+        container = new Composite(parent, SWT.NULL);
 
         setControl(container);
         container.setLayout(new GridLayout(2, false));
 
+        /* Type label + combobox */
         lblType = new Label(container, SWT.NONE);
-        lblType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblType.setText("Type");
 
+        /* Combo for choosing database type */
         comboType = new Combo(container, SWT.READ_ONLY);
-        comboType.setItems(new String[] {"MySQL"});
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboType.select(0);
+        comboType.setItems(new String[] {MYSQL, POSTGRESQL, SQLITE});
         comboType.addSelectionListener(new SelectionAdapter() {
 
+            /**
+             * Swaps the composites, resets it and triggers a relayout
+             */
             @Override
-            public void widgetSelected(SelectionEvent arg0)
+            public void widgetSelected(SelectionEvent e)
             {
 
-                evaluatePage();
+                setMessage(null);
+                setErrorMessage(null);
+                setPageComplete(false);
+
+                /* Display compositeLocal in case of SQLite */
+                if (comboType.getText().equals(SQLITE)) {
+
+                    comboLocation.removeAll();
+                    layout.topControl = compositeLocal;
+
+                /* Display compositeRemote otherwise */
+                } else {
+
+                    layout.topControl = compositeRemote;
+
+                    /* Set default ports in case text field is empty */
+                    if (txtPort.getText().isEmpty()) {
+
+                        if (comboType.getText().equals(MYSQL)) {
+
+                            txtPort.setText("3306");
+
+                        } else if (comboType.getText().equals(POSTGRESQL)) {
+
+                            txtPort.setText("5432");
+
+                        }
+
+                    }
+
+                }
+
+                /* Trigger relayout */
+                compositeSwap.layout();
 
             }
 
         });
 
-        lblServer = new Label(container, SWT.NONE);
+        /* Placeholder */
+        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);
+
+        /* Swap composite */
+        compositeSwap = new Composite(container, SWT.NONE);
+        layout = new StackLayout();
+        compositeSwap.setLayout(layout);
+        compositeSwap.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+
+        /* Remote composite */
+        createCompositeRemote();
+
+        /* Local composite */
+        createCompositeLocal();
+
+        /* Mark page as incomplete by default */
+        setPageComplete(false);
+
+    }
+
+    /**
+     * Creates the content of {@link #compositeRemote}
+     *
+     * This adds all of the labels and text fields necessary to connect to a
+     * remote database server. If everything is fine, the tables from the
+     * database will be read.
+     *
+     * @see {@link #readTables()}
+     */
+    private void createCompositeRemote()
+    {
+
+        compositeRemote = new Composite(compositeSwap, SWT.NONE);
+        compositeRemote.setLayout(new GridLayout(2, false));
+
+        /**
+         * Tries to connect to database on traverse and focusLost events
+         *
+         * @see {@link #tryToConnect()}
+         */
+        class ConnectionListener extends FocusAdapter implements TraverseListener {
+
+            /**
+             * Handles traverse events (enter, tab, etc.)
+             *
+             * @see {@link #tryToConnect()}
+             */
+            @Override
+            public void keyTraversed(TraverseEvent e)
+            {
+
+                tryToConnect();
+
+            }
+
+            /**
+             * Handles focusLost events
+             *
+             * @see {@link #tryToConnect()}
+             */
+            @Override
+            public void focusLost(FocusEvent e)
+            {
+
+                tryToConnect();
+
+            }
+
+        }
+
+        ConnectionListener connectionListener = new ConnectionListener();
+
+        Label lblServer = new Label(compositeRemote, SWT.NONE);
         lblServer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblServer.setText("Server");
 
-        txtServer = new Text(container, SWT.BORDER);
+        txtServer = new Text(compositeRemote, SWT.BORDER);
         txtServer.setText("localhost");
         txtServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtServer.addFocusListener(new FocusAdapter() {
+        txtServer.addFocusListener(connectionListener);
+        txtServer.addTraverseListener(connectionListener);
 
-            @Override
-            public void focusLost(FocusEvent arg0) {
-
-                evaluatePage();
-
-            }
-
-        });
-
-        lblPort = new Label(container, SWT.NONE);
+        Label lblPort = new Label(compositeRemote, SWT.NONE);
         lblPort.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblPort.setText("Port");
 
-        txtPort = new Text(container, SWT.BORDER);
-        txtPort.setText("3306");
+        txtPort = new Text(compositeRemote, SWT.BORDER);
         txtPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtPort.addFocusListener(new FocusAdapter() {
+        txtPort.addFocusListener(connectionListener);
+        txtPort.addTraverseListener(connectionListener);
 
-            @Override
-            public void focusLost(FocusEvent arg0) {
-
-                evaluatePage();
-
-            }
-
-        });
-
-        lblUsername = new Label(container, SWT.NONE);
+        Label lblUsername = new Label(compositeRemote, SWT.NONE);
         lblUsername.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblUsername.setText("Username");
 
-        txtUsername = new Text(container, SWT.BORDER);
-        txtUsername.setText("jdbc");
+        txtUsername = new Text(compositeRemote, SWT.BORDER);
         txtUsername.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtUsername.addFocusListener(new FocusAdapter() {
+        txtUsername.addFocusListener(connectionListener);
+        txtUsername.addTraverseListener(connectionListener);
 
-            @Override
-            public void focusLost(FocusEvent arg0) {
-
-                evaluatePage();
-
-            }
-
-        });
-
-        lblPassword = new Label(container, SWT.NONE);
+        Label lblPassword = new Label(compositeRemote, SWT.NONE);
         lblPassword.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblPassword.setText("Password");
 
-        txtPassword = new Text(container, SWT.BORDER | SWT.PASSWORD);
-        txtPassword.setText("jdbc");
+        txtPassword = new Text(compositeRemote, SWT.BORDER | SWT.PASSWORD);
         txtPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtPassword.addFocusListener(new FocusAdapter() {
+        txtPassword.addFocusListener(connectionListener);
+        txtPassword.addTraverseListener(connectionListener);
 
-            @Override
-            public void focusLost(FocusEvent arg0) {
-
-                evaluatePage();
-
-            }
-
-        });
-
-        lblDatabase = new Label(container, SWT.NONE);
+        Label lblDatabase = new Label(compositeRemote, SWT.NONE);
         lblDatabase.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblDatabase.setText("Database");
 
-        txtDatabase = new Text(container, SWT.BORDER);
-        txtDatabase.setText("jdbc");
+        txtDatabase = new Text(compositeRemote, SWT.BORDER);
         txtDatabase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtDatabase.addFocusListener(new FocusAdapter() {
+        txtDatabase.addFocusListener(connectionListener);
+        txtDatabase.addTraverseListener(connectionListener);
 
+    }
+
+    /**
+     * Tries to establish a remote JDBC connection
+     *
+     * Unless all mandatory fields (everything besides the password) are
+     * not empty this will try to connect to the database. It sets the message
+     * and errors of this page accordingly and will also try to read in the
+     * tables once a successfull connection has been established.
+     *
+     * @see {@link #readTables()}
+     */
+    private void tryToConnect()
+    {
+
+        setErrorMessage(null);
+        setMessage(null);
+
+        String server = txtServer.getText();
+        String port = txtPort.getText();
+        String username = txtUsername.getText();
+        String database = txtDatabase.getText();
+
+        if (server.isEmpty() || port.isEmpty() || username.isEmpty() || database.isEmpty()) {
+
+            return;
+
+        }
+
+        setMessage("Trying to connect to database", INFORMATION);
+        if (connect()) {
+
+            setMessage("Successfully connected to database", INFORMATION);
+            readTables();
+
+        }
+
+    }
+
+    /**
+     * Creates the content of {@link #compositeLocal}
+     *
+     * This adds a file chooser and an appropriate combo to select files.
+     * Selecting a file from the combo will trigger a read of the tables. If
+     * everything is fine, the tables from the database will be read.
+     *
+     * @see {@link #readTables()}
+     */
+    private void createCompositeLocal()
+    {
+
+        compositeLocal = new Composite(compositeSwap, SWT.NONE);
+        compositeLocal.setLayout(new GridLayout(3, false));
+
+        /* Location label */
+        lblLocation = new Label(compositeLocal, SWT.NONE);
+        lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblLocation.setText("Location");
+
+        /* Combo box for selection of file */
+        comboLocation = new Combo(compositeLocal, SWT.READ_ONLY);
+        comboLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboLocation.addSelectionListener(new SelectionAdapter() {
+
+            /* Read tables from file */
             @Override
-            public void focusLost(FocusEvent arg0) {
+            public void widgetSelected(SelectionEvent e)
+            {
 
-                evaluatePage();
+                setPageComplete(false);
+                setErrorMessage(null);
+
+                connect();
+                readTables();
 
             }
 
         });
 
-        setPageComplete(false);
+        /* Button to open file selection dialog */
+        btnChoose = new Button(compositeLocal, SWT.NONE);
+        btnChoose.setText("Browse...");
+        btnChoose.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * Opens a file selection dialog for "*.db" files
+             *
+             * If a valid file was selected, it is added to
+             * {@link #comboLocation} when it wasn't already there. It is then
+             * preselected within {@link #comboLocation}.
+             */
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                /* Open file dialog */
+                final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), "*.db");
+
+                if (path == null) {
+
+                    return;
+
+                }
+
+                /* Check whether path was already added */
+                if (comboLocation.indexOf(path) == -1) {
+
+                    comboLocation.add(path, 0);
+
+                }
+
+                /* Select path and notify comboLocation about change */
+                comboLocation.select(comboLocation.indexOf(path));
+                comboLocation.notifyListeners(SWT.Selection, null);
+
+            }
+
+        });
+    }
+
+    /**
+     * Connects to the database
+     *
+     * This tries to establish an JDBC connection. In case of an error
+     * appropriate error messages are set. Otherwise the connection is passed
+     * on to {@link ImportData}. The return value indicates whether a
+     * connection has been established.
+     *
+     * @return True if successfully connected, false otherwise
+     *
+     * @see {@link ImportData#setJdbcConnection(Connection)}
+     */
+    protected boolean connect()
+    {
+
+        try {
+
+            Connection connection = null;
+
+            if (comboType.getText().equals(SQLITE)) {
+
+                Class.forName("org.sqlite.JDBC");
+                connection = DriverManager.getConnection("jdbc:sqlite:" + comboLocation.getText());
+
+            } else if (comboType.getText().equals(MYSQL)) {
+
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText());
+
+            } else if (comboType.getText().equals(POSTGRESQL)) {
+
+                Class.forName("org.postgresql.Driver");
+                connection = DriverManager.getConnection("jdbc:postgresql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText());
+
+            }
+
+            wizardImport.getData().setJdbcConnection(connection);
+            return true;
+
+        } catch (ClassNotFoundException e) {
+
+            setErrorMessage("No JDBC driver for selected connection type");
+            return false;
+
+        } catch (SQLException e) {
+
+            /* Database connection error */
+            setErrorMessage(e.getLocalizedMessage());
+            return false;
+
+        }
 
     }
 
-    private void evaluatePage()
+    /**
+     * Reads in the tables
+     *
+     * If successful, the page is marked as complete and a list of tables is
+     * assigned to {@link ImportData}. Otherwise an appropriate error messages
+     * is set.
+     *
+     * @see {@link ImportData#setJdbcTables(List)}
+     */
+    protected void readTables()
     {
 
-        setPageComplete(false);
-        setErrorMessage(null);
+        try {
 
-        if (txtServer.getText().length() == 0) {
+            Connection connection = wizardImport.getData().getJdbcConnection();
+            String[] tableTypes = {"TABLE", "VIEW"};
+            ResultSet rs = connection.getMetaData().getTables(null, null, "%", tableTypes);
+            List<String> tables = new ArrayList<String>();
 
-            setErrorMessage("Please provide a server");
+            while(rs.next()) {
 
-            return;
+                tables.add(rs.getString("TABLE_NAME"));
 
-        }
+            }
 
-        if (txtUsername.getText().length() == 0) {
-
-            setErrorMessage("Please provide a username");
-
-            return;
-
-        }
-
-        if (txtDatabase.getText().length() == 0) {
-
-            setErrorMessage("Please provide a database");
-
-            return;
-
-        }
-
-        if (jdbcConnect()) {
+            wizardImport.getData().setJdbcTables(tables);
 
             setPageComplete(true);
 
-        } else {
+        } catch (SQLException e)  {
 
-            setErrorMessage("Unable to connect to database");
+            setErrorMessage("Couldn't read tables from database");
 
         }
-
-    }
-
-    private boolean jdbcConnect()
-    {
-
-        return true;
 
     }
 

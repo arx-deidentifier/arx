@@ -17,13 +17,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io;
+package org.deidentifier.arx.io.datasource;
+
+import org.deidentifier.arx.io.datasource.column.CSVColumn;
+import org.deidentifier.arx.io.datasource.column.Column;
+
 
 
 /**
  * Configuration describing a CSV file
  */
-public class CSVFileConfiguration extends DataSourceFileConfiguration implements IDataSourceCanContainHeader {
+public class CSVFileConfiguration extends FileConfiguration implements ICanContainHeader {
 
     /**
      * Character that separates the columns from each other
@@ -33,7 +37,7 @@ public class CSVFileConfiguration extends DataSourceFileConfiguration implements
     /**
      * Indicates whether first row contains header (names of columns)
      *
-     * @see {@link IDataSourceCanContainHeader}
+     * @see {@link ICanContainHeader}
      */
     private boolean containsHeader;
 
@@ -62,6 +66,9 @@ public class CSVFileConfiguration extends DataSourceFileConfiguration implements
 
     }
 
+    /**
+     * @return {@link #containsHeader}
+     */
     @Override
     public boolean getContainsHeader() {
 
@@ -69,11 +76,52 @@ public class CSVFileConfiguration extends DataSourceFileConfiguration implements
 
     }
 
+    /**
+     * @param containsHeader {@link #containsHeader}
+     */
     @Override
     public void setContainsHeader(boolean containsHeader)
     {
 
         this.containsHeader = containsHeader;
+
+    }
+
+    /**
+     * Adds a single column to import from
+     *
+     * This makes sure that only {@link CSVColumn} can be added, otherwise
+     * an {@link IllegalArgumentException} will be thrown.
+     *
+     * @param column A single column to import from, {@link CSVColumn}
+     */
+    @Override
+    public void addColumn(Column column) {
+
+        if (!(column instanceof CSVColumn)) {
+
+            throw new IllegalArgumentException("Column needs to be of type CSVColumn");
+
+        }
+
+        for (Column c : columns) {
+
+            if (((CSVColumn) column).getIndex() == ((CSVColumn) c).getIndex()) {
+
+                throw new IllegalArgumentException("Column for this index already assigned");
+
+            }
+
+            if (column.getAliasName() != null && c.getAliasName() != null &&
+                c.getAliasName().equals(column.getAliasName())) {
+
+                throw new IllegalArgumentException("Column names need to be unique");
+
+            }
+
+        }
+
+        this.columns.add(column);
 
     }
 

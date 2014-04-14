@@ -16,39 +16,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io;
+package org.deidentifier.arx.io.datasource.column;
+
+import org.deidentifier.arx.DataType;
 
 
 /**
- * Configuration describing files in general
+ * Represents a single Excel data column
  *
- * File based configurations should extend this class as the notion of a
- * {@link #fileLocation} is common to all of them.
+ * Excel columns are referred to by an index (see {@link IndexColumn}).
  */
-abstract public class DataSourceFileConfiguration extends DataSourceConfiguration {
+public class ExcelColumn extends IndexColumn {
 
     /**
-     * Location of file
+     * Creates a new instance of this object with the given parameters
+     *
+     * @see {@link IndexColumn}
      */
-    private String fileLocation;
+    public ExcelColumn(int index, DataType<?> datatype)
+    {
 
-
-    /**
-     * @return {@link #fileLocation}
-     */
-    public String getFileLocation() {
-
-        return fileLocation;
+        super(index, datatype);
 
     }
 
     /**
-     * @param fileLocation {@link #fileLocation}
+     * Creates a new instance of this object with the given parameters
+     *
+     * @see {@link IndexColumn}
      */
-    public void setFileLocation(String fileLocation)
+    public ExcelColumn(int index, String aliasName, DataType<?> datatype)
     {
 
-        this.fileLocation = fileLocation;
+        super(index, aliasName, datatype);
 
     }
 

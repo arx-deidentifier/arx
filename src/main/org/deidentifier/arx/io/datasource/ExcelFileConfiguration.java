@@ -16,13 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io;
+package org.deidentifier.arx.io.datasource;
 
 import org.apache.commons.io.FilenameUtils;
+import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.datasource.column.ExcelColumn;
 
 
 /**
- * Configuration describing a Excel files
+ * Configuration describing an Excel file
  *
  * This is used to describe Excel files. Both file types (XLS and XLSX) are
  * supported. The file type can either be detected automatically by the file
@@ -30,7 +32,7 @@ import org.apache.commons.io.FilenameUtils;
  * sheet index {@link #sheetIndex}, which describes which sheet within the
  * file should be used.
  */
-public class ExcelFileConfiguration extends DataSourceFileConfiguration implements IDataSourceCanContainHeader {
+public class ExcelFileConfiguration extends FileConfiguration implements ICanContainHeader {
 
     /**
      * Valid file types for Excel files
@@ -56,7 +58,7 @@ public class ExcelFileConfiguration extends DataSourceFileConfiguration implemen
     /**
      * Indicates whether first row contains header (names of columns)
      *
-     * @see {@link IDataSourceCanContainHeader}
+     * @see {@link ICanContainHeader}
      */
     private boolean containsHeader;
 
@@ -153,6 +155,9 @@ public class ExcelFileConfiguration extends DataSourceFileConfiguration implemen
 
     }
 
+    /**
+     * @return {@link #containsHeader}
+     */
     @Override
     public boolean getContainsHeader() {
 
@@ -160,11 +165,52 @@ public class ExcelFileConfiguration extends DataSourceFileConfiguration implemen
 
     }
 
+    /**
+     * @param containsHeader {@link #containsHeader}
+     */
     @Override
     public void setContainsHeader(boolean containsHeader)
     {
 
         this.containsHeader = containsHeader;
+
+    }
+
+    /**
+     * Adds a single column to import from
+     *
+     * This makes sure that only {@link ExcelColumn} can be added, otherwise
+     * an {@link IllegalArgumentException} will be thrown.
+     *
+     * @param column A single column to import from, {@link ExcelColumn}
+     */
+    @Override
+    public void addColumn(Column column) {
+
+        if (!(column instanceof ExcelColumn)) {
+
+            throw new IllegalArgumentException("Column needs to be of type ExcelColumn");
+
+        }
+
+        for (Column c : columns) {
+
+            if (((ExcelColumn) column).getIndex() == ((ExcelColumn) c).getIndex()) {
+
+                throw new IllegalArgumentException("Column for this index already assigned");
+
+            }
+
+            if (column.getAliasName() != null && c.getAliasName() != null &&
+                c.getAliasName().equals(column.getAliasName())) {
+
+                throw new IllegalArgumentException("Column names need to be unique");
+
+            }
+
+        }
+
+        this.columns.add(column);
 
     }
 

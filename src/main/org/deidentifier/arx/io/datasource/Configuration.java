@@ -17,21 +17,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io;
+package org.deidentifier.arx.io.datasource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.importdata.Column;
+import org.deidentifier.arx.io.datasource.column.Column;
 
 /**
  * Abstract base configuration
  *
- * Such a configuration contains characteristics that are needed to access
- * the data. This abstract superclass defines properties that all of them have
+ * This abstract superclass defines properties that all configurations have
  * in common, i.e. a notion of columns, which can be added and retrieved.
  */
-public abstract class DataSourceConfiguration {
+public abstract class Configuration {
 
     /**
      * List of columns to be imported
@@ -50,29 +49,12 @@ public abstract class DataSourceConfiguration {
      * Adds a single column to import from
      *
      * @param column A single column to import from
+     *
+     * @note This needs to be implemented by the specific configuration class,
+     * as {@link Column} is only an abstract superclass for various kind of
+     * columns.
      */
-    public void addColumn(Column column) {
-
-        for (Column c : columns) {
-
-            if (column.getIndex() == c.getIndex()) {
-
-                throw new IllegalArgumentException("Column for this index already assigned");
-
-            }
-
-            if (column.getName() != null && c.getName() != null &&
-                c.getName().equals(column.getName())) {
-
-                throw new IllegalArgumentException("Column names need to be unique");
-
-            }
-
-        }
-
-        this.columns.add(column);
-
-    }
+    abstract public void addColumn(Column column);
 
     /**
      * Returns all added columns
