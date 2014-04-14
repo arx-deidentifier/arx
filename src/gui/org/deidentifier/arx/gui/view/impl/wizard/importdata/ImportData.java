@@ -100,6 +100,11 @@ public class ImportData {
     private List<String[]> previewData;
 
     /**
+     * List of potential JDBC tables
+     */
+    private List<String> jdbcTables;
+
+    /**
      * Maximum number of lines to be loaded for preview purposes
      */
     public static final int previewDataMaxLines = 25;
@@ -301,6 +306,26 @@ public class ImportData {
         }
 
         return result;
+
+    }
+
+    /**
+     * @param jdbcTables {@link #jdbcTables}
+     */
+    public void setJdbcTables(List<String> jdbcTables)
+    {
+
+        this.jdbcTables = jdbcTables;
+
+    }
+
+    /**
+     * @return {@link #jdbcTables}
+     */
+    public List<String> getJdbcTables()
+    {
+
+        return jdbcTables;
 
     }
 

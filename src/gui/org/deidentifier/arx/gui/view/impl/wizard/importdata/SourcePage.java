@@ -122,7 +122,7 @@ public class SourcePage extends WizardPage {
 
         /* Add button for JDBC */
         btnJdbc = new Button(container, SWT.RADIO);
-        btnJdbc.setEnabled(false);
+        btnJdbc.setEnabled(true);
         btnJdbc.setText("Database (JDBC)");
         btnJdbc.addSelectionListener(new SelectionAdapter() {
 
