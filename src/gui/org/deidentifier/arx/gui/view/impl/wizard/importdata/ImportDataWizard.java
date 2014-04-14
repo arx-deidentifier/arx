@@ -276,7 +276,7 @@ public class ImportDataWizard extends Wizard {
 
         } else {
 
-            throw new RuntimeException("File configuration not supported");
+            throw new RuntimeException("Configuration type not supported");
 
         }
 
