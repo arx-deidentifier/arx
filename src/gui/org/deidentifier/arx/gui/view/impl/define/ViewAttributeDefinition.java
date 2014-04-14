@@ -141,9 +141,7 @@ public class ViewAttributeDefinition implements IView {
                     if ((model != null) &&
                         (model.getInputConfig().getInput() != null)) {
                         final AttributeType type = COMBO1_TYPES[typeCombo.getSelectionIndex()];
-                        final DataDefinition definition = model.getInputConfig()
-                                                               .getInput()
-                                                               .getDefinition();
+                        final DataDefinition definition = model.getInputDefinition();
                         
                         // Handle QIs 
                         if (type == null) {
@@ -268,7 +266,7 @@ public class ViewAttributeDefinition implements IView {
                         }
 
                         // Set and update
-                        model.getInputConfig().getInput().getDefinition().setDataType(attribute, type);
+                        model.getInputDefinition().setDataType(attribute, type);
                         updateDataType();
                         controller.update(new ModelEvent(outer, ModelPart.DATA_TYPE, attribute));
                     }
@@ -407,9 +405,7 @@ public class ViewAttributeDefinition implements IView {
      * Update the attribute type
      */
     private void updateAttributeType() {
-        AttributeType type = model.getInputConfig()
-                                  .getInput()
-                                  .getDefinition()
+        AttributeType type = model.getInputDefinition()
                                   .getAttributeType(attribute);
         if (type instanceof Hierarchy) {
             type = null;
@@ -427,10 +423,8 @@ public class ViewAttributeDefinition implements IView {
      */
     private void updateDataType() {
 
-        final DataType<?> dtype = model.getInputConfig()
-                                    .getInput()
-                                    .getDefinition()
-                                    .getDataType(attribute);
+        final DataType<?> dtype = model.getInputDefinition()
+                                       .getDataType(attribute);
         
         dataTypeCombo.select(getIndexOfDataType(dtype));
         
@@ -453,9 +447,7 @@ public class ViewAttributeDefinition implements IView {
      * Update the column icon
      */
     private void updateIcon() {
-        AttributeType type = model.getInputConfig()
-                                  .getInput()
-                                  .getDefinition()
+        AttributeType type = model.getInputDefinition()
                                   .getAttributeType(attribute);
         if (type instanceof Hierarchy) {
             tab.setImage(IMAGE_QUASI_IDENTIFYING);

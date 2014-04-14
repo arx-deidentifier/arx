@@ -53,8 +53,9 @@ public class DebugData {
         
         StringBuilder builder = new StringBuilder();
         builder.append("Handles\n");
-        builder.append(" - Data\n");
-        builder.append("   * Input : ").append(getDebugData(model.getInputConfig().getInput().getDefinition()));
+        builder.append(" - Definitions\n");
+        builder.append("   * Input : ").append(getDebugData(model.getInputDefinition()));
+        builder.append("   * Output: ").append(getDebugData(model.getOutputDefinition()));
         builder.append(" - Input\n");
         builder.append("   * Input : ").append(getDebugData("             ", model.getInputConfig().getInput().getHandle(), false));
         if (model.getOutput() != null) {

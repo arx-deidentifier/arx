@@ -60,7 +60,7 @@ public class ViewDataOutput extends ViewData {
     @Override
     protected DataDefinition getDefinition() {
         if (model == null) return null;
-        else return model.getOutput().getDefinition();
+        else return model.getOutputDefinition();
     }
 
     @Override

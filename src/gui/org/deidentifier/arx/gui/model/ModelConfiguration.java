@@ -248,24 +248,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Checks whether the lattice is too large
-     * 
-     * @return
-     */
-    public boolean isValidLatticeSize(final int max) {
-        int size = 1;
-        for (final String attr : input.getDefinition()
-                                      .getQuasiIdentifyingAttributes()) {
-            final int factor = input.getDefinition()
-                                    .getMaximumGeneralization(attr) -
-                               input.getDefinition()
-                                    .getMinimumGeneralization(attr);
-            size *= factor;
-        }
-        return size <= max;
-    }
-
-    /**
      * Delegates to an instance of ARXConfiguration
      * @param clazz
      * @return

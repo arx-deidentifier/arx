@@ -134,12 +134,11 @@ public class AnalysisContext {
     public Hierarchy getHierarchy(Context context, String attribute) {
 
         // We only accept sanitized input
-        // TODO: Theoretically, we could also use input-hierarchies
-        // TODO: but would need to make sure that these cover all data items
         if (context.config == model.getInputConfig()) return null;
         
         // First, check hierarchies for QIs
-        AttributeType type = context.handle.getDefinition().getAttributeType(attribute);
+        
+        AttributeType type = model.getOutputDefinition().getAttributeType(attribute);
         if (type instanceof Hierarchy){
             return (Hierarchy)type;
         }

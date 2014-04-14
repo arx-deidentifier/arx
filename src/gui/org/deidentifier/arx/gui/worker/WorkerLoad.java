@@ -241,7 +241,7 @@ public class WorkerLoad extends Worker<Model> {
             // Read input, config and definition
         	readInput(config, zip);
             model.setInputConfig(config);
-            readDefinition(config, config.getInput().getDefinition(), prefix, zip);
+            readDefinition(config, model.getInputDefinition(), prefix, zip);
             
         } else {
             

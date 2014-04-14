@@ -90,6 +90,7 @@ public class WorkerSave extends Worker<Model> {
         try {
             final FileOutputStream f = new FileOutputStream(path);
             final ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
+            model.createConfig(); 
             writeMetadata(model, zip);
             arg0.worked(1);
             writeModel(model, zip);
@@ -146,10 +147,8 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
         writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
         writer.indent(vocabulary.getCriteria());
-        if (config.getCriteria().isEmpty()) model.createCriteriaAndDefinition(config);
         for (PrivacyCriterion c : config.getCriteria()) {
-        	// TODO: Why this condition?
-        	if (c != null && !(c instanceof Inclusion)) {
+        	if (c != null) {
         		writer.write(vocabulary.getCriterion(), c.toString());
         	}
         }
@@ -384,16 +383,19 @@ public class WorkerSave extends Worker<Model> {
     private void writeDefinition(final ModelConfiguration config,
                                  final String prefix,
                                  final ZipOutputStream zip) throws IOException {
-        if (config.getInput() != null) {
-            if (config.getInput().getDefinition() != null) {
-                zip.putNextEntry(new ZipEntry(prefix + "definition.xml")); //$NON-NLS-1$
-                final Writer w = new OutputStreamWriter(zip);
-                w.write(toXML(config,
-                              config.getInput().getHandle(),
-                              config.getInput().getDefinition()));
-                w.flush();
-            }
-        }
+    	
+    	// Obtain definition
+    	DataDefinition definition = null;
+    	if (config == model.getInputConfig()) definition = model.getInputDefinition();
+    	else definition = model.getOutputDefinition();
+    	
+    	// Store
+		if (definition != null) {
+			zip.putNextEntry(new ZipEntry(prefix + "definition.xml")); //$NON-NLS-1$
+			final Writer w = new OutputStreamWriter(zip);
+			w.write(toXML(config, config.getInput().getHandle(), definition));
+			w.flush();
+		}
     }
 
     /**

@@ -91,7 +91,7 @@ public class ViewDataInput extends ViewData {
     @Override
     protected DataDefinition getDefinition() {
         if (model == null) return null;
-        else return model.getInputConfig().getInput().getDefinition();
+        else return model.getInputDefinition();
     }
 
     @Override

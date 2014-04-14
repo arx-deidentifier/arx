@@ -33,6 +33,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
@@ -111,7 +112,7 @@ public class Model implements Serializable {
 		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
 		
 		// Add all criteria
-		this.createCriteriaAndDefinition(inputConfig);
+		this.createConfig();
 
         // Return the anonymizer
 		return anonymizer;
@@ -124,13 +125,16 @@ public class Model implements Serializable {
         this.setModified();
 	}
 	
-	public void createCriteriaAndDefinition(ModelConfiguration config) {
+	public void createConfig() {
 
+		ModelConfiguration config = getInputConfig();
+		DataDefinition definition = getInputDefinition();
+		
 		// Initialize the config
 		config.removeAllCriteria();
 
 		// Initialize definition
-        for (String attr : config.getInput().getDefinition().getQuasiIdentifyingAttributes()) {
+        for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
             Hierarchy hierarchy = config.getHierarchy(attr);
             /* Handle non-existent hierarchies*/
@@ -146,9 +150,9 @@ public class Model implements Serializable {
                 if (hierarchy.getHierarchy().length==0){ max = 0; } 
                 else { max = hierarchy.getHierarchy()[0].length-1; }
             }
-            config.getInput().getDefinition().setAttributeType(attr, hierarchy);
-            config.getInput().getDefinition().setMinimumGeneralization(attr, min);
-            config.getInput().getDefinition().setMaximumGeneralization(attr, max);
+            definition.setAttributeType(attr, hierarchy);
+            definition.setMinimumGeneralization(attr, min);
+            definition.setMaximumGeneralization(attr, max);
         }
         
 		if (this.kAnonymityModel != null &&
@@ -191,8 +195,8 @@ public class Model implements Serializable {
         if (!config.containsCriterion(DPresence.class)){
             if (getInputConfig() != null && getInputConfig().getInput() != null &&
                 getInputConfig().getResearchSubset() != null) {
-                DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                                      getInputConfig().getResearchSubset());
+                DataSubset subset = DataSubset.create(config.getInput(), 
+                                                      config.getResearchSubset());
                 config.addCriterion(new Inclusion(subset));
             }
         }
@@ -257,6 +261,10 @@ public class Model implements Serializable {
 		return inputConfig;
 	}
 
+	public DataDefinition getInputDefinition(){
+		return inputConfig.getInput().getDefinition();
+	}
+
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
@@ -298,6 +306,11 @@ public class Model implements Serializable {
 
 	public ModelConfiguration getOutputConfig() {
 		return outputConfig;
+	}
+
+	public DataDefinition getOutputDefinition(){
+		if (this.output == null) return null;
+		else return this.output.getDefinition();
 	}
 
 	public ARXNode getOutputNode() {
@@ -354,14 +367,14 @@ public class Model implements Serializable {
 	public String getSubsetOrigin(){
         return this.subsetOrigin;
     }
-
+	
 	/**
 	 * @return the suppressionString
 	 */
 	public String getSuppressionString() {
 		return suppressionString;
 	}
-
+	
 	public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
 		return tClosenessModel;
 	}
@@ -389,17 +402,29 @@ public class Model implements Serializable {
 	}
 
 	public boolean isQuasiIdentifierSelected() {
-		return (getInputConfig().getInput().getDefinition()
-				.getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
+		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
 
 	public boolean isSensitiveAttributeSelected() {
-		return (getInputConfig().getInput().getDefinition()
-				.getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
+		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
 
+    /**
+     * Checks whether the lattice is too large
+     * 
+     * @return
+     */
+
 	public boolean isValidLatticeSize() {
-		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
+
+		DataDefinition definition = getInputDefinition();
+		int size = 1;
+		for (final String attr : definition.getQuasiIdentifyingAttributes()) {
+			final int factor = definition.getMaximumGeneralization(attr) -
+					           definition.getMinimumGeneralization(attr);
+			size *= factor;
+		}
+		return size <= maxNodesInLattice;
 	}
 
 	public boolean isVisualizationEnabled(){
@@ -506,6 +531,10 @@ public class Model implements Serializable {
 		setModified();
 	}
 
+	private void setModified() {
+		modified = true;
+	}
+
 	public void setName(final String name) {
 		this.name = name;
 		setModified();
@@ -534,11 +563,11 @@ public class Model implements Serializable {
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
-
 	public void setPath(final String path) {
 		this.path = path;
 		setModified();
 	}
+	
 	public void setQuery(String query){
         this.query = query;
         setModified();
@@ -556,7 +585,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-	
+
 	public void setSaved() {
 		modified = false;
 	}
@@ -597,11 +626,11 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	public void setSnapshotSizeSnapshot(final double snapshotSize) {
+    public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-
+    
     public void setSubsetManual(){
         if (!this.subsetOrigin.endsWith("manual")) {
             this.subsetOrigin += " + manual";
@@ -624,7 +653,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
 		this.time = time;
 	}
-    
+
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
@@ -632,17 +661,13 @@ public class Model implements Serializable {
 			outputConfig.setUnmodified();
 		}
 	}
-
+    
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-    
+
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();
     }
-
-    private void setModified() {
-		modified = true;
-	}
 }

@@ -310,6 +310,7 @@ public class Controller implements IView {
             return;
         }
 
+        model.createConfig();
         if (!model.isValidLatticeSize()) {
             final String message = Resources.getMessage("Controller.7") + //$NON-NLS-1$
                                    Resources.getMessage("Controller.8") + //$NON-NLS-1$
@@ -421,8 +422,7 @@ public class Controller implements IView {
                                 .getHandle()
                                 .getColumnIndexOf(attr);
         
-        DataType<?> type = model.getInputConfig().getInput()
-                                .getDefinition().getDataType(attr);
+        DataType<?> type = model.getInputDefinition().getDataType(attr);
         
         String[] data = model.getInputConfig()
                                 .getInput()
@@ -1155,7 +1155,7 @@ public class Controller implements IView {
         }
 
         // Create definition
-        final DataDefinition definition = data.getDefinition();
+        final DataDefinition definition = model.getInputDefinition();
         for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
             definition.setAttributeType(model.getInputConfig()
                                              .getInput()
@@ -1428,8 +1428,6 @@ public class Controller implements IView {
                             model.getOutput();
         
         handle = config.isSubset() ? handle.getView() : handle;
-                 
-        DataDefinition definition = handle.getDefinition();
         
         if (config.getMode() == Mode.SORTED_INPUT ||
             config.getMode() == Mode.SORTED_OUTPUT) {
@@ -1448,6 +1446,7 @@ public class Controller implements IView {
             
             // Groups
             // Create array with indices of all QIs
+        	DataDefinition definition = model.getOutputDefinition();
             int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
             int index = 0;
             for (String attribute : definition.getQuasiIdentifyingAttributes()) {
