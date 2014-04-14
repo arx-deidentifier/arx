@@ -42,27 +42,46 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
+/**
+ * Table overview page
+ *
+ * This pages gives the user an overview of the detected tables and allows him
+ * to select the desired one by clicking on it. The tables itself are retrieved
+ * from {@link ImportData#getJdbcTables()()}. The selected one will be assigned
+ * via {@link ImportData#setSelectedJdbcTable(String)} along with the detected
+ * columns for this table using {@link ImportData#setWizardColumns(List)} and
+ * its preview data {@link ImportData#setPreviewData(List)}.
+ */
 public class TablePage extends WizardPage {
 
+    /**
+     * Reference to the wizard containing this page
+     */
     private ImportDataWizard wizardImport;
 
-    /* Widgets */
+    /* SWT Widgets */
     private Table table;
     private TableViewer tableViewer;
 
 
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public TablePage(ImportDataWizard wizardImport)
     {
 
         super("WizardImportTablePage");
-
         this.wizardImport = wizardImport;
-
         setTitle("Tables");
         setDescription("Please select the table you want to import from");
 
     }
 
+    /**
+     * Creates the design of this page along with the appropriate listeners
+     */
     public void createControl(Composite parent)
     {
 
@@ -71,30 +90,37 @@ public class TablePage extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
+        /* TableViewer for the detected tables */
         tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+            /**
+             * Reads in the columns and preview data for selected table
+             */
             @Override
             public void selectionChanged(SelectionChangedEvent arg0)
             {
 
+                /* Save selected table */
                 int index = table.getSelectionIndex();
                 String selectedTable = wizardImport.getData().getJdbcTables().get(index);
-
-                readColumns(selectedTable);
-                readPreview(selectedTable);
-
                 wizardImport.getData().setSelectedJdbcTable(selectedTable);
+
+                readColumns();
+                readPreview();
+
                 setPageComplete(true);
 
             }
 
         });
 
+        /* Table for {@link #tableViewer} */
         table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
+        /* Column for table names */
         TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
@@ -116,8 +142,17 @@ public class TablePage extends WizardPage {
 
     }
 
-    private void readColumns(String selectedTable)
+    /**
+     * Reads in the columns of currently selected table
+     *
+     * If this can be performed successful, the columns will be made available
+     * for the next page by {@link ImportData#setWizardColumns(List)}.
+     * Otherwise an appropriate error message is set.
+     */
+    private void readColumns()
     {
+
+        String selectedTable = wizardImport.getData().getSelectedJdbcTable();
 
         Connection connection = wizardImport.getData().getJdbcConnection();
         List<WizardColumn> columns = new ArrayList<WizardColumn>();
@@ -144,8 +179,18 @@ public class TablePage extends WizardPage {
 
     }
 
-    protected void readPreview(String selectedTable)
+    /**
+     * Reads in the preview data for currently selected table
+     *
+     * If this can be performed successful, the preview data will be made
+     * available for the following pages by
+     * {@link ImportData#setPreviewData(List)}. Otherwise an appropriate error
+     * message is set.
+     */
+    protected void readPreview()
     {
+
+        String selectedTable = wizardImport.getData().getSelectedJdbcTable();
 
         List<String[]> previewData = new ArrayList<String[]>();
         Connection connection = wizardImport.getData().getJdbcConnection();
@@ -181,6 +226,9 @@ public class TablePage extends WizardPage {
 
     }
 
+    /**
+     * Applies previously detected tables to {@link #tableViewer}
+     */
     @Override
     public void setVisible(boolean visible)
     {
