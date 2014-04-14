@@ -134,10 +134,13 @@ public class AnalysisContext {
     public Hierarchy getHierarchy(Context context, String attribute) {
 
         // We only accept sanitized input
-        if (context.config == model.getInputConfig()) return null;
+        if (context.config == null || 
+        	context.config == model.getInputConfig() ||
+        	model.getOutputDefinition() == null) {
+        	return null;
+        }
         
         // First, check hierarchies for QIs
-        
         AttributeType type = model.getOutputDefinition().getAttributeType(attribute);
         if (type instanceof Hierarchy){
             return (Hierarchy)type;
