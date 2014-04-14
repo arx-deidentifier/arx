@@ -41,11 +41,32 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 
+/**
+ * JDBC page
+ *
+ * This page offers means to specify connection details for a database. For
+ * now MySQL, PostgreSQL and SQLite is supported. In case of remote database
+ * types (i.e. MySQL and PostgreSQL) the user is asked for the server and a
+ * username and password. In case of SQLite the user can select any *.db file.
+ *
+ * After ther user specified the details a connection is established and
+ * passed on to {@link ImportData}.
+ *
+ * This includes:
+ *
+ * <ul>
+ *  <li>{@link ImportData#setJdbcConnection(Connection)<li>
+ *  <li>{@link ImportData#setJdbcTables(List)<li>
+ * </ul>
+ */
 public class JdbcPage extends WizardPage {
 
+    /**
+     * Reference to the wizard containing this page
+     */
     private ImportDataWizard wizardImport;
 
-    /* Widgets */
+    /* SWT Widgets */
     private Label lblType;
     private Combo comboType;
     private Composite compositeSwap;
@@ -62,10 +83,17 @@ public class JdbcPage extends WizardPage {
     private Button btnChoose;
     private Composite container;
 
+    /* String constants for different database types */
     private static final String MYSQL = "MySQL";
     private static final String POSTGRESQL = "PostgreSQL";
     private static final String SQLITE = "SQLite";
 
+
+    /**
+     * Creates a new instance of this page and sets its title and description
+     *
+     * @param wizardImport Reference to wizard containing this page
+     */
     public JdbcPage(ImportDataWizard wizardImport)
     {
 
@@ -77,6 +105,15 @@ public class JdbcPage extends WizardPage {
 
     }
 
+    /**
+     * Creates the design of this page
+     *
+     * This adds all the controls to the page along with their listeners.
+     *
+     * @note {@link #compositeSwap} contains the actual text fields. Depending
+     * upon the status of {@link #comboType}, it will either display
+     * {@link #compositeRemote} or {@link #compositeLocal}.
+     */
     public void createControl(Composite parent)
     {
 
@@ -89,13 +126,14 @@ public class JdbcPage extends WizardPage {
         lblType = new Label(container, SWT.NONE);
         lblType.setText("Type");
 
+        /* Combo for choosing database type */
         comboType = new Combo(container, SWT.READ_ONLY);
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         comboType.setItems(new String[] {MYSQL, POSTGRESQL, SQLITE});
         comboType.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Swaps the composites, clears it and triggers a relayout
+             * Swaps the composites, resets it and triggers a relayout
              */
             @Override
             public void widgetSelected(SelectionEvent e)
@@ -103,15 +141,18 @@ public class JdbcPage extends WizardPage {
 
                 setPageComplete(false);
 
+                /* Display compositeLocal in case of SQLite */
                 if (comboType.getText().equals(SQLITE)) {
 
                     comboLocation.removeAll();
                     layout.topControl = compositeLocal;
 
+                /* Display compositeRemote otherwise */
                 } else {
 
                     layout.topControl = compositeRemote;
 
+                    /* Set default ports in case text field is empty */
                     if (txtPort.getText().isEmpty()) {
 
                         if (comboType.getText().equals(MYSQL)) {
@@ -128,6 +169,7 @@ public class JdbcPage extends WizardPage {
 
                 }
 
+                /* Trigger relayout */
                 compositeSwap.layout();
 
             }
@@ -150,10 +192,23 @@ public class JdbcPage extends WizardPage {
         /* Local composite */
         createCompositeLocal();
 
+        /* Mark page as incomplete by default */
         setPageComplete(false);
 
     }
 
+    /**
+     * Creates the content of {@link #compositeRemote}
+     *
+     * This adds all of the labels and text fields necessary to connect to a
+     * remote database server. If everything is fine, the tables from the
+     * database will be read.
+     *
+     * @see {@link #readTables()}
+     *
+     * TODO: Connect to database in case details are correct, not only in case
+     * of focusLost on txtDatabase.
+     */
     private void createCompositeRemote()
     {
 
@@ -209,6 +264,15 @@ public class JdbcPage extends WizardPage {
 
     }
 
+    /**
+     * Creates the content of {@link #compositeLocal}
+     *
+     * This adds a file chooser and an appropriate combo to select files.
+     * Selecting a file from the combo will trigger a read of the tables. If
+     * everything is fine, the tables from the database will be read.
+     *
+     * @see {@link #readTables()}
+     */
     private void createCompositeLocal()
     {
 
@@ -225,6 +289,7 @@ public class JdbcPage extends WizardPage {
         comboLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         comboLocation.addSelectionListener(new SelectionAdapter() {
 
+            /* Read tables from file */
             @Override
             public void widgetSelected(SelectionEvent e)
             {
@@ -241,9 +306,9 @@ public class JdbcPage extends WizardPage {
         btnChoose.addSelectionListener(new SelectionAdapter() {
 
             /**
-             * Opens a file selection dialog for db files
+             * Opens a file selection dialog for "*.db" files
              *
-             * If a valid db file was selected, it is added to
+             * If a valid file was selected, it is added to
              * {@link #comboLocation} when it wasn't already there. It is then
              * preselected within {@link #comboLocation}.
              */
@@ -275,11 +340,23 @@ public class JdbcPage extends WizardPage {
         });
     }
 
+    /**
+     * Reads in the tables
+     *
+     * This tries to establish an JDBC connection and read in the tables. If
+     * successful, the page is marked as complete and a list of tables is
+     * assigned to {@link ImportData}. Otherwise appropriate error messages
+     * are set.
+     *
+     * @see {@link ImportData#setJdbcTables(List)}
+     * @see {@link ImportData#setJdbcConnection(Connection)}
+     */
     protected void readTables()
     {
 
         Connection connection = null;
 
+        /* Establish JDBC connection */
         try {
 
             if (comboType.getText().equals(SQLITE)) {
@@ -309,6 +386,7 @@ public class JdbcPage extends WizardPage {
 
         }
 
+        /* Read in tables */
         try {
 
             ResultSet rs = connection.getMetaData().getTables(null, null, "%", null);
