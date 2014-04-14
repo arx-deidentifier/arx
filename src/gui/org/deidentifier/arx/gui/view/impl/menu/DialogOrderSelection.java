@@ -190,13 +190,13 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
+            controller.actionShowInfoDialog(getShell(), "Error", "Error while loading values: "+e.getMessage());
             return null;
         } finally {
             if (reader != null) try {
                 reader.close();
             } catch (IOException e) {
-                controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
+                controller.actionShowInfoDialog(getShell(), "Error", "Error while loading values: "+e.getMessage());
                 return null;
             }
         }
@@ -217,12 +217,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 if (i<elements.length-1) writer.write("\n");
             }
         } catch (IOException e) {
-            controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
+            controller.actionShowInfoDialog(getShell(), "Error", "Error while saving values: "+e.getMessage());
         } finally {
             if (writer != null) try {
                 writer.close();
             } catch (IOException e) {
-                controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
+                controller.actionShowInfoDialog(getShell(), "Error", "Error while saving values: "+e.getMessage());
             }
         }
     }
