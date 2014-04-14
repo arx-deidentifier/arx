@@ -39,7 +39,7 @@ public class HierarchyWizardModelInterval<T> extends HierarchyWizardModelGroupin
         super.error = null;
         super.groupsizes = null;
         
-        HierarchyBuilderIntervalBased<T> builder = new HierarchyBuilderIntervalBased<T>(
+        HierarchyBuilderIntervalBased<T> builder = HierarchyBuilderIntervalBased.create(
                                 super.getDataType(),
                                 new Range<T>(super.getLowerRange().repeat,
                                              super.getLowerRange().snap,

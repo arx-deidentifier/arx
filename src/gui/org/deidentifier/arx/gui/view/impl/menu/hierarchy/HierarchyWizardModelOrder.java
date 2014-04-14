@@ -98,7 +98,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         super.groupsizes = null;
         
         HierarchyBuilderOrderBased<T> builder = 
-                new HierarchyBuilderOrderBased<T>(super.getDataType(), false);
+                HierarchyBuilderOrderBased.create(super.getDataType(), false);
         
         int level = 0;
         for (List<HierarchyWizardGroupingGroup<T>> list : super.getModelGroups()) {

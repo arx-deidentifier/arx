@@ -74,7 +74,7 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         super.error = null;
         super.groupsizes = null;
         
-        HierarchyBuilderRedactionBased<T> builder = new HierarchyBuilderRedactionBased<T>(  alignmentOrder, 
+        HierarchyBuilderRedactionBased<T> builder = HierarchyBuilderRedactionBased.create(  alignmentOrder, 
                                                             redactionOrder, 
                                                             paddingCharacter, 
                                                             redactionCharacter);
