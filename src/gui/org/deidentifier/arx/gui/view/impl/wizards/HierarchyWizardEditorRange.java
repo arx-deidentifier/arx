@@ -1,11 +1,11 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.text.ParseException;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingRange;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingRange;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -13,12 +13,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for adjustments
+ * Editor for ranges
  * @author Fabian Prasser
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingRangeEditor<T> implements HierarchyWizardView {
+public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
     /** Var */
     private final Group                           composite;
@@ -42,7 +42,7 @@ public class HierarchyWizardGroupingRangeEditor<T> implements HierarchyWizardVie
      * @param lower
      */
     @SuppressWarnings("unchecked")
-    public HierarchyWizardGroupingRangeEditor(final Composite parent,
+    public HierarchyWizardEditorRange(final Composite parent,
                                      final HierarchyWizardModelGrouping<T> model,
                                      final boolean lower) {
 

@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.menu;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,24 +72,10 @@ public class ARXWizardDialog extends WizardDialog {
         this.map = new HashMap<ARXWizardButton, Button>();
     }
 
-    @Override
-    protected Control createDialogArea(Composite parent) {
-        Control ctrl = super.createDialogArea(parent);
-        getProgressMonitor();
-        return ctrl;
+    public Button getButton(ARXWizardButton button){
+        return map.get(button);
     }
    
-    @Override
-    protected IProgressMonitor getProgressMonitor() {
-        ProgressMonitorPart monitor = (ProgressMonitorPart) super.getProgressMonitor();
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.heightHint = 0;
-        monitor.setLayoutData(gridData);
-        monitor.setVisible(false);
-        return monitor;
-    }
-
-
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         if (buttons != null){
@@ -102,8 +88,22 @@ public class ARXWizardDialog extends WizardDialog {
         }
         super.createButtonsForButtonBar(parent);
     }
+
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Control ctrl = super.createDialogArea(parent);
+        getProgressMonitor();
+        return ctrl;
+    }
     
-    public Button getButton(ARXWizardButton button){
-        return map.get(button);
+    @Override
+    protected IProgressMonitor getProgressMonitor() {
+        ProgressMonitorPart monitor = (ProgressMonitorPart) super.getProgressMonitor();
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData.heightHint = 0;
+        monitor.setLayoutData(gridData);
+        monitor.setVisible(false);
+        return monitor;
     }
 }

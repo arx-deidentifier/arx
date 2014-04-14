@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
@@ -78,7 +78,7 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         }
         
         this.order = new Button(composite, SWT.RADIO);
-        this.order.setText("Use ordering (e.g., for variables with ordinal scale");
+        this.order.setText("Use ordering (e.g., for variables with ordinal scale)");
         this.order.setEnabled(true);
         
         this.redaction = new Button(composite, SWT.RADIO);
@@ -147,5 +147,16 @@ public class HierarchyWizardPageType<T> extends WizardPage {
             if (save != null) save.setEnabled(false);
         }
         super.setVisible(value);
+    }
+
+    public void updatePage() {
+        interval.setSelection(model.getType() == Type.INTERVAL_BASED);
+        order.setSelection(model.getType() == Type.ORDER_BASED);
+        redaction.setSelection(model.getType() == Type.REDACTION_BASED);
+        switch (model.getType()){
+            case INTERVAL_BASED:  next = intervalPage;  break;
+            case ORDER_BASED:     next = orderPage;     break;
+            case REDACTION_BASED: next = redactionPage; break;
+        }
     }
 }

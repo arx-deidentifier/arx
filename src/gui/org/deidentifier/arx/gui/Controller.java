@@ -47,6 +47,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -62,13 +63,13 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainContextMenu;
 import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.deidentifier.arx.gui.view.impl.menu.ARXWizardDialog;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
-import org.deidentifier.arx.gui.view.impl.menu.WizardHierarchy;
 import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportDataWizard;
+import org.deidentifier.arx.gui.view.impl.wizards.ARXWizardDialog;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -391,44 +392,33 @@ public class Controller implements IView {
             return;
         } 
         
-        final String attr = model.getSelectedAttribute();
-        final int index = model.getInputConfig()
-                               .getInput()
-                               .getHandle()
-                               .getColumnIndexOf(attr);
+        String attr = model.getSelectedAttribute();
         
-        if (true) {
-            DataType<?> type = model.getInputConfig().getInput()
-                                    .getDefinition().getDataType(attr);
-            org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizard<?>
-            wizard = new org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizard(this, attr, type, 
-                                                                                           model.getInputConfig()
-                                                                                           .getInput()
-                                                                                           .getHandle()
-                                                                                           .getStatistics()
-                                                                                           .getDistinctValues(index));
-            wizard.open(main.getShell());
-            return;
-        }
+        int index = model.getInputConfig()
+                                .getInput()
+                                .getHandle()
+                                .getColumnIndexOf(attr);
         
-        final WizardHierarchy i = new WizardHierarchy(this,
-                                                      attr,
-                                                      model.getInputConfig()
-                                                           .getInput()
-                                                           .getDefinition()
-                                                           .getDataType(attr),
-                                                      model.getSuppressionString(),
-                                                      model.getInputConfig()
-                                                           .getInput()
-                                                           .getHandle()
-                                                           .getStatistics()
-                                                           .getDistinctValues(index));
-        if (i.open(main.getShell())) {
-            Hierarchy hierarchy = i.getModel().getHierarchy();
+        DataType<?> type = model.getInputConfig().getInput()
+                                .getDefinition().getDataType(attr);
+        
+        String[] data = model.getInputConfig()
+                                .getInput()
+                                .getHandle()
+                                .getStatistics()
+                                .getDistinctValues(index);
+        
+        HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        HierarchyWizard<?> wizard = new HierarchyWizard(this, attr, builder, type, data);
+       
+        if (wizard.open(main.getShell())) {
+            Hierarchy hierarchy = wizard.getHierarchy();
             if (hierarchy != null){
                 model.getInputConfig().setMaximumGeneralization(attr, null);
                 model.getInputConfig().setMinimumGeneralization(attr, null);
                 model.getInputConfig().setHierarchy(attr, hierarchy);
+                model.getInputConfig().setHierarchyBuilder(attr, wizard.getBuilder());
                 update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
             }
         }

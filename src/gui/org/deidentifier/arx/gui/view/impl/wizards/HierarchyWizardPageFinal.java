@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.gui.view.SWTUtil;

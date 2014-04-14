@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,6 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -42,6 +41,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     private final Controller controller;
     private List list;
     private Combo combo;
+    HierarchyWizardEditor<Long> editor; 
     
     public HierarchyWizardPageOrder(final Controller controller,
                                     final HierarchyWizard<T> wizard,
@@ -55,6 +55,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         setPageComplete(true);
     }
     
+    @Override
     public void createControl(final Composite parent) {
         
         Composite composite = new Composite(parent, SWT.NONE);
@@ -64,135 +65,18 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         setControl(composite);
     }
 
-    private void createGroups(Composite parent){
-        Group composite = new Group(parent, SWT.NONE);
-        composite.setText("Groups");
-        composite.setLayout(SWTUtil.createGridLayout(1, false));
-        composite.setLayoutData(SWTUtil.createFillGridData());
-        
-        HierarchyWizardGroupingEditor<Long> component = 
-                new HierarchyWizardGroupingEditor<Long>(composite, 
-                        (HierarchyWizardModelGrouping<Long>) model);
-        component.setLayoutData(SWTUtil.createFillGridData());
-    }
-    
-    private void createOrder(Composite parent){
-        Group composite = new Group(parent, SWT.NONE);
-        composite.setText("Order");
-        composite.setLayout(SWTUtil.createGridLayout(1, false));
-        composite.setLayoutData(SWTUtil.createFillVerticallyGridData());
-        
-        list = new List(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
-        list.setLayoutData(SWTUtil.createFillGridData());
+    @Override
+    public void updatePage() {
+        list.setRedraw(false);
+        list.removeAll();
         for (String s : model.getData()) {
             list.add(s);
         }
-
-        final Button up = new Button(composite, SWT.NONE);
-        up.setText(Resources.getMessage("HierarchyWizardPageOrder.3")); //$NON-NLS-1$
-        up.setImage(controller.getResources().getImage("arrow_up.png")); //$NON-NLS-1$
-        up.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        up.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                actionUp();
-            }
-        });
-
-        final Button down = new Button(composite, SWT.NONE);
-        down.setText(Resources.getMessage("HierarchyWizardPageOrder.5")); //$NON-NLS-1$
-        down.setImage(controller.getResources().getImage("arrow_down.png")); //$NON-NLS-1$
-        down.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        down.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                actionDown();
-            }
-        });
-
-        final Composite bottom1 = new Composite(composite, SWT.NONE);
-        bottom1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        bottom1.setLayout(SWTUtil.createGridLayout(2, false));
-
-        final Label text = new Label(bottom1, SWT.NONE);
-        text.setText(Resources.getMessage("HierarchyWizardPageOrder.7")); //$NON-NLS-1$
-
-        combo = new Combo(bottom1, SWT.NONE);
-        combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        combo.add(Resources.getMessage("HierarchyWizardPageOrder.8")); //$NON-NLS-1$
-        for (String type : getDataTypes()){
-            combo.add(type);
-        }
-        combo.select(0);
-        combo.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                int index = combo.getSelectionIndex();
-                if (index >=0 ){
-                    combo.select(actionSort(index));
-                }
-            }
-        });
+        list.setRedraw(true);
+        combo.select(getIndexOfDataType(model.getDataType()));
+        model.update();
     }
     
-
-    /**
-     * Returns a description for the given label
-     * @param label
-     * @return
-     */
-    private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.list()){
-            if (label.equals(desc.getLabel())){
-                return desc;
-            }
-        }
-        throw new RuntimeException("Unknown data type: "+label);
-    }
-    
-    /**
-     * Returns the labels of all available data types
-     * @return
-     */
-    private String[] getDataTypes(){
-        ArrayList<String> list = new ArrayList<String>();
-        for (DataTypeDescription<?> desc : DataType.list()){
-            list.add(desc.getLabel());
-        }
-        return list.toArray(new String[list.size()]);
-    }
-
-    /**
-     * Returns the index of a given data type
-     * @param type
-     * @return
-     */
-    private int getIndexOfDataType(DataType<?> type){
-        int idx = 0;
-        for (DataTypeDescription<?> desc : DataType.list()){
-            if (desc.getLabel().equals(type.getDescription().getLabel())) {
-                return idx;
-            }
-            idx++;
-        }
-        throw new RuntimeException("Unknown data type: "+type.getDescription().getLabel());
-    }
-
-    /**
-     * Checks whether the data type is valid
-     * @param type
-     * @param values
-     * @return
-     */
-    private boolean isValid(DataType<?> type, String[] values){
-        for (String value : values){
-            if (!type.isValid(value)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void actionDown() {
         int index = list.getSelectionIndex();
         model.moveDown(index);
@@ -206,21 +90,6 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         list.setSelection(index+1);
         list.setRedraw(true);
         update();
-    }
-    private void actionUp() {
-        int index = list.getSelectionIndex();
-        model.moveUp(index);
-
-        // After moving in the array, move in the list
-        if (index<=0) return;
-        list.setRedraw(false);
-        String temp = list.getItem(index-1);
-        list.setItem(index-1, list.getItem(index));
-        list.setItem(index, temp);
-        list.setSelection(index-1);
-        list.setRedraw(true);
-        update();
-
     }
     
     private int actionSort(int index) {
@@ -290,10 +159,143 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         list.setRedraw(true);
         return returnIndex;
     }
+    
+    private void actionUp() {
+        int index = list.getSelectionIndex();
+        model.moveUp(index);
 
-    @Override
-    public void updatePage() {
-        // TODO Auto-generated method stub
+        // After moving in the array, move in the list
+        if (index<=0) return;
+        list.setRedraw(false);
+        String temp = list.getItem(index-1);
+        list.setItem(index-1, list.getItem(index));
+        list.setItem(index, temp);
+        list.setSelection(index-1);
+        list.setRedraw(true);
+        update();
+
+    }
+
+    private void createGroups(Composite parent){
+        Group composite = new Group(parent, SWT.NONE);
+        composite.setText("Groups");
+        composite.setLayout(SWTUtil.createGridLayout(1, false));
+        composite.setLayoutData(SWTUtil.createFillGridData());
         
+        editor =  new HierarchyWizardEditor<Long>(composite, (HierarchyWizardModelGrouping<Long>) model);
+        editor.setLayoutData(SWTUtil.createFillGridData());
+    }
+
+    private void createOrder(Composite parent){
+        Group composite = new Group(parent, SWT.NONE);
+        composite.setText("Order");
+        composite.setLayout(SWTUtil.createGridLayout(1, false));
+        composite.setLayoutData(SWTUtil.createFillVerticallyGridData());
+        
+        list = new List(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        list.setLayoutData(SWTUtil.createFillGridData());
+        
+        final Button up = new Button(composite, SWT.NONE);
+        up.setText(Resources.getMessage("HierarchyWizardPageOrder.3")); //$NON-NLS-1$
+        up.setImage(controller.getResources().getImage("arrow_up.png")); //$NON-NLS-1$
+        up.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        up.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionUp();
+            }
+        });
+
+        final Button down = new Button(composite, SWT.NONE);
+        down.setText(Resources.getMessage("HierarchyWizardPageOrder.5")); //$NON-NLS-1$
+        down.setImage(controller.getResources().getImage("arrow_down.png")); //$NON-NLS-1$
+        down.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        down.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionDown();
+            }
+        });
+
+        final Composite bottom1 = new Composite(composite, SWT.NONE);
+        bottom1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        bottom1.setLayout(SWTUtil.createGridLayout(2, false));
+
+        final Label text = new Label(bottom1, SWT.NONE);
+        text.setText(Resources.getMessage("HierarchyWizardPageOrder.7")); //$NON-NLS-1$
+
+        combo = new Combo(bottom1, SWT.NONE);
+        combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        combo.add(Resources.getMessage("HierarchyWizardPageOrder.8")); //$NON-NLS-1$
+        for (String type : getDataTypes()){
+            combo.add(type);
+        }
+        combo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                int index = combo.getSelectionIndex();
+                if (index >=0 ){
+                    combo.select(actionSort(index));
+                }
+            }
+        });
+        updatePage();
+    }
+
+    /**
+     * Returns a description for the given label
+     * @param label
+     * @return
+     */
+    private DataTypeDescription<?> getDataType(String label){
+        for (DataTypeDescription<?> desc : DataType.list()){
+            if (label.equals(desc.getLabel())){
+                return desc;
+            }
+        }
+        throw new RuntimeException("Unknown data type: "+label);
+    }
+    
+    /**
+     * Returns the labels of all available data types
+     * @return
+     */
+    private String[] getDataTypes(){
+        ArrayList<String> list = new ArrayList<String>();
+        for (DataTypeDescription<?> desc : DataType.list()){
+            list.add(desc.getLabel());
+        }
+        return list.toArray(new String[list.size()]);
+    }
+    
+    /**
+     * Returns the index of a given data type
+     * @param type
+     * @return
+     */
+    private int getIndexOfDataType(DataType<?> type){
+        int idx = 0;
+        for (DataTypeDescription<?> desc : DataType.list()){
+            if (desc.getLabel().equals(type.getDescription().getLabel())) {
+                return idx;
+            }
+            idx++;
+        }
+        return -1;
+    }
+
+    /**
+     * Checks whether the data type is valid
+     * @param type
+     * @param values
+     * @return
+     */
+    private boolean isValid(DataType<?> type, String[] values){
+        for (String value : values){
+            if (!type.isValid(value)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

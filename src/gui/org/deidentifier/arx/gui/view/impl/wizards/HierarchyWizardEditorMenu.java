@@ -1,7 +1,7 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.MenuItem;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingEditorMenu<T> {
+public class HierarchyWizardEditorMenu<T> {
 
     /** Var*/
     private final Composite         composite;
@@ -41,7 +41,7 @@ public class HierarchyWizardGroupingEditorMenu<T> {
      * @param composite
      * @param model
      */
-    public HierarchyWizardGroupingEditorMenu(final Composite composite, 
+    public HierarchyWizardEditorMenu(final Composite composite, 
                                final HierarchyWizardModelGrouping<T> model) {
         
         this.model = model;

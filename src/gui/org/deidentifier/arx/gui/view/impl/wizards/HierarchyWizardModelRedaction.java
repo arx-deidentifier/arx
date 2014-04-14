@@ -1,8 +1,7 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 
@@ -17,19 +16,42 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         this.update();
     }
 
+    public Order getAlignmentOrder() {
+        return alignmentOrder;
+    }
+
+    @Override
+    public HierarchyBuilderRedactionBased<T> getBuilder() {
+        return HierarchyBuilderRedactionBased.create(  alignmentOrder, 
+                                                       redactionOrder, 
+                                                       paddingCharacter, 
+                                                       redactionCharacter);
+    }
+
+    public char getPaddingCharacter() {
+        return paddingCharacter;
+    }
+
+    public char getRedactionCharacter() {
+        return redactionCharacter;
+    }
+
     public Order getRedactionOrder() {
         return redactionOrder;
     }
 
-    public void setRedactionOrder(Order redactionOrder) {
-        if (redactionOrder != this.redactionOrder){
-            this.redactionOrder = redactionOrder;
-            this.update();
+    @Override
+    public void parse(HierarchyBuilder<T> _builder) {
+        
+        if (!(_builder instanceof HierarchyBuilderRedactionBased)) {
+            return;
         }
-    }
-
-    public Order getAlignmentOrder() {
-        return alignmentOrder;
+        HierarchyBuilderRedactionBased<T> builder = (HierarchyBuilderRedactionBased<T>)_builder; 
+        this.redactionOrder = builder.getRedactionOrder();
+        this.alignmentOrder = builder.getAligmentOrder();
+        this.redactionCharacter = builder.getRedactionCharacter();
+        this.paddingCharacter = builder.getPaddingCharacter();
+        this.update();
     }
 
     public void setAlignmentOrder(Order alignmentOrder) {
@@ -39,10 +61,6 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         }
     }
 
-    public char getPaddingCharacter() {
-        return paddingCharacter;
-    }
-
     public void setPaddingCharacter(char paddingCharacter) {
         if (this.paddingCharacter != paddingCharacter){
             this.paddingCharacter = paddingCharacter;
@@ -50,13 +68,16 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         }
     }
 
-    public char getRedactionCharacter() {
-        return redactionCharacter;
-    }
-
     public void setRedactionCharacter(char redactionCharacter) {
         if (this.redactionCharacter != redactionCharacter){
             this.redactionCharacter = redactionCharacter;
+            this.update();
+        }
+    }
+
+    public void setRedactionOrder(Order redactionOrder) {
+        if (redactionOrder != this.redactionOrder){
+            this.redactionOrder = redactionOrder;
             this.update();
         }
     }
@@ -81,27 +102,5 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
             super.error = "Unknown error";
             return;
         }
-    }
-
-    @Override
-    public HierarchyBuilderRedactionBased<T> getBuilder() {
-        return HierarchyBuilderRedactionBased.create(  alignmentOrder, 
-                                                       redactionOrder, 
-                                                       paddingCharacter, 
-                                                       redactionCharacter);
-    }
-
-    @Override
-    public void parse(HierarchyBuilder<T> _builder) {
-        
-        if (!(_builder instanceof HierarchyBuilderRedactionBased)) {
-            return;
-        }
-        HierarchyBuilderRedactionBased<T> builder = (HierarchyBuilderRedactionBased<T>)_builder; 
-        this.redactionOrder = builder.getRedactionOrder();
-        this.alignmentOrder = builder.getAligmentOrder();
-        this.redactionCharacter = builder.getRedactionCharacter();
-        this.paddingCharacter = builder.getPaddingCharacter();
-        this.update();
     }
 }

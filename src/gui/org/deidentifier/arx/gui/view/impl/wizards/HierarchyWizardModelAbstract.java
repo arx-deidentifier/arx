@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -15,33 +15,33 @@ public abstract class HierarchyWizardModelAbstract<T> {
         this.data = data;
     }
 
+    public abstract HierarchyBuilder<T> getBuilder();
+
+    public String[] getData() {
+        return data;
+    }
+
     public String getError() {
         return error;
+    }
+    
+    public int[] getGroups() {
+        return groupsizes;
     }
 
     public Hierarchy getHierarchy() {
         return hierarchy;
     }
-
-    public int[] getGroups() {
-        return groupsizes;
+    
+    public abstract void parse(HierarchyBuilder<T> builder);
+    
+    public void setView(HierarchyWizardView view){
+        this.view = view;
     }
     
     public void update(){
         internalUpdate();
         if (view != null) view.update();
     }
-
     protected abstract void internalUpdate();
-    
-    public void setView(HierarchyWizardView view){
-        this.view = view;
-    }
-    
-    public String[] getData() {
-        return data;
-    }
-    
-    public abstract HierarchyBuilder<T> getBuilder();
-    public abstract void parse(HierarchyBuilder<T> builder);
 }

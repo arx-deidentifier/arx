@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.gui.Controller;
@@ -33,7 +33,13 @@ import org.eclipse.swt.widgets.Label;
 public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<T> {
 
     private final HierarchyWizardModelRedaction<T> model;
-    
+    private Button                                 buttonLeftAlign;
+    private Button                                 buttonRightAlign;
+    private Button                                 buttonLeftRedact;
+    private Button                                 buttonRightRedact;
+    private Combo                                  comboPaddingChar;
+    private Combo                                  comboRedactionChar;
+
     public HierarchyWizardPageRedaction(Controller controller,
                                         final HierarchyWizard<T> wizard,
                                         final HierarchyWizardModel<T> model, 
@@ -45,6 +51,7 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         setPageComplete(true);
     }
     
+    @Override
     public void createControl(final Composite parent) {
         
         Composite composite = new Composite(parent, SWT.NONE);
@@ -54,18 +61,18 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         group1.setText("Alignment");
         group1.setLayout(SWTUtil.createGridLayout(1, false));
         group1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        final Button buttonLeftAlign = new Button(group1, SWT.RADIO);
+        buttonLeftAlign = new Button(group1, SWT.RADIO);
         buttonLeftAlign.setText("Align items to the left");
-        final Button buttonRightAlign = new Button(group1, SWT.RADIO);
+        buttonRightAlign = new Button(group1, SWT.RADIO);
         buttonRightAlign.setText("Align items to the right");
     
         Group group2 = new Group(composite, SWT.SHADOW_ETCHED_IN);
         group2.setText("Redaction");
         group2.setLayout(SWTUtil.createGridLayout(1, false));
         group2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        final Button buttonLeftRedact = new Button(group2, SWT.RADIO);
+        buttonLeftRedact = new Button(group2, SWT.RADIO);
         buttonLeftRedact.setText("Redact characters left to right");
-        final Button buttonRightRedact = new Button(group2, SWT.RADIO);
+        buttonRightRedact = new Button(group2, SWT.RADIO);
         buttonRightRedact.setText("Redact characters right to left");
     
         Group group3 = new Group(composite, SWT.SHADOW_ETCHED_IN);
@@ -74,11 +81,11 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         group3.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Label label1 = new Label(group3, SWT.NONE);
         label1.setText("Padding character");
-        final Combo comboPaddingChar = new Combo(group3, SWT.READ_ONLY);
+        comboPaddingChar = new Combo(group3, SWT.READ_ONLY);
         comboPaddingChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Label label2 = new Label(group3, SWT.NONE);
         label2.setText("Redaction character");
-        final Combo comboRedactionChar = new Combo(group3, SWT.READ_ONLY);
+        comboRedactionChar = new Combo(group3, SWT.READ_ONLY);
         comboRedactionChar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         createItems(comboPaddingChar, true);
@@ -132,17 +139,20 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
             }
         });
         
+        updatePage();
+        setControl(composite);
+    }
+
+    @Override
+    public void updatePage() {
         buttonLeftAlign.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
         buttonRightAlign.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
         buttonLeftRedact.setSelection(model.getAlignmentOrder() == Order.LEFT_TO_RIGHT);
         buttonRightRedact.setSelection(model.getAlignmentOrder() == Order.RIGHT_TO_LEFT);
-    
         comboPaddingChar.select(indexOf(comboPaddingChar, model.getPaddingCharacter()));
         comboRedactionChar.select(indexOf(comboRedactionChar, model.getRedactionCharacter()));
-        
-        setControl(composite);
     }
-
+    
     void createItems(Combo combo, boolean padding){
         if (padding) combo.add("( )");
         combo.add("(*)");
@@ -150,7 +160,7 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         combo.add("(#)");
         combo.add("(-)");
     }
-    
+
     int indexOf(Combo combo, char value){
         for (int i=0; i < combo.getItems().length; i++) {
             if (combo.getItem(i).toCharArray()[1]==value) {
@@ -159,11 +169,5 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         }
         combo.add("("+String.valueOf(value)+")");
         return combo.getItemCount()-1;
-    }
-
-    @Override
-    public void updatePage() {
-        // TODO Auto-generated method stub
-        
     }
 }

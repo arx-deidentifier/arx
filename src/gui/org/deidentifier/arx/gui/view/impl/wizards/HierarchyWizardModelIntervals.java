@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.List;
 
@@ -20,35 +20,6 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
         super(data, dataType, true);
         this.data = data;
         this.update();
-    }
-
-    @Override
-    protected void internalUpdate() {
-        super.hierarchy = null;
-        super.error = null;
-        super.groupsizes = null;
-        
-        HierarchyBuilderIntervalBased<T> builder = getBuilder();
-        
-        String error = builder.isValid();
-        if (error != null) {
-            super.error = error;
-            return;
-        }
-        
-        try {
-            super.groupsizes = builder.prepare(data);
-        } catch(Exception e){
-            super.error = e.getMessage();
-            return;
-        }
-        
-        try {
-            super.hierarchy = builder.build();
-        } catch(Exception e){
-            super.error = e.getMessage();
-            return;
-        }
     }
 
     @Override
@@ -83,5 +54,34 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
             return;
         }
         super.parse((HierarchyBuilderIntervalBased<T>)builder);
+    }
+
+    @Override
+    protected void internalUpdate() {
+        super.hierarchy = null;
+        super.error = null;
+        super.groupsizes = null;
+        
+        HierarchyBuilderIntervalBased<T> builder = getBuilder();
+        
+        String error = builder.isValid();
+        if (error != null) {
+            super.error = error;
+            return;
+        }
+        
+        try {
+            super.groupsizes = builder.prepare(data);
+        } catch(Exception e){
+            super.error = e.getMessage();
+            return;
+        }
+        
+        try {
+            super.hierarchy = builder.build();
+        } catch(Exception e){
+            super.error = e.getMessage();
+            return;
+        }
     }
 }

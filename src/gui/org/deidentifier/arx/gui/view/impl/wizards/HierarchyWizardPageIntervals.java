@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -40,13 +40,14 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         setPageComplete(true);
     }
     
+    @Override
     public void createControl(final Composite parent) {
         
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         
-        HierarchyWizardGroupingEditor<Long> component = 
-                new HierarchyWizardGroupingEditor<Long>(composite, 
+        HierarchyWizardEditor<Long> component = 
+                new HierarchyWizardEditor<Long>(composite, 
                         (HierarchyWizardModelGrouping<Long>) model);
         component.setLayoutData(SWTUtil.createFillGridData());
 
@@ -55,7 +56,6 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
 
     @Override
     public void updatePage() {
-        // TODO Auto-generated method stub
-        
+        model.update();
     }
 }

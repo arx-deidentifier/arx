@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -34,6 +34,19 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
     }
 
     @Override
+    public void setVisible(boolean value){
+        
+        if (value) {
+            this.model.update();
+            Button load = this.wizard.getLoadButton();
+            if (load != null) load.setEnabled(false);
+            Button save = this.wizard.getSaveButton();
+            if (save != null) save.setEnabled(true);
+        }
+        super.setVisible(value);
+    }
+    
+    @Override
     public void update() {
         if (model.getError() != null) {
             this.setErrorMessage(model.getError());
@@ -47,19 +60,6 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
             this.setPageComplete(true);
         }
     }
-    
-    public abstract void updatePage();
 
-    @Override
-    public void setVisible(boolean value){
-        
-        if (value) {
-            this.model.update();
-            Button load = this.wizard.getLoadButton();
-            if (load != null) load.setEnabled(false);
-            Button save = this.wizard.getSaveButton();
-            if (save != null) save.setEnabled(true);
-        }
-        super.setVisible(value);
-    }
+    public abstract void updatePage();
 }

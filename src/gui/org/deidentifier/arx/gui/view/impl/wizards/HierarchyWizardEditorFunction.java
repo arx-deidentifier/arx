@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingFunctionEditor<T> {
+public class HierarchyWizardEditorFunction<T> {
     
     /**
      * Tiny callback for parents
@@ -56,7 +56,7 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
      * @param composite
      * @param general
      */
-    public HierarchyWizardGroupingFunctionEditor(final IHierarchyFunctionEditorParent<T> parent,
+    public HierarchyWizardEditorFunction(final IHierarchyFunctionEditorParent<T> parent,
                                    final HierarchyWizardModelGrouping<T> model,
                                    final Composite composite,
                                    final boolean general) {
@@ -102,7 +102,7 @@ public class HierarchyWizardGroupingFunctionEditor<T> {
             @Override
             public void setValue(final String s) {
                 function = functions.get(labels.indexOf(s));
-                HierarchyWizardGroupingFunctionEditor.this.update();
+                HierarchyWizardEditorFunction.this.update();
                 parent.setFunction(function);
             }
         };

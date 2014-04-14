@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,7 +124,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     /** Var */
     private Object                                      selected      = null;
     /** Var */
-    private HierarchyWizardGroupingRenderer<T>          renderer      = new HierarchyWizardGroupingRenderer<T>(this);
+    private HierarchyWizardEditorRenderer<T>          renderer      = new HierarchyWizardEditorRenderer<T>(this);
     /** Var */
     private List<HierarchyWizardView>           components    = new ArrayList<HierarchyWizardView>();
 
@@ -312,7 +312,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     /**
      * @return the renderer
      */
-    public HierarchyWizardGroupingRenderer<T> getRenderer() {
+    public HierarchyWizardEditorRenderer<T> getRenderer() {
         return renderer;
     }
     
@@ -520,6 +520,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     /**
      * Update all UI components
      */
+    @Override
     public void update(){
         super.update();
         renderer.update();

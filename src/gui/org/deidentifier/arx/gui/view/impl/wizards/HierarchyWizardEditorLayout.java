@@ -1,10 +1,10 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 
 /**
  * 
@@ -13,7 +13,7 @@ import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardModelGro
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingLayout<T> {
+public class HierarchyWizardEditorLayout<T> {
 
     /** Constant */
     public static final int                       PRETTY_THRESHOLD = 100;
@@ -27,7 +27,7 @@ public class HierarchyWizardGroupingLayout<T> {
      * Creates a new instance
      * @param model
      */
-    public HierarchyWizardGroupingLayout(HierarchyWizardModelGrouping<T> model){
+    public HierarchyWizardEditorLayout(HierarchyWizardModelGrouping<T> model){
         this.model = model;
     }
 
