@@ -153,11 +153,11 @@ public class TablePage extends WizardPage {
         try {
 
             Statement statement = connection.createStatement();
+            statement.setMaxRows(ImportData.previewDataMaxLines);
             statement.execute("SELECT * FROM " + selectedTable);
             ResultSet rs = statement.getResultSet();
 
-            int i = 0;
-            while(rs.next() && i < ImportData.previewDataMaxLines) {
+            while(rs.next()) {
 
                 String[] previewRow = new String[rs.getMetaData().getColumnCount()];
 
@@ -168,7 +168,6 @@ public class TablePage extends WizardPage {
                 }
 
                 previewData.add(previewRow);
-                i++;
 
             }
 
