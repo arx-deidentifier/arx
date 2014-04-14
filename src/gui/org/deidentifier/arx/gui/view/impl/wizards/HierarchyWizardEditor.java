@@ -120,7 +120,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         this.folder.setSimple(false);
         this.folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.createGeneralTab(folder);
-        if (model.isShowIntervals()) this.createBoundsTab(folder);
+        if (model.isShowIntervals()) this.createRangeTab(folder);
         if (model.isShowIntervals()) this.createIntervalTab(folder);
         this.createGroupTab(folder);
         this.folder.setSelection(0);
@@ -151,7 +151,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      * Create a tab
      * @param tabFolder
      */
-    private void createBoundsTab(CTabFolder tabFolder) {
+    private void createRangeTab(CTabFolder tabFolder) {
     	CTabItem tabItem4 = new CTabItem(tabFolder, SWT.NULL);
         tabItem4.setText("Range");
         Composite parent = new Composite(tabFolder, SWT.NULL);

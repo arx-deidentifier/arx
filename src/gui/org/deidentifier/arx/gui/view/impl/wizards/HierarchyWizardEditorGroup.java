@@ -57,7 +57,7 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         this.model.register(this);
         
         final Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(SWTUtil.createGridLayout(2, false));    
+        composite.setLayout(SWTUtil.createGridLayout(2, true));    
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
 

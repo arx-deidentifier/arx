@@ -65,7 +65,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
 
         final Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        composite.setLayout(SWTUtil.createGridLayout(2, false));
+        composite.setLayout(SWTUtil.createGridLayout(2, true));
         this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
         
         createLabel(composite, "Min:");
