@@ -62,6 +62,9 @@ public class JdbcPage extends WizardPage {
     private Button btnChoose;
     private Composite container;
 
+    private static final String MYSQL = "MySQL";
+    private static final String POSTGRESQL = "PostgreSQL";
+    private static final String SQLITE = "SQLite";
 
     public JdbcPage(ImportDataWizard wizardImport)
     {
@@ -88,7 +91,7 @@ public class JdbcPage extends WizardPage {
 
         comboType = new Combo(container, SWT.READ_ONLY);
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboType.setItems(new String[] {"MySQL", "PostgreSQL", "SQLite"});
+        comboType.setItems(new String[] {MYSQL, POSTGRESQL, SQLITE});
         comboType.addSelectionListener(new SelectionAdapter() {
 
             /**
@@ -100,7 +103,7 @@ public class JdbcPage extends WizardPage {
 
                 setPageComplete(false);
 
-                if (comboType.getText().equals("SQLite")) {
+                if (comboType.getText().equals(SQLITE)) {
 
                     comboLocation.removeAll();
                     layout.topControl = compositeLocal;
@@ -111,11 +114,11 @@ public class JdbcPage extends WizardPage {
 
                     if (txtPort.getText().isEmpty()) {
 
-                        if (comboType.getText().equals("MySQL")) {
+                        if (comboType.getText().equals(MYSQL)) {
 
                             txtPort.setText("3306");
 
-                        } else if (comboType.getText().equals("PostgreSQL")) {
+                        } else if (comboType.getText().equals(POSTGRESQL)) {
 
                             txtPort.setText("5432");
 
@@ -279,17 +282,17 @@ public class JdbcPage extends WizardPage {
 
         try {
 
-            if (comboType.getText().equals("SQLite")) {
+            if (comboType.getText().equals(SQLITE)) {
 
                 Class.forName("org.sqlite.JDBC");
                 connection = DriverManager.getConnection("jdbc:sqlite:" + comboLocation.getText());
 
-            } else if (comboType.getText().equals("MySQL")) {
+            } else if (comboType.getText().equals(MYSQL)) {
 
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText());
 
-            } else if (comboType.getText().equals("PostgreSQL")) {
+            } else if (comboType.getText().equals(POSTGRESQL)) {
 
                 Class.forName("org.postgresql.Driver");
                 connection = DriverManager.getConnection("jdbc:postgresql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText());
