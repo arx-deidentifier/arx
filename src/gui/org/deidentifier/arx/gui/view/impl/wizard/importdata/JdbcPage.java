@@ -32,6 +32,8 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -139,6 +141,8 @@ public class JdbcPage extends WizardPage {
             public void widgetSelected(SelectionEvent e)
             {
 
+                setMessage(null);
+                setErrorMessage(null);
                 setPageComplete(false);
 
                 /* Display compositeLocal in case of SQLite */
@@ -205,15 +209,49 @@ public class JdbcPage extends WizardPage {
      * database will be read.
      *
      * @see {@link #readTables()}
-     *
-     * TODO: Connect to database in case details are correct, not only in case
-     * of focusLost on txtDatabase.
      */
     private void createCompositeRemote()
     {
 
         compositeRemote = new Composite(compositeSwap, SWT.NONE);
         compositeRemote.setLayout(new GridLayout(2, false));
+
+        /**
+         * Tries to connect to database on traverse and focusLost events
+         *
+         * @see {@link #tryToConnect()}
+         */
+        class ConnectionListener extends FocusAdapter implements TraverseListener {
+
+            /**
+             * Handles traverse events (enter, tab, etc.)
+             *
+             * @see {@link #tryToConnect()}
+             */
+            @Override
+            public void keyTraversed(TraverseEvent e)
+            {
+
+                tryToConnect();
+
+            }
+
+            /**
+             * Handles focusLost events
+             *
+             * @see {@link #tryToConnect()}
+             */
+            @Override
+            public void focusLost(FocusEvent e)
+            {
+
+                tryToConnect();
+
+            }
+
+        }
+
+        ConnectionListener connectionListener = new ConnectionListener();
 
         Label lblServer = new Label(compositeRemote, SWT.NONE);
         lblServer.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -222,6 +260,8 @@ public class JdbcPage extends WizardPage {
         txtServer = new Text(compositeRemote, SWT.BORDER);
         txtServer.setText("localhost");
         txtServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtServer.addFocusListener(connectionListener);
+        txtServer.addTraverseListener(connectionListener);
 
         Label lblPort = new Label(compositeRemote, SWT.NONE);
         lblPort.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -229,6 +269,8 @@ public class JdbcPage extends WizardPage {
 
         txtPort = new Text(compositeRemote, SWT.BORDER);
         txtPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtPort.addFocusListener(connectionListener);
+        txtPort.addTraverseListener(connectionListener);
 
         Label lblUsername = new Label(compositeRemote, SWT.NONE);
         lblUsername.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -236,6 +278,8 @@ public class JdbcPage extends WizardPage {
 
         txtUsername = new Text(compositeRemote, SWT.BORDER);
         txtUsername.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtUsername.addFocusListener(connectionListener);
+        txtUsername.addTraverseListener(connectionListener);
 
         Label lblPassword = new Label(compositeRemote, SWT.NONE);
         lblPassword.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -243,6 +287,8 @@ public class JdbcPage extends WizardPage {
 
         txtPassword = new Text(compositeRemote, SWT.BORDER | SWT.PASSWORD);
         txtPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtPassword.addFocusListener(connectionListener);
+        txtPassword.addTraverseListener(connectionListener);
 
         Label lblDatabase = new Label(compositeRemote, SWT.NONE);
         lblDatabase.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -250,18 +296,45 @@ public class JdbcPage extends WizardPage {
 
         txtDatabase = new Text(compositeRemote, SWT.BORDER);
         txtDatabase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtDatabase.addFocusListener(new FocusAdapter() {
+        txtDatabase.addFocusListener(connectionListener);
+        txtDatabase.addTraverseListener(connectionListener);
 
-            @Override
-            public void focusLost(FocusEvent e)
-            {
+    }
 
-                connect();
-                readTables();
+    /**
+     * Tries to establish a remote JDBC connection
+     *
+     * Unless all mandatory fields (everything besides the password) are
+     * not empty this will try to connect to the database. It sets the message
+     * and errors of this page accordingly and will also try to read in the
+     * tables once a successfull connection has been established.
+     *
+     * @see {@link #readTables()}
+     */
+    private void tryToConnect()
+    {
 
-            }
+        setErrorMessage(null);
+        setMessage(null);
 
-        });
+        String server = txtServer.getText();
+        String port = txtPort.getText();
+        String username = txtUsername.getText();
+        String database = txtDatabase.getText();
+
+        if (server.isEmpty() || port.isEmpty() || username.isEmpty() || database.isEmpty()) {
+
+            return;
+
+        }
+
+        setMessage("Trying to connect to database", INFORMATION);
+        if (connect()) {
+
+            setMessage("Successfully connected to database", INFORMATION);
+            readTables();
+
+        }
 
     }
 
@@ -294,6 +367,9 @@ public class JdbcPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e)
             {
+
+                setPageComplete(false);
+                setErrorMessage(null);
 
                 connect();
                 readTables();
@@ -346,11 +422,15 @@ public class JdbcPage extends WizardPage {
      * Connects to the database
      *
      * This tries to establish an JDBC connection. In case of an error
-     * appropriate error messages are set.
+     * appropriate error messages are set. Otherwise the connection is passed
+     * on to {@link ImportData}. The return value indicates whether a
+     * connection has been established.
+     *
+     * @return True if successfully connected, false otherwise
      *
      * @see {@link ImportData#setJdbcConnection(Connection)}
      */
-    protected void connect()
+    protected boolean connect()
     {
 
         try {
@@ -375,14 +455,18 @@ public class JdbcPage extends WizardPage {
             }
 
             wizardImport.getData().setJdbcConnection(connection);
+            return true;
 
         } catch (ClassNotFoundException e) {
 
             setErrorMessage("No JDBC driver for selected connection type");
+            return false;
 
         } catch (SQLException e) {
 
-            setErrorMessage("Database connection error");
+            /* Database connection error */
+            setErrorMessage(e.getLocalizedMessage());
+            return false;
 
         }
 
