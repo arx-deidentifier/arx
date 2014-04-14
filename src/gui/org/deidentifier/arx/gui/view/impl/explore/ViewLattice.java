@@ -427,7 +427,7 @@ public class ViewLattice extends Panel implements IView {
         b.append(format.format(asRelativeValue(node.getMaximumInformationLoss())));
         b.append(" [%]\n"); //$NON-NLS-1$
         for (final String qi : node.getQuasiIdentifyingAttributes()) {
-            int height = model.getOutputConfig().getInput().getDefinition().getHierarchyHeight(qi);
+            int height = model.getOutput().getDefinition().getHierarchyHeight(qi);
             b.append(" * "); //$NON-NLS-1$
             b.append(qi);
             b.append(": "); //$NON-NLS-1$
