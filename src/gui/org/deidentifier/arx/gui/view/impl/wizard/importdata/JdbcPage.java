@@ -487,7 +487,8 @@ public class JdbcPage extends WizardPage {
         try {
 
             Connection connection = wizardImport.getData().getJdbcConnection();
-            ResultSet rs = connection.getMetaData().getTables(null, null, "%", null);
+            String[] tableTypes = {"TABLE", "VIEW"};
+            ResultSet rs = connection.getMetaData().getTables(null, null, "%", tableTypes);
             List<String> tables = new ArrayList<String>();
 
             while(rs.next()) {
