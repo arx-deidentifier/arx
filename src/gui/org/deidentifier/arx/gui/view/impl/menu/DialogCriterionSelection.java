@@ -33,6 +33,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -177,5 +180,15 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     @Override
     protected boolean isResizable() {
         return false;
+    }
+
+    @Override
+    protected ShellListener getShellListener() {
+        return new ShellAdapter() {
+            @Override
+            public void shellClosed(final ShellEvent event) {
+                setReturnCode(Window.CANCEL);
+            }
+        };
     }
 }

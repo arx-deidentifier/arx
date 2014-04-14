@@ -28,9 +28,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -296,5 +300,15 @@ public class DialogComboSelection extends Dialog {
         // Bug 16256: important not to treat "" (blank error) the same as null
         // (no error)
         setErrorMessage(errorMsg);
+    }
+
+    @Override
+    protected ShellListener getShellListener() {
+        return new ShellAdapter() {
+            @Override
+            public void shellClosed(final ShellEvent event) {
+                setReturnCode(Window.CANCEL);
+            }
+        };
     }
 }

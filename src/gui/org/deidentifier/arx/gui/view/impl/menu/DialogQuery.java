@@ -37,6 +37,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -327,5 +330,15 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
     @Override
     protected boolean isResizable() {
         return false;
+    }
+
+    @Override
+    protected ShellListener getShellListener() {
+        return new ShellAdapter() {
+            @Override
+            public void shellClosed(final ShellEvent event) {
+                setReturnCode(Window.CANCEL);
+            }
+        };
     }
 }
