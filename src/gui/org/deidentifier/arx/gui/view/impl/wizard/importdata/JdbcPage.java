@@ -256,6 +256,7 @@ public class JdbcPage extends WizardPage {
             public void focusLost(FocusEvent e)
             {
 
+                connect();
                 readTables();
 
             }
@@ -294,6 +295,7 @@ public class JdbcPage extends WizardPage {
             public void widgetSelected(SelectionEvent e)
             {
 
+                connect();
                 readTables();
 
             }
@@ -341,23 +343,19 @@ public class JdbcPage extends WizardPage {
     }
 
     /**
-     * Reads in the tables
+     * Connects to the database
      *
-     * This tries to establish an JDBC connection and read in the tables. If
-     * successful, the page is marked as complete and a list of tables is
-     * assigned to {@link ImportData}. Otherwise appropriate error messages
-     * are set.
+     * This tries to establish an JDBC connection. In case of an error
+     * appropriate error messages are set.
      *
-     * @see {@link ImportData#setJdbcTables(List)}
      * @see {@link ImportData#setJdbcConnection(Connection)}
      */
-    protected void readTables()
+    protected void connect()
     {
 
-        Connection connection = null;
-
-        /* Establish JDBC connection */
         try {
+
+            Connection connection = null;
 
             if (comboType.getText().equals(SQLITE)) {
 
@@ -376,6 +374,8 @@ public class JdbcPage extends WizardPage {
 
             }
 
+            wizardImport.getData().setJdbcConnection(connection);
+
         } catch (ClassNotFoundException e) {
 
             setErrorMessage("No JDBC driver for selected connection type");
@@ -386,9 +386,23 @@ public class JdbcPage extends WizardPage {
 
         }
 
-        /* Read in tables */
+    }
+
+    /**
+     * Reads in the tables
+     *
+     * If successful, the page is marked as complete and a list of tables is
+     * assigned to {@link ImportData}. Otherwise an appropriate error messages
+     * is set.
+     *
+     * @see {@link ImportData#setJdbcTables(List)}
+     */
+    protected void readTables()
+    {
+
         try {
 
+            Connection connection = wizardImport.getData().getJdbcConnection();
             ResultSet rs = connection.getMetaData().getTables(null, null, "%", null);
             List<String> tables = new ArrayList<String>();
 
@@ -398,7 +412,6 @@ public class JdbcPage extends WizardPage {
 
             }
 
-            wizardImport.getData().setJdbcConnection(connection);
             wizardImport.getData().setJdbcTables(tables);
 
             setPageComplete(true);
