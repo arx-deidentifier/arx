@@ -37,6 +37,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 
 public class Model implements Serializable {
 
@@ -132,6 +133,11 @@ public class Model implements Serializable {
         for (String attr : config.getInput().getDefinition().getQuasiIdentifyingAttributes()) {
             
             Hierarchy hierarchy = config.getHierarchy(attr);
+            /* Handle non-existent hierarchies*/
+            if (hierarchy == null || hierarchy.getHierarchy()==null) {
+                hierarchy = Hierarchy.create();
+                config.setHierarchy(attr, hierarchy);
+            }
             Integer min = config.getMinimumGeneralization(attr);
             Integer max = config.getMaximumGeneralization(attr);
             
@@ -169,7 +175,15 @@ public class Model implements Serializable {
             if (entry.getValue() != null &&
                 entry.getValue().isActive() &&
                 entry.getValue().isEnabled()) {
-                config.addCriterion(entry.getValue().getCriterion(this));
+                
+                if (entry.getValue().getVariant()==1){ // EMD with hierarchy
+                    if (config.getHierarchy(entry.getValue().getAttribute())==null){
+                        config.setHierarchy(entry.getValue().getAttribute(), Hierarchy.create());
+                    }
+                }
+                
+                PrivacyCriterion criterion = entry.getValue().getCriterion(this);
+                config.addCriterion(criterion);
             }
         }
 
