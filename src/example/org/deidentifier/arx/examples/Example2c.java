@@ -62,8 +62,10 @@ public class Example2c extends Example {
 
             // Add columns (index, name and datatype) to configuration
             // The name is optional and can be detected/assigned automatically
-            importConfig.addColumn(new JdbcColumn(0, "Alter", DataType.INTEGER));
-            importConfig.addColumn(new JdbcColumn(1, DataType.STRING));
+            // Note that some columns are referenced by name, while others by
+            // an index. In is also possible to assign an aliasName!
+            importConfig.addColumn(new JdbcColumn("age", "Alter", DataType.INTEGER));
+            importConfig.addColumn(new JdbcColumn("gender", DataType.STRING));
             importConfig.addColumn(new JdbcColumn(2, DataType.STRING));
 
             // Create data object
