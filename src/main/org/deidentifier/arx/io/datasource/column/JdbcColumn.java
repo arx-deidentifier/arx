@@ -31,8 +31,6 @@ import org.deidentifier.arx.DataType;
  * @note For now only the index based addressing works
  *
  * @warning Don't mix name based and index based addressing
- *
- * @todo Implement name based addressing
  */
 public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
 
@@ -41,7 +39,7 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
      *
      * @note Counting starts usually at 0
      */
-    private int index;
+    private int index = -1;
 
     /**
      * Name this column refers to
@@ -72,10 +70,11 @@ public class JdbcColumn extends Column implements IIndexedColumn, INamedColumn {
     /**
      * Creates a new instance of this object with the given parameters
      */
-    public JdbcColumn(String aliasName, DataType<?> datatype)
+    public JdbcColumn(String name, DataType<?> datatype)
     {
 
-        super(aliasName, datatype);
+        super(name, datatype);
+        setName(name);
 
     }
 

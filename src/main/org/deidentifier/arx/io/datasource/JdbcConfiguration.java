@@ -20,6 +20,9 @@
 package org.deidentifier.arx.io.datasource;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.datasource.column.Column;
 import org.deidentifier.arx.io.datasource.column.JdbcColumn;
@@ -119,6 +122,13 @@ public class JdbcConfiguration extends Configuration {
 
         }
 
+        if (((JdbcColumn) column).getIndex() == -1) {
+
+            int index = getIndexForColumn(((JdbcColumn) column).getName());
+            ((JdbcColumn) column).setIndex(index);
+
+        }
+
         for (Column c : columns) {
 
             if (((JdbcColumn) column).getIndex() == ((JdbcColumn) c).getIndex()) {
@@ -137,6 +147,35 @@ public class JdbcConfiguration extends Configuration {
         }
 
         this.columns.add(column);
+
+    }
+
+    private int getIndexForColumn(String aliasName) throws NoSuchElementException
+    {
+        try {
+
+            ResultSet rs = connection.getMetaData().getColumns(null, null, table, null);
+
+            int i = 0;
+            while(rs.next()) {
+
+                if (rs.getString("COLUMN_NAME").equals(aliasName)) {
+
+                    return i;
+
+                }
+
+                i++;
+
+            }
+
+        } catch (SQLException e) {
+
+            
+
+        }
+
+        throw new NoSuchElementException("Index for column '" + aliasName + "' couldn't be found");
 
     }
 
