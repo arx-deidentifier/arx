@@ -1,10 +1,10 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingFunctionEditor.IHierarchyFunctionEditorParent;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -16,31 +16,31 @@ import org.eclipse.swt.widgets.Label;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGroupingView, IHierarchyFunctionEditorParent<T>{
+public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T>{
 
     /** Var */
     private HierarchyWizardGroupingGroup<T>                group = null;
     /** Var */
     private final EditorString                             editorSize;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>          model;
+    private final HierarchyWizardModelGrouping<T>          model;
     /** Var */
-    private final HierarchyWizardGroupingFunctionEditor<T> editorFunction;
+    private final HierarchyWizardEditorFunction<T> editorFunction;
 
     /**
      * Creates a new instance
      * @param parent
      * @param model
      */
-    public HierarchyWizardGroupingGroupEditor(final Composite parent,
-                                final HierarchyWizardGroupingModel<T> model) {
+    public HierarchyWizardEditorGroup(final Composite parent,
+                                final HierarchyWizardModelGrouping<T> model) {
         this.model = model;
         this.model.register(this);
         
         final Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(2, false));    
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.editorFunction = new HierarchyWizardGroupingFunctionEditor<T>(this, model, composite, false);
+        this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
 
         createLabel(composite, "Size:");
         this.editorSize = new EditorString(composite) {
@@ -66,7 +66,7 @@ public class HierarchyWizardGroupingGroupEditor<T> implements HierarchyWizardGro
                 if (group!=null){
                     if (group.size != Integer.valueOf(s)){
                         group.size = Integer.valueOf(s);
-                        model.update(HierarchyWizardGroupingGroupEditor.this);
+                        model.update(HierarchyWizardEditorGroup.this);
                     }
                 }
             }

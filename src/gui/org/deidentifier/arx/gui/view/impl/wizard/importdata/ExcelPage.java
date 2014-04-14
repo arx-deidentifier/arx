@@ -198,7 +198,8 @@ public class ExcelPage extends WizardPage {
             public void widgetSelected(SelectionEvent arg0) {
 
                 /* Open file dialog */
-                final String path = wizardImport.getController().actionShowOpenFileDialog("*.xls;*.xlsx");
+                final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), 
+                                                                                          "*.xls;*.xlsx");
 
                 if (path == null) {
 

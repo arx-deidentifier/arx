@@ -27,6 +27,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
@@ -364,5 +365,39 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     private void setModified() {
         modified = true;
+    }
+
+    private Map<String, HierarchyBuilder<?>> hierarchyBuilders = null;
+    
+    /**
+     * Sets the given hierarchy builder
+     * @param attr
+     * @param builder
+     */
+    public void setHierarchyBuilder(String attr, HierarchyBuilder<?> builder) {
+        if (hierarchyBuilders==null){
+            hierarchyBuilders = new HashMap<String, HierarchyBuilder<?>>();
+        }
+        hierarchyBuilders.put(attr, builder);
+    }
+    
+    /**
+     * Returns the according builder
+     * @param attr
+     * @return
+     */
+    public HierarchyBuilder<?> getHierarchyBuilder(String attr) {
+        if (hierarchyBuilders==null) return null;
+        else return hierarchyBuilders.get(attr);
+    }
+
+    /**
+     * Removes the builder for the given attribute
+     * @param attr
+     * @return
+     */
+    public void removeHierarchyBuilder(String attr){
+        if (hierarchyBuilders==null) return;
+        hierarchyBuilders.remove(attr);
     }
 }

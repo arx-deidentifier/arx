@@ -23,16 +23,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
 /**
- * Base class for hierarchy builders
+ * Base class for hierarchy builders. Hierarchies can be built in two ways:<br> 
+ * 1. Call prepare(data), which returns some metadata and preserves a state, and then calling build(), or<br>
+ * 2. Call build(data)
+ * 
  * @author Fabian Prasser
  *
  */
-public abstract class HierarchyBuilder<T> {
+public abstract class HierarchyBuilder<T> implements Serializable {
     
+    private static final long serialVersionUID = -4182364711973630816L;
     /** The type*/
     private Type type;
     
@@ -82,12 +87,18 @@ public abstract class HierarchyBuilder<T> {
         ORDER_BASED,
         REDACTION_BASED
     }
-
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @param data
+     * @return
+     */
+    public abstract Hierarchy build(String[] data);
+    
     /**
      * Creates a new hierarchy, based on the predefined specification
      * @return
      */
-    public abstract Hierarchy create();
+    public abstract Hierarchy build();
     
     /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level

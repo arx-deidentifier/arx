@@ -1,7 +1,7 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.MenuItem;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingEditorMenu<T> {
+public class HierarchyWizardEditorMenu<T> {
 
     /** Var*/
     private final Composite         composite;
@@ -34,15 +34,15 @@ public class HierarchyWizardGroupingEditorMenu<T> {
     /** Var*/
     private final MenuItem          addRight;
     /** Var*/
-    private final HierarchyWizardGroupingModel<T> model;
+    private final HierarchyWizardModelGrouping<T> model;
 
     /**
      * Creates a new instance
      * @param composite
      * @param model
      */
-    public HierarchyWizardGroupingEditorMenu(final Composite composite, 
-                               final HierarchyWizardGroupingModel<T> model) {
+    public HierarchyWizardEditorMenu(final Composite composite, 
+                               final HierarchyWizardModelGrouping<T> model) {
         
         this.model = model;
         this.composite = composite;
@@ -136,8 +136,8 @@ public class HierarchyWizardGroupingEditorMenu<T> {
             
         } else if (model.getSelectedElement() instanceof HierarchyWizardGroupingGroup){
             if (model.isShowIntervals() && 
-                model.getGroups().size()==1 && 
-                model.getGroups().get(0).size()==1) {
+                model.getModelGroups().size()==1 && 
+                model.getModelGroups().get(0).size()==1) {
                 this.remove.setEnabled(false);
             } else {
                 this.remove.setEnabled(true);

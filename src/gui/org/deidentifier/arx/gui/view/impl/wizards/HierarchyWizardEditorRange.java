@@ -1,11 +1,11 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.text.ParseException;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.menu.EditorString;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingRange;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingRange;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -13,19 +13,19 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for adjustments
+ * Editor for ranges
  * @author Fabian Prasser
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWizardGroupingView {
+public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
     /** Var */
     private final Group                           composite;
     /** Var */
     private final DataTypeWithRatioScale<T>       type;
     /** Var */
-    private final HierarchyWizardGroupingModel<T> model;
+    private final HierarchyWizardModelGrouping<T> model;
     /** Var */
     private final HierarchyWizardGroupingRange<T> range;
     /** Var */
@@ -42,8 +42,8 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
      * @param lower
      */
     @SuppressWarnings("unchecked")
-    public HierarchyWizardGroupingAdjustmentEditor(final Composite parent,
-                                     final HierarchyWizardGroupingModel<T> model,
+    public HierarchyWizardEditorRange(final Composite parent,
+                                     final HierarchyWizardModelGrouping<T> model,
                                      final boolean lower) {
 
         this.composite = new Group(parent, SWT.SHADOW_ETCHED_IN);
@@ -95,7 +95,7 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
      * @param lower
      * @param adjustment
      */
-    private void createLabel(final HierarchyWizardGroupingModel<T> model,
+    private void createLabel(final HierarchyWizardModelGrouping<T> model,
                              final boolean lower,
                              final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, "Label:");
@@ -151,7 +151,7 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
      * @param lower
      * @param adjustment
      */
-    private void createRepeat(final HierarchyWizardGroupingModel<T> model,
+    private void createRepeat(final HierarchyWizardModelGrouping<T> model,
                               final boolean lower,
                               final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, "Repeat:");
@@ -208,7 +208,7 @@ public class HierarchyWizardGroupingAdjustmentEditor<T> implements HierarchyWiza
      * @param lower
      * @param adjustment
      */
-    private void createSnap(final HierarchyWizardGroupingModel<T> model,
+    private void createSnap(final HierarchyWizardModelGrouping<T> model,
                             final boolean lower,
                             final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, "Snap:");

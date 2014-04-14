@@ -55,25 +55,18 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         /**
          * Creates a new instance
-         * @param fanout
+         * @param size
          * @param function
          */
-        private Group(int fanout, AggregateFunction<U> function) {
-            if (fanout<=0) {
+        private Group(int size, AggregateFunction<U> function) {
+            if (size<=0) {
                 throw new IllegalArgumentException("Size must be >= 0");
             }
             if (function==null) {
                 throw new IllegalArgumentException("Function must not be null");
             }
-            this.size = fanout;
+            this.size = size;
             this.function = function;
-        }
-
-        /**
-         * @return the size
-         */
-        public int getSize() {
-            return size;
         }
 
         /**
@@ -81,6 +74,13 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
          */
         public AggregateFunction<U> getFunction() {
             return function;
+        }
+
+        /**
+         * @return the size
+         */
+        public int getSize() {
+            return size;
         }
         
         @Override
@@ -114,38 +114,38 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         
         /**
          * Adds the given group with the default aggregate function
-         * @param fanout
+         * @param size
          * @return
          */
-        public Level<U> addGroup(int fanout) {
+        public Level<U> addGroup(int size) {
             if (builder.getDefaultFunction() == null) {
                 throw new IllegalStateException("No default aggregate function defined");
             }
-            this.list.add(new Group<U>(fanout, builder.getDefaultFunction()));
+            this.list.add(new Group<U>(size, builder.getDefaultFunction()));
             builder.setPrepared(false);
             return this;
         }
 
         /**
          * Adds the given group with the given aggregate function
-         * @param fanout
+         * @param size
          * @param function
          * @return
          */
-        public Level<U> addGroup(int fanout, AggregateFunction<U> function) {
-            this.list.add(new Group<U>(fanout, function));
+        public Level<U> addGroup(int size, AggregateFunction<U> function) {
+            this.list.add(new Group<U>(size, function));
             builder.setPrepared(false);
             return this;
         }
 
         /**
          * Adds the given group. The result will be labeled with the given string
-         * @param fanout
+         * @param size
          * @param label
          * @return
          */
-        public Level<U> addGroup(int fanout, String label) {
-            this.list.add(new Group<U>(fanout, AggregateFunction.forType(builder.getDataType()).createConstantFunction(label)));
+        public Level<U> addGroup(int size, String label) {
+            this.list.add(new Group<U>(size, AggregateFunction.forType(builder.getDataType()).createConstantFunction(label)));
             builder.setPrepared(false);
             return this;
         }
@@ -232,9 +232,19 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     
     /**
      * Creates a new hierarchy, based on the predefined specification
+     * @param data
      * @return
      */
-    public Hierarchy create(){
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
+    }
+    
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @return
+     */
+    public Hierarchy build(){
         
         if (!prepared) {
             throw new IllegalStateException("Please call prepare() first");
@@ -265,6 +275,22 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
+     * Returns the data type
+     * @return
+     */
+    public DataType<T> getDataType(){
+        return this.datatype;
+    }
+
+    /**
+     * Returns the default aggregate function
+     * @return
+     */
+    public AggregateFunction<T> getDefaultFunction(){
+        return this.function;
+    }
+
+    /**
      * Returns the given level
      * @param level
      * @return 
@@ -276,7 +302,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         return this.groups.get(level);
     }
-
+    
     /**
      * Returns all currently defined levels
      * @return
@@ -293,7 +319,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         });
         return levels;
     }
-
+    
     /**
      * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
      * if not.
@@ -391,22 +417,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     protected String[] getData(){
         return data;
-    }
-    
-    /**
-     * Returns the data type
-     * @return
-     */
-    public DataType<T> getDataType(){
-        return this.datatype;
-    }
-    
-    /**
-     * Returns the default aggregate function
-     * @return
-     */
-    public AggregateFunction<T> getDefaultFunction(){
-        return this.function;
     }
     
     /**

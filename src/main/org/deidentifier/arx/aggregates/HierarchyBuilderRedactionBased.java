@@ -45,18 +45,84 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
 
     private static final long serialVersionUID = 3625654600380531803L;
 
-    private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
-    private char                 paddingCharacter   = '*';
-    private char                 redactionCharacter = '*';
-    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
-    private transient String[][] result;
-
     /**
      * Values are aligned left-to-right and redacted right-to-left. Redacted characters
      * are replaced with the given character. The same character is used for padding.
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(char redactionCharacter){
+    public static <T> HierarchyBuilderRedactionBased<T> create(char redactionCharacter){
+        return new HierarchyBuilderRedactionBased<T>(redactionCharacter);
+    }
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> HierarchyBuilderRedactionBased<T> create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderRedactionBased<T> result = (HierarchyBuilderRedactionBased<T>)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
+        }
+    }
+    
+    /**
+     * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder. 
+     * Redacted characters are replaced with the given character. The same character is used for padding.
+     * @param alignmentOrder
+     * @param redactionOrder
+     * @param redactionCharacter
+     */
+    public static <T> HierarchyBuilderRedactionBased<T> create(Order alignmentOrder, 
+                                                               Order redactionOrder, 
+                                                               char redactionCharacter){
+        return new HierarchyBuilderRedactionBased<T>(alignmentOrder, redactionOrder, redactionCharacter);
+    }
+    
+    /**
+     * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder. 
+     * Redacted characters are replaced with the given character. The padding character is used for padding.
+     * @param alignmentOrder
+     * @param redactionOrder
+     * @param paddingCharacter
+     * @param redactionCharacter
+     */
+    public static <T> HierarchyBuilderRedactionBased<T> create(Order alignmentOrder, 
+                                                               Order redactionOrder, 
+                                                               char paddingCharacter, 
+                                                               char redactionCharacter){
+        return new HierarchyBuilderRedactionBased<T>(alignmentOrder, redactionOrder, paddingCharacter, redactionCharacter);
+    }
+
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static <T> HierarchyBuilderRedactionBased<T> create(String file) throws IOException{
+        return create(new File(file));
+    }
+    
+    private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
+    private char                 paddingCharacter   = '*';
+    private char                 redactionCharacter = '*';
+    private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
+    private transient String[][] result;
+    
+    /**
+     * Values are aligned left-to-right and redacted right-to-left. Redacted characters
+     * are replaced with the given character. The same character is used for padding.
+     * @param redactionCharacter
+     */
+    private HierarchyBuilderRedactionBased(char redactionCharacter){
         super(Type.REDACTION_BASED);
         this.redactionCharacter = redactionCharacter;
         this.paddingCharacter = redactionCharacter;
@@ -69,7 +135,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
      * @param redactionOrder
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(Order alignmentOrder, 
+    private HierarchyBuilderRedactionBased(Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char redactionCharacter){
         super(Type.REDACTION_BASED);
@@ -78,7 +144,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.aligmentOrder = alignmentOrder;
         this.redactionOrder = redactionOrder;
     }
-    
+
     /**
      * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder. 
      * Redacted characters are replaced with the given character. The padding character is used for padding.
@@ -87,7 +153,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
      * @param paddingCharacter
      * @param redactionCharacter
      */
-    public HierarchyBuilderRedactionBased(Order alignmentOrder, 
+    private HierarchyBuilderRedactionBased(Order alignmentOrder, 
                                           Order redactionOrder, 
                                           char paddingCharacter, 
                                           char redactionCharacter){
@@ -97,14 +163,21 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.aligmentOrder = alignmentOrder;
         this.redactionOrder = redactionOrder;
     }
-    
     /**
      * Creates a new hierarchy, based on the predefined specification
      * @param data
-     * @param type
      * @return
      */
-    public Hierarchy create(){
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
+    }
+    
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @return
+     */
+    public Hierarchy build(){
         
         // Check
         if (result == null) {
@@ -115,6 +188,38 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         Hierarchy h = Hierarchy.create(result);
         this.result = null;
         return h;
+    }
+
+    /**
+     * Returns the alignment order
+     * @return
+     */
+    public Order getAligmentOrder() {
+        return aligmentOrder;
+    }
+    
+    /**
+     * Returns the padding character
+     * @return
+     */
+    public char getPaddingCharacter() {
+        return paddingCharacter;
+    }
+
+    /**
+     * Returns the redaction character
+     * @return
+     */
+    public char getRedactionCharacter() {
+        return redactionCharacter;
+    }
+
+    /**
+     * Returns the redaction order
+     * @return
+     */
+    public Order getRedactionOrder() {
+        return redactionOrder;
     }
 
     /**
@@ -141,7 +246,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         // Return
         return sizes;
     }
-    
+
     /**
      * Computes the hierarchy
      */
@@ -191,36 +296,6 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
                     result[i][j] =  redact + base[i].substring(0, length - j);
                 }
             }
-        }
-    }
-
-    /**
-     * Loads a builder specification from the given file
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public static <T> HierarchyBuilderRedactionBased<T> create(String file) throws IOException{
-        return create(new File(file));
-    }
-    
-    /**
-     * Loads a builder specification from the given file
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> HierarchyBuilderRedactionBased<T> create(File file) throws IOException{
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new FileInputStream(file));
-            HierarchyBuilderRedactionBased<T> result = (HierarchyBuilderRedactionBased<T>)ois.readObject();
-            return result;
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            if (ois != null) ois.close();
         }
     }
 }

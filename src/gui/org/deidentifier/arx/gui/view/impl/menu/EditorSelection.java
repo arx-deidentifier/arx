@@ -56,14 +56,14 @@ public abstract class EditorSelection implements IEditor<String> {
 
     @Override
     public void createControl(final Composite parent) {
-        combo = new Combo(parent, SWT.NONE);
+        combo = new Combo(parent, SWT.READ_ONLY);
         combo.setItems(elems);
         combo.select(indexOf(getValue()));
         combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (combo.getSelectionIndex() != -1) {
+                if (combo.getSelectionIndex() >= 0) {
                     setValue(elems[combo.getSelectionIndex()]);
                 }
             }

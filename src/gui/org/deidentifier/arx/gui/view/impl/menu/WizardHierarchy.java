@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.impl.wizards.ARXWizardDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -68,7 +69,7 @@ public class WizardHierarchy extends Wizard implements IWizard {
     }
 
     public boolean open(final Shell shell) {
-        final WizardDialog dialog = new WizardDialog(shell, this);
+        final WizardDialog dialog = new ARXWizardDialog(shell, this);
         this.dialog = dialog;
         return dialog.open() == 0;
     }

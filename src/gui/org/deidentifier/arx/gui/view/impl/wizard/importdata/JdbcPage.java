@@ -236,7 +236,7 @@ public class JdbcPage extends WizardPage {
             public void widgetSelected(SelectionEvent arg0) {
 
                 /* Open file dialog */
-                final String path = wizardImport.getController().actionShowOpenFileDialog("*.db");
+                final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), "*.db");
 
                 if (path == null) {
 

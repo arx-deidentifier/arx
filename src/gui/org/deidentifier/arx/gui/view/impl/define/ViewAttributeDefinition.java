@@ -234,7 +234,8 @@ public class ViewAttributeDefinition implements IView {
                         if (description.getLabel().equals("OrderedString")) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            String[] array = controller.actionShowOrderValuesDialog(text1, text2, DataType.STRING, getValuesAsArray());
+                            String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
+                                                                                    text1, text2, DataType.STRING, getValuesAsArray());
                             if (array == null) {
                                 type = DataType.STRING;
                             } else {
@@ -244,7 +245,8 @@ public class ViewAttributeDefinition implements IView {
                                         type = DataType.STRING;
                                     }
                                 } catch (Exception e){
-                                    controller.actionShowInfoDialog("Error", "Cannot create data type: "+e.getMessage());
+                                    controller.actionShowInfoDialog(controller.getResources().getShell(),
+                                                                    "Error", "Cannot create data type: "+e.getMessage());
                                     type = DataType.STRING;
                                 }
                             }

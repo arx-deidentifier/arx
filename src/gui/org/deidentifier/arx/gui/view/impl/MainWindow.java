@@ -212,7 +212,7 @@ public class MainWindow implements IView {
                     display.sleep();
                 }
             } catch (final Exception e) {
-                controller.actionShowErrorDialog(Resources.getMessage("MainWindow.8"), Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                controller.actionShowErrorDialog(shell, Resources.getMessage("MainWindow.8"), Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
@@ -245,7 +245,7 @@ public class MainWindow implements IView {
      * @param header
      * @param message
      */
-    public void showErrorDialog(final String header, final String message) {
+    public void showErrorDialog(final Shell shell, final String header, final String message) {
         final DialogError dialog = new DialogError(shell, controller, header, message);
         dialog.create();
         dialog.open();
@@ -257,7 +257,7 @@ public class MainWindow implements IView {
      * @param message
      * @param error
      */
-    public void showErrorDialog(final String header, final String message, final String error) {
+    public void showErrorDialog(final Shell shell, final String header, final String message, final String error) {
         final DialogError dialog = new DialogError(shell, controller, header, message, error);
         dialog.create();
         dialog.open();
@@ -269,12 +269,12 @@ public class MainWindow implements IView {
      * @param message
      * @param t
      */
-    public void showErrorDialog(final String header, final String message, final Throwable t) {
+    public void showErrorDialog(final Shell shell, final String header, final String message, final Throwable t) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         t.printStackTrace(pw);
         final String trace = sw.toString();
-        showErrorDialog(header, message, trace);
+        showErrorDialog(shell, header, message, trace);
     }
 
     /**
@@ -285,7 +285,7 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public String[] showOrderValuesDialog(final String header, final String text, final DataType<?> type, final String[] values) {
+    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final String[] values) {
 
         // Open dialog
         DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
@@ -382,7 +382,7 @@ public class MainWindow implements IView {
      * @param header
      * @param text
      */
-    public void showInfoDialog(final String header, final String text) {
+    public void showInfoDialog(final Shell shell, final String header, final String text) {
         MessageDialog.openInformation(getShell(), header, text);
     }
 
@@ -393,7 +393,7 @@ public class MainWindow implements IView {
      * @param initial
      * @return
      */
-    public String showInputDialog(final String header, final String text, final String initial) {
+    public String showInputDialog(final Shell shell, final String header, final String text, final String initial) {
 
         final InputDialog dlg = new InputDialog(shell, header, text, initial, null);
         if (dlg.open() == Window.OK) {
@@ -408,7 +408,7 @@ public class MainWindow implements IView {
      * @param filter
      * @return
      */
-    public String showOpenFileDialog(String filter) {
+    public String showOpenFileDialog(final Shell shell, String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);
@@ -452,7 +452,7 @@ public class MainWindow implements IView {
      * @param text
      * @return
      */
-    public boolean showQuestionDialog(final String header, final String text) {
+    public boolean showQuestionDialog(final Shell shell, final String header, final String text) {
         return MessageDialog.openQuestion(getShell(), header, text);
     }
 
@@ -461,7 +461,7 @@ public class MainWindow implements IView {
      * @param filter
      * @return
      */
-    public String showSaveFileDialog(String filter) {
+    public String showSaveFileDialog(final Shell shell, String filter) {
         final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);

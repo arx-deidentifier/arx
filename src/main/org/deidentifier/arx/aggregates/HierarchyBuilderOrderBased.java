@@ -51,6 +51,10 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             this.values = values;
         }
 
+        protected String[] getValues(){
+            return values;
+        }
+
         @SuppressWarnings("rawtypes")
         protected CloseElements merge(List<CloseElements<T>> list, AggregateFunction<T> function) {
             List<String> values = new ArrayList<String>();
@@ -61,14 +65,59 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             }
             return new CloseElements<T>(values.toArray(new String[values.size()]), function);
         }
-
-        protected String[] getValues(){
-            return values;
-        }
     }
     
     private static final long serialVersionUID = -2749758635401073668L;
     
+    /**
+     * Creates a new instance. Either preserves the given order, or 
+     * sorts the items according to the order induced by the given data type
+     * @param type The data type is also used for ordering data items
+     * @param order Should the items be sorted according to the order induced by the data type
+     */
+    public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, boolean order) {
+        return new HierarchyBuilderOrderBased<T>(type, order);
+    }
+
+    /**
+     * Creates a new instance. Uses the comparator for ordering data items
+     * @param type The data type
+     * @param comparator Use this comparator for ordering data items
+     */
+    public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final Comparator<T> comparator) {
+        return new HierarchyBuilderOrderBased<T>(type, comparator);
+    }
+    
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> HierarchyBuilderOrderBased<T> create(File file) throws IOException{
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+            HierarchyBuilderOrderBased<T> result = (HierarchyBuilderOrderBased<T>)ois.readObject();
+            return result;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (ois != null) ois.close();
+        }
+    }
+    
+    /**
+     * Loads a builder specification from the given file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static <T> HierarchyBuilderOrderBased<T> create(String file) throws IOException{
+        return create(new File(file));
+    }
+
     private final Comparator<String> comparator;
 
     /**
@@ -76,7 +125,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * @param type The data type is also used for ordering data items
      * @param order Should the items be sorted according to the order induced by the data type 
      */
-    public HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
+    private HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
         super(Type.ORDER_BASED, type);
         if (order) {
             this.comparator = new Comparator<String>(){
@@ -99,7 +148,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
      */
-    public HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
+    private HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
         super(Type.ORDER_BASED, type);
         this.comparator = new Comparator<String>(){
             @Override
@@ -111,6 +160,14 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
             }
         };
+    }
+    
+    /**
+     * Returns the comparator
+     * @return
+     */
+    public Comparator<String> getComparator(){
+        return comparator;
     }
     
     @SuppressWarnings("unchecked")
@@ -215,35 +272,5 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         
         // Return
         return result.toArray(new AbstractGroup[0][0]);
-    }
-
-    /**
-     * Loads a builder specification from the given file
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public static <T> HierarchyBuilderOrderBased<T> create(String file) throws IOException{
-        return create(new File(file));
-    }
-    
-    /**
-     * Loads a builder specification from the given file
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> HierarchyBuilderOrderBased<T> create(File file) throws IOException{
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new FileInputStream(file));
-            HierarchyBuilderOrderBased<T> result = (HierarchyBuilderOrderBased<T>)ois.readObject();
-            return result;
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            if (ois != null) ois.close();
-        }
     }
 }

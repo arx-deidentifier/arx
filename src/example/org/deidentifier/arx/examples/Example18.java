@@ -77,7 +77,7 @@ public class Example18 extends Example {
     private static void orderBased() {
 
         // Create the builder
-        HierarchyBuilderOrderBased<Long> builder = new HierarchyBuilderOrderBased<Long>(DataType.INTEGER, false);
+        HierarchyBuilderOrderBased<Long> builder = HierarchyBuilderOrderBased.create(DataType.INTEGER, false);
 
         // Define grouping fanouts
         builder.getLevel(0).addGroup(10, DataType.INTEGER.createAggregate().createIntervalFunction());
@@ -108,7 +108,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -119,7 +119,7 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
+        HierarchyBuilderIntervalBased<Long> builder = HierarchyBuilderIntervalBased.create(
                                                           DataType.INTEGER,
                                                           new Range<Long>(0l,-5l,Long.MIN_VALUE),
                                                           new Range<Long>(94l,97l,Long.MAX_VALUE));
@@ -157,7 +157,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
 
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -168,7 +168,7 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Long> builder = new HierarchyBuilderIntervalBased<Long>(
+        HierarchyBuilderIntervalBased<Long> builder = HierarchyBuilderIntervalBased.create(
                                                           DataType.INTEGER,
                                                           new Range<Long>(0l,0l,Long.MIN_VALUE),
                                                           new Range<Long>(100l,100l,Long.MAX_VALUE));
@@ -206,7 +206,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
 
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -216,7 +216,7 @@ public class Example18 extends Example {
     private static void redactionBased() {
 
         // Create the builder
-        HierarchyBuilderRedactionBased builder = new HierarchyBuilderRedactionBased(Order.RIGHT_TO_LEFT,
+        HierarchyBuilderRedactionBased builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
                                                                                     Order.RIGHT_TO_LEFT,
                                                                                     ' ', '*');
 
@@ -233,7 +233,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
     
@@ -245,7 +245,7 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(DataType.DECIMAL);
+        HierarchyBuilderIntervalBased<Double> builder = HierarchyBuilderIntervalBased.create(DataType.DECIMAL);
         
         // Define base intervals
         builder.addInterval(0d, 1.8d, "very low");
@@ -282,7 +282,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -294,7 +294,7 @@ public class Example18 extends Example {
 
 
         // Create the builder
-        HierarchyBuilderIntervalBased<Double> builder = new HierarchyBuilderIntervalBased<Double>(DataType.DECIMAL,
+        HierarchyBuilderIntervalBased<Double> builder = HierarchyBuilderIntervalBased.create(DataType.DECIMAL,
                                                                                 new Range<Double>(0d, -2d, -5d),
                                                                                 new Range<Double>(10d, 13d, 15d));
         
@@ -333,7 +333,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
     

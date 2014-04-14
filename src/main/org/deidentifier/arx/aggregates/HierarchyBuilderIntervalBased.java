@@ -314,6 +314,23 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     private static final long serialVersionUID = 3663874945543082808L;
     
     /**
+     * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
+     * @param type
+     */
+    public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type) {
+        return new HierarchyBuilderIntervalBased<T>(type);
+    }
+    /**
+     * Creates a new instance. Data points that are out of range are handled according to the given settings.
+     * @param type
+     * @param lowerRange
+     * @param upperRange
+     */
+    public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
+        return new HierarchyBuilderIntervalBased<T>(type, lowerRange, upperRange);
+    }
+    
+    /**
      * Loads a builder specification from the given file
      * @param file
      * @return
@@ -332,6 +349,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (ois != null) ois.close();
         }
     }
+    
     /**
      * Loads a builder specification from the given file
      * @param file
@@ -341,6 +359,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(String file) throws IOException{
         return create(new File(file));
     }
+    
     /** Adjustment */
     private Range<T>     lowerRange;
 
@@ -354,7 +373,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
      * @param type
      */
-    public HierarchyBuilderIntervalBased(DataType<T> type) {
+    private HierarchyBuilderIntervalBased(DataType<T> type) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
@@ -369,7 +388,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param lowerRange
      * @param upperRange
      */
-    public HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
+    private HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");

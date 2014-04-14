@@ -17,6 +17,7 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Arrays;
 
@@ -28,8 +29,10 @@ import org.deidentifier.arx.DataType;
  *
  * @param <T>
  */
-public abstract class AggregateFunction<T> {
+public abstract class AggregateFunction<T> implements Serializable{
     
+    private static final long serialVersionUID = 3803318906010996154L;
+
     /**
      * A builder for aggregate functions
      * 
@@ -129,6 +132,7 @@ public abstract class AggregateFunction<T> {
      */
     public static abstract class AggregateFunctionWithParameter<T> extends AggregateFunction<T>{
         
+        private static final long serialVersionUID = 1L;
         /** Creates a new instance*/
         protected AggregateFunctionWithParameter(DataType<T> type) { super(type); }
         /** Returns whether the function accepts this parameter*/
@@ -146,6 +150,8 @@ public abstract class AggregateFunction<T> {
      * @author Fabian Prasser
      */
     public static class GenericBounds<T> extends AggregateFunction<T> {
+
+        private static final long serialVersionUID = -8884657842545379206L;
 
         /**
          * Creates a new instance
@@ -183,6 +189,7 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericCommonPrefix<T> extends AggregateFunctionWithParameter<T> {
         
+        private static final long serialVersionUID = 526809670467390820L;
         private Character redaction;
 
         /**
@@ -272,6 +279,7 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericConstant<T> extends AggregateFunctionWithParameter<T> {
 
+        private static final long serialVersionUID = -8995068916108125096L;
         private String value;
         
         /**
@@ -323,6 +331,7 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericInterval<T> extends AggregateFunction<T> {
         
+        private static final long serialVersionUID = -5182521036467379023L;
         private final boolean lowerIncluded;
         private final boolean upperIncluded;
         
@@ -381,6 +390,8 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericSet<T> extends AggregateFunction<T> {
 
+        private static final long serialVersionUID = -4029191421720743653L;
+
         /**
          * Creates a new instance
          * @param type
@@ -421,6 +432,7 @@ public abstract class AggregateFunction<T> {
      */
     public static class GenericSetOfPrefixes<T> extends AggregateFunctionWithParameter<T> {
 
+        private static final long serialVersionUID = -4164142474804296433L;
         private int length;
 
         /**

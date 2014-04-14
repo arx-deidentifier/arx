@@ -1,11 +1,11 @@
-package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
+package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingGroup;
-import org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizardGroupingModel.HierarchyWizardGroupingInterval;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup;
+import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Rectangle;
  *
  * @param <T>
  */
-public class HierarchyWizardGroupingRenderer<T> {
+public class HierarchyWizardEditorRenderer<T> {
 
     /**
      * Base class for rendering contexts
@@ -28,7 +28,7 @@ public class HierarchyWizardGroupingRenderer<T> {
      *
      * @param <T>
      */
-    public abstract static class ComponentContext<T> {
+    public abstract static class RenderedComponent<T> {
         public Rectangle rectangle1;
         public Rectangle rectangle2;
         public int       depth;
@@ -44,7 +44,7 @@ public class HierarchyWizardGroupingRenderer<T> {
      *
      * @param <T>
      */
-    public static class RenderedGroup<T> extends ComponentContext<T> {
+    public static class RenderedGroup<T> extends RenderedComponent<T> {
         public HierarchyWizardGroupingGroup<T> group;
 
         @Override
@@ -74,7 +74,7 @@ public class HierarchyWizardGroupingRenderer<T> {
      *
      * @param <T>
      */
-    public static class RenderedInterval<T> extends ComponentContext<T> {
+    public static class RenderedInterval<T> extends RenderedComponent<T> {
         public HierarchyWizardGroupingInterval<T> interval;
         public T                    offset;
         
@@ -139,25 +139,25 @@ public class HierarchyWizardGroupingRenderer<T> {
     /** Var */
     private final List<List<RenderedGroup<T>>>     renderedGroups    = new ArrayList<List<RenderedGroup<T>>>();
     /** Var */
-    private final HierarchyWizardGroupingLayout<T> layout;
+    private final HierarchyWizardEditorLayout<T> layout;
     /** Var */
-    private final HierarchyWizardGroupingModel<T>  model;
+    private final HierarchyWizardModelGrouping<T>  model;
 
     /**
      * Creates a new instance
      * @param model
      */
-    public HierarchyWizardGroupingRenderer(HierarchyWizardGroupingModel<T> model) {
+    public HierarchyWizardEditorRenderer(HierarchyWizardModelGrouping<T> model) {
         this.model = model;
-        this.layout = new HierarchyWizardGroupingLayout<T>(model);
+        this.layout = new HierarchyWizardEditorLayout<T>(model);
     }
 
     /**
      * Returns all components
      * @return
      */
-    public List<ComponentContext<T>> getComponents(){
-        List<ComponentContext<T>> result = new ArrayList<ComponentContext<T>>();
+    public List<RenderedComponent<T>> getComponents(){
+        List<RenderedComponent<T>> result = new ArrayList<RenderedComponent<T>>();
         if (model.isShowIntervals()) result.addAll(intervals);
         for (List<RenderedGroup<T>> list : groups){
             result.addAll(list);
@@ -173,7 +173,7 @@ public class HierarchyWizardGroupingRenderer<T> {
     public Point getMinSize() {
         int minWidth = 0;
         int minHeight = 0;
-        for (ComponentContext<T> component : getComponents()) {
+        for (RenderedComponent<T> component : getComponents()) {
             minWidth = Math.max(minWidth, component.rectangle2.x + component.rectangle2.width);
             minHeight = Math.max(minHeight, component.rectangle2.y + component.rectangle2.height);
         }
@@ -187,7 +187,7 @@ public class HierarchyWizardGroupingRenderer<T> {
      */
     public boolean select(int x, int y) {
         Object result = null;
-        for (ComponentContext<T> component : getComponents()) {
+        for (RenderedComponent<T> component : getComponents()) {
             if (component.enabled) {
                 if (component.rectangle1.contains(x, y) || 
                     component.rectangle2.contains(x, y)) {
@@ -218,7 +218,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         // Init
         boolean showIntervals = model.isShowIntervals();
         List<HierarchyWizardGroupingInterval<T>> modelIntervals = model.getIntervals();
-        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getGroups();
+        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getModelGroups();
         
         // Prepare
         if (showIntervals) intervals.clear();
@@ -404,7 +404,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         int width = 0;
         for (Object elem : list){
             
-            width = Math.max(width, gc.textExtent(((ComponentContext<T>)elem).bounds).x);
+            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).bounds).x);
         }
         return width;
     }
@@ -415,7 +415,7 @@ public class HierarchyWizardGroupingRenderer<T> {
         int width = 0;
         for (Object elem : list){
             
-            width = Math.max(width, gc.textExtent(((ComponentContext<T>)elem).label).x);
+            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).label).x);
         }
         return width;
     }
