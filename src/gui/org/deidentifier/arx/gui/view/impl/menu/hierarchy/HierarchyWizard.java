@@ -21,6 +21,11 @@ package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 import java.util.Arrays;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.menu.ARXWizardDialog;
@@ -34,12 +39,15 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
 public class HierarchyWizard<T> extends Wizard implements IWizard {
-    
-    private final HierarchyWizardModel<T> model;
-    private final Controller              controller;
-    private final ARXWizardButton         buttonLoad;
-    private final ARXWizardButton         buttonSave;
-    private ARXWizardDialog               dialog;
+
+    private final HierarchyWizardModel<T>   model;
+    private final Controller                controller;
+    private final ARXWizardButton           buttonLoad;
+    private final ARXWizardButton           buttonSave;
+    private ARXWizardDialog                 dialog;
+    private HierarchyWizardPageIntervals<T> pageIntervals;
+    private HierarchyWizardPageOrder<T>     pageOrder;
+    private HierarchyWizardPageRedaction<T> pageRedaction;
 
     public HierarchyWizard(final Controller controller,
                            final String attribute,
@@ -69,16 +77,18 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
     @Override
     public void addPages() {
         HierarchyWizardPageFinal<T> finalPage = new HierarchyWizardPageFinal<T>(this, model);
-        HierarchyWizardPageIntervals<T> intervalsPage = null;
+        
         if (model.getIntervalModel() != null){
-            intervalsPage = new HierarchyWizardPageIntervals<T>(controller, this, model, finalPage);
+            pageIntervals = new HierarchyWizardPageIntervals<T>(controller, this, model, finalPage);
+        } else {
+            pageIntervals = null;
         }
-        HierarchyWizardPageOrder<T> orderingPage = new HierarchyWizardPageOrder<T>(controller, this, model, finalPage);
-        HierarchyWizardPageRedaction<T> redactionPage = new HierarchyWizardPageRedaction<T>(controller, this, model, finalPage);
-        addPage(new HierarchyWizardPageType<T>(this, model, intervalsPage, orderingPage, redactionPage));
-        if (intervalsPage != null) addPage(intervalsPage);
-        addPage(orderingPage);
-        addPage(redactionPage);
+        pageOrder = new HierarchyWizardPageOrder<T>(controller, this, model, finalPage);
+        pageRedaction = new HierarchyWizardPageRedaction<T>(controller, this, model, finalPage);
+        addPage(new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction));
+        if (pageIntervals != null) addPage(pageIntervals);
+        addPage(pageOrder);
+        addPage(pageRedaction);
         addPage(finalPage);
     }
 
@@ -115,7 +125,63 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
      * Loads a specification
      */
     private void load(){
+
+        final String ERROR_HEADER = "Error loading hierarchy specification";
+        final String ERROR_TEXT = "Unknown error: ";
+        final String ERROR_RATIO_TEXT = "Intervals can only be used for data types with ratio scales";
+        final String ERROR_TYPE_TEXT = "Incompatible data types";
+        final String ERROR_APPLY_TEXT = "Cannot apply specification: ";
         
+        // Dialog
+        String file = controller.actionShowOpenFileDialog(getShell(), "*.ahs");
+        if (file == null) return;
+
+        // Load
+        HierarchyBuilder<T> builder = null;
+        try {
+            builder = HierarchyBuilder.create(file);
+        } catch (Exception e){
+            controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
+            return;
+        }
+        
+        // Checks
+        if (builder == null) return;
+        else if (builder.getType() == Type.INTERVAL_BASED) {
+            if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
+                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_RATIO_TEXT);
+                return;
+            } else if (!((HierarchyBuilderIntervalBased<?>)builder).getDataType().equals(model.getDataType())){
+                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TYPE_TEXT);
+                return;
+            }
+        } else if (builder.getType() == Type.ORDER_BASED) {
+            if (!((HierarchyBuilderOrderBased<?>)builder).getDataType().equals(model.getDataType())){
+                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TYPE_TEXT);
+                return;
+            }
+        }
+        
+        // Select
+        try {
+            model.setSpecification(builder);
+        } catch (Exception e){
+            controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_APPLY_TEXT+e.getMessage());
+            return;
+        }
+        
+        // Update views
+        switch (builder.getType()) {
+        case INTERVAL_BASED:
+            pageIntervals.updatePage();
+            break;
+        case ORDER_BASED:
+            pageOrder.updatePage();
+            break;
+        case REDACTION_BASED:
+            pageRedaction.updatePage();
+            break;
+        }
     }
     
     /**
@@ -123,6 +189,30 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
      */
     private void save(){
         
+        final String ERROR_HEADER = "Error saving hierarchy specification";
+        final String ERROR_TEXT = "Unknown error: ";
+        
+        // Dialog
+        String file = controller.actionShowSaveFileDialog(getShell(), "*.ahs");
+        if (file == null) return;
+        
+        // Select
+        HierarchyBuilder<T> builder = null;
+        if (dialog.getCurrentPage()  instanceof HierarchyWizardPageOrder){
+            builder = model.getOrderModel().getBuilder();
+        } else if (dialog.getCurrentPage()  instanceof HierarchyWizardPageIntervals){
+            builder = model.getIntervalModel().getBuilder();
+        } else if (dialog.getCurrentPage()  instanceof HierarchyWizardPageRedaction){
+            builder = model.getRedactionModel().getBuilder();
+        }
+        
+        // Save
+        try {
+            builder.save(file);
+        } catch (Exception e){
+            controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
+            return;
+        }
     }
     
     public boolean open(final Shell shell) {

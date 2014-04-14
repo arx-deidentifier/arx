@@ -47,6 +47,8 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
             this.setPageComplete(true);
         }
     }
+    
+    public abstract void updatePage();
 
     @Override
     public void setVisible(boolean value){

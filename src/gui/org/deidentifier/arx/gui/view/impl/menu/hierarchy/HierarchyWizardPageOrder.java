@@ -290,4 +290,10 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         list.setRedraw(true);
         return returnIndex;
     }
+
+    @Override
+    public void updatePage() {
+        // TODO Auto-generated method stub
+        
+    }
 }

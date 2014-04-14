@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 
 public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T>{
@@ -80,33 +82,13 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         update();
     }
 
-    /**
-     * Constructor used to load a definition. The previous sort order of the items is preserved
-     * @param builder
-     * @param data
-     */
-    public HierarchyWizardModelOrder(HierarchyBuilderOrderBased<T> builder, String[] data) {
-        super(data, builder);
-        this.data = data;
-        this.update();
-    }
-
     @Override
     protected void internalUpdate() {
         super.hierarchy = null;
         super.error = null;
         super.groupsizes = null;
         
-        HierarchyBuilderOrderBased<T> builder = 
-                HierarchyBuilderOrderBased.create(super.getDataType(), false);
-        
-        int level = 0;
-        for (List<HierarchyWizardGroupingGroup<T>> list : super.getModelGroups()) {
-            for (HierarchyWizardGroupingGroup<T> group : list){
-                builder.getLevel(level).addGroup(group.size, group.function);
-            }
-            level++;
-        }
+        HierarchyBuilderOrderBased<T> builder = getBuilder();
         
         String error = builder.isValid();
         if (error != null) {
@@ -127,5 +109,30 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
             super.error = e.getMessage();
             return;
         }
+    }
+
+    @Override
+    public HierarchyBuilderOrderBased<T> getBuilder() {
+        HierarchyBuilderOrderBased<T> builder = HierarchyBuilderOrderBased.create(super.getDataType(), false);
+
+        int level = 0;
+        for (List<HierarchyWizardGroupingGroup<T>> list : super.getModelGroups()) {
+            for (HierarchyWizardGroupingGroup<T> group : list){
+                builder.getLevel(level).addGroup(group.size, group.function);
+            }
+            level++;
+        }
+        
+        return builder;
+    }
+    
+
+    @Override
+    public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException {
+        
+        if (!(builder instanceof HierarchyBuilderOrderBased)) {
+            return;
+        }
+        super.parse((HierarchyBuilderOrderBased<T>)builder);
     }
 }

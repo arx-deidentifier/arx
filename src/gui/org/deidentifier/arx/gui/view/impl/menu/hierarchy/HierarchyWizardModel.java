@@ -16,32 +16,11 @@ public class HierarchyWizardModel<T> {
 
     private Type type;
     private HierarchyWizardModelOrder<T>   orderModel;
-    private HierarchyWizardModelInterval<T>   intervalModel;
+    private HierarchyWizardModelIntervals<T>   intervalModel;
     private HierarchyWizardModelRedaction<T>  redactionModel;
     private final DataType<T> dataType;
     private final String[] data;
     
-    /**
-     * Creates a new instance from a given builder
-     * @param dataType
-     * @param data
-     * @param builder
-     */
-    public HierarchyWizardModel(DataType<T> dataType, String[] data, HierarchyBuilder<T> builder){
-        
-        this(dataType, data);
-        this.type = builder.getType();
-        if (type == Type.INTERVAL_BASED) {
-            intervalModel = new HierarchyWizardModelInterval<T>((HierarchyBuilderIntervalBased<T>)builder, data);
-        } else if (type == Type.ORDER_BASED) {
-            orderModel = new HierarchyWizardModelOrder<T>((HierarchyBuilderOrderBased<T>)builder, data);
-        } else if (type == Type.REDACTION_BASED) {
-            redactionModel = new HierarchyWizardModelRedaction<T>((HierarchyBuilderRedactionBased<T>)builder, data);
-        } else {
-            throw new RuntimeException("Unknown type of builder");
-        }
-    }
-
     /**
      * Creates a new instance for the given data type
      * @param dataType
@@ -56,7 +35,7 @@ public class HierarchyWizardModel<T> {
         // Create models
         orderModel = new HierarchyWizardModelOrder<T>(dataType, getOrderData());
         if (dataType instanceof DataTypeWithRatioScale){
-            intervalModel = new HierarchyWizardModelInterval<T>(dataType, data);
+            intervalModel = new HierarchyWizardModelIntervals<T>(dataType, data);
         }
         redactionModel = new HierarchyWizardModelRedaction<T>(dataType, data);
         
@@ -123,16 +102,16 @@ public class HierarchyWizardModel<T> {
      * Updates the model with a new specification
      * @param builder
      */
-    public void setSpecification(HierarchyBuilder<T> builder) {
+    public void setSpecification(HierarchyBuilder<T> builder) throws IllegalArgumentException{
         this.type = builder.getType();
         if (type == Type.INTERVAL_BASED) {
-            intervalModel = new HierarchyWizardModelInterval<T>((HierarchyBuilderIntervalBased<T>)builder, data);
+            intervalModel.parse((HierarchyBuilderIntervalBased<T>)builder);
         } else if (type == Type.ORDER_BASED) {
-            orderModel = new HierarchyWizardModelOrder<T>((HierarchyBuilderOrderBased<T>)builder, data);
+            orderModel.parse((HierarchyBuilderOrderBased<T>)builder);
         } else if (type == Type.REDACTION_BASED) {
-            redactionModel = new HierarchyWizardModelRedaction<T>((HierarchyBuilderRedactionBased<T>)builder, data);
+            redactionModel.parse((HierarchyBuilderRedactionBased<T>)builder);
         } else {
-            throw new RuntimeException("Unknown type of builder");
+            throw new IllegalArgumentException("Unknown type of builder");
         }
     }
 
@@ -156,7 +135,7 @@ public class HierarchyWizardModel<T> {
         return redactionModel;
     }
 
-    public HierarchyWizardModelInterval<T> getIntervalModel() {
+    public HierarchyWizardModelIntervals<T> getIntervalModel() {
         return intervalModel;
     }
 

@@ -1,6 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 
 public abstract class HierarchyWizardModelAbstract<T> {
 
@@ -40,4 +41,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
     public String[] getData() {
         return data;
     }
+    
+    public abstract HierarchyBuilder<T> getBuilder();
+    public abstract void parse(HierarchyBuilder<T> builder);
 }

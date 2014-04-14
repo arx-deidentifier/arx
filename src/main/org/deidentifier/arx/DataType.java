@@ -234,6 +234,8 @@ public abstract class DataType<T> implements Serializable {
         public String toString() {
             return "Date(" + string + ")";
         }
+        
+        
     }
 
     /**
@@ -714,6 +716,15 @@ public abstract class DataType<T> implements Serializable {
             if (this == obj) { return true; }
             if (obj == null) { return false; }
             if (getClass() != obj.getClass()) { return false; }
+            if (this.order == null) {
+                if (((ARXOrderedString)obj).order != null) { 
+                    return false;
+                }
+            } else {
+                if (!((ARXOrderedString)obj).order.equals(this.order)) {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -1154,6 +1165,12 @@ public abstract class DataType<T> implements Serializable {
     
     @Override
     public abstract DataType<T> clone();
+    
+    @Override
+    public abstract int hashCode();
+    
+    @Override
+    public abstract boolean equals(Object other);
     
     /**
      * Compares two values. The result is 0 if both values are equal, 

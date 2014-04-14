@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<T> {
 
-    private final HierarchyWizardModelInterval<T> model;
+    private final HierarchyWizardModelIntervals<T> model;
     private final Controller controller;
     
     public HierarchyWizardPageIntervals(final Controller controller,
@@ -51,5 +51,11 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         component.setLayoutData(SWTUtil.createFillGridData());
 
         setControl(composite);
+    }
+
+    @Override
+    public void updatePage() {
+        // TODO Auto-generated method stub
+        
     }
 }

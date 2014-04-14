@@ -119,7 +119,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
 
     private final Comparator<String> comparator;
-    
+
     /**
      * Creates a new instance
      * @param type The data type is also used for ordering data items
@@ -160,6 +160,14 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
             }
         };
+    }
+    
+    /**
+     * Returns the comparator
+     * @return
+     */
+    public Comparator<String> getComparator(){
+        return comparator;
     }
     
     @SuppressWarnings("unchecked")

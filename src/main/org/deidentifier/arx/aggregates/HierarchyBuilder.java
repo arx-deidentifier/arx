@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
@@ -34,8 +35,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * @author Fabian Prasser
  *
  */
-public abstract class HierarchyBuilder<T> {
+public abstract class HierarchyBuilder<T> implements Serializable {
     
+    private static final long serialVersionUID = -4182364711973630816L;
     /** The type*/
     private Type type;
     
