@@ -109,6 +109,20 @@ public class JdbcPage extends WizardPage {
 
                     layout.topControl = compositeRemote;
 
+                    if (txtPort.getText().isEmpty()) {
+
+                        if (comboType.getText().equals("MySQL")) {
+
+                            txtPort.setText("3306");
+
+                        } else if (comboType.getText().equals("PostgreSQL")) {
+
+                            txtPort.setText("5432");
+
+                        }
+
+                    }
+
                 }
 
                 compositeSwap.layout();
@@ -148,6 +162,7 @@ public class JdbcPage extends WizardPage {
         lblServer.setText("Server");
 
         txtServer = new Text(compositeRemote, SWT.BORDER);
+        txtServer.setText("localhost");
         txtServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblPort = new Label(compositeRemote, SWT.NONE);
