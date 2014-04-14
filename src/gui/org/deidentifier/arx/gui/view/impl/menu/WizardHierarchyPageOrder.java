@@ -147,7 +147,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
                         if (description.getLabel().equals("OrderedString")) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            String[] array = controller.actionShowOrderValuesDialog(text1, text2, DataType.STRING, model.getItems().toArray(new String[]{}));
+                            String[] array = controller.actionShowOrderValuesDialog(getShell(), text1, text2, DataType.STRING, model.getItems().toArray(new String[]{}));
                             if (array == null) {
                                 type = DataType.STRING;
                             } else {
@@ -158,7 +158,7 @@ public class WizardHierarchyPageOrder extends WizardPage {
                                         combo.select(getIndexOfDataType(DataType.STRING)+1);
                                     }
                                 } catch (Exception e){
-                                    controller.actionShowInfoDialog("Error", "Cannot create data type: "+e.getMessage());
+                                    controller.actionShowInfoDialog(getShell(), "Error", "Cannot create data type: "+e.getMessage());
                                     type = DataType.STRING;
                                     combo.select(getIndexOfDataType(DataType.STRING)+1);
                                 }

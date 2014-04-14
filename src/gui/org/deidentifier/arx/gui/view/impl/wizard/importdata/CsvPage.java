@@ -210,7 +210,8 @@ public class CsvPage extends WizardPage {
             public void widgetSelected(SelectionEvent arg0) {
 
                 /* Open file dialog */
-                final String path = wizardImport.getController().actionShowOpenFileDialog("*.csv");
+                final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), 
+                                                                                          "*.csv");
 
                 if (path == null) {
 

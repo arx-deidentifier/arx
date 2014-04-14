@@ -190,13 +190,13 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            controller.actionShowErrorDialog("Error", "Input/output error while saving values", e);
+            controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
             return null;
         } finally {
             if (reader != null) try {
                 reader.close();
             } catch (IOException e) {
-                controller.actionShowErrorDialog("Error", "Input/output error while saving values", e);
+                controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
                 return null;
             }
         }
@@ -217,12 +217,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 if (i<elements.length-1) writer.write("\n");
             }
         } catch (IOException e) {
-            controller.actionShowErrorDialog("Error", "Input/output error while saving values", e);
+            controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
         } finally {
             if (writer != null) try {
                 writer.close();
             } catch (IOException e) {
-                controller.actionShowErrorDialog("Error", "Input/output error while saving values", e);
+                controller.actionShowErrorDialog(getShell(), "Error", "Input/output error while saving values", e);
             }
         }
     }
@@ -272,7 +272,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         loadButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                String file = controller.actionShowOpenFileDialog("*.csv");
+                String file = controller.actionShowOpenFileDialog(getShell(), "*.csv");
                 if (file != null){
                     String[] array = loadArray(file);
                     if (array != null) {
@@ -298,7 +298,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         saveButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                String file = controller.actionShowSaveFileDialog("*.csv");
+                String file = controller.actionShowSaveFileDialog(getShell(), "*.csv");
                 if (file != null) {
                     saveArray(file, elements);
                 }

@@ -525,7 +525,8 @@ public class ViewHierarchy implements IView {
         final int index = table.indexOf(targetColumn);
 
         final String oldValue = targetRow.getText(index);
-        final String newValue = controller.actionShowInputDialog(Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
+        final String newValue = controller.actionShowInputDialog(controller.getResources().getShell(),
+                                                                 Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (newValue != null) {
             int row = 0;

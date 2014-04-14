@@ -240,7 +240,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             if (description.getLabel().equals("OrderedString")) {
                 final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                 final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                String[] array = controller.actionShowOrderValuesDialog(text1, text2,
+                String[] array = controller.actionShowOrderValuesDialog(getShell(), 
+                                                                        text1, text2,
                                                                         DataType.STRING,
                                                                         model.getData());
                 if (array == null) {
@@ -252,7 +253,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
                             type = DataType.STRING;
                         }
                     } catch (Exception e) {
-                        controller.actionShowInfoDialog("Error", "Cannot create data type: " + e.getMessage());
+                        controller.actionShowInfoDialog(getShell(), 
+                                                        "Error", "Cannot create data type: " + e.getMessage());
                         type = DataType.STRING;
                     }
                 }

@@ -116,7 +116,8 @@ public class ViewClipboard implements IView {
                 if (selectedTableItem != null) {
                     ARXNode node = (ARXNode)selectedTableItem.getData(); 
                     final String label = Arrays.toString(node.getTransformation());
-                    final String value = controller.actionShowInputDialog(Resources.getMessage("NodeClipboardView.4"),  //$NON-NLS-1$
+                    final String value = controller.actionShowInputDialog(controller.getResources().getShell(),
+                                                                          Resources.getMessage("NodeClipboardView.4"),  //$NON-NLS-1$
                                                                           Resources.getMessage("NodeClipboardView.5") + label, //$NON-NLS-1$
                                                                           selectedTableItem.getText(1));
                     if (value != null) {
