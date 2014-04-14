@@ -191,6 +191,13 @@ public class TablePage extends WizardPage {
 
             tableViewer.setInput(wizardImport.getData().getJdbcTables());
 
+            /* Mark page as complete when table has been selected before */
+            if (wizardImport.getData().getSelectedJdbcTable() != null) {
+
+                setPageComplete(true);
+
+            }
+
         } else {
 
             setPageComplete(false);
