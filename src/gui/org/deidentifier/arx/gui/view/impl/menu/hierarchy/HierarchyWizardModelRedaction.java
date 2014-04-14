@@ -86,7 +86,7 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         }
         
         try {
-            super.hierarchy = builder.create();
+            super.hierarchy = builder.build();
         } catch(Exception e){
             super.error = "Unknown error";
             return;

@@ -163,14 +163,21 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.aligmentOrder = alignmentOrder;
         this.redactionOrder = redactionOrder;
     }
-    
     /**
      * Creates a new hierarchy, based on the predefined specification
      * @param data
-     * @param type
      * @return
      */
-    public Hierarchy create(){
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
+    }
+    
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @return
+     */
+    public Hierarchy build(){
         
         // Check
         if (result == null) {

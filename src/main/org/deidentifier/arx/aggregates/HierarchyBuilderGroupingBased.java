@@ -70,17 +70,17 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
 
         /**
-         * @return the size
-         */
-        public int getSize() {
-            return size;
-        }
-
-        /**
          * @return the function
          */
         public AggregateFunction<U> getFunction() {
             return function;
+        }
+
+        /**
+         * @return the size
+         */
+        public int getSize() {
+            return size;
         }
         
         @Override
@@ -232,9 +232,19 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     
     /**
      * Creates a new hierarchy, based on the predefined specification
+     * @param data
      * @return
      */
-    public Hierarchy create(){
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
+    }
+    
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @return
+     */
+    public Hierarchy build(){
         
         if (!prepared) {
             throw new IllegalStateException("Please call prepare() first");
@@ -265,6 +275,22 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
+     * Returns the data type
+     * @return
+     */
+    public DataType<T> getDataType(){
+        return this.datatype;
+    }
+
+    /**
+     * Returns the default aggregate function
+     * @return
+     */
+    public AggregateFunction<T> getDefaultFunction(){
+        return this.function;
+    }
+
+    /**
      * Returns the given level
      * @param level
      * @return 
@@ -276,7 +302,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         }
         return this.groups.get(level);
     }
-
+    
     /**
      * Returns all currently defined levels
      * @return
@@ -293,7 +319,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         });
         return levels;
     }
-
+    
     /**
      * Returns whether the current configuration is valid. Returns <code>null</code>, if so, an error message
      * if not.
@@ -391,22 +417,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      */
     protected String[] getData(){
         return data;
-    }
-    
-    /**
-     * Returns the data type
-     * @return
-     */
-    public DataType<T> getDataType(){
-        return this.datatype;
-    }
-    
-    /**
-     * Returns the default aggregate function
-     * @return
-     */
-    public AggregateFunction<T> getDefaultFunction(){
-        return this.function;
     }
     
     /**

@@ -122,7 +122,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         }
         
         try {
-            super.hierarchy = builder.create();
+            super.hierarchy = builder.build();
         } catch(Exception e){
             super.error = e.getMessage();
             return;

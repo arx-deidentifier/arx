@@ -108,7 +108,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -157,7 +157,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
 
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -206,7 +206,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
 
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -233,7 +233,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
     
@@ -282,7 +282,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
 
@@ -333,7 +333,7 @@ public class Example18 extends Example {
         System.out.println("RESULT");
         
         // Print resulting hierarchy
-        printArray(builder.create().getHierarchy());
+        printArray(builder.build().getHierarchy());
         System.out.println("");
     }
     
