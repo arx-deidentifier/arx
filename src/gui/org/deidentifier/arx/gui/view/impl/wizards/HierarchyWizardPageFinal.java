@@ -30,17 +30,33 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * The final page that shows an overview of the resulting hierarchy
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizardPageFinal<T> extends WizardPage{
 
+    /** Var */
     private final HierarchyWizard<T> wizard;
-    private Composite composite;
-    private Table table;
-    private TableColumn column1;
-    private ViewHierarchy view;
+    /** Var */
+    private Composite                composite;
+    /** Var */
+    private Table                    table;
+    /** Var */
+    private TableColumn              column1;
+    /** Var */
+    private ViewHierarchy            view;
+    /** Var */
+    private int[]                    groups;
+    /** Var */
+    private Hierarchy                hierarchy;
     
-    private int[] groups;
-    private Hierarchy hierarchy;
-    
+    /**
+     * Creates a new instance
+     * @param wizard
+     */
     public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard) {
         super("");
         this.wizard = wizard;
@@ -89,10 +105,18 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         return false;
     }
     
+    /**
+     * Sets the groups
+     * @param groups
+     */
     public void setGroups(int[] groups){
         this.groups = groups;
     }
     
+    /**
+     * Sets the hierarchy
+     * @param hierarchy
+     */
     public void setHierarchy(Hierarchy hierarchy){
         this.hierarchy = hierarchy;
     }

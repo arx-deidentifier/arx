@@ -40,18 +40,35 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ARXWizardDialog extends WizardDialog {
 
+    /**
+     * A specification for a button to add to the wizard
+     * @author Fabian Prasser
+     *
+     */
     public static class ARXWizardButton{
-        static int ID = Integer.MAX_VALUE - 10;
+        
+        /** Var*/
+        private static int ID = Integer.MAX_VALUE - 10;
+        /** Var*/
         private final int id = ID--;
+        /** Var*/
         private final String text;
+        /** Var*/
         private final SelectionListener listener;
+        /**
+         * Creates a new instance
+         * @param text
+         * @param listener
+         */
         public ARXWizardButton(String text, SelectionListener listener) {
             this.text = text;
             this.listener = listener;
         }
     }
     
+    /** Var*/
     private final List<ARXWizardButton> buttons;
+    /** Var*/
     private final Map<ARXWizardButton, Button> map;
     
     /**
@@ -65,6 +82,12 @@ public class ARXWizardDialog extends WizardDialog {
         this.map = null;
     }
 
+    /**
+     * Creates a new instance
+     * @param parentShell
+     * @param newWizard
+     * @param buttons
+     */
     public ARXWizardDialog(Shell parentShell, IWizard newWizard,
                            List<ARXWizardButton> buttons) {
         super(parentShell, newWizard);
@@ -72,6 +95,11 @@ public class ARXWizardDialog extends WizardDialog {
         this.map = new HashMap<ARXWizardButton, Button>();
     }
 
+    /**
+     * Returns the button created for the given specification
+     * @param button
+     * @return
+     */
     public Button getButton(ARXWizardButton button){
         return map.get(button);
     }

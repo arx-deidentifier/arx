@@ -35,14 +35,32 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 
+/**
+ * A page for configuring the order-based builder
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
+    /** Var */
     private final HierarchyWizardModelOrder<T> model;
-    private final Controller controller;
-    private List list;
-    private Combo combo;
-    HierarchyWizardEditor<Long> editor; 
+    /** Var */
+    private final Controller                   controller;
+    /** Var */
+    private List                               list;
+    /** Var */
+    private Combo                              combo;
+    /** Var */
+    private HierarchyWizardEditor<Long>        editor; 
     
+    /**
+     * Creates a new instance
+     * @param controller
+     * @param wizard
+     * @param model
+     * @param finalPage
+     */
     public HierarchyWizardPageOrder(final Controller controller,
                                     final HierarchyWizard<T> wizard,
                                        final HierarchyWizardModel<T> model, 
@@ -77,6 +95,9 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         model.update();
     }
     
+    /**
+     * Moves the selected item down
+     */
     private void actionDown() {
         int index = list.getSelectionIndex();
         model.moveDown(index);
@@ -92,6 +113,11 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         update();
     }
     
+    /**
+     * Sorts according to the index of a data type
+     * @param index
+     * @return
+     */
     private int actionSort(int index) {
         
         // Initial data type
@@ -160,6 +186,9 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         return returnIndex;
     }
     
+    /**
+     * Moves the selected item up
+     */
     private void actionUp() {
         int index = list.getSelectionIndex();
         model.moveUp(index);
@@ -176,6 +205,10 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
     }
 
+    /**
+     * Create the grouping-part of the page
+     * @param parent
+     */
     @SuppressWarnings("unchecked")
     private void createGroups(Composite parent){
         Group composite = new Group(parent, SWT.NONE);
@@ -187,6 +220,10 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         editor.setLayoutData(SWTUtil.createFillGridData());
     }
 
+    /**
+     * Create the ordering-part of the page
+     * @param parent
+     */
     private void createOrder(Composite parent){
         Group composite = new Group(parent, SWT.NONE);
         composite.setText("Order");

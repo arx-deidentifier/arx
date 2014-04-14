@@ -22,10 +22,23 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * A page for configuring the interval-based builder
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<T> {
 
+    /** Var */
     private final HierarchyWizardModelIntervals<T> model;
     
+    /**
+     * Creates a new instance
+     * @param wizard
+     * @param model
+     * @param finalPage
+     */
     public HierarchyWizardPageIntervals(final HierarchyWizard<T> wizard,
                                         final HierarchyWizardModel<T> model, 
                                         final HierarchyWizardPageFinal<T> finalPage) {
