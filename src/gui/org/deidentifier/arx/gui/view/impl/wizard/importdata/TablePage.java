@@ -118,12 +118,16 @@ public class TablePage extends WizardPage {
 
         /* Table for {@link #tableViewer} */
         table = tableViewer.getTable();
+        table.setHeaderVisible(true);
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         /* Column for table names */
         TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
+            /**
+             * Returns table name
+             */
             @Override
             public String getText(Object element)
             {
@@ -135,10 +139,78 @@ public class TablePage extends WizardPage {
         });
 
         TableColumn tblclmnColumnName = tableViewerColumnName.getColumn();
-        tblclmnColumnName.setWidth(100);
+        tblclmnColumnName.setToolTipText("Name of the table");
+        tblclmnColumnName.setWidth(300);
         tblclmnColumnName.setText("Name");
 
+        TableViewerColumn tableViewerColumnRows = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnRows.setLabelProvider(new ColumnLabelProvider() {
+
+            /**
+             * Returns number of rows for table
+             *
+             * If the number of rows couldn't be determined, three question
+             * marks are returned.
+             */
+            @Override
+            public String getText(Object element)
+            {
+
+                int rows = getNumberOfRows((String) element);
+
+                if (rows != -1) {
+
+                    return " ~ " + rows;
+
+                } else {
+
+                    return "???";
+
+                }
+
+            }
+
+        });
+
+        TableColumn tblclmnRows = tableViewerColumnRows.getColumn();
+        tblclmnRows.setToolTipText("Number of rows contained in table");
+        tblclmnRows.setWidth(100);
+        tblclmnRows.setText("# rows");
+
         setPageComplete(false);
+
+    }
+
+    /**
+     * Gets the number of rows for given table
+     *
+     * This uses the JDBC connection {@link ImportData#getJdbcConnection()} to
+     * determine the number of rows for given table.
+     *
+     * @param table Table number of rows should be returned for
+     *
+     * @return Number of rows for given table, -1 in case of error
+     */
+    protected int getNumberOfRows(String table)
+    {
+
+        try {
+
+            Statement statement = wizardImport.getData().getJdbcConnection().createStatement();
+            statement.execute("SELECT COUNT(*) FROM " + table);
+            ResultSet resultSet = statement.getResultSet();
+
+            if (resultSet.next()) {
+
+                return resultSet.getInt(1);
+
+            }
+
+        } catch (SQLException e) {
+
+        }
+
+        return -1;
 
     }
 
