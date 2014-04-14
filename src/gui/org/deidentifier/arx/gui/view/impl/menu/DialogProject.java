@@ -165,7 +165,7 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         return new ShellAdapter() {
             @Override
             public void shellClosed(final ShellEvent event) {
-                event.doit = false;
+                setReturnCode(Window.CANCEL);
             }
         };
     }

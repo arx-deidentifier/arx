@@ -29,19 +29,41 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * A hierarchy page for choosing the type of builder
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizardPageType<T> extends WizardPage {
 
-    private final HierarchyWizardModel<T> model;
-
-    private Button interval;
-    private Button order;
-    private Button redaction;
-    private IWizardPage next;
+    /** Var */
+    private final HierarchyWizardModel<T>         model;
+    /** Var */
+    private Button                                interval;
+    /** Var */
+    private Button                                order;
+    /** Var */
+    private Button                                redaction;
+    /** Var */
+    private IWizardPage                           next;
+    /** Var */
     private final HierarchyWizardPageIntervals<T> intervalPage;
-    private final HierarchyWizardPageOrder<T> orderPage;
+    /** Var */
+    private final HierarchyWizardPageOrder<T>     orderPage;
+    /** Var */
     private final HierarchyWizardPageRedaction<T> redactionPage;
-    private final HierarchyWizard<T> wizard;
+    /** Var */
+    private final HierarchyWizard<T>              wizard;
     
+    /**
+     * Creates a new instance
+     * @param wizard
+     * @param model
+     * @param intervalPage
+     * @param orderPage
+     * @param redactionPage
+     */
     public HierarchyWizardPageType(final HierarchyWizard<T> wizard,
                                    final HierarchyWizardModel<T> model,
                                    final HierarchyWizardPageIntervals<T> intervalPage,
@@ -149,6 +171,9 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         super.setVisible(value);
     }
 
+    /**
+     * Updates the page
+     */
     public void updatePage() {
         interval.setSelection(model.getType() == Type.INTERVAL_BASED);
         order.setSelection(model.getType() == Type.ORDER_BASED);

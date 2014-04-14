@@ -212,7 +212,7 @@ public class MainWindow implements IView {
                     display.sleep();
                 }
             } catch (final Exception e) {
-                controller.actionShowErrorDialog(shell, Resources.getMessage("MainWindow.8"), Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                controller.actionShowErrorDialog(shell, Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
@@ -244,37 +244,16 @@ public class MainWindow implements IView {
      * Shows an error dialog
      * @param header
      * @param message
-     */
-    public void showErrorDialog(final Shell shell, final String header, final String message) {
-        final DialogError dialog = new DialogError(shell, controller, header, message);
-        dialog.create();
-        dialog.open();
-    }
-
-    /**
-     * Shows an error dialog
-     * @param header
-     * @param message
-     * @param error
-     */
-    public void showErrorDialog(final Shell shell, final String header, final String message, final String error) {
-        final DialogError dialog = new DialogError(shell, controller, header, message, error);
-        dialog.create();
-        dialog.open();
-    }
-
-    /**
-     * Shows an error dialog
-     * @param header
-     * @param message
      * @param t
      */
-    public void showErrorDialog(final Shell shell, final String header, final String message, final Throwable t) {
+    public void showErrorDialog(final Shell shell, final String message, final Throwable t) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         t.printStackTrace(pw);
         final String trace = sw.toString();
-        showErrorDialog(shell, header, message, trace);
+        final DialogError dialog = new DialogError(shell, controller, message, trace);
+        dialog.create();
+        dialog.open();
     }
 
     /**

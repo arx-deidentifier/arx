@@ -30,16 +30,36 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * A page for configuring the redaction-based builder
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<T> {
 
+    /** Var */
     private final HierarchyWizardModelRedaction<T> model;
+    /** Var */
     private Button                                 buttonLeftAlign;
+    /** Var */
     private Button                                 buttonRightAlign;
+    /** Var */
     private Button                                 buttonLeftRedact;
+    /** Var */
     private Button                                 buttonRightRedact;
+    /** Var */
     private Combo                                  comboPaddingChar;
+    /** Var */
     private Combo                                  comboRedactionChar;
 
+    /**
+     * Creates a new instance
+     * @param controller
+     * @param wizard
+     * @param model
+     * @param finalPage
+     */
     public HierarchyWizardPageRedaction(Controller controller,
                                         final HierarchyWizard<T> wizard,
                                         final HierarchyWizardModel<T> model, 
@@ -153,7 +173,12 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         comboRedactionChar.select(indexOf(comboRedactionChar, model.getRedactionCharacter()));
     }
     
-    void createItems(Combo combo, boolean padding){
+    /**
+     * Creates combo items
+     * @param combo
+     * @param padding
+     */
+    private void createItems(Combo combo, boolean padding){
         if (padding) combo.add("( )");
         combo.add("(*)");
         combo.add("(x)");
@@ -161,7 +186,13 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         combo.add("(-)");
     }
 
-    int indexOf(Combo combo, char value){
+    /**
+     * Returns the index of the item, or adds it to the combo
+     * @param combo
+     * @param value
+     * @return
+     */
+    private int indexOf(Combo combo, char value){
         for (int i=0; i < combo.getItems().length; i++) {
             if (combo.getItem(i).toCharArray()[1]==value) {
                 return i;

@@ -38,20 +38,51 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * This class implements a wizard for generalization hierarchies
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizard<T> extends Wizard implements IWizard {
-
+    
+    /**
+     * Updateable part of the wizard
+     * @author Fabian Prasser
+     */
+    public static interface HierarchyWizardView {
+        /** Update*/
+        public void update();
+    }
+    
+    /** Var */
     private final HierarchyWizardModel<T>   model;
+    /** Var */
     private final Controller                controller;
+    /** Var */
     private final ARXWizardButton           buttonLoad;
+    /** Var */
     private final ARXWizardButton           buttonSave;
+    /** Var */
     private ARXWizardDialog                 dialog;
+    /** Var */
     private HierarchyWizardPageIntervals<T> pageIntervals;
+    /** Var */
     private HierarchyWizardPageOrder<T>     pageOrder;
+    /** Var */
     private HierarchyWizardPageRedaction<T> pageRedaction;
+    /** Var */
     private HierarchyWizardPageFinal<T>     pageFinal;
+    /** Var */
     private HierarchyWizardPageType<T>      pageType;
 
-
+    /**
+     * Creates a new instance
+     * @param controller
+     * @param attribute
+     * @param datatype
+     * @param items
+     */
     public HierarchyWizard(final Controller controller,
                            final String attribute,
                            final DataType<T> datatype,
@@ -59,6 +90,14 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
         this(controller, attribute, null, datatype, items);
     }
     
+    /**
+     * Creates a new instance
+     * @param controller
+     * @param attribute
+     * @param builder
+     * @param datatype
+     * @param items
+     */
     public HierarchyWizard(final Controller controller,
                            final String attribute,
                            HierarchyBuilder<?> builder,
@@ -82,9 +121,9 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
         });
         
         // Initialize pages
-        pageFinal = new HierarchyWizardPageFinal<T>(this, model);
+        pageFinal = new HierarchyWizardPageFinal<T>(this);
         if (model.getIntervalModel() != null){
-            pageIntervals = new HierarchyWizardPageIntervals<T>(controller, this, model, pageFinal);
+            pageIntervals = new HierarchyWizardPageIntervals<T>(this, model, pageFinal);
         } else {
             pageIntervals = null;
         }
@@ -150,6 +189,11 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
         }
     }
     
+    /**
+     * Opens the dialog
+     * @param shell
+     * @return
+     */
     public boolean open(final Shell shell) {
         
         this.dialog = new ARXWizardDialog(shell, this, Arrays.asList(new ARXWizardButton[]{buttonLoad, buttonSave}));

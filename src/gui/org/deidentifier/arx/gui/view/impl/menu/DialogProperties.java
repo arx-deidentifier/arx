@@ -450,7 +450,7 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         return new ShellAdapter() {
             @Override
             public void shellClosed(final ShellEvent event) {
-                event.doit = ok.isEnabled();
+                setReturnCode(Window.CANCEL);
             }
         };
     }

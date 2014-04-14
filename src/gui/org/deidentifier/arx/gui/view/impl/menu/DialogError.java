@@ -34,7 +34,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -46,25 +45,8 @@ import org.eclipse.swt.widgets.Text;
 public class DialogError extends TitleAreaDialog implements IDialog {
 
     private Image image;
-    private final String title;
     private final String message;
     private final String error;
-
-    /**
-     * Constructor for displaying one message
-     * @param parentShell
-     * @param controller
-     * @param title
-     * @param message
-     */
-    public DialogError(final Shell parentShell, final Controller controller,
-    				   final String title, final String message) {
-        super(parentShell);
-        this.title = title;
-        this.message = message;
-        this.error = null;
-        this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
-    }
 
     /**
      * Constructor for displaying two messages
@@ -74,10 +56,8 @@ public class DialogError extends TitleAreaDialog implements IDialog {
      * @param message
      * @param error
      */
-    public DialogError(final Shell parentShell, final Controller controller,
-    				   final String title, final String message, String error) {
+    public DialogError(final Shell parentShell, final Controller controller, final String message, String error) {
         super(parentShell);
-        this.title = title;
         this.message = message;
         this.error = error;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
@@ -86,8 +66,8 @@ public class DialogError extends TitleAreaDialog implements IDialog {
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
-        setTitle(title); //$NON-NLS-1$
-        setMessage(title, IMessageProvider.ERROR); //$NON-NLS-1$
+        setTitle("Error");
+        setMessage(message.replaceAll(" \\(\\)\\!", "!"), IMessageProvider.ERROR);
         if (image!=null) setTitleImage(image); //$NON-NLS-1$
         return contents;
     }
@@ -113,20 +93,12 @@ public class DialogError extends TitleAreaDialog implements IDialog {
     protected Control createDialogArea(final Composite parent) {
 
     	parent.setLayout(new GridLayout());
-    	
-    	if (message != null){
-    		final Label label = new Label(parent, SWT.NONE);
-    		label.setText(message.replaceAll(" \\(\\)\\!", "!")); // ;-)
-    		label.setLayoutData(SWTUtil.createFillHorizontallyGridData()); 
-    	}
-    	if (error != null){
-	        final Text text = new Text(parent, SWT.NONE | SWT.MULTI |
-	                                              SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-	        text.setText(error);
-	        final GridData d = SWTUtil.createFillGridData();
-	        d.heightHint = 100;
-	        text.setLayoutData(d);
-    	}
+        final Text text = new Text(parent, SWT.NONE | SWT.MULTI | SWT.V_SCROLL |
+                                           SWT.H_SCROLL | SWT.BORDER);
+        text.setText(error);
+        final GridData d = SWTUtil.createFillGridData();
+        d.heightHint = 100;
+        text.setLayoutData(d);
         return parent;
     }
 

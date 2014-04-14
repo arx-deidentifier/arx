@@ -1,3 +1,21 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.List;
@@ -11,14 +29,26 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 
+/**
+ * The base model for the wizard
+ * @author Fabian Prasser
+ *
+ * @param <T>
+ */
 public class HierarchyWizardModel<T> {
 
-    private Type type;
-    private HierarchyWizardModelOrder<T>   orderModel;
-    private HierarchyWizardModelIntervals<T>   intervalModel;
-    private HierarchyWizardModelRedaction<T>  redactionModel;
-    private final DataType<T> dataType;
-    private final String[] data;
+    /** Var */
+    private Type                             type;
+    /** Var */
+    private HierarchyWizardModelOrder<T>     orderModel;
+    /** Var */
+    private HierarchyWizardModelIntervals<T> intervalModel;
+    /** Var */
+    private HierarchyWizardModelRedaction<T> redactionModel;
+    /** Var */
+    private final DataType<T>                dataType;
+    /** Var */
+    private final String[]                   data;
     
     /**
      * Creates a new instance for the given data type
@@ -57,10 +87,7 @@ public class HierarchyWizardModel<T> {
             if (builder != null){
                 this.setSpecification((HierarchyBuilder<T>)builder);
             }
-        } catch (Exception e){
-            // Ignore
-            e.printStackTrace();
-        }
+        } catch (Exception e){ /* Ignore */ }
     }
 
     /**
@@ -103,14 +130,26 @@ public class HierarchyWizardModel<T> {
         }
     }
     
+    /**
+     * Returns the model of the interval-based builder
+     * @return
+     */
     public HierarchyWizardModelIntervals<T> getIntervalModel() {
         return intervalModel;
     }
     
+    /**
+     * Returns the model of the order-based builder
+     * @return
+     */
     public HierarchyWizardModelOrder<T> getOrderModel() {
         return orderModel;
     }
     
+    /**
+     * Returns the model of the redaction-based builder
+     * @return
+     */
     public HierarchyWizardModelRedaction<T> getRedactionModel() {
         return redactionModel;
     }

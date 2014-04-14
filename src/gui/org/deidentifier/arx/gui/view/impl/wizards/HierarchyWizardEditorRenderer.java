@@ -1,3 +1,21 @@
+/*
+ * ARX: Efficient, Stable and Optimal Data Anonymization
+ * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.deidentifier.arx.gui.view.impl.wizards;
 
 import java.util.ArrayList;
@@ -29,13 +47,21 @@ public class HierarchyWizardEditorRenderer<T> {
      * @param <T>
      */
     public abstract static class RenderedComponent<T> {
+        /** Var */
         public Rectangle rectangle1;
+        /** Var */
         public Rectangle rectangle2;
+        /** Var */
         public int       depth;
+        /** Var */
         public boolean   enabled;
+        /** Var */
         public String    label;
+        /** Var */
         public String    bounds;
+        /** Var */
         public T         min;
+        /** Var */
         public T         max;
     }
     /**
@@ -45,6 +71,8 @@ public class HierarchyWizardEditorRenderer<T> {
      * @param <T>
      */
     public static class RenderedGroup<T> extends RenderedComponent<T> {
+        
+        /** Var */
         public HierarchyWizardGroupingGroup<T> group;
 
         @Override
@@ -75,9 +103,12 @@ public class HierarchyWizardEditorRenderer<T> {
      * @param <T>
      */
     public static class RenderedInterval<T> extends RenderedComponent<T> {
-        public HierarchyWizardGroupingInterval<T> interval;
-        public T                    offset;
         
+        /** Var */
+        public HierarchyWizardGroupingInterval<T> interval;
+        /** Var */
+        public T                                  offset;
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
