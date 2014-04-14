@@ -67,6 +67,7 @@ public class HierarchyWizardEditorFunction<T> {
         this.labels = new ArrayList<String>();
         this.model = model;
         this.defaultFunction = new AggregateFunction<T>(type){
+            private static final long serialVersionUID = -6444219024682845316L;
             @Override public String aggregate(String[] values) {return null;}
             @Override public String toLabel() {return "Default";}
             @Override public String toString() {return "Default";}

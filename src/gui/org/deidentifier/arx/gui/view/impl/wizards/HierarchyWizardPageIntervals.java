@@ -18,7 +18,6 @@
 
 package org.deidentifier.arx.gui.view.impl.wizards;
 
-import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -26,15 +25,12 @@ import org.eclipse.swt.widgets.Composite;
 public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<T> {
 
     private final HierarchyWizardModelIntervals<T> model;
-    private final Controller controller;
     
-    public HierarchyWizardPageIntervals(final Controller controller,
-                                        final HierarchyWizard<T> wizard,
-                                       final HierarchyWizardModel<T> model, 
-                                       final HierarchyWizardPageFinal<T> finalPage) {
+    public HierarchyWizardPageIntervals(final HierarchyWizard<T> wizard,
+                                        final HierarchyWizardModel<T> model, 
+                                        final HierarchyWizardPageFinal<T> finalPage) {
         super(wizard, model.getIntervalModel(), finalPage);
         this.model = model.getIntervalModel();
-        this.controller = controller;
         setTitle("Create a hierarchy by defining intervals");
         setDescription("Specify the parameters");
         setPageComplete(true);
@@ -46,6 +42,7 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         
+        @SuppressWarnings("unchecked")
         HierarchyWizardEditor<Long> component = 
                 new HierarchyWizardEditor<Long>(composite, 
                         (HierarchyWizardModelGrouping<Long>) model);

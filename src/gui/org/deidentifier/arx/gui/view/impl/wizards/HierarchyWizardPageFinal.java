@@ -32,10 +32,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class HierarchyWizardPageFinal<T> extends WizardPage{
 
-    private final HierarchyWizardModel<T> model;
     private final HierarchyWizard<T> wizard;
-    
-
     private Composite composite;
     private Table table;
     private TableColumn column1;
@@ -44,9 +41,8 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
     private int[] groups;
     private Hierarchy hierarchy;
     
-    public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard, final HierarchyWizardModel<T> model) {
+    public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard) {
         super("");
-        this.model = model;
         this.wizard = wizard;
         setTitle("Review the hierarchy");
         setDescription("Overview of groups and values");

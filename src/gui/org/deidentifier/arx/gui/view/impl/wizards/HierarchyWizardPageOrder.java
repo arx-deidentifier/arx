@@ -176,6 +176,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void createGroups(Composite parent){
         Group composite = new Group(parent, SWT.NONE);
         composite.setText("Groups");

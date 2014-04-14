@@ -82,9 +82,9 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
         });
         
         // Initialize pages
-        pageFinal = new HierarchyWizardPageFinal<T>(this, model);
+        pageFinal = new HierarchyWizardPageFinal<T>(this);
         if (model.getIntervalModel() != null){
-            pageIntervals = new HierarchyWizardPageIntervals<T>(controller, this, model, pageFinal);
+            pageIntervals = new HierarchyWizardPageIntervals<T>(this, model, pageFinal);
         } else {
             pageIntervals = null;
         }
