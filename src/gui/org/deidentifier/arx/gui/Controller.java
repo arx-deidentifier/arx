@@ -123,7 +123,9 @@ public class Controller implements IView {
 
         // Show errors
         if (worker.getError() != null) {
-            main.showErrorDialog(main.getShell(), "Error!", Resources.getMessage("Controller.2"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), "Error!", //$NON-NLS-1$
+                                 Resources.getMessage("Controller.2"), //$NON-NLS-1$
+                                 worker.getError()); 
             return;
         }
 
@@ -134,7 +136,8 @@ public class Controller implements IView {
             
             // Do not sort if dataset is too large
             if (model.getMaximalSizeForComplexOperations() == 0 ||
-                model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
+                model.getInputConfig().getInput().getHandle().getNumRows() <= 
+                model.getMaximalSizeForComplexOperations()) {
                 this.model.getViewConfig().setMode(Mode.GROUPED);
                 this.updateViewConfig(true);
             } else {
@@ -190,7 +193,9 @@ public class Controller implements IView {
         
         // Break if none found
         if (others.isEmpty()) {
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.95"), Resources.getMessage("Controller.96")); //$NON-NLS-1$ //$NON-NLS-1$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.95"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.96")); //$NON-NLS-1$ 
             return;
         }
         
@@ -210,7 +215,9 @@ public class Controller implements IView {
      * @param criterion
      */
     public void actionCriterionPush(ModelCriterion criterion) {
-        if (main.showQuestionDialog(main.getShell(), Resources.getMessage("Controller.93"), Resources.getMessage("Controller.94"))){ //$NON-NLS-1$ //$NON-NLS-1$
+        if (main.showQuestionDialog(main.getShell(), 
+                                    Resources.getMessage("Controller.93"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.94"))){ //$NON-NLS-1$
             
             if (criterion instanceof ModelLDiversityCriterion){
                 for (ModelLDiversityCriterion other : model.getLDiversityModel().values()){
@@ -290,20 +297,28 @@ public class Controller implements IView {
     public void actionMenuEditAnonymize() {
 
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.3"), Resources.getMessage("Controller.4")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.3"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.4")); //$NON-NLS-1$
             return;
         }
 
         if (model.getInputConfig().getInput() == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.5"), Resources.getMessage("Controller.6")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.6")); //$NON-NLS-1$
             return;
         }
 
         if (!model.isValidLatticeSize()) {
-            final String message = Resources.getMessage("Controller.7") + Resources.getMessage("Controller.8") + //$NON-NLS-1$ //$NON-NLS-2$
-                                   Resources.getMessage("Controller.9") + Resources.getMessage("Controller.10"); //$NON-NLS-1$ //$NON-NLS-2$
+            final String message = Resources.getMessage("Controller.7") + //$NON-NLS-1$
+                                   Resources.getMessage("Controller.8") + //$NON-NLS-1$
+                                   Resources.getMessage("Controller.9") + //$NON-NLS-1$
+                                   Resources.getMessage("Controller.10"); //$NON-NLS-1$
             
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.11"), //$NON-NLS-1$
+                                message);
             return;
         }
 
@@ -325,7 +340,9 @@ public class Controller implements IView {
             if (worker.getError() instanceof InvocationTargetException) {
                 t = worker.getError().getCause();
             }
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.13"), Resources.getMessage("Controller.14") + t.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.14") + t.getMessage()); //$NON-NLS-1$
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             worker.getError().printStackTrace(pw);
@@ -357,7 +374,8 @@ public class Controller implements IView {
                 
                 // Do not sort if dataset is too large
                 if (model.getMaximalSizeForComplexOperations() == 0 ||
-                    model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
+                    model.getInputConfig().getInput().getHandle().getNumRows() <= 
+                    model.getMaximalSizeForComplexOperations()) {
                     this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.GROUPED);
                     this.updateViewConfig(true);
@@ -385,10 +403,14 @@ public class Controller implements IView {
      */
     public void actionMenuEditCreateHierarchy() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.16"), Resources.getMessage("Controller.17")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.16"), //$NON-NLS-1$ 
+                                Resources.getMessage("Controller.17")); //$NON-NLS-1$
             return;
         } else if (model.getInputConfig().getInput() == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.18"), Resources.getMessage("Controller.19")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.18"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.19")); //$NON-NLS-1$
             return;
         } 
         
@@ -429,7 +451,9 @@ public class Controller implements IView {
      */
     public void actionMenuEditSettings() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.22"), Resources.getMessage("Controller.23")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.22"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.23")); //$NON-NLS-1$
             return;
         }
         try {
@@ -442,7 +466,9 @@ public class Controller implements IView {
             // TODO: This is not sound
             ((IView) main).update(new ModelEvent(this, ModelPart.MODEL, model));
         } catch (final Exception e) {
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.24"), Resources.getMessage("Controller.25")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.24"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.25")); //$NON-NLS-1$
             getResources().getLogger().info(e);
         }
     }
@@ -451,9 +477,13 @@ public class Controller implements IView {
      * File->exit
      */
     public void actionMenuFileExit() {
-        if (main.showQuestionDialog(main.getShell(), Resources.getMessage("Controller.26"), Resources.getMessage("Controller.27"))) { //$NON-NLS-1$ //$NON-NLS-2$
+        if (main.showQuestionDialog(main.getShell(), 
+                                    Resources.getMessage("Controller.26"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.27"))) { //$NON-NLS-1$
             if ((model != null) && model.isModified()) {
-                if (main.showQuestionDialog(main.getShell(), Resources.getMessage("Controller.28"), Resources.getMessage("Controller.29"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                if (main.showQuestionDialog(main.getShell(), 
+                                            Resources.getMessage("Controller.28"), //$NON-NLS-1$
+                                            Resources.getMessage("Controller.29"))) { //$NON-NLS-1$
                     actionMenuFileSave();
                 }
             }
@@ -467,16 +497,23 @@ public class Controller implements IView {
      */
     public void actionMenuFileExportData() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.30"), Resources.getMessage("Controller.31")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.30"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.31")); //$NON-NLS-1$
             return;
         } else if (model.getOutput() == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.32"), Resources.getMessage("Controller.33")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.32"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.33")); //$NON-NLS-1$
             return;
         }
 
         // Check node
         if (model.getOutputNode().isAnonymous() != Anonymity.ANONYMOUS) {
-            if (!main.showQuestionDialog(main.getShell(), Resources.getMessage("Controller.34"), Resources.getMessage("Controller.35"))) { return; } //$NON-NLS-1$ //$NON-NLS-2$
+            if (!main.showQuestionDialog(main.getShell(), 
+                                         Resources.getMessage("Controller.34"), //$NON-NLS-1$
+                                         Resources.getMessage("Controller.35"))) //$NON-NLS-1$
+            { return; }
         }
 
         // Ask for file
@@ -496,7 +533,10 @@ public class Controller implements IView {
         main.showProgressDialog(Resources.getMessage("Controller.39"), worker); //$NON-NLS-1$
 
         if (worker.getError() != null) {
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.40"), Resources.getMessage("Controller.41"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.40"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.41"), //$NON-NLS-1$
+                                 worker.getError()); 
             return;
         }
     }
@@ -507,10 +547,14 @@ public class Controller implements IView {
     public void actionMenuFileExportHierarchy() {
 
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.42"), Resources.getMessage("Controller.43")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.42"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.43")); //$NON-NLS-1$
             return;
         } else if (!(model.isQuasiIdentifierSelected() || model.isSensitiveAttributeSelected())) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.44"), Resources.getMessage("Controller.45")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.44"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.45")); //$NON-NLS-1$
             return;
         }
 
@@ -528,13 +572,17 @@ public class Controller implements IView {
             
             Hierarchy h = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
             if (h==null){
-               main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.91"), Resources.getMessage("Controller.92")); //$NON-NLS-1$ //$NON-NLS-2$
+               main.showInfoDialog(main.getShell(), 
+                                   Resources.getMessage("Controller.91"), //$NON-NLS-1$
+                                   Resources.getMessage("Controller.92")); //$NON-NLS-1$
             } else {
                 out.write(h.getHierarchy());
             }
 
         } catch (final Exception e) {
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.49"), Resources.getMessage("Controller.50"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.49"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.50"), e); //$NON-NLS-1$
         }
     }
 
@@ -544,7 +592,9 @@ public class Controller implements IView {
     public void actionMenuFileImportData() {
 
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.51"), Resources.getMessage("Controller.52")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.51"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.52")); //$NON-NLS-1$
             return;
         }
 
@@ -563,10 +613,14 @@ public class Controller implements IView {
      */
     public void actionMenuFileImportHierarchy() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.54"), Resources.getMessage("Controller.55")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.54"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.55")); //$NON-NLS-1$
             return;
         } else if (model.getInputConfig().getInput() == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.56"), Resources.getMessage("Controller.57")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.56"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.57")); //$NON-NLS-1$
             return;
         } 
 
@@ -591,7 +645,9 @@ public class Controller implements IView {
                 if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
                     main.showInfoDialog(main.getShell(), "Error loading hierarchy", error.getMessage());
                 } else {
-                    main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$ //$NON-NLS-2$
+                    main.showErrorDialog(main.getShell(), 
+                                         Resources.getMessage("Controller.77"), //$NON-NLS-1$
+                                         Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
                 }
                 return;
             }
@@ -615,7 +671,9 @@ public class Controller implements IView {
     public void actionMenuFileNew() {
 
         if ((model != null) && model.isModified()) {
-            if (main.showQuestionDialog(main.getShell(), Resources.getMessage("Controller.61"), Resources.getMessage("Controller.62"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (main.showQuestionDialog(main.getShell(), 
+                                        Resources.getMessage("Controller.61"), //$NON-NLS-1$
+                                        Resources.getMessage("Controller.62"))) { //$NON-NLS-1$
                 actionMenuFileSave();
             }
         }
@@ -637,7 +695,9 @@ public class Controller implements IView {
     public void actionMenuFileOpen() {
 
         if ((model != null) && model.isModified()) {
-            if (main.showQuestionDialog(main.getShell(), Resources.getMessage("Controller.63"), Resources.getMessage("Controller.64"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (main.showQuestionDialog(main.getShell(), 
+                                        Resources.getMessage("Controller.63"), //$NON-NLS-1$
+                                        Resources.getMessage("Controller.64"))) { //$NON-NLS-1$
                 actionMenuFileSave();
             }
         }
@@ -658,7 +718,9 @@ public class Controller implements IView {
      */
     public void actionMenuFileSave() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.66"), Resources.getMessage("Controller.67")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.66"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.67")); //$NON-NLS-1$
             return;
         }
         if (model.getPath() == null) {
@@ -673,7 +735,9 @@ public class Controller implements IView {
      */
     public void actionMenuFileSaveAs() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.68"), Resources.getMessage("Controller.69")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.68"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.69")); //$NON-NLS-1$
             return;
         }
 
@@ -901,9 +965,14 @@ public class Controller implements IView {
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             if (worker.getError() instanceof IllegalArgumentException){
-                main.showInfoDialog(main.getShell(), "Error loading data", worker.getError().getMessage());
+                main.showInfoDialog(main.getShell(), 
+                                    "Error loading data", 
+                                    worker.getError().getMessage());
             } else {
-                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+                main.showErrorDialog(main.getShell(), 
+                                     Resources.getMessage("Controller.75"), //$NON-NLS-1$
+                                     Resources.getMessage("Controller.76"), //$NON-NLS-1$
+                                     worker.getError()); 
             }
             return;
         }
@@ -1058,7 +1127,9 @@ public class Controller implements IView {
             if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
                 main.showInfoDialog(main.getShell(), "Error loading data", error.getMessage());
             } else {
-                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.75"), Resources.getMessage("Controller.76"), error); //$NON-NLS-1$ //$NON-NLS-2$
+                main.showErrorDialog(main.getShell(), 
+                                     Resources.getMessage("Controller.75"), //$NON-NLS-1$
+                                     Resources.getMessage("Controller.76"), error); //$NON-NLS-1$
             }
             return;
         }
@@ -1144,7 +1215,9 @@ public class Controller implements IView {
             if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
                 main.showInfoDialog(main.getShell(), "Error loading hierarchy", error.getMessage());
             } else {
-                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.77"), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$ //$NON-NLS-2$
+                main.showErrorDialog(main.getShell(), 
+                                     Resources.getMessage("Controller.77"), //$NON-NLS-1$
+                                     Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
             }
         }
         return null;
@@ -1163,14 +1236,19 @@ public class Controller implements IView {
         try {
             worker = new WorkerLoad(path, this);
         } catch (final IOException e) {
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.81"), Resources.getMessage("Controller.82"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.81"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.82"), e); //$NON-NLS-1$
             return;
         }
 
         main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             getResources().getLogger().info(worker.getError());
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.84"), Resources.getMessage("Controller.85"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.84"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.85"), //$NON-NLS-1$
+                                 worker.getError());
             return;
         }
 
@@ -1316,7 +1394,9 @@ public class Controller implements IView {
      */
     private void actionSaveProject() {
         if (model == null) {
-            main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.86"), Resources.getMessage("Controller.87")); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.86"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.87")); //$NON-NLS-1$
             return;
         }
 
@@ -1324,7 +1404,10 @@ public class Controller implements IView {
         main.showProgressDialog(Resources.getMessage("Controller.88"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
             getResources().getLogger().info(worker.getError());
-            main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.89"), Resources.getMessage("Controller.90"), worker.getError()); //$NON-NLS-1$ //$NON-NLS-2$
+            main.showErrorDialog(main.getShell(), 
+                                 Resources.getMessage("Controller.89"), //$NON-NLS-1$
+                                 Resources.getMessage("Controller.90"), //$NON-NLS-1$
+                                 worker.getError()); 
             return;
         }
     }
