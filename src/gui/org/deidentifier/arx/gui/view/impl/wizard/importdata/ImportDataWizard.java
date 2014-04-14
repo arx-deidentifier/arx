@@ -137,8 +137,6 @@ public class ImportDataWizard extends Wizard {
      *
      * @note Note that for reasons of simplicity all pages are directly added
      * here. The page ordering is handled by {@link #getNextPage(IWizardPage)}.
-     *
-     * TODO Add pages in a more elegant way, e.g. using an array and loop
      */
     @Override
     public void addPages()
@@ -177,8 +175,6 @@ public class ImportDataWizard extends Wizard {
      * @param currentPage The page that is currently being shown
      *
      * @return The page that will be shown next
-     *
-     * TODO Implement in a more elegant way
      */
     @Override
     public IWizardPage getNextPage(IWizardPage currentPage) {
