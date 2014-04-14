@@ -1,6 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -137,20 +138,63 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
         this.type = type;
         this.showIntervals = intervals;
         if (intervals) {
-            this.lower = new HierarchyWizardGroupingRange<T>(type, true);
-            this.upper = new HierarchyWizardGroupingRange<T>(type, false);
+            
+            // Check
             if (!(type instanceof DataTypeWithRatioScale)) {
                 throw new IllegalArgumentException("Data type with ratio scale is required");
             }
+            
+            // Prepare
             DataTypeWithRatioScale<T> dtype = (DataTypeWithRatioScale<T>)type;
+            this.lower = new HierarchyWizardGroupingRange<T>(type, true);
+            this.upper = new HierarchyWizardGroupingRange<T>(type, false);
             this.function = AggregateFunction.forType(type).createIntervalFunction(true, false);
-            this.intervals.add(new HierarchyWizardGroupingInterval<T>(dtype.getMinimum(), dtype.getMaximum(), this.function));
+            
+            // Initialize
+            if (data != null){
+                T min = null;
+                T max = null;
+                for (String date : data) {
+                    T value = dtype.parse(date);
+                    if (min==null || dtype.compare(value, min) < 0) min = value;
+                    if (max==null || dtype.compare(value, max) > 0) max = value;
+                }
+                
+                if (equals(type, DataType.INTEGER)) {
+                    max = dtype.add(max, (T)new Long(1)); // Add 1
+                } else if (equals(type, DataType.DECIMAL)) {
+                    max = dtype.add(max, (T)new Double(1)); // Add 1
+                } else if (equals(type, DataType.DATE)) {
+                    max = dtype.add(max, (T)new Date(3600l * 1000l)); // Add 1 day
+                }
+                
+                this.lower.label = min;
+                this.lower.repeat = min;
+                this.lower.snap = min;
+                this.upper.label = max;
+                this.upper.repeat = max;
+                this.upper.snap = max;
+                this.intervals.add(new HierarchyWizardGroupingInterval<T>(min, max, this.function));
+            } else {
+                this.intervals.add(new HierarchyWizardGroupingInterval<T>(dtype.getMinimum(), dtype.getMaximum(), this.function));
+            }
         } else {
             this.function = AggregateFunction.forType(type).createSetFunction();
             this.groups.add(new ArrayList<HierarchyWizardGroupingGroup<T>>());
             this.groups.get(0).add(new HierarchyWizardGroupingGroup<T>(1, this.function));
         }
         this.update();
+    }
+    
+
+    /**
+     * Simple comparison of data types
+     * @param type
+     * @param other
+     * @return
+     */
+    private boolean equals(DataType<?> type, DataType<?> other){
+        return type.getDescription().getLabel().equals(other.getDescription().getLabel());
     }
 
     /**
@@ -487,6 +531,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
      * @param sender
      */
     public void update(HierarchyWizardView sender){
+        super.update();
         renderer.update();
         for (HierarchyWizardView c : components){
             if (c != sender) {

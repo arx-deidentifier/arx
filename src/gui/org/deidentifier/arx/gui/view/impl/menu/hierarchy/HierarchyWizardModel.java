@@ -72,25 +72,6 @@ public class HierarchyWizardModel<T> {
         } else if (equals(dataType, DataType.STRING)) {
             this.type = Type.REDACTION_BASED;
         }
-        
-        // Initialize
-        if (data != null && dataType instanceof DataTypeWithRatioScale){
-            @SuppressWarnings("unchecked")
-            DataTypeWithRatioScale<T> dataTypeWRS = (DataTypeWithRatioScale<T>)dataType; 
-            T min = null;
-            T max = null;
-            for (String date : data) {
-                T value = dataTypeWRS.parse(date);
-                if (min==null || dataTypeWRS.compare(value, min) < 0) min = value;
-                if (max==null || dataTypeWRS.compare(value, max) > 0) max = value;
-            }
-            this.intervalModel.getLowerRange().label = min;
-            this.intervalModel.getLowerRange().repeat = min;
-            this.intervalModel.getLowerRange().snap = min;
-            this.intervalModel.getUpperRange().label = max;
-            this.intervalModel.getUpperRange().repeat = max;
-            this.intervalModel.getUpperRange().snap = max;
-        } 
     }
     
     /**
@@ -109,7 +90,7 @@ public class HierarchyWizardModel<T> {
         } 
         return data;
     }
-    
+
     /**
      * Simple comparison of data types
      * @param type

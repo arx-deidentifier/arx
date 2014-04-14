@@ -1,7 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableItem;
 
 public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implements HierarchyWizardView {
 
@@ -32,6 +35,8 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
     public void update() {
         if (model.getError() != null) {
             this.setErrorMessage(model.getError());
+            finalPage.setGroups(null);
+            finalPage.setHierarchy(null);
             this.setPageComplete(false);
         } else {
             this.setErrorMessage(null);
@@ -39,5 +44,15 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
             finalPage.setHierarchy(model.getHierarchy());
             this.setPageComplete(true);
         }
+    }
+    
+
+    @Override
+    public void setVisible(boolean value){
+        
+        if (value) {
+            this.model.update();
+        }
+        super.setVisible(value);
     }
 }

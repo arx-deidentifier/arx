@@ -397,7 +397,7 @@ public class Controller implements IView {
                                .getHandle()
                                .getColumnIndexOf(attr);
         
-        if (false) {
+        if (true) {
             DataType<?> type = model.getInputConfig().getInput()
                                     .getDefinition().getDataType(attr);
             org.deidentifier.arx.gui.view.impl.menu.hierarchy.HierarchyWizard<?>
