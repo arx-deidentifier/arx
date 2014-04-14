@@ -549,12 +549,16 @@ public class Controller implements IView {
                                 Resources.getMessage("Controller.42"), //$NON-NLS-1$
                                 Resources.getMessage("Controller.43")); //$NON-NLS-1$
             return;
-        } else if (!(model.isQuasiIdentifierSelected() || model.isSensitiveAttributeSelected())) {
-            main.showInfoDialog(main.getShell(), 
-                                Resources.getMessage("Controller.44"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.45")); //$NON-NLS-1$
-            return;
-        }
+        } 
+        
+        Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
+        if (hierarchy==null || hierarchy.getHierarchy()==null || hierarchy.getHierarchy().length == 0 ||
+            hierarchy.getHierarchy()[0].length == 0) {
+               main.showInfoDialog(main.getShell(), 
+                                   Resources.getMessage("Controller.91"), //$NON-NLS-1$
+                                   Resources.getMessage("Controller.92")); //$NON-NLS-1$
+               return;
+        } 
 
         // Ask for file
         String file = main.showSaveFileDialog(main.getShell(), "*.csv"); //$NON-NLS-1$
@@ -567,15 +571,7 @@ public class Controller implements IView {
         try {
             final CSVDataOutput out = new CSVDataOutput(file,
                                                         model.getSeparator());
-            
-            Hierarchy h = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
-            if (h==null){
-               main.showInfoDialog(main.getShell(), 
-                                   Resources.getMessage("Controller.91"), //$NON-NLS-1$
-                                   Resources.getMessage("Controller.92")); //$NON-NLS-1$
-            } else {
-                out.write(h.getHierarchy());
-            }
+            out.write(hierarchy.getHierarchy());
 
         } catch (final Exception e) {
             main.showErrorDialog(main.getShell(), 
