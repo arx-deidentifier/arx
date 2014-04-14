@@ -32,10 +32,13 @@ import org.eclipse.swt.widgets.Label;
 
 public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<T> {
 
-    final HierarchyWizardModelRedaction<T> model;
-    public HierarchyWizardPageRedaction(Controller controller, final HierarchyWizardModel<T> model, 
+    private final HierarchyWizardModelRedaction<T> model;
+    
+    public HierarchyWizardPageRedaction(Controller controller,
+                                        final HierarchyWizard<T> wizard,
+                                        final HierarchyWizardModel<T> model, 
                                         final HierarchyWizardPageFinal<T> finalPage) {
-        super(model.getRedactionModel(), finalPage);
+        super(wizard, model.getRedactionModel(), finalPage);
         this.model = model.getRedactionModel();
         setTitle("Create a hierarchy by redacting characters");
         setDescription("Specify the parameters");

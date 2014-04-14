@@ -44,9 +44,10 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     private Combo combo;
     
     public HierarchyWizardPageOrder(final Controller controller,
+                                    final HierarchyWizard<T> wizard,
                                        final HierarchyWizardModel<T> model, 
                                        final HierarchyWizardPageFinal<T> finalPage) {
-        super(model.getOrderModel(), finalPage);
+        super(wizard, model.getOrderModel(), finalPage);
         this.model = model.getOrderModel();
         this.controller = controller;
         setTitle("Create a hierarchy by ordering and grouping items");

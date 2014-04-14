@@ -40,13 +40,16 @@ public class HierarchyWizardPageType<T> extends WizardPage {
     private final HierarchyWizardPageIntervals<T> intervalPage;
     private final HierarchyWizardPageOrder<T> orderPage;
     private final HierarchyWizardPageRedaction<T> redactionPage;
+    private final HierarchyWizard<T> wizard;
     
-    public HierarchyWizardPageType(final HierarchyWizardModel<T> model,
+    public HierarchyWizardPageType(final HierarchyWizard<T> wizard,
+                                   final HierarchyWizardModel<T> model,
                                    final HierarchyWizardPageIntervals<T> intervalPage,
                                    final HierarchyWizardPageOrder<T> orderPage,
                                    final HierarchyWizardPageRedaction<T> redactionPage) {
         
         super(""); //$NON-NLS-1$
+        this.wizard = wizard;
         this.redactionPage = redactionPage;
         this.orderPage = orderPage;
         this.intervalPage = intervalPage;
@@ -132,5 +135,17 @@ public class HierarchyWizardPageType<T> extends WizardPage {
     @Override
     public boolean isPageComplete() {
         return true;
+    }
+    
+    @Override
+    public void setVisible(boolean value){
+        
+        if (value) {
+            Button load = this.wizard.getLoadButton();
+            if (load != null) load.setEnabled(true);
+            Button save = this.wizard.getSaveButton();
+            if (save != null) save.setEnabled(false);
+        }
+        super.setVisible(value);
     }
 }

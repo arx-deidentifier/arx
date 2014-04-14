@@ -18,11 +18,9 @@
 
 package org.deidentifier.arx.gui.view.impl.menu.hierarchy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.menu.ARXWizardDialog;
@@ -30,16 +28,18 @@ import org.deidentifier.arx.gui.view.impl.menu.ARXWizardDialog.ARXWizardButton;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
 public class HierarchyWizard<T> extends Wizard implements IWizard {
     
     private final HierarchyWizardModel<T> model;
-    private WizardDialog                  dialog;
     private final Controller              controller;
+    private final ARXWizardButton         buttonLoad;
+    private final ARXWizardButton         buttonSave;
+    private ARXWizardDialog               dialog;
 
     public HierarchyWizard(final Controller controller,
                            final String attribute,
@@ -53,18 +53,29 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
         this.setWindowTitle(Resources.getMessage("HierarchyWizard.0")); //$NON-NLS-1$
         this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
                                                                                 .getImage("wizard.png"))); //$NON-NLS-1$
+        this.buttonLoad = new ARXWizardButton("Load...", new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                load();
+            }
+        });
+
+        this.buttonSave = new ARXWizardButton("Save...", new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                save();
+            }
+        });
     }
     
     @Override
     public void addPages() {
-        HierarchyWizardPageFinal<T> finalPage = new HierarchyWizardPageFinal<T>(model);
+        HierarchyWizardPageFinal<T> finalPage = new HierarchyWizardPageFinal<T>(this, model);
         HierarchyWizardPageIntervals<T> intervalsPage = null;
-        if (model.getDataType() instanceof DataTypeWithRatioScale){
-            intervalsPage = new HierarchyWizardPageIntervals<T>(controller, model, finalPage);
+        if (model.getIntervalModel() != null){
+            intervalsPage = new HierarchyWizardPageIntervals<T>(controller, this, model, finalPage);
         }
-        HierarchyWizardPageOrder<T> orderingPage = new HierarchyWizardPageOrder<T>(controller, model, finalPage);
-        HierarchyWizardPageRedaction<T> redactionPage = new HierarchyWizardPageRedaction<T>(controller, model, finalPage);
-        addPage(new HierarchyWizardPageType<T>(model, intervalsPage, orderingPage, redactionPage));
+        HierarchyWizardPageOrder<T> orderingPage = new HierarchyWizardPageOrder<T>(controller, this, model, finalPage);
+        HierarchyWizardPageRedaction<T> redactionPage = new HierarchyWizardPageRedaction<T>(controller, this, model, finalPage);
+        addPage(new HierarchyWizardPageType<T>(this, model, intervalsPage, orderingPage, redactionPage));
         if (intervalsPage != null) addPage(intervalsPage);
         addPage(orderingPage);
         addPage(redactionPage);
@@ -75,31 +86,49 @@ public class HierarchyWizard<T> extends Wizard implements IWizard {
     public boolean canFinish() {
         return dialog.getCurrentPage() instanceof HierarchyWizardPageFinal;
     }
+    
+    /**
+     * Returns the load button
+     * @return
+     */
+    public Button getLoadButton(){
+        if (dialog != null) {
+            return dialog.getButton(buttonLoad);
+        } else {
+            return null;
+        }
+    }
 
+    /**
+     * Returns the load button
+     * @return
+     */
+    public Button getSaveButton(){
+        if (dialog != null) {
+            return dialog.getButton(buttonSave);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Loads a specification
+     */
     private void load(){
         
     }
     
+    /**
+     * Saves the current specification
+     */
     private void save(){
         
     }
     
     public boolean open(final Shell shell) {
         
-        List<ARXWizardButton> buttons = new ArrayList<ARXWizardButton>();
-        buttons.add(new ARXWizardButton("Load...", new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                load();
-            }
-        }));
-        buttons.add(new ARXWizardButton("Save...", new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                save();
-            }
-        }));
-        
-        final WizardDialog dialog = new ARXWizardDialog(shell, this, buttons);
-        this.dialog = dialog;
+        this.dialog= new ARXWizardDialog(shell, this, 
+                                         Arrays.asList(new ARXWizardButton[]{buttonLoad, buttonSave}));
         this.dialog.setPageSize(800, 400);
         return dialog.open() == 0;
     }

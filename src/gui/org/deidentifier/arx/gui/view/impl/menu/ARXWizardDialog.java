@@ -18,10 +18,11 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -51,6 +52,7 @@ public class ARXWizardDialog extends WizardDialog {
     }
     
     private final List<ARXWizardButton> buttons;
+    private final Map<ARXWizardButton, Button> map;
     
     /**
      * Creates a new instance
@@ -60,12 +62,14 @@ public class ARXWizardDialog extends WizardDialog {
     public ARXWizardDialog(Shell parentShell, IWizard newWizard) {
         super(parentShell, newWizard);
         this.buttons = null;
+        this.map = null;
     }
 
     public ARXWizardDialog(Shell parentShell, IWizard newWizard,
                            List<ARXWizardButton> buttons) {
         super(parentShell, newWizard);
         this.buttons = buttons;
+        this.map = new HashMap<ARXWizardButton, Button>();
     }
 
     @Override
@@ -93,8 +97,13 @@ public class ARXWizardDialog extends WizardDialog {
                 Button bt = super.createButton(parent, button.id, button.text, false);
                 setButtonLayoutData(bt);
                 bt.addSelectionListener(button.listener);
+                map.put(button, bt);
             }
         }
         super.createButtonsForButtonBar(parent);
+    }
+    
+    public Button getButton(ARXWizardButton button){
+        return map.get(button);
     }
 }

@@ -29,9 +29,10 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
     private final Controller controller;
     
     public HierarchyWizardPageIntervals(final Controller controller,
+                                        final HierarchyWizard<T> wizard,
                                        final HierarchyWizardModel<T> model, 
                                        final HierarchyWizardPageFinal<T> finalPage) {
-        super(model.getIntervalModel(), finalPage);
+        super(wizard, model.getIntervalModel(), finalPage);
         this.model = model.getIntervalModel();
         this.controller = controller;
         setTitle("Create a hierarchy by defining intervals");

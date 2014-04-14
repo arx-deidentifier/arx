@@ -23,6 +23,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.define.ViewHierarchy;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
@@ -32,6 +33,8 @@ import org.eclipse.swt.widgets.TableItem;
 public class HierarchyWizardPageFinal<T> extends WizardPage{
 
     private final HierarchyWizardModel<T> model;
+    private final HierarchyWizard<T> wizard;
+    
 
     private Composite composite;
     private Table table;
@@ -41,9 +44,10 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
     private int[] groups;
     private Hierarchy hierarchy;
     
-    public HierarchyWizardPageFinal(final HierarchyWizardModel<T> model) {
+    public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard, final HierarchyWizardModel<T> model) {
         super("");
         this.model = model;
+        this.wizard = wizard;
         setTitle("Review the hierarchy");
         setDescription("Overview of groups and values");
         setPageComplete(true);
@@ -121,6 +125,12 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
             }
             
             this.composite.setRedraw(true);
+
+            // Deactivate buttons
+            Button load = this.wizard.getLoadButton();
+            if (load != null) load.setEnabled(false);
+            Button save = this.wizard.getSaveButton();
+            if (save != null) save.setEnabled(false);
         }
         super.setVisible(value);
     }
