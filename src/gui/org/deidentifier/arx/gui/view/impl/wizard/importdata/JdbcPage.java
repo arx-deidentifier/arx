@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.gui.Controller;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -229,8 +228,6 @@ public class JdbcPage extends WizardPage {
              * If a valid db file was selected, it is added to
              * {@link #comboLocation} when it wasn't already there. It is then
              * preselected within {@link #comboLocation}.
-             *
-             * @see {@link Controller#actionShowOpenFileDialog(String)}
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {

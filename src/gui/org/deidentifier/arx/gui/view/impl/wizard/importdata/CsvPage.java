@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.column.CSVColumn;
@@ -205,8 +204,6 @@ public class CsvPage extends WizardPage {
              * {@link #comboLocation} when it wasn't already there. It is then
              * preselected within {@link #comboLocation} and the page is
              * evaluated {@see #evaluatePage}.
-             *
-             * @see {@link Controller#actionShowOpenFileDialog(String)}
              */
             @Override
             public void widgetSelected(SelectionEvent arg0) {
