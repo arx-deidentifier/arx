@@ -25,6 +25,7 @@ import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportData.SourceTyp
 import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.Configuration;
 import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
+import org.deidentifier.arx.io.datasource.JdbcConfiguration;
 import org.deidentifier.arx.io.datasource.column.Column;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -268,6 +269,10 @@ public class ImportDataWizard extends Wizard {
         } else if (data.getSourceType() == SourceType.EXCEL) {
 
             configuration = new ExcelFileConfiguration(data.getFileLocation(), data.getExcelSheetIndex(), data.getFirstRowContainsHeader());
+
+        } else if (data.getSourceType() == SourceType.JDBC) {
+
+            configuration = new JdbcConfiguration(data.getJdbcConnection(), data.getSelectedJdbcTable());
 
         } else {
 
