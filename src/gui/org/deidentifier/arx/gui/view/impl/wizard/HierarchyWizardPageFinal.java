@@ -88,7 +88,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         column1 = new TableColumn(table, SWT.LEFT);
-        column1.setText("#Groups");
+        column1.setText("Count");
         column1.pack();
         
         final Group right = new Group(composite, SWT.SHADOW_ETCHED_IN);
