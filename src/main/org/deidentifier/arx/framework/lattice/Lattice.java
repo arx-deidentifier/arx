@@ -303,7 +303,6 @@ public class Lattice {
      * Returns the top node
      */
     public Node getTop() {
-        
         for (int i = levels.length - 1; i>=0; i--) {
             if (levels[i].length==1){
                 return levels[i][0];
