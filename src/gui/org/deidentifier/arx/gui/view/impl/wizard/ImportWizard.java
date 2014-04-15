@@ -27,6 +27,7 @@ import org.deidentifier.arx.io.ImportConfiguration;
 import org.deidentifier.arx.io.ImportConfigurationCSV;
 import org.deidentifier.arx.io.ImportConfigurationExcel;
 import org.deidentifier.arx.io.ImportConfigurationJDBC;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 
 /**
@@ -98,7 +99,9 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      */
     public ImportWizard(Controller controller, Model model) {
 
-        setWindowTitle("Import data wizard");
+        setWindowTitle("Import data");
+        this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
+                                                                           .getImage("import.png"))); //$NON-NLS-1$
         this.controller = controller;
         this.model = model;
     }
@@ -146,7 +149,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      */
     @Override
     public boolean canFinish() {
-
         return this.currentPage == previewPage;
     }
 
@@ -252,7 +254,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * Returns a reference to the controller being used by this wizard
      */
     Controller getController() {
-
         return controller;
     }
 
@@ -260,7 +261,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * Returns a reference to the object containing the gathered data
      */
     ImportWizardModel getData() {
-
         return data;
     }
 
@@ -268,7 +268,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * Returns a reference to the model being used by this wizard
      */
     Model getModel() {
-
         return model;
     }
 }

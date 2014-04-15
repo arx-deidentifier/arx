@@ -124,7 +124,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         // Initialize window
         this.setWindowTitle(Resources.getMessage("HierarchyWizard.0")); //$NON-NLS-1$
         this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
-                                                                                .getImage("wizard.png"))); //$NON-NLS-1$
+                                                                                .getImage("hierarchy.png"))); //$NON-NLS-1$
         
         // Initialize buttons
         this.buttonLoad = new ARXWizardButton("Load...", new SelectionAdapter(){
