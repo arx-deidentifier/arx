@@ -708,7 +708,31 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         Map<AbstractGroup, AbstractGroup> cache = new HashMap<AbstractGroup, AbstractGroup>();
         AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
-            first[i] = getGroup(cache, getInterval(index, type, type.parse(data[i])));
+            T value = type.parse(data[i]);
+            Interval<T> interval = getInterval(index, type, value);
+            
+            if (type.compare(value, tempLower.labelBound) < 0) {
+                throw new IllegalArgumentException(type.format(value)+ " is < lower label bound");
+            } else if (type.compare(value, tempLower.snapBound) < 0) {
+                interval = new Interval<T>(this, true, tempLower.snapBound);
+            } 
+            
+            if (type.compare(value, tempUpper.labelBound) >= 0) {
+                throw new IllegalArgumentException(type.format(value)+ " is >= upper label bound");
+            } else if (type.compare(value, tempUpper.snapBound) >= 0) {
+                interval = new Interval<T>(this, false, tempUpper.snapBound);
+            }
+            
+            if (interval.min != null && interval.max != null){
+                if (type.compare(interval.min, tempLower.repeatBound) < 0){
+                    interval = new Interval<T>(this, getDataType(), tempLower.repeatBound, interval.max, interval.function);
+                }
+                if (type.compare(interval.max, tempUpper.repeatBound) >= 0){
+                    interval = new Interval<T>(this, getDataType(), interval.min, tempUpper.repeatBound, interval.function);
+                }
+            }
+            
+            first[i] = getGroup(cache, interval);
         }
         result.add(first);
         
