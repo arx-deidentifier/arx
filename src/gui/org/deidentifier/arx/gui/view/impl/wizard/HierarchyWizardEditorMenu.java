@@ -130,19 +130,26 @@ public class HierarchyWizardEditorMenu<T> {
         }
         
         if (model.getSelectedElement() instanceof HierarchyWizardGroupingInterval){
+            
+            HierarchyWizardGroupingInterval<T> interval = 
+                    (HierarchyWizardGroupingInterval<T>)model.getSelectedElement();
+            
             if (model.getIntervals().size()==1) {
                 this.remove.setEnabled(false);
-            } else {
+            } else if (model.isFirst(interval) || model.isLast(interval)){
                 this.remove.setEnabled(true);
+            } else {
+                this.remove.setEnabled(false);
             }
-            if (model.isFirst((HierarchyWizardGroupingInterval<T>)model.getSelectedElement())) {
+            
+            if (model.isFirst(interval)) {
                 this.addBefore.setEnabled(true);
                 this.mergeDown.setEnabled(false);
             } else {
                 this.addBefore.setEnabled(false);
                 this.mergeDown.setEnabled(true);
             }
-            if (model.isLast((HierarchyWizardGroupingInterval<T>)model.getSelectedElement())) {
+            if (model.isLast(interval)) {
                 this.addAfter.setEnabled(true);
                 this.mergeUp.setEnabled(false);
             } else {
@@ -153,13 +160,18 @@ public class HierarchyWizardEditorMenu<T> {
             this.addRight.setEnabled(true);
             
         } else if (model.getSelectedElement() instanceof HierarchyWizardGroupingGroup){
-            if (model.isShowIntervals() && 
-                model.getModelGroups().size()==1 && 
-                model.getModelGroups().get(0).size()==1) {
-                this.remove.setEnabled(false);
+            if (model.isShowIntervals()){
+                this.remove.setEnabled(true); 
             } else {
-                this.remove.setEnabled(true);
+                if (model.getModelGroups().size() == 1 &&
+                    model.getModelGroups().get(0).size() == 1) {
+                    this.remove.setEnabled(false);
+                } else {
+                    this.remove.setEnabled(true);
+
+                }
             }
+                
             this.addBefore.setEnabled(true);
             this.addAfter.setEnabled(true);
             this.addRight.setEnabled(true);
