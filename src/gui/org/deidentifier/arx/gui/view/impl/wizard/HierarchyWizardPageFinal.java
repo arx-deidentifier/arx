@@ -26,9 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.List;
 
 /**
  * The final page that shows an overview of the resulting hierarchy
@@ -43,9 +41,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
     /** Var */
     private Composite                composite;
     /** Var */
-    private Table                    table;
-    /** Var */
-    private TableColumn              column1;
+    private List                     list;
     /** Var */
     private ViewHierarchy            view;
     /** Var */
@@ -76,7 +72,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         composite.setLayout(SWTUtil.createGridLayout(2, false));
 
         final Group center = new Group(composite, SWT.SHADOW_ETCHED_IN);
-        center.setText("Groups");
+        center.setText("#Groups");
         center.setLayoutData(SWTUtil.createFillVerticallyGridData());
         center.setLayout(SWTUtil.createGridLayout(1, false));
         
@@ -84,12 +80,8 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         base.setLayoutData(SWTUtil.createFillGridData());
         base.setLayout(SWTUtil.createGridLayout(1, false));
         
-        table = new Table(base, SWT.BORDER);
-        table.setLayoutData(SWTUtil.createFillGridData());
-        table.setHeaderVisible(true);
-        column1 = new TableColumn(table, SWT.LEFT);
-        column1.setText("Count");
-        column1.pack();
+        list = new List(base, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE);
+        list.setLayoutData(SWTUtil.createFillGridData());
         
         final Group right = new Group(composite, SWT.SHADOW_ETCHED_IN);
         right.setText("Table");
@@ -128,17 +120,13 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
             this.composite.setRedraw(false);
             
             // Reset
-            for (TableItem item : table.getItems()) {
-                item.dispose();
-            }
+            list.removeAll();
             this.view.setHierarchy(Hierarchy.create());
             
             if (groups != null) {
                 for (int count : groups){
-                    TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(new String[]{String.valueOf(count)});
+                    list.add(String.valueOf(count));
                 }
-                column1.pack();
             }
             if (hierarchy != null) {
                 view.setHierarchy(hierarchy);
