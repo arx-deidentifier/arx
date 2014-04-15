@@ -130,25 +130,27 @@ public class HierarchyWizardEditorRenderer<T> {
             return result;
         }
     }
-    /** Constants*/
-    public static final Font                   FONT                = getFont();
-    /** Constants*/
-    public static final int                    OFFSET              = 10;
-    /** Constants*/
-    public static final int                    INTERVAL_HEIGHT     = 20;
-    /** Constants*/
-    public static final Color                  DISABLED_FOREGROUND = GUIHelper.COLOR_GRAY;
-    /** Constants*/
-    public static final Color                  DISABLED_BACKGROUND = GUIHelper.getColor(230, 230, 230);
 
-    /** Constants*/
-    public static final Color                  NORMAL_FOREGROUND   = GUIHelper.COLOR_BLACK;
-
-    /** Constants*/
-    public static final Color                  NORMAL_BACKGROUND   = GUIHelper.COLOR_WHITE;
-
-    /** Constants*/
-    public static final Color                  SELECTED_BACKGROUND = GUIHelper.COLOR_YELLOW;
+    /** Constants */
+    public static final Font  FONT                   = getFont();
+    /** Constants */
+    public static final int   OFFSET                 = 10;
+    /** Constants */
+    public static final int   INTERVAL_HEIGHT        = 20;
+    /** Constants */
+    public static final Color WIDGET_BACKGROUND      = GUIHelper.COLOR_WHITE;
+    /** Constants */
+    public static final Color DISABLED_FOREGROUND    = GUIHelper.COLOR_GRAY;
+    /** Constants */
+    public static final Color DISABLED_BACKGROUND    = GUIHelper.getColor(230, 230, 230);
+    /** Constants */
+    public static final Color NORMAL_FOREGROUND      = GUIHelper.COLOR_BLACK;
+    /** Constants */
+    public static final Color ALTERNATIVE_FOREGROUND = GUIHelper.COLOR_WHITE;
+    /** Constants */
+    public static final Color NORMAL_BACKGROUND      = GUIHelper.getColor(230, 230, 230);
+    /** Constants */
+    public static final Color SELECTED_BACKGROUND    = GUIHelper.COLOR_YELLOW;
 
     /**
      * Returns the font

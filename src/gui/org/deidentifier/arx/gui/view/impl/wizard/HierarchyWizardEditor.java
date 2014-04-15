@@ -238,16 +238,25 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         
         model.getRenderer().update(gc);
         
+        gc.setBackground(HierarchyWizardEditorRenderer.WIDGET_BACKGROUND);
+        Point size = canvascomposite.getSize();
+        gc.fillRectangle(0, 0, size.x, size.y);
+        
         for (RenderedComponent<T> component : model.getRenderer().getComponents()) {
             
             Color foreground = HierarchyWizardEditorRenderer.NORMAL_FOREGROUND;
-            Color background = isSelected(component) ? 
-                               HierarchyWizardEditorRenderer.SELECTED_BACKGROUND : 
-                               HierarchyWizardEditorRenderer.NORMAL_BACKGROUND;
+            Color alternative = HierarchyWizardEditorRenderer.ALTERNATIVE_FOREGROUND;
+            Color background = HierarchyWizardEditorRenderer.NORMAL_BACKGROUND;
+            
+            if (isSelected(component)) {
+                background = HierarchyWizardEditorRenderer.SELECTED_BACKGROUND;
+                alternative = background;
+            }
             
             if (!component.enabled) {
                 foreground = HierarchyWizardEditorRenderer.DISABLED_FOREGROUND;
                 background = HierarchyWizardEditorRenderer.DISABLED_BACKGROUND;
+                alternative = background;
             }
 
             gc.setBackground(background);
@@ -259,7 +268,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
             gc.setBackground(foreground);
             gc.fillRectangle(component.rectangle2);
             gc.drawRectangle(component.rectangle2);
-            gc.setForeground(background);
+            gc.setForeground(alternative);
             drawString(gc, component.label, component.rectangle2);
         }
         scrolledcomposite.setMinSize(model.getRenderer().getMinSize());
