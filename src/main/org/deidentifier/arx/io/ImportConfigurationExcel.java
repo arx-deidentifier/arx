@@ -19,6 +19,8 @@
 package org.deidentifier.arx.io;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Configuration describing an Excel file
@@ -141,15 +143,27 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
         if (!(column instanceof ImportColumnExcel)) {
             throw new IllegalArgumentException("Column needs to be of type ExcelColumn");
         }
+        
+        if (!((ImportColumnExcel) column).isIndexSpecified() && 
+            !this.getContainsHeader()){
+            final String ERROR = "Adressing columns by name is only possible if the source contains a header";
+            throw new IllegalArgumentException(ERROR);
+        }
 
         for (ImportColumn c : columns) {
-            if (((ImportColumnExcel) column).getIndex() == ((ImportColumnExcel) c).getIndex()) {
-                throw new IllegalArgumentException("Column for this index already assigned");
+            if (((ImportColumnExcel) column).isIndexSpecified() &&
+                ((ImportColumnExcel) column).getIndex() == ((ImportColumnExcel) c).getIndex()) { 
+                throw new IllegalArgumentException("Column for this index already assigned"); 
+            }
+
+            if (!((ImportColumnExcel) column).isIndexSpecified() &&
+                ((ImportColumnExcel) column).getName().equals(((ImportColumnExcel) c).getName())) { 
+                throw new IllegalArgumentException("Column for this name already assigned"); 
             }
 
             if (column.getAliasName() != null && c.getAliasName() != null &&
-                c.getAliasName().equals(column.getAliasName())) {
-                throw new IllegalArgumentException("Column names need to be unique");
+                c.getAliasName().equals(column.getAliasName())) { 
+                throw new IllegalArgumentException("Column names need to be unique"); 
             }
         }
         this.columns.add(column);
@@ -200,5 +214,25 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
      */
     public void setSheetIndex(int sheetIndex) {
         this.sheetIndex = sheetIndex;
+    }
+
+
+    /**
+     * Sets the indexes based on the header
+     * @param row
+     */
+    public void prepare(Row row) {
+
+        for (ImportColumn c : super.getColumns()) {
+            ImportColumnExcel column = (ImportColumnExcel) c;
+            if (!column.isIndexSpecified()) {
+                for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
+                    row.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+                    if (row.getCell(i).getStringCellValue().equals(column.getName())) {
+                        column.setIndex(i);
+                    }
+                }
+            }
+        }
     }
 }

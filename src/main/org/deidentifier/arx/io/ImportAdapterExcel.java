@@ -54,7 +54,7 @@ public class ImportAdapterExcel extends ImportAdapter {
     /**
      * Actual iterator used to go through data
      */
-    private Iterator<Row>            rowIterator;
+    private Iterator<Row>            iterator;
 
     /**
      * Contains the last row as returned by the iterator
@@ -62,7 +62,7 @@ public class ImportAdapterExcel extends ImportAdapter {
      * @note This row cannot be simply returned, but needs to be further
      *       processed, e.g. to return only selected columns.
      */
-    private Row                      lastRow;
+    private Row                      row;
 
     /**
      * Indicates whether the first row has already been returned
@@ -96,7 +96,7 @@ public class ImportAdapterExcel extends ImportAdapter {
      * Creates a new instance of this object with given configuration
      * 
      * Depending upon the file type it either uses HSSF or XSSF to access the
-     * file. In both cases {@link #rowIterator} will be assigned a reference to
+     * file. In both cases {@link #iterator} will be assigned a reference to
      * an iterator, which can then be used to access the actual data on a row by
      * row basis.
      * 
@@ -110,10 +110,6 @@ public class ImportAdapterExcel extends ImportAdapter {
 
         super(config);
         this.config = config;
-
-        /* Preparation work */
-        this.indexes = getIndexesToImport();
-        this.dataTypes = getColumnDatatypes();
 
         /* Get row iterator */
         FileInputStream input = new FileInputStream(config.getFileLocation());
@@ -130,17 +126,17 @@ public class ImportAdapterExcel extends ImportAdapter {
 
         workbook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
         Sheet sheet = workbook.getSheetAt(config.getSheetIndex());
-        rowIterator = sheet.iterator();
+        iterator = sheet.iterator();
 
         /* Get total number of rows */
         totalRows = sheet.getPhysicalNumberOfRows();
 
         /* Check whether there is actual data within the file */
-        if (rowIterator.hasNext()) {
+        if (iterator.hasNext()) {
 
-            lastRow = rowIterator.next();
+            row = iterator.next();
             if (config.getContainsHeader()) {
-                if (!rowIterator.hasNext()) {
+                if (!iterator.hasNext()) {
                     throw new IOException("File contains nothing but header");
                 }
             }
@@ -166,15 +162,15 @@ public class ImportAdapterExcel extends ImportAdapter {
      * Indicates whether there is another element to return
      * 
      * This returns true when the file contains another line, which could be
-     * accessed by {@link #rowIterator}.
+     * accessed by {@link #iterator}.
      * 
-     * @note {@link #lastRow} effectively works as buffer and will always be set
+     * @note {@link #row} effectively works as buffer and will always be set
      *       up by the previous iteration, so once there is no data, it will be
      *       assigned <code>null</code>, which is checked for here.
      */
     @Override
     public boolean hasNext() {
-        return lastRow != null;
+        return row != null;
     }
 
     /**
@@ -198,7 +194,7 @@ public class ImportAdapterExcel extends ImportAdapter {
         }
 
         /* Check whether number of columns is too big */
-        if (lastRow.getPhysicalNumberOfCells() > numberOfColumns) {
+        if (row.getPhysicalNumberOfCells() > numberOfColumns) {
             throw new IllegalArgumentException("Number of columns in row " + currentRow + " is too big");
         }
 
@@ -206,8 +202,8 @@ public class ImportAdapterExcel extends ImportAdapter {
         String[] result = new String[indexes.length];
         for (int i = 0; i < indexes.length; i++) {
 
-            lastRow.getCell(indexes[i]).setCellType(Cell.CELL_TYPE_STRING);
-            result[i] = lastRow.getCell(indexes[i]).getStringCellValue();
+            row.getCell(indexes[i]).setCellType(Cell.CELL_TYPE_STRING);
+            result[i] = row.getCell(indexes[i]).getStringCellValue();
 
             if (!dataTypes[i].isValid(result[i])) {
                 throw new IllegalArgumentException("Data value does not match data type");
@@ -215,11 +211,11 @@ public class ImportAdapterExcel extends ImportAdapter {
         }
 
         /* Fetches the next row, which will be used in next iteration */
-        if (rowIterator.hasNext()) {
-            lastRow = rowIterator.next();
+        if (iterator.hasNext()) {
+            row = iterator.next();
             currentRow++;
         } else {
-            lastRow = null;
+            row = null;
         }
 
         /* Return resulting row */
@@ -246,6 +242,11 @@ public class ImportAdapterExcel extends ImportAdapter {
      */
     private String[] createHeader() {
 
+        /* Preparation work */
+        if (config.getContainsHeader()) this.config.prepare(row);
+        this.indexes = getIndexesToImport();
+        this.dataTypes = getColumnDatatypes();
+
         /* Initialization */
         String[] header = new String[config.getColumns().size()];
         List<ImportColumn> columns = config.getColumns();
@@ -255,9 +256,9 @@ public class ImportAdapterExcel extends ImportAdapter {
 
             ImportColumn column = columns.get(i);
 
-            lastRow.getCell(((ImportColumnExcel) column).getIndex())
+            row.getCell(((ImportColumnExcel) column).getIndex())
                    .setCellType(Cell.CELL_TYPE_STRING);
-            String name = lastRow.getCell(((ImportColumnExcel) column).getIndex())
+            String name = row.getCell(((ImportColumnExcel) column).getIndex())
                                  .getStringCellValue();
 
             if (config.getContainsHeader() && !name.equals("")) {
@@ -280,11 +281,11 @@ public class ImportAdapterExcel extends ImportAdapter {
         /* Fetch next row in preparation for next iteration */
         if (config.getContainsHeader()) {
 
-            if (rowIterator.hasNext()) {
-                lastRow = rowIterator.next();
+            if (iterator.hasNext()) {
+                row = iterator.next();
                 currentRow++;
             } else {
-                lastRow = null;
+                row = null;
             }
         }
 
