@@ -141,6 +141,34 @@ public class ImportWizardPageTable extends WizardPage {
         tblclmnColumnName.setWidth(300);
         tblclmnColumnName.setText("Name");
 
+        TableViewerColumn tableViewerColumnColumns = new TableViewerColumn(tableViewer,
+                                                                        SWT.NONE);
+        tableViewerColumnColumns.setLabelProvider(new ColumnLabelProvider() {
+
+            /**
+             * Returns number of columns for table
+             * 
+             * If the number of columns couldn't be determined, three question
+             * marks are returned.
+             */
+            @Override
+            public String getText(Object element) {
+
+                int columns = getNumberOfColumns((String) element);
+                if (columns != -1) {
+                    return "" + columns;
+                } else {
+                    return "???";
+                }
+            }
+
+        });
+
+        TableColumn tblclmnColumns = tableViewerColumnColumns.getColumn();
+        tblclmnColumns.setToolTipText("Number of columns for this table");
+        tblclmnColumns.setWidth(100);
+        tblclmnColumns.setText("# columns");
+
         TableViewerColumn tableViewerColumnRows = new TableViewerColumn(tableViewer,
                                                                         SWT.NONE);
         tableViewerColumnRows.setLabelProvider(new ColumnLabelProvider() {
@@ -280,6 +308,42 @@ public class ImportWizardPageTable extends WizardPage {
             /* Ignore silently*/
         }
         return -1L;
+    }
+
+    /**
+     * Gets the number of columns for given table
+     *
+     * This uses the JDBC connection
+     * {@link ImportWizardModel#getJdbcConnection()} to determine the number of
+     * columns for given table.
+     *
+     * @param table
+     *            Table number of rows should be returned for
+     *
+     * @return Number of rows for given table, -1 in case of error
+     */
+    protected int getNumberOfColumns(String table)
+    {
+
+        int i = 0;
+
+        try {
+
+            Connection connection = wizardImport.getData().getJdbcConnection();
+            ResultSet rs = connection.getMetaData().getColumns(null,
+                                                               null,
+                                                               table,
+                                                               null);
+            while (rs.next()) {
+                i++;
+            }
+
+        } catch (SQLException e) {
+            setErrorMessage("Couldn't determine number of columns");
+        }
+
+        return i;
+
     }
 
     /**
