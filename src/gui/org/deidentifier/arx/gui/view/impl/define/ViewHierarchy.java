@@ -285,6 +285,10 @@ public class ViewHierarchy implements IView {
         base.setRedraw(true);
         base.redraw();
         
+        if (table.getColumnCount()==0){
+            actionClear();
+        }
+        
         targetColumn = null;
         updateArray();
         updateCombos();
