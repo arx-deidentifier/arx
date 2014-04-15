@@ -131,28 +131,21 @@ public class ImportAdapterCSV extends ImportAdapter {
     }
 
     /**
-     * Returns an array with indexes of columns that should be imported
+     * Returns the percentage of data that has already been returned
      * 
-     * Only columns listed within {@link #columns} will be imported. This
-     * iterates over the list of columns and returns an array with indexes of
-     * columns that should be imported.
-     * 
-     * @return Array containing indexes of columns that should be imported
+     * This divides the amount of bytes that have already been read by the
+     * amount of total bytes and casts the result into a percentage.
      */
-    protected int[] getIndexesToImport() {
+    @Override
+    public int getProgress() {
 
-        /* Get indexes to import from */
-        ArrayList<Integer> indexes = new ArrayList<Integer>();
-        for (ImportColumn column : config.getColumns()) {
-            indexes.add(((ImportColumnCSV) column).getIndex());
+        /* Check whether stream has been opened already at all */
+        if (cin == null) {
+            return 0;
         }
 
-        int[] result = new int[indexes.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = indexes.get(i);
-        }
-
-        return result;
+        long bytesRead = cin.getByteCount();
+        return (int) ((double) bytesRead / (double) bytesTotal * 100d);
     }
 
     /**
@@ -204,6 +197,14 @@ public class ImportAdapterCSV extends ImportAdapter {
 
         /* Return resulting row */
         return result;
+    }
+
+    /**
+     * Dummy
+     */
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -259,28 +260,27 @@ public class ImportAdapterCSV extends ImportAdapter {
     }
 
     /**
-     * Dummy
-     */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns the percentage of data that has already been returned
+     * Returns an array with indexes of columns that should be imported
      * 
-     * This divides the amount of bytes that have already been read by the
-     * amount of total bytes and casts the result into a percentage.
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes of
+     * columns that should be imported.
+     * 
+     * @return Array containing indexes of columns that should be imported
      */
-    @Override
-    public int getProgress() {
+    protected int[] getIndexesToImport() {
 
-        /* Check whether stream has been opened already at all */
-        if (cin == null) {
-            return 0;
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for (ImportColumn column : config.getColumns()) {
+            indexes.add(((ImportColumnCSV) column).getIndex());
         }
 
-        long bytesRead = cin.getByteCount();
-        return (int) ((double) bytesRead / (double) bytesTotal * 100d);
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = indexes.get(i);
+        }
+
+        return result;
     }
 }

@@ -88,19 +88,19 @@ public class ImportColumnJDBC extends ImportColumn implements
     }
 
     /**
-     * @param index
-     *            {@link #index}
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    /**
      * @return {@link #name}
      */
     @Override
     public String getName() {
         return name;
+    }
+
+    /**
+     * @param index
+     *            {@link #index}
+     */
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     /**

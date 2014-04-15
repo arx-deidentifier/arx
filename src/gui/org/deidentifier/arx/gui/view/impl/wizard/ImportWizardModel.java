@@ -127,21 +127,40 @@ public class ImportWizardModel {
     public static final int               previewDataMaxLines    = 25;
 
     /**
+     * @return {@link #csvSeparator}
+     */
+    public char getCsvSeparator() {
+
+        return csvSeparator;
+    }
+
+    /**
+     * Returns list of enabled columns
+     * 
+     * This iterates over {@link #wizardColumns} and returns only the columns
+     * that are enabled {@link ImportWizardModelColumn#isEnabled()}. Columns
+     * that have been disabled by the user will not be returned.
+     * 
+     * @return {@link ImportColumn} List of enabled columns
+     */
+    public List<ImportColumn> getEnabledColumns() {
+
+        List<ImportColumn> result = new ArrayList<ImportColumn>();
+        for (ImportWizardModelColumn column : wizardColumns) {
+            if (column.isEnabled()) {
+                result.add(column.getColumn());
+            }
+        }
+        return result;
+    }
+
+    /**
      * @return {@link #excelSheetIndex}
      */
     public int getExcelSheetIndex() {
 
         return excelSheetIndex;
 
-    }
-
-    /**
-     * @param excelSheetIndex
-     *            {@link #excelSheetIndex}
-     */
-    public void setExcelSheetIndex(int excelSheetIndex) {
-
-        this.excelSheetIndex = excelSheetIndex;
     }
 
     /**
@@ -153,32 +172,6 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param fileLocation
-     *            {@link #fileLocation}
-     */
-    public void setFileLocation(String fileLocation) {
-
-        this.fileLocation = fileLocation;
-    }
-
-    /**
-     * @return {@link #csvSeparator}
-     */
-    public char getCsvSeparator() {
-
-        return csvSeparator;
-    }
-
-    /**
-     * @param csvSeparator
-     *            {@link #csvSeparator}
-     */
-    public void setCsvSeparator(char csvSeparator) {
-
-        this.csvSeparator = csvSeparator;
-    }
-
-    /**
      * @return {@link #firstRowContainsHeader}
      */
     public boolean getFirstRowContainsHeader() {
@@ -187,55 +180,19 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param firstRowContainsHeader
-     *            {@link #firstRowContainsHeader}
+     * @return {@link #jdbcConnection}
      */
-    public void setFirstRowContainsHeader(boolean firstRowContainsHeader) {
+    public Connection getJdbcConnection() {
 
-        this.firstRowContainsHeader = firstRowContainsHeader;
+        return jdbcConnection;
     }
 
     /**
-     * @return {@link #sourceType}
+     * @return {@link #jdbcTables}
      */
-    public SourceType getSourceType() {
+    public List<String> getJdbcTables() {
 
-        return sourceType;
-    }
-
-    /**
-     * @param source
-     *            {@link #sourceType}
-     */
-    public void setSourceType(SourceType sourceType) {
-
-        this.sourceType = sourceType;
-    }
-
-    /**
-     * @return {@link #wizardColumns}
-     */
-    public List<ImportWizardModelColumn> getWizardColumns() {
-
-        return wizardColumns;
-    }
-
-    /**
-     * @param columns
-     *            {@link #wizardColumns}
-     */
-    public void setWizardColumns(List<ImportWizardModelColumn> columns) {
-
-        this.wizardColumns = columns;
-    }
-
-    /**
-     * @param wizardColumns
-     *            {@link #previewData}
-     */
-    public void setPreviewData(List<String[]> previewData) {
-
-        this.previewData = previewData;
+        return jdbcTables;
     }
 
     /**
@@ -276,57 +233,63 @@ public class ImportWizardModel {
     }
 
     /**
-     * Returns list of enabled columns
-     * 
-     * This iterates over {@link #wizardColumns} and returns only the columns
-     * that are enabled {@link ImportWizardModelColumn#isEnabled()}. Columns
-     * that have been disabled by the user will not be returned.
-     * 
-     * @return {@link ImportColumn} List of enabled columns
-     */
-    public List<ImportColumn> getEnabledColumns() {
-
-        List<ImportColumn> result = new ArrayList<ImportColumn>();
-        for (ImportWizardModelColumn column : wizardColumns) {
-            if (column.isEnabled()) {
-                result.add(column.getColumn());
-            }
-        }
-        return result;
-    }
-
-    /**
-     * @param jdbcTables
-     *            {@link #jdbcTables}
-     */
-    public void setJdbcTables(List<String> jdbcTables) {
-
-        this.jdbcTables = jdbcTables;
-    }
-
-    /**
-     * @return {@link #jdbcTables}
-     */
-    public List<String> getJdbcTables() {
-
-        return jdbcTables;
-    }
-
-    /**
-     * @param selectedJdbcTable
-     *            {@link #selectedJdbcTable}
-     */
-    public void setSelectedJdbcTable(String selectedJdbcTable) {
-
-        this.selectedJdbcTable = selectedJdbcTable;
-    }
-
-    /**
      * @return {@link #selectedJdbcTable}
      */
     public String getSelectedJdbcTable() {
 
         return selectedJdbcTable;
+    }
+
+    /**
+     * @return {@link #sourceType}
+     */
+    public SourceType getSourceType() {
+
+        return sourceType;
+    }
+
+    /**
+     * @return {@link #wizardColumns}
+     */
+    public List<ImportWizardModelColumn> getWizardColumns() {
+
+        return wizardColumns;
+    }
+
+    /**
+     * @param csvSeparator
+     *            {@link #csvSeparator}
+     */
+    public void setCsvSeparator(char csvSeparator) {
+
+        this.csvSeparator = csvSeparator;
+    }
+
+    /**
+     * @param excelSheetIndex
+     *            {@link #excelSheetIndex}
+     */
+    public void setExcelSheetIndex(int excelSheetIndex) {
+
+        this.excelSheetIndex = excelSheetIndex;
+    }
+
+    /**
+     * @param fileLocation
+     *            {@link #fileLocation}
+     */
+    public void setFileLocation(String fileLocation) {
+
+        this.fileLocation = fileLocation;
+    }
+
+    /**
+     * @param firstRowContainsHeader
+     *            {@link #firstRowContainsHeader}
+     */
+    public void setFirstRowContainsHeader(boolean firstRowContainsHeader) {
+
+        this.firstRowContainsHeader = firstRowContainsHeader;
     }
 
     /**
@@ -339,10 +302,47 @@ public class ImportWizardModel {
     }
 
     /**
-     * @return {@link #jdbcConnection}
+     * @param jdbcTables
+     *            {@link #jdbcTables}
      */
-    public Connection getJdbcConnection() {
+    public void setJdbcTables(List<String> jdbcTables) {
 
-        return jdbcConnection;
+        this.jdbcTables = jdbcTables;
+    }
+
+    /**
+     * @param wizardColumns
+     *            {@link #previewData}
+     */
+    public void setPreviewData(List<String[]> previewData) {
+
+        this.previewData = previewData;
+    }
+
+    /**
+     * @param selectedJdbcTable
+     *            {@link #selectedJdbcTable}
+     */
+    public void setSelectedJdbcTable(String selectedJdbcTable) {
+
+        this.selectedJdbcTable = selectedJdbcTable;
+    }
+
+    /**
+     * @param source
+     *            {@link #sourceType}
+     */
+    public void setSourceType(SourceType sourceType) {
+
+        this.sourceType = sourceType;
+    }
+
+    /**
+     * @param columns
+     *            {@link #wizardColumns}
+     */
+    public void setWizardColumns(List<ImportWizardModelColumn> columns) {
+
+        this.wizardColumns = columns;
     }
 }

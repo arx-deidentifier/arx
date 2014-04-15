@@ -195,6 +195,76 @@ public class ImportWizardPageJDBC extends WizardPage {
     }
 
     /**
+     * Creates the content of {@link #compositeLocal}
+     *
+     * This adds a file chooser and an appropriate combo to select files.
+     * Selecting a file from the combo will trigger a read of the tables. If
+     * everything is fine, the tables from the database will be read.
+     *
+     * @see {@link #readTables()}
+     */
+    private void createCompositeLocal() {
+
+        compositeLocal = new Composite(compositeSwap, SWT.NONE);
+        compositeLocal.setLayout(new GridLayout(3, false));
+
+        /* Location label */
+        lblLocation = new Label(compositeLocal, SWT.NONE);
+        lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblLocation.setText("Location");
+
+        /* Combo box for selection of file */
+        comboLocation = new Combo(compositeLocal, SWT.READ_ONLY);
+        comboLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboLocation.addSelectionListener(new SelectionAdapter() {
+
+            /* Read tables from file */
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                setPageComplete(false);
+                setErrorMessage(null);
+
+                connect();
+                readTables();
+            }
+        });
+
+        /* Button to open file selection dialog */
+        btnChoose = new Button(compositeLocal, SWT.NONE);
+        btnChoose.setText("Browse...");
+        btnChoose.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * Opens a file selection dialog for "*.db" files
+             *
+             * If a valid file was selected, it is added to
+             * {@link #comboLocation} when it wasn't already there. It is then
+             * preselected within {@link #comboLocation}.
+             */
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                /* Open file dialog */
+                final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), "*.db");
+
+                if (path == null) {
+                    return;
+                }
+
+                /* Check whether path was already added */
+                if (comboLocation.indexOf(path) == -1) {
+                    comboLocation.add(path, 0);
+                }
+
+                /* Select path and notify comboLocation about change */
+                comboLocation.select(comboLocation.indexOf(path));
+                comboLocation.notifyListeners(SWT.Selection, null);
+            }
+        });
+    }
+
+    /**
      * Creates the content of {@link #compositeRemote}
      *
      * This adds all of the labels and text fields necessary to connect to a
@@ -216,22 +286,22 @@ public class ImportWizardPageJDBC extends WizardPage {
         class ConnectionListener extends FocusAdapter implements TraverseListener {
 
             /**
-             * Handles traverse events (enter, tab, etc.)
-             *
-             * @see {@link #tryToConnect()}
-             */
-            @Override
-            public void keyTraversed(TraverseEvent e) {
-                tryToConnect();
-            }
-
-            /**
              * Handles focusLost events
              *
              * @see {@link #tryToConnect()}
              */
             @Override
             public void focusLost(FocusEvent e) {
+                tryToConnect();
+            }
+
+            /**
+             * Handles traverse events (enter, tab, etc.)
+             *
+             * @see {@link #tryToConnect()}
+             */
+            @Override
+            public void keyTraversed(TraverseEvent e) {
                 tryToConnect();
             }
         }
@@ -315,76 +385,6 @@ public class ImportWizardPageJDBC extends WizardPage {
             setMessage("Successfully connected to database", INFORMATION);
             readTables();
         }
-    }
-
-    /**
-     * Creates the content of {@link #compositeLocal}
-     *
-     * This adds a file chooser and an appropriate combo to select files.
-     * Selecting a file from the combo will trigger a read of the tables. If
-     * everything is fine, the tables from the database will be read.
-     *
-     * @see {@link #readTables()}
-     */
-    private void createCompositeLocal() {
-
-        compositeLocal = new Composite(compositeSwap, SWT.NONE);
-        compositeLocal.setLayout(new GridLayout(3, false));
-
-        /* Location label */
-        lblLocation = new Label(compositeLocal, SWT.NONE);
-        lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblLocation.setText("Location");
-
-        /* Combo box for selection of file */
-        comboLocation = new Combo(compositeLocal, SWT.READ_ONLY);
-        comboLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboLocation.addSelectionListener(new SelectionAdapter() {
-
-            /* Read tables from file */
-            @Override
-            public void widgetSelected(SelectionEvent e)
-            {
-                setPageComplete(false);
-                setErrorMessage(null);
-
-                connect();
-                readTables();
-            }
-        });
-
-        /* Button to open file selection dialog */
-        btnChoose = new Button(compositeLocal, SWT.NONE);
-        btnChoose.setText("Browse...");
-        btnChoose.addSelectionListener(new SelectionAdapter() {
-
-            /**
-             * Opens a file selection dialog for "*.db" files
-             *
-             * If a valid file was selected, it is added to
-             * {@link #comboLocation} when it wasn't already there. It is then
-             * preselected within {@link #comboLocation}.
-             */
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-
-                /* Open file dialog */
-                final String path = wizardImport.getController().actionShowOpenFileDialog(getShell(), "*.db");
-
-                if (path == null) {
-                    return;
-                }
-
-                /* Check whether path was already added */
-                if (comboLocation.indexOf(path) == -1) {
-                    comboLocation.add(path, 0);
-                }
-
-                /* Select path and notify comboLocation about change */
-                comboLocation.select(comboLocation.indexOf(path));
-                comboLocation.notifyListeners(SWT.Selection, null);
-            }
-        });
     }
 
     /**

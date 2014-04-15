@@ -67,6 +67,29 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
     private boolean        containsHeader;
 
     /**
+     * Creates a new instance of this object
+     * 
+     * @param fileLocation
+     *            {@link #setFileLocation(String)}
+     * @param excelFileType
+     *            {@link #setExcelFileType(ExcelFileTypes)}
+     * @param sheetIndex
+     *            {@link #setSheetIndex(int)}
+     * @param containsHeader
+     *            {@link #setContainsHeader(boolean)}
+     */
+    public ImportConfigurationExcel(String fileLocation,
+                                    ExcelFileTypes excelFileType,
+                                    int sheetIndex,
+                                    boolean containsHeader) {
+
+        setFileLocation(fileLocation);
+        setExcelFileType(excelFileType);
+        setSheetIndex(sheetIndex);
+        setContainsHeader(containsHeader);
+    }
+
+    /**
      * Creates a new instance of this object without specifying the file type
      * 
      * The file type will be detected automatically using the file extension. By
@@ -104,76 +127,6 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
     }
 
     /**
-     * Creates a new instance of this object
-     * 
-     * @param fileLocation
-     *            {@link #setFileLocation(String)}
-     * @param excelFileType
-     *            {@link #setExcelFileType(ExcelFileTypes)}
-     * @param sheetIndex
-     *            {@link #setSheetIndex(int)}
-     * @param containsHeader
-     *            {@link #setContainsHeader(boolean)}
-     */
-    public ImportConfigurationExcel(String fileLocation,
-                                    ExcelFileTypes excelFileType,
-                                    int sheetIndex,
-                                    boolean containsHeader) {
-
-        setFileLocation(fileLocation);
-        setExcelFileType(excelFileType);
-        setSheetIndex(sheetIndex);
-        setContainsHeader(containsHeader);
-    }
-
-    /**
-     * @return {@link #ExcelFileTypes}
-     */
-    public ExcelFileTypes getExcelFileType() {
-        return excelFileType;
-    }
-
-    /**
-     * @param excelFileType
-     *            {@link #ExcelFileTypes}
-     */
-    public void setExcelFileType(ExcelFileTypes excelFileType) {
-        this.excelFileType = excelFileType;
-    }
-
-    /**
-     * @return {@link #sheetIndex}
-     */
-    public int getSheetIndex() {
-        return sheetIndex;
-    }
-
-    /**
-     * @param sheetIndex
-     *            {@link #sheetIndex}
-     */
-    public void setSheetIndex(int sheetIndex) {
-        this.sheetIndex = sheetIndex;
-    }
-
-    /**
-     * @return {@link #containsHeader}
-     */
-    @Override
-    public boolean getContainsHeader() {
-        return containsHeader;
-    }
-
-    /**
-     * @param containsHeader
-     *            {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
-    }
-
-    /**
      * Adds a single column to import from
      * 
      * This makes sure that only {@link ImportColumnExcel} can be added,
@@ -200,5 +153,52 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
             }
         }
         this.columns.add(column);
+    }
+
+    /**
+     * @return {@link #containsHeader}
+     */
+    @Override
+    public boolean getContainsHeader() {
+        return containsHeader;
+    }
+
+    /**
+     * @return {@link #ExcelFileTypes}
+     */
+    public ExcelFileTypes getExcelFileType() {
+        return excelFileType;
+    }
+
+    /**
+     * @return {@link #sheetIndex}
+     */
+    public int getSheetIndex() {
+        return sheetIndex;
+    }
+
+    /**
+     * @param containsHeader
+     *            {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
+    }
+
+    /**
+     * @param excelFileType
+     *            {@link #ExcelFileTypes}
+     */
+    public void setExcelFileType(ExcelFileTypes excelFileType) {
+        this.excelFileType = excelFileType;
+    }
+
+    /**
+     * @param sheetIndex
+     *            {@link #sheetIndex}
+     */
+    public void setSheetIndex(int sheetIndex) {
+        this.sheetIndex = sheetIndex;
     }
 }

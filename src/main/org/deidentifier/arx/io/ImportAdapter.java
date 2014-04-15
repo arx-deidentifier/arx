@@ -38,24 +38,6 @@ import org.deidentifier.arx.DataType;
 abstract public class ImportAdapter implements Iterator<String[]> {
 
     /**
-     * Array of datatypes describing the columns
-     */
-    protected DataType<?>[]     dataTypes;
-
-    /**
-     * Indexes of columns that should be imported
-     * 
-     * This keeps track of columns that should be imported, as not all columns
-     * will necessarily be imported.
-     */
-    protected int[]             indexes;
-
-    /**
-     * Data source configuration used to import actual data
-     */
-    private ImportConfiguration config = null;
-
-    /**
      * Factory method
      * 
      * This will return an appropriate ImportAdapter for each implemented data
@@ -82,6 +64,24 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
+     * Array of datatypes describing the columns
+     */
+    protected DataType<?>[]     dataTypes;
+
+    /**
+     * Indexes of columns that should be imported
+     * 
+     * This keeps track of columns that should be imported, as not all columns
+     * will necessarily be imported.
+     */
+    protected int[]             indexes;
+
+    /**
+     * Data source configuration used to import actual data
+     */
+    private ImportConfiguration config = null;
+
+    /**
      * Creates a new instance of this object with given configuration
      * 
      * @param config
@@ -96,6 +96,22 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
+     * Returns the configuration used by the import adapter
+     * 
+     * @return {@link #config}
+     */
+    public ImportConfiguration getConfig() {
+        return config;
+    }
+
+    /**
+     * Returns the percentage of data has has already been imported
+     * 
+     * @return Percentage of data already imported, 0 - 100
+     */
+    public abstract int getProgress();
+
+    /**
      * Returns an array with datatypes of columns that should be imported
      * 
      * @return Array containing datatypes of columns that should be imported
@@ -108,21 +124,5 @@ abstract public class ImportAdapter implements Iterator<String[]> {
         }
         return result.toArray(new DataType[result.size()]);
 
-    }
-
-    /**
-     * Returns the percentage of data has has already been imported
-     * 
-     * @return Percentage of data already imported, 0 - 100
-     */
-    public abstract int getProgress();
-
-    /**
-     * Returns the configuration used by the import adapter
-     * 
-     * @return {@link #config}
-     */
-    public ImportConfiguration getConfig() {
-        return config;
     }
 }

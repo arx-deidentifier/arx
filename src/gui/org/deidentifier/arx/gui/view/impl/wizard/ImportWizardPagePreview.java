@@ -53,10 +53,69 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPagePreview extends WizardPage {
 
     /**
+     * Returns cell content for each column
+     * 
+     * The data itself comes in form of
+     * {@link ImportWizardModel#getPreviewData()}. This class is a wrapper
+     * around the appropriate string arrays and makes specific fields available
+     * to the appropriate column.
+     */
+    private class PreviewColumnLabelProvider extends ColumnLabelProvider {
+
+        /**
+         * Column index this provider is meant to be for, starting with 0
+         */
+        private int index;
+
+        /**
+         * Creates new instance of this object for given index
+         * 
+         * @param index
+         *            Index of column this instance is for
+         */
+        public PreviewColumnLabelProvider(int index) {
+            this.index = index;
+        }
+
+        /**
+         * Returns content for this column {@link #index}.
+         */
+        @Override
+        public String getText(Object element) {
+            return ((String[]) element)[index];
+        }
+
+        /**
+         * Returns tooltip for a particular cell
+         * 
+         * This will return the datatype and potentially the associated format
+         * with the datatype for each cell.
+         */
+        @Override
+        public String getToolTipText(Object element) {
+
+            DataType<?> datatype = wizardImport.getData()
+                                               .getWizardColumns()
+                                               .get(index)
+                                               .getColumn()
+                                               .getDataType();
+
+            String result = "Datatype: " + datatype.getDescription().getLabel();
+
+            /* Add format for appropriate data types */
+            if (datatype.getDescription().hasFormat()) {
+                result += ", format: " +
+                          ((DataTypeWithFormat) datatype).getFormat();
+            }
+            return result;
+        }
+    }
+    /**
      * Reference to the wizard containing this page
      */
     private ImportWizard wizardImport;
     private Table        table;
+
     private TableViewer  tableViewer;
 
     /**
@@ -152,65 +211,6 @@ public class ImportWizardPagePreview extends WizardPage {
 
         } else {
             setPageComplete(false);
-        }
-    }
-
-    /**
-     * Returns cell content for each column
-     * 
-     * The data itself comes in form of
-     * {@link ImportWizardModel#getPreviewData()}. This class is a wrapper
-     * around the appropriate string arrays and makes specific fields available
-     * to the appropriate column.
-     */
-    private class PreviewColumnLabelProvider extends ColumnLabelProvider {
-
-        /**
-         * Column index this provider is meant to be for, starting with 0
-         */
-        private int index;
-
-        /**
-         * Creates new instance of this object for given index
-         * 
-         * @param index
-         *            Index of column this instance is for
-         */
-        public PreviewColumnLabelProvider(int index) {
-            this.index = index;
-        }
-
-        /**
-         * Returns content for this column {@link #index}.
-         */
-        @Override
-        public String getText(Object element) {
-            return ((String[]) element)[index];
-        }
-
-        /**
-         * Returns tooltip for a particular cell
-         * 
-         * This will return the datatype and potentially the associated format
-         * with the datatype for each cell.
-         */
-        @Override
-        public String getToolTipText(Object element) {
-
-            DataType<?> datatype = wizardImport.getData()
-                                               .getWizardColumns()
-                                               .get(index)
-                                               .getColumn()
-                                               .getDataType();
-
-            String result = "Datatype: " + datatype.getDescription().getLabel();
-
-            /* Add format for appropriate data types */
-            if (datatype.getDescription().hasFormat()) {
-                result += ", format: " +
-                          ((DataTypeWithFormat) datatype).getFormat();
-            }
-            return result;
         }
     }
 }

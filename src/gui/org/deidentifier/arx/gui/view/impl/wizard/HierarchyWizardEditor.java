@@ -150,20 +150,6 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
      * Create a tab
      * @param tabFolder
      */
-    private void createRangeTab(CTabFolder tabFolder) {
-    	CTabItem tabItem4 = new CTabItem(tabFolder, SWT.NULL);
-        tabItem4.setText("Range");
-        Composite parent = new Composite(tabFolder, SWT.NULL);
-        parent.setLayout(SWTUtil.createGridLayout(2, false));
-        new HierarchyWizardEditorRange<T>(parent, model, true);
-        new HierarchyWizardEditorRange<T>(parent, model, false);
-        tabItem4.setControl(parent);
-    }
-
-    /**
-     * Create a tab
-     * @param tabFolder
-     */
     private void createGeneralTab(CTabFolder tabFolder) {
     	CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NULL);
         tabItem1.setText("General");
@@ -188,7 +174,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         tabItem3.setControl(parent);
         
     }
-    
+
     /**
      * Create a tab
      * @param tabFolder
@@ -200,6 +186,20 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         parent.setLayout(SWTUtil.createGridLayout(2, false));
         new HierarchyWizardEditorInterval<T>(parent, model);
         tabItem2.setControl(parent);
+    }
+    
+    /**
+     * Create a tab
+     * @param tabFolder
+     */
+    private void createRangeTab(CTabFolder tabFolder) {
+    	CTabItem tabItem4 = new CTabItem(tabFolder, SWT.NULL);
+        tabItem4.setText("Range");
+        Composite parent = new Composite(tabFolder, SWT.NULL);
+        parent.setLayout(SWTUtil.createGridLayout(2, false));
+        new HierarchyWizardEditorRange<T>(parent, model, true);
+        new HierarchyWizardEditorRange<T>(parent, model, false);
+        tabItem4.setControl(parent);
     }
 
     /**

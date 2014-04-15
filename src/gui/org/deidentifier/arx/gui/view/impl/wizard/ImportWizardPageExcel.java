@@ -81,6 +81,53 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPageExcel extends WizardPage {
 
     /**
+     * Label provider for Excel columns
+     *
+     * A new instance of this object will be initiated for each column of
+     * {@link tableViewerPreview}. This class holds the index of the
+     * appropriate column {@link #index}, making sure they will return the
+     * correct value for each column.
+     */
+    class ExcelColumnLabelProvider extends ColumnLabelProvider {
+
+        /**
+         * Index of the column this instance is representing
+         */
+        private int index;
+
+
+        /**
+         * Creates new instance of this class for the given index
+         *
+         * @param index Index the instance should be created for
+         */
+        public ExcelColumnLabelProvider(int index) {
+            this.index = index;
+        }
+
+        /**
+         * Returns the string value for the given column
+         */
+        @Override
+        public String getText(Object element) {
+            return ((String[]) element)[index];
+        }
+
+        /**
+         * Returns tooltip for each element of given column
+         *
+         * The tooltip contains the current row as well as the column index
+         * itself.
+         */
+        @Override
+        public String getToolTipText(Object element) {
+
+            int row = previewData.indexOf(element);
+            return "Row: " + (row + 1) + ", Column: " + (index + 1);
+        }
+    }
+
+    /**
      * Reference to the wizard containing this page
      */
     private ImportWizard wizardImport;
@@ -89,7 +136,6 @@ public class ImportWizardPageExcel extends WizardPage {
      * Columns detected by this page and passed on to {@link ImportWizardModel}
      */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
-
     /* Widgets */
     private Label lblLocation;
     private Combo comboLocation;
@@ -98,6 +144,7 @@ public class ImportWizardPageExcel extends WizardPage {
     private Combo comboSheet;
     private Label lblSheet;
     private Table tablePreview;
+
     private TableViewer tableViewerPreview;
 
     /**
@@ -105,13 +152,13 @@ public class ImportWizardPageExcel extends WizardPage {
      */
     ArrayList<String[]> previewData = new ArrayList<String[]>();
 
+
     /**
      * Workbook
      *
      * Either HSSFWorkbook or XSSFWorkbook, depending upon file type
      */
     private Workbook workbook;
-
 
     /**
      * Creates a new instance of this page and sets its title and description
@@ -278,31 +325,51 @@ public class ImportWizardPageExcel extends WizardPage {
         setPageComplete(false);
 
     }
-
-    /**
-     * Reads in the available sheets from file
-     *
-     * This reads in the available sheets from the file chosen at
-     * {@link #comboLocation} and adds them as items to {@link #comboSheet}.
-     */
-    private void readSheets() throws IOException {
-
-        /* Remove previous items */
-        comboSheet.removeAll();
-
-        /* Get workbook */
-        try {
-            workbook = WorkbookFactory.create(new FileInputStream(comboLocation.getText()));
-        } catch (InvalidFormatException e) {
-            throw new IOException("File format invalid");
-        }
-
-        /* Add all sheets to combo */
-        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-            comboSheet.add(workbook.getSheetName(i));
-        }
-    }
     
+    /**
+     * Evaluates the page
+     *
+     * This checks whether the current settings on the page make any sense
+     * and applies them appropriately. It basically checks tries to read in
+     * the preview data {@link #readPreview()}.
+     *
+     * If everything is fine, the settings are being put into the appropriate
+     * data container {@link ImportWizardModel} and the  current page is marked as
+     * complete by invoking {@link #setPageComplete(boolean)}. Otherwise an
+     * error message is set, which will make sure the user is informed about
+     * the reason for the error.
+     */
+    private void evaluatePage() {
+
+        setPageComplete(false);
+        setErrorMessage(null);
+        tablePreview.setVisible(false);
+
+        if (comboLocation.getText().equals("")) {
+            return;
+        }
+
+        try {
+            readPreview();
+        } catch (IOException | IllegalArgumentException e) {
+            setErrorMessage(e.getMessage());
+            return;
+        }
+
+        /* Put data into container */
+        ImportWizardModel data = wizardImport.getData();
+
+        data.setWizardColumns(wizardColumns);
+        data.setPreviewData(previewData);
+        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
+        data.setFileLocation(comboLocation.getText());
+        data.setExcelSheetIndex(comboSheet.getSelectionIndex());
+
+        /* Mark page as completed */
+        setPageComplete(true);
+
+    }
+
     /**
      * Reads in preview data
      *
@@ -401,93 +468,26 @@ public class ImportWizardPageExcel extends WizardPage {
     }
 
     /**
-     * Evaluates the page
+     * Reads in the available sheets from file
      *
-     * This checks whether the current settings on the page make any sense
-     * and applies them appropriately. It basically checks tries to read in
-     * the preview data {@link #readPreview()}.
-     *
-     * If everything is fine, the settings are being put into the appropriate
-     * data container {@link ImportWizardModel} and the  current page is marked as
-     * complete by invoking {@link #setPageComplete(boolean)}. Otherwise an
-     * error message is set, which will make sure the user is informed about
-     * the reason for the error.
+     * This reads in the available sheets from the file chosen at
+     * {@link #comboLocation} and adds them as items to {@link #comboSheet}.
      */
-    private void evaluatePage() {
+    private void readSheets() throws IOException {
 
-        setPageComplete(false);
-        setErrorMessage(null);
-        tablePreview.setVisible(false);
+        /* Remove previous items */
+        comboSheet.removeAll();
 
-        if (comboLocation.getText().equals("")) {
-            return;
-        }
-
+        /* Get workbook */
         try {
-            readPreview();
-        } catch (IOException | IllegalArgumentException e) {
-            setErrorMessage(e.getMessage());
-            return;
+            workbook = WorkbookFactory.create(new FileInputStream(comboLocation.getText()));
+        } catch (InvalidFormatException e) {
+            throw new IOException("File format invalid");
         }
 
-        /* Put data into container */
-        ImportWizardModel data = wizardImport.getData();
-
-        data.setWizardColumns(wizardColumns);
-        data.setPreviewData(previewData);
-        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
-        data.setFileLocation(comboLocation.getText());
-        data.setExcelSheetIndex(comboSheet.getSelectionIndex());
-
-        /* Mark page as completed */
-        setPageComplete(true);
-
-    }
-
-    /**
-     * Label provider for Excel columns
-     *
-     * A new instance of this object will be initiated for each column of
-     * {@link tableViewerPreview}. This class holds the index of the
-     * appropriate column {@link #index}, making sure they will return the
-     * correct value for each column.
-     */
-    class ExcelColumnLabelProvider extends ColumnLabelProvider {
-
-        /**
-         * Index of the column this instance is representing
-         */
-        private int index;
-
-
-        /**
-         * Creates new instance of this class for the given index
-         *
-         * @param index Index the instance should be created for
-         */
-        public ExcelColumnLabelProvider(int index) {
-            this.index = index;
-        }
-
-        /**
-         * Returns the string value for the given column
-         */
-        @Override
-        public String getText(Object element) {
-            return ((String[]) element)[index];
-        }
-
-        /**
-         * Returns tooltip for each element of given column
-         *
-         * The tooltip contains the current row as well as the column index
-         * itself.
-         */
-        @Override
-        public String getToolTipText(Object element) {
-
-            int row = previewData.indexOf(element);
-            return "Row: " + (row + 1) + ", Column: " + (index + 1);
+        /* Add all sheets to combo */
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            comboSheet.add(workbook.getSheetName(i));
         }
     }
 }

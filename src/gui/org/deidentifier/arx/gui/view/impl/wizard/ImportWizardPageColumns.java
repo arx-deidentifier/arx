@@ -69,10 +69,281 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPageColumns extends WizardPage {
 
     /**
+     * Implements editing support for datatype column within the column page
+     * 
+     * This allows to change the datatype of columns. The modifications are
+     * performed with a combo box {@link ComboBoxCellEditor}.
+     */
+    public class DatatypeEditingSupport extends EditingSupport {
+
+        /**
+         * Reference to actual editor
+         */
+        private ComboBoxCellEditor editor;
+
+        /**
+         * Allowed values for the user to choose from
+         * 
+         * This array contains all of the choices the user can make. The array
+         * gets populated during runtime.
+         */
+        private String[]           choices;
+
+        /**
+         * Creates a new editor for the given {@link TableViewer}.
+         * 
+         * @param viewer
+         *            The TableViewer this editor is implemented for
+         */
+        public DatatypeEditingSupport(TableViewer viewer) {
+
+            super(viewer);
+
+            List<String> labels = new ArrayList<String>();
+            for (DataTypeDescription<?> description : DataType.list()) {
+
+                /* Remove OrderedString from list of choices for now */
+                if (description.newInstance().getClass() == DataType.ORDERED_STRING.getClass()) {
+                    continue;
+                }
+                labels.add(description.getLabel());
+            }
+
+            choices = labels.toArray(new String[labels.size()]);
+            editor = new ComboBoxCellEditor(viewer.getTable(),
+                                            choices,
+                                            SWT.READ_ONLY);
+
+        }
+
+        /**
+         * Indicates that enabled cells within this column can be edited
+         */
+        @Override
+        protected boolean canEdit(Object column) {
+            return ((ImportWizardModelColumn) column).isEnabled();
+        }
+
+        /**
+         * Returns a reference to {@link #editor}.
+         */
+        @Override
+        protected CellEditor getCellEditor(Object arg0) {
+            return editor;
+        }
+
+        /**
+         * Returns current index of {@link #choices} for given column datatype
+         */
+        @Override
+        protected Object getValue(Object element) {
+
+            DataType<?> datatype = ((ImportWizardModelColumn) element).getColumn()
+                                                                      .getDataType();
+            int i = 0;
+            for (DataTypeDescription<?> description : DataType.list()) {
+                if (description.newInstance().getClass() == datatype.getClass()) {
+                    return i;
+                }
+                i++;
+            }
+            return null;
+        }
+
+        /**
+         * Applies datatype choice made by the user
+         * 
+         * If a datatype, which requires a format string, was selected an input
+         * dialog will be shown {@link actionShowFormatInputDialog}. Otherwise
+         * the choice is directly applied. THe input dialog itself will make
+         * sure that the format string is valid for the datatype. This method on
+         * the other hand will try to apply the format string to the available
+         * preview data {@link ImportWizardModel#getPreviewData()} making sure
+         * that it matches. In case of an error the choice is discarded.
+         */
+        @Override
+        protected void setValue(Object element, Object value) {
+            
+            final String HEADER = "Format string";
+            final String BODY = "Please provide a format string describing each item of this column";
+
+            String label = choices[(int) value];
+            ImportWizardModelColumn wizardColumn = (ImportWizardModelColumn) element;
+            ImportColumn column = wizardColumn.getColumn();
+            List<String> previewData;
+
+            try {
+                previewData = wizardImport.getData().getPreviewData(wizardColumn);
+            } catch (Exception e) {
+                /* Catch silently*/
+                return;
+            }
+
+            for (DataTypeDescription<?> description : DataType.list()) {
+                if (description.getLabel().equals(label)) {
+                    
+                    DataType<?> datatype = null;
+                    if (description.hasFormat()) {
+
+                        final Controller controller = wizardImport.getController();
+                        String format = null;
+                        if (column.getDataType().getClass() == description.newInstance()
+                                                                          .getClass()) {
+
+                            format = controller.actionShowFormatInputDialog(getShell(),
+                                                                            HEADER,
+                                                                            BODY,
+                                                                            ((DataTypeWithFormat) column.getDataType()).getFormat(),
+                                                                            description,
+                                                                            previewData);
+
+                        } else {
+                            format = controller.actionShowFormatInputDialog(getShell(),
+                                                                            HEADER,
+                                                                            BODY,
+                                                                            description,
+                                                                            previewData);
+                        }
+
+                        if (format != null) {
+                            datatype = description.newInstance(format);
+                        } else {
+                            /* Invalid string or aborted by user */
+                            return;
+                        }
+                    } else {
+                        /* Datatype has no format */
+                        datatype = description.newInstance();
+                    }
+
+                    /* Apply datatype */
+                    column.setDataType(datatype);
+                    getViewer().update(element, null);
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Implements the editing support for name column
+     * 
+     * This allows to change the name of columns. The modifications are
+     * performed within a simple text field {@link TextCellEditor}.
+     */
+    public class NameEditingSupport extends EditingSupport {
+
+        /**
+         * Reference to actual editor
+         */
+        private TextCellEditor editor;
+
+        /**
+         * Creates a new editor for the given {@link TableViewer}.
+         * 
+         * @param viewer
+         *            The TableViewer this editor is implemented for
+         */
+        public NameEditingSupport(TableViewer viewer) {
+
+            super(viewer);
+            editor = new TextCellEditor(viewer.getTable());
+        }
+
+        /**
+         * Indicates that enabled cells within this column can be edited
+         */
+        @Override
+        protected boolean canEdit(Object column) {
+            return ((ImportWizardModelColumn) column).isEnabled();
+        }
+
+        @Override
+        protected CellEditor getCellEditor(Object arg0) {
+            return editor;
+        }
+
+        /**
+         * Retrieves name of column ({@link ImportColumn#getAliasName()})
+         */
+        @Override
+        protected Object getValue(Object arg0) {
+            return ((ImportWizardModelColumn) arg0).getColumn().getAliasName();
+        }
+
+        /**
+         * Sets name for given column ({@link ImportColumn#setAliasName(String)})
+         */
+        @Override
+        protected void setValue(Object element, Object value) {
+
+            ((ImportWizardModelColumn) element).getColumn()
+                                               .setAliasName((String) value);
+            getViewer().update(element, null);
+        }
+    }
+    /**
+     * Listener for click events of the "enabled" column
+     * 
+     * By clicking on the column all items can be selected and/or deselected at
+     * once. The result of the action depends upon {@link #selectAll}.
+     */
+    private final class ColumnEnabledSelectionListener extends SelectionAdapter {
+
+        /**
+         * (Un)checks all of the items at once
+         * 
+         * This iterates through all of the items and invokes
+         * {@link #setChecked(int, Boolean)} for all of them. Furthermore the
+         * tooltip is changed appropriately.
+         */
+        @Override
+        public void widgetSelected(SelectionEvent arg0) {
+
+            for (int i = 0; i < table.getItems().length; i++) {
+                setChecked(i, selectAll);
+            }
+
+            selectAll = !selectAll;
+
+            if (selectAll) {
+                tblclmnEnabled.setToolTipText("Select all");
+                tblclmnEnabled.setText("SA");
+            } else {
+                tblclmnEnabled.setToolTipText("Deselect all");
+                tblclmnEnabled.setText("DA");
+            }
+        }
+
+        /**
+         * Applies a boolean value to the given item
+         * 
+         * @param i
+         *            Item that <code>check</code> should be applied to
+         * @param check
+         *            Value that should be applied to item <code>i</code>
+         */
+        private void setChecked(int i, Boolean check) {
+
+            table.getItem(i).setChecked(check);
+            wizardImport.getData().getWizardColumns().get(i).setEnabled(check);
+
+            setPageComplete(false);
+
+            for (ImportWizardModelColumn column : wizardImport.getData()
+                                                              .getWizardColumns()) {
+
+                if (column.isEnabled()) {
+                    setPageComplete(true);
+                    return;
+                }
+            }
+        }
+    }
+    /**
      * Reference to the wizard containing this page
      */
     private ImportWizard        wizardImport;
-
     /* Widgets */
     private Table               table;
     private CheckboxTableViewer checkboxTableViewer;
@@ -83,8 +354,11 @@ public class ImportWizardPageColumns extends WizardPage {
     private TableColumn         tblclmnEnabled;
     private TableViewerColumn   tableViewerColumnEnabled;
     private TableColumn         tblclmnFormat;
+
     private TableViewerColumn   tableViewerColumnFormat;
+
     private Button              btnUp;
+
     private Button              btnDown;
 
     /**
@@ -126,16 +400,16 @@ public class ImportWizardPageColumns extends WizardPage {
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
         checkboxTableViewer.setCheckStateProvider(new ICheckStateProvider() {
 
-            /** No column should be grayed out */
-            @Override
-            public boolean isGrayed(Object column) {
-                return false;
-            }
-
             /** @return {@link ImportWizardModelColumn#isEnabled()} */
             @Override
             public boolean isChecked(Object column) {
                 return ((ImportWizardModelColumn) column).isEnabled();
+            }
+
+            /** No column should be grayed out */
+            @Override
+            public boolean isGrayed(Object column) {
+                return false;
             }
         });
         checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
@@ -381,6 +655,20 @@ public class ImportWizardPageColumns extends WizardPage {
     }
 
     /**
+     * Adds input to table viewer once page gets visible
+     */
+    @Override
+    public void setVisible(boolean visible) {
+
+        super.setVisible(visible);
+        if (visible) {
+            checkboxTableViewer.setInput(wizardImport.getData()
+                                                     .getWizardColumns());
+            setPageComplete((wizardImport.getData().getWizardColumns().size() > 0));
+        }
+    }
+
+    /**
      * Checks whether column names are unique
      * 
      * @return True if column names are unique, false otherwise
@@ -403,293 +691,5 @@ public class ImportWizardPageColumns extends WizardPage {
             }
         }
         return true;
-    }
-
-    /**
-     * Adds input to table viewer once page gets visible
-     */
-    @Override
-    public void setVisible(boolean visible) {
-
-        super.setVisible(visible);
-        if (visible) {
-            checkboxTableViewer.setInput(wizardImport.getData()
-                                                     .getWizardColumns());
-            setPageComplete((wizardImport.getData().getWizardColumns().size() > 0));
-        }
-    }
-
-    /**
-     * Listener for click events of the "enabled" column
-     * 
-     * By clicking on the column all items can be selected and/or deselected at
-     * once. The result of the action depends upon {@link #selectAll}.
-     */
-    private final class ColumnEnabledSelectionListener extends SelectionAdapter {
-
-        /**
-         * (Un)checks all of the items at once
-         * 
-         * This iterates through all of the items and invokes
-         * {@link #setChecked(int, Boolean)} for all of them. Furthermore the
-         * tooltip is changed appropriately.
-         */
-        @Override
-        public void widgetSelected(SelectionEvent arg0) {
-
-            for (int i = 0; i < table.getItems().length; i++) {
-                setChecked(i, selectAll);
-            }
-
-            selectAll = !selectAll;
-
-            if (selectAll) {
-                tblclmnEnabled.setToolTipText("Select all");
-                tblclmnEnabled.setText("SA");
-            } else {
-                tblclmnEnabled.setToolTipText("Deselect all");
-                tblclmnEnabled.setText("DA");
-            }
-        }
-
-        /**
-         * Applies a boolean value to the given item
-         * 
-         * @param i
-         *            Item that <code>check</code> should be applied to
-         * @param check
-         *            Value that should be applied to item <code>i</code>
-         */
-        private void setChecked(int i, Boolean check) {
-
-            table.getItem(i).setChecked(check);
-            wizardImport.getData().getWizardColumns().get(i).setEnabled(check);
-
-            setPageComplete(false);
-
-            for (ImportWizardModelColumn column : wizardImport.getData()
-                                                              .getWizardColumns()) {
-
-                if (column.isEnabled()) {
-                    setPageComplete(true);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * Implements the editing support for name column
-     * 
-     * This allows to change the name of columns. The modifications are
-     * performed within a simple text field {@link TextCellEditor}.
-     */
-    public class NameEditingSupport extends EditingSupport {
-
-        /**
-         * Reference to actual editor
-         */
-        private TextCellEditor editor;
-
-        /**
-         * Creates a new editor for the given {@link TableViewer}.
-         * 
-         * @param viewer
-         *            The TableViewer this editor is implemented for
-         */
-        public NameEditingSupport(TableViewer viewer) {
-
-            super(viewer);
-            editor = new TextCellEditor(viewer.getTable());
-        }
-
-        /**
-         * Indicates that enabled cells within this column can be edited
-         */
-        @Override
-        protected boolean canEdit(Object column) {
-            return ((ImportWizardModelColumn) column).isEnabled();
-        }
-
-        @Override
-        protected CellEditor getCellEditor(Object arg0) {
-            return editor;
-        }
-
-        /**
-         * Retrieves name of column ({@link ImportColumn#getAliasName()})
-         */
-        @Override
-        protected Object getValue(Object arg0) {
-            return ((ImportWizardModelColumn) arg0).getColumn().getAliasName();
-        }
-
-        /**
-         * Sets name for given column ({@link ImportColumn#setAliasName(String)})
-         */
-        @Override
-        protected void setValue(Object element, Object value) {
-
-            ((ImportWizardModelColumn) element).getColumn()
-                                               .setAliasName((String) value);
-            getViewer().update(element, null);
-        }
-    }
-
-    /**
-     * Implements editing support for datatype column within the column page
-     * 
-     * This allows to change the datatype of columns. The modifications are
-     * performed with a combo box {@link ComboBoxCellEditor}.
-     */
-    public class DatatypeEditingSupport extends EditingSupport {
-
-        /**
-         * Reference to actual editor
-         */
-        private ComboBoxCellEditor editor;
-
-        /**
-         * Allowed values for the user to choose from
-         * 
-         * This array contains all of the choices the user can make. The array
-         * gets populated during runtime.
-         */
-        private String[]           choices;
-
-        /**
-         * Creates a new editor for the given {@link TableViewer}.
-         * 
-         * @param viewer
-         *            The TableViewer this editor is implemented for
-         */
-        public DatatypeEditingSupport(TableViewer viewer) {
-
-            super(viewer);
-
-            List<String> labels = new ArrayList<String>();
-            for (DataTypeDescription<?> description : DataType.list()) {
-
-                /* Remove OrderedString from list of choices for now */
-                if (description.newInstance().getClass() == DataType.ORDERED_STRING.getClass()) {
-                    continue;
-                }
-                labels.add(description.getLabel());
-            }
-
-            choices = labels.toArray(new String[labels.size()]);
-            editor = new ComboBoxCellEditor(viewer.getTable(),
-                                            choices,
-                                            SWT.READ_ONLY);
-
-        }
-
-        /**
-         * Indicates that enabled cells within this column can be edited
-         */
-        @Override
-        protected boolean canEdit(Object column) {
-            return ((ImportWizardModelColumn) column).isEnabled();
-        }
-
-        /**
-         * Returns a reference to {@link #editor}.
-         */
-        @Override
-        protected CellEditor getCellEditor(Object arg0) {
-            return editor;
-        }
-
-        /**
-         * Returns current index of {@link #choices} for given column datatype
-         */
-        @Override
-        protected Object getValue(Object element) {
-
-            DataType<?> datatype = ((ImportWizardModelColumn) element).getColumn()
-                                                                      .getDataType();
-            int i = 0;
-            for (DataTypeDescription<?> description : DataType.list()) {
-                if (description.newInstance().getClass() == datatype.getClass()) {
-                    return i;
-                }
-                i++;
-            }
-            return null;
-        }
-
-        /**
-         * Applies datatype choice made by the user
-         * 
-         * If a datatype, which requires a format string, was selected an input
-         * dialog will be shown {@link actionShowFormatInputDialog}. Otherwise
-         * the choice is directly applied. THe input dialog itself will make
-         * sure that the format string is valid for the datatype. This method on
-         * the other hand will try to apply the format string to the available
-         * preview data {@link ImportWizardModel#getPreviewData()} making sure
-         * that it matches. In case of an error the choice is discarded.
-         */
-        @Override
-        protected void setValue(Object element, Object value) {
-            
-            final String HEADER = "Format string";
-            final String BODY = "Please provide a format string describing each item of this column";
-
-            String label = choices[(int) value];
-            ImportWizardModelColumn wizardColumn = (ImportWizardModelColumn) element;
-            ImportColumn column = wizardColumn.getColumn();
-            List<String> previewData;
-
-            try {
-                previewData = wizardImport.getData().getPreviewData(wizardColumn);
-            } catch (Exception e) {
-                /* Catch silently*/
-                return;
-            }
-
-            for (DataTypeDescription<?> description : DataType.list()) {
-                if (description.getLabel().equals(label)) {
-                    
-                    DataType<?> datatype = null;
-                    if (description.hasFormat()) {
-
-                        final Controller controller = wizardImport.getController();
-                        String format = null;
-                        if (column.getDataType().getClass() == description.newInstance()
-                                                                          .getClass()) {
-
-                            format = controller.actionShowFormatInputDialog(getShell(),
-                                                                            HEADER,
-                                                                            BODY,
-                                                                            ((DataTypeWithFormat) column.getDataType()).getFormat(),
-                                                                            description,
-                                                                            previewData);
-
-                        } else {
-                            format = controller.actionShowFormatInputDialog(getShell(),
-                                                                            HEADER,
-                                                                            BODY,
-                                                                            description,
-                                                                            previewData);
-                        }
-
-                        if (format != null) {
-                            datatype = description.newInstance(format);
-                        } else {
-                            /* Invalid string or aborted by user */
-                            return;
-                        }
-                    } else {
-                        /* Datatype has no format */
-                        datatype = description.newInstance();
-                    }
-
-                    /* Apply datatype */
-                    column.setDataType(datatype);
-                    getViewer().update(element, null);
-                    return;
-                }
-            }
-        }
     }
 }

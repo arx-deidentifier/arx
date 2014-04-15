@@ -169,34 +169,23 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
-     * Gets the number of rows for given table
-     * 
-     * This uses the JDBC connection
-     * {@link ImportWizardModel#getJdbcConnection()} to determine the number of
-     * rows for given table.
-     * 
-     * @param table
-     *            Table number of rows should be returned for
-     * 
-     * @return Number of rows for given table, -1 in case of error
+     * Applies previously detected tables to {@link #tableViewer}
      */
-    protected int getNumberOfRows(String table) {
+    @Override
+    public void setVisible(boolean visible) {
 
-        try {
-            Statement statement = wizardImport.getData()
-                                              .getJdbcConnection()
-                                              .createStatement();
-            statement.execute("SELECT COUNT(*) FROM " + table);
-            ResultSet resultSet = statement.getResultSet();
+        super.setVisible(visible);
 
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
+        if (visible) {
+            tableViewer.setInput(wizardImport.getData().getJdbcTables());
+
+            /* Mark page as complete when table has been selected before */
+            if (wizardImport.getData().getSelectedJdbcTable() != null) {
+                setPageComplete(true);
             }
-
-        } catch (SQLException e) {
-            /* Ignore silently*/
+        } else {
+            setPageComplete(false);
         }
-        return -1;
     }
 
     /**
@@ -232,6 +221,37 @@ public class ImportWizardPageTable extends WizardPage {
         }
 
         wizardImport.getData().setWizardColumns(columns);
+    }
+
+    /**
+     * Gets the number of rows for given table
+     * 
+     * This uses the JDBC connection
+     * {@link ImportWizardModel#getJdbcConnection()} to determine the number of
+     * rows for given table.
+     * 
+     * @param table
+     *            Table number of rows should be returned for
+     * 
+     * @return Number of rows for given table, -1 in case of error
+     */
+    protected int getNumberOfRows(String table) {
+
+        try {
+            Statement statement = wizardImport.getData()
+                                              .getJdbcConnection()
+                                              .createStatement();
+            statement.execute("SELECT COUNT(*) FROM " + table);
+            ResultSet resultSet = statement.getResultSet();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            /* Ignore silently*/
+        }
+        return -1;
     }
 
     /**
@@ -271,25 +291,5 @@ public class ImportWizardPageTable extends WizardPage {
 
         wizardImport.getData().setPreviewData(previewData);
 
-    }
-
-    /**
-     * Applies previously detected tables to {@link #tableViewer}
-     */
-    @Override
-    public void setVisible(boolean visible) {
-
-        super.setVisible(visible);
-
-        if (visible) {
-            tableViewer.setInput(wizardImport.getData().getJdbcTables());
-
-            /* Mark page as complete when table has been selected before */
-            if (wizardImport.getData().getSelectedJdbcTable() != null) {
-                setPageComplete(true);
-            }
-        } else {
-            setPageComplete(false);
-        }
     }
 }

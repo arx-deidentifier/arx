@@ -150,27 +150,16 @@ public class ImportAdapterExcel extends ImportAdapter {
     }
 
     /**
-     * Returns an array with indexes of columns that should be imported
+     * Returns the percentage of data that has already been returned
      * 
-     * Only columns listed within {@link #columns} will be imported. This
-     * iterates over the list of columns and returns an array with indexes of
-     * columns that should be imported.
+     * The basis for this calculation is the row currently being accessed.
      * 
-     * @return Array containing indexes of columns that should be imported
+     * @see {@link #currentRow}
+     * @see {@link #totalRows}
      */
-    protected int[] getIndexesToImport() {
-
-        /* Get indexes to import from */
-        ArrayList<Integer> indexes = new ArrayList<Integer>();
-        for (ImportColumn column : config.getColumns()) {
-            indexes.add(((ImportColumnExcel) column).getIndex());
-        }
-
-        int[] result = new int[indexes.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = indexes.get(i);
-        }
-        return result;
+    @Override
+    public int getProgress() {
+        return (int) ((double) currentRow / (double) totalRows * 100d);
     }
 
     /**
@@ -238,6 +227,14 @@ public class ImportAdapterExcel extends ImportAdapter {
     }
 
     /**
+     * Dummy
+     */
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Creates the header row
      * 
      * This returns a string array with the names of the columns that will be
@@ -299,23 +296,26 @@ public class ImportAdapterExcel extends ImportAdapter {
     }
 
     /**
-     * Dummy
+     * Returns an array with indexes of columns that should be imported
+     * 
+     * Only columns listed within {@link #columns} will be imported. This
+     * iterates over the list of columns and returns an array with indexes of
+     * columns that should be imported.
+     * 
+     * @return Array containing indexes of columns that should be imported
      */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
+    protected int[] getIndexesToImport() {
 
-    /**
-     * Returns the percentage of data that has already been returned
-     * 
-     * The basis for this calculation is the row currently being accessed.
-     * 
-     * @see {@link #currentRow}
-     * @see {@link #totalRows}
-     */
-    @Override
-    public int getProgress() {
-        return (int) ((double) currentRow / (double) totalRows * 100d);
+        /* Get indexes to import from */
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        for (ImportColumn column : config.getColumns()) {
+            indexes.add(((ImportColumnExcel) column).getIndex());
+        }
+
+        int[] result = new int[indexes.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = indexes.get(i);
+        }
+        return result;
     }
 }

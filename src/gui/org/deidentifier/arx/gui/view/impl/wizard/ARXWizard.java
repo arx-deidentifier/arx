@@ -86,13 +86,6 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
     }
     
     /**
-     * Returns the associated dialog
-     */
-    protected ARXWizardDialog getDialog(){
-        return dialog;
-    }
-    
-    /**
      * Returns the button created for the given specification
      * @param button
      * @return
@@ -100,6 +93,13 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
     protected Button getButton(ARXWizardButton button){
         if (dialog == null) return null;
         else return dialog.getButton(button);
+    }
+    
+    /**
+     * Returns the associated dialog
+     */
+    protected ARXWizardDialog getDialog(){
+        return dialog;
     }
     
     /**

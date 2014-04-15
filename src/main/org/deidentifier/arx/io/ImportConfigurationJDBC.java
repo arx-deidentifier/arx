@@ -62,36 +62,6 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
 
     /**
-     * @param connection
-     *            {@link #setConnection(Connection)}
-     */
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    /**
-     * @return {@link #connection}
-     */
-    public Connection getConnection() {
-        return connection;
-    }
-
-    /**
-     * @param table
-     *            {@link #setTable(String)}
-     */
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    /**
-     * @return {@link #table}
-     */
-    public String getTable() {
-        return table;
-    }
-
-    /**
      * Adds a single column to import from
      * 
      * This makes sure that only {@link ImportColumnJDBC} can be added,
@@ -124,6 +94,36 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
             }
         }
         this.columns.add(column);
+    }
+
+    /**
+     * @return {@link #connection}
+     */
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * @return {@link #table}
+     */
+    public String getTable() {
+        return table;
+    }
+
+    /**
+     * @param connection
+     *            {@link #setConnection(Connection)}
+     */
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * @param table
+     *            {@link #setTable(String)}
+     */
+    public void setTable(String table) {
+        this.table = table;
     }
 
     private int getIndexForColumn(String aliasName) throws NoSuchElementException {

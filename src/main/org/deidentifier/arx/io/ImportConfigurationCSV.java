@@ -61,30 +61,6 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     }
 
     /**
-     * @return {@link #separator}
-     */
-    public char getSeparator() {
-        return separator;
-    }
-
-    /**
-     * @return {@link #containsHeader}
-     */
-    @Override
-    public boolean getContainsHeader() {
-        return containsHeader;
-    }
-
-    /**
-     * @param containsHeader
-     *            {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
-    }
-
-    /**
      * Adds a single column to import from
      * 
      * This makes sure that only {@link ImportColumnCSV} can be added, otherwise
@@ -113,5 +89,29 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
         }
 
         this.columns.add(column);
+    }
+
+    /**
+     * @return {@link #containsHeader}
+     */
+    @Override
+    public boolean getContainsHeader() {
+        return containsHeader;
+    }
+
+    /**
+     * @return {@link #separator}
+     */
+    public char getSeparator() {
+        return separator;
+    }
+
+    /**
+     * @param containsHeader
+     *            {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
     }
 }

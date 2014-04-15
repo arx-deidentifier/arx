@@ -66,18 +66,18 @@ abstract public class ImportColumn {
     }
 
     /**
+     * @return {@link #dataType}
+     */
+    public DataType<?> getDataType() {
+        return dataType;
+    }
+
+    /**
      * @param aliasName
      *            {@link #aliasName}
      */
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
-    }
-
-    /**
-     * @return {@link #dataType}
-     */
-    public DataType<?> getDataType() {
-        return dataType;
     }
 
     /**

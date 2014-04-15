@@ -81,6 +81,52 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPageCSV extends WizardPage {
 
     /**
+     * Label provider for CSV columns
+     *
+     * A new instance of this object will be initiated for each column of
+     * {@link tableViewerPreview}. This class holds the index of the
+     * appropriate column {@link #index}, making sure they will return the
+     * correct value for each column.
+     */
+    class CSVColumnLabelProvider extends ColumnLabelProvider {
+
+        /**
+         * Index of the column this instance is representing
+         */
+        private int index;
+
+
+        /**
+         * Creates new instance of this class for the given index
+         *
+         * @param index Index the instance should be created for
+         */
+        public CSVColumnLabelProvider(int index) {
+            this.index = index;
+        }
+
+        /**
+         * Returns the string value for the given column
+         */
+        @Override
+        public String getText(Object element) {
+            return ((String[]) element)[index];
+        }
+
+        /**
+         * Returns tooltip for each element of given column
+         *
+         * The tooltip contains the current row as well as the column index
+         * itself.
+         */
+        @Override
+        public String getToolTipText(Object element) {
+            int row = previewData.indexOf(element);
+            return "Row: " + (row + 1) + ", Column: " + (index + 1);
+        }
+    }
+
+    /**
      * Reference to the wizard containing this page
      */
     private ImportWizard wizardImport;
@@ -89,7 +135,6 @@ public class ImportWizardPageCSV extends WizardPage {
      * Columns detected by this page and passed on to {@link ImportWizardModel}
      */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
-
     /* Widgets */
     private Label lblLocation;
     private Combo comboLocation;
@@ -98,6 +143,7 @@ public class ImportWizardPageCSV extends WizardPage {
     private Combo comboSeparator;
     private Label lblSeparator;
     private Table tablePreview;
+
     private TableViewer tableViewerPreview;
 
     /**
@@ -123,7 +169,6 @@ public class ImportWizardPageCSV extends WizardPage {
      * @see {@link #separators}
      */
     private final String[] labels = {";", ",", "|", "Tab"};
-
     /**
      * Indicates whether separator was detected automatically or by the user
      *
@@ -133,8 +178,9 @@ public class ImportWizardPageCSV extends WizardPage {
      * of the logic knows about it.
      */
     private boolean customSeparator;
-    private final ArrayList<String[]> previewData = new ArrayList<String[]>();
 
+
+    private final ArrayList<String[]> previewData = new ArrayList<String[]>();
 
     /**
      * Creates a new instance of this page and sets its title and description
@@ -355,6 +401,59 @@ public class ImportWizardPageCSV extends WizardPage {
     }
 
     /**
+     * Evaluates the page
+     *
+     * This checks whether the current settings on the page make any sense.
+     * If everything is fine, the settings are being put into the appropriate
+     * data container {@link ImportWizardModel} and the  current page is marked as
+     * complete by invoking {@link #setPageComplete(boolean)}. Otherwise an
+     * error message is set, which will make sure the user is informed about
+     * the reason for the error.
+     */
+    private void evaluatePage() {
+
+        setPageComplete(false);
+        setErrorMessage(null);
+        tablePreview.setVisible(false);
+
+        if (comboLocation.getText().equals("")) {
+            return;
+        }
+
+        try {
+            if (!customSeparator) {
+                detectSeparator();
+                comboSeparator.select(selection);
+            }
+            readPreview();
+
+        } catch (IOException | IllegalArgumentException e) {
+            setErrorMessage(e.getMessage());
+            return;
+        } catch (RuntimeException e) {
+            if (e.getCause()!=null) {
+                setErrorMessage(e.getCause().getMessage());
+            } else {
+                setErrorMessage(e.getMessage());
+            }
+            return;
+        }
+
+        /* Put data into container */
+        ImportWizardModel data = wizardImport.getData();
+
+        data.setWizardColumns(wizardColumns);
+        data.setPreviewData(previewData);
+        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
+        data.setFileLocation(comboLocation.getText());
+        data.setCsvSeparator(separators[selection]);
+
+        /* Mark page as completed */
+        setPageComplete(true);
+
+    }
+
+    /**
      * Reads in preview data
      *
      * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
@@ -450,104 +549,5 @@ public class ImportWizardPageCSV extends WizardPage {
         tablePreview.setVisible(true);
         tablePreview.layout();
         tablePreview.setRedraw(true);
-    }
-
-    /**
-     * Evaluates the page
-     *
-     * This checks whether the current settings on the page make any sense.
-     * If everything is fine, the settings are being put into the appropriate
-     * data container {@link ImportWizardModel} and the  current page is marked as
-     * complete by invoking {@link #setPageComplete(boolean)}. Otherwise an
-     * error message is set, which will make sure the user is informed about
-     * the reason for the error.
-     */
-    private void evaluatePage() {
-
-        setPageComplete(false);
-        setErrorMessage(null);
-        tablePreview.setVisible(false);
-
-        if (comboLocation.getText().equals("")) {
-            return;
-        }
-
-        try {
-            if (!customSeparator) {
-                detectSeparator();
-                comboSeparator.select(selection);
-            }
-            readPreview();
-
-        } catch (IOException | IllegalArgumentException e) {
-            setErrorMessage(e.getMessage());
-            return;
-        } catch (RuntimeException e) {
-            if (e.getCause()!=null) {
-                setErrorMessage(e.getCause().getMessage());
-            } else {
-                setErrorMessage(e.getMessage());
-            }
-            return;
-        }
-
-        /* Put data into container */
-        ImportWizardModel data = wizardImport.getData();
-
-        data.setWizardColumns(wizardColumns);
-        data.setPreviewData(previewData);
-        data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
-        data.setFileLocation(comboLocation.getText());
-        data.setCsvSeparator(separators[selection]);
-
-        /* Mark page as completed */
-        setPageComplete(true);
-
-    }
-
-    /**
-     * Label provider for CSV columns
-     *
-     * A new instance of this object will be initiated for each column of
-     * {@link tableViewerPreview}. This class holds the index of the
-     * appropriate column {@link #index}, making sure they will return the
-     * correct value for each column.
-     */
-    class CSVColumnLabelProvider extends ColumnLabelProvider {
-
-        /**
-         * Index of the column this instance is representing
-         */
-        private int index;
-
-
-        /**
-         * Creates new instance of this class for the given index
-         *
-         * @param index Index the instance should be created for
-         */
-        public CSVColumnLabelProvider(int index) {
-            this.index = index;
-        }
-
-        /**
-         * Returns the string value for the given column
-         */
-        @Override
-        public String getText(Object element) {
-            return ((String[]) element)[index];
-        }
-
-        /**
-         * Returns tooltip for each element of given column
-         *
-         * The tooltip contains the current row as well as the column index
-         * itself.
-         */
-        @Override
-        public String getToolTipText(Object element) {
-            int row = previewData.indexOf(element);
-            return "Row: " + (row + 1) + ", Column: " + (index + 1);
-        }
     }
 }

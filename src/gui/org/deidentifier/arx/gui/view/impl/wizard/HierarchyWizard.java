@@ -44,15 +44,6 @@ import org.eclipse.swt.widgets.Button;
 public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     
     /**
-     * Updateable part of the wizard
-     * @author Fabian Prasser
-     */
-    public static interface HierarchyWizardView {
-        /** Update*/
-        public void update();
-    }
-    
-    /**
      * Result of the wizard
      * @author Fabian Prasser
      *
@@ -67,6 +58,15 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             this.hierarchy = hierarchy;
             this.builder = builder;
         }
+    }
+    
+    /**
+     * Updateable part of the wizard
+     * @author Fabian Prasser
+     */
+    public static interface HierarchyWizardView {
+        /** Update*/
+        public void update();
     }
     
     /** Var */
@@ -178,22 +178,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Returns the load button
-     * @return
-     */
-    protected Button getLoadButton(){
-        return super.getButton(buttonLoad);
-    }
-    
-    /**
-     * Returns the load button
-     * @return
-     */
-    protected Button getSaveButton(){
-        return super.getButton(buttonSave);
-    }
-    
-    /**
      * Loads a specification
      */
     private void load(){
@@ -264,7 +248,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             break;
         }
     }
-
+    
     /**
      * Saves the current specification
      */
@@ -294,5 +278,21 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
             return;
         }
+    }
+    
+    /**
+     * Returns the load button
+     * @return
+     */
+    protected Button getLoadButton(){
+        return super.getButton(buttonLoad);
+    }
+
+    /**
+     * Returns the load button
+     * @return
+     */
+    protected Button getSaveButton(){
+        return super.getButton(buttonSave);
     }
 }

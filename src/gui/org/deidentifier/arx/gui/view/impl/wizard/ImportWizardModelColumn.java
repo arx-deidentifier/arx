@@ -70,6 +70,14 @@ public class ImportWizardModelColumn {
     }
 
     /**
+     * @return {@link #column}
+     */
+    public ImportColumn getColumn() {
+
+        return column;
+    }
+
+    /**
      * @return {@link #enabled}
      */
     public boolean isEnabled() {
@@ -79,27 +87,19 @@ public class ImportWizardModelColumn {
 
     /**
      * @param enabled
-     *            {@link #enabled}
-     */
-    public void setEnabled(boolean enabled) {
-
-        this.enabled = enabled;
-    }
-
-    /**
-     * @return {@link #column}
-     */
-    public ImportColumn getColumn() {
-
-        return column;
-    }
-
-    /**
-     * @param enabled
      *            {@link #column}
      */
     public void setColumn(ImportColumn column) {
 
         this.column = column;
+    }
+
+    /**
+     * @param enabled
+     *            {@link #enabled}
+     */
+    public void setEnabled(boolean enabled) {
+
+        this.enabled = enabled;
     }
 }

@@ -89,30 +89,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     private ImportConfiguration           configuration = null;
 
     /**
-     * Returns a reference to the controller being used by this wizard
-     */
-    Controller getController() {
-
-        return controller;
-    }
-
-    /**
-     * Returns a reference to the model being used by this wizard
-     */
-    Model getModel() {
-
-        return model;
-    }
-
-    /**
-     * Returns a reference to the object containing the gathered data
-     */
-    ImportWizardModel getData() {
-
-        return data;
-    }
-
-    /**
      * Creates a new data import wizard and sets the window title
      * 
      * @param controller
@@ -160,6 +136,21 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
+     * Determines when the wizard should be finishable
+     * 
+     * The wizard can only be finished on the {@link #previewPage preview page}.
+     * This makes sure that the user is signs off on the settings previously
+     * made.
+     * 
+     * @see {@link #performFinish()}
+     */
+    @Override
+    public boolean canFinish() {
+
+        return this.currentPage == previewPage;
+    }
+
+    /**
      * Handles the correct ordering of wizard pages
      * 
      * This method makes sure that the correct page is shown once the user hits
@@ -200,18 +191,19 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
-     * Determines when the wizard should be finishable
+     * Returns a reference to DataSourceConfiguration
      * 
-     * The wizard can only be finished on the {@link #previewPage preview page}.
-     * This makes sure that the user is signs off on the settings previously
-     * made.
+     * The wizard will built an appropriate {@link ImportConfiguration} object once it
+     * is about to finish {@link #performFinish()}. This object can then be
+     * retrieved using this method.
      * 
-     * @see {@link #performFinish()}
+     * @note Note however, that the return value might be null, when the wizard
+     *       wasn't completed successfully.
+     * 
+     * @return {@link #configuration} The resulting data source configuration
      */
-    @Override
-    public boolean canFinish() {
-
-        return this.currentPage == previewPage;
+    public ImportConfiguration getResult() {
+        return configuration;
     }
 
     /**
@@ -257,18 +249,26 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
-     * Returns a reference to DataSourceConfiguration
-     * 
-     * The wizard will built an appropriate {@link ImportConfiguration} object once it
-     * is about to finish {@link #performFinish()}. This object can then be
-     * retrieved using this method.
-     * 
-     * @note Note however, that the return value might be null, when the wizard
-     *       wasn't completed successfully.
-     * 
-     * @return {@link #configuration} The resulting data source configuration
+     * Returns a reference to the controller being used by this wizard
      */
-    public ImportConfiguration getResult() {
-        return configuration;
+    Controller getController() {
+
+        return controller;
+    }
+
+    /**
+     * Returns a reference to the object containing the gathered data
+     */
+    ImportWizardModel getData() {
+
+        return data;
+    }
+
+    /**
+     * Returns a reference to the model being used by this wizard
+     */
+    Model getModel() {
+
+        return model;
     }
 }
