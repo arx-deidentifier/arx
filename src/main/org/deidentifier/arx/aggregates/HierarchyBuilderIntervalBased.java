@@ -748,15 +748,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                     }
                 }
 
-                // Make sure that max is <= repeat bound
-                if (type.compare(max, tempUpper.getRepeatBound()) > 0){
-                    max = tempUpper.getRepeatBound();
-                }
-                
                 // Add interval
                 newIntervals.add(new Interval<T>(this, getDataType(), min, max, group.getFunction()));
             }
-
+            
             // Compute next column
             HierarchyBuilderIntervalBased<T> builder = new HierarchyBuilderIntervalBased<T>(getDataType(),
                                                                                             lowerRange,
