@@ -746,12 +746,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
         }
         
-        // Store index
-        IndexNode index = nodes.get(0);
-
         // Prepare
         String[] data = getData();
         List<AbstractGroup[]> result = new ArrayList<AbstractGroup[]>();
+        IndexNode index = nodes.get(0);
         
         // Create first column
         Map<AbstractGroup, AbstractGroup> cache = new HashMap<AbstractGroup, AbstractGroup>();
@@ -761,9 +759,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         result.add(first);
         
+        // Clean
+        index = null;
+        
         // Create other columns
         List<Group<T>> groups = super.getLevel(0).getGroups();
-        if (!groups.isEmpty()) {
+        if (cache.size()>1 && !groups.isEmpty()) {
 
             // Prepare
             List<Interval<T>> newIntervals = new ArrayList<Interval<T>>();
@@ -824,15 +825,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             for (AbstractGroup[] column : columns) {
                 result.add(column);
             }
-        } else {
-            if (cache.size()>1) {
-                AbstractGroup[] column = new AbstractGroup[data.length];
-                @SuppressWarnings("serial") AbstractGroup element = new AbstractGroup("*"){};
-                for (int i=0; i<column.length; i++){
-                    column[i] = element;
-                }
-                result.add(column);  
+        } else if (cache.size()>1) {
+            AbstractGroup[] column = new AbstractGroup[data.length];
+            @SuppressWarnings("serial")
+            AbstractGroup element = new AbstractGroup("*") {};
+            for (int i = 0; i < column.length; i++) {
+                column[i] = element;
             }
+            result.add(column);
         }
         
         // Return
