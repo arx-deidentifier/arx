@@ -53,7 +53,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     @Override
     public HierarchyBuilderOrderBased<T> getBuilder() {
         HierarchyBuilderOrderBased<T> builder = HierarchyBuilderOrderBased.create(super.getDataType(), false);
-
+        builder.setAggregateFunction(this.getDefaultFunction());
         int level = 0;
         for (List<HierarchyWizardGroupingGroup<T>> list : super.getModelGroups()) {
             for (HierarchyWizardGroupingGroup<T> group : list){

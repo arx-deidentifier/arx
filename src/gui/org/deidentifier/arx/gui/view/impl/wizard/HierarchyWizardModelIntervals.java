@@ -56,6 +56,8 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
                                                     new Range<T>(super.getUpperRange().repeat,
                                                                  super.getUpperRange().snap,
                                                                  super.getUpperRange().label));
+        
+        builder.setAggregateFunction(this.getDefaultFunction());
 
         for (HierarchyWizardGroupingInterval<T> interval : super.getIntervals()) {
             builder.addInterval(interval.min, interval.max, interval.function);
