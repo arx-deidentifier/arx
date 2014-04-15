@@ -174,7 +174,11 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * @return
      */
     public HierarchyWizardResult<T> getResult(){
-        return new HierarchyWizardResult<T>(model.getHierarchy(), model.getBuilder());
+        try {
+            return new HierarchyWizardResult<T>(model.getHierarchy(), model.getBuilder());
+        } catch (Exception e){
+            return null;
+        }
     }
     
     /**
@@ -260,19 +264,20 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         // Dialog
         String file = controller.actionShowSaveFileDialog(getShell(), "*.ahs");
         if (file == null) return;
-        
-        // Select
-        HierarchyBuilder<T> builder = null;
-        if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageOrder){
-            builder = model.getOrderModel().getBuilder();
-        } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageIntervals){
-            builder = model.getIntervalModel().getBuilder();
-        } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageRedaction){
-            builder = model.getRedactionModel().getBuilder();
-        }
-        
+
         // Save
         try {
+            // Select
+            HierarchyBuilder<T> builder = null;
+            if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageOrder){
+                builder = model.getOrderModel().getBuilder();
+            } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageIntervals){
+                builder = model.getIntervalModel().getBuilder();
+            } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageRedaction){
+                builder = model.getRedactionModel().getBuilder();
+            }
+
+            // Save
             builder.save(file);
         } catch (Exception e){
             controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());

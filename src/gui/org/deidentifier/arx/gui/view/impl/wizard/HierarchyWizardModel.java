@@ -94,7 +94,7 @@ public class HierarchyWizardModel<T> {
      * Returns the current builder
      * @return
      */
-    public HierarchyBuilder<T> getBuilder() {
+    public HierarchyBuilder<T> getBuilder() throws Exception {
         if (type == Type.INTERVAL_BASED) {
             return intervalModel.getBuilder();
         } else if (type == Type.REDACTION_BASED) {

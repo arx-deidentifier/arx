@@ -51,7 +51,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
 
     @Override
-    public HierarchyBuilderOrderBased<T> getBuilder() {
+    public HierarchyBuilderOrderBased<T> getBuilder() throws Exception {
         HierarchyBuilderOrderBased<T> builder = HierarchyBuilderOrderBased.create(super.getDataType(), false);
         builder.setAggregateFunction(this.getDefaultFunction());
         int level = 0;
@@ -137,7 +137,13 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         super.error = null;
         super.groupsizes = null;
         
-        HierarchyBuilderOrderBased<T> builder = getBuilder();
+        HierarchyBuilderOrderBased<T> builder = null;
+        try {
+            builder = getBuilder();
+        } catch (Exception e){
+            super.error = e.getMessage();
+            return;
+        }
         
         String error = builder.isValid();
         if (error != null) {

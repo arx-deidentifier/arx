@@ -86,11 +86,15 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
             finalPage.setGroups(null);
             finalPage.setHierarchy(null);
             this.setPageComplete(false);
+            Button save = this.wizard.getSaveButton();
+            if (save != null) save.setEnabled(false);
         } else {
             this.setErrorMessage(null);
             finalPage.setGroups(model.getGroups());
             finalPage.setHierarchy(model.getHierarchy());
             this.setPageComplete(true);
+            Button save = this.wizard.getSaveButton();
+            if (save != null) save.setEnabled(true);
         }
     }
 

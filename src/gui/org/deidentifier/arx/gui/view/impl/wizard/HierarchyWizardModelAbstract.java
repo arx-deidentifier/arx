@@ -53,7 +53,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
      * Returns the builder currently configured
      * @return
      */
-    public abstract HierarchyBuilder<T> getBuilder();
+    public abstract HierarchyBuilder<T> getBuilder() throws Exception;
 
     /**
      * Returns the data
