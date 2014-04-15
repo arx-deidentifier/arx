@@ -160,7 +160,6 @@ public class ARXResult {
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,
-                        ARXNode optimalNode,
                         long duration,
                         String suppressionString,
                         boolean removeOutliers) {
@@ -171,7 +170,7 @@ public class ARXResult {
         this.definition = definition;
         this.config = config;
         this.lattice = lattice;
-        this.optimalNode = optimalNode;
+        this.optimalNode = lattice.getOptimum();
         this.duration = duration;
         this.suppressionString = suppressionString;
         this.removeOutliers = removeOutliers;

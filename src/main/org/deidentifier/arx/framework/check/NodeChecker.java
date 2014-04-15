@@ -195,9 +195,7 @@ public class NodeChecker implements INodeChecker {
     @Override
     @Deprecated
     public double getInformationLoss(final Node node) {
-        check(node);
-        metric.evaluate(node, currentGroupify);
-        return node.getInformationLoss().getValue();
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     @Override
@@ -237,6 +235,6 @@ public class NodeChecker implements INodeChecker {
     @Override
     @Deprecated
     public Data transform(final Node node) {
-        throw new RuntimeException("Not implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 }

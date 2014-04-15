@@ -203,5 +203,4 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
             lattice.triggerTagged();
         }
     }
-    
 }

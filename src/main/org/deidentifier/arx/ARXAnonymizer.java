@@ -155,7 +155,6 @@ public class ARXAnonymizer {
                                  handle.getDefinition(),
                                  config,
                                  flattice,
-                                 flattice.getOptimum(),
                                  System.currentTimeMillis() - time,
                                  suppressionString,
                                  removeOutliers);      
