@@ -29,10 +29,12 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.ImportColumnJDBC;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -94,6 +96,7 @@ public class ImportWizardPageTable extends WizardPage {
         tableViewer = new TableViewer(container, SWT.BORDER |
                                                  SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
+        ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
             /**
@@ -158,6 +161,31 @@ public class ImportWizardPageTable extends WizardPage {
                     return "???";
                 }
             }
+
+            /**
+             * Returns the exact number of rows as tooltip
+             *
+             * This will return the exact number of rows for tables with a
+             * row count greater than thousand, as the column itself will
+             * only show a human readable string.
+             *
+             * @see #getText(Object)
+             * @see #getNumberOfRows(String)
+             */
+            @Override
+            public String getToolTipText(Object element)
+            {
+
+                long rows = getNumberOfRows((String) element);
+
+                if (rows > 1000) {
+                    return "" + rows;
+                } else {
+                    return null;
+                }
+
+            }
+
         });
 
         TableColumn tblclmnRows = tableViewerColumnRows.getColumn();
