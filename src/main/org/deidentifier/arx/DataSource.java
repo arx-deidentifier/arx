@@ -28,6 +28,11 @@ import org.deidentifier.arx.io.ImportConfigurationCSV;
 import org.deidentifier.arx.io.ImportConfigurationExcel;
 import org.deidentifier.arx.io.ImportConfigurationJDBC;
 
+/**
+ * This class provides configuration options for importing data from CSV-files, from Excel-files
+ * or via a JDBC connection
+ * @author Fabian Prasser
+ */
 public class DataSource {
     
     /** The config*/
