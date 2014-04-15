@@ -190,7 +190,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         // Break if no groups specified
         if (!super.getLevels().isEmpty() &&
             !super.getLevel(0).getGroups().isEmpty()) {
-            
+
             // Create first column
             AbstractGroup[] first = new AbstractGroup[data.length];
             outer: while (true) {
@@ -203,58 +203,63 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                     for (int i=0; i<items.size(); i++) {
                         first[resultIndex++] = element;
                     }
+                    groupCount++;
                     items.clear();
                     if (index == data.length) break outer;
                 }
             }
             result.add(first);
             
-            // Build higher-level columns
-            for (int i=1; i<super.getLevels().size(); i++){
+            // Break if done
+            if (groupCount>1) {
                 
-                // Break if done
-                if (groupCount==1) break;
-                
-                // Prepare
-                groupCount = 0;
-                groups = super.getLevel(i).getGroups();
-                Map<AbstractGroup, AbstractGroup> map = new HashMap<AbstractGroup, AbstractGroup>();
-                List<AbstractGroup> list = new ArrayList<AbstractGroup>();
-                AbstractGroup[] column = result.get(i-1);
-                for (int j=0; j<column.length; j++){
-                    if (!map.containsKey(column[j])) {
-                        map.put(column[j], column[j]);
-                        list.add(column[j]);
-                    }
-                }
-                
-                // Build
-                index = 0;
-                resultIndex = 0;
-                List<CloseElements<T>> gItems = new ArrayList<CloseElements<T>>();
-                outer: while (true) {
-                    for (Group<T> group : groups) {
-                        for (int j = 0; j<group.getSize(); j++){
-                            gItems.add((CloseElements<T>)list.get(index++));
-                            if (index == list.size()) break;
+                // Build higher-level columns
+                for (int i=1; i<super.getLevels().size(); i++){
+                    
+                    // Break if done
+                    if (groupCount==1) break;
+                    
+                    // Prepare
+                    groupCount = 0;
+                    groups = super.getLevel(i).getGroups();
+                    Map<AbstractGroup, AbstractGroup> map = new HashMap<AbstractGroup, AbstractGroup>();
+                    List<AbstractGroup> list = new ArrayList<AbstractGroup>();
+                    AbstractGroup[] column = result.get(i-1);
+                    for (int j=0; j<column.length; j++){
+                        if (!map.containsKey(column[j])) {
+                            map.put(column[j], column[j]);
+                            list.add(column[j]);
                         }
-                        CloseElements<T> element = gItems.get(0).merge(gItems, group.getFunction());
-                        groupCount++;
-                        for (int j=0; j<gItems.size(); j++) {
-                            map.put(gItems.get(j), element);
-                        }
-                        
-                        gItems.clear();
-                        if (index == list.size()) break outer;
                     }
+                    
+                    // Build
+                    index = 0;
+                    resultIndex = 0;
+                    List<CloseElements<T>> gItems = new ArrayList<CloseElements<T>>();
+                    outer: while (true) {
+                        for (Group<T> group : groups) {
+                            for (int j = 0; j<group.getSize(); j++){
+                                gItems.add((CloseElements<T>)list.get(index++));
+                                if (index == list.size()) break;
+                            }
+                            CloseElements<T> element = gItems.get(0).merge(gItems, group.getFunction());
+                            groupCount++;
+                            for (int j=0; j<gItems.size(); j++) {
+                                map.put(gItems.get(j), element);
+                            }
+                            
+                            gItems.clear();
+                            if (index == list.size()) break outer;
+                        }
+                    }
+                    
+                    // Store
+                    AbstractGroup[] ccolumn = new AbstractGroup[data.length];
+                    for (int j=0; j<column.length; j++){
+                        ccolumn[j] = map.get(column[j]);
+                    }
+                    result.add(ccolumn);
                 }
-                
-                // Store
-                AbstractGroup[] ccolumn = new AbstractGroup[data.length];
-                for (int j=0; j<column.length; j++){
-                    ccolumn[j] = map.get(column[j]);
-                }
-                result.add(ccolumn);
             }
         } else {
             groupCount = data.length;
