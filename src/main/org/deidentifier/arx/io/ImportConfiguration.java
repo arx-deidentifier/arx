@@ -17,32 +17,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource;
+package org.deidentifier.arx.io;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.datasource.column.Column;
 
 /**
  * Abstract base configuration
  *
  * This abstract superclass defines properties that all configurations have
  * in common, i.e. a notion of columns, which can be added and retrieved.
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public abstract class Configuration {
+public abstract class ImportConfiguration {
 
     /**
      * List of columns to be imported
      *
      * Each element of this list represents a single column to import from.
-     * Refer to {@link Column} for details. Columns can be added by invoking
-     * {@link #addColumn(Column)} and retrieved by {@link #getColumns()}.
+     * Refer to {@link ImportColumn} for details. Columns can be added by invoking
+     * {@link #addColumn(ImportColumn)} and retrieved by {@link #getColumns()}.
      *
      * @note Only columns that are part of this list will be imported from,
      * any other column will simply be ignored.
      */
-    protected List<Column> columns = new ArrayList<Column>();
+    protected List<ImportColumn> columns = new ArrayList<ImportColumn>();
 
 
     /**
@@ -51,20 +53,17 @@ public abstract class Configuration {
      * @param column A single column to import from
      *
      * @note This needs to be implemented by the specific configuration class,
-     * as {@link Column} is only an abstract superclass for various kind of
+     * as {@link ImportColumn} is only an abstract superclass for various kind of
      * columns.
      */
-    abstract public void addColumn(Column column);
+    abstract public void addColumn(ImportColumn column);
 
     /**
      * Returns all added columns
      *
      * @return {@link #columns}
      */
-    public List<Column> getColumns() {
-
+    public List<ImportColumn> getColumns() {
         return columns;
-
     }
-
 }

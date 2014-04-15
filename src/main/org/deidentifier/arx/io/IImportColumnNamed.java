@@ -16,40 +16,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource;
+package org.deidentifier.arx.io;
 
 
 /**
- * Configuration describing a file in general
+ * Interface to be implemented when columns can be referred to by a name
  *
- * File based configurations should extend this class as the notion of a
- * {@link #fileLocation} is common to all of them.
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-abstract public class FileConfiguration extends Configuration {
+public interface IImportColumnNamed {
 
     /**
-     * Location of file
+     * Returns the name this column refers to
      */
-    private String fileLocation;
-
+    public String getName();
 
     /**
-     * @return {@link #fileLocation}
+     * Sets the name this columns refers to
      */
-    public String getFileLocation() {
-
-        return fileLocation;
-
-    }
-
-    /**
-     * @param fileLocation {@link #fileLocation}
-     */
-    public void setFileLocation(String fileLocation)
-    {
-
-        this.fileLocation = fileLocation;
-
-    }
+    public void setName(String name);
 
 }

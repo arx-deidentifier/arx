@@ -17,26 +17,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource;
+package org.deidentifier.arx.io;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.datasource.column.JdbcColumn;
-
-
 /**
  * Configuration describing a JDBC source
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public class JdbcConfiguration extends Configuration {
-
+public class ImportConfigurationJDBC extends ImportConfiguration {
 
     /**
      * Connection to be used
-     *
+     * 
      * @see {@link #setConnection(Connection)}
      * @see {@link #getConnection()}
      */
@@ -44,139 +42,110 @@ public class JdbcConfiguration extends Configuration {
 
     /**
      * Name of table to be used
-     *
+     * 
      * @see {@link #setTable(String)}
      * @see {@link #getTable()}
      */
-    private String table;
-
+    private String     table;
 
     /**
      * Creates a new instance of this object
-     *
-     * @param connection {@link #setConnection(Connection)}
-     * @param table {@link #setTable(String)}
+     * 
+     * @param connection
+     *            {@link #setConnection(Connection)}
+     * @param table
+     *            {@link #setTable(String)}
      */
-    public JdbcConfiguration(Connection connection, String table)
-    {
-
+    public ImportConfigurationJDBC(Connection connection, String table) {
         setConnection(connection);
         setTable(table);
-
     }
 
     /**
-     * @param connection {@link #setConnection(Connection)}
+     * @param connection
+     *            {@link #setConnection(Connection)}
      */
-    public void setConnection(Connection connection)
-    {
-
+    public void setConnection(Connection connection) {
         this.connection = connection;
-
     }
 
     /**
      * @return {@link #connection}
      */
-    public Connection getConnection()
-    {
-
+    public Connection getConnection() {
         return connection;
-
     }
 
     /**
-     * @param table {@link #setTable(String)}
+     * @param table
+     *            {@link #setTable(String)}
      */
-    public void setTable(String table)
-    {
-
+    public void setTable(String table) {
         this.table = table;
-
     }
 
     /**
      * @return {@link #table}
      */
-    public String getTable()
-    {
-
+    public String getTable() {
         return table;
-
     }
 
     /**
      * Adds a single column to import from
-     *
-     * This makes sure that only {@link JdbcColumn} can be added, otherwise
-     * an {@link IllegalArgumentException} will be thrown.
-     *
-     * @param column A single column to import from, {@link JdbcColumn}
+     * 
+     * This makes sure that only {@link ImportColumnJDBC} can be added,
+     * otherwise an {@link IllegalArgumentException} will be thrown.
+     * 
+     * @param column
+     *            A single column to import from, {@link ImportColumnJDBC}
      */
     @Override
-    public void addColumn(Column column) {
+    public void addColumn(ImportColumn column) {
 
-        if (!(column instanceof JdbcColumn)) {
-
+        if (!(column instanceof ImportColumnJDBC)) {
             throw new IllegalArgumentException("");
-
         }
 
-        if (((JdbcColumn) column).getIndex() == -1) {
-
-            int index = getIndexForColumn(((JdbcColumn) column).getName());
-            ((JdbcColumn) column).setIndex(index);
-
+        if (((ImportColumnJDBC) column).getIndex() == -1) {
+            int index = getIndexForColumn(((ImportColumnJDBC) column).getName());
+            ((ImportColumnJDBC) column).setIndex(index);
         }
 
-        for (Column c : columns) {
+        for (ImportColumn c : columns) {
 
-            if (((JdbcColumn) column).getIndex() == ((JdbcColumn) c).getIndex()) {
-
+            if (((ImportColumnJDBC) column).getIndex() == ((ImportColumnJDBC) c).getIndex()) {
                 throw new IllegalArgumentException("Column for this index already assigned");
-
             }
 
             if (column.getAliasName() != null && c.getAliasName() != null &&
                 c.getAliasName().equals(column.getAliasName())) {
-
                 throw new IllegalArgumentException("Column names need to be unique");
-
             }
-
         }
-
         this.columns.add(column);
-
     }
 
-    private int getIndexForColumn(String aliasName) throws NoSuchElementException
-    {
+    private int getIndexForColumn(String aliasName) throws NoSuchElementException {
         try {
 
-            ResultSet rs = connection.getMetaData().getColumns(null, null, table, null);
+            ResultSet rs = connection.getMetaData().getColumns(null,
+                                                               null,
+                                                               table,
+                                                               null);
 
             int i = 0;
-            while(rs.next()) {
-
+            while (rs.next()) {
                 if (rs.getString("COLUMN_NAME").equals(aliasName)) {
-
                     return i;
-
                 }
-
                 i++;
-
             }
-
         } catch (SQLException e) {
-
-            
-
+            /* Catch silently*/
         }
-
-        throw new NoSuchElementException("Index for column '" + aliasName + "' couldn't be found");
+        throw new NoSuchElementException("Index for column '" + aliasName +
+                                         "' couldn't be found");
 
     }
-
 }

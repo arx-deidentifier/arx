@@ -16,40 +16,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource.column;
+package org.deidentifier.arx.io;
 
 import org.deidentifier.arx.DataType;
 
-
 /**
  * Represents a single Excel data column
- *
- * Excel columns are referred to by an index (see {@link IndexColumn}).
+ * 
+ * Excel columns are referred to by an index (see {@link ImportColumnIndexed}).
+ * 
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public class ExcelColumn extends IndexColumn {
+public class ImportColumnExcel extends ImportColumnIndexed {
 
     /**
      * Creates a new instance of this object with the given parameters
-     *
-     * @see {@link IndexColumn}
+     * 
+     * @see {@link ImportColumnIndexed}
      */
-    public ExcelColumn(int index, DataType<?> datatype)
-    {
-
+    public ImportColumnExcel(int index, DataType<?> datatype) {
         super(index, datatype);
-
     }
 
     /**
      * Creates a new instance of this object with the given parameters
-     *
-     * @see {@link IndexColumn}
+     * 
+     * @see {@link ImportColumnIndexed}
      */
-    public ExcelColumn(int index, String aliasName, DataType<?> datatype)
-    {
-
+    public ImportColumnExcel(int index, String aliasName, DataType<?> datatype) {
         super(index, aliasName, datatype);
-
     }
-
 }

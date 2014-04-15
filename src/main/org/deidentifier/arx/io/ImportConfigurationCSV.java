@@ -17,39 +17,42 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource;
-
-import org.deidentifier.arx.io.datasource.column.CSVColumn;
-import org.deidentifier.arx.io.datasource.column.Column;
-
-
+package org.deidentifier.arx.io;
 
 /**
  * Configuration describing a CSV file
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public class CSVFileConfiguration extends FileConfiguration implements ICanContainHeader {
+public class ImportConfigurationCSV extends ImportConfigurationFile implements
+        IImportConfigurationWithHeader {
 
     /**
      * Character that separates the columns from each other
      */
-    private char separator;
+    private char    separator;
 
     /**
      * Indicates whether first row contains header (names of columns)
-     *
-     * @see {@link ICanContainHeader}
+     * 
+     * @see {@link IImportConfigurationWithHeader}
      */
     private boolean containsHeader;
 
-
     /**
      * Creates a new instance of this object
-     *
-     * @param fileLocation {@link #setFileLocation(String)}
-     * @param separator {@link #separator}
-     * @param containsHeader {@link #containsHeader}
+     * 
+     * @param fileLocation
+     *            {@link #setFileLocation(String)}
+     * @param separator
+     *            {@link #separator}
+     * @param containsHeader
+     *            {@link #containsHeader}
      */
-    public CSVFileConfiguration(String fileLocation, char separator, boolean containsHeader) {
+    public ImportConfigurationCSV(String fileLocation,
+                                  char separator,
+                                  boolean containsHeader) {
 
         setFileLocation(fileLocation);
         this.separator = separator;
@@ -61,9 +64,7 @@ public class CSVFileConfiguration extends FileConfiguration implements ICanConta
      * @return {@link #separator}
      */
     public char getSeparator() {
-
         return separator;
-
     }
 
     /**
@@ -71,58 +72,46 @@ public class CSVFileConfiguration extends FileConfiguration implements ICanConta
      */
     @Override
     public boolean getContainsHeader() {
-
         return containsHeader;
-
     }
 
     /**
-     * @param containsHeader {@link #containsHeader}
+     * @param containsHeader
+     *            {@link #containsHeader}
      */
     @Override
-    public void setContainsHeader(boolean containsHeader)
-    {
-
+    public void setContainsHeader(boolean containsHeader) {
         this.containsHeader = containsHeader;
-
     }
 
     /**
      * Adds a single column to import from
-     *
-     * This makes sure that only {@link CSVColumn} can be added, otherwise
+     * 
+     * This makes sure that only {@link ImportColumnCSV} can be added, otherwise
      * an {@link IllegalArgumentException} will be thrown.
-     *
-     * @param column A single column to import from, {@link CSVColumn}
+     * 
+     * @param column
+     *            A single column to import from, {@link ImportColumnCSV}
      */
     @Override
-    public void addColumn(Column column) {
+    public void addColumn(ImportColumn column) {
 
-        if (!(column instanceof CSVColumn)) {
-
+        if (!(column instanceof ImportColumnCSV)) {
             throw new IllegalArgumentException("Column needs to be of type CSVColumn");
-
         }
 
-        for (Column c : columns) {
+        for (ImportColumn c : columns) {
 
-            if (((CSVColumn) column).getIndex() == ((CSVColumn) c).getIndex()) {
-
+            if (((ImportColumnCSV) column).getIndex() == ((ImportColumnCSV) c).getIndex()) {
                 throw new IllegalArgumentException("Column for this index already assigned");
-
             }
 
             if (column.getAliasName() != null && c.getAliasName() != null &&
                 c.getAliasName().equals(column.getAliasName())) {
-
                 throw new IllegalArgumentException("Column names need to be unique");
-
             }
-
         }
 
         this.columns.add(column);
-
     }
-
 }

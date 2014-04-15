@@ -16,40 +16,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource.column;
-
-import org.deidentifier.arx.DataType;
-
+package org.deidentifier.arx.io;
 
 /**
- * Represents a single CSV data column
- *
- * CSV columns are referred to by an index (see {@link IndexColumn}).
+ * Interface to be implemented when columns can be referred to by an index
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public class CSVColumn extends IndexColumn {
+public interface IImportColumnIndexed {
 
     /**
-     * Creates a new instance of this object with the given parameters
-     *
-     * @see {@link IndexColumn}
+     * Returns the index this column refers to
      */
-    public CSVColumn(int index, DataType<?> datatype)
-    {
-
-        super(index, datatype);
-
-    }
+    public int getIndex();
 
     /**
-     * Creates a new instance of this object with the given parameters
-     *
-     * @see {@link IndexColumn}
+     * Sets the index this columns refers to
      */
-    public CSVColumn(int index, String aliasName, DataType<?> datatype)
-    {
-
-        super(index, aliasName, datatype);
-
-    }
+    public void setIndex(int index);
 
 }

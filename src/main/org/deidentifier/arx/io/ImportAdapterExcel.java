@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.importdata;
+package org.deidentifier.arx.io;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,82 +30,83 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
-import org.deidentifier.arx.io.datasource.ExcelFileConfiguration.ExcelFileTypes;
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.datasource.column.ExcelColumn;
+import org.deidentifier.arx.io.ImportConfigurationExcel.ExcelFileTypes;
 
 /**
  * Import adapter for Excel files
- *
+ * 
  * This adapter can import data from Excel files. It handles both XLS and XLSX
- * files. The file type itself is defined by {@link ExcelFileConfiguration}.
+ * files. The file type itself is defined by {@link ImportConfigurationExcel}.
  * The files are accessed using Apache POI.
- *
+ * 
  * @see <a href="https://poi.apache.org/">Aapache POI</a>
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public class ExcelFileImportAdapter extends ImportAdapter {
+public class ImportAdapterExcel extends ImportAdapter {
 
     /**
      * The configuration describing the Excel file
      */
-    private ExcelFileConfiguration config;
+    private ImportConfigurationExcel config;
 
     /**
      * Actual iterator used to go through data
      */
-    private Iterator<Row> rowIterator;
+    private Iterator<Row>            rowIterator;
 
     /**
      * Contains the last row as returned by the iterator
-     *
+     * 
      * @note This row cannot be simply returned, but needs to be further
-     * processed, e.g. to return only selected columns.
+     *       processed, e.g. to return only selected columns.
      */
-    private Row lastRow;
+    private Row                      lastRow;
 
     /**
      * Indicates whether the first row has already been returned
-     *
+     * 
      * The first row contains the name of the columns and always needs to be
-     * returned first in order to guarantee that the framework will pick up
-     * the names correctly.
+     * returned first in order to guarantee that the framework will pick up the
+     * names correctly.
      */
-    private boolean headerReturned = false;
+    private boolean                  headerReturned = false;
 
     /**
      * Number of rows within the specified sheet
      */
-    private int totalRows;
+    private int                      totalRows;
 
     /**
      * Current row {@link lastRow} is referencing
      */
-    private int currentRow = 0;
+    private int                      currentRow     = 0;
 
     /**
      * Holds the number of columns
-     *
-     * This is set in the first iteration and is checked against in every
-     * other iteration. Once a row contains more columns that this, an
-     * exception is thrown.
+     * 
+     * This is set in the first iteration and is checked against in every other
+     * iteration. Once a row contains more columns that this, an exception is
+     * thrown.
      */
-    private int numberOfColumns;
-
+    private int                      numberOfColumns;
 
     /**
      * Creates a new instance of this object with given configuration
-     *
+     * 
      * Depending upon the file type it either uses HSSF or XSSF to access the
-     * file. In both cases {@link #rowIterator} will be assigned a reference
-     * to an iterator, which can then be used to access the actual data on a
-     * row by row basis.
-     *
-     * @param config {@link #config}
-     *
-     * @throws IOException In case file doesn't contain actual data
+     * file. In both cases {@link #rowIterator} will be assigned a reference to
+     * an iterator, which can then be used to access the actual data on a row by
+     * row basis.
+     * 
+     * @param config
+     *            {@link #config}
+     * 
+     * @throws IOException
+     *             In case file doesn't contain actual data
      */
-    protected ExcelFileImportAdapter(ExcelFileConfiguration config) throws IOException{
+    protected ImportAdapterExcel(ImportConfigurationExcel config) throws IOException {
 
         super(config);
         this.config = config;
@@ -119,18 +120,12 @@ public class ExcelFileImportAdapter extends ImportAdapter {
         Workbook workbook = null;
 
         if (config.getExcelFileType() == ExcelFileTypes.XLS) {
-
             workbook = new HSSFWorkbook(input);
-
         } else if (config.getExcelFileType() == ExcelFileTypes.XLSX) {
-
             workbook = new XSSFWorkbook(input);
-
         } else {
-
             input.close();
             throw new IllegalArgumentException("File type not supported");
-
         }
 
         workbook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
@@ -144,98 +139,78 @@ public class ExcelFileImportAdapter extends ImportAdapter {
         if (rowIterator.hasNext()) {
 
             lastRow = rowIterator.next();
-
             if (config.getContainsHeader()) {
-
                 if (!rowIterator.hasNext()) {
-
                     throw new IOException("File contains nothing but header");
-
                 }
-
             }
-
         } else {
-
             throw new IOException("File contains no data");
-
         }
-
     }
 
     /**
      * Returns an array with indexes of columns that should be imported
-     *
+     * 
      * Only columns listed within {@link #columns} will be imported. This
-     * iterates over the list of columns and returns an array with indexes
-     * of columns that should be imported.
-     *
+     * iterates over the list of columns and returns an array with indexes of
+     * columns that should be imported.
+     * 
      * @return Array containing indexes of columns that should be imported
      */
-    protected int[] getIndexesToImport(){
+    protected int[] getIndexesToImport() {
 
         /* Get indexes to import from */
         ArrayList<Integer> indexes = new ArrayList<Integer>();
-        for(Column column : config.getColumns()) {
-
-            indexes.add(((ExcelColumn) column).getIndex());
-
+        for (ImportColumn column : config.getColumns()) {
+            indexes.add(((ImportColumnExcel) column).getIndex());
         }
 
         int[] result = new int[indexes.size()];
         for (int i = 0; i < result.length; i++) {
-
             result[i] = indexes.get(i);
-
         }
-
         return result;
-
     }
 
     /**
      * Indicates whether there is another element to return
-     *
+     * 
      * This returns true when the file contains another line, which could be
      * accessed by {@link #rowIterator}.
-     *
-     * @note {@link #lastRow} effectively works as buffer and will always be
-     * set up by the previous iteration, so once there is no data, it will
-     * be assigned <code>null</code>, which is checked for here.
+     * 
+     * @note {@link #lastRow} effectively works as buffer and will always be set
+     *       up by the previous iteration, so once there is no data, it will be
+     *       assigned <code>null</code>, which is checked for here.
      */
     @Override
     public boolean hasNext() {
-
         return lastRow != null;
-
     }
 
     /**
      * Returns the next row
-     *
-     * The returned element is sorted as defined by {@link Column#index} and
-     * contains as many elements as there are columns selected to import from
-     * {@link #indexes}. The first row will always contain the names of the
+     * 
+     * The returned element is sorted as defined by {@link ImportColumn#index}
+     * and contains as many elements as there are columns selected to import
+     * from {@link #indexes}. The first row will always contain the names of the
      * columns. {@link #headerReturned} is used to keep track of that.
-     *
-     * @throws IllegalArgumentException In case defined datatypes don't match
+     * 
+     * @throws IllegalArgumentException
+     *             In case defined datatypes don't match
      */
     @Override
     public String[] next() {
 
         /* Check whether header was already returned */
         if (!headerReturned) {
-
             headerReturned = true;
             return createHeader();
-
         }
 
         /* Check whether number of columns is too big */
         if (lastRow.getPhysicalNumberOfCells() > numberOfColumns) {
-
             throw new IllegalArgumentException("Number of columns in row " + currentRow + " is too big");
-
         }
 
         /* Create regular row */
@@ -246,92 +221,74 @@ public class ExcelFileImportAdapter extends ImportAdapter {
             result[i] = lastRow.getCell(indexes[i]).getStringCellValue();
 
             if (!dataTypes[i].isValid(result[i])) {
-
                 throw new IllegalArgumentException("Data value does not match data type");
-
             }
-
         }
 
         /* Fetches the next row, which will be used in next iteration */
         if (rowIterator.hasNext()) {
-
             lastRow = rowIterator.next();
             currentRow++;
-
         } else {
-
             lastRow = null;
-
         }
 
         /* Return resulting row */
         return result;
-
     }
 
     /**
      * Creates the header row
-     *
+     * 
      * This returns a string array with the names of the columns that will be
      * returned later on by iterating over this object. Depending upon the
-     * configuration {@link ExcelFileConfiguration#getContainsHeader()} and
-     * whether or not names have been assigned explicitly either the
-     * appropriate values will be returned, or names will be made up on the
-     * fly following the pattern "Column #x", where x is incremented for each
-     * column.
+     * configuration {@link ImportConfigurationExcel#getContainsHeader()} and
+     * whether or not names have been assigned explicitly either the appropriate
+     * values will be returned, or names will be made up on the fly following
+     * the pattern "Column #x", where x is incremented for each column.
      */
     private String[] createHeader() {
 
         /* Initialization */
         String[] header = new String[config.getColumns().size()];
-        List<Column> columns = config.getColumns();
+        List<ImportColumn> columns = config.getColumns();
 
         /* Create header */
         for (int i = 0, len = columns.size(); i < len; i++) {
 
-            Column column = columns.get(i);
+            ImportColumn column = columns.get(i);
 
-            lastRow.getCell(((ExcelColumn) column).getIndex()).setCellType(Cell.CELL_TYPE_STRING);
-            String name = lastRow.getCell(((ExcelColumn) column).getIndex()).getStringCellValue();
+            lastRow.getCell(((ImportColumnExcel) column).getIndex())
+                   .setCellType(Cell.CELL_TYPE_STRING);
+            String name = lastRow.getCell(((ImportColumnExcel) column).getIndex())
+                                 .getStringCellValue();
 
             if (config.getContainsHeader() && !name.equals("")) {
-
                 /* Assign name of file itself */
                 header[i] = name;
-
             } else {
-
                 /* Nothing defined in header (or empty), build name manually */
-                header[i] = "Column #" + ((ExcelColumn) column).getIndex();
-
+                header[i] = "Column #" +
+                            ((ImportColumnExcel) column).getIndex();
             }
 
             if (column.getAliasName() != null) {
-
                 /* Name has been assigned explicitly */
                 header[i] = column.getAliasName();
-
             }
 
             column.setAliasName(header[i]);
-
         }
 
         /* Fetch next row in preparation for next iteration */
         if (config.getContainsHeader()) {
 
             if (rowIterator.hasNext()) {
-
                 lastRow = rowIterator.next();
                 currentRow++;
-
             } else {
-
                 lastRow = null;
-
             }
-
         }
 
         /* Store number of columns */
@@ -339,7 +296,6 @@ public class ExcelFileImportAdapter extends ImportAdapter {
 
         /* Return header */
         return header;
-
     }
 
     /**
@@ -347,24 +303,19 @@ public class ExcelFileImportAdapter extends ImportAdapter {
      */
     @Override
     public void remove() {
-
         throw new UnsupportedOperationException();
-
     }
 
     /**
      * Returns the percentage of data that has already been returned
-     *
+     * 
      * The basis for this calculation is the row currently being accessed.
-     *
+     * 
      * @see {@link #currentRow}
      * @see {@link #totalRows}
      */
     @Override
     public int getProgress() {
-
-        return (int)((double)currentRow / (double)totalRows * 100d);
-
+        return (int) ((double) currentRow / (double) totalRows * 100d);
     }
-
 }

@@ -16,22 +16,37 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource.column;
+package org.deidentifier.arx.io;
 
 
 /**
- * Interface to be implemented when columns can be referred to by an index
+ * Configuration describing a file in general
+ *
+ * File based configurations should extend this class as the notion of a
+ * {@link #fileLocation} is common to all of them.
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public interface IIndexedColumn {
+abstract public class ImportConfigurationFile extends ImportConfiguration {
 
     /**
-     * Returns the index this column refers to
+     * Location of file
      */
-    public int getIndex();
+    private String fileLocation;
+
 
     /**
-     * Sets the index this columns refers to
+     * @return {@link #fileLocation}
      */
-    public void setIndex(int index);
+    public String getFileLocation() {
+        return fileLocation;
+    }
 
+    /**
+     * @param fileLocation {@link #fileLocation}
+     */
+    public void setFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
+    }
 }

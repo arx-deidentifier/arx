@@ -16,36 +16,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource;
+package org.deidentifier.arx.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.datasource.column.ExcelColumn;
-
 
 /**
  * Configuration describing an Excel file
- *
+ * 
  * This is used to describe Excel files. Both file types (XLS and XLSX) are
  * supported. The file type can either be detected automatically by the file
- * extension, or alternatively can be set manually. Furthermore there is a
- * sheet index {@link #sheetIndex}, which describes which sheet within the
- * file should be used.
+ * extension, or alternatively can be set manually. Furthermore there is a sheet
+ * index {@link #sheetIndex}, which describes which sheet within the file should
+ * be used.
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public class ExcelFileConfiguration extends FileConfiguration implements ICanContainHeader {
+public class ImportConfigurationExcel extends ImportConfigurationFile implements
+        IImportConfigurationWithHeader {
 
     /**
      * Valid file types for Excel files
-     *
+     * 
      * XLS is the "old" Excel file type, XLSX is the "new" Excel file type.
      */
-    public enum ExcelFileTypes {XLS, XLSX};
+    public enum ExcelFileTypes {
+        XLS,
+        XLSX
+    };
 
     /**
      * Used file type
-     *
+     * 
      * This is the actual filetype that will be used
-     *
+     * 
      * @see {@link #setExcelFileType(ExcelFileTypes excelFileType)}
      */
     private ExcelFileTypes excelFileType;
@@ -53,106 +57,103 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
     /**
      * Sheet index
      */
-    private int sheetIndex;
+    private int            sheetIndex;
 
     /**
      * Indicates whether first row contains header (names of columns)
-     *
-     * @see {@link ICanContainHeader}
+     * 
+     * @see {@link IImportConfigurationWithHeader}
      */
-    private boolean containsHeader;
-
+    private boolean        containsHeader;
 
     /**
      * Creates a new instance of this object without specifying the file type
-     *
-     * The file type will be detected automatically using the file extension.
-     * By default "xlsx" is assumed. In case the file extension is "xls" the
-     * file type will be set to {@link ExcelFileTypes#XLS}.
-     *
-     * @param fileLocation {@link #setFileLocation(String)}
-     * @param sheetIndex {@link #sheetIndex}
-     * @param containsHeader {@link #containsHeader}
+     * 
+     * The file type will be detected automatically using the file extension. By
+     * default "xlsx" is assumed. In case the file extension is "xls" the file
+     * type will be set to {@link ExcelFileTypes#XLS}.
+     * 
+     * @param fileLocation
+     *            {@link #setFileLocation(String)}
+     * @param sheetIndex
+     *            {@link #sheetIndex}
+     * @param containsHeader
+     *            {@link #containsHeader}
      */
-    public ExcelFileConfiguration(String fileLocation, int sheetIndex, boolean containsHeader) {
+    public ImportConfigurationExcel(String fileLocation,
+                                    int sheetIndex,
+                                    boolean containsHeader) {
 
         ExcelFileTypes excelFileType;
         String ext = FilenameUtils.getExtension(fileLocation);
 
         switch (ext) {
-
             case "xls":
                 excelFileType = ExcelFileTypes.XLS;
                 break;
-
+    
             default:
                 excelFileType = ExcelFileTypes.XLSX;
                 break;
-
         }
 
         setFileLocation(fileLocation);
         setSheetIndex(sheetIndex);
         setContainsHeader(containsHeader);
         setExcelFileType(excelFileType);
-
     }
 
     /**
      * Creates a new instance of this object
-     *
-     * @param fileLocation {@link #setFileLocation(String)}
-     * @param excelFileType {@link #setExcelFileType(ExcelFileTypes)}
-     * @param sheetIndex {@link #setSheetIndex(int)}
-     * @param containsHeader {@link #setContainsHeader(boolean)}
+     * 
+     * @param fileLocation
+     *            {@link #setFileLocation(String)}
+     * @param excelFileType
+     *            {@link #setExcelFileType(ExcelFileTypes)}
+     * @param sheetIndex
+     *            {@link #setSheetIndex(int)}
+     * @param containsHeader
+     *            {@link #setContainsHeader(boolean)}
      */
-    public ExcelFileConfiguration(String fileLocation, ExcelFileTypes excelFileType, int sheetIndex, boolean containsHeader) {
+    public ImportConfigurationExcel(String fileLocation,
+                                    ExcelFileTypes excelFileType,
+                                    int sheetIndex,
+                                    boolean containsHeader) {
 
         setFileLocation(fileLocation);
         setExcelFileType(excelFileType);
         setSheetIndex(sheetIndex);
         setContainsHeader(containsHeader);
-
     }
 
     /**
      * @return {@link #ExcelFileTypes}
      */
-    public ExcelFileTypes getExcelFileType()
-    {
-
+    public ExcelFileTypes getExcelFileType() {
         return excelFileType;
-
     }
 
     /**
-     * @param excelFileType {@link #ExcelFileTypes}
+     * @param excelFileType
+     *            {@link #ExcelFileTypes}
      */
-    public void setExcelFileType(ExcelFileTypes excelFileType)
-    {
-
+    public void setExcelFileType(ExcelFileTypes excelFileType) {
         this.excelFileType = excelFileType;
-
     }
 
     /**
      * @return {@link #sheetIndex}
      */
-    public int getSheetIndex()
-    {
-
+    public int getSheetIndex() {
         return sheetIndex;
-
     }
 
     /**
-     * @param sheetIndex {@link #sheetIndex}
+     * @param sheetIndex
+     *            {@link #sheetIndex}
      */
-    public void setSheetIndex(int sheetIndex)
-    {
-
+    public void setSheetIndex(int sheetIndex) {
         this.sheetIndex = sheetIndex;
-
     }
 
     /**
@@ -160,58 +161,44 @@ public class ExcelFileConfiguration extends FileConfiguration implements ICanCon
      */
     @Override
     public boolean getContainsHeader() {
-
         return containsHeader;
-
     }
 
     /**
-     * @param containsHeader {@link #containsHeader}
+     * @param containsHeader
+     *            {@link #containsHeader}
      */
     @Override
-    public void setContainsHeader(boolean containsHeader)
-    {
-
+    public void setContainsHeader(boolean containsHeader) {
         this.containsHeader = containsHeader;
-
     }
 
     /**
      * Adds a single column to import from
-     *
-     * This makes sure that only {@link ExcelColumn} can be added, otherwise
-     * an {@link IllegalArgumentException} will be thrown.
-     *
-     * @param column A single column to import from, {@link ExcelColumn}
+     * 
+     * This makes sure that only {@link ImportColumnExcel} can be added,
+     * otherwise an {@link IllegalArgumentException} will be thrown.
+     * 
+     * @param column
+     *            A single column to import from, {@link ImportColumnExcel}
      */
     @Override
-    public void addColumn(Column column) {
+    public void addColumn(ImportColumn column) {
 
-        if (!(column instanceof ExcelColumn)) {
-
+        if (!(column instanceof ImportColumnExcel)) {
             throw new IllegalArgumentException("Column needs to be of type ExcelColumn");
-
         }
 
-        for (Column c : columns) {
-
-            if (((ExcelColumn) column).getIndex() == ((ExcelColumn) c).getIndex()) {
-
+        for (ImportColumn c : columns) {
+            if (((ImportColumnExcel) column).getIndex() == ((ImportColumnExcel) c).getIndex()) {
                 throw new IllegalArgumentException("Column for this index already assigned");
-
             }
 
             if (column.getAliasName() != null && c.getAliasName() != null &&
                 c.getAliasName().equals(column.getAliasName())) {
-
                 throw new IllegalArgumentException("Column names need to be unique");
-
             }
-
         }
-
         this.columns.add(column);
-
     }
-
 }

@@ -16,84 +16,75 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource.column;
+package org.deidentifier.arx.io;
 
 import org.deidentifier.arx.DataType;
 
-
 /**
  * Represents a single data column
- *
- * This represents a single column that will be imported from. Each column
- * at least consists of an {@link #aliasName} and {@link #dataType}.
+ * 
+ * This represents a single column that will be imported from. Each column at
+ * least consists of an {@link #aliasName} and {@link #dataType}.
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-abstract public class Column {
+abstract public class ImportColumn {
 
     /**
      * Alias name of column
-     *
+     * 
      * @note Note that this is alias name of the column. The original names
-     * might be different in case of {@link INamedColumn}.
+     *       might be different in case of {@link IImportColumnNamed}.
      */
-    private String aliasName;
+    private String      aliasName;
 
     /**
      * Datatype of column
      */
     private DataType<?> dataType;
 
-
     /**
      * Creates a new instance of this object with the given parameters
-     *
-     * @param aliasName {@link #aliasName}
-     * @param dataType {@link #dataType}
+     * 
+     * @param aliasName
+     *            {@link #aliasName}
+     * @param dataType
+     *            {@link #dataType}
      */
-    public Column(String aliasName, DataType<?> dataType) {
+    public ImportColumn(String aliasName, DataType<?> dataType) {
 
         setAliasName(aliasName);
         setDataType(dataType);
-
     }
 
     /**
      * @return {@link #aliasName}
      */
-    public String getAliasName()
-    {
-
+    public String getAliasName() {
         return aliasName;
-
     }
 
     /**
-     * @param aliasName {@link #aliasName}
+     * @param aliasName
+     *            {@link #aliasName}
      */
-    public void setAliasName(String aliasName)
-    {
-
+    public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
-
     }
 
     /**
      * @return {@link #dataType}
      */
-    public DataType<?> getDataType()
-    {
-
+    public DataType<?> getDataType() {
         return dataType;
-
     }
 
     /**
-     * @param dataType {@link #dataType}
+     * @param dataType
+     *            {@link #dataType}
      */
-    public void setDataType(DataType<?> dataType)
-    {
-
+    public void setDataType(DataType<?> dataType) {
         this.dataType = dataType;
-
     }
-
 }

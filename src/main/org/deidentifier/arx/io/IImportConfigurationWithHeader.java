@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.io.datasource;
+package org.deidentifier.arx.io;
 
 
 /**
@@ -24,8 +24,11 @@ package org.deidentifier.arx.io.datasource;
  *
  * A header describes the columns itself, e.g. by naming them. Usually it will
  * be the first row, but there might be more complex configurations.
+ * 
+ * @author Karol Babioch
+ * @author Fabian Prasser
  */
-public interface ICanContainHeader {
+public interface IImportConfigurationWithHeader {
 
     /**
      * Indicates whether there actually is a header
