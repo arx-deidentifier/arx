@@ -55,12 +55,15 @@ public class Example21 extends Example {
         
         // Define configuration for CSV file
         DataSource source = DataSource.createCSVSource("data/test.csv", ';', true);
-
-        // Add columns (index, name and datatype) to configuration
-        // The name is optional and can be detected/assigned automatically
-        source.addColumn(0, "renamed", DataType.INTEGER);
+        source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(1, DataType.STRING);
         source.addColumn(2, DataType.STRING);
+        
+        // In the output dataset, the columns will appear in the same order as
+        // specified by the order of calls to addColumn(). Columns in the source
+        // can be addressed by either zero-based indexes or names. If columns
+        // are addressed by name, the data source must contain a header. Optionally,
+        // columns can be renamed by providing an alias or a data type can be specified
 
         // Create data object
         final Data data = Data.create(source);
@@ -79,12 +82,15 @@ public class Example21 extends Example {
 
         // Define configuration for Excel file
         DataSource source = DataSource.createExcelSource("data/test.xls", 0, true);
-
-        // Add columns (index, name and datatype) to configuration
-        // The name is optional and can be detected/assigned automatically
         source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(1, DataType.STRING);
         source.addColumn(2, DataType.STRING);
+        
+        // In the output dataset, the columns will appear in the same order as
+        // specified by the order of calls to addColumn(). Columns in the source
+        // can be addressed by either zero-based indexes or names. If columns
+        // are addressed by name, the data source must contain a header. Optionally,
+        // columns can be renamed by providing an alias or a data type can be specified
 
         // Create data object
         final Data data = Data.create(source);
@@ -104,12 +110,15 @@ public class Example21 extends Example {
         // Configuration for JDBC source
         Class.forName("org.sqlite.JDBC");
         DataSource source = DataSource.createJDBCSource("jdbc:sqlite:data/test.db", "test");
-
-        // Add columns (index, name and datatype) to configuration
-        // The name is optional and can be detected/assigned automatically
         source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(1, DataType.STRING);
         source.addColumn(2, DataType.STRING);
+        
+        // In the output dataset, the columns will appear in the same order as
+        // specified by the order of calls to addColumn(). Columns in the source
+        // can be addressed by either zero-based indexes or names. If columns
+        // are addressed by name, the data source must contain a header. Optionally,
+        // columns can be renamed by providing an alias or a data type can be specified
 
         // Create data object
         final Data data = Data.create(source);
