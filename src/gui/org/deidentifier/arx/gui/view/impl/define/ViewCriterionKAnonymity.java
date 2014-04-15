@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.define.criteria;
+package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Scale;
  * A view on a k-anonymity criterion
  * @author Fabian Prasser
  */
-public class ViewKAnonymity extends ViewCriterion {
+public class ViewCriterionKAnonymity extends ViewCriterion {
 
 	private Label labelK;
 	private Scale sliderK;
@@ -49,7 +49,7 @@ public class ViewKAnonymity extends ViewCriterion {
 	 * @param controller
 	 * @param model
 	 */
-	public ViewKAnonymity(final Composite parent, final Controller controller,
+	public ViewCriterionKAnonymity(final Composite parent, final Controller controller,
 			final Model model) {
 
 		super(parent, controller, model);

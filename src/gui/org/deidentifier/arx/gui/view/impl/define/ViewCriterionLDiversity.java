@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.define.criteria;
+package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Scale;
  * A view on an l-diversity criterion
  * @author Fabian Prasser
  */
-public class ViewLDiversity extends ViewCriterion{
+public class ViewCriterionLDiversity extends ViewCriterion{
 
 	private static final String    VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -56,7 +56,7 @@ public class ViewLDiversity extends ViewCriterion{
      * @param controller
      * @param model
      */
-    public ViewLDiversity(final Composite parent,
+    public ViewCriterionLDiversity(final Composite parent,
                           final Controller controller,
                           final Model model) {
     	

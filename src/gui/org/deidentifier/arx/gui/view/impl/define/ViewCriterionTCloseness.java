@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.define.criteria;
+package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Scale;
  * Implements a view on a t-closeness criterion
  * @author Fabian Prasser
  */
-public class ViewTCloseness extends ViewCriterion {
+public class ViewCriterionTCloseness extends ViewCriterion {
 
 	private static final String VARIANTS[] = {
 			Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -55,7 +55,7 @@ public class ViewTCloseness extends ViewCriterion {
 	 * @param controller
 	 * @param model
 	 */
-	public ViewTCloseness(final Composite parent, final Controller controller,
+	public ViewCriterionTCloseness(final Composite parent, final Controller controller,
 			final Model model) {
 
 		super(parent, controller, model);

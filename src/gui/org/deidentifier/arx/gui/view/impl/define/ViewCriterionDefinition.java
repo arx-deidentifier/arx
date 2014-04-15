@@ -28,10 +28,6 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewDPresence;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewKAnonymity;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewLDiversity;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewTCloseness;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -200,13 +196,13 @@ public class ViewCriterionDefinition implements IView {
         folder = new ComponentTitledFolder(group, controller, bar, null);
         folder.setLayoutData(gd1);
         Composite item1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.19"), controller.getResources().getImage("symbol_k.png"));        
-        new ViewKAnonymity(item1, controller, model);
+        new ViewCriterionKAnonymity(item1, controller, model);
         Composite item2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.60"), controller.getResources().getImage("symbol_d.png"));
-        new ViewDPresence(item2, controller, model);
+        new ViewCriterionDPresence(item2, controller, model);
         Composite item3 = folder.createItem(Resources.getMessage("CriterionDefinitionView.20"), controller.getResources().getImage("symbol_l.png"));
-        new ViewLDiversity(item3, controller, model);
+        new ViewCriterionLDiversity(item3, controller, model);
         Composite item4 = folder.createItem(Resources.getMessage("CriterionDefinitionView.21"), controller.getResources().getImage("symbol_t.png"));
-        new ViewTCloseness(item4, controller, model);
+        new ViewCriterionTCloseness(item4, controller, model);
         folder.setSelection(0);
         
         folder.addSelectionListener(new SelectionAdapter() {

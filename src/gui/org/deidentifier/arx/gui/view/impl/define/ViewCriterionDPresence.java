@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.define.criteria;
+package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Scale;
  * A view on a d-presence criterion
  * @author Fabian Prasser
  */
-public class ViewDPresence extends ViewCriterion{
+public class ViewCriterionDPresence extends ViewCriterion{
 
     private Scale                  sliderDMin;
     private Scale                  sliderDMax;
@@ -51,7 +51,7 @@ public class ViewDPresence extends ViewCriterion{
      * @param controller
      * @param model
      */
-    public ViewDPresence(final Composite parent,
+    public ViewCriterionDPresence(final Composite parent,
                          final Controller controller,
                          final Model model) {
 
