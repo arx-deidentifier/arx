@@ -100,5 +100,5 @@ public interface IHashGroupify {
      * Returns statistics about the groups
      * @return
      */
-    public abstract GroupStatistics getGroupStatistics();
+    public abstract GroupStatistics getGroupStatistics(boolean anonymous);
 }

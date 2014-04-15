@@ -23,7 +23,6 @@ import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -37,6 +36,12 @@ import org.deidentifier.arx.metric.Metric;
  * @author Florian Kohlmayer
  */
 public class NodeChecker implements INodeChecker {
+
+    /** The config */
+    private final ARXConfiguration config;
+
+    /** The data. */
+    private final Data             data;
 
     /** The current hash groupify. */
     protected IHashGroupify        currentGroupify;
@@ -55,12 +60,6 @@ public class NodeChecker implements INodeChecker {
 
     /** The data transformer. */
     protected Transformer          transformer;
-
-    /** The data. */
-    private final Data             data;
-
-    /** The config */
-    private final ARXConfiguration config;
 
     /**
      * Creates a new NodeChecker instance.
@@ -181,11 +180,6 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getNumberOfGroups() {
-        return currentGroupify.size();
-    }
-
-    @Override
     public IHashGroupify getGroupify() {
         return currentGroupify;
     }
@@ -204,7 +198,6 @@ public class NodeChecker implements INodeChecker {
         check(node);
         metric.evaluate(node, currentGroupify);
         return node.getInformationLoss().getValue();
-
     }
 
     @Override
@@ -213,14 +206,12 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    @Deprecated
-    public Data transform(final Node node) {
-
-        throw new RuntimeException("Not implemented!");
+    public int getNumberOfGroups() {
+        return currentGroupify.size();
     }
 
     @Override
-    public Data transformAndMarkOutliers(final Node node) {
+    public TransformedData getTransformedData(final Node node) {
 
         // Apply transition and groupify
         currentGroupify.clear();
@@ -240,11 +231,12 @@ public class NodeChecker implements INodeChecker {
         }
 
         // Return the buffer
-        return getBuffer();
+        return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics(node.isAnonymous()));
     }
 
     @Override
-    public GroupStatistics getGroupStatistics() {
-        return currentGroupify.getGroupStatistics();
+    @Deprecated
+    public Data transform(final Node node) {
+        throw new RuntimeException("Not implemented!");
     }
 }
