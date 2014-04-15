@@ -82,8 +82,8 @@ public class Example21 extends Example {
 
         // Define configuration for Excel file
         DataSource source = DataSource.createExcelSource("data/test.xls", 0, true);
-        source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(1, DataType.STRING);
+        source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(2, DataType.STRING);
         
         // In the output dataset, the columns will appear in the same order as
