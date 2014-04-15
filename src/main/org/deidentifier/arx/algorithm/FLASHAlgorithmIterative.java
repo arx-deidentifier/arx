@@ -65,7 +65,7 @@ public class FLASHAlgorithmIterative extends AbstractFLASHAlgorithm {
         // Init
         pqueue.clear();
         stack.clear();
-        checkBottom();
+        checker.check(lattice.getBottom(), true);
 
         // TODO: This algorithm is potentially suboptimal, 
         // as predictive tagging could be applied in same cases
@@ -103,6 +103,10 @@ public class FLASHAlgorithmIterative extends AbstractFLASHAlgorithm {
                     }
                 }
             }
+        }
+        
+        if (lattice.getTop().getInformationLoss() == null) {
+            checker.check(lattice.getTop(), true);
         }
     }
 }

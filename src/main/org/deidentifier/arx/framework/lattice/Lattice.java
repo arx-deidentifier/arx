@@ -283,4 +283,33 @@ public class Lattice {
     public void triggerTagged() {
         if (this.listener != null) this.listener.nodeTagged(size * multiplier);
     }
+    
+
+    /**
+     * Returns the bottom node
+     */
+    public Node getBottom() {
+        for (int i = 0; i<levels.length; i++) {
+            if (levels[i].length==1){
+                return levels[i][0];
+            } else if (levels[i].length > 1) { 
+                throw new RuntimeException("Multiple bottom nodes!"); 
+            }
+        }
+        throw new RuntimeException("Empty lattice!");
+    }
+
+    /**
+     * Returns the top node
+     */
+    public Node getTop() {
+        for (int i = levels.length - 1; i>=0; i--) {
+            if (levels[i].length==1){
+                return levels[i][0];
+            } else if (levels[i].length > 1) { 
+                throw new RuntimeException("Multiple top nodes!"); 
+            }
+        }
+        throw new RuntimeException("Empty lattice!");
+    }
 }

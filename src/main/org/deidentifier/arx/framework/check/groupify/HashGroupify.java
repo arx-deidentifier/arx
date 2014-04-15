@@ -310,7 +310,7 @@ public class HashGroupify implements IHashGroupify {
     }
 
     @Override
-    public GroupStatistics getGroupStatistics() {
+    public GroupStatistics getGroupStatistics(boolean anonymous) {
 
         // Statistics about equivalence classes
         double averageEquivalenceClassSize = 0;
@@ -325,9 +325,8 @@ public class HashGroupify implements IHashGroupify {
         HashGroupifyEntry entry = firstEntry;
         while (entry != null) {
             if (entry.count > 0){
-                final boolean anonymous = isAnonymous(entry);
                 numberOfEquivalenceClasses++;
-                if (!anonymous) {
+                if (anonymous && !isAnonymous(entry)) {
                      numberOfOutlyingEquivalenceClasses++;
                      numberOfOutlyingTuples += entry.count;
                 } else {
@@ -339,14 +338,13 @@ public class HashGroupify implements IHashGroupify {
              entry = entry.nextOrdered;
          }
         
+        // Sanitize
         if (minimalEquivalenceClassSize == Integer.MAX_VALUE){
             minimalEquivalenceClassSize = 0;
         }
-        
         if (maximalEquivalenceClassSize == Integer.MIN_VALUE){
             maximalEquivalenceClassSize = 0;
         } 
-
         if (numberOfEquivalenceClasses - numberOfOutlyingEquivalenceClasses == 0){
             averageEquivalenceClassSize = 0;
         } else {

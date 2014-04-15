@@ -19,7 +19,6 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
@@ -45,6 +44,12 @@ public interface INodeChecker {
     public abstract void check(final Node node);
 
     /**
+     * Returns statistics about the groups
+     * @return
+     */
+    public void check(Node node, boolean forceMeasureInfoLoss);
+
+    /**
      * Returns the buffer as a Data object
      * 
      * @return
@@ -66,19 +71,18 @@ public interface INodeChecker {
     public abstract Data getData();
 
     /**
-     * Returns the number of groups from the previous check
-     * 
-     * @return
-     */
-    public abstract int getNumberOfGroups();
-
-    /**
      * Returns the current hash groupify
      * 
      * @return
      */
     public abstract IHashGroupify getGroupify();
 
+
+    /**
+     * Returns the history, if there is any
+     * @return
+     */
+    public abstract History getHistory();
 
     @Deprecated
     public abstract double getInformationLoss(final Node node);
@@ -91,6 +95,21 @@ public interface INodeChecker {
     public abstract Metric<?> getMetric();
 
     /**
+     * Returns the number of groups from the previous check
+     * 
+     * @return
+     */
+    public abstract int getNumberOfGroups();
+
+    /**
+     * Returns the data for a given node
+     * 
+     * @param node
+     * @return
+     */
+    public TransformedData getTransformedData(Node node);
+
+    /**
      * Returns the data for a given state. Only used for NUMA.
      * 
      * @param node
@@ -99,24 +118,4 @@ public interface INodeChecker {
      */
     @Deprecated
     public abstract Data transform(final Node node);
-
-    /**
-     * Returns the data for a given state and marks outliers
-     * 
-     * @param node
-     * @return
-     */
-    public Data transformAndMarkOutliers(Node node);
-
-    /**
-     * Returns the history, if there is any
-     * @return
-     */
-    public abstract History getHistory();
-
-    /**
-     * Returns statistics about the groups
-     * @return
-     */
-    public abstract GroupStatistics getGroupStatistics();
 }

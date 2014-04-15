@@ -22,6 +22,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -291,7 +292,7 @@ public class ARXResult {
         tNode.setTransformation(node.getTransformation(), level);
  
         // Apply the transformation
-        checker.transformAndMarkOutliers(tNode);
+        TransformedData information = checker.getTransformedData(tNode);
 
         // Store
         if (!node.isChecked()) {
@@ -312,22 +313,18 @@ public class ARXResult {
             lattice.estimateInformationLoss();
         }
         
-        // Obtain statistics
-        StatisticsEquivalenceClasses statistics = new StatisticsEquivalenceClasses(checker.getGroupStatistics());
-        
         // Clone if needed
-        org.deidentifier.arx.framework.data.Data buffer = checker.getBuffer();
         if (fork) {
-            buffer = buffer.clone(); 
+            information.buffer = information.buffer.clone(); 
         }
 
         // Create
         DataHandleOutput result = new DataHandleOutput(this,
                                                        registry,
                                                        manager,
-                                                       buffer,
+                                                       information.buffer,
                                                        node,
-                                                       statistics,
+                                                       new StatisticsEquivalenceClasses(information.statistics),
                                                        suppressionString,
                                                        definition,
                                                        removeOutliers,
