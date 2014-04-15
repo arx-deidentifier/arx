@@ -151,7 +151,7 @@ public class ImportWizardPageTable extends WizardPage {
             @Override
             public String getText(Object element) {
 
-                int rows = getNumberOfRows((String) element);
+                long rows = getNumberOfRows((String) element);
                 if (rows != -1) {
                     return " ~ " + rows;
                 } else {
@@ -235,7 +235,7 @@ public class ImportWizardPageTable extends WizardPage {
      * 
      * @return Number of rows for given table, -1 in case of error
      */
-    protected int getNumberOfRows(String table) {
+    protected long getNumberOfRows(String table) {
 
         try {
             Statement statement = wizardImport.getData()
@@ -245,13 +245,13 @@ public class ImportWizardPageTable extends WizardPage {
             ResultSet resultSet = statement.getResultSet();
 
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                return resultSet.getLong(1);
             }
 
         } catch (SQLException e) {
             /* Ignore silently*/
         }
-        return -1;
+        return -1L;
     }
 
     /**
