@@ -62,7 +62,7 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
         // Init
         pqueue.clear();
         stack.clear();
-        checkBottom();
+        checker.check(lattice.getBottom(), true);
 
         // For each node
         final int length = lattice.getLevels().length;
@@ -97,6 +97,10 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
                     }
                 }
             }
+        }
+        
+        if (lattice.getTop().getInformationLoss() == null) {
+            checker.check(lattice.getTop(), true);
         }
     }
 }

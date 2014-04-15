@@ -109,6 +109,11 @@ public class NodeChecker implements INodeChecker {
 
     @Override
     public void check(final Node node) {
+        check(node, false);
+    }
+
+    @Override
+    public void check(final Node node, final boolean forceMeasureInfoLoss) {
 
         // Store snapshot from last check
         if (stateMachine.getLastNode() != null) {
@@ -143,13 +148,20 @@ public class NodeChecker implements INodeChecker {
         // Propagate k-anonymity
         node.setKAnonymous(currentGroupify.isKAnonymous());
 
-        // Propagate anonymity and information loss
+        // Propagate anonymity
+        boolean measureInfoLoss = forceMeasureInfoLoss;
         if (currentGroupify.isAnonymous()) {
             node.setAnonymous(true);
+            measureInfoLoss = true;
+        } else {
+            node.setAnonymous(false);
+        }
+
+        // Propagate information loss
+        if (measureInfoLoss) {
             metric.evaluate(node, currentGroupify);
         } else {
             node.setInformationLoss(null);
-            node.setAnonymous(false);
         }
     }
 

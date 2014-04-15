@@ -141,25 +141,7 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
     protected final void sort(final Node[] array) {
         Arrays.sort(array, strategy);
     }
-
-    /**
-     * Checks the bottom node
-     */
-    protected void checkBottom() {
-        for (final Node[] level : lattice.getLevels()) {
-            if (level.length != 0) {
-                if (level.length == 1) {
-                    Node node = level[0];
-                    if (!node.isChecked()) checker.check(level[0]);
-                    break;
-                } else {
-                    throw new RuntimeException("Multiple bottom nodes!");
-                }
-            }
-        }
-    }
     
-
     /**
      * Checks a path sequentially.
      * 

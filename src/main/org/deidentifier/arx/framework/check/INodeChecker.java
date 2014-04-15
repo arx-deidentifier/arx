@@ -119,4 +119,10 @@ public interface INodeChecker {
      * @return
      */
     public abstract GroupStatistics getGroupStatistics();
+
+    /**
+     * Returns statistics about the groups
+     * @return
+     */
+    public void check(Node node, boolean forceMeasureInfoLoss);
 }
