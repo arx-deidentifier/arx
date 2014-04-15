@@ -37,7 +37,8 @@ import org.deidentifier.arx.criteria.RecursiveCLDiversity;
  * This class implements an example on how to use the API by directly providing
  * the input datasets
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example5 extends Example {
 

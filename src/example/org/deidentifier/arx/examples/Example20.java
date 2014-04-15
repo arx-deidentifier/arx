@@ -27,7 +27,8 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
 /**
  * This class implements examples of how to use aggregate functions
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example20 extends Example {
 

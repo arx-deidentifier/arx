@@ -28,6 +28,13 @@ import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
+/**
+ * Abstract base class for metrics
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
+ *
+ * @param <T>
+ */
 public abstract class Metric<T extends InformationLoss> implements Serializable {
 
     private static final long serialVersionUID = -2657745103125430229L;

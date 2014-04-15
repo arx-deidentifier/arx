@@ -28,7 +28,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * Abstract class for an algorithm, which provides some generic methods.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class AbstractAlgorithm {
 

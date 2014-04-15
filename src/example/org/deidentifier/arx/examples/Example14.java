@@ -40,7 +40,8 @@ import org.deidentifier.arx.metric.Metric;
  * enforcing different privacy criteria while also protecting the sensitive associations between
  * the values
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example14 extends Example {
 

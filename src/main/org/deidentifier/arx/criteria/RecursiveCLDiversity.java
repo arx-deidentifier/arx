@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The recursive-(c,l)-diversity criterion
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class RecursiveCLDiversity extends LDiversity{
 

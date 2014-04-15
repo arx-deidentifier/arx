@@ -38,7 +38,8 @@ import org.eclipse.swt.widgets.Listener;
 /**
  * Main entry point
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Main {
 

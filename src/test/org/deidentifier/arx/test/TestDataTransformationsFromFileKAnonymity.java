@@ -31,7 +31,8 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Test for data transformations
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
 public class TestDataTransformationsFromFileKAnonymity extends TestDataTransformationsFromFileAbstract {

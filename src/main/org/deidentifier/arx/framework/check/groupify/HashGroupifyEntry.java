@@ -23,7 +23,8 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 /**
  * Implements an equivalence class.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class HashGroupifyEntry {
 

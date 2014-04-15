@@ -24,7 +24,8 @@ import java.io.OutputStreamWriter;
 /**
  * Wraps a writer
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FileBuilder {
 	

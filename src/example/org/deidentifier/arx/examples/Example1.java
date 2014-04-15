@@ -35,7 +35,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
  * This class implements an example on how to use the API by directly providing
  * the input datasets
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example1 extends Example {
 

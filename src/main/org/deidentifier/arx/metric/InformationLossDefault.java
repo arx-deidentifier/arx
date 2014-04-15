@@ -22,7 +22,8 @@ package org.deidentifier.arx.metric;
  * This class implements a default information loss which represents one single
  * metric.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 class InformationLossDefault extends InformationLoss {
 

@@ -37,7 +37,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 /**
  * This class implements an example on how to use the API for tools such as GUIs
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example4 extends Example {
 

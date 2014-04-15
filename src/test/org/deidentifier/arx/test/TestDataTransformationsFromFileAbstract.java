@@ -38,7 +38,8 @@ import org.junit.Test;
 /**
  * Test for data transformations
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class TestDataTransformationsFromFileAbstract extends AbstractTest {
 

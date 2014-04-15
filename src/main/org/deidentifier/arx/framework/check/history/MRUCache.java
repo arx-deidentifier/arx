@@ -26,14 +26,16 @@ import java.util.Iterator;
  * 
  * @param <T>
  *            the generic type
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MRUCache<T> {
 
     /**
      * The Class MRULinkedListIterator.
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public class MRULinkedListIterator implements Iterator<T> {
 

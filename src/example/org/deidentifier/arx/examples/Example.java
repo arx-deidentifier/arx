@@ -32,7 +32,8 @@ import org.deidentifier.arx.DataHandle;
 /**
  * This class provides a base class for examples
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class Example {
 

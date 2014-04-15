@@ -30,7 +30,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * A metric that has a default main metric and several auxiliary metrics that
  * are also evaluated
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricCombined extends Metric<InformationLossCombined> {
 

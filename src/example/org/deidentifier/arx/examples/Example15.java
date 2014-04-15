@@ -38,7 +38,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to pretty-print information loss
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example15 extends Example {
 

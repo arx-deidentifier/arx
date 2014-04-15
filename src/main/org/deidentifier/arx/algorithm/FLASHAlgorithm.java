@@ -24,7 +24,8 @@ import org.deidentifier.arx.framework.lattice.Lattice;
 /**
  * This class provides a static method for instantiating the FLASH algorithm
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithm {
 

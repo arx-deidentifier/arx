@@ -21,7 +21,8 @@ package org.deidentifier.arx.framework.check.distribution;
 /**
  * Implements an entry.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class IntArrayDictionaryEntry {
 

@@ -30,7 +30,8 @@ import org.deidentifier.arx.framework.data.DataManager;
  * Hiding the presence of individuals from shared databases. 
  * Proceedings of the 2007 ACM SIGMOD international conference on Management of data. 2007:665-676.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DPresence extends ImplicitPrivacyCriterion{
     

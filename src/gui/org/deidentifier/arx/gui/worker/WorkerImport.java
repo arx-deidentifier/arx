@@ -23,8 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.io.datasource.Configuration;
-import org.deidentifier.arx.io.importdata.ImportAdapter;
+import org.deidentifier.arx.io.ImportAdapter;
+import org.deidentifier.arx.io.ImportConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class WorkerImport extends Worker<Data> {
 
     /** The path */
-    private final Configuration config;
+    private final ImportConfiguration config;
     /** The stop flag */
     private volatile boolean              stop = false;
 
@@ -43,7 +43,7 @@ public class WorkerImport extends Worker<Data> {
      * @param path
      * @param separator
      */
-    public WorkerImport(final Configuration config) {
+    public WorkerImport(final ImportConfiguration config) {
         this.config = config;
     }
 

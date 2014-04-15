@@ -19,7 +19,8 @@
 /**
  * This package provides basic input/output functionality
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.io;
 

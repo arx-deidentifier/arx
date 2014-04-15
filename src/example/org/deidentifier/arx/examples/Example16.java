@@ -38,7 +38,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
  * This class implements an example of how to use the API for access to basic statistics 
  * about the data
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example16 extends Example {
 

@@ -27,8 +27,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
-import org.deidentifier.arx.io.datasource.column.ExcelColumn;
+import org.deidentifier.arx.io.ImportColumnExcel;
+import org.deidentifier.arx.io.ImportConfigurationExcel;
 
 /**
  * This class demonstrates how to use the API to import data from Excel (XLS
@@ -45,14 +45,14 @@ public class Example2b extends Example {
         try {
 
             // Define configuration for Excel file(s)
-            ExcelFileConfiguration importConfig = new ExcelFileConfiguration("data/test.xls", 0, true);
+            ImportConfigurationExcel importConfig = new ImportConfigurationExcel("data/test.xls", 0, true);
             //ExcelFileConfiguration importConfig = new ExcelFileConfiguration("data/test.xlsx", 0, true);
 
             // Add columns (index, name and datatype) to configuration
             // The name is optional and can be detected/assigned automatically
-            importConfig.addColumn(new ExcelColumn(0, "Alter", DataType.INTEGER));
-            importConfig.addColumn(new ExcelColumn(1, DataType.STRING));
-            importConfig.addColumn(new ExcelColumn(2, DataType.STRING));
+            importConfig.addColumn(new ImportColumnExcel(0, "Alter", DataType.INTEGER));
+            importConfig.addColumn(new ImportColumnExcel(1, DataType.STRING));
+            importConfig.addColumn(new ImportColumnExcel(2, DataType.STRING));
 
             // Create data object
             final Data data = Data.create(importConfig);

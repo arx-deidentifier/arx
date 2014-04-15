@@ -39,7 +39,8 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
 /**
  * This class provides access to the data types supported by the ARX framework
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class DataType<T> implements Serializable {
     

@@ -30,7 +30,8 @@
  * <li>The class {@link ARXAdapter} can be utilized to attach a listener to the ARX framework, tracking its progress while anonymizing a dataset.</li>
  * </ul>
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx;
 

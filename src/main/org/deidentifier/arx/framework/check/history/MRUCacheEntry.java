@@ -23,7 +23,8 @@ package org.deidentifier.arx.framework.check.history;
  * 
  * @param <T>
  *            the generic type
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MRUCacheEntry<T> {
 

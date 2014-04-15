@@ -24,7 +24,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * The t-closeness criterion with hierarchical-distance EMD
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class HierarchicalDistanceTCloseness extends TCloseness {
 

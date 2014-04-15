@@ -20,7 +20,8 @@
  * This package implements the 'history' optimization. It provides means to store a set of highly compact representations
  * of different transformations of the input dataset in a cache which implements an MRU eviction policy.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.framework.check.history;
 

@@ -30,7 +30,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * Encapsulates the results of an execution of the ARX algorithm
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class ARXResult {
 

@@ -23,7 +23,8 @@ import org.deidentifier.arx.ARXListener;
 /**
  * The class Lattice.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Lattice {
 

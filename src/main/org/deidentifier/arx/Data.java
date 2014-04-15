@@ -30,21 +30,23 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.datasource.Configuration;
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.importdata.ImportAdapter;
+import org.deidentifier.arx.io.ImportAdapter;
+import org.deidentifier.arx.io.ImportColumn;
+import org.deidentifier.arx.io.ImportConfiguration;
 
 /**
  * Represents input data for the ARX framework
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class Data {
 
     /**
      * A data object for arrays
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     static class ArrayData extends Data {
 
@@ -89,7 +91,8 @@ public abstract class Data {
      * The default implementation of a data object. It allows the user to
      * programmatically define its content.
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public static class DefaultData extends Data {
 
@@ -115,7 +118,8 @@ public abstract class Data {
     /**
      * A data object for iterators
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     static class IterableData extends Data {
 
@@ -183,7 +187,7 @@ public abstract class Data {
         
         // TODO: This is ugly
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
-        List<Column> columns = adapter.getConfig().getColumns();
+        List<ImportColumn> columns = adapter.getConfig().getColumns();
         for (int i=0; i<columns.size(); i++){
             types.put(i, columns.get(i).getDataType());
         }
@@ -243,13 +247,13 @@ public abstract class Data {
      *
      * @throws IOException
      */
-    public static Data create(final Configuration config) throws IOException {
+    public static Data create(final ImportConfiguration config) throws IOException {
 
         final Data data = new IterableData(ImportAdapter.create(config));
 
         // TODO: This is ugly
         Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
-        List<Column> columns = config.getColumns();
+        List<ImportColumn> columns = config.getColumns();
         for (int i=0; i<columns.size(); i++){
             types.put(i, columns.get(i).getDataType());
         }

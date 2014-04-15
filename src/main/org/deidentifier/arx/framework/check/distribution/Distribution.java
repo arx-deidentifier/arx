@@ -26,7 +26,8 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  * This class can be utilized to track the distributions of values. It is backed by a hash table
  * implementing open addressing with linear probing.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Distribution {
 

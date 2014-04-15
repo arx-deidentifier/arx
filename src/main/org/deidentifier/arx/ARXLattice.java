@@ -32,14 +32,16 @@ import org.deidentifier.arx.metric.Metric;
  * This class implements a representation of the generalization lattice that is
  * exposed to users of the API
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class ARXLattice implements Serializable {
 
     /**
      * The internal accessor class
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public class Access implements Serializable {
 
@@ -104,14 +106,16 @@ public class ARXLattice implements Serializable {
     /**
      * A node in the lattice
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public class ARXNode {
 
         /**
          * Internal access class
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         public class Access {
 

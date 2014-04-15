@@ -26,7 +26,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides a reference implementation of the Iterative FLASH Algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmIterative extends AbstractFLASHAlgorithm {
 

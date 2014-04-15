@@ -34,7 +34,8 @@ import cern.colt.Arrays;
 /**
  * This class implements examples of how to use the builders for generalization hierarchies
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example18 extends Example {
 

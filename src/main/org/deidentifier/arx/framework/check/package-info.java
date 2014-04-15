@@ -19,7 +19,8 @@
 /**
  * This package implements the core functionality of the ARX framework, i.e., a highly efficient check for k-anonymity
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.framework.check;
 

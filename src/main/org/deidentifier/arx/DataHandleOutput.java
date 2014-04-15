@@ -33,14 +33,16 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 /**
  * An implementation of the class DataHandle for output data.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataHandleOutput extends DataHandle {
 
     /**
      * The class ResultIterator.
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public class ResultIterator implements Iterator<String[]> {
 

@@ -44,7 +44,8 @@ import cern.colt.Swapper;
  * graphical tools that allow to compare the original dataset to generalized
  * versions.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class DataHandle {
 

@@ -38,7 +38,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to apply the d-presence criterion
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example9 extends Example {
 

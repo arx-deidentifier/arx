@@ -30,7 +30,8 @@ import org.deidentifier.arx.DataType.DataTypeDescription;
 /**
  * This class implements an example of how to list the available data types
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example17 extends Example {
 

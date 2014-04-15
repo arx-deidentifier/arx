@@ -29,7 +29,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 /**
  * Encapsulates a definition of the types of attributes contained in a dataset
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataDefinition implements Cloneable{
     
