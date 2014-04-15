@@ -73,8 +73,6 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
             this.model.update();
             Button load = this.wizard.getLoadButton();
             if (load != null) load.setEnabled(false);
-            Button save = this.wizard.getSaveButton();
-            if (save != null) save.setEnabled(true);
         }
         super.setVisible(value);
     }
