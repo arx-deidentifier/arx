@@ -113,7 +113,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
             }
         });
         
-        this.menu = new HierarchyWizardEditorMenu<T>(composite, model);
+        this.menu = new HierarchyWizardEditorMenu<T>(canvascomposite, model);
         
         this.folder = new CTabFolder(composite, SWT.BORDER);
         this.folder.setSimple(false);
