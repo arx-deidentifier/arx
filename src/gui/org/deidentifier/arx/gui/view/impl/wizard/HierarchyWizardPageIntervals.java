@@ -32,6 +32,7 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
 
     /** Var */
     private final HierarchyWizardModelIntervals<T> model;
+    private HierarchyWizardEditor<T> editor;
     
     /**
      * Creates a new instance
@@ -55,11 +56,8 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         
-        @SuppressWarnings("unchecked")
-        HierarchyWizardEditor<Long> component = 
-                new HierarchyWizardEditor<Long>(composite, 
-                        (HierarchyWizardModelGrouping<Long>) model);
-        component.setLayoutData(SWTUtil.createFillGridData());
+        editor =  new HierarchyWizardEditor<T>(composite,  (HierarchyWizardModelGrouping<T>) model);
+        editor.setLayoutData(SWTUtil.createFillGridData());
 
         setControl(composite);
     }
@@ -67,5 +65,6 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
     @Override
     public void updatePage() {
         model.update();
+        if (editor != null) editor.setFunction(model.getDefaultFunction());
     }
 }

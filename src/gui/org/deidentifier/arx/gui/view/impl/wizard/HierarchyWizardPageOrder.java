@@ -52,7 +52,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     /** Var */
     private Combo                              combo;
     /** Var */
-    private HierarchyWizardEditor<Long>        editor; 
+    private HierarchyWizardEditor<T>           editor; 
     
     /**
      * Creates a new instance
@@ -92,6 +92,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         }
         list.setRedraw(true);
         combo.select(getIndexOfDataType(model.getDataType()));
+        if (editor != null) editor.setFunction(model.getDefaultFunction());
         model.update();
     }
     
@@ -209,14 +210,12 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
      * Create the grouping-part of the page
      * @param parent
      */
-    @SuppressWarnings("unchecked")
     private void createGroups(Composite parent){
         Group composite = new Group(parent, SWT.NONE);
         composite.setText("Groups");
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         composite.setLayoutData(SWTUtil.createFillGridData());
-        
-        editor =  new HierarchyWizardEditor<Long>(composite, (HierarchyWizardModelGrouping<Long>) model);
+        editor =  new HierarchyWizardEditor<T>(composite, (HierarchyWizardModelGrouping<T>) model);
         editor.setLayoutData(SWTUtil.createFillGridData());
     }
 

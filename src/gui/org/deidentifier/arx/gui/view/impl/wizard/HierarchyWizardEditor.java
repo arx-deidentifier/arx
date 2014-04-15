@@ -49,18 +49,20 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T> {
 
-	/** Var */
-	private HierarchyWizardModelGrouping<T> model;
-	/** Var */
-	private Composite composite;
-	/** Var */
-	private Composite canvascomposite;
-	/** Var */
-	private ScrolledComposite scrolledcomposite;
-	/** Var */
-	private CTabFolder folder;
-	/** Var */
-	private HierarchyWizardEditorMenu<T> menu;
+    /** Var */
+    private HierarchyWizardModelGrouping<T>  model;
+    /** Var */
+    private Composite                        composite;
+    /** Var */
+    private Composite                        canvascomposite;
+    /** Var */
+    private ScrolledComposite                scrolledcomposite;
+    /** Var */
+    private CTabFolder                       folder;
+    /** Var */
+    private HierarchyWizardEditorMenu<T>     menu;
+    /** Var */
+    private HierarchyWizardEditorFunction<T> editor;
     
     /**
      * Creates a new instance
@@ -130,6 +132,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     @Override
     public void setFunction(AggregateFunction<T> function) {
         model.setDefaultFunction(function);
+        editor.setFunction(function);
         model.update();
     }
 
@@ -156,7 +159,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         Composite parent = new Composite(tabFolder, SWT.NULL);
         parent.setLayout(SWTUtil.createGridLayout(2, false));
         parent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        HierarchyWizardEditorFunction<T> editor = new HierarchyWizardEditorFunction<T>(this, model, parent, true);
+        editor = new HierarchyWizardEditorFunction<T>(this, model, parent, true);
         editor.setFunction(model.getDefaultFunction());
         tabItem1.setControl(parent);
     }
