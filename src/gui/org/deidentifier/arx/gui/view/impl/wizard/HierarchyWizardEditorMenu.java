@@ -113,7 +113,7 @@ public class HierarchyWizardEditorMenu<T> {
         new MenuItem(menu, SWT.SEPARATOR);
         
         this.addRight = new MenuItem(menu, SWT.NONE);
-        this.addRight.setText("Add level of groups");
+        this.addRight.setText("Add groups");
         this.addRight.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 model.addRight(model.getSelectedElement());
