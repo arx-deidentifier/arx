@@ -119,7 +119,6 @@ public class DPresence extends ImplicitPrivacyCriterion{
         return dMax;
     }
     
-    
 	@Override
 	public String toString() {
 		return "("+dMin+","+dMax+")-presence";

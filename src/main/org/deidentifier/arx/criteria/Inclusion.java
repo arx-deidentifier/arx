@@ -58,4 +58,9 @@ public class Inclusion extends DPresence {
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Inclusion";
+    }
 }
