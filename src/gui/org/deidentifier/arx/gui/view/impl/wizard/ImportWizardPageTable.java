@@ -201,19 +201,15 @@ public class ImportWizardPageTable extends WizardPage {
              * @see #getNumberOfRows(String)
              */
             @Override
-            public String getToolTipText(Object element)
-            {
+            public String getToolTipText(Object element) {
 
                 long rows = getNumberOfRows((String) element);
-
                 if (rows > 1000) {
                     return "" + rows;
                 } else {
                     return null;
                 }
-
             }
-
         });
 
         TableColumn tblclmnRows = tableViewerColumnRows.getColumn();
@@ -400,18 +396,12 @@ public class ImportWizardPageTable extends WizardPage {
     private static String humanReadableRowCount(long rows) {
 
         int unit = 1000;
-
         if (rows < unit) {
-
             return new Long(rows).toString();
-
+        } else {
+            int exp = (int) (Math.log(rows) / Math.log(unit));
+            char pre = "kMGTPE".charAt(exp - 1);
+            return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
         }
-
-        int exp = (int) (Math.log(rows) / Math.log(unit));
-        char pre = "kMGTPE".charAt(exp - 1);
-
-        return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
-
     }
-
 }
