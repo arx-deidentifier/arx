@@ -28,7 +28,7 @@ package org.deidentifier.arx.io;
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public interface IImportConfigurationWithHeader {
+interface IImportConfigurationWithHeader {
 
     /**
      * Indicates whether there actually is a header
@@ -39,11 +39,11 @@ public interface IImportConfigurationWithHeader {
      *
      * @return True if there actually is a header, false otherwise
      */
-    public boolean getContainsHeader();
+    boolean getContainsHeader();
 
     /**
      * @param containsHeader Whether or not a header is actually contained
      */
-    public void setContainsHeader(boolean containsHeader);
+    void setContainsHeader(boolean containsHeader);
 
 }

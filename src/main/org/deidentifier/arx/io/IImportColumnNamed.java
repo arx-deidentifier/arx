@@ -25,16 +25,16 @@ package org.deidentifier.arx.io;
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public interface IImportColumnNamed {
+interface IImportColumnNamed {
 
     /**
      * Returns the name this column refers to
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the name this columns refers to
      */
-    public void setName(String name);
+    void setName(String name);
 
 }

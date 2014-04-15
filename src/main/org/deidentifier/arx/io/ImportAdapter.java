@@ -59,7 +59,7 @@ abstract public class ImportAdapter implements Iterator<String[]> {
         } else if (config instanceof ImportConfigurationJDBC) {
             return new ImportAdapterJDBC((ImportConfigurationJDBC) config);
         } else {
-            throw new IllegalArgumentException("No ImportAdapter defined for this type of configuration");
+            throw new IllegalArgumentException("No adapter defined for this type of configuration");
         }
     }
 
