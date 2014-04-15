@@ -153,7 +153,7 @@ public class ImportWizardPageTable extends WizardPage {
 
                 long rows = getNumberOfRows((String) element);
                 if (rows != -1) {
-                    return " ~ " + rows;
+                    return " ~ " + humanReadableRowCount(rows);
                 } else {
                     return "???";
                 }
@@ -292,4 +292,34 @@ public class ImportWizardPageTable extends WizardPage {
         wizardImport.getData().setPreviewData(previewData);
 
     }
+
+    /**
+     * Returns a human readable string representation of <code>rows</code>
+     *
+     * This converts rows into a human readable string, e.g. 1000000 gets
+     * converted to 1M.
+     *
+     * The code is based upon <a href="http://bit.ly/1m4UetX">this</a> snippet.
+     *
+     * @param rows The number of rows to be converted
+     *
+     * @return Human readable string representation of <code>rows</code>
+     */
+    private static String humanReadableRowCount(long rows) {
+
+        int unit = 1000;
+
+        if (rows < unit) {
+
+            return new Long(rows).toString();
+
+        }
+
+        int exp = (int) (Math.log(rows) / Math.log(unit));
+        char pre = "kMGTPE".charAt(exp - 1);
+
+        return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
+
+    }
+
 }
