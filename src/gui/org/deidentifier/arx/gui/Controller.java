@@ -67,9 +67,10 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
-import org.deidentifier.arx.gui.view.impl.wizard.importdata.ImportDataWizard;
-import org.deidentifier.arx.gui.view.impl.wizards.ARXWizardDialog;
-import org.deidentifier.arx.gui.view.impl.wizards.HierarchyWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.ARXWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardResult;
+import org.deidentifier.arx.gui.view.impl.wizard.ImportWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
 import org.deidentifier.arx.gui.worker.WorkerExport;
@@ -81,7 +82,6 @@ import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
 import org.deidentifier.arx.io.datasource.Configuration;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import cern.colt.Swapper;
@@ -432,16 +432,16 @@ public class Controller implements IView {
         
         HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        HierarchyWizard<?> wizard = new HierarchyWizard(this, attr, builder, type, data);
+        ARXWizard<HierarchyWizardResult<?>> wizard = new HierarchyWizard(this, attr, builder, type, data);
        
         if (wizard.open(main.getShell())) {
-            Hierarchy hierarchy = wizard.getHierarchy();
-            if (hierarchy != null){
+            HierarchyWizardResult<?> result = wizard.getResult();
+            if (result.hierarchy != null){
                 model.getInputConfig().setMaximumGeneralization(attr, null);
                 model.getInputConfig().setMinimumGeneralization(attr, null);
-                model.getInputConfig().setHierarchy(attr, hierarchy);
-                model.getInputConfig().setHierarchyBuilder(attr, wizard.getBuilder());
-                update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+                model.getInputConfig().setHierarchy(attr, result.hierarchy);
+                model.getInputConfig().setHierarchyBuilder(attr, result.builder);
+                update(new ModelEvent(this, ModelPart.HIERARCHY, result.hierarchy));
             }
         }
     }
@@ -591,13 +591,12 @@ public class Controller implements IView {
             return;
         }
 
-        // TODO: Rework, follow the ARX scheme with Wizard.open()
-        ImportDataWizard wizard = new ImportDataWizard(this, model);
-        new ARXWizardDialog(main.getShell(), wizard).open();
-        
-        Configuration config = wizard.getResultingConfiguration();
-        if (config != null) {
-            actionImportData(config);
+        ARXWizard<Configuration> wizard = new ImportWizard(this, model);
+        if (wizard.open(main.getShell())) {
+            Configuration config = wizard.getResult();
+            if (config != null) {
+                actionImportData(config);
+            }
         }
     }
 
@@ -943,16 +942,17 @@ public class Controller implements IView {
      */
     public void actionSubsetFile() {
 
-        // Check
-
-        ImportDataWizard wizard = new ImportDataWizard(this, model);
-        new WizardDialog(main.getShell(), wizard).open();
-        
-        Configuration config = wizard.getResultingConfiguration();
-        if (config == null) {
+        // Open wizard
+        ARXWizard<Configuration> wizard = new ImportWizard(this, model);
+        if (!wizard.open(main.getShell())) {
             return;
         }
         
+        Configuration config = wizard.getResult();
+        if (config == null) {
+            return;
+        }
+         
         final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
