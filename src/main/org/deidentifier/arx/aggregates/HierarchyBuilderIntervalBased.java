@@ -577,13 +577,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param max
      */
     private <U> void checkInterval(DataType<U> type, U min, U max){
+         
+        int cmp = 0;
         try {
-            if (type.compare(type.format(min), type.format(max)) > 0) {
-                throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
-            }
+            cmp = type.compare(type.format(min), type.format(max));
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid data item "+min+" or "+max);
         }
+        if (cmp > 0) throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
     }
     
     /**
