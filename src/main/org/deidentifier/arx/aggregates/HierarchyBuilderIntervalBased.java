@@ -584,7 +584,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid data item "+min+" or "+max);
         }
-        if (cmp > 0) throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
+        if (cmp >= 0) throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
     }
     
     /**
