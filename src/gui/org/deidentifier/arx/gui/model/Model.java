@@ -565,7 +565,6 @@ public class Model implements Serializable {
 	}
 	public void setPath(final String path) {
 		this.path = path;
-		setModified();
 	}
 	
 	public void setQuery(String query){
