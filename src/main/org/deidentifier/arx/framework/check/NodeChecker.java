@@ -215,23 +215,23 @@ public class NodeChecker implements INodeChecker {
 
         // Determine outliers and set infoloss
         node.setAnonymous(currentGroupify.isAnonymous());
-        if (!node.isChecked()) {
-            node.setChecked();
+        node.setChecked();
+        node.setTagged();
+        if (node.getInformationLoss() == null) {
             metric.evaluate(node, currentGroupify);
-            node.setTagged();
         }
 
-        // Find outliers
-        if (config.getAbsoluteMaxOutliers() != 0) {
+        // Find outliers only if node is anonymous
+        if (node.isAnonymous() && config.getAbsoluteMaxOutliers() != 0) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
 
         // Return the buffer
         return getBuffer();
     }
-    
+
     @Override
-    public GroupStatistics getGroupStatistics(){
+    public GroupStatistics getGroupStatistics() {
         return currentGroupify.getGroupStatistics();
     }
 }
