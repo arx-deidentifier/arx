@@ -30,7 +30,8 @@ import java.util.Iterator;
 /**
  * Provides methods for writing CSV encoded data.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser 
+ * @author Florian Kohlmayer
  */
 public class CSVDataOutput {
 

@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 /**
  * The class Transformer13.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Transformer13 extends AbstractTransformer {
 

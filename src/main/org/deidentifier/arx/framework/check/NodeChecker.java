@@ -33,7 +33,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class orchestrates the process of checking a node for k-anonymity
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class NodeChecker implements INodeChecker {
 

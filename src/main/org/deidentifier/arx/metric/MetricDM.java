@@ -31,7 +31,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides an implementation of the DM metric (non-monotonic)
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricDM extends MetricDefault {
     /**

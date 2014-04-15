@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 /**
  * The class Transformer08.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Transformer08 extends AbstractTransformer {
 

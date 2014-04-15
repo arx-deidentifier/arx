@@ -31,10 +31,10 @@ import java.util.Map;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
-import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.column.CSVColumn;
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.importdata.ImportAdapter;
+import org.deidentifier.arx.io.ImportAdapter;
+import org.deidentifier.arx.io.ImportColumn;
+import org.deidentifier.arx.io.ImportColumnCSV;
+import org.deidentifier.arx.io.ImportConfigurationCSV;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -360,7 +360,7 @@ public class ImportWizardPageCSV extends WizardPage {
      * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
      * within the appropriate file and reads them in. It uses
      * {@link ImportAdapter} in combination with
-     * {@link CSVFileConfiguration} to actually read in the data.
+     * {@link ImportConfigurationCSV} to actually read in the data.
      */
     private void readPreview() throws IOException {
 
@@ -377,7 +377,7 @@ public class ImportWizardPageCSV extends WizardPage {
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
-        CSVFileConfiguration config = new CSVFileConfiguration(location, separator, containsHeader);
+        ImportConfigurationCSV config = new ImportConfigurationCSV(location, separator, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {
@@ -389,7 +389,7 @@ public class ImportWizardPageCSV extends WizardPage {
         /* Iterate over columns and add it to {@link #allColumns} */
         for (int i = 0; i < firstLine.length; i++) {
 
-            Column column = new CSVColumn(i, DataType.STRING);
+            ImportColumn column = new ImportColumnCSV(i, DataType.STRING);
             ImportWizardModelColumn wizardColumn = new ImportWizardModelColumn(column);
 
             wizardColumns.add(wizardColumn);
@@ -432,14 +432,14 @@ public class ImportWizardPageCSV extends WizardPage {
         for (ImportWizardModelColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(((CSVColumn) column.getColumn()).getIndex()));
+            tableViewerColumn.setLabelProvider(new CSVColumnLabelProvider(((ImportColumnCSV) column.getColumn()).getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
 
             if (btnContainsHeader.getSelection()) {
                 tableColumn.setText(column.getColumn().getAliasName());
-                tableColumn.setToolTipText("Column #" + ((CSVColumn) column.getColumn()).getIndex());
+                tableColumn.setToolTipText("Column #" + ((ImportColumnCSV) column.getColumn()).getIndex());
             }
             ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
         }

@@ -26,7 +26,8 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * The default XML handler
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class XMLHandler extends DefaultHandler {
 

@@ -22,11 +22,11 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.view.impl.wizard.ImportWizardModel.SourceType;
-import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.Configuration;
-import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
-import org.deidentifier.arx.io.datasource.JdbcConfiguration;
-import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.ImportColumn;
+import org.deidentifier.arx.io.ImportConfiguration;
+import org.deidentifier.arx.io.ImportConfigurationCSV;
+import org.deidentifier.arx.io.ImportConfigurationExcel;
+import org.deidentifier.arx.io.ImportConfigurationJDBC;
 import org.eclipse.jface.wizard.IWizardPage;
 
 /**
@@ -43,7 +43,7 @@ import org.eclipse.jface.wizard.IWizardPage;
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public class ImportWizard extends ARXWizard<Configuration> {
+public class ImportWizard extends ARXWizard<ImportConfiguration> {
 
     /**
      * Reference to container storing all the data gathered by the wizard
@@ -86,7 +86,7 @@ public class ImportWizard extends ARXWizard<Configuration> {
      * created once the wizard is about to finish {@link #performFinish()} and
      * can be accessed by {@link #getResultingConfiguration()}.
      */
-    private Configuration           configuration = null;
+    private ImportConfiguration           configuration = null;
 
     /**
      * Returns a reference to the controller being used by this wizard
@@ -217,7 +217,7 @@ public class ImportWizard extends ARXWizard<Configuration> {
     /**
      * Gets executed once the wizard is about to finish
      * 
-     * This will build an appropriate {@link Configuration} object, depending
+     * This will build an appropriate {@link ImportConfiguration} object, depending
      * upon the {@link ImportWizardModel#getSourceType() source type} and the
      * choices the user made during the process of the wizard.
      * 
@@ -231,26 +231,26 @@ public class ImportWizard extends ARXWizard<Configuration> {
 
         if (data.getSourceType() == SourceType.CSV) {
             
-            configuration = new CSVFileConfiguration(data.getFileLocation(),
+            configuration = new ImportConfigurationCSV(data.getFileLocation(),
                                                      data.getCsvSeparator(),
                                                      data.getFirstRowContainsHeader());
 
         } else if (data.getSourceType() == SourceType.EXCEL) {
 
-            configuration = new ExcelFileConfiguration(data.getFileLocation(),
+            configuration = new ImportConfigurationExcel(data.getFileLocation(),
                                                        data.getExcelSheetIndex(),
                                                        data.getFirstRowContainsHeader());
 
         } else if (data.getSourceType() == SourceType.JDBC) {
 
-            configuration = new JdbcConfiguration(data.getJdbcConnection(),
+            configuration = new ImportConfigurationJDBC(data.getJdbcConnection(),
                                                   data.getSelectedJdbcTable());
 
         } else {
             throw new RuntimeException("Configuration type not supported");
         }
 
-        for (Column c : data.getEnabledColumns()) {
+        for (ImportColumn c : data.getEnabledColumns()) {
             configuration.addColumn(c);
         }
         return true;
@@ -259,7 +259,7 @@ public class ImportWizard extends ARXWizard<Configuration> {
     /**
      * Returns a reference to DataSourceConfiguration
      * 
-     * The wizard will built an appropriate {@link Configuration} object once it
+     * The wizard will built an appropriate {@link ImportConfiguration} object once it
      * is about to finish {@link #performFinish()}. This object can then be
      * retrieved using this method.
      * 
@@ -268,7 +268,7 @@ public class ImportWizard extends ARXWizard<Configuration> {
      * 
      * @return {@link #configuration} The resulting data source configuration
      */
-    public Configuration getResult() {
+    public ImportConfiguration getResult() {
         return configuration;
     }
 }

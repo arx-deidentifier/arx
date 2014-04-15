@@ -21,7 +21,8 @@ package org.deidentifier.arx.framework.lattice;
 /**
  * The class LatticeBuilder.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class LatticeBuilder {
 

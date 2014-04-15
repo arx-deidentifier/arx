@@ -26,14 +26,16 @@ import org.deidentifier.arx.framework.lattice.Node;
  * can be applied to the current transition depending on the previous
  * transition.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class StateMachine {
 
     /**
      * The resulting transition.
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public static class Transition {
 
@@ -50,7 +52,8 @@ public class StateMachine {
     /**
      * The possible transition type.
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public static enum TransitionType {
 

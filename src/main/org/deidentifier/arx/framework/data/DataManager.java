@@ -34,7 +34,8 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 /**
  * Holds all data needed for the anonymization process.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataManager {
 

@@ -33,7 +33,8 @@ import de.linearbits.objectselector.datatypes.DataType;
 
 /**
  * A selector for tuples
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  *
  */
 public class DataSelector {

@@ -31,10 +31,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.io.datasource.ExcelFileConfiguration;
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.datasource.column.ExcelColumn;
-import org.deidentifier.arx.io.importdata.ImportAdapter;
+import org.deidentifier.arx.io.ImportAdapter;
+import org.deidentifier.arx.io.ImportColumn;
+import org.deidentifier.arx.io.ImportColumnExcel;
+import org.deidentifier.arx.io.ImportConfigurationExcel;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -309,7 +309,7 @@ public class ImportWizardPageExcel extends WizardPage {
      * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
      * within the appropriate file and reads them in. It uses
      * {@link ImportAdapter} in combination with
-     * {@link ExcelFileConfiguration} to actually read in the data.
+     * {@link ImportConfigurationExcel} to actually read in the data.
      */
     private void readPreview() throws IOException {
 
@@ -324,7 +324,7 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Variables needed for processing */
         Sheet sheet = workbook.getSheetAt(sheetIndex);
         Iterator<Row> rowIterator = sheet.iterator();
-        ExcelFileConfiguration config = new ExcelFileConfiguration(location, sheetIndex, containsHeader);
+        ImportConfigurationExcel config = new ImportConfigurationExcel(location, sheetIndex, containsHeader);
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
 
         /* Check whether there is at least one row in sheet and retrieve it */
@@ -343,7 +343,7 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Iterate over columns and add them */
         for (int i = 0; i < firstRow.getPhysicalNumberOfCells(); i++) {
 
-            Column column = new ExcelColumn(i, DataType.STRING);
+            ImportColumn column = new ImportColumnExcel(i, DataType.STRING);
             ImportWizardModelColumn wizardColumn = new ImportWizardModelColumn(column);
 
             wizardColumns.add(wizardColumn);
@@ -380,14 +380,14 @@ public class ImportWizardPageExcel extends WizardPage {
         for (ImportWizardModelColumn column : wizardColumns) {
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
-            tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(((ExcelColumn) column.getColumn()).getIndex()));
+            tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(((ImportColumnExcel) column.getColumn()).getIndex()));
 
             TableColumn tableColumn = tableViewerColumn.getColumn();
             tableColumn.setWidth(100);
 
             if (btnContainsHeader.getSelection()) {
                 tableColumn.setText(column.getColumn().getAliasName());
-                tableColumn.setToolTipText("Column #" + ((ExcelColumn) column.getColumn()).getIndex());
+                tableColumn.setToolTipText("Column #" + ((ImportColumnExcel) column.getColumn()).getIndex());
             }
             ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
         }

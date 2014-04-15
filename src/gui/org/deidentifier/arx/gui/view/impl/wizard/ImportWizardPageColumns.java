@@ -26,7 +26,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.ImportColumn;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -219,7 +219,7 @@ public class ImportWizardPageColumns extends WizardPage {
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             /**
-             * Gets name of cells from {@link Column#getAliasName()}
+             * Gets name of cells from {@link ImportColumn#getAliasName()}
              * 
              * This also makes sure that all column names are unique using
              * {@link #uniqueColumnNames()}. In case there are duplicates it
@@ -256,7 +256,7 @@ public class ImportWizardPageColumns extends WizardPage {
             /**
              * Gets string representation for given datatype of column
              * 
-             * Internally it makes use of {@link Column#getDataType()}.
+             * Internally it makes use of {@link ImportColumn#getDataType()}.
              */
             @Override
             public String getText(Object element) {
@@ -517,7 +517,7 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Retrieves name of column ({@link Column#getAliasName()})
+         * Retrieves name of column ({@link ImportColumn#getAliasName()})
          */
         @Override
         protected Object getValue(Object arg0) {
@@ -525,7 +525,7 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Sets name for given column ({@link Column#setAliasName(String)})
+         * Sets name for given column ({@link ImportColumn#setAliasName(String)})
          */
         @Override
         protected void setValue(Object element, Object value) {
@@ -637,7 +637,7 @@ public class ImportWizardPageColumns extends WizardPage {
 
             String label = choices[(int) value];
             ImportWizardModelColumn wizardColumn = (ImportWizardModelColumn) element;
-            Column column = wizardColumn.getColumn();
+            ImportColumn column = wizardColumn.getColumn();
             List<String> previewData;
 
             try {

@@ -20,7 +20,8 @@
  * This package implements data management, i.e., encoding and representing input data, output data and generalization
  * hierarchies
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.framework.data;
 

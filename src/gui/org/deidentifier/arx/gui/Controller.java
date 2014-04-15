@@ -79,8 +79,8 @@ import org.deidentifier.arx.gui.worker.WorkerLoad;
 import org.deidentifier.arx.gui.worker.WorkerSave;
 import org.deidentifier.arx.gui.worker.WorkerTransform;
 import org.deidentifier.arx.io.CSVDataOutput;
-import org.deidentifier.arx.io.datasource.CSVFileConfiguration;
-import org.deidentifier.arx.io.datasource.Configuration;
+import org.deidentifier.arx.io.ImportConfiguration;
+import org.deidentifier.arx.io.ImportConfigurationCSV;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
@@ -591,9 +591,9 @@ public class Controller implements IView {
             return;
         }
 
-        ARXWizard<Configuration> wizard = new ImportWizard(this, model);
+        ARXWizard<ImportConfiguration> wizard = new ImportWizard(this, model);
         if (wizard.open(main.getShell())) {
-            Configuration config = wizard.getResult();
+            ImportConfiguration config = wizard.getResult();
             if (config != null) {
                 actionImportData(config);
             }
@@ -943,12 +943,12 @@ public class Controller implements IView {
     public void actionSubsetFile() {
 
         // Open wizard
-        ARXWizard<Configuration> wizard = new ImportWizard(this, model);
+        ARXWizard<ImportConfiguration> wizard = new ImportWizard(this, model);
         if (!wizard.open(main.getShell())) {
             return;
         }
         
-        Configuration config = wizard.getResult();
+        ImportConfiguration config = wizard.getResult();
         if (config == null) {
             return;
         }
@@ -1104,7 +1104,7 @@ public class Controller implements IView {
      * @param path
      * @param separator
      */
-    private void actionImportData(Configuration config) {
+    private void actionImportData(ImportConfiguration config) {
 
         final WorkerImport worker = new WorkerImport(config);
         main.showProgressDialog(Resources.getMessage("Controller.74"), worker); //$NON-NLS-1$
@@ -1148,8 +1148,8 @@ public class Controller implements IView {
         model.getInputConfig().setInput(data);
         
         // TODO: Fix this
-        if (config instanceof CSVFileConfiguration){
-            model.setInputBytes(new File(((CSVFileConfiguration)config).getFileLocation()).length());
+        if (config instanceof ImportConfigurationCSV){
+            model.setInputBytes(new File(((ImportConfigurationCSV)config).getFileLocation()).length());
         } else {
             model.setInputBytes(0);
         }

@@ -29,7 +29,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements a generic interface for node checkers
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public interface INodeChecker {
 

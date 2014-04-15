@@ -23,8 +23,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.datasource.column.IndexColumn;
+import org.deidentifier.arx.io.ImportColumn;
+import org.deidentifier.arx.io.ImportColumnIndexed;
 
 /**
  * Stores all of the data gathered by the wizard and offers means to access it
@@ -266,7 +266,7 @@ public class ImportWizardModel {
 
         if (index != -1) {
             for (String[] s : getPreviewData()) {
-                result.add(s[((IndexColumn) column.getColumn()).getIndex()]);
+                result.add(s[((ImportColumnIndexed) column.getColumn()).getIndex()]);
             }
         } else {
             throw new IllegalArgumentException("Column not part of preview data");
@@ -282,11 +282,11 @@ public class ImportWizardModel {
      * that are enabled {@link ImportWizardModelColumn#isEnabled()}. Columns
      * that have been disabled by the user will not be returned.
      * 
-     * @return {@link Column} List of enabled columns
+     * @return {@link ImportColumn} List of enabled columns
      */
-    public List<Column> getEnabledColumns() {
+    public List<ImportColumn> getEnabledColumns() {
 
-        List<Column> result = new ArrayList<Column>();
+        List<ImportColumn> result = new ArrayList<ImportColumn>();
         for (ImportWizardModelColumn column : wizardColumns) {
             if (column.isEnabled()) {
                 result.add(column.getColumn());

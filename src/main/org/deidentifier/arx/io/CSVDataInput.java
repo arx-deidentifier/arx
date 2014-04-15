@@ -28,7 +28,8 @@ import java.io.InputStreamReader;
 /**
  * This class implements a reader for CSV encoded information
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser 
+ * @author Florian Kohlmayer
  */
 public class CSVDataInput extends CSVAbstractInput {
 

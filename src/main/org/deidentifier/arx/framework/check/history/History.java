@@ -31,7 +31,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * The Class History.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class History {
 

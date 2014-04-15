@@ -33,7 +33,8 @@ import org.junit.Test;
 /**
  * A test case for illegal arguments
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class TestIllegalArguments extends AbstractTest {
 

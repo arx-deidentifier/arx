@@ -46,7 +46,8 @@ import org.junit.Test;
 /**
  * Test for data transformations
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class TestDataTransformations extends AbstractTest {
 

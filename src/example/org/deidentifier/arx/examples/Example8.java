@@ -37,7 +37,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to apply the t-closeness criterion
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example8 extends Example {
 

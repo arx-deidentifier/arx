@@ -38,7 +38,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * information loss induced by suppressing the transformed representation of the
  * outliers.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricNMEntropy extends MetricEntropy {
 

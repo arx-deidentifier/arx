@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
 /**
  * A hash groupify operator.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class IntArrayDictionary {
 

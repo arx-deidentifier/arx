@@ -58,7 +58,8 @@ import org.eclipse.swt.widgets.Text;
  * This class implements an editor for generalization hierarchies. It is partly
  * based upon code implemented by Ledian Xhani and Ljubomir Dshevlekov.
  * 
- * @author Prasser, Kohlmayer, Xhani, Dshevlekov
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer, Xhani, Dshevlekov
  * 
  */
 public class ViewHierarchy implements IView {

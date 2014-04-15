@@ -21,7 +21,8 @@ package org.deidentifier.arx;
 /**
  * This class implements a listener for the ARX framework
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public interface ARXListener {
 

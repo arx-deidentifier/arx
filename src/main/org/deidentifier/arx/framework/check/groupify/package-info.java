@@ -19,7 +19,8 @@
 /**
  * This package implements different hash-groupify operators.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.framework.check.groupify;
 

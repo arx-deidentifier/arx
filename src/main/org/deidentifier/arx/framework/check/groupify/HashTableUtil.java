@@ -21,7 +21,8 @@ package org.deidentifier.arx.framework.check.groupify;
 /**
  * This class implements several helper methods for hash tables
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  * 
  */
 public class HashTableUtil {

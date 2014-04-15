@@ -23,7 +23,8 @@ import java.io.Serializable;
 /**
  * This class implements an abstract base class for information loss
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class InformationLoss implements Comparable<InformationLoss>, Serializable {
 

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.io.datasource.column.JdbcColumn;
+import org.deidentifier.arx.io.ImportColumnJDBC;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -221,7 +221,7 @@ public class ImportWizardPageTable extends WizardPage {
                                                                null);
 
             while (rs.next()) {
-                JdbcColumn column = new JdbcColumn(i++,
+                ImportColumnJDBC column = new ImportColumnJDBC(i++,
                                                    rs.getString("COLUMN_NAME"),
                                                    DataType.STRING);
                 columns.add(new ImportWizardModelColumn(column));

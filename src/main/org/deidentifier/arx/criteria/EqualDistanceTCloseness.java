@@ -23,7 +23,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * The t-closeness criterion with equal-distance EMD
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class EqualDistanceTCloseness extends TCloseness {
 

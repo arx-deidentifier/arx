@@ -2,7 +2,8 @@ package org.deidentifier.arx.criteria;
 
 /**
  * A privacy criterion that is implicitly bound to the quasi-identifiers
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class ImplicitPrivacyCriterion extends PrivacyCriterion {
 

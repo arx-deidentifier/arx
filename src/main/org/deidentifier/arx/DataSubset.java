@@ -10,7 +10,8 @@ import java.util.Set;
 
 /**
  * This class represents a data subset as required for d-presence
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  *
  */
 public class DataSubset implements Serializable {
@@ -19,7 +20,8 @@ public class DataSubset implements Serializable {
 
     /**
      * Wrapper around a string array
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      *
      */
     private static class Entry implements Serializable {

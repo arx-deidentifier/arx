@@ -10,7 +10,8 @@ import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 
 /**
  * This implementation of a data handle projects a given data handle onto a given research subset.
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataHandleSubset extends DataHandle {
     

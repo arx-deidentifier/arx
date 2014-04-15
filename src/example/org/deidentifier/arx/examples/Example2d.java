@@ -29,8 +29,8 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.io.datasource.JdbcConfiguration;
-import org.deidentifier.arx.io.datasource.column.JdbcColumn;
+import org.deidentifier.arx.io.ImportColumnJDBC;
+import org.deidentifier.arx.io.ImportConfigurationJDBC;
 
 /**
  * This class demonstrates how to use the API to import data from a JDBC
@@ -58,13 +58,13 @@ public class Example2d extends Example {
 
             // Configuration for JDBC source
             // Table: test
-            JdbcConfiguration importConfig = new JdbcConfiguration(connection, "test");
+            ImportConfigurationJDBC importConfig = new ImportConfigurationJDBC(connection, "test");
 
             // Add columns (index, name and datatype) to configuration
             // The name is optional and can be detected/assigned automatically
-            importConfig.addColumn(new JdbcColumn(0, "Alter", DataType.INTEGER));
-            importConfig.addColumn(new JdbcColumn(1, DataType.STRING));
-            importConfig.addColumn(new JdbcColumn(2, DataType.STRING));
+            importConfig.addColumn(new ImportColumnJDBC(0, "Alter", DataType.INTEGER));
+            importConfig.addColumn(new ImportColumnJDBC(1, DataType.STRING));
+            importConfig.addColumn(new ImportColumnJDBC(2, DataType.STRING));
 
             // Create data object
             final Data data = Data.create(importConfig);

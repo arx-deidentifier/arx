@@ -18,12 +18,12 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
-import org.deidentifier.arx.io.datasource.column.Column;
+import org.deidentifier.arx.io.ImportColumn;
 
 /**
- * Wrapper for {@link Column} used in the wizard context
+ * Wrapper for {@link ImportColumn} used in the wizard context
  * 
- * This is a wrapper for {@link Column}. It essentially adds an property
+ * This is a wrapper for {@link ImportColumn}. It essentially adds an property
  * indicating whether a column is enabled {@link #enabled}.
  * 
  * @author Karol Babioch
@@ -42,7 +42,7 @@ public class ImportWizardModelColumn {
     /**
      * The actual column this wraps around
      */
-    private Column  column;
+    private ImportColumn  column;
 
     /**
      * Creates a new instance for the given column
@@ -52,7 +52,7 @@ public class ImportWizardModelColumn {
      * @param column
      *            Column that should be wrapped around
      */
-    public ImportWizardModelColumn(Column column) {
+    public ImportWizardModelColumn(ImportColumn column) {
 
         this(column, true);
     }
@@ -63,7 +63,7 @@ public class ImportWizardModelColumn {
      * @param column
      *            Column that should be wrapped around
      */
-    public ImportWizardModelColumn(Column column, boolean enabled) {
+    public ImportWizardModelColumn(ImportColumn column, boolean enabled) {
 
         setEnabled(enabled);
         setColumn(column);
@@ -89,7 +89,7 @@ public class ImportWizardModelColumn {
     /**
      * @return {@link #column}
      */
-    public Column getColumn() {
+    public ImportColumn getColumn() {
 
         return column;
     }
@@ -98,7 +98,7 @@ public class ImportWizardModelColumn {
      * @param enabled
      *            {@link #column}
      */
-    public void setColumn(Column column) {
+    public void setColumn(ImportColumn column) {
 
         this.column = column;
     }

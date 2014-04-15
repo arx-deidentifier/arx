@@ -25,7 +25,8 @@ import java.util.Arrays;
  * array, an associated dictionary, a header and a mapping to the columns in the
  * input data set
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Data {
 

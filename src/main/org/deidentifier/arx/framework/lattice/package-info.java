@@ -19,7 +19,8 @@
 /**
  * This package provides the internal generalization lattice
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.framework.lattice;
 

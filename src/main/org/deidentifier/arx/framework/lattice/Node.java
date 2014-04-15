@@ -25,7 +25,8 @@ import org.deidentifier.arx.metric.InformationLoss;
 /**
  * The Class Node.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Node {
 

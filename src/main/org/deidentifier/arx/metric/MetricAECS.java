@@ -33,7 +33,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * We dont normailze the metric as proposed in the original publication [1], as this would only be possible for k-anonymity.
  * [1] LeFevre K, DeWitt DJ, Ramakrishnan R. Mondrian Multidimensional K-Anonymity. IEEE; 2006:25-25.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricAECS extends MetricDefault {
 

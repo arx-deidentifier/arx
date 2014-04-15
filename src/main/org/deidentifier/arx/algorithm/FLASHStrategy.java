@@ -27,7 +27,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class implements the general strategy of the ARX algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHStrategy implements Comparator<Node> {
 

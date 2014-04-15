@@ -33,7 +33,8 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 /**
  * Represents an attribute type
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class AttributeType implements Serializable, Cloneable {
     
@@ -42,7 +43,8 @@ public class AttributeType implements Serializable, Cloneable {
     /**
      * This class implements a generalization hierarchy
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public static abstract class Hierarchy extends AttributeType implements Serializable {
 
@@ -51,7 +53,8 @@ public class AttributeType implements Serializable, Cloneable {
 		/**
          * The implementation for arrays
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         static class ArrayHierarchy extends Hierarchy {
 
@@ -78,7 +81,8 @@ public class AttributeType implements Serializable, Cloneable {
          * The default implementation of a generalization hierarchy. It allows
          * the user to programmatically define its content.
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         public static class DefaultHierarchy extends Hierarchy {
 
@@ -133,7 +137,8 @@ public class AttributeType implements Serializable, Cloneable {
         /**
          * The implementation for iterators
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         static class IterableHierarchy extends Hierarchy {
 

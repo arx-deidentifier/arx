@@ -2,7 +2,8 @@ package org.deidentifier.arx.criteria;
 
 /**
  * A privacy criterion that is explicitly bound to a sensitive attribute
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
 

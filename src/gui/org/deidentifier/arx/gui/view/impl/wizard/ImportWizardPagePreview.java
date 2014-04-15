@@ -20,8 +20,8 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
-import org.deidentifier.arx.io.datasource.column.Column;
-import org.deidentifier.arx.io.datasource.column.IIndexedColumn;
+import org.deidentifier.arx.io.IImportColumnIndexed;
+import org.deidentifier.arx.io.ImportColumn;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -125,11 +125,11 @@ public class ImportWizardPagePreview extends WizardPage {
             }
 
             /* Add enabled columns with appropriate label providers */
-            for (Column column : wizardImport.getData().getEnabledColumns()) {
+            for (ImportColumn column : wizardImport.getData().getEnabledColumns()) {
 
                 TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer,
                                                                             SWT.NONE);
-                tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(((IIndexedColumn) column).getIndex()));
+                tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(((IImportColumnIndexed) column).getIndex()));
 
                 TableColumn tblclmnColumn = tableViewerColumn.getColumn();
                 tblclmnColumn.setToolTipText("Datatype: " +

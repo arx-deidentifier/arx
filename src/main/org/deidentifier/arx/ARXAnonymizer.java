@@ -48,7 +48,8 @@ import org.deidentifier.arx.metric.Metric;
  * This class offers several methods to define parameters and execute the ARX
  * algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class ARXAnonymizer {
 
@@ -92,7 +93,8 @@ public class ARXAnonymizer {
     /**
      * Temporary result of the ARX algorithm.
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     class Result {
 

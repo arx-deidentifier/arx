@@ -29,7 +29,8 @@ import org.deidentifier.arx.framework.data.Dictionary;
 /**
  * An implementation of the DataHandle interface for input data
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataHandleInput extends DataHandle {
 

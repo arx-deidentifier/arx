@@ -31,7 +31,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
  * This class implements an example on how to use the API by providing CSV files
  * as input
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example2 extends Example {
 

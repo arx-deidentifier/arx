@@ -21,7 +21,8 @@
  * k-anonymity and d-presence are implicit privacy criteria, i.e., they are implicitly bound to the
  * quasi-identifiers, while the other criteria are explicitly bound to a specific sensitive attribute.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.criteria;
 

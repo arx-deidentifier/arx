@@ -27,7 +27,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides an implementation of the Precision metric.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricPrecision extends MetricDefault {
 

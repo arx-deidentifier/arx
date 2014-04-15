@@ -29,7 +29,8 @@ import org.deidentifier.arx.framework.data.Data;
  * A hash groupify operator. It implements a hash table with chaining and keeps
  * track of additional properties per equivalence class
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class HashGroupify implements IHashGroupify {
 

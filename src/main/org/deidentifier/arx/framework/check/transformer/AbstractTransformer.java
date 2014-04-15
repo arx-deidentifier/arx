@@ -30,7 +30,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 /**
  * This class implements an abstract base class for all transformers.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 

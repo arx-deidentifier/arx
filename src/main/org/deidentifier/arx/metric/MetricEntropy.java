@@ -37,7 +37,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * generalization levels. It further reduces the overhead induced by subsequent
  * calls by caching the results for previous columns and generalization levels.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricEntropy extends MetricDefault {
 

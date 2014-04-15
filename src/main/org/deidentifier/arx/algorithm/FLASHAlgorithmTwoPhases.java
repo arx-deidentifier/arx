@@ -28,7 +28,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides a reference implementation of the Two-Phase FLASH algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
 
