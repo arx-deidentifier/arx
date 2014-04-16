@@ -1207,6 +1207,14 @@ public abstract class DataType<T> implements Serializable {
     public abstract DataTypeDescription<T> getDescription();
 
     /**
+     * Compare
+     * @param t1
+     * @param t2
+     * @return
+     */
+    public abstract int compare(T t1, T t2);
+
+    /**
      * Checks whether the given string conforms to the data type's format
      * @param s
      * @return
