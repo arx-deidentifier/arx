@@ -53,6 +53,8 @@ public abstract class Popup {
      * @param parent
      */
     public Popup(final Shell parent) {
+        
+        if (isNativeImplementationSupported()) return;
 
         // Listen for mouse down events in SWT components
         parent.getDisplay().addFilter(SWT.MouseDown, new Listener() {
@@ -139,6 +141,18 @@ public abstract class Popup {
                 }
             });
         }
+    }
+    
+    /**
+     * Is the native implementation supported on this platform
+     * @return
+     */
+    protected boolean isNativeImplementationSupported(){
+
+        String osName = System.getProperty("os.name");
+        if (osName.contains("OS X")) return true;
+        else if (osName.contains("Windows")) return true;
+        else return false;
     }
     
     /**

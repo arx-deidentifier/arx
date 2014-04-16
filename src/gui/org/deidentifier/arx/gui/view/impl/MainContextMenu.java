@@ -94,13 +94,24 @@ public class MainContextMenu extends Popup{
      * @param listener
      */
     public void show(final Menu menu, final int x, final int y) {
-        if (super.isVisible()) return;
-        this.menu = menu;
-        this.show(x, y);
+        
+        if (isNativeImplementationSupported()){
+            menu.setLocation(x, y);
+            menu.setVisible(true);
+            this.menu = menu;
+        } else {
+            if (super.isVisible()) return;
+            this.menu = menu;
+            this.show(x, y);
+        }
     }
     
     @Override
     public boolean isVisible() {
-        return super.isVisible();
+        if (isNativeImplementationSupported()) {
+            if (this.menu == null) return false;
+            else return this.menu.isVisible();
+        }
+        else return super.isVisible();
     }
 }
