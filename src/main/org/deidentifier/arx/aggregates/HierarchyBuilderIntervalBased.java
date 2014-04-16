@@ -679,10 +679,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 }
             }
         }
+        
+        if (interval == null && intervals.size()==1){
+            interval = intervals.get(0);
+        }
 
         // Check
         if (interval == null) { 
-            throw new IllegalStateException("No interval found for: " + type.format(tValue) +"/"+ type.format(value)); 
+            throw new IllegalStateException("Internal error. Sorry for that!"); 
         }
         
         
