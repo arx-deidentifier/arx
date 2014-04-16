@@ -95,7 +95,7 @@ public class MainContextMenu extends Popup{
      */
     public void show(final Menu menu, final int x, final int y) {
         
-        if (isNativeImplementationSupported()){
+        if (isDisablePopup()){
             menu.setLocation(x, y);
             menu.setVisible(true);
             this.menu = menu;
@@ -108,7 +108,7 @@ public class MainContextMenu extends Popup{
     
     @Override
     public boolean isVisible() {
-        if (isNativeImplementationSupported()) {
+        if (isDisablePopup()) {
             return false;
         }
         else return super.isVisible();

@@ -28,25 +28,25 @@ import javax.swing.Timer;
 import org.deidentifier.arx.gui.view.impl.common.Popup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolTip;
 
 /**
- * This class implements a global tooltip
+ * This class implements a global tool tip
  * @author Fabian Prasser
  */
 public class MainToolTip extends Popup{
 
     private static final int TIME   = 1000;
+
     private int              oldX;
     private int              oldY;
     private long             oldTime;
+
     private String           string = null;
     private MainContextMenu  popup  = null;
+    
     private Text             label;
-    private ToolTip          tooltip;    
 
     /**
      * Creates a new instance
@@ -54,36 +54,17 @@ public class MainToolTip extends Popup{
      */
     public MainToolTip(final Shell parent) {      
         super(parent);
-
-        if (isNativeImplementationSupported()) {
-            tooltip = new ToolTip(parent, SWT.ICON_INFORMATION);
-            tooltip.setAutoHide(true);
-        } 
         
-        new Timer(WAIT, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                synchronized (this) {
-                    if (string != null && !isVisible() && !popup.isVisible()) {
-                        Point p = MouseInfo.getPointerInfo().getLocation();
-                        if (p.x != oldX || p.y != oldY) {
-                            oldX = p.x;
-                            oldY = p.y;
-                            oldTime = System.currentTimeMillis();
-                        } else if (System.currentTimeMillis() - oldTime > TIME) {
-                            if (isNativeImplementationSupported()){
-                                Display.getDefault().asyncExec(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        tooltip.setMessage(string);
-                                        tooltip.setLocation(oldX, oldY);
-                                        tooltip.setVisible(true);
-                                    }
-                                });
-                            } else {
-                                show(oldX, oldY);
-                            }
-                        }
+        if (!isDisablePopup()) new Timer(WAIT, new ActionListener(){
+            @Override public void actionPerformed(ActionEvent e) {
+                if (string != null && !isVisible() && !popup.isVisible()){
+                    Point p = MouseInfo.getPointerInfo().getLocation();
+                    if (p.x != oldX || p.y != oldY) {
+                        oldX = p.x;
+                        oldY = p.y;
+                        oldTime = System.currentTimeMillis();
+                    } else if (System.currentTimeMillis() - oldTime > TIME){
+                         show(oldX, oldY);
                     }
                 }
             }
@@ -95,6 +76,7 @@ public class MainToolTip extends Popup{
      * @param popup
      */
     public void setPopUp(MainContextMenu popup){
+        if (isDisablePopup()) return; 
         this.popup = popup;
     }
 
@@ -123,46 +105,29 @@ public class MainToolTip extends Popup{
      * @param listener
      */
     public void show(final String text) {
-        
-        synchronized (this) {
-            if (isNativeImplementationSupported()) {
-                this.string = text;
-            } else {
-                if (super.isVisible()) return;
-                this.string = text;
-            }
-        }
+        if (isDisablePopup()) return;
+        if (super.isVisible()) return;
+        this.string = text;
     }
     
     /**
      * Hides the tooltip
      */
     public void unshow(){
-        synchronized (this) {
-            if (isNativeImplementationSupported()) {
-               this.string = null;
-            } else {
-                if (super.isVisible()) return;
-                this.string = null;
-            }
-        }
+        if (isDisablePopup()) return;
+        if (super.isVisible()) return;
+        this.string = null;
     }
     
     @Override
     public boolean isVisible() {
-        if (isNativeImplementationSupported()) {
-            return false;
-        } else {
-            return super.isVisible();
-        }
+        if (isDisablePopup()) return false;
+        return super.isVisible();
     }
     
     @Override
     public void hide() {
-        if (isNativeImplementationSupported()) {
-            tooltip.setVisible(false);
-        } else {
-            super.hide();
-        }
+        if (isDisablePopup()) return;
+        super.hide();
     }
 }

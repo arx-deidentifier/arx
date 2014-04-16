@@ -42,12 +42,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class Popup {
 
-    protected static final long                THRESHOLD       = 20;
-    protected static final int                 WAIT            = 100;
-    private Shell                              shell           = null;
-    private Rectangle                          bounds          = null;
-    private org.eclipse.swt.graphics.Rectangle shellBounds     = null;
-    private boolean                            nativeSupported = getNativeImplementationSupported();
+    protected static final long                THRESHOLD    = 20;
+    protected static final int                 WAIT         = 100;
+    private Shell                              shell        = null;
+    private Rectangle                          bounds       = null;
+    private org.eclipse.swt.graphics.Rectangle shellBounds  = null;
+    private boolean                            disablePopup = getDisablePopup();
 
     /**
      * Creates a new instance
@@ -55,7 +55,7 @@ public abstract class Popup {
      */
     public Popup(final Shell parent) {
         
-        if (isNativeImplementationSupported()) return;
+        if (isDisablePopup()) return;
 
         // Listen for mouse down events in SWT components
         parent.getDisplay().addFilter(SWT.MouseDown, new Listener() {
@@ -148,19 +148,18 @@ public abstract class Popup {
      * Is the native implementation supported on this platform
      * @return
      */
-    protected boolean isNativeImplementationSupported(){
-        return nativeSupported;
+    protected boolean isDisablePopup(){
+        return disablePopup;
     }
     
     /**
      * Is the native implementation supported on this platform
      * @return
      */
-    private boolean getNativeImplementationSupported(){
+    private boolean getDisablePopup(){
 
         String osName = System.getProperty("os.name");
         if (osName.contains("OS X")) return true;
-        else if (osName.contains("Windows")) return true;
         else return false;
     }
     
