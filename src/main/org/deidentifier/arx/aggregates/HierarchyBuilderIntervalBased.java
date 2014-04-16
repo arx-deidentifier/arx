@@ -790,7 +790,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             lowerSnap = new Interval<T>(this, getDataType(), lowerSnap.min, upperSnap.max, lowerSnap.function);
             upperSnap = lowerSnap;
         }
-
+        
         // Create first column
         AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
@@ -810,10 +810,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             }
             
             if (interval.min != null && interval.max != null){
-                if (type.compare(interval.min, tempLower.repeatBound) < 0){
+                if (type.compare(interval.min, lowerSnap.max) < 0){
                     interval = lowerSnap;
-                }
-                if (type.compare(interval.max, tempUpper.repeatBound) >= 0){
+                } else if (type.compare(interval.max, upperSnap.min) >= 0){
                     interval = upperSnap;
                 }
             }
