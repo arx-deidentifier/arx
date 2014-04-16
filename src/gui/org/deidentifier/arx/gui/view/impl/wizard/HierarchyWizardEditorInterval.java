@@ -50,6 +50,8 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
     private final DataTypeWithRatioScale<T>        type;
     /** Var */
     private final HierarchyWizardEditorFunction<T> editorFunction;
+    /** Var */
+    private final Composite                        composite;
 
     /**
      * Creates a new instance
@@ -63,7 +65,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
         this.model.register(this);
         this.type = (DataTypeWithRatioScale<T>)model.getDataType();
 
-        final Composite composite = new Composite(parent, SWT.NONE);
+        composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         composite.setLayout(SWTUtil.createGridLayout(2, true));
         this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
@@ -157,11 +159,13 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
             } else {
                 SWTUtil.disable(editorMax.getControl());
             }
+            SWTUtil.enable(composite);
         } else {
             this.interval = null;
             this.editorFunction.setFunction(null);
             SWTUtil.disable(editorMin.getControl());
             SWTUtil.disable(editorMax.getControl());
+            SWTUtil.disable(composite);
         }
     }
 

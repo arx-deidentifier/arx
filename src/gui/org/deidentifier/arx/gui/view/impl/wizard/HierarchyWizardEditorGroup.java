@@ -45,6 +45,8 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
     private final HierarchyWizardModelGrouping<T>  model;
     /** Var */
     private final HierarchyWizardEditorFunction<T> editorFunction;
+    /** Var */
+    private final Composite                        composite;
 
     /**
      * Creates a new instance
@@ -56,7 +58,7 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         this.model = model;
         this.model.register(this);
         
-        final Composite composite = new Composite(parent, SWT.NONE);
+        composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(2, true));    
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.editorFunction = new HierarchyWizardEditorFunction<T>(this, model, composite, false);
@@ -111,11 +113,13 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
             this.editorFunction.setFunction(group.function);
             this.editorSize.update();
             SWTUtil.enable(editorSize.getControl());
+            SWTUtil.enable(composite);
         } else {
             this.group = null;
             this.editorFunction.setFunction(null);
             this.editorSize.update();
             SWTUtil.disable(editorSize.getControl());
+            SWTUtil.disable(composite);
         }
     }
 
