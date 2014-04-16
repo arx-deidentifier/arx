@@ -154,4 +154,12 @@ public class HierarchyWizardEditorLayout<T> {
             return cardinality;
         }
     }
+
+    /**
+     * Sets the pretty mode
+     * @param pretty
+     */
+    public void setPretty(boolean pretty) {
+        this.pretty = pretty;
+    }
 }

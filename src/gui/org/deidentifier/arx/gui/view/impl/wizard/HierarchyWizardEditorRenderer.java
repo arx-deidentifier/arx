@@ -245,61 +245,35 @@ public class HierarchyWizardEditorRenderer<T> {
     /**
      * Updates the drawing context
      */
-    @SuppressWarnings("unchecked")
     public void update(){
         
         // Init
-        boolean showIntervals = model.isShowIntervals();
-        List<HierarchyWizardGroupingInterval<T>> modelIntervals = model.getIntervals();
-        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getModelGroups();
-        
-        // Prepare
-        if (showIntervals) intervals.clear();
-        groups.clear();
-        
-        // Layout
         int[] factors = layout.layout();
+        List<HierarchyWizardGroupingInterval<T>> modelIntervals = updateIntervals(factors);
+        updateGroups(factors, modelIntervals);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateGroups(int[] factors, List<HierarchyWizardGroupingInterval<T>> modelIntervals) {
+        
+        // Init
+        List<List<HierarchyWizardGroupingGroup<T>>> modelGroups = model.getModelGroups();
+        boolean showIntervals = model.isShowIntervals();
         T width = null;
         DataTypeWithRatioScale<T> dtype = null;
         if (showIntervals) {
             dtype = (DataTypeWithRatioScale<T>)model.getDataType();
             width = dtype.subtract(modelIntervals.get(modelIntervals.size()-1).max, modelIntervals.get(0).min);
         }
-       
-        // Create intervals
-        if (showIntervals) {
-            for (int i=0; i < factors[0]; i++) {
-                HierarchyWizardGroupingInterval<T> interval = modelIntervals.get(i % modelIntervals.size());
-                RenderedInterval<T> element = new RenderedInterval<T>();
-                if (i<modelIntervals.size()) {
-                    element.offset = null;
-                } else {
-                    int factor = i / modelIntervals.size();
-                    element.offset = dtype.multiply(width, factor);
-                }
-                element.depth = 0;
-                element.enabled = i < modelIntervals.size();
-                T min = interval.min;
-                T max = interval.max;
-                if (element.offset != null){
-                    min = dtype.add(element.offset, min);
-                    max = dtype.add(element.offset, max);
-                } 
-                element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"[";
-                String[] values = {dtype.format(min), dtype.format(max)};
-                element.label = interval.function.aggregate(values);
-                element.interval = interval;
-                intervals.add(element);
-            }
-        }
         
         // Create groups
+        groups.clear();
         int shift = showIntervals ? 1 : 0;
         for (int i=0; i<modelGroups.size(); i++){
             groups.add(new ArrayList<RenderedGroup<T>>());
             int offset = 0;
             
-            if (showIntervals && i>0) {
+            if (layout.isPretty() && showIntervals && i>0) {
                 width = dtype.subtract(groups.get(i-1).get(groups.get(i-1).size()-1).max, groups.get(i-1).get(0).min);
             }
             
@@ -364,6 +338,50 @@ public class HierarchyWizardEditorRenderer<T> {
                 
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<HierarchyWizardGroupingInterval<T>> updateIntervals(int[] factors) {
+
+        // Init
+        List<HierarchyWizardGroupingInterval<T>> modelIntervals = model.getIntervals();
+        boolean showIntervals = model.isShowIntervals();
+        if (showIntervals) intervals.clear();
+        DataTypeWithRatioScale<T> dtype = null;
+        T width = null;
+        if (showIntervals) {
+            dtype = (DataTypeWithRatioScale<T>)model.getDataType();
+            width = dtype.subtract(modelIntervals.get(modelIntervals.size()-1).max, modelIntervals.get(0).min);
+        }
+       
+        // Create intervals
+        if (showIntervals) {
+            for (int i=0; i < factors[0]; i++) {
+                HierarchyWizardGroupingInterval<T> interval = modelIntervals.get(i % modelIntervals.size());
+                RenderedInterval<T> element = new RenderedInterval<T>();
+                if (i<modelIntervals.size()) {
+                    element.offset = null;
+                } else {
+                    int factor = i / modelIntervals.size();
+                    element.offset = dtype.multiply(width, factor);
+                }
+                element.depth = 0;
+                element.enabled = i < modelIntervals.size();
+                T min = interval.min;
+                T max = interval.max;
+                if (element.offset != null){
+                    min = dtype.add(element.offset, min);
+                    max = dtype.add(element.offset, max);
+                } 
+                element.bounds = "["+dtype.format(min)+", "+dtype.format(max)+"[";
+                String[] values = {dtype.format(min), dtype.format(max)};
+                element.label = interval.function.aggregate(values);
+                element.interval = interval;
+                intervals.add(element);
+            }
+        }
+     
+        return modelIntervals;
     }
 
     /**
