@@ -908,7 +908,7 @@ public class ViewLattice extends Panel implements IView {
                 model.setSelectedNode(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));
                 repaint();
-                controller.getPopup().show(menu, x, y);
+                controller.getContextMenu().show(menu, x, y);
             }
         });
     }

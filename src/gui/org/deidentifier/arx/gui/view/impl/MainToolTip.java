@@ -28,6 +28,7 @@ import javax.swing.Timer;
 import org.deidentifier.arx.gui.view.impl.common.Popup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
@@ -62,18 +63,26 @@ public class MainToolTip extends Popup{
         new Timer(WAIT, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (string != null && !isVisible() && !popup.isVisible()) {
-                    Point p = MouseInfo.getPointerInfo().getLocation();
-                    if (p.x != oldX || p.y != oldY) {
-                        oldX = p.x;
-                        oldY = p.y;
-                        oldTime = System.currentTimeMillis();
-                    } else if (System.currentTimeMillis() - oldTime > TIME) {
-                        if (isNativeImplementationSupported()){
-                            tooltip.setLocation(oldX, oldY);
-                            tooltip.setVisible(true);
-                        } else {
-                            show(oldX, oldY);
+                synchronized (this) {
+                    if (string != null && !isVisible() && !popup.isVisible()) {
+                        Point p = MouseInfo.getPointerInfo().getLocation();
+                        if (p.x != oldX || p.y != oldY) {
+                            oldX = p.x;
+                            oldY = p.y;
+                            oldTime = System.currentTimeMillis();
+                        } else if (System.currentTimeMillis() - oldTime > TIME) {
+                            if (isNativeImplementationSupported()){
+                                Display.getDefault().asyncExec(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tooltip.setMessage(string);
+                                        tooltip.setLocation(oldX, oldY);
+                                        tooltip.setVisible(true);
+                                    }
+                                });
+                            } else {
+                                show(oldX, oldY);
+                            }
                         }
                     }
                 }
@@ -115,12 +124,13 @@ public class MainToolTip extends Popup{
      */
     public void show(final String text) {
         
-        if (isNativeImplementationSupported()) {
-            if (super.isVisible()) return;
-            this.string = text;
-        } else {
-            if (super.isVisible()) return;
-            this.string = text;
+        synchronized (this) {
+            if (isNativeImplementationSupported()) {
+                this.string = text;
+            } else {
+                if (super.isVisible()) return;
+                this.string = text;
+            }
         }
     }
     
@@ -128,19 +138,20 @@ public class MainToolTip extends Popup{
      * Hides the tooltip
      */
     public void unshow(){
-        if (isNativeImplementationSupported()) {
-            this.tooltip.setVisible(false);
-            this.string = null;
-        } else {
-            if (super.isVisible()) return;
-            this.string = null;
+        synchronized (this) {
+            if (isNativeImplementationSupported()) {
+               this.string = null;
+            } else {
+                if (super.isVisible()) return;
+                this.string = null;
+            }
         }
     }
     
     @Override
     public boolean isVisible() {
         if (isNativeImplementationSupported()) {
-            return tooltip.isVisible();
+            return false;
         } else {
             return super.isVisible();
         }

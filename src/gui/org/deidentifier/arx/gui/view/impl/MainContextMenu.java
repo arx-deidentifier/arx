@@ -109,8 +109,7 @@ public class MainContextMenu extends Popup{
     @Override
     public boolean isVisible() {
         if (isNativeImplementationSupported()) {
-            if (this.menu == null) return false;
-            else return this.menu.isVisible();
+            return false;
         }
         else return super.isVisible();
     }

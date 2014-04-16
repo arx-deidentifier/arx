@@ -1046,7 +1046,7 @@ public class Controller implements IView {
      * Returns the popup
      * @return
      */
-    public MainContextMenu getPopup() {
+    public MainContextMenu getContextMenu() {
         return main.getPopUp();
     }
 
