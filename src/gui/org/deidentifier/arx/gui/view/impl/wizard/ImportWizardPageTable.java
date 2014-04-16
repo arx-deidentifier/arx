@@ -29,10 +29,12 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.ImportColumnJDBC;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -94,6 +96,7 @@ public class ImportWizardPageTable extends WizardPage {
         tableViewer = new TableViewer(container, SWT.BORDER |
                                                  SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
+        ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
             /**
@@ -138,6 +141,34 @@ public class ImportWizardPageTable extends WizardPage {
         tblclmnColumnName.setWidth(300);
         tblclmnColumnName.setText("Name");
 
+        TableViewerColumn tableViewerColumnColumns = new TableViewerColumn(tableViewer,
+                                                                        SWT.NONE);
+        tableViewerColumnColumns.setLabelProvider(new ColumnLabelProvider() {
+
+            /**
+             * Returns number of columns for table
+             * 
+             * If the number of columns couldn't be determined, three question
+             * marks are returned.
+             */
+            @Override
+            public String getText(Object element) {
+
+                int columns = getNumberOfColumns((String) element);
+                if (columns != -1) {
+                    return "" + columns;
+                } else {
+                    return "???";
+                }
+            }
+
+        });
+
+        TableColumn tblclmnColumns = tableViewerColumnColumns.getColumn();
+        tblclmnColumns.setToolTipText("Number of columns for this table");
+        tblclmnColumns.setWidth(100);
+        tblclmnColumns.setText("# columns");
+
         TableViewerColumn tableViewerColumnRows = new TableViewerColumn(tableViewer,
                                                                         SWT.NONE);
         tableViewerColumnRows.setLabelProvider(new ColumnLabelProvider() {
@@ -151,11 +182,32 @@ public class ImportWizardPageTable extends WizardPage {
             @Override
             public String getText(Object element) {
 
-                int rows = getNumberOfRows((String) element);
+                long rows = getNumberOfRows((String) element);
                 if (rows != -1) {
-                    return " ~ " + rows;
+                    return " ~ " + humanReadableRowCount(rows);
                 } else {
                     return "???";
+                }
+            }
+
+            /**
+             * Returns the exact number of rows as tooltip
+             *
+             * This will return the exact number of rows for tables with a
+             * row count greater than thousand, as the column itself will
+             * only show a human readable string.
+             *
+             * @see #getText(Object)
+             * @see #getNumberOfRows(String)
+             */
+            @Override
+            public String getToolTipText(Object element) {
+
+                long rows = getNumberOfRows((String) element);
+                if (rows > 1000) {
+                    return "" + rows;
+                } else {
+                    return null;
                 }
             }
         });
@@ -235,7 +287,7 @@ public class ImportWizardPageTable extends WizardPage {
      * 
      * @return Number of rows for given table, -1 in case of error
      */
-    protected int getNumberOfRows(String table) {
+    protected long getNumberOfRows(String table) {
 
         try {
             Statement statement = wizardImport.getData()
@@ -245,13 +297,49 @@ public class ImportWizardPageTable extends WizardPage {
             ResultSet resultSet = statement.getResultSet();
 
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                return resultSet.getLong(1);
             }
 
         } catch (SQLException e) {
             /* Ignore silently*/
         }
-        return -1;
+        return -1L;
+    }
+
+    /**
+     * Gets the number of columns for given table
+     *
+     * This uses the JDBC connection
+     * {@link ImportWizardModel#getJdbcConnection()} to determine the number of
+     * columns for given table.
+     *
+     * @param table
+     *            Table number of rows should be returned for
+     *
+     * @return Number of rows for given table, -1 in case of error
+     */
+    protected int getNumberOfColumns(String table)
+    {
+
+        int i = 0;
+
+        try {
+
+            Connection connection = wizardImport.getData().getJdbcConnection();
+            ResultSet rs = connection.getMetaData().getColumns(null,
+                                                               null,
+                                                               table,
+                                                               null);
+            while (rs.next()) {
+                i++;
+            }
+
+        } catch (SQLException e) {
+            setErrorMessage("Couldn't determine number of columns");
+        }
+
+        return i;
+
     }
 
     /**
@@ -291,5 +379,29 @@ public class ImportWizardPageTable extends WizardPage {
 
         wizardImport.getData().setPreviewData(previewData);
 
+    }
+
+    /**
+     * Returns a human readable string representation of <code>rows</code>
+     *
+     * This converts rows into a human readable string, e.g. 1000000 gets
+     * converted to 1M.
+     *
+     * The code is based upon <a href="http://bit.ly/1m4UetX">this</a> snippet.
+     *
+     * @param rows The number of rows to be converted
+     *
+     * @return Human readable string representation of <code>rows</code>
+     */
+    private static String humanReadableRowCount(long rows) {
+
+        int unit = 1000;
+        if (rows < unit) {
+            return new Long(rows).toString();
+        } else {
+            int exp = (int) (Math.log(rows) / Math.log(unit));
+            char pre = "kMGTPE".charAt(exp - 1);
+            return String.format("%.1f%s", rows / Math.pow(unit, exp), pre);
+        }
     }
 }

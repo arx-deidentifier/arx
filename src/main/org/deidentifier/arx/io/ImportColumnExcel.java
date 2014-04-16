@@ -48,4 +48,23 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     public ImportColumnExcel(int index, String aliasName, DataType<?> datatype) {
         super(index, aliasName, datatype);
     }
+
+    /**
+     * Creates a new instance of this object with the given parameters
+     * @param name
+     * @param datatype
+     */
+    public ImportColumnExcel(String name, DataType<?> datatype) {
+        super(name, datatype);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters
+     * @param name
+     * @param alias
+     * @param datatype
+     */
+    public ImportColumnExcel(String name, String alias, DataType<?> datatype) {
+        super(name, alias, datatype);
+    }
 }

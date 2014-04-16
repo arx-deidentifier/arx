@@ -1,11 +1,11 @@
 --
--- Table structure
+-- Table
 --
 
 CREATE TABLE IF NOT EXISTS `test` (
-  `age` int(3) NOT NULL,
-  `gender` varchar(255) NOT NULL,
-  `zipcode` varchar(255) NOT NULL
+  `age` tinyint(3) unsigned NOT NULL,
+  `gender` enum('female','male') NOT NULL,
+  `zipcode` varchar(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -20,4 +20,3 @@ INSERT INTO `test` (`age`, `gender`, `zipcode`) VALUES
 (34, 'female', '81931'),
 (70, 'male', '81931'),
 (45, 'male', '81931');
-

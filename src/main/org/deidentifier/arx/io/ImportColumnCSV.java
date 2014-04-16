@@ -47,4 +47,23 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     public ImportColumnCSV(int index, String aliasName, DataType<?> datatype) {
         super(index, aliasName, datatype);
     }
+
+    /**
+     * Creates a new instance of this object with the given parameters
+     * @param name
+     * @param datatype
+     */
+    public ImportColumnCSV(String name, DataType<?> datatype) {
+        super(name, datatype);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters
+     * @param name
+     * @param alias
+     * @param datatype
+     */
+    public ImportColumnCSV(String name, String alias, DataType<?> datatype) {
+        super(name, alias, datatype);
+    }
 }

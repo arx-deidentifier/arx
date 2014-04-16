@@ -137,8 +137,7 @@ public class ImportWizardPageJDBC extends WizardPage {
              * Swaps the composites, resets it and triggers a relayout
              */
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
 
                 setMessage(null);
                 setErrorMessage(null);
@@ -146,7 +145,6 @@ public class ImportWizardPageJDBC extends WizardPage {
 
                 /* Display compositeLocal in case of SQLite */
                 if (comboType.getText().equals(SQLITE)) {
-
                     comboLocation.removeAll();
                     layout.topControl = compositeLocal;
 
@@ -168,9 +166,7 @@ public class ImportWizardPageJDBC extends WizardPage {
 
                 /* Trigger relayout */
                 compositeSwap.layout();
-
             }
-
         });
 
         /* Placeholder */
@@ -191,7 +187,6 @@ public class ImportWizardPageJDBC extends WizardPage {
 
         /* Mark page as incomplete by default */
         setPageComplete(false);
-
     }
 
     /**
@@ -220,8 +215,7 @@ public class ImportWizardPageJDBC extends WizardPage {
 
             /* Read tables from file */
             @Override
-            public void widgetSelected(SelectionEvent e)
-            {
+            public void widgetSelected(SelectionEvent e) {
                 setPageComplete(false);
                 setErrorMessage(null);
 
@@ -353,7 +347,6 @@ public class ImportWizardPageJDBC extends WizardPage {
         txtDatabase.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtDatabase.addFocusListener(connectionListener);
         txtDatabase.addTraverseListener(connectionListener);
-
     }
 
     /**

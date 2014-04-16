@@ -75,11 +75,22 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
         if (!(column instanceof ImportColumnCSV)) {
             throw new IllegalArgumentException("Column needs to be of type CSVColumn");
         }
+        
+        if (!((ImportColumnCSV) column).isIndexSpecified() && 
+            !this.getContainsHeader()){
+            final String ERROR = "Adressing columns by name is only possible if the source contains a header";
+            throw new IllegalArgumentException(ERROR);
+        }
 
         for (ImportColumn c : columns) {
-
-            if (((ImportColumnCSV) column).getIndex() == ((ImportColumnCSV) c).getIndex()) {
+            if (((ImportColumnCSV) column).isIndexSpecified() &&
+                ((ImportColumnCSV) column).getIndex() == ((ImportColumnCSV) c).getIndex()) {
                 throw new IllegalArgumentException("Column for this index already assigned");
+            }
+            
+            if (!((ImportColumnCSV) column).isIndexSpecified() &&
+                    ((ImportColumnCSV) column).getName().equals(((ImportColumnCSV) c).getName())) {
+                    throw new IllegalArgumentException("Column for this name already assigned");
             }
 
             if (column.getAliasName() != null && c.getAliasName() != null &&
@@ -113,5 +124,23 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     @Override
     public void setContainsHeader(boolean containsHeader) {
         this.containsHeader = containsHeader;
+    }
+
+    /**
+     * Sets the indexes based on the header
+     * @param row
+     */
+    public void prepare(String[] row) {
+
+        for (ImportColumn c : super.getColumns()) {
+            ImportColumnCSV column = (ImportColumnCSV) c;
+            if (!column.isIndexSpecified()) {
+                for (int i = 0; i < row.length; i++) {
+                    if (row[i].equals(column.getName())) {
+                        column.setIndex(i);
+                    }
+                }
+            }
+        }
     }
 }

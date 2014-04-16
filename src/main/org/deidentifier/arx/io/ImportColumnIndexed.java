@@ -40,6 +40,11 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     private int index;
 
     /**
+     * Column name
+     */
+    private String name;
+    
+    /**
      * Creates a new instance of this object with the given parameters
      * 
      * @param index
@@ -72,6 +77,24 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
         super(aliasName, datatype);
         setIndex(index);
     }
+    
+    /**
+     * Creates a new instance of this object with the given parameters
+     * @param name
+     * @param datatype
+     */
+    public ImportColumnIndexed(String name, DataType<?> datatype) {
+        this(name, null, datatype);
+    }
+
+    /**
+     * Creates a new instance of this object with the given parameters
+     */
+    public ImportColumnIndexed(String name, String aliasName, DataType<?> datatype) {
+        super(aliasName, datatype);
+        setIndex(Integer.MIN_VALUE);
+        setName(name);
+    }
 
     /**
      * @return {@link #index}
@@ -86,5 +109,29 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
      */
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    /**
+     * Gets the name
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * Returns whether an index was given
+     * @return
+     */
+    public boolean isIndexSpecified() {
+        return this.index != Integer.MIN_VALUE;
     }
 }

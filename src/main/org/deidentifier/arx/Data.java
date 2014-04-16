@@ -176,32 +176,6 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from a given import adapter
-     * 
-     * @param adapter An adapter
-     * @return A Data object
-     */
-    public static Data create(final ImportAdapter adapter) {
-
-        Data data = new IterableData(adapter);
-        
-        // TODO: This is ugly
-        Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
-        List<ImportColumn> columns = adapter.getConfig().getColumns();
-        for (int i=0; i<columns.size(); i++){
-            types.put(i, columns.get(i).getDataType());
-        }
-        DataHandle handle = data.getHandle();
-        for (int i=0; i<handle.getNumColumns(); i++) {
-            String attribute = handle.getAttributeName(i);
-            data.getDefinition().setDataType(attribute, types.get(i));
-        }
-
-        // Return
-        return data;
-    }
-
-    /**
      * Creates a new data object from an iterator over tuples
      * 
      * @param iterator
@@ -239,16 +213,17 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from an import Adapter
+     * Creates a new data object from the given data source specification
      *
-     * @param config The config that should be used to import data
+     * @param source The source that should be used to import data
      *
-     * @return Data object as described by ImportAdapter
+     * @return Data object as described by the data source
      *
      * @throws IOException
      */
-    public static Data create(final ImportConfiguration config) throws IOException {
+    public static Data create(final DataSource source) throws IOException {
 
+        final ImportConfiguration config = source.getConfiguration();
         final Data data = new IterableData(ImportAdapter.create(config));
 
         // TODO: This is ugly

@@ -28,7 +28,7 @@ import java.util.Arrays;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Data {
+public class Data implements Cloneable{
 
     /** The outliers mask */
     public static final int  OUTLIER_MASK        = 1 << 31;

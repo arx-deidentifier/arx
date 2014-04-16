@@ -106,10 +106,6 @@ public class ImportAdapterCSV extends ImportAdapter {
         this.config = config;
         this.bytesTotal = new File(config.getFileLocation()).length();
 
-        /* Preparation work */
-        this.indexes = getIndexesToImport();
-        this.dataTypes = getColumnDatatypes();
-
         /* Used to keep track of progress */
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
 
@@ -218,6 +214,11 @@ public class ImportAdapterCSV extends ImportAdapter {
      * the pattern "Column #x", where x is incremented for each column.
      */
     private String[] createHeader() {
+        
+        /* Preparation work */
+        if (config.getContainsHeader()) this.config.prepare(row);
+        this.indexes = getIndexesToImport();
+        this.dataTypes = getColumnDatatypes();
 
         /* Initialization */
         String[] header = new String[config.getColumns().size()];

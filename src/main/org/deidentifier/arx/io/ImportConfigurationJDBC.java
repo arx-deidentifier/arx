@@ -20,6 +20,7 @@
 package org.deidentifier.arx.io;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
@@ -58,6 +59,34 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      */
     public ImportConfigurationJDBC(Connection connection, String table) {
         setConnection(connection);
+        setTable(table);
+    }
+
+    /**
+     * Creates a new instance of this object
+     * 
+     * @param url
+     * @param user
+     * @param password
+     * @param table {@link #setTable(String)}
+     * @throws SQLException 
+     */
+    public ImportConfigurationJDBC(String url, String table) throws SQLException {
+        setConnection(DriverManager.getConnection(url));
+        setTable(table);
+    }
+
+    /**
+     * Creates a new instance of this object
+     * 
+     * @param url
+     * @param user
+     * @param password
+     * @param table {@link #setTable(String)}
+     * @throws SQLException 
+     */
+    public ImportConfigurationJDBC(String url, String user, String password, String table) throws SQLException {
+        setConnection(DriverManager.getConnection(url, user, password));
         setTable(table);
     }
 
