@@ -635,7 +635,61 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         throw new IllegalStateException("No interval found for: "+type.format(value));
     }
-    
+
+    /**
+     * Returns the matching interval
+     * @param index
+     * @param type
+     * @param tValue
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private Interval<T> getIntervalUpperSnap(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
+
+        // Find interval
+        int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
+        T offset = type.multiply(type.subtract(index.max, index.min), shift);
+        T value = type.subtract(tValue, offset);
+        Interval<T> interval = null;
+
+        for (int j=0; j<intervals.size(); j++) {
+            Interval<T> i = intervals.get(j);
+            if (type.compare(i.min, value) <= 0 &&
+                type.compare(i.max, value) > 0) {
+
+                // If on lower bound, use next-lower interval
+                if (type.compare(value, i.min) == 0) {
+                    if (j>0) {
+                        
+                        // Simply use the next one
+                        interval = intervals.get(j-1);
+                        break;
+                    } else {
+                        
+                        // Wrap around
+                        interval = intervals.get(intervals.size()-1);
+                        offset = type.multiply(type.subtract(index.max, index.min), shift-1);
+                        break;
+                    }
+                } else {
+                    interval = i;
+                    break;
+                }
+            }
+        }
+
+        // Check
+        if (interval == null) { 
+            throw new IllegalStateException("No interval found for: " + type.format(tValue) +"/"+ type.format(value)); 
+        }
+        
+        
+        // Create first result interval
+        T lower = type.add(interval.min, offset);
+        T upper = type.add(interval.max, offset);
+        return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected AbstractGroup[][] prepareGroups() {
@@ -727,9 +781,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         Interval<T> lowerSnap = getInterval(index, type, tempLower.repeatBound);
         lowerSnap = new Interval<T>(this, getDataType(), tempLower.snapBound, lowerSnap.max, lowerSnap.function);
         
-        Interval<T> upperSnap = getInterval(index, type, tempUpper.repeatBound);
+        Interval<T> upperSnap = getIntervalUpperSnap(index, type, tempUpper.repeatBound);
         upperSnap = new Interval<T>(this, getDataType(), upperSnap.min, tempUpper.snapBound, upperSnap.function);
-        
+
         // Create first column
         AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
@@ -765,7 +819,8 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         index = null;
         
         // Create other columns
-        List<Group<T>> groups = super.getLevel(0).getGroups();
+        List<Group<T>> groups = new ArrayList<Group<T>>();
+        if (!super.getLevels().isEmpty()) groups = super.getLevels().get(0).getGroups();
         if (cache.size()>1 && !groups.isEmpty()) {
 
             // Prepare
@@ -817,18 +872,20 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             
             // Copy data
             builder.prepare(data);
-            AbstractGroup[][] columns = builder.prepareGroups();
+            AbstractGroup[][] columns = builder.getPreparedGroups();
             for (AbstractGroup[] column : columns) {
                 result.add(column);
             }
-        } else if (cache.size()>1) {
-            AbstractGroup[] column = new AbstractGroup[data.length];
-            @SuppressWarnings("serial")
-            AbstractGroup element = new AbstractGroup("*") {};
-            for (int i = 0; i < column.length; i++) {
-                column[i] = element;
+        } else {
+            if (cache.size()>1) {
+                AbstractGroup[] column = new AbstractGroup[data.length];
+                @SuppressWarnings("serial")
+                AbstractGroup element = new AbstractGroup("*") {};
+                for (int i = 0; i < column.length; i++) {
+                    column[i] = element;
+                }
+                result.add(column);
             }
-            result.add(column);
         }
         
         // Return

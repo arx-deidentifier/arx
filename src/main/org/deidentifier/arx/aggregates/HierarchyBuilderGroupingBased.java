@@ -434,4 +434,12 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             this.abstractGroups = null;
         }
     }
+
+    /**
+     * Returns the prepared groups for recursion
+     * @return 
+     */
+    protected AbstractGroup[][] getPreparedGroups(){
+        return this.abstractGroups;
+    }
 }
