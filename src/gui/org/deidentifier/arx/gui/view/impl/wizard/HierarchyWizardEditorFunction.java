@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -233,5 +234,21 @@ public class HierarchyWizardEditorFunction<T> {
         data.verticalAlignment = SWT.CENTER;
         label.setLayoutData(data);
         return label;
+    }
+
+    /**
+     * Return control1
+     * @return
+     */
+    public Control getControl1() {
+        return editor1.getControl();
+    }
+
+    /**
+     * Return control2
+     * @return
+     */
+    public Control getControl2() {
+        return editor2.getControl();
     }
 }
