@@ -175,7 +175,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      */
     public HierarchyWizardResult<T> getResult(){
         try {
-            return new HierarchyWizardResult<T>(model.getHierarchy(), model.getBuilder());
+            return new HierarchyWizardResult<T>(model.getHierarchy(), model.getBuilder(true));
         } catch (Exception e){
             return null;
         }
@@ -270,16 +270,17 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             // Select
             HierarchyBuilder<T> builder = null;
             if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageOrder){
-                builder = model.getOrderModel().getBuilder();
+                builder = model.getOrderModel().getBuilder(true);
             } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageIntervals){
-                builder = model.getIntervalModel().getBuilder();
+                builder = model.getIntervalModel().getBuilder(true);
             } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageRedaction){
-                builder = model.getRedactionModel().getBuilder();
+                builder = model.getRedactionModel().getBuilder(true);
             }
 
             // Save
             builder.save(file);
         } catch (Exception e){
+            e.printStackTrace();
             controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_TEXT+e.getMessage());
             return;
         }

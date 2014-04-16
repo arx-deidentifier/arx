@@ -48,7 +48,7 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
     }
 
     @Override
-    public HierarchyBuilderIntervalBased<T> getBuilder() throws Exception{
+    public HierarchyBuilderIntervalBased<T> getBuilder(boolean serializable) throws Exception{
         HierarchyBuilderIntervalBased<T> builder = HierarchyBuilderIntervalBased.create(super.getDataType(),
                                                     new Range<T>(super.getLowerRange().repeat,
                                                                  super.getLowerRange().snap,
@@ -91,7 +91,7 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
         
         HierarchyBuilderIntervalBased<T> builder = null;
         try {
-            builder = getBuilder();
+            builder = getBuilder(false);
         } catch (Exception e){
             super.error = e.getMessage();
             return;

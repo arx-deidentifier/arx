@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,6 +41,16 @@ import org.deidentifier.arx.DataType;
  */
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
+    /**
+     * A serializable comparator
+     * @author Fabian Prasser
+     *
+     * @param <T>
+     */
+    public static abstract class SerializableComparator<T> implements Comparator<T>, Serializable {
+        private static final long serialVersionUID = 3851134667082727602L;
+    }
+    
     @SuppressWarnings("hiding")
     protected class CloseElements<T> extends AbstractGroup {
         
@@ -87,6 +98,15 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final Comparator<T> comparator) {
         return new HierarchyBuilderOrderBased<T>(type, comparator);
     }
+
+    /**
+     * Creates a new instance. Uses the defined order for data items
+     * @param type The data type
+     * @param order Use this for ordering data items
+     */
+    public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final String[] order) {
+        return new HierarchyBuilderOrderBased<T>(type, order);
+    }
     
     /**
      * Loads a builder specification from the given file
@@ -128,7 +148,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     private HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
         super(Type.ORDER_BASED, type);
         if (order) {
-            this.comparator = new Comparator<String>(){
+            this.comparator = new SerializableComparator<String>(){
+                private static final long serialVersionUID = -5728888259809544706L;
                 @Override
                 public int compare(String o1, String o2) {
                     try {
@@ -142,7 +163,32 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
             this.comparator = null;
         }
     }
-    
+
+    /**
+     * Creates a new instance
+     * @param type The data type
+     * @param order Use this for ordering data items
+     */
+    private HierarchyBuilderOrderBased(final DataType<T> type, final String[] order) {
+        super(Type.ORDER_BASED, type);
+        
+        final Map<String, Integer> map = new HashMap<String, Integer>();
+        for (int i=0; i<order.length; i++) {
+            map.put(order[i], i);
+        }
+        this.comparator = new SerializableComparator<String>(){
+            private static final long serialVersionUID = 8016783606581696832L;
+            @Override
+            public int compare(String o1, String o2) {
+                try {
+                    return map.get(o1).compareTo(map.get(o2));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        };
+    }
+
     /**
      * Creates a new instance
      * @param type The data type
@@ -150,7 +196,11 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      */
     private HierarchyBuilderOrderBased(final DataType<T> type, final Comparator<T> comparator) {
         super(Type.ORDER_BASED, type);
-        this.comparator = new Comparator<String>(){
+        if (!(comparator instanceof Serializable)) {
+            throw new IllegalArgumentException("Comparator must be serializable");
+        }
+        this.comparator = new SerializableComparator<String>(){
+            private static final long serialVersionUID = -487411642974218418L;
             @Override
             public int compare(String o1, String o2) {
                 try {
@@ -174,7 +224,11 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     @Override
     protected AbstractGroup[][] prepareGroups() {
         if (comparator != null) {
-            Arrays.sort(super.getData(), comparator);
+            try {
+                Arrays.sort(super.getData(), comparator);
+            } catch (Exception e){
+                throw new IllegalArgumentException(e.getMessage());
+            }
         }
 
         List<Group<T>> groups = super.getLevel(0).getGroups();

@@ -33,10 +33,10 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
  *
  * @param <T>
  */
-public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T>{
+public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T> {
     
     /** Var */
-    private final String[] data;
+    private final transient String[] data;
 
     /**
      * Constructor to create an initial definition
@@ -51,8 +51,15 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
 
     @Override
-    public HierarchyBuilderOrderBased<T> getBuilder() throws Exception {
-        HierarchyBuilderOrderBased<T> builder = HierarchyBuilderOrderBased.create(super.getDataType(), false);
+    public HierarchyBuilderOrderBased<T> getBuilder(boolean serializable) throws Exception {
+        
+        HierarchyBuilderOrderBased<T> builder;
+        if (serializable) {
+            builder = HierarchyBuilderOrderBased.create(super.getDataType(), data);
+        } else {
+            builder = HierarchyBuilderOrderBased.create(super.getDataType(), false);
+        }
+        
         builder.setAggregateFunction(this.getDefaultFunction());
         int level = 0;
         for (List<HierarchyWizardGroupingGroup<T>> list : super.getModelGroups()) {
@@ -139,7 +146,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         
         HierarchyBuilderOrderBased<T> builder = null;
         try {
-            builder = getBuilder();
+            builder = getBuilder(false);
         } catch (Exception e){
             super.error = e.getMessage();
             return;

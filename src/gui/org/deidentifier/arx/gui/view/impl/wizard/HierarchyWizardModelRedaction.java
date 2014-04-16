@@ -60,7 +60,7 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     @Override
-    public HierarchyBuilderRedactionBased<T> getBuilder() {
+    public HierarchyBuilderRedactionBased<T> getBuilder(boolean serializable) {
         return HierarchyBuilderRedactionBased.create(  alignmentOrder, 
                                                        redactionOrder, 
                                                        paddingCharacter, 
@@ -155,7 +155,7 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         super.error = null;
         super.groupsizes = null;
         
-        HierarchyBuilderRedactionBased<T> builder = getBuilder();
+        HierarchyBuilderRedactionBased<T> builder = getBuilder(false);
         try {
             super.groupsizes = builder.prepare(data);
         } catch(Exception e){

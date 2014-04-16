@@ -146,9 +146,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     /** Var */
     private Object                                      selected      = null;
     /** Var */
-    private HierarchyWizardEditorRenderer<T>          renderer      = new HierarchyWizardEditorRenderer<T>(this);
+    private HierarchyWizardEditorRenderer<T>            renderer      = new HierarchyWizardEditorRenderer<T>(this);
     /** Var */
-    private List<HierarchyWizardView>           components    = new ArrayList<HierarchyWizardView>();
+    private List<HierarchyWizardView>                   components    = new ArrayList<HierarchyWizardView>();
 
     /**
      * Creates a new instance

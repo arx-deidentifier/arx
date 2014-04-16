@@ -94,13 +94,13 @@ public class HierarchyWizardModel<T> {
      * Returns the current builder
      * @return
      */
-    public HierarchyBuilder<T> getBuilder() throws Exception {
+    public HierarchyBuilder<T> getBuilder(boolean serializable) throws Exception {
         if (type == Type.INTERVAL_BASED) {
-            return intervalModel.getBuilder();
+            return intervalModel.getBuilder(serializable);
         } else if (type == Type.REDACTION_BASED) {
-            return redactionModel.getBuilder();
+            return redactionModel.getBuilder(serializable);
         } else if (type == Type.ORDER_BASED) {
-            return orderModel.getBuilder();
+            return orderModel.getBuilder(serializable);
         } else {
             throw new IllegalArgumentException("Unknown type of builder");
         }
