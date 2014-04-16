@@ -70,7 +70,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /** Var */
-    private final HierarchyWizardModel<T>   model;
+    private HierarchyWizardModel<T>   model;
     /** Var */
     private final Controller                controller;
     /** Var */
@@ -110,16 +110,27 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * @param datatype
      * @param items
      */
+    @SuppressWarnings("unchecked")
     public HierarchyWizard(final Controller controller,
                            final String attribute,
-                           HierarchyBuilder<?> builder,
+                           final HierarchyBuilder<?> builder,
                            final DataType<T> datatype,
                            final String[] items) {
         super(new Point(800, 400));
         
         // Store
-        this.model = new HierarchyWizardModel<T>(datatype, items, builder);
+        this.model = new HierarchyWizardModel<T>(datatype, items);
         this.controller = controller;
+        
+        // Parse given builder, if needed
+        try {
+            if (builder != null){
+                this.model.parse((HierarchyBuilder<T>)builder);
+            }
+        } catch (Exception e){ 
+            /* Die silently, and recover*/
+            this.model = new HierarchyWizardModel<T>(datatype, items);
+        }
         
         // Initialize window
         this.setWindowTitle(Resources.getMessage("HierarchyWizard.0")); //$NON-NLS-1$
@@ -224,7 +235,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         
         // Select
         try {
-            model.setSpecification(builder);
+            model.parse(builder);
         } catch (Exception e){
             controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_APPLY_TEXT+e.getMessage());
             return;

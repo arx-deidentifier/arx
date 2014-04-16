@@ -56,8 +56,7 @@ public class HierarchyWizardModel<T> {
      * @param data
      * @param builder 
      */
-    @SuppressWarnings("unchecked")
-    public HierarchyWizardModel(DataType<T> dataType, String[] data, HierarchyBuilder<?> builder){
+    public HierarchyWizardModel(DataType<T> dataType, String[] data){
         
         // Store
         this.data = data;
@@ -82,12 +81,6 @@ public class HierarchyWizardModel<T> {
         } else if (equals(dataType, DataType.STRING)) {
             this.type = Type.REDACTION_BASED;
         }
-        
-        try {
-            if (builder != null){
-                this.setSpecification((HierarchyBuilder<T>)builder);
-            }
-        } catch (Exception e){ /* Ignore */ }
     }
 
     /**
@@ -166,7 +159,7 @@ public class HierarchyWizardModel<T> {
      * Updates the model with a new specification
      * @param builder
      */
-    public void setSpecification(HierarchyBuilder<T> builder) throws IllegalArgumentException{
+    public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException{
         if (type == Type.INTERVAL_BASED) {
             if (intervalModel != null){
                 this.intervalModel.parse((HierarchyBuilderIntervalBased<T>)builder);
