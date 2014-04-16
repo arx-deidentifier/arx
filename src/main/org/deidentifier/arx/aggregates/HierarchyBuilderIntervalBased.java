@@ -783,6 +783,13 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         Interval<T> upperSnap = getIntervalUpperSnap(index, type, tempUpper.repeatBound);
         upperSnap = new Interval<T>(this, getDataType(), upperSnap.min, tempUpper.snapBound, upperSnap.function);
+        
+        // Overlapping snaps -> one interval
+        if (type.compare(lowerSnap.max, upperSnap.min)>=0) {
+            // We could use lowerSnap.function or upperSnap.function
+            lowerSnap = new Interval<T>(this, getDataType(), lowerSnap.min, upperSnap.max, lowerSnap.function);
+            upperSnap = lowerSnap;
+        }
 
         // Create first column
         AbstractGroup[] first = new AbstractGroup[data.length];
