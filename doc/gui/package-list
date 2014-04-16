@@ -1,4 +1,5 @@
 org.deidentifier.arx
+org.deidentifier.arx.aggregates
 org.deidentifier.arx.criteria
 org.deidentifier.arx.gui
 org.deidentifier.arx.gui.model
@@ -8,11 +9,11 @@ org.deidentifier.arx.gui.view.def
 org.deidentifier.arx.gui.view.impl
 org.deidentifier.arx.gui.view.impl.analyze
 org.deidentifier.arx.gui.view.impl.common
-org.deidentifier.arx.gui.view.impl.common.datatable
 org.deidentifier.arx.gui.view.impl.define
-org.deidentifier.arx.gui.view.impl.define.criteria
 org.deidentifier.arx.gui.view.impl.explore
 org.deidentifier.arx.gui.view.impl.menu
+org.deidentifier.arx.gui.view.impl.wizard
 org.deidentifier.arx.gui.worker
+org.deidentifier.arx.gui.worker.io
 org.deidentifier.arx.io
 org.deidentifier.arx.metric

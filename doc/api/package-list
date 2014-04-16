@@ -1,4 +1,5 @@
 org.deidentifier.arx
+org.deidentifier.arx.aggregates
 org.deidentifier.arx.criteria
 org.deidentifier.arx.io
 org.deidentifier.arx.metric
