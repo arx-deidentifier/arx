@@ -143,6 +143,8 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         super.hierarchy = null;
         super.error = null;
         super.groupsizes = null;
+
+        if (data==null) return;
         
         HierarchyBuilderOrderBased<T> builder = null;
         try {

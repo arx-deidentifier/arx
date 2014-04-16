@@ -89,6 +89,8 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
         super.error = null;
         super.groupsizes = null;
         
+        if (data==null) return;
+        
         HierarchyBuilderIntervalBased<T> builder = null;
         try {
             builder = getBuilder(false);

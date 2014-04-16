@@ -154,6 +154,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         super.hierarchy = null;
         super.error = null;
         super.groupsizes = null;
+
+        if (data==null) return;
         
         HierarchyBuilderRedactionBased<T> builder = getBuilder(false);
         try {
