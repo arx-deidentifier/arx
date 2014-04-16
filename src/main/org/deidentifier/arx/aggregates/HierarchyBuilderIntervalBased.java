@@ -546,30 +546,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     }
 
     /**
-     * Performs the index lookup
-     * @param value
-     * @return
-     */
-    public Interval<T> query(IndexNode node, T value) {
-        @SuppressWarnings("unchecked")
-        DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
-        if (node.isLeaf) {
-            for (Interval<T> leaf : node.leafs) {
-                if (type.compare(leaf.min, value) <= 0 && type.compare(leaf.max, value) > 0) {
-                    return leaf;
-                }
-            }
-        } else {
-            for (IndexNode child : node.children) {
-                if (type.compare(child.min, value) <= 0 && type.compare(child.max, value) > 0) {
-                    return query(child, value);
-                }
-            }
-        }
-        throw new IllegalStateException("No interval found for: "+type.format(value));
-    }
-
-    /**
      * Checks the interval
      * @param type
      * @param min
@@ -585,7 +561,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         if (cmp >= 0) throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
     }
-    
+
     /**
      * Returns the according group from the cache
      * @param cache
@@ -601,14 +577,21 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return interval;
         }
     }
-
+    
+    /**
+     * Returns the matching interval
+     * @param index
+     * @param type
+     * @param tValue
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private Interval<T> getInterval(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
 
         // Find interval
         int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
         T offset = type.multiply(type.subtract(index.max, index.min), shift);
-        Interval<T> interval = query(index, type.subtract(tValue, offset));
+        Interval<T> interval = getInterval(index, type.subtract(tValue, offset));
 
         // Check
         if (interval == null) { throw new IllegalStateException("No interval found for: " + type.format(tValue)); }
@@ -617,6 +600,78 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         T lower = type.add(interval.min, offset);
         T upper = type.add(interval.max, offset);
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
+    }
+
+    /**
+     * Performs the index lookup
+     * @param value
+     * @return
+     */
+    private Interval<T> getInterval(IndexNode node, T value) {
+        @SuppressWarnings("unchecked")
+        DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
+        if (node.isLeaf) {
+            for (Interval<T> leaf : node.leafs) {
+                if (type.compare(leaf.min, value) <= 0 && type.compare(leaf.max, value) > 0) {
+                    return leaf;
+                }
+            }
+        } else {
+            for (IndexNode child : node.children) {
+                if (type.compare(child.min, value) <= 0 && type.compare(child.max, value) > 0) {
+                    return getInterval(child, value);
+                }
+            }
+        }
+        throw new IllegalStateException("No interval found for: "+type.format(value));
+    }
+
+    /**
+     * TODO: Mostly a duplicate of the standard method
+     * @param index
+     * @param type
+     * @param tValue
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private Interval<T> getIntervalSnap(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
+
+        // Find interval
+        int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
+        T offset = type.multiply(type.subtract(index.max, index.min), shift);
+        Interval<T> interval = getIntervalSnap(index, type.subtract(tValue, offset));
+
+        // Check
+        if (interval == null) { throw new IllegalStateException("No interval found for: " + type.format(tValue)); }
+        
+        // Create first result interval
+        T lower = type.add(interval.min, offset);
+        T upper = type.add(interval.max, offset);
+        return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
+    }
+
+    /**
+     * TODO: Mostly a duplicate of the standard method
+     * @param value
+     * @return
+     */
+    private Interval<T> getIntervalSnap(IndexNode node, T value) {
+        @SuppressWarnings("unchecked")
+        DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
+        if (node.isLeaf) {
+            for (Interval<T> leaf : node.leafs) {
+                if (type.compare(leaf.min, value) < 0 && type.compare(leaf.max, value) >= 0) {
+                    return leaf;
+                }
+            }
+        } else {
+            for (IndexNode child : node.children) {
+                if (type.compare(child.min, value) < 0 && type.compare(child.max, value) >= 0) {
+                    return getIntervalSnap(child, value);
+                }
+            }
+        }
+        throw new IllegalStateException("No interval found for: "+type.format(value));
     }
     
     @Override
@@ -703,9 +758,18 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         List<AbstractGroup[]> result = new ArrayList<AbstractGroup[]>();
         IndexNode index = nodes.get(0);
         
-        // Create first column
+        // Prepare
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
         Map<AbstractGroup, AbstractGroup> cache = new HashMap<AbstractGroup, AbstractGroup>();
+        
+        // Create snap intervals
+        Interval<T> lowerSnap = getInterval(index, type, tempLower.repeatBound);
+        lowerSnap = new Interval<T>(this, getDataType(), tempLower.snapBound, lowerSnap.max, lowerSnap.function);
+        
+        Interval<T> upperSnap = getIntervalSnap(index, type, tempUpper.repeatBound);
+        upperSnap = new Interval<T>(this, getDataType(), upperSnap.min, tempUpper.snapBound, upperSnap.function);
+        
+        // Create first column
         AbstractGroup[] first = new AbstractGroup[data.length];
         for (int i=0; i<data.length; i++){
             T value = type.parse(data[i]);
@@ -725,10 +789,10 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             
             if (interval.min != null && interval.max != null){
                 if (type.compare(interval.min, tempLower.repeatBound) < 0){
-                    interval = new Interval<T>(this, getDataType(), tempLower.repeatBound, interval.max, interval.function);
+                    interval = lowerSnap;
                 }
                 if (type.compare(interval.max, tempUpper.repeatBound) >= 0){
-                    interval = new Interval<T>(this, getDataType(), interval.min, tempUpper.repeatBound, interval.function);
+                    interval = upperSnap;
                 }
             }
             
