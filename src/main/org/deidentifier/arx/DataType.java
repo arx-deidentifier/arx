@@ -42,7 +42,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class DataType<T> implements Serializable {
+public abstract class DataType<T> implements Serializable, Comparator<T> {
     
     /**
      * Base class for date/time types
