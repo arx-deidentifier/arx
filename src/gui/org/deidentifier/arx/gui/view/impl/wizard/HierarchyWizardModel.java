@@ -160,15 +160,16 @@ public class HierarchyWizardModel<T> {
      * @param builder
      */
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException{
-        if (type == Type.INTERVAL_BASED) {
+        
+        if (builder.getType() == Type.INTERVAL_BASED) {
             if (intervalModel != null){
                 this.intervalModel.parse((HierarchyBuilderIntervalBased<T>)builder);
                 this.type = Type.INTERVAL_BASED;
             }
-        } else if (type == Type.ORDER_BASED) {
+        } else if (builder.getType() == Type.ORDER_BASED) {
             this.orderModel.parse((HierarchyBuilderOrderBased<T>)builder);
             this.type = Type.ORDER_BASED;
-        } else if (type == Type.REDACTION_BASED) {
+        } else if (builder.getType() == Type.REDACTION_BASED) {
             this.redactionModel.parse(builder);
             this.type = Type.REDACTION_BASED;
         } else {

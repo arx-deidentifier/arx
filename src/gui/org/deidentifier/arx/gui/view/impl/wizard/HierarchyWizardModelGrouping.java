@@ -445,6 +445,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
      * @param builder
      */
     public void parse(HierarchyBuilderOrderBased<T> builder) throws IllegalArgumentException{
+        
         if (builder.getComparator() != null) {
             try {
                 Arrays.sort(this.data, builder.getComparator());
