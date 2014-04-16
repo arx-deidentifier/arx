@@ -36,6 +36,9 @@ import org.deidentifier.arx.DataType;
  * @author Fabian Prasser
  */
 abstract public class ImportAdapter implements Iterator<String[]> {
+    
+    /** The header*/
+    protected String[] header;
 
     /**
      * Factory method
@@ -110,6 +113,14 @@ abstract public class ImportAdapter implements Iterator<String[]> {
      * @return Percentage of data already imported, 0 - 100
      */
     public abstract int getProgress();
+    
+    /**
+     * Returns the header
+     * @return
+     */
+    public String[] getHeader() {
+        return header;
+    }
 
     /**
      * Returns an array with datatypes of columns that should be imported

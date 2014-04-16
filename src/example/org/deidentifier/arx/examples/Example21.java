@@ -70,6 +70,7 @@ public class Example21 extends Example {
 
         // Print to console
         print(data.getHandle());
+        System.out.println("\n");
     }
 
     /**
@@ -97,6 +98,7 @@ public class Example21 extends Example {
 
         // Print to console
         print(data.getHandle());
+        System.out.println("\n");
     }
     
     /**
@@ -125,5 +127,6 @@ public class Example21 extends Example {
 
         // Print to console
         print(data.getHandle());
+        System.out.println("\n");
     }
 }

@@ -23,15 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.ImportAdapter;
-import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportConfiguration;
 
 /**
@@ -183,7 +180,17 @@ public abstract class Data {
      * @return A Data object
      */
     public static Data create(final Iterator<String[]> iterator) {
-        return new IterableData(iterator);
+        
+        // Obtain data
+        IterableData result = new IterableData(iterator);
+
+        // Update definition, if needed
+        if (iterator instanceof ImportAdapter){
+            result.getDefinition().parse((ImportAdapter)iterator);
+        }
+        
+        // Return
+        return result;
     }
 
     /**
@@ -223,23 +230,9 @@ public abstract class Data {
      */
     public static Data create(final DataSource source) throws IOException {
 
-        final ImportConfiguration config = source.getConfiguration();
-        final Data data = new IterableData(ImportAdapter.create(config));
-
-        // TODO: This is ugly
-        Map<Integer, DataType<?>> types = new HashMap<Integer, DataType<?>>();
-        List<ImportColumn> columns = config.getColumns();
-        for (int i=0; i<columns.size(); i++){
-            types.put(i, columns.get(i).getDataType());
-        }
-        DataHandle handle = data.getHandle();
-        for (int i=0; i<handle.getNumColumns(); i++) {
-            String attribute = handle.getAttributeName(i);
-            data.getDefinition().setDataType(attribute, types.get(i));
-        }
-
-        // Return
-        return data;
+        ImportConfiguration config = source.getConfiguration();
+        ImportAdapter adapter = ImportAdapter.create(config);
+        return create(adapter);
     }
 
     /**

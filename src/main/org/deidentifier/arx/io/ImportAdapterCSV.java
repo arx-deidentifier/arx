@@ -124,6 +124,9 @@ public class ImportAdapterCSV extends ImportAdapter {
         } else {
             throw new IOException("CSV file contains no data");
         }
+        
+        // Create header
+        header = createHeader();
     }
 
     /**
@@ -172,7 +175,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         /* Check whether header was already returned */
         if (!headerReturned) {
             headerReturned = true;
-            return createHeader();
+            return header;
         }
 
         /* Create regular row */

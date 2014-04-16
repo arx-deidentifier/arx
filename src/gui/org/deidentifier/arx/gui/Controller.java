@@ -1118,8 +1118,7 @@ public class Controller implements IView {
             if ((error instanceof IllegalArgumentException) || (error instanceof IOException)){
                 main.showInfoDialog(main.getShell(), "Error loading data", error.getMessage());
             } else {
-                main.showErrorDialog(main.getShell(), 
-                                     Resources.getMessage("Controller.76"), error); //$NON-NLS-1$
+                main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.76"), error); //$NON-NLS-1$
             }
             return;
         }

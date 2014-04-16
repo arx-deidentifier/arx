@@ -118,6 +118,9 @@ public class ImportAdapterJDBC extends ImportAdapter {
         } catch (SQLException e) {
             throw new IOException(e.getMessage());
         }
+
+        // Create header
+        header = createHeader();
     }
 
     /**
@@ -153,7 +156,8 @@ public class ImportAdapterJDBC extends ImportAdapter {
 
         /* Return header in first iteration */
         if (!headerReturned) {
-            return createHeader();
+            headerReturned = true;
+            return header;
         }
 
         try {
@@ -224,7 +228,6 @@ public class ImportAdapterJDBC extends ImportAdapter {
             }
             column.setAliasName(header[i]);
         }
-        headerReturned = true;
 
         /* Return header */
         return header;

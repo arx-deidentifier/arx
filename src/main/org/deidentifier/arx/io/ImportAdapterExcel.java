@@ -143,6 +143,9 @@ public class ImportAdapterExcel extends ImportAdapter {
         } else {
             throw new IOException("File contains no data");
         }
+
+        // Create header
+        header = createHeader();
     }
 
     /**
@@ -190,8 +193,9 @@ public class ImportAdapterExcel extends ImportAdapter {
         /* Check whether header was already returned */
         if (!headerReturned) {
             headerReturned = true;
-            return createHeader();
+            return header;
         }
+
 
         /* Check whether number of columns is too big */
         if (row.getPhysicalNumberOfCells() > numberOfColumns) {

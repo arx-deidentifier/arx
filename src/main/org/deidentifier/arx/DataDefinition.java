@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.io.ImportAdapter;
+import org.deidentifier.arx.io.ImportConfiguration;
 
 /**
  * Encapsulates a definition of the types of attributes contained in a dataset
@@ -293,5 +295,17 @@ public class DataDefinition implements Cloneable{
      */
     public boolean isLocked(){
         return locked;
+    }
+
+    /**
+     * Parses the configuration of the import adapter
+     * @param adapter
+     */
+    protected void parse(ImportAdapter adapter) {
+        String[] header = adapter.getHeader();
+        ImportConfiguration config = adapter.getConfig();
+        for (int i=0; i<config.getColumns().size(); i++){
+            this.setDataType(header[i], config.getColumns().get(i).getDataType());
+        }
     }
 }
