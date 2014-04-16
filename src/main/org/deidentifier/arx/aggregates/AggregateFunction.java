@@ -220,12 +220,11 @@ public abstract class AggregateFunction<T> implements Serializable{
 
             // Determine largest common prefix
             int position = 0;
-            boolean found = true;
-            outer: while (found) {
+            outer: while (true) {
+                if (values[0].length()==position) break outer;
                 char c = values[0].charAt(position);
                 for (int i = 1; i < values.length; i++) {
                     if (values[i].charAt(position) != c) {
-                        found = false;
                         break outer;
                     }
                 }
