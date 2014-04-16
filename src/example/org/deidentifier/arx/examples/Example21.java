@@ -27,7 +27,12 @@ import org.deidentifier.arx.DataSource;
 import org.deidentifier.arx.DataType;
 
 /**
- * This class demonstrates the use of data import functionality provided by ARX
+ * This class demonstrates the use of the data import facilities provided by
+ * the ARX framework. Data can be imported from various types of sources, e.g.
+ * CSV files, Excel files and databases (using JDBC). The API is mostly the
+ * same for all of these sources, although not all options might be available
+ * in each case. Refer to the comments further down below for details about
+ * particular sources.
  * 
  * @author Karol Babioch
  * @author Fabian Prasser
@@ -36,6 +41,7 @@ public class Example21 extends Example {
 
     /**
      * Main entry point
+     * @throws IOException
      * @throws SQLException 
      * @throws ClassNotFoundException 
      */
@@ -47,23 +53,38 @@ public class Example21 extends Example {
     }
 
     /**
-     * This class implements an example on how to use the API to import data from
-     * a CSV file. It uses more advanced features than {@link #Example2}. Columns
-     * are renamed and could be ignored altogether.
+     * This method demonstrates the import of data from a simple CSV file. It
+     * uses more advanced features than {@link #Example2}. Columns are renamed,
+     * and individual columns can be ignored. Furthermore a data type for each
+     * column is specified, which describes the format of the appropriate data.
      */
     private static void exampleCSV() throws IOException {
-        
+
         // Define configuration for CSV file
+        // The most interesting parameter is the last one, which defines
+        // whether or not the file contains a header assigning a name to each
+        // individual column, which can be used to address the column later on
         DataSource source = DataSource.createCSVSource("data/test.csv", ';', true);
+
+        // Add columns
+        // Note that there are different means to specify a column. The first
+        // two columns are addressed based on their name. It is also possible
+        // to rename columns, which might be an interesting option to manipulate
+        // the output. Be aware however, that name based addressing will only
+        // work for types that implement the {@link IImportColumnNamed}
+        // interface. CSV and Excel files need to contain a header for this to
+        // work. "Index based" addressing on the other hand is currently
+        // supported by all types and is therefore guaranteed to work. This
+        // is the way the last column is addressed by. If the source does not
+        // contain a dedicated name for this column one will be assigned
+        // automatically, following the "Column #x" style, where x will be
+        // the number of the column.
         source.addColumn("age", "renamed", DataType.INTEGER);
-        source.addColumn(1, DataType.STRING);
+        source.addColumn("gender", DataType.STRING);
         source.addColumn(2, DataType.STRING);
-        
+
         // In the output dataset, the columns will appear in the same order as
-        // specified by the order of calls to addColumn(). Columns in the source
-        // can be addressed by either zero-based indexes or names. If columns
-        // are addressed by name, the data source must contain a header. Optionally,
-        // columns can be renamed by providing an alias or a data type can be specified
+        // specified by the order of calls to addColumn().
 
         // Create data object
         final Data data = Data.create(source);
@@ -74,24 +95,29 @@ public class Example21 extends Example {
     }
 
     /**
-     * This class demonstrates how to use the API to import data from an Excel
-     * source It is loosely based upon previous examples
-     * as the API is quite similar.
+     * This method demonstrates the import of data from an Excel file. It uses
+     * more advanced features than {@link #Example2}. Columns are renamed,
+     * and individual columns can be ignored. Furthermore a data type for each
+     * column is specified, which describes the format of the appropriate data.
+     *
+     * Internally it makes use of <a href="https://poi.apache.org/">POI<a/>.
+     *
+     * Refer to {@link #exampleCSV()} for detailed comments about the meaning
+     * of certain parameters, as basically everything mentioned there also
+     * applies here.
+     *
+     * @throws IOException In case of IO errors with the given file
      */
     private static void exampleExcel() throws IOException {
         
 
         // Define configuration for Excel file
         DataSource source = DataSource.createExcelSource("data/test.xls", 0, true);
+
+        // Add columns
         source.addColumn(1, DataType.STRING);
         source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(2, DataType.STRING);
-        
-        // In the output dataset, the columns will appear in the same order as
-        // specified by the order of calls to addColumn(). Columns in the source
-        // can be addressed by either zero-based indexes or names. If columns
-        // are addressed by name, the data source must contain a header. Optionally,
-        // columns can be renamed by providing an alias or a data type can be specified
 
         // Create data object
         final Data data = Data.create(source);
@@ -102,25 +128,36 @@ public class Example21 extends Example {
     }
     
     /**
-     * This class demonstrates how to use the API to import data from a JDBC
-     * source (SQLite in this case). It is loosely based upon previous examples
-     * as the API is quite similar.
-     * @throws ClassNotFoundException 
+     * This method demonstrates the import of data from a JDBC data source.
+     * Columns can be renamed, or selected individually. Furthermore a data
+     * type for each column is specified, which describes the format of the
+     * appropriate data.
+     *
+     * This example uses SQLite, and uses the example database that is
+     * contained within the `data` directory. Note however, that in principal
+     * every JDBC connection can be used here.
+     *
+     * Refer to {@link #exampleCSV()} for detailed comments about the meaning
+     * of certain parameters, as basically everything mentioned there also
+     * applies here. Obviously columns can always be addressed by name in this
+     * scenario.
+     *
+     * @throws IOException In case of IO errors with the given file
+     * @throws SQLException In case of SQL errors with given database
+     * @throws ClassNotFoundException In case there is no JDBC driver
      */
     private static void exampleJDBC() throws IOException, SQLException, ClassNotFoundException {
 
-        // Configuration for JDBC source
+        // Load JDBC driver
         Class.forName("org.sqlite.JDBC");
+
+        // Configuration for JDBC source
         DataSource source = DataSource.createJDBCSource("jdbc:sqlite:data/test.db", "test");
+
+        // Add columns
         source.addColumn("age", "renamed", DataType.INTEGER);
         source.addColumn(1, DataType.STRING);
         source.addColumn(2, DataType.STRING);
-        
-        // In the output dataset, the columns will appear in the same order as
-        // specified by the order of calls to addColumn(). Columns in the source
-        // can be addressed by either zero-based indexes or names. If columns
-        // are addressed by name, the data source must contain a header. Optionally,
-        // columns can be renamed by providing an alias or a data type can be specified
 
         // Create data object
         final Data data = Data.create(source);
