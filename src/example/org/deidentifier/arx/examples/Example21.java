@@ -79,9 +79,9 @@ public class Example21 extends Example {
         // contain a dedicated name for this column one will be assigned
         // automatically, following the "Column #x" style, where x will be
         // the number of the column.
-        source.addColumn("age", "renamed", DataType.INTEGER);
-        source.addColumn("gender", DataType.STRING);
-        source.addColumn(2, DataType.STRING);
+        source.addColumn(2, DataType.STRING); // zipcode (index based addressing)
+        source.addColumn("gender", DataType.STRING); // gender (named addressing)
+        source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
 
         // In the output dataset, the columns will appear in the same order as
         // specified by the order of calls to addColumn().
@@ -115,9 +115,9 @@ public class Example21 extends Example {
         DataSource source = DataSource.createExcelSource("data/test.xls", 0, true);
 
         // Add columns
-        source.addColumn(1, DataType.STRING);
-        source.addColumn("age", "renamed", DataType.INTEGER);
-        source.addColumn(2, DataType.STRING);
+        source.addColumn(2, DataType.STRING); // zipcode (index based addressing)
+        source.addColumn("gender", DataType.STRING); // gender (named addressing)
+        source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
 
         // Create data object
         final Data data = Data.create(source);
@@ -155,9 +155,9 @@ public class Example21 extends Example {
         DataSource source = DataSource.createJDBCSource("jdbc:sqlite:data/test.db", "test");
 
         // Add columns
-        source.addColumn("age", "renamed", DataType.INTEGER);
-        source.addColumn(1, DataType.STRING);
-        source.addColumn(2, DataType.STRING);
+        source.addColumn(2, DataType.STRING); // zipcode (index based addressing)
+        source.addColumn("gender", DataType.STRING); // gender (named addressing)
+        source.addColumn("age", "renamed", DataType.INTEGER); // age (named addressing + alias name)
 
         // Create data object
         final Data data = Data.create(source);
