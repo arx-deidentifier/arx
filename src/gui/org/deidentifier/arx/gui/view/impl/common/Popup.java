@@ -42,11 +42,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class Popup {
 
-    protected static final long                THRESHOLD   = 20;
-    protected static final int                 WAIT        = 100;
-    private Shell                              shell;
-    private Rectangle                          bounds      = null;
-    private org.eclipse.swt.graphics.Rectangle shellBounds = null;
+    protected static final long                THRESHOLD       = 20;
+    protected static final int                 WAIT            = 100;
+    private Shell                              shell           = null;
+    private Rectangle                          bounds          = null;
+    private org.eclipse.swt.graphics.Rectangle shellBounds     = null;
+    private boolean                            nativeSupported = getNativeImplementationSupported();
 
     /**
      * Creates a new instance
@@ -142,12 +143,20 @@ public abstract class Popup {
             });
         }
     }
-    
+
     /**
      * Is the native implementation supported on this platform
      * @return
      */
     protected boolean isNativeImplementationSupported(){
+        return nativeSupported;
+    }
+    
+    /**
+     * Is the native implementation supported on this platform
+     * @return
+     */
+    private boolean getNativeImplementationSupported(){
 
         String osName = System.getProperty("os.name");
         if (osName.contains("OS X")) return true;
