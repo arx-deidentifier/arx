@@ -162,6 +162,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         } else {
             this.comparator = null;
         }
+        this.function = AggregateFunction.forType(type).createSetFunction();
     }
 
     /**
@@ -187,6 +188,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
             }
         };
+        this.function = AggregateFunction.forType(type).createSetFunction();
     }
 
     /**
@@ -210,6 +212,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
                 }
             }
         };
+        this.function = AggregateFunction.forType(type).createSetFunction();
     }
     
     /**

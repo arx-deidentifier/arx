@@ -219,7 +219,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     /** The data type*/
     private DataType<T> datatype;
     /** The default aggregate function, might be null*/
-    private AggregateFunction<T> function;
+    protected AggregateFunction<T> function;
 
     /**
      * Creates a new instance for the given data type

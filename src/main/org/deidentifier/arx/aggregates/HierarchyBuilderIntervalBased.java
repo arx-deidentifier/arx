@@ -390,6 +390,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         this.lowerRange = new Range<T>(null, null, null);
         this.upperRange = new Range<T>(null, null, null);
+        this.function = AggregateFunction.forType(type).createIntervalFunction();
     }
     
     /**
@@ -405,6 +406,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         this.lowerRange = lowerRange;
         this.upperRange = upperRange;
+        this.function = AggregateFunction.forType(type).createIntervalFunction();
     }
 
     /**
