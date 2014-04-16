@@ -40,6 +40,8 @@ public abstract class HierarchyWizardModelAbstract<T> {
     protected String              error;
     /** Var */
     protected HierarchyWizardView view;
+    /** Var */
+    protected boolean             visible = false;
 
     /**
      * Creates a new instance
@@ -47,6 +49,15 @@ public abstract class HierarchyWizardModelAbstract<T> {
      */
     public HierarchyWizardModelAbstract(String[] data) {
         this.data = data;
+    }
+    
+    /**
+     * Set visible
+     * @param visible
+     */
+    protected void setVisible(boolean visible){
+        this.visible = visible;
+        if (visible) update();
     }
 
     /**
@@ -105,7 +116,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
      * Updates the resulting hierarchy and the view
      */
     public void update(){
-        build();
+        if (visible) build();
         if (view != null) view.update();
     }
     
