@@ -18,9 +18,8 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
@@ -120,19 +119,17 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
      * @param type
      * @return successful, or not
      */
-    private boolean internalSort(final DataType<?> type) {
+    private <U> boolean internalSort(final DataType<U> type) {
+
         try {
-            Arrays.sort(data, new Comparator<String>(){
-                @Override public int compare(String o1, String o2) {
-                    try {
-                        return type.compare(o1, o2);
-                    } catch (NumberFormatException | ParseException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
+            ArrayList<U> list = new ArrayList<U>();
+            for (String s : data) list.add(type.parse(s));
+            Collections.sort(list, type);
+            for (int i = 0; i < list.size(); i++) {
+                data[i] = type.format(list.get(i));
+            }
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
