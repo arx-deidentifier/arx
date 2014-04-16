@@ -258,6 +258,19 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         
         return true;
     }
+    
+    /** 
+     * Cancel pressed
+     */
+    @Override
+    public boolean performCancel() {
+        try {
+            if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
+                data.getJdbcConnection().close();
+            }
+        } catch (Exception e) { /* Die silently */ }
+        return true;
+    }
 
     /**
      * Returns a reference to the controller being used by this wizard
