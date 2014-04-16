@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
@@ -47,6 +48,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -67,6 +69,30 @@ import org.eclipse.swt.widgets.TableColumn;
  * @author Fabian Prasser
  */
 public class ImportWizardPageColumns extends WizardPage {
+    
+    /**
+     * Works around JFace bugs. 
+     * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=230398
+     *
+     */
+    private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
+        protected AutoDropComboBoxViewerCellEditor(Composite parent) {
+            super(parent, SWT.READ_ONLY);
+            setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
+        }
+
+        @Override
+        protected Control createControl(Composite parent) {
+            final Control control = super.createControl(parent);
+            getViewer().getCCombo().addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    focusLost();
+                }
+            });
+            return control;
+        }
+    }
 
     /**
      * Implements editing support for datatype column within the column page
@@ -79,7 +105,7 @@ public class ImportWizardPageColumns extends WizardPage {
         /**
          * Reference to actual editor
          */
-        private ComboBoxCellEditor editor;
+        private AutoDropComboBoxViewerCellEditor editor;
 
         /**
          * Allowed values for the user to choose from
@@ -101,7 +127,6 @@ public class ImportWizardPageColumns extends WizardPage {
 
             List<String> labels = new ArrayList<String>();
             for (DataTypeDescription<?> description : DataType.list()) {
-
                 /* Remove OrderedString from list of choices for now */
                 if (description.newInstance().getClass() == DataType.ORDERED_STRING.getClass()) {
                     continue;
@@ -110,10 +135,9 @@ public class ImportWizardPageColumns extends WizardPage {
             }
 
             choices = labels.toArray(new String[labels.size()]);
-            editor = new ComboBoxCellEditor(viewer.getTable(),
-                                            choices,
-                                            SWT.READ_ONLY);
-
+            editor = new AutoDropComboBoxViewerCellEditor(viewer.getTable());
+            editor.setContentProvider(new ArrayContentProvider());
+            editor.setInput(choices);
         }
 
         /**
@@ -140,16 +164,9 @@ public class ImportWizardPageColumns extends WizardPage {
 
             DataType<?> datatype = ((ImportWizardModelColumn) element).getColumn()
                                                                       .getDataType();
-            int i = 0;
-            for (DataTypeDescription<?> description : DataType.list()) {
-                if (description.newInstance().getClass() == datatype.getClass()) {
-                    return i;
-                }
-                i++;
-            }
-            return null;
+            return datatype.getDescription().getLabel();
         }
-
+        
         /**
          * Applies datatype choice made by the user
          * 
@@ -167,17 +184,10 @@ public class ImportWizardPageColumns extends WizardPage {
             final String HEADER = "Format string";
             final String BODY = "Please provide a format string describing each item of this column";
 
-            String label = choices[(int) value];
+            String label = (String)value;
             ImportWizardModelColumn wizardColumn = (ImportWizardModelColumn) element;
             ImportColumn column = wizardColumn.getColumn();
-            List<String> previewData;
-
-            try {
-                previewData = wizardImport.getData().getPreviewData(wizardColumn);
-            } catch (Exception e) {
-                /* Catch silently*/
-                return;
-            }
+            List<String> previewData = wizardImport.getData().getPreviewData(wizardColumn);
 
             for (DataTypeDescription<?> description : DataType.list()) {
                 if (description.getLabel().equals(label)) {
@@ -214,6 +224,12 @@ public class ImportWizardPageColumns extends WizardPage {
                     } else {
                         /* Datatype has no format */
                         datatype = description.newInstance();
+                    }
+                    
+                    for (String data : previewData) {
+                        if (!datatype.isValid(data)) {
+                            datatype = DataType.STRING;
+                        }
                     }
 
                     /* Apply datatype */

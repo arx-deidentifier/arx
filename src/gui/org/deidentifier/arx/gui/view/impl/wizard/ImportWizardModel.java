@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnIndexed;
+import org.deidentifier.arx.io.ImportColumnJDBC;
 
 /**
  * Stores all of the data gathered by the wizard and offers means to access it
@@ -223,7 +224,11 @@ public class ImportWizardModel {
 
         if (index != -1) {
             for (String[] s : getPreviewData()) {
-                result.add(s[((ImportColumnIndexed) column.getColumn()).getIndex()]);
+                if (column.getColumn() instanceof ImportColumnIndexed) {
+                    result.add(s[((ImportColumnIndexed) column.getColumn()).getIndex()]);
+                } else if (column.getColumn() instanceof ImportColumnJDBC){
+                    result.add(s[((ImportColumnJDBC) column.getColumn()).getIndex()]);
+                }
             }
         } else {
             throw new IllegalArgumentException("Column not part of preview data");
