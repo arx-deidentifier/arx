@@ -247,6 +247,28 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         for (ImportColumn c : data.getEnabledColumns()) {
             configuration.addColumn(c);
         }
+        
+        if (data.getSourceType() != SourceType.JDBC) {
+            try {
+                if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
+                    data.getJdbcConnection().close();
+                }
+            } catch (Exception e) { /* Die silently */ }
+        }
+        
+        return true;
+    }
+    
+    /** 
+     * Cancel pressed
+     */
+    @Override
+    public boolean performCancel() {
+        try {
+            if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
+                data.getJdbcConnection().close();
+            }
+        } catch (Exception e) { /* Die silently */ }
         return true;
     }
 

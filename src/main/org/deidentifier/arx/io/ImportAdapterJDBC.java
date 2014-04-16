@@ -174,6 +174,17 @@ public class ImportAdapterJDBC extends ImportAdapter {
 
             /* Move cursor forward and assign result to {@link #hasNext} */
             hasNext = resultSet.next();
+            
+            if (!hasNext) {
+                try {
+                    if (!config.getConnection().isClosed()) {
+                        config.getConnection().close();
+                    }
+                } catch (Exception e){
+                    /* Die silently*/
+                }
+            }
+            
             return result;
 
         } catch (SQLException e) {

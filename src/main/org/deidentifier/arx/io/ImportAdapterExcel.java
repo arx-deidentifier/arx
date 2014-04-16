@@ -92,6 +92,8 @@ public class ImportAdapterExcel extends ImportAdapter {
      */
     private int                      numberOfColumns;
 
+    private FileInputStream          input;
+
     /**
      * Creates a new instance of this object with given configuration
      * 
@@ -112,7 +114,7 @@ public class ImportAdapterExcel extends ImportAdapter {
         this.config = config;
 
         /* Get row iterator */
-        FileInputStream input = new FileInputStream(config.getFileLocation());
+        input = new FileInputStream(config.getFileLocation());
         Workbook workbook = null;
 
         if (config.getExcelFileType() == ExcelFileTypes.XLS) {
@@ -220,6 +222,11 @@ public class ImportAdapterExcel extends ImportAdapter {
             currentRow++;
         } else {
             row = null;
+            try {
+                input.close();
+            } catch (Exception e){
+                /* Die silently*/
+            }
         }
 
         /* Return resulting row */
