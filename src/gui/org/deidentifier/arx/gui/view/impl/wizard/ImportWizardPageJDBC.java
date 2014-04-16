@@ -414,7 +414,13 @@ public class ImportWizardPageJDBC extends WizardPage {
                 connection = DriverManager.getConnection("jdbc:postgresql://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText());
 
             }
-
+            try {
+                if (!wizardImport.getData().getJdbcConnection().isClosed()) {
+                    wizardImport.getData().getJdbcConnection().close();
+                }
+            } catch (Exception e){
+                /* Die silently*/
+            }
             wizardImport.getData().setJdbcConnection(connection);
             return true;
 

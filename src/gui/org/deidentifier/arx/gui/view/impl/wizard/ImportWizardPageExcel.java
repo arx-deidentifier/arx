@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -159,6 +160,9 @@ public class ImportWizardPageExcel extends WizardPage {
      * Either HSSFWorkbook or XSSFWorkbook, depending upon file type
      */
     private Workbook workbook;
+    
+    /** Input stream*/
+    private InputStream stream;
 
     /**
      * Creates a new instance of this page and sets its title and description
@@ -480,7 +484,14 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Get workbook */
         try {
-            workbook = WorkbookFactory.create(new FileInputStream(comboLocation.getText()));
+            try { 
+                if (stream != null) stream.close();
+            } catch (Exception e){
+                /* Die silently*/
+            }
+            
+            stream = new FileInputStream(comboLocation.getText());
+            workbook = WorkbookFactory.create(stream);
         } catch (InvalidFormatException e) {
             throw new IOException("File format invalid");
         }
@@ -488,6 +499,16 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Add all sheets to combo */
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             comboSheet.add(workbook.getSheetName(i));
+        }
+    }
+    
+    @Override
+    public void setVisible(boolean value){
+        super.setVisible(value);
+        try { 
+            if (stream != null) stream.close();
+        } catch (Exception e){
+            /* Die silently*/
         }
     }
 }
