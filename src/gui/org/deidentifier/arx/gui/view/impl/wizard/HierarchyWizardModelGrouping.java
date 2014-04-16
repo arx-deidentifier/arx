@@ -422,8 +422,12 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     public void parse(HierarchyBuilderIntervalBased<T> builder){
         this.type = builder.getDataType();
         this.showIntervals = true;
-        this.lower = new HierarchyWizardGroupingRange<T>(builder.getLowerRange());
-        this.upper = new HierarchyWizardGroupingRange<T>(builder.getUpperRange());
+        this.lower.label = builder.getLowerRange().getLabelBound();
+        this.lower.repeat = builder.getLowerRange().getRepeatBound();
+        this.lower.snap = builder.getLowerRange().getSnapBound();
+        this.upper.label = builder.getUpperRange().getLabelBound();
+        this.upper.repeat = builder.getUpperRange().getRepeatBound();
+        this.upper.snap = builder.getUpperRange().getSnapBound();
         this.function = builder.getDefaultFunction();
         this.intervals.clear();
         this.groups.clear();
