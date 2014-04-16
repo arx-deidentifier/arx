@@ -75,6 +75,7 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
             if (load != null) load.setEnabled(false);
         }
         super.setVisible(value);
+        model.setVisible(value);
     }
     
     @Override

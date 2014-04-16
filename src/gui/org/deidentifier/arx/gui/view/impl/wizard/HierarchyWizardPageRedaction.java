@@ -201,4 +201,11 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         combo.add("("+String.valueOf(value)+")");
         return combo.getItemCount()-1;
     }
+    
+
+    @Override
+    public void setVisible(boolean value){
+        super.setVisible(value);
+        model.setVisible(value);
+    }
 }
