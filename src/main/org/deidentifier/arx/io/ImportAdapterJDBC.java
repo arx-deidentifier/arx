@@ -230,11 +230,9 @@ public class ImportAdapterJDBC extends ImportAdapter {
                 /* Assign name from JDBC metadata */
                 try {
                     /* +1 offset, because counting in JDBC starts at 1 */
-                    header[i] = resultSet.getMetaData()
-                                         .getColumnName(((ImportColumnJDBC) column).getIndex() + 1);
-
+                    header[i] = resultSet.getMetaData().getColumnName(((ImportColumnJDBC) column).getIndex() + 1);
                 } catch (SQLException e) {
-                    throw new RuntimeException("Couldn't retrieve column name from metadata");
+                    throw new IllegalArgumentException("Index for column '" + ((ImportColumnJDBC) column).getIndex() + "' couldn't be found");
                 }
             }
             column.setAliasName(header[i]);

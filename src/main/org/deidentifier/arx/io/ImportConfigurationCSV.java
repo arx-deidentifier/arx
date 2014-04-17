@@ -19,6 +19,7 @@
 
 package org.deidentifier.arx.io;
 
+
 /**
  * Configuration describing a CSV file
  * 
@@ -128,6 +129,7 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
 
     /**
      * Sets the indexes based on the header
+     * 
      * @param row
      */
     public void prepare(String[] row) {
@@ -135,10 +137,15 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
         for (ImportColumn c : super.getColumns()) {
             ImportColumnCSV column = (ImportColumnCSV) c;
             if (!column.isIndexSpecified()) {
+                boolean found = false;
                 for (int i = 0; i < row.length; i++) {
                     if (row[i].equals(column.getName())) {
+                        found = true;
                         column.setIndex(i);
                     }
+                }
+                if (!found) {
+                    throw new IllegalArgumentException("Index for column '" + column.getName() + "' couldn't be found");
                 }
             }
         }

@@ -219,6 +219,7 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
 
     /**
      * Sets the indexes based on the header
+     * 
      * @param row
      */
     public void prepare(Row row) {
@@ -226,11 +227,16 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
         for (ImportColumn c : super.getColumns()) {
             ImportColumnExcel column = (ImportColumnExcel) c;
             if (!column.isIndexSpecified()) {
+                boolean found = false;
                 for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
                     row.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
                     if (row.getCell(i).getStringCellValue().equals(column.getName())) {
+                        found = true;
                         column.setIndex(i);
                     }
+                }
+                if (!found) {
+                    throw new IllegalArgumentException("Index for column '" + column.getName() + "' couldn't be found");
                 }
             }
         }
