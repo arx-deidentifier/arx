@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.io;
 
+import java.util.NoSuchElementException;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -226,11 +228,16 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
         for (ImportColumn c : super.getColumns()) {
             ImportColumnExcel column = (ImportColumnExcel) c;
             if (!column.isIndexSpecified()) {
+                boolean found = false;
                 for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
                     row.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
                     if (row.getCell(i).getStringCellValue().equals(column.getName())) {
+                        found = true;
                         column.setIndex(i);
                     }
+                }
+                if (!found) {
+                    throw new NoSuchElementException("Index for column '" + column.getName() + "' couldn't be found");
                 }
             }
         }
