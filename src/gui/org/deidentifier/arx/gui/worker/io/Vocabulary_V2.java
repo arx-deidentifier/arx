@@ -18,6 +18,9 @@
 
 package org.deidentifier.arx.gui.worker.io;
 
+import org.deidentifier.arx.gui.resources.Resources;
+import org.xml.sax.SAXException;
+
 
 /**
  * Second version of the ARX XML vocabulary
@@ -43,6 +46,13 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 		b.append("<!-- z = attribute                  -->\n");
 		return b.toString();
 	}
+	
+    @Override
+    public void checkVersion(String version) throws SAXException {
+        if (!(version.equals("2.0") || version.equals("2.1"))) {
+            throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
+        }
+    }
 
     @Override
     public String getVocabularyVersion() {
