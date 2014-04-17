@@ -147,6 +147,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     @Override
     public void update() {
         this.canvascomposite.redraw();
+        this.editor.update();
     }
 
     /**

@@ -157,8 +157,7 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
             } else {
                 SWTUtil.disable(editorMax.getControl());
             }
-            SWTUtil.enable(this.editorFunction.getControl1());
-            SWTUtil.enable(this.editorFunction.getControl2());
+            this.editorFunction.update();
         } else {
             this.interval = null;
             this.editorFunction.setFunction(null);

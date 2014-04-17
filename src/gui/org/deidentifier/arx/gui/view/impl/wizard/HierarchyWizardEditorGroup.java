@@ -111,8 +111,7 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
             this.editorFunction.setFunction(group.function);
             this.editorSize.update();
             SWTUtil.enable(editorSize.getControl());
-            SWTUtil.enable(this.editorFunction.getControl1());
-            SWTUtil.enable(this.editorFunction.getControl2());
+            this.editorFunction.update();
         } else {
             this.group = null;
             this.editorFunction.setFunction(null);
