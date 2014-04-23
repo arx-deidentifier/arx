@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,7 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnExcel;
