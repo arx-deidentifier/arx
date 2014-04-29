@@ -1,6 +1,6 @@
 package org.deidentifier.arx.masking;
 
-import org.deidentifier.arx.IDataParser;
+import org.deidentifier.arx.DataType;
 
 /**
  * Performs data masking on single instances of data of type T.
@@ -16,12 +16,12 @@ public abstract class AbstractInstanceMasker<T> implements IInstanceMasker<T> {
 	 * Interprets the input string as a data instance of type T, performs data masking on it and
 	 * returns the masked data, converted back to a string.
 	 * @param input The string representing a data instance.
-	 * @param parser The parser used to interpret the string as data - usually a {@link
+	 * @param type The parser used to interpret the string as data - usually a {@link
 	 * org.deidentifier.arx.DataType DataType}.
 	 * @return The string representing the masked data.
 	 */
-	public String maskString(String input, IDataParser<T> parser) {
-		return parser.toString(mask(parser.fromString(input)));
+	public String maskString(String input, DataType<T> type) {
+		return type.format(mask(type.parse(input)));
 	}
 	
 }

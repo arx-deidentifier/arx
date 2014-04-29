@@ -1,10 +1,10 @@
 package org.deidentifier.arx.masking;
 
-import org.deidentifier.arx.IDataParser;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+
+import org.deidentifier.arx.DataType;
 
 /**
  * Performs data masking on whole dictionaries of data of type T.
@@ -22,23 +22,23 @@ public abstract class AbstractDictionaryMasker<T> implements IDictionaryMasker<T
 	 * 
 	 * @param dataStrings The array of strings that contains the input dictionary and is
 	 * replaced by the masked output.
-	 * @param parser The object used to parse the data - usually a {@link
+	 * @param type The object used to parse the data - usually a {@link
 	 * org.deidentifier.arx.DataType DataType}.
 	 */
-	public void maskStrings(String[] dataStrings, IDataParser<T> parser) {
+	public void maskStrings(String[] dataStrings, DataType<T> type) {
 		
 		// Convert input strings to T and store in a Vector.
 		List<String> stringList = Arrays.asList(dataStrings);
 		Vector<T> dataVector = new Vector<T>();
 		for (String item : stringList)
-			dataVector.add(parser.fromString(item));
+			dataVector.add(type.parse(item));
 		
 		// Perform the masking.
 		maskList(dataVector);
 		
 		// Write back to input array.
 		for (int i = 0; i < dataVector.size(); ++i)
-			dataStrings[i] = parser.toString(dataVector.elementAt(i));
+			dataStrings[i] = type.format(dataVector.elementAt(i));
 	}
 	
 	/**
