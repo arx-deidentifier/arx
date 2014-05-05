@@ -42,8 +42,8 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      * Creates a new instance
      * @param l
      */
-    public LDiversity(String attribute, double l) {
-        super(attribute, false);
+    public LDiversity(String attribute, double l, boolean monotonic) {
+        super(attribute, monotonic);
         this.l = l;
         this.minSize = (int) Math.ceil(l);
     }
