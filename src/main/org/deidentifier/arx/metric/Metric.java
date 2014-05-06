@@ -19,6 +19,7 @@
 package org.deidentifier.arx.metric;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -115,6 +116,28 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
+     * Creates a weighted precision metric
+     * 
+     * @param weights Contains the weights for each column, indexed by the column name.
+     * @return
+     */
+    public static Metric<InformationLossDefault> createPrecisionWeightedMetric(Map<String, Double> weights) {
+        return new MetricPrecisionWeighted(weights);
+    }
+
+    /**
+     * Creates a user defined and weighted metric
+     * 
+     * @param infoloss Contains the infoloss for each level of the hierarchy, index by column name
+     * @param weights Contains the weights for each column, indexed by the column name.
+     * @return
+     */
+
+    public static Metric<InformationLossDefault> createUserDefinedWeightedMetric(Map<String, List<Double>> infoloss, Map<String, Double> weights) {
+        return new MetricUserDefinedWeighted(infoloss, weights);
+    }
+
+    /**
      * Creates a weighted metric
      * 
      * @param weights
@@ -164,8 +187,7 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
 
         // Store optimum
         // Store global optimum
-        if (node.isAnonymous() && ((globalOptimum == null) || (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||
-            (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
+        if (node.isAnonymous() && ((globalOptimum == null) || (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) || (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
             this.globalOptimum = node;
             this.optimalInformationLoss = node.getInformationLoss();
         }
