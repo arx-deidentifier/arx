@@ -46,6 +46,7 @@ public class EqualDistanceTCloseness extends TCloseness {
 
     @Override
     public void initialize(DataManager manager) {
+        super.initialize(manager);
         distribution = manager.getDistribution(attribute);
     }
 

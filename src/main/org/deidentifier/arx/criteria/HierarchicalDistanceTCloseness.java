@@ -55,6 +55,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 
     @Override
     public void initialize(DataManager manager) {
+        super.initialize(manager);
         this.tree = manager.getTree(attribute);
         this.start = this.tree[1] + 3;
         this.empty = new int[this.tree[1]];

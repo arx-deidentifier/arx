@@ -25,13 +25,16 @@ import org.deidentifier.arx.examples.Example10;
 import org.deidentifier.arx.examples.Example11;
 import org.deidentifier.arx.examples.Example12;
 import org.deidentifier.arx.examples.Example13;
-import org.deidentifier.arx.examples.Example14;
 import org.deidentifier.arx.examples.Example15;
 import org.deidentifier.arx.examples.Example16;
 import org.deidentifier.arx.examples.Example17;
 import org.deidentifier.arx.examples.Example18;
 import org.deidentifier.arx.examples.Example19;
 import org.deidentifier.arx.examples.Example2;
+import org.deidentifier.arx.examples.Example20;
+import org.deidentifier.arx.examples.Example21;
+import org.deidentifier.arx.examples.Example22;
+import org.deidentifier.arx.examples.Example23;
 import org.deidentifier.arx.examples.Example3;
 import org.deidentifier.arx.examples.Example4;
 import org.deidentifier.arx.examples.Example5;
@@ -175,16 +178,6 @@ public class TestExamples {
     }
 
     @Test
-    public void testExample14() {
-        try {
-            Example14.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
     public void testExample15() {
         try {
             Example15.main(null);
@@ -228,6 +221,46 @@ public class TestExamples {
     public void testExample19() {
         try {
             Example19.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample20() {
+        try {
+            Example20.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample21() {
+        try {
+            Example21.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample22() {
+        try {
+            Example22.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testExample23() {
+        try {
+            Example23.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
