@@ -215,7 +215,7 @@ public class History {
         // Create the snapshot
         final int[] data = createSnapshot(g);
 
-        // if cache size is to large purge
+        // if cache size is too large purge
         if (cache.size() >= size) {
             purgeCache();
         }
