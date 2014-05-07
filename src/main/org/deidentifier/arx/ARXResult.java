@@ -297,15 +297,10 @@ public class ARXResult {
         if (!node.isChecked()) {
             
             node.access().setChecked(true);
-            
-            // TODO: Only in this case, due to the special case 
-            // with multiple sensitive attributes
-            if (definition.getSensitiveAttributes().size()<=1) {
-                if (tNode.isAnonymous()) {
-                    node.access().setAnonymous();
-                } else {
-                    node.access().setNotAnonymous();
-                }
+            if (tNode.isAnonymous()) {
+                node.access().setAnonymous();
+            } else {
+                node.access().setNotAnonymous();
             }
             node.access().setMaximumInformationLoss(tNode.getInformationLoss());
             node.access().setMinimumInformationLoss(tNode.getInformationLoss());

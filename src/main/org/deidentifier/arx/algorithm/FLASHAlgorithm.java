@@ -66,17 +66,4 @@ public class FLASHAlgorithm {
             }
         }
     }
-    
-    /**
-     * Creates a new instance based on a previous one for repeated executions
-     * @param previous
-     * @param checker
-     * @return
-     */
-    public static AbstractAlgorithm create(final AbstractFLASHAlgorithm previous,
-                                           final INodeChecker checker) {
-        
-        /* Iterative FLASH*/
-        return new FLASHAlgorithmIterative(previous.lattice, checker, previous.strategy, previous.sorted);
-    }
 }
