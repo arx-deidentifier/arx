@@ -60,7 +60,7 @@ public class TransformerAll extends AbstractTransformer {
             intuple = data[i];
             outtuple = buffer[i];
             for (int d = 0; d < dimensions; d++) {
-                final int state = states[d];
+                final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
             }
 
@@ -83,7 +83,7 @@ public class TransformerAll extends AbstractTransformer {
             intuple = data[element.representant];
             outtuple = buffer[element.representant];
             for (int d = 0; d < dimensions; d++) {
-                final int state = states[d];
+                final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
             }
 
@@ -113,7 +113,7 @@ public class TransformerAll extends AbstractTransformer {
             intuple = data[snapshot[i]];
             outtuple = buffer[snapshot[i]];
             for (int d = 0; d < dimensions; d++) {
-                final int state = states[d];
+                final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
             }
 

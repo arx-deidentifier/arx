@@ -211,8 +211,8 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The data. */
     protected final int[][]                   data;
 
-    /** The delegate*/
-    protected final IGroupify                       delegate;
+    /** The delegate */
+    protected final IGroupify                 delegate;
 
     /** The dictionary for the snapshot compression **/
     protected final IntArrayDictionary        dictionarySensFreq;
@@ -230,10 +230,11 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The hierarchies. */
     protected final GeneralizationHierarchy[] hierarchies;
     /** The idindex14. */
-    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5, idindex6, idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13,
-            idindex14;
+    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5, 
+                                              idindex6, idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
     /** The index14. */
-    protected int                             index0, index1, index2, index3, index4, index5, index6, index7, index8, index9, index10, index11, index12, index13, index14;
+    protected int                             index0, index1, index2, index3, index4, index5, index6, index7, 
+                                              index8, index9, index10, index11, index12, index13, index14;
     /** The intuple. */
     protected int[]                           intuple;
     /** The generalization hierarchies */
@@ -254,19 +255,14 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     protected int                             outindex13;
     /** The outindices. */
     protected int                             outindex14;
-
     /** The outindices. */
     protected int                             outindex2;
-
     /** The outindices. */
     protected int                             outindex3;
-
     /** The outindices. */
     protected int                             outindex4;
-
     /** The outindices. */
     protected int                             outindex5;
-
     /** The outindices. */
     protected int                             outindex6;
     /** The outindices. */
@@ -278,7 +274,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The outtuple. */
     protected int[]                           outtuple;
     /** The sesitive values. */
-    protected final int[][]                     sensitiveValues;
+    protected final int[][]                   sensitiveValues;
     /** The snapshot. */
     protected int[]                           snapshot;
     /** The size of one snapshopt entry **/
@@ -286,51 +282,42 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The start index. */
     protected int                             startIndex;
     /** The stateindices */
-    protected int                             stateindex0;
+    protected int                             generalizationindex0;
     /** The stateindices */
-    protected int                             stateindex1;
+    protected int                             generalizationindex1;
     /** The stateindices */
-    protected int                             stateindex10;
+    protected int                             generalizationindex10;
     /** The stateindices */
-    protected int                             stateindex11;
+    protected int                             generalizationindex11;
     /** The stateindices */
-    protected int                             stateindex12;
+    protected int                             generalizationindex12;
     /** The stateindices */
-    protected int                             stateindex13;
-
+    protected int                             generalizationindex13;
     /** The stateindices */
-    protected int                             stateindex14;
+    protected int                             generalizationindex14;
     /** The stateindices */
-    protected int                             stateindex2;
+    protected int                             generalizationindex2;
     /** The stateindices */
-    protected int                             stateindex3;
+    protected int                             generalizationindex3;
     /** The stateindices */
-    protected int                             stateindex4;
-
+    protected int                             generalizationindex4;
     /** The stateindices */
-    protected int                             stateindex5;
-
+    protected int                             generalizationindex5;
     /** The stateindices */
-    protected int                             stateindex6;
-
+    protected int                             generalizationindex6;
     /** The stateindices */
-    protected int                             stateindex7;
-
+    protected int                             generalizationindex7;
     /** The stateindices */
-    protected int                             stateindex8;
-
+    protected int                             generalizationindex8;
     /** The stateindices */
-    protected int                             stateindex9;
-
+    protected int                             generalizationindex9;
     /** The state index array. */
-    protected final int[]                     stateIndexArray;
+    protected final int[]                     generalizationIndexArray;
 
     /** The states. */
-    protected int[]                           states;
-
+    protected int[]                           generalization;
     /** The stop index. */
     protected int                             stopIndex;
-
     /** The transition. */
     protected TransitionType                  transition;
 
@@ -362,7 +349,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         if (dimensions > arraySizes) {
             arraySizes = dimensions;
         }
-        stateIndexArray = new int[arraySizes];
+        generalizationIndexArray = new int[arraySizes];
         columnIndexArray = new int[arraySizes];
         columnMapArray = new int[arraySizes][][];
         map = new int[hierarchies.length][][];
@@ -466,13 +453,13 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         this.bucket = bucket;
         numElements = stopIndex - startIndex;
 
-        states = state;
+        generalization = state;
         this.transition = transition;
 
         int index = 0;
         for (int i = 0; i < dimensions; i++) {
             if ((projection & (1L << i)) == 0) {
-                stateIndexArray[index] = state[i];
+                generalizationIndexArray[index] = state[i];
                 columnIndexArray[index] = i;
                 columnMapArray[index] = hierarchies[i].getArray();
                 index++;
@@ -521,21 +508,21 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         outindex14 = columnIndexArray[14];
 
         // Store values
-        stateindex0 = stateIndexArray[0];
-        stateindex1 = stateIndexArray[1];
-        stateindex2 = stateIndexArray[2];
-        stateindex3 = stateIndexArray[3];
-        stateindex4 = stateIndexArray[4];
-        stateindex5 = stateIndexArray[5];
-        stateindex6 = stateIndexArray[6];
-        stateindex7 = stateIndexArray[7];
-        stateindex8 = stateIndexArray[8];
-        stateindex9 = stateIndexArray[9];
-        stateindex10 = stateIndexArray[10];
-        stateindex11 = stateIndexArray[11];
-        stateindex12 = stateIndexArray[12];
-        stateindex13 = stateIndexArray[13];
-        stateindex14 = stateIndexArray[14];
+        generalizationindex0 = generalizationIndexArray[0];
+        generalizationindex1 = generalizationIndexArray[1];
+        generalizationindex2 = generalizationIndexArray[2];
+        generalizationindex3 = generalizationIndexArray[3];
+        generalizationindex4 = generalizationIndexArray[4];
+        generalizationindex5 = generalizationIndexArray[5];
+        generalizationindex6 = generalizationIndexArray[6];
+        generalizationindex7 = generalizationIndexArray[7];
+        generalizationindex8 = generalizationIndexArray[8];
+        generalizationindex9 = generalizationIndexArray[9];
+        generalizationindex10 = generalizationIndexArray[10];
+        generalizationindex11 = generalizationIndexArray[11];
+        generalizationindex12 = generalizationIndexArray[12];
+        generalizationindex13 = generalizationIndexArray[13];
+        generalizationindex14 = generalizationIndexArray[14];
 
         // Store values
         idindex0 = columnMapArray[0];

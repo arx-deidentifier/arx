@@ -60,7 +60,7 @@ public class Transformer01 extends AbstractTransformer {
             // Transform
             intuple = data[i];
             outtuple = buffer[i];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
 
             // Call
             delegate.callAll(outtuple, i);
@@ -81,7 +81,7 @@ public class Transformer01 extends AbstractTransformer {
 
             intuple = data[element.representant];
             outtuple = buffer[element.representant];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
 
             // Call
             delegate.callGroupify(outtuple, element);
@@ -109,7 +109,7 @@ public class Transformer01 extends AbstractTransformer {
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
             intuple = data[snapshot[i]];
             outtuple = buffer[snapshot[i]];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
 
             // Call
             delegate.callSnapshot(outtuple, snapshot, i);
