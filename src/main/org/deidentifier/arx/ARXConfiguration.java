@@ -109,7 +109,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                   snapshotLength;
 
     /** Make sure that no information can be derived from associations between sensitive attributes*/
-    private boolean               protectSensitiveAssociations  = true;
+    private boolean               protectSensitiveAssociations  = false;
 
     /**
      * Creates a new config without tuple suppression
