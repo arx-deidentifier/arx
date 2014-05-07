@@ -19,7 +19,6 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;

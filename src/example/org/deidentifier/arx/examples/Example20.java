@@ -18,7 +18,6 @@
 
 package org.deidentifier.arx.examples;
 
-import java.text.ParseException;
 import java.util.Arrays;
 
 import org.deidentifier.arx.DataType;
