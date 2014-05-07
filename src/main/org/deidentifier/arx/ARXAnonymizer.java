@@ -343,6 +343,7 @@ public class ARXAnonymizer {
 			    LatticeManipulator finalManipulator = createFinalManipulator(result.lattice, config, ((DataHandleInput) handle).header, currentDefinition, definition);
 			    ((DataHandleInput)handle).setDefinition(finalDefinition);
 			    result = anonymizeInternal(handle, finalDefinition, finalConfig, null, 1, null, finalManipulator);
+			    
 			}
 			
 			// Return the result from the last iteration
@@ -736,6 +737,9 @@ public class ARXAnonymizer {
                     lattice.triggerTagged();
                     lattice.decUntaggedCount(node.getLevel());
                 }
+                
+                // TODO: This is just a hack
+                node.setInformationLoss(other.getInformationLoss());
             }
         };
     }

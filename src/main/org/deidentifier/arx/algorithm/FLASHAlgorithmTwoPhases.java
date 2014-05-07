@@ -110,8 +110,8 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
 
         pqueue.clear();
         stack.clear();
-        checker.check(lattice.getBottom(), true);
-
+        if (!lattice.getBottom().isChecked()) checker.check(lattice.getBottom(), true);
+        
         // For each node
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
@@ -159,7 +159,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
         }
         
         if (lattice.getTop().getInformationLoss() == null) {
-            checker.check(lattice.getTop(), true);
+            if (!lattice.getTop().isChecked())  checker.check(lattice.getTop(), true);
         }
     }
 }
