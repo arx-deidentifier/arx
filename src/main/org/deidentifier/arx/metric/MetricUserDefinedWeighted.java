@@ -35,8 +35,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricUserDefinedWeighted extends MetricDefault {
 
-    private static final long         serialVersionUID = -7612335677779934559L;
-
+    private static final long serialVersionUID = 3778891174824606177L;
+    
     /** The pre-calculated infoloss */
     private double[][]                infoloss;
     /** The user defined weight map, indexed by column name  */

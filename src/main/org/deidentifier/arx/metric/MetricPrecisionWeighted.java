@@ -35,10 +35,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricPrecisionWeighted extends MetricDefault {
 
-    /**
-     * 
-     */
-    private static final long   serialVersionUID = -7612335677779934559L;
+    private static final long serialVersionUID = -4310441992550794016L;
+    
     /** The maximum levels */
     private int[]               maxLevels;
     /** The weights */
