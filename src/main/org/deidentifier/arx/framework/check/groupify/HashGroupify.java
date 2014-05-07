@@ -228,44 +228,57 @@ public class HashGroupify implements IHashGroupify {
     }
 
     @Override
-    public void addAll(int[] key, int representant, int count, int sensitive, int pcount) {
+    public void addAll(int[] key, int representant, int count, int[] sensitive, int pcount) {
 
         // Add
         final int hash = HashTableUtil.hashcode(key);
         final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a sensitive attribute provided
-        if (sensitive != -1) {
-            if (entry.distribution == null) {
-                entry.distribution = new Distribution();
+        if (sensitive != null) {
+            if (entry.distributions == null) {
+                entry.distributions = new Distribution[sensitive.length];
+                
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i] = new Distribution();
+                }
             }
 
             // Only add sensitive value if in research subset
             if (subset == null || subset.contains(representant)) {
-                entry.distribution.add(sensitive);
+
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i].add(sensitive[i]);
+                }
             }
         }
     }
 
     @Override
-    public void addGroupify(int[] key, int representant, int count, Distribution distribution, int pcount) {
+    public void addGroupify(int[] key, int representant, int count, Distribution[] distributions, int pcount) {
 
         // Add
         final int hash = HashTableUtil.hashcode(key);
         final HashGroupifyEntry entry = addInternal(key, hash, representant, count, pcount);
 
         // Is a distribution provided
-        if (distribution != null) {
-            if (entry.distribution == null) {
-                entry.distribution = distribution;
+        if (distributions != null) {
+            if (entry.distributions == null) {
+                entry.distributions = distributions;
             } else {
-                entry.distribution.merge(distribution);
+
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i].merge(distributions[i]);
+                }
             }
         }
     }
 
     @Override
-    public void addSnapshot(int[] key, int representant, int count, int[] elements, int[] frequencies, int pcount) {
+    public void addSnapshot(int[] key, int representant, int count, int[][] elements, int[][] frequencies, int pcount) {
 
         // Add
         final int hash = HashTableUtil.hashcode(key);
@@ -273,10 +286,20 @@ public class HashGroupify implements IHashGroupify {
 
         // Is a distribution provided
         if (elements != null) {
-            if (entry.distribution == null) {
-                entry.distribution = new Distribution(elements, frequencies);
+            if (entry.distributions == null) {
+                
+                entry.distributions = new Distribution[elements.length];
+                
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
+                }
             } else {
-                entry.distribution.merge(elements, frequencies);
+
+                // TODO: Improve!
+                for (int i=0; i<entry.distributions.length; i++){
+                    entry.distributions[i].merge(elements[i], frequencies[i]);
+                }
             }
         }
     }

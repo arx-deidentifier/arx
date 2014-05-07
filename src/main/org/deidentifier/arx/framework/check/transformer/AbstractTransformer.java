@@ -43,7 +43,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addAll(outtuple, i, 1, -1, -1);
+            groupify.addAll(outtuple, i, 1, null, -1);
         }
 
         @Override
@@ -69,12 +69,22 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
+            groupify.addGroupify(outtuple, element.representant, element.count, element.distributions, -1);
         }
 
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
-            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
+            
+            // TODO: Improve!
+            int[][] values = new int[sensitiveValues.length][];
+            int[][] frequencies = new int[sensitiveValues.length][];
+            int index = 0;
+            for (int j = i + 2; j < config.getSnapshotLength() - 1; j += 2) {
+                values[index] = dictionarySensValue.get(snapshot[j]);
+                frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
+            }
+            
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], values, frequencies, -1);
         }
     }
 
@@ -85,7 +95,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     protected final class GroupifyCounterSecondaryCounter implements IGroupify {
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addAll(outtuple, i, 1, -1, 1);
+            groupify.addAll(outtuple, i, 1, null, 1);
         }
 
         @Override
@@ -112,12 +122,22 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, element.pcount);
+            groupify.addGroupify(outtuple, element.representant, element.count, element.distributions, element.pcount);
         }
 
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
-            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 3]), dictionarySensFreq.get(snapshot[i + 4]), snapshot[i + 2]);
+
+            // TODO: Improve!
+            int[][] values = new int[sensitiveValues.length][];
+            int[][] frequencies = new int[sensitiveValues.length][];
+            int index = 0;
+            for (int j = i + 3; j < config.getSnapshotLength() - 1; j += 2) {
+                values[index] = dictionarySensValue.get(snapshot[j]);
+                frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
+            }
+
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], values, frequencies, snapshot[i + 2]);
         }
     }
 
@@ -134,12 +154,22 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
 
         @Override
         public final void callGroupify(final int[] outtuple, final HashGroupifyEntry element) {
-            groupify.addGroupify(outtuple, element.representant, element.count, element.distribution, -1);
+            groupify.addGroupify(outtuple, element.representant, element.count, element.distributions, -1);
         }
 
         @Override
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
-            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], dictionarySensValue.get(snapshot[i + 2]), dictionarySensFreq.get(snapshot[i + 3]), -1);
+
+            // TODO: Improve!
+            int[][] values = new int[sensitiveValues.length][];
+            int[][] frequencies = new int[sensitiveValues.length][];
+            int index = 0;
+            for (int j = i + 2; j < config.getSnapshotLength() - 1; j += 2) {
+                values[index] = dictionarySensValue.get(snapshot[j]);
+                frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
+            }
+            
+            groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], values, frequencies, -1);
         }
     }
 
@@ -248,7 +278,7 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
     /** The outtuple. */
     protected int[]                           outtuple;
     /** The sesitive values. */
-    protected final int[]                     sensitiveValues;
+    protected final int[][]                     sensitiveValues;
     /** The snapshot. */
     protected int[]                           snapshot;
     /** The size of one snapshopt entry **/
@@ -314,14 +344,14 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
      */
     public AbstractTransformer(final int[][] data,
                                final GeneralizationHierarchy[] hierarchies,
-                               final int[] sensitiveValues,
+                               final int[][] sensitive,
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
                                final ARXConfiguration config) {
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
-        this.sensitiveValues = sensitiveValues;
+        this.sensitiveValues = sensitive;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         ssStepWidth = config.getSnapshotLength();

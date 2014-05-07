@@ -150,15 +150,7 @@ public class History {
 
         return rData;
     }
-
-    public IntArrayDictionary getDictionarySensFreq() {
-        return dictionarySensFreq;
-    }
-
-    public IntArrayDictionary getDictionarySensValue() {
-        return dictionarySensValue;
-    }
-
+    
     /**
      * Returns the node backing the last returned snapshot
      * 
@@ -299,18 +291,22 @@ public class History {
                 break;
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 data[index + 2] = m.pcount;
-                Distribution fSet = m.distribution;
-                fSet.pack();
-                data[index + 3] = dictionarySensValue.probe(fSet.getPackedElements());
-                data[index + 4] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+                for (int i=0; i<m.distributions.length; i++) {
+                    Distribution distribution = m.distributions[i];
+                    distribution.pack();
+                    data[index + 3 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
+                    data[index + 4 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                }
                 break;
             // TODO: If we only need a distribution, we should get rid of the primary counter
             case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
-                fSet = m.distribution;
-                fSet.pack();
-                data[index + 2] = dictionarySensValue.probe(fSet.getPackedElements());
-                data[index + 3] = dictionarySensFreq.probe(fSet.getPackedFrequency());
+                for (int i=0; i<m.distributions.length; i++) {
+                    Distribution distribution = m.distributions[i];
+                    distribution.pack();
+                    data[index + 2 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
+                    data[index + 3 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                }
                 break;
             default:
                 throw new RuntimeException("Invalid requirements: " + requirements);
@@ -358,16 +354,20 @@ public class History {
         switch (requirements) {
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
-                dictionarySensValue.decrementRefCount(snapshot[i + 3]);
-                dictionarySensFreq.decrementRefCount(snapshot[i + 4]);
+                for (int j = i + 3; j<snapshot.length-1; j+=2) {
+                    dictionarySensValue.decrementRefCount(snapshot[j]);
+                    dictionarySensFreq.decrementRefCount(snapshot[j+1]);
+                }
             }
             break;
         // TODO: If we only need a distribution, we should get rid of the primary counter
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
         case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
-                dictionarySensValue.decrementRefCount(snapshot[i + 2]);
-                dictionarySensFreq.decrementRefCount(snapshot[i + 3]);
+                for (int j = i + 2; j<snapshot.length-1; j+=2) {
+                    dictionarySensValue.decrementRefCount(snapshot[j]);
+                    dictionarySensFreq.decrementRefCount(snapshot[j+1]);
+                }
             }
         }
 

@@ -72,7 +72,7 @@ public interface IHashGroupify {
      * @param sensitive
      * @param pcount
      */
-    public abstract void addAll(int[] outtuple, int representant, int count, int sensitive, int pcount);
+    public abstract void addAll(int[] outtuple, int representant, int count, int[] sensitive, int pcount);
     
     /**
      * Generic adder for all combinations of criteria in mode transform GROUPIFY
@@ -82,7 +82,7 @@ public interface IHashGroupify {
      * @param distribution
      * @param pcount
      */
-    public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution distribution, int pcount);
+    public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution[] distribution, int pcount);
     
 
     /**
@@ -94,7 +94,7 @@ public interface IHashGroupify {
      * @param frequencies
      * @param pcount
      */
-    public abstract void addSnapshot(int[] outtuple, int representant, int count, int[] elements, int[] frequencies, int pcount);
+    public abstract void addSnapshot(int[] outtuple, int representant, int count, int[][] elements, int[][] frequencies, int pcount);
 
     /**
      * Returns statistics about the groups

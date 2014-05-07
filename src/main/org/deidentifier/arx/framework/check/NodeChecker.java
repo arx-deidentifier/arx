@@ -102,7 +102,6 @@ public class NodeChecker implements INodeChecker {
         this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
-
         this.transformer = new Transformer(manager.getDataQI().getArray(), manager.getHierarchies(), manager.getDataSE().getArray(), config, dictionarySensValue, dictionarySensFreq);
     }
 

@@ -53,7 +53,7 @@ public class EqualDistanceTCloseness extends TCloseness {
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
-        int[] buckets = entry.distribution.getBuckets();
+        int[] buckets = entry.distributions[index].getBuckets();
         int totalElements = 0;
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty

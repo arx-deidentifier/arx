@@ -51,7 +51,7 @@ public class RecursiveCLDiversity extends LDiversity{
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
-        Distribution d = entry.distribution;
+        Distribution d = entry.distributions[index];
         
         // if less than l values are present skip
         if (d.size() < minSize) { return false; }

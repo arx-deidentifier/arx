@@ -40,7 +40,7 @@ public class TransformerAll extends AbstractTransformer {
      */
     public TransformerAll(final int[][] data,
                           final GeneralizationHierarchy[] hierarchies,
-                          final int[] sensitiveValues,
+                          final int[][] sensitiveValues,
                           final IntArrayDictionary dictionarySensValue,
                           final IntArrayDictionary dictionarySensFreq,
                           final ARXConfiguration config) {
