@@ -354,7 +354,7 @@ public class History {
         switch (requirements) {
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
-                for (int j = i + 3; j<snapshot.length-1; j+=2) {
+                for (int j = i + 3; j < i + config.getSnapshotLength() - 1; j += 2) {
                     dictionarySensValue.decrementRefCount(snapshot[j]);
                     dictionarySensFreq.decrementRefCount(snapshot[j+1]);
                 }
@@ -364,7 +364,7 @@ public class History {
         case ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_DISTRIBUTION:
         case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
             for (int i = 0; i < snapshot.length; i += config.getSnapshotLength()) {
-                for (int j = i + 2; j<snapshot.length-1; j+=2) {
+                for (int j = i + 2; j < i + config.getSnapshotLength() - 1; j += 2) {
                     dictionarySensValue.decrementRefCount(snapshot[j]);
                     dictionarySensFreq.decrementRefCount(snapshot[j+1]);
                 }
