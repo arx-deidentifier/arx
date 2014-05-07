@@ -206,6 +206,10 @@ public class ARXAnonymizer {
             throw new RuntimeException("This data handle is locked. Please release it first");
         }
         
+        if (config.isProtectSensitiveAssociations()) {
+            throw new UnsupportedOperationException("Currently not supported!");
+        }
+        
         DataHandle handle = data.getHandle();
         
         final long time = System.currentTimeMillis();
