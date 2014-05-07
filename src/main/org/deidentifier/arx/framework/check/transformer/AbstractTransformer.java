@@ -76,10 +76,12 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
             
             // TODO: Improve!
-            int[][] values = new int[sensitiveValues.length][];
-            int[][] frequencies = new int[sensitiveValues.length][];
+            int[][] values = new int[sensitiveValues[0].length][];
+            int[][] frequencies = new int[sensitiveValues[0].length][];
             int index = 0;
-            for (int j = i + 2; j < config.getSnapshotLength() - 1; j += 2) {
+            int offset = i + 2;
+            int length = config.getSnapshotLength() - 1 - 2;
+            for (int j = offset; j < offset + length; j += 2) {
                 values[index] = dictionarySensValue.get(snapshot[j]);
                 frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
@@ -129,10 +131,12 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[sensitiveValues.length][];
-            int[][] frequencies = new int[sensitiveValues.length][];
+            int[][] values = new int[sensitiveValues[0].length][];
+            int[][] frequencies = new int[sensitiveValues[0].length][];
             int index = 0;
-            for (int j = i + 3; j < config.getSnapshotLength() - 1; j += 2) {
+            int offset = i + 3;
+            int length = config.getSnapshotLength() - 1 - 3;
+            for (int j = offset; j < offset + length; j += 2) {
                 values[index] = dictionarySensValue.get(snapshot[j]);
                 frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
@@ -161,14 +165,16 @@ public abstract class AbstractTransformer implements Callable<IHashGroupify> {
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[sensitiveValues.length][];
-            int[][] frequencies = new int[sensitiveValues.length][];
+            int[][] values = new int[sensitiveValues[0].length][];
+            int[][] frequencies = new int[sensitiveValues[0].length][];
             int index = 0;
-            for (int j = i + 2; j < config.getSnapshotLength() - 1; j += 2) {
+            int offset = i + 2;
+            int length = config.getSnapshotLength() - 1 - 2;
+            for (int j = offset; j < offset + length; j += 2) {
                 values[index] = dictionarySensValue.get(snapshot[j]);
                 frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
-            
+
             groupify.addSnapshot(outtuple, snapshot[i], snapshot[i + 1], values, frequencies, -1);
         }
     }
