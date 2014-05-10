@@ -80,7 +80,7 @@ public class Main {
             });
 
             String path = null;
-            if (args.length > 0) {
+            if (args.length > 0 && args[0].endsWith(".deid")) {
                 path = args[0];
             }
             main.show(path);
