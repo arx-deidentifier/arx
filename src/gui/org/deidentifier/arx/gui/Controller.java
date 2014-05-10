@@ -1215,7 +1215,7 @@ public class Controller implements IView {
      * Internal method for loading a project
      * @param path
      */
-    private void actionOpenProject(String path) {
+    public void actionOpenProject(String path) {
         if (!path.endsWith(".deid")) { //$NON-NLS-1$
             path += ".deid"; //$NON-NLS-1$
         }

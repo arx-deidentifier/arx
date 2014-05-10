@@ -68,6 +68,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class implements the global application window
+ * 
  * @author Fabian Prasser
  */
 public class MainWindow implements IView {
@@ -149,6 +150,7 @@ public class MainWindow implements IView {
 
     /**
      * Adds a listener
+     * 
      * @param event
      * @param listener
      */
@@ -158,6 +160,7 @@ public class MainWindow implements IView {
 
     /**
      * Adds a shell listener
+     * 
      * @param listener
      */
     public void addShellListener(ShellListener listener) {
@@ -171,6 +174,7 @@ public class MainWindow implements IView {
 
     /**
      * Returns the popup window
+     * 
      * @return
      */
     public MainContextMenu getPopUp() {
@@ -179,6 +183,7 @@ public class MainWindow implements IView {
 
     /**
      * Returns the shell
+     * 
      * @return
      */
     public Shell getShell() {
@@ -187,6 +192,7 @@ public class MainWindow implements IView {
 
     /**
      * Returns the tooltip window
+     * 
      * @return
      */
     public MainToolTip getToolTip() {
@@ -204,7 +210,12 @@ public class MainWindow implements IView {
     /**
      * Main SWT event loop
      */
-    public void show() {
+    public void show(String path) {
+
+        if (path != null) {
+            controller.actionOpenProject(path);
+        }
+
         shell.open();
         while (!shell.isDisposed()) {
             try {
@@ -242,6 +253,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows an error dialog
+     * 
      * @param header
      * @param message
      * @param t
@@ -258,6 +270,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows an input dialog for ordering data items
+     * 
      * @param header
      * @param text
      * @param type
@@ -277,6 +290,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows an input dialog for selecting formats string for data types
+     * 
      * @param shell
      * @param header
      * @param text
@@ -288,7 +302,9 @@ public class MainWindow implements IView {
     public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final DataTypeDescription<?> description, final Collection<String> values) {
 
         // Check
-        if (!description.hasFormat()) { throw new RuntimeException("This dialog can only be used for data types with format"); }
+        if (!description.hasFormat()) {
+            throw new RuntimeException("This dialog can only be used for data types with format");
+        }
 
         // Init
         final String DEFAULT = "Default";
@@ -308,7 +324,8 @@ public class MainWindow implements IView {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
                 }
                 for (final String value : values) {
-                    if (!type.isValid(value)) { return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
+                    if (!type.isValid(value)) {
+                        return Resources.getMessage("MainWindow.13"); //$NON-NLS-1$
                     }
                 }
                 return null;
@@ -348,6 +365,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a help dialog
+     * 
      * @param id
      */
     public void showHelpDialog(String id) {
@@ -358,6 +376,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows an info dialog
+     * 
      * @param header
      * @param text
      */
@@ -367,6 +386,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows an input dialog
+     * 
      * @param header
      * @param text
      * @param initial
@@ -384,6 +404,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a file open dialog
+     * 
      * @param filter
      * @return
      */
@@ -396,6 +417,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a progress dialog
+     * 
      * @param text
      * @param worker
      */
@@ -409,6 +431,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a query dialog for selecting a research subset
+     * 
      * @param query
      * @param data
      * @return
@@ -427,6 +450,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a question dialog
+     * 
      * @param header
      * @param text
      * @return
@@ -437,6 +461,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a file save dialog
+     * 
      * @param filter
      * @return
      */
@@ -449,6 +474,7 @@ public class MainWindow implements IView {
 
     /**
      * Shows a dialog for selecting privacy criteria
+     * 
      * @param others
      * @return
      */

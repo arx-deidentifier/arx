@@ -43,10 +43,10 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class Main {
 
-	private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
-	private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
-	
-    private static MainSplash splash = null;
+    private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
+    private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
+
+    private static MainSplash   splash      = null;
 
     public static void main(final String[] args) {
 
@@ -56,11 +56,11 @@ public class Main {
                 splash = new MainSplash();
                 splash.setVisible(true);
             } else {
-            	try {
-            		Class.forName(JDK16_FRAME);
-            	} catch (Exception e){
-            		SWT_AWT.embeddedFrameClass = JDK17_FRAME;
-            	}
+                try {
+                    Class.forName(JDK16_FRAME);
+                } catch (Exception e) {
+                    SWT_AWT.embeddedFrameClass = JDK17_FRAME;
+                }
             }
 
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,16 +72,21 @@ public class Main {
                     hideSplash();
                 }
             });
-            main.addListener(SWT.Show, new Listener(){
+            main.addListener(SWT.Show, new Listener() {
                 @Override
                 public void handleEvent(Event arg0) {
                     hideSplash();
                 }
             });
-            main.show();
+
+            String path = null;
+            if (args.length > 0) {
+                path = args[0];
+            }
+            main.show(path);
 
         } catch (Throwable e) {
-            
+
             hideSplash();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
