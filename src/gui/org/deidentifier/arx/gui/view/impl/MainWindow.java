@@ -210,6 +210,14 @@ public class MainWindow implements IView {
     /**
      * Main SWT event loop
      */
+    public void show() {
+        show(null);
+    }
+
+    /**
+     * Main SWT event loop
+     * @param path Path of project-file that should be opened
+     */
     public void show(String path) {
 
         if (path != null) {

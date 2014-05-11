@@ -92,16 +92,16 @@ import cern.colt.Swapper;
  */
 public class Controller implements IView {
 
-    /** The model*/
-    private Model                            model;
-    /** The main window*/
-    private final MainWindow                 main;
-    /** The resources*/
-    private final Resources                  resources;
     /** The debug data*/
     private final DebugData                  debug = new DebugData();
     /** Listeners registered by the views*/
     private final Map<ModelPart, Set<IView>> listeners = Collections.synchronizedMap(new HashMap<ModelPart, Set<IView>>());
+    /** The main window*/
+    private final MainWindow                 main;
+    /** The model*/
+    private Model                            model;
+    /** The resources*/
+    private final Resources                  resources;
 
     /**
      * Creates a new controller
@@ -765,6 +765,148 @@ public class Controller implements IView {
     }
 
     /**
+     * Internal method for loading a project
+     * @param path
+     */
+    public void actionOpenProject(String path) {
+        if (!path.endsWith(".deid")) { //$NON-NLS-1$
+            path += ".deid"; //$NON-NLS-1$
+        }
+
+        WorkerLoad worker = null;
+        try {
+            worker = new WorkerLoad(path, this);
+        } catch (final IOException e) {
+            main.showInfoDialog(main.getShell(), 
+                               Resources.getMessage("Controller.82"), e.getMessage()); //$NON-NLS-1$
+            return;
+        }
+
+        main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
+        if (worker.getError() != null) {
+            getResources().getLogger().info(worker.getError());
+            main.showInfoDialog(main.getShell(), 
+                                Resources.getMessage("Controller.85"), //$NON-NLS-1$
+                                worker.getError().getMessage());
+            return;
+        }
+
+        // Reset the workbench
+        reset();
+
+        // Obtain the result
+        model = worker.getResult();
+        model.setPath(path);
+
+        // Temporary store parts of the model, because it might be overwritten
+        // when updating the workbench
+        final ModelNodeFilter tempNodeFilter = model.getNodeFilter();
+        final String tempSelectedAttribute = model.getSelectedAttribute();
+        final ARXNode tempSelectedNode = model.getSelectedNode();
+        final Set<ARXNode> tempClipboard = new HashSet<ARXNode>();
+        if (model.getClipboard() == null) {
+            model.setClipboard(new HashSet<ARXNode>());
+        } else {
+            tempClipboard.addAll(model.getClipboard());
+        }
+
+        // Update the model
+        update(new ModelEvent(this, ModelPart.MODEL, model));
+
+        // Update subsets of the model
+        if (model.getInputConfig().getInput() != null) {
+            update(new ModelEvent(this,
+                                  ModelPart.INPUT,
+                                  model.getInputConfig().getInput().getHandle()));
+        }
+
+        // Update subsets of the model
+        if (model.getResult() != null) {
+            update(new ModelEvent(this, ModelPart.RESULT, model.getResult()));
+        }
+
+        // Update subsets of the model
+        if (tempSelectedNode != null) {
+            model.setSelectedNode(tempSelectedNode);
+            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
+            final DataHandle handle = model.getResult().getOutput(tempSelectedNode, false);
+            model.setOutput(handle, tempSelectedNode);
+            update(new ModelEvent(this, ModelPart.OUTPUT, handle));
+        } 
+
+        // Update subsets of the model
+        if (tempNodeFilter != null) {
+            model.setNodeFilter(tempNodeFilter);
+            update(new ModelEvent(this, ModelPart.FILTER, tempNodeFilter));
+        }
+
+        // Update hierarchies and selected attribute
+        if (model.getInputConfig() != null &&
+            model.getInputConfig().getInput() != null) {
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            if (handle != null) {
+                for (int i=0; i<handle.getNumColumns(); i++){
+                    String attr = handle.getAttributeName(i);
+                    Hierarchy hierarchy = model.getInputConfig().getHierarchy(attr);
+                    if (hierarchy != null){
+                        model.setSelectedAttribute(attr);
+                        update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+                    }
+                }
+                if (handle.getNumColumns() > 0) {
+                    String attribute = handle.getAttributeName(0);
+                    model.setSelectedAttribute(attribute);
+                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
+                }
+            }
+        }
+
+        // Update subsets of the model
+        if (tempSelectedAttribute != null) {
+            model.setSelectedAttribute(tempSelectedAttribute);
+            update(new ModelEvent(this,
+                                  ModelPart.SELECTED_ATTRIBUTE,
+                                  tempSelectedAttribute));
+        }
+
+        // Update subsets of the model
+        if (tempClipboard != null) {
+            model.getClipboard().clear();
+            model.getClipboard().addAll(tempClipboard);
+            update(new ModelEvent(this,
+                                  ModelPart.CLIPBOARD,
+                                  model.getClipboard()));
+        }
+
+        // Update the attribute types
+        if (model.getInputConfig().getInput() != null) {
+            final DataHandle handle = model.getInputConfig()
+                                           .getInput()
+                                           .getHandle();
+            for (int i = 0; i < handle.getNumColumns(); i++) {
+                update(new ModelEvent(this,
+                                      ModelPart.ATTRIBUTE_TYPE,
+                                      handle.getAttributeName(i)));
+            }
+        }
+        
+        // Update research subset
+        update(new ModelEvent(this,
+                              ModelPart.RESEARCH_SUBSET,
+                              model.getInputConfig().getResearchSubset()));
+        
+        // Update view config
+        if (model.getOutput() != null){
+	        update(new ModelEvent(this,
+	                              ModelPart.VIEW_CONFIG,
+	                              model.getOutput()));
+        }
+
+        // We just loaded the model, so there are no changes
+        model.setUnmodified();
+    }
+
+    /**
      * Shows an error dialog
      * @param header
      * @param text
@@ -872,6 +1014,7 @@ public class Controller implements IView {
         return main.showOpenFileDialog(shell, filter);
     }
 
+
     /**
      * Shows an input dialog for ordering data items
      * @param shell
@@ -888,7 +1031,6 @@ public class Controller implements IView {
         
         return main.showOrderValuesDialog(shell, title, text, type, values);
     }
-
 
     /**
      * Shows a progress dialog
@@ -1033,14 +1175,6 @@ public class Controller implements IView {
             }
         }
     }
-
-    /**
-     * Returns debug data
-     * @return
-     */
-    public String getDebugData(){
-        return this.debug.getData(model);
-    }
     
     /**
      * Returns the popup
@@ -1048,6 +1182,14 @@ public class Controller implements IView {
      */
     public MainContextMenu getContextMenu() {
         return main.getPopUp();
+    }
+
+    /**
+     * Returns debug data
+     * @return
+     */
+    public String getDebugData(){
+        return this.debug.getData(model);
     }
 
     /**
@@ -1076,7 +1218,7 @@ public class Controller implements IView {
             listeners.remove(listener);
         }
     }
-
+    
     @Override
     public void reset() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1098,7 +1240,7 @@ public class Controller implements IView {
             }
         }
     }
-    
+
     /**
      * Internal method for importing data
      * @param path
@@ -1209,148 +1351,6 @@ public class Controller implements IView {
             }
         }
         return null;
-    }
-
-    /**
-     * Internal method for loading a project
-     * @param path
-     */
-    public void actionOpenProject(String path) {
-        if (!path.endsWith(".deid")) { //$NON-NLS-1$
-            path += ".deid"; //$NON-NLS-1$
-        }
-
-        WorkerLoad worker = null;
-        try {
-            worker = new WorkerLoad(path, this);
-        } catch (final IOException e) {
-            main.showInfoDialog(main.getShell(), 
-                               Resources.getMessage("Controller.82"), e.getMessage()); //$NON-NLS-1$
-            return;
-        }
-
-        main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
-        if (worker.getError() != null) {
-            getResources().getLogger().info(worker.getError());
-            main.showInfoDialog(main.getShell(), 
-                                Resources.getMessage("Controller.85"), //$NON-NLS-1$
-                                worker.getError().getMessage());
-            return;
-        }
-
-        // Reset the workbench
-        reset();
-
-        // Obtain the result
-        model = worker.getResult();
-        model.setPath(path);
-
-        // Temporary store parts of the model, because it might be overwritten
-        // when updating the workbench
-        final ModelNodeFilter tempNodeFilter = model.getNodeFilter();
-        final String tempSelectedAttribute = model.getSelectedAttribute();
-        final ARXNode tempSelectedNode = model.getSelectedNode();
-        final Set<ARXNode> tempClipboard = new HashSet<ARXNode>();
-        if (model.getClipboard() == null) {
-            model.setClipboard(new HashSet<ARXNode>());
-        } else {
-            tempClipboard.addAll(model.getClipboard());
-        }
-
-        // Update the model
-        update(new ModelEvent(this, ModelPart.MODEL, model));
-
-        // Update subsets of the model
-        if (model.getInputConfig().getInput() != null) {
-            update(new ModelEvent(this,
-                                  ModelPart.INPUT,
-                                  model.getInputConfig().getInput().getHandle()));
-        }
-
-        // Update subsets of the model
-        if (model.getResult() != null) {
-            update(new ModelEvent(this, ModelPart.RESULT, model.getResult()));
-        }
-
-        // Update subsets of the model
-        if (tempSelectedNode != null) {
-            model.setSelectedNode(tempSelectedNode);
-            update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            final DataHandle handle = model.getResult().getOutput(tempSelectedNode, false);
-            model.setOutput(handle, tempSelectedNode);
-            update(new ModelEvent(this, ModelPart.OUTPUT, handle));
-        } 
-
-        // Update subsets of the model
-        if (tempNodeFilter != null) {
-            model.setNodeFilter(tempNodeFilter);
-            update(new ModelEvent(this, ModelPart.FILTER, tempNodeFilter));
-        }
-
-        // Update hierarchies and selected attribute
-        if (model.getInputConfig() != null &&
-            model.getInputConfig().getInput() != null) {
-            DataHandle handle = model.getInputConfig().getInput().getHandle();
-            if (handle != null) {
-                for (int i=0; i<handle.getNumColumns(); i++){
-                    String attr = handle.getAttributeName(i);
-                    Hierarchy hierarchy = model.getInputConfig().getHierarchy(attr);
-                    if (hierarchy != null){
-                        model.setSelectedAttribute(attr);
-                        update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
-                    }
-                }
-                if (handle.getNumColumns() > 0) {
-                    String attribute = handle.getAttributeName(0);
-                    model.setSelectedAttribute(attribute);
-                    update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
-                }
-            }
-        }
-
-        // Update subsets of the model
-        if (tempSelectedAttribute != null) {
-            model.setSelectedAttribute(tempSelectedAttribute);
-            update(new ModelEvent(this,
-                                  ModelPart.SELECTED_ATTRIBUTE,
-                                  tempSelectedAttribute));
-        }
-
-        // Update subsets of the model
-        if (tempClipboard != null) {
-            model.getClipboard().clear();
-            model.getClipboard().addAll(tempClipboard);
-            update(new ModelEvent(this,
-                                  ModelPart.CLIPBOARD,
-                                  model.getClipboard()));
-        }
-
-        // Update the attribute types
-        if (model.getInputConfig().getInput() != null) {
-            final DataHandle handle = model.getInputConfig()
-                                           .getInput()
-                                           .getHandle();
-            for (int i = 0; i < handle.getNumColumns(); i++) {
-                update(new ModelEvent(this,
-                                      ModelPart.ATTRIBUTE_TYPE,
-                                      handle.getAttributeName(i)));
-            }
-        }
-        
-        // Update research subset
-        update(new ModelEvent(this,
-                              ModelPart.RESEARCH_SUBSET,
-                              model.getInputConfig().getResearchSubset()));
-        
-        // Update view config
-        if (model.getOutput() != null){
-	        update(new ModelEvent(this,
-	                              ModelPart.VIEW_CONFIG,
-	                              model.getOutput()));
-        }
-
-        // We just loaded the model, so there are no changes
-        model.setUnmodified();
     }
 
     /**
