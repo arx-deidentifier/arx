@@ -56,7 +56,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
@@ -149,22 +150,19 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Adds a listener
-     * 
-     * @param event
-     * @param listener
+     * Executes the given runnable on show
+     * @param runnable
      */
-    public void addListener(int event, Listener listener) {
-        shell.addListener(event, listener);
-    }
-
-    /**
-     * Adds a shell listener
-     * 
-     * @param listener
-     */
-    public void addShellListener(ShellListener listener) {
-        this.shell.addShellListener(listener);
+    public void onShow(final Runnable runnable){
+        
+        // Using a paint listener is a hack to reliably determine when the shell is visible
+        shell.addPaintListener(new PaintListener(){
+            @Override
+            public void paintControl(PaintEvent arg0) {
+                shell.removePaintListener(this);
+                display.timerExec(200, runnable);
+            }
+        });
     }
 
     @Override
@@ -211,18 +209,6 @@ public class MainWindow implements IView {
      * Main SWT event loop
      */
     public void show() {
-        show(null);
-    }
-
-    /**
-     * Main SWT event loop
-     * @param path Path of project-file that should be opened
-     */
-    public void show(String path) {
-
-        if (path != null) {
-            controller.actionOpenProject(path);
-        }
 
         shell.open();
         while (!shell.isDisposed()) {
@@ -508,5 +494,9 @@ public class MainWindow implements IView {
             root.setEnabled(true);
             menu.update(event);
         }
+    }
+
+    public Controller getController() {
+        return this.controller;
     }
 }
