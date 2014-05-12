@@ -11,15 +11,15 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:export-ydpi="90.010002"
-   inkscape:export-xdpi="90.010002"
-   inkscape:export-filename="C:\Downloads\logo_128.png"
+   inkscape:export-ydpi="21.715363"
+   inkscape:export-xdpi="21.715363"
+   inkscape:export-filename="C:\Downloads\logo_32.png"
    id="svg2985"
    version="1.1"
    inkscape:version="0.48.4 r9939"
    width="256"
    height="256"
-   sodipodi:docname="logo_v7.svg">
+   sodipodi:docname="logo_v8.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -34,7 +34,7 @@
      id="namedview2987"
      showgrid="false"
      inkscape:zoom="2.4516476"
-     inkscape:cx="51.442241"
+     inkscape:cx="-26.668496"
      inkscape:cy="97.097696"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -283,6 +283,11 @@
        gradientTransform="matrix(0.84346958,0.00260798,-0.00220075,0.71176876,18.668022,42.736108)"
        gradientUnits="userSpaceOnUse" />
   </defs>
+  <path
+     inkscape:connector-curvature="0"
+     id="path3095"
+     d="m 48.125,100.0625 c 0.347099,21.70354 0.191556,44.36035 8.0625,64.71875 12.104382,26.87231 32.047672,50.8206 57.8125,65.40625 27.23172,-15.60046 48.45812,-41.425 59.8125,-70.625 5.58727,-19.76063 6.10163,-40.88411 6.03125,-61.46875 -43.89583,0 -87.791667,0 -131.6875,0 l -0.01587,0.99987 -0.01538,0.96888 z"
+     style="fill:#ffffff;stroke:none;stroke-width:0.50000000000000000;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1" />
   <path
      style="fill:url(#radialGradient5860);stroke:#000000;stroke-width:0.5;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
      d="m 48.125,100.0625 c 0.347099,21.70354 0.191556,44.36035 8.0625,64.71875 12.104382,26.87231 32.047672,50.8206 57.8125,65.40625 27.23172,-15.60046 48.45812,-41.425 59.8125,-70.625 5.58727,-19.76063 6.10163,-40.88411 6.03125,-61.46875 -43.89583,0 -87.791667,0 -131.6875,0 l -0.01587,0.99987 -0.01538,0.96888 z"
