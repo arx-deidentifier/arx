@@ -152,6 +152,24 @@ public class History {
     }
     
     /**
+     * Method needed for benchmarking
+     * 
+     * @return
+     */
+    public IntArrayDictionary getDictionarySensFreq() {
+        return dictionarySensFreq;
+    }
+
+    /**
+     * Method needed for benchmarking
+     * 
+     * @return
+     */
+    public IntArrayDictionary getDictionarySensValue() {
+        return dictionarySensValue;
+    }
+
+    /**
      * Returns the node backing the last returned snapshot
      * 
      * @return
@@ -187,6 +205,14 @@ public class History {
      */
     public void setPruningStrategy(final PruningStrategy pruning) {
         pruningStrategy = pruning;
+    }
+
+    /**
+     * Sets the size of this history
+     * @param size
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 
     public int size() {
@@ -317,7 +343,7 @@ public class History {
         }
         return data;
     }
-
+    
     /**
      * Remove least recently used from cache and index.
      */
@@ -371,13 +397,5 @@ public class History {
             }
         }
 
-    }
-
-    /**
-     * Sets the size of this history
-     * @param size
-     */
-    public void setSize(int size) {
-        this.size = size;
     }
 }
