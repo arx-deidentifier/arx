@@ -21,50 +21,45 @@ package org.deidentifier.arx.metric;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * This class provides an implementation of a weighted precision metric.
+ * This class provides an abstract skeleton for the implementation of weighted metrics.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricPrecisionWeighted extends MetricDefaultWeighted {
+public abstract class MetricDefaultWeighted extends MetricDefault {
 
-    private static final long serialVersionUID = -4310441992550794016L;
+    private static final long         serialVersionUID = 6508220940790010968L;
+    /** The user defined weight map, indexed by column name */
+    private final Map<String, Double> definitionWeights;
+    /** The weights */
+    protected double[]                weights;
 
-    /** The maximum levels */
-    private int[]             maxLevels;
-
-    protected MetricPrecisionWeighted(final Map<String, Double> definitionWeights) {
-        super(true, true, definitionWeights);
-    }
-
-    @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-
-        double value = 0;
-        double divisor = 0;
-        final int[] state = node.getTransformation();
-        for (int i = 0; i < state.length; i++) {
-            divisor++;
-            value += ((double) state[i] / (double) maxLevels[i]) * weights[i];
-        }
-        return new InformationLossDefault(value / divisor);
+    public MetricDefaultWeighted(final boolean monotonic, final boolean independent, final Map<String, Double> definitionWeights) {
+        super(monotonic, independent);
+        this.definitionWeights = definitionWeights;
     }
 
     @Override
     protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         super.initializeInternal(input, hierarchies, config);
 
-        // Initialize maximum levels
-        maxLevels = new int[hierarchies.length];
-        for (int j = 0; j < maxLevels.length; j++) {
-            maxLevels[j] = hierarchies[j].getArray()[0].length;
+        // Initialize weights
+        weights = new double[hierarchies.length];
+        for (int i = 0; i < hierarchies.length; i++) {
+            final String attribute = hierarchies[i].getName();
+
+            if (!definitionWeights.containsKey(attribute)) {
+                throw new RuntimeException("No weight defined for hierarchy [" + attribute + "]");
+            }
+
+            final double weight = definitionWeights.get(attribute);
+            weights[i] = weight;
         }
 
     }
+
 }

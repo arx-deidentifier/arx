@@ -33,21 +33,19 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricUserDefinedWeighted extends MetricDefault {
+public class MetricUserDefinedWeighted extends MetricDefaultWeighted {
 
-    private static final long serialVersionUID = 3778891174824606177L;
-    
-    /** The pre-calculated infoloss */
-    private double[][]                infoloss;
-    /** The user defined weight map, indexed by column name  */
-    private Map<String, Double>       definitionWeight;
+    private static final long               serialVersionUID = 3778891174824606177L;
+
     /** The user defined infoloss per level, indexed by column name */
-    private Map<String, List<Double>> definitionInfoLoss;
+    private final Map<String, List<Double>> definitionInfoLoss;
 
-    protected MetricUserDefinedWeighted(Map<String, List<Double>> infolossMap, Map<String, Double> weightMap) {
-        super(true, true);
-        this.definitionWeight = weightMap;
-        this.definitionInfoLoss = infolossMap;
+    /** The pre-calculated infoloss */
+    private double[][]                      infoloss;
+
+    protected MetricUserDefinedWeighted(final Map<String, List<Double>> infolossMap, final Map<String, Double> definitionWeights) {
+        super(true, true, definitionWeights);
+        definitionInfoLoss = infolossMap;
     }
 
     @Override
@@ -63,32 +61,30 @@ public class MetricUserDefinedWeighted extends MetricDefault {
 
     @Override
     protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+        super.initializeInternal(input, hierarchies, config);
 
         // Initialize infoloss
         infoloss = new double[hierarchies.length][];
         for (int i = 0; i < hierarchies.length; i++) {
             final String attribute = hierarchies[i].getName();
 
-            List<Double> basicInfoloss = definitionInfoLoss.get(attribute);
-            if (basicInfoloss == null) { 
-                throw new RuntimeException("No information loss defined for attribute [" + attribute + "]"); 
+            final List<Double> basicInfoloss = definitionInfoLoss.get(attribute);
+            if (basicInfoloss == null) {
+                throw new RuntimeException("No information loss defined for attribute [" + attribute + "]");
             }
-            if (basicInfoloss.size() != hierarchies[i].getHeight()) { 
-                throw new RuntimeException("Information loss for attribute [" + attribute + "] is not defined on all levels."); 
+            if (basicInfoloss.size() != hierarchies[i].getHeight()) {
+                throw new RuntimeException("Information loss for attribute [" + attribute + "] is not defined on all levels.");
             }
-            if (!definitionWeight.containsKey(attribute)) {
-                throw new RuntimeException("No weight defined for hierarchy ["+attribute+"]");
-            }
-            for (int j=1; j<basicInfoloss.size(); j++){
-                if (basicInfoloss.get(j) < basicInfoloss.get(j-1)) {
-                    throw new RuntimeException("Information loss is not monotonic for attribute ["+attribute+"]");
+
+            for (int j = 1; j < basicInfoloss.size(); j++) {
+                if (basicInfoloss.get(j) < basicInfoloss.get(j - 1)) {
+                    throw new RuntimeException("Information loss is not monotonic for attribute [" + attribute + "]");
                 }
             }
-            
+
             infoloss[i] = new double[basicInfoloss.size()];
-            Double weight = definitionWeight.get(attribute);
             for (int j = 0; j < infoloss[i].length; j++) {
-                infoloss[i][j] = basicInfoloss.get(j) * weight;
+                infoloss[i][j] = basicInfoloss.get(j) * weights[i];
             }
         }
     }
