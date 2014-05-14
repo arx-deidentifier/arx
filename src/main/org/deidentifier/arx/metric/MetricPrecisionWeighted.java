@@ -39,8 +39,8 @@ public class MetricPrecisionWeighted extends MetricDefaultWeighted {
     /** The maximum levels */
     private int[]             maxLevels;
 
-    protected MetricPrecisionWeighted(final Map<String, Double> definitionWeights) {
-        super(true, true, definitionWeights);
+    protected MetricPrecisionWeighted(final Map<String, Double> weightMap) {
+        super(true, true, weightMap);
     }
 
     @Override
@@ -65,6 +65,5 @@ public class MetricPrecisionWeighted extends MetricDefaultWeighted {
         for (int j = 0; j < maxLevels.length; j++) {
             maxLevels[j] = hierarchies[j].getArray()[0].length;
         }
-
     }
 }

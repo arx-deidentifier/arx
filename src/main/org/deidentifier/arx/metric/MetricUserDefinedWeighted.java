@@ -38,14 +38,14 @@ public class MetricUserDefinedWeighted extends MetricDefaultWeighted {
     private static final long               serialVersionUID = 3778891174824606177L;
 
     /** The user defined infoloss per level, indexed by column name */
-    private final Map<String, List<Double>> definitionInfoLoss;
+    private final Map<String, List<Double>> infoLossMap;
 
     /** The pre-calculated infoloss */
     private double[][]                      infoloss;
 
-    protected MetricUserDefinedWeighted(final Map<String, List<Double>> infolossMap, final Map<String, Double> definitionWeights) {
-        super(true, true, definitionWeights);
-        definitionInfoLoss = infolossMap;
+    protected MetricUserDefinedWeighted(final Map<String, List<Double>> infolossMap, final Map<String, Double> weightMap) {
+        super(true, true, weightMap);
+        infoLossMap = infolossMap;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MetricUserDefinedWeighted extends MetricDefaultWeighted {
         for (int i = 0; i < hierarchies.length; i++) {
             final String attribute = hierarchies[i].getName();
 
-            final List<Double> basicInfoloss = definitionInfoLoss.get(attribute);
+            final List<Double> basicInfoloss = infoLossMap.get(attribute);
             if (basicInfoloss == null) {
                 throw new RuntimeException("No information loss defined for attribute [" + attribute + "]");
             }

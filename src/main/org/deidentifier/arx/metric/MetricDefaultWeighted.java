@@ -34,13 +34,13 @@ public abstract class MetricDefaultWeighted extends MetricDefault {
 
     private static final long         serialVersionUID = 6508220940790010968L;
     /** The user defined weight map, indexed by column name */
-    private final Map<String, Double> definitionWeights;
+    private final Map<String, Double> weightMap;
     /** The weights */
     protected double[]                weights;
 
-    public MetricDefaultWeighted(final boolean monotonic, final boolean independent, final Map<String, Double> definitionWeights) {
+    public MetricDefaultWeighted(final boolean monotonic, final boolean independent, final Map<String, Double> weightMap) {
         super(monotonic, independent);
-        this.definitionWeights = definitionWeights;
+        this.weightMap = weightMap;
     }
 
     @Override
@@ -52,11 +52,11 @@ public abstract class MetricDefaultWeighted extends MetricDefault {
         for (int i = 0; i < hierarchies.length; i++) {
             final String attribute = hierarchies[i].getName();
 
-            if (!definitionWeights.containsKey(attribute)) {
-                throw new RuntimeException("No weight defined for hierarchy [" + attribute + "]");
+            if (!weightMap.containsKey(attribute)) {
+                throw new RuntimeException("No weight defined for attribute [" + attribute + "]");
             }
 
-            final double weight = definitionWeights.get(attribute);
+            final double weight = weightMap.get(attribute);
             weights[i] = weight;
         }
 
