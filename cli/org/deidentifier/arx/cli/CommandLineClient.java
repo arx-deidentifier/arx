@@ -103,7 +103,8 @@ public class CommandLineClient {
         final OptionSpec<String> attributeName = parser.accepts("aName", "name of the attribute").withRequiredArg().ofType(String.class);
         final OptionSpec<String> attributeType = parser.accepts("aType", "type of the attribute; possible values are " + Arrays.toString(AttributeType.values())).requiredIf(attributeName).withRequiredArg().ofType(String.class);
         final OptionSpec<String> attributeHierarchy = parser.accepts("aHierarchy", "hierarchy file of the attribute").requiredIf(attributeName).withRequiredArg().ofType(String.class);
-        // final OptionSpec<String> attributeDataType = parser.accepts("aDType", "data type of the attribute; possible values are " + Arrays.toString(DataType.values())).withRequiredArg().ofType(String.class);
+
+        // TODO: currently only one criteria of each type is supported
 
         // k_anonymity
         final OptionSpec<String> k_anonymity = parser.accepts("kAnonymity", "specify if k-anonymity should be employed").withOptionalArg().ofType(String.class);
@@ -115,20 +116,17 @@ public class CommandLineClient {
         final OptionSpec<Double> dMax = parser.accepts("dMax", "value of dmax for d-presence").requiredIf(d_presence).withRequiredArg().ofType(Double.class);
         final OptionSpec<String> subset = parser.accepts("subset", "subset file").requiredIf(d_presence).withRequiredArg().ofType(String.class);
 
-        // TODO: multiple sensitive attributes! possible to specify attributes, separated by comma --> hierarchical t-closeness - specify hierarchies by comma as well
-
         // ldiversity
         final OptionSpec<String> l_diversity = parser.accepts("lDiversity", "specify if l-diversity should be employed").withOptionalArg().ofType(String.class);
-        final OptionSpec<String> lAttribute = parser.accepts("lAttribute", "specifies the name of the attribute for this l-diversity criterion").requiredIf(l_diversity).withRequiredArg().ofType(String.class);
+        final OptionSpec<String> lAttribute = parser.accepts("lAttribute", "specifies the name(s) of the attribute(s) for this l-diversity criterion").requiredIf(l_diversity).withRequiredArg().ofType(String.class).withValuesSeparatedBy(',');
         final OptionSpec<String> lVariant = parser.accepts("lVariant", "variant of l-diversity; possible values are " + Arrays.toString(LDiversityVariant.values())).requiredIf(l_diversity).withRequiredArg().ofType(String.class);
         final OptionSpec<Double> lValue = parser.accepts("lValue", "value of l").requiredIf(l_diversity).withRequiredArg().ofType(Double.class);
         final OptionSpec<Double> cValue = parser.accepts("cValue", "value of c").withRequiredArg().ofType(Double.class);
 
         // tcloseness
         final OptionSpec<String> t_closeness = parser.accepts("tCloseness", "specify if t-closeness should be employed").withOptionalArg().ofType(String.class);
-        final OptionSpec<String> tAttribute = parser.accepts("tAttribute", "specifies the name of the attribute for this l-diversity criterion").requiredIf(t_closeness).withRequiredArg().ofType(String.class);
-        final OptionSpec<String> tVariant = parser.accepts("tVariant", "variant of l-diversity; possible values are " + Arrays.toString(TClosenessVariant.values())).requiredIf(t_closeness).withRequiredArg().ofType(String.class);
-        final OptionSpec<String> tHierarchy = parser.accepts("tHierarchy", "for hierarchical t-closeness a hierarchy must be specified").withRequiredArg().ofType(String.class);
+        final OptionSpec<String> tAttribute = parser.accepts("tAttribute", "specifies the name(s) of the attribute(s) for this t-clonseness criterion").requiredIf(t_closeness).withRequiredArg().ofType(String.class).withValuesSeparatedBy(',');
+        final OptionSpec<String> tVariant = parser.accepts("tVariant", "variant of t-closeness; possible values are " + Arrays.toString(TClosenessVariant.values())).requiredIf(t_closeness).withRequiredArg().ofType(String.class);
         final OptionSpec<Double> tValue = parser.accepts("tValue", "value of t").requiredIf(t_closeness).withRequiredArg().ofType(Double.class);
 
         // supression
@@ -237,23 +235,30 @@ public class CommandLineClient {
             if (options.has(d_presence)) {
                 final DataSubset subsetInstance = DataSubset.create(cli.data, Data.create(options.valueOf(subset), cli.separator));
                 cli.config.addCriterion(new DPresence(options.valueOf(dMin), options.valueOf(dMax), subsetInstance));
-                throw new IllegalArgumentException("currently not supported");
             }
 
             // l-diversity
             if (options.has(l_diversity)) {
+                List<String> attributes = options.valuesOf(lAttribute);
+
                 switch (LDiversityVariant.valueOf(options.valueOf(lVariant).trim().toUpperCase())) {
                 case DISTINCT:
-                    cli.config.addCriterion(new DistinctLDiversity(options.valueOf(lAttribute), options.valueOf(lValue).intValue()));
+                    for (String attribute : attributes) {
+                        cli.config.addCriterion(new DistinctLDiversity(attribute, options.valueOf(lValue).intValue()));
+                    }
                     break;
                 case ENTROPY:
-                    cli.config.addCriterion(new EntropyLDiversity(options.valueOf(lAttribute), options.valueOf(lValue)));
+                    for (String attribute : attributes) {
+                        cli.config.addCriterion(new EntropyLDiversity(attribute, options.valueOf(lValue)));
+                    }
                     break;
                 case RECURSIVE:
                     if (!options.has(cValue)) {
                         throw new IllegalArgumentException("for recursive l-diversity a c value must be specified");
                     }
-                    cli.config.addCriterion(new RecursiveCLDiversity(options.valueOf(lAttribute), options.valueOf(cValue), options.valueOf(lValue).intValue()));
+                    for (String attribute : attributes) {
+                        cli.config.addCriterion(new RecursiveCLDiversity(attribute, options.valueOf(cValue), options.valueOf(lValue).intValue()));
+                    }
                     break;
                 default:
                     break;
@@ -262,15 +267,28 @@ public class CommandLineClient {
 
             // t-closeness
             if (options.has(t_closeness)) {
+                List<String> attributes = options.valuesOf(tAttribute);
                 switch (TClosenessVariant.valueOf(options.valueOf(tVariant).trim().toUpperCase())) {
                 case EMD_EQUAL:
-                    cli.config.addCriterion(new EqualDistanceTCloseness(options.valueOf(tAttribute), options.valueOf(tValue)));
+                    for (String attribute : attributes) {
+                        cli.config.addCriterion(new EqualDistanceTCloseness(attribute, options.valueOf(tValue)));
+                    }
                     break;
                 case EMD_HIERARCHICAL:
-                    if (!options.has(tHierarchy)) {
-                        throw new IllegalArgumentException("for hierarchical t-closeness a hierarchy must be specified");
+                    Hierarchy h;
+                    for (String attribute : attributes) {
+                        // find corresponding hierarchy
+                        for (int i = 0; i < attributeNames.size(); i++) {
+                            if (attributeTypes.get(i).equals(attribute)) {
+                                if (attributeHierarchies.get(i).equalsIgnoreCase("none")) {
+                                    throw new IllegalArgumentException("for hierarchical t-closeness a hierarchy must be specified for attribute " + attribute);
+                                }
+                                h = Hierarchy.create(attributeHierarchies.get(i), cli.separator);
+                                cli.config.addCriterion(new HierarchicalDistanceTCloseness(attribute, options.valueOf(tValue), h));
+                                break;
+                            }
+                        }
                     }
-                    cli.config.addCriterion(new HierarchicalDistanceTCloseness(options.valueOf(tAttribute), options.valueOf(tValue), Hierarchy.create(options.valueOf(tHierarchy), cli.separator)));
                     break;
                 default:
                     break;
@@ -278,7 +296,8 @@ public class CommandLineClient {
 
             }
 
-            System.out.println(cli.config);
+            // TODO: output config
+            // System.out.println(cli.config);
 
         } catch (final Exception e) {
             try {
@@ -291,7 +310,10 @@ public class CommandLineClient {
         }
 
         try {
-            cli.run();
+            // Create an instance of the anonymizer
+            final ARXAnonymizer anonymizer = new ARXAnonymizer();
+            final ARXResult result = anonymizer.anonymize(cli.data, cli.config);
+            result.getOutput().save(cli.output, cli.separator);
         } catch (IOException e) {
             e.printStackTrace();
             try {
@@ -303,13 +325,4 @@ public class CommandLineClient {
         System.out.println("DONE");
     }
 
-    /**
-     * Run.
-     */
-    private void run() throws IOException {
-        // Create an instance of the anonymizer
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        final ARXResult result = anonymizer.anonymize(data, config);
-        result.getOutput().save(output, separator);
-    }
 }
