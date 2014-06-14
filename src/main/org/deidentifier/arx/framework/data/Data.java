@@ -18,14 +18,17 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.util.Arrays;
+
 /**
  * Encodes a data object consisting of a dictionary encoded two-dimensional
  * array, an associated dictionary, a header and a mapping to the columns in the
  * input data set
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class Data {
+public class Data implements Cloneable{
 
     /** The outliers mask */
     public static final int  OUTLIER_MASK        = 1 << 31;
@@ -119,5 +122,14 @@ public class Data {
      */
     public int[] getMap() {
         return map;
+    }
+    
+    @Override
+    public Data clone(){
+        int[][] newData = new int[data.length][];
+        for (int i=0; i < data.length; i++){
+            newData[i] = Arrays.copyOf(data[i], header.length);
+        }
+        return new Data(newData, header, map, dictionary);
     }
 }

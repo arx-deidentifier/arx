@@ -27,10 +27,19 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker performs the anonymization process
+ * @author Fabian Prasser
+ */
 public class WorkerAnonymize extends Worker<ARXResult> {
 
+	/** The model*/
     private final Model      model;
 
+    /**
+     * Creates a new instance
+     * @param model
+     */
     public WorkerAnonymize(final Model model) {
         this.model = model;
     }
@@ -62,20 +71,17 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         try {
             
             // Anonymize
+            model.getInputConfig().getInput().getHandle().release();
         	result = anonymizer.anonymize(model.getInputConfig().getInput(), model.getInputConfig().getConfig());
-            arg0.beginTask(Resources.getMessage("WorkerAnonymize.2"), 2); //$NON-NLS-1$
 
-            // Determine minimum and maximum information loss
-            result.getHandle(result.getLattice().getBottom());
-            arg0.worked(1);
-            result.getHandle(result.getLattice().getTop());
+            // Apply optimal transformation, if any
             arg0.beginTask(Resources.getMessage("WorkerAnonymize.3"), 1); //$NON-NLS-1$
             if (result.isResultAvailable()) {
-                result.getHandle();
+                result.getOutput(false);
             }
             model.setAnonymizer(anonymizer);
             model.setTime(result.getTime());
-            arg0.worked(2);
+            arg0.worked(1);
             arg0.done();
         } catch (final Exception e) {
             error = e;

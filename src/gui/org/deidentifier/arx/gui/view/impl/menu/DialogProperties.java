@@ -44,24 +44,39 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+/**
+ * This class implements a dialog for editing project properties
+ * @author Fabian Prasser
+ */
 public class DialogProperties extends TitleAreaDialog implements IDialog {
 
     /**
      * Validates double input
      * 
-     * @author fabian
-     * 
+     * @author Fabian Prasser
      */
     private static class DoubleValidator {
         private final double min;
         private final double max;
 
+        /**
+         * Creates a new instance
+         * @param min
+         * @param max
+         */
         public DoubleValidator(final double min, final double max) {
             this.min = min;
             this.max = max;
         }
 
+        /**
+         * Validates the string
+         * @param s
+         * @return
+         */
         public boolean validate(final String s) {
+            
+            // TODO: Ugly
             try {
                 final double i = Double.valueOf(s);
                 return (i > min) && (i < max);
@@ -73,17 +88,25 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
 
     /**
      * Validates integer input
+     * 
+     * @author Fabian Prasser
      */
     private static class IntegerValidator {
         private final int min;
         private final int max;
 
+        /**
+         * Creates a new instance
+         * @param min
+         * @param max
+         */
         public IntegerValidator(final int min, final int max) {
             this.min = min;
             this.max = max;
         }
 
         public boolean validate(final String s) {
+            // TODO: Ugly
             try {
                 final int i = Integer.valueOf(s);
                 return (i > min) && (i < max);
@@ -93,12 +116,16 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         }
     }
 
-    private Button      ok;
-
     private final Model model;
 
+    private Button      ok;
     private TabFolder   folder;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param model
+     */
     public DialogProperties(final Shell parent, final Model model) {
         super(parent);
         this.model = model;
@@ -301,7 +328,7 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         });
 
         // Internals category
-        final IntegerValidator v2 = new IntegerValidator(-1, 1001);
+        final IntegerValidator v2 = new IntegerValidator(0, 1000001);
         result.add(new EditorString(Resources.getMessage("PropertyDialog.16"), Resources.getMessage("PropertyDialog.17"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
@@ -351,6 +378,34 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
                 model.setSnapshotSizeSnapshot(Double.valueOf(s));
             }
         });
+        final IntegerValidator v5 = new IntegerValidator(0, Integer.MAX_VALUE);
+        result.add(new EditorString(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.28"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
+            @Override
+            public boolean accepts(final String s) {
+                return v5.validate(s);
+            }
+
+            @Override
+            public String getValue() {
+                return String.valueOf(model.getMaximalSizeForComplexOperations());
+            }
+
+            @Override
+            public void setValue(final String s) {
+                model.setMaximalSizeForComplexOperations(Integer.valueOf(s));
+            }
+        });
+        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.29")) { //$NON-NLS-1$ //$NON-NLS-2$
+            @Override
+            public Boolean getValue() {
+                return model.isDebugEnabled();
+            }
+
+            @Override
+            public void setValue(final Boolean s) {
+                model.setDebugEnabled(s);
+            }
+        });
 
         // Viewer category
         final IntegerValidator v4 = new IntegerValidator(0, 10000);
@@ -386,7 +441,6 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
                 model.setMaxNodesInViewer(Integer.valueOf(s));
             }
         });
-
         // Return
         return result;
     }
@@ -396,7 +450,7 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         return new ShellAdapter() {
             @Override
             public void shellClosed(final ShellEvent event) {
-                event.doit = ok.isEnabled();
+                setReturnCode(Window.CANCEL);
             }
         };
     }

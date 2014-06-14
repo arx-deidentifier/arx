@@ -34,7 +34,8 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 /**
  * Holds all data needed for the anonymization process.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataManager {
 
@@ -243,67 +244,6 @@ public class DataManager {
         this.minLevels = minLevels;
         this.indexesSE = indexesSE;
         this.header = header;
-    }
-
-    /**
-     * Encodes the data
-     * 
-     * @param data
-     * @param map
-     * @param mapQI
-     * @param mapSE
-     * @param mapIS
-     * @param dictionaryQI
-     * @param dictionarySE
-     * @param dictionaryIS
-     * @param headerQI
-     * @param headerSE
-     * @param headerIS
-     * @return
-     */
-    private Data[] encode(final int[][] data,
-                          final int[] map,
-                          final int[] mapQI,
-                          final int[] mapSE,
-                          final int[] mapIS,
-                          final Dictionary dictionaryQI,
-                          final Dictionary dictionarySE,
-                          final Dictionary dictionaryIS,
-                          final String[] headerQI,
-                          final String[] headerSE,
-                          final String[] headerIS) {
-
-        // Parse the dataset
-        final int[][] valsQI = new int[data.length][];
-        final int[][] valsSE = new int[data.length][];
-        final int[][] valsIS = new int[data.length][];
-
-        int index = 0;
-        for (final int[] tuple : data) {
-
-            // Process a tuple
-            final int[] tupleQI = new int[headerQI.length];
-            final int[] tupleSE = new int[headerSE.length];
-            final int[] tupleIS = new int[headerIS.length];
-
-            for (int i = 0; i < tuple.length; i++) {
-                if (map[i] >= 1000) {
-                    tupleIS[map[i] - 1000] = tuple[i];
-                } else if (map[i] > 0) {
-                    tupleQI[map[i] - 1] = tuple[i];
-                } else if (map[i] < 0) {
-                    tupleSE[-map[i] - 1] = tuple[i];
-                }
-            }
-            valsQI[index] = tupleQI;
-            valsIS[index] = tupleIS;
-            valsSE[index] = tupleSE;
-            index++;
-        }
-
-        // Build data object
-        final Data[] result = { new Data(valsQI, headerQI, mapQI, dictionaryQI), new Data(valsSE, headerSE, mapSE, dictionarySE), new Data(valsIS, headerIS, mapIS, dictionaryIS) };
-        return result;
     }
 
     /**
@@ -523,6 +463,67 @@ public class DataManager {
         }
 
         return treeArray;
+    }
+
+    /**
+     * Encodes the data
+     * 
+     * @param data
+     * @param map
+     * @param mapQI
+     * @param mapSE
+     * @param mapIS
+     * @param dictionaryQI
+     * @param dictionarySE
+     * @param dictionaryIS
+     * @param headerQI
+     * @param headerSE
+     * @param headerIS
+     * @return
+     */
+    private Data[] encode(final int[][] data,
+                          final int[] map,
+                          final int[] mapQI,
+                          final int[] mapSE,
+                          final int[] mapIS,
+                          final Dictionary dictionaryQI,
+                          final Dictionary dictionarySE,
+                          final Dictionary dictionaryIS,
+                          final String[] headerQI,
+                          final String[] headerSE,
+                          final String[] headerIS) {
+
+        // Parse the dataset
+        final int[][] valsQI = new int[data.length][];
+        final int[][] valsSE = new int[data.length][];
+        final int[][] valsIS = new int[data.length][];
+
+        int index = 0;
+        for (final int[] tuple : data) {
+
+            // Process a tuple
+            final int[] tupleQI = new int[headerQI.length];
+            final int[] tupleSE = new int[headerSE.length];
+            final int[] tupleIS = new int[headerIS.length];
+
+            for (int i = 0; i < tuple.length; i++) {
+                if (map[i] >= 1000) {
+                    tupleIS[map[i] - 1000] = tuple[i];
+                } else if (map[i] > 0) {
+                    tupleQI[map[i] - 1] = tuple[i];
+                } else if (map[i] < 0) {
+                    tupleSE[-map[i] - 1] = tuple[i];
+                }
+            }
+            valsQI[index] = tupleQI;
+            valsIS[index] = tupleIS;
+            valsSE[index] = tupleSE;
+            index++;
+        }
+
+        // Build data object
+        final Data[] result = { new Data(valsQI, headerQI, mapQI, dictionaryQI), new Data(valsSE, headerSE, mapSE, dictionarySE), new Data(valsIS, headerIS, mapIS, dictionaryIS) };
+        return result;
     }
 
     /**

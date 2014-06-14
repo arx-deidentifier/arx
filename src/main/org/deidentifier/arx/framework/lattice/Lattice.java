@@ -23,7 +23,8 @@ import org.deidentifier.arx.ARXListener;
 /**
  * The class Lattice.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Lattice {
 
@@ -41,9 +42,6 @@ public class Lattice {
 
     /** A listener */
     private ARXListener listener      = null;
-
-    /** A multiplier for the listener*/
-    private int         multiplier    = 1;
 
     /**
      * Initializes a lattice.
@@ -102,7 +100,7 @@ public class Lattice {
 
         // Call listener
         if (listener != null) {
-            listener.nodeTagged(size * multiplier);
+            listener.nodeTagged(size);
         }
 
         // Traverse
@@ -267,19 +265,38 @@ public class Lattice {
     }
 
     /**
-     * Sets a multiplier, which is used to multiply the number of nodes in the lattice when calling a
-     * listener. Needed to return the correct progress information when anonymizing with multiple
-     * sensitive attributes
-     * @param multiplier
-     */
-    public void setMultiplier(int multiplier) {
-        this.multiplier = multiplier;
-    }
-
-    /**
      * Triggers a tagged event at the listener
      */
     public void triggerTagged() {
-        if (this.listener != null) this.listener.nodeTagged(size * multiplier);
+        if (this.listener != null) this.listener.nodeTagged(size);
+    }
+    
+
+    /**
+     * Returns the bottom node
+     */
+    public Node getBottom() {
+        for (int i = 0; i<levels.length; i++) {
+            if (levels[i].length==1){
+                return levels[i][0];
+            } else if (levels[i].length > 1) { 
+                throw new RuntimeException("Multiple bottom nodes!"); 
+            }
+        }
+        throw new RuntimeException("Empty lattice!");
+    }
+
+    /**
+     * Returns the top node
+     */
+    public Node getTop() {
+        for (int i = levels.length - 1; i>=0; i--) {
+            if (levels[i].length==1){
+                return levels[i][0];
+            } else if (levels[i].length > 1) { 
+                throw new RuntimeException("Multiple top nodes!"); 
+            }
+        }
+        throw new RuntimeException("Empty lattice!");
     }
 }

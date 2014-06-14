@@ -4,10 +4,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
+
 
 /**
  * This implementation of a data handle projects a given data handle onto a given research subset.
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataHandleSubset extends DataHandle {
     
@@ -23,18 +27,33 @@ public class DataHandleSubset extends DataHandle {
      * @param subset
      */
     protected DataHandleSubset(DataHandle source, DataSubset subset){
+        this(source, subset, null);
+    }
+
+    /**
+     * Creates a new handle that represents the research subset
+     * @param source
+     * @param subset
+     * @param eqStatistics
+     */
+    public DataHandleSubset(DataHandle source, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
         this.source = source;
         this.dataTypes = source.dataTypes;
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        createDataTypeArray();
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), eqStatistics);
     }
 
     @Override
     public String getAttributeName(int col) {
         checkRegistry();
         return source.getAttributeName(col);
+    }
+    
+    @Override
+    public DataType<?> getDataType(String attribute) {
+        return source.getDataType(attribute);
     }
 
     @Override
@@ -126,36 +145,23 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    protected DataType<?>[][] getDataTypeArray() {
+        return source.dataTypes;
+    }
+
+    @Override
+    protected String getSuppressionString(){
+        return source.getSuppressionString();
+    }
+
+    @Override
     protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
 
     @Override
-    protected void createDataTypeArray() {
-        this.dataTypes = source.dataTypes;
-    }
-
-    @Override
     protected String internalGetValue(int row, int col) {
         return source.internalGetValue(this.subset.getArray()[row], col);
-    }
-
-    /**
-     * Translates the row number
-     * @param row
-     * @return
-     */
-    protected int internalTranslate(int row) {
-        return this.subset.getArray()[row];
-    }
-
-    /**
-     * Swaps the bits in the set representation
-     * @param row1
-     * @param row2
-     */
-    protected void internalSwap(int row1, int row2) {
-        this.subset.getSet().swap(row1, row2);
     }
 
     /**
@@ -168,5 +174,36 @@ public class DataHandleSubset extends DataHandle {
                 this.subset.getArray()[index++] = i;
             }
         }
+    }
+
+    /**
+     * Swaps the bits in the set representation
+     * @param row1
+     * @param row2
+     */
+    protected void internalSwap(int row1, int row2) {
+        this.subset.getSet().swap(row1, row2);
+    }
+    
+    /**
+     * Translates the row number
+     * @param row
+     * @return
+     */
+    protected int internalTranslate(int row) {
+        return this.subset.getArray()[row];
+    }
+    
+    /**
+     * Returns the underlying source data handle
+     * @return
+     */
+    protected DataHandle getSource(){
+        return source;
+    }
+
+    @Override
+    protected void doRelease() {
+        // Nothing to do
     }
 }

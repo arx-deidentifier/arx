@@ -28,7 +28,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements a generic interface for node checkers
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public interface INodeChecker {
 
@@ -41,6 +42,12 @@ public interface INodeChecker {
      * @return Information loss, null if not k-anonymous
      */
     public abstract void check(final Node node);
+
+    /**
+     * Returns statistics about the groups
+     * @return
+     */
+    public void check(Node node, boolean forceMeasureInfoLoss);
 
     /**
      * Returns the buffer as a Data object
@@ -64,25 +71,18 @@ public interface INodeChecker {
     public abstract Data getData();
 
     /**
-     * Returns the number of groups from the previous check
-     * 
-     * @return
-     */
-    public abstract int getNumberOfGroups();
-
-    /**
      * Returns the current hash groupify
      * 
      * @return
      */
     public abstract IHashGroupify getGroupify();
 
+
     /**
-     * Returns the number of outlying groups from the previous check
-     * 
+     * Returns the history, if there is any
      * @return
      */
-    public abstract int getNumberOfOutlyingGroups();
+    public abstract History getHistory();
 
     @Deprecated
     public abstract double getInformationLoss(final Node node);
@@ -95,11 +95,19 @@ public interface INodeChecker {
     public abstract Metric<?> getMetric();
 
     /**
-     * Returns the number of outliers from the previous check
+     * Returns the number of groups from the previous check
      * 
      * @return
      */
-    public abstract int getNumberOfOutlyingTuples();
+    public abstract int getNumberOfGroups();
+
+    /**
+     * Returns the data for a given node
+     * 
+     * @param node
+     * @return
+     */
+    public TransformedData getTransformedData(Node node);
 
     /**
      * Returns the data for a given state. Only used for NUMA.
@@ -110,18 +118,4 @@ public interface INodeChecker {
      */
     @Deprecated
     public abstract Data transform(final Node node);
-
-    /**
-     * Returns the data for a given state and marks outliers
-     * 
-     * @param node
-     * @return
-     */
-    public Data transformAndMarkOutliers(Node node);
-
-    /**
-     * Returns the history, if there is any
-     * @return
-     */
-    public abstract History getHistory();
 }

@@ -18,11 +18,7 @@
 
 package org.deidentifier.arx.gui.view.impl.explore;
 
-import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
@@ -30,32 +26,27 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
+/**
+ * This class layouts the exploration view
+ * @author Fabian Prasser
+ */
 public class LayoutExplore implements ILayout {
 
     private final Composite root;
-    private ModelNodeFilter filter;
-    private ARXResult       result;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public LayoutExplore(final Composite parent, final Controller controller) {
 
         // Create top composite
         root = new Composite(parent, SWT.NONE);
         root.setLayoutData(SWTUtil.createFillGridData());
         root.setLayout(SWTUtil.createGridLayout(1));
-        root.addListener(SWT.Show, new Listener() {
-            @Override
-            public void handleEvent(final Event arg0) {
-                if ((result != null) && (filter != null)) {
-                    controller.update(new ModelEvent(this,
-                                                     ModelPart.FILTER,
-                                                     filter));
-                }
-            }
-        });
-
+ 
         // Create top composite
         ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
@@ -88,6 +79,5 @@ public class LayoutExplore implements ILayout {
         new ViewFilter(bottom, controller);
         new ViewClipboard(bottom, controller);
         new ViewProperties(bottom, controller);
-
     }
 }

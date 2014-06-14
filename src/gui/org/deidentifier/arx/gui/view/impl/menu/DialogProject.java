@@ -42,6 +42,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * This class implements a dialog for creating a project
+ * @author Fabian Prasser
+ */
 public class DialogProject extends TitleAreaDialog implements IDialog {
 
     private Text   name        = null;
@@ -49,6 +53,10 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
     private Button ok          = null;
     private Model  model       = null;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     */
     public DialogProject(final Shell parent) {
         super(parent);
     }
@@ -144,6 +152,10 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
+    /**
+     * Returns the resulting project
+     * @return
+     */
     public Model getProject() {
         return model;
     }
@@ -153,7 +165,7 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         return new ShellAdapter() {
             @Override
             public void shellClosed(final ShellEvent event) {
-                event.doit = false;
+                setReturnCode(Window.CANCEL);
             }
         };
     }

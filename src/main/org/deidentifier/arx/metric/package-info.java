@@ -20,7 +20,8 @@
  * This package implements several metrics for information loss. 
  * An abstract base class can be utilized for implementing further metrics
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.metric;
 

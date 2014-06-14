@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 /**
  * The class TransformerAll.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class TransformerAll extends AbstractTransformer {
 
@@ -39,7 +40,7 @@ public class TransformerAll extends AbstractTransformer {
      */
     public TransformerAll(final int[][] data,
                           final GeneralizationHierarchy[] hierarchies,
-                          final int[] sensitiveValues,
+                          final int[][] sensitiveValues,
                           final IntArrayDictionary dictionarySensValue,
                           final IntArrayDictionary dictionarySensFreq,
                           final ARXConfiguration config) {
@@ -59,7 +60,7 @@ public class TransformerAll extends AbstractTransformer {
             intuple = data[i];
             outtuple = buffer[i];
             for (int d = 0; d < dimensions; d++) {
-                final int state = states[d];
+                final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
             }
 
@@ -82,7 +83,7 @@ public class TransformerAll extends AbstractTransformer {
             intuple = data[element.representant];
             outtuple = buffer[element.representant];
             for (int d = 0; d < dimensions; d++) {
-                final int state = states[d];
+                final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
             }
 
@@ -112,7 +113,7 @@ public class TransformerAll extends AbstractTransformer {
             intuple = data[snapshot[i]];
             outtuple = buffer[snapshot[i]];
             for (int d = 0; d < dimensions; d++) {
-                final int state = states[d];
+                final int state = generalization[d];
                 outtuple[d] = map[d][intuple[d]][state];
             }
 

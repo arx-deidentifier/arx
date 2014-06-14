@@ -18,46 +18,116 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
-import org.deidentifier.arx.gui.view.SWTUtil;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+import org.deidentifier.arx.gui.view.impl.common.Popup;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class MainToolTip {
+/**
+ * This class implements a global tool tip
+ * @author Fabian Prasser
+ */
+public class MainToolTip extends Popup{
 
-    private final Shell shell;
-    private final Text  text;
+    private static final int TIME   = 1000;
 
-    public MainToolTip(final Shell parent) {
-        shell = new Shell(parent, SWT.TOOL | SWT.ON_TOP);
-        shell.setLayout(new GridLayout());
-        text = new Text(shell, SWT.MULTI);
-        text.setLayoutData(SWTUtil.createFillGridData());
-        text.setBackground(shell.getBackground());
-        shell.pack();
-        shell.setVisible(false);
-        shell.addMouseMoveListener(new MouseMoveListener() {
-            @Override
-            public void mouseMove(final MouseEvent arg0) {
-                hide();
+    private int              oldX;
+    private int              oldY;
+    private long             oldTime;
+
+    private String           string = null;
+    private MainContextMenu  popup  = null;
+    
+    private Text             label;
+
+    /**
+     * Creates a new instance
+     * @param parent
+     */
+    public MainToolTip(final Shell parent) {      
+        super(parent);
+        
+        if (!isDisablePopup()) new Timer(WAIT, new ActionListener(){
+            @Override public void actionPerformed(ActionEvent e) {
+                if (string != null && !isVisible() && !popup.isVisible()){
+                    Point p = MouseInfo.getPointerInfo().getLocation();
+                    if (p.x != oldX || p.y != oldY) {
+                        oldX = p.x;
+                        oldY = p.y;
+                        oldTime = System.currentTimeMillis();
+                    } else if (System.currentTimeMillis() - oldTime > TIME){
+                         show(oldX, oldY);
+                    }
+                }
             }
-        });
+        }).start();
     }
 
-    public void hide() {
-        shell.setVisible(false);
+    /**
+     * Sets the popup
+     * @param popup
+     */
+    public void setPopUp(MainContextMenu popup){
+        if (isDisablePopup()) return; 
+        this.popup = popup;
     }
 
-    public void setText(final String message) {
-        text.setText(message);
+    @Override
+    protected void prepareVisible(Shell shell) {
+        label.setText(string);
         shell.pack();
     }
 
-    public void show(final int x, final int y) {
-        shell.setLocation(x, y);
-        shell.setVisible(true);
+    @Override
+    protected void prepare(Shell shell) {
+        
+        shell.setLayout(new FillLayout());
+        shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        shell.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+        label = new Text(shell, SWT.MULTI);
+        label.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        label.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+        shell.pack();
+    }
+
+    /**
+     * Sets the options displayed by the popup
+     * 
+     * @param items
+     * @param listener
+     */
+    public void show(final String text) {
+        if (isDisablePopup()) return;
+        if (super.isVisible()) return;
+        this.string = text;
+    }
+    
+    /**
+     * Hides the tooltip
+     */
+    public void unshow(){
+        if (isDisablePopup()) return;
+        if (super.isVisible()) return;
+        this.string = null;
+    }
+    
+    @Override
+    public boolean isVisible() {
+        if (isDisablePopup()) return false;
+        return super.isVisible();
+    }
+    
+    @Override
+    public void hide() {
+        if (isDisablePopup()) return;
+        super.hide();
     }
 }

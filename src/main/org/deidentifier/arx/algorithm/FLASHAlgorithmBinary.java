@@ -28,7 +28,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides a reference implementation of the Binary FLASH Algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
 
@@ -61,8 +62,8 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
         // Init
         pqueue.clear();
         stack.clear();
-        // checkBottom();
-
+        if (!lattice.getBottom().isChecked()) checker.check(lattice.getBottom(), true);
+        
         // For each node
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
@@ -81,6 +82,10 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
                     }
                 }
             }
+        }
+        
+        if (lattice.getTop().getInformationLoss() == null) {
+            if (!lattice.getTop().isChecked())  checker.check(lattice.getTop(), true);
         }
     }
 

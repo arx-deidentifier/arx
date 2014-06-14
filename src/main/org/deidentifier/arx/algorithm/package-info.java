@@ -21,7 +21,8 @@
  * An abstract base class can be utilized to implement novel algorithms within 
  * the anonymization framework.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.algorithm;
 

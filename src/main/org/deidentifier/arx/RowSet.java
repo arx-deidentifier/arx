@@ -20,13 +20,12 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
-
 /**
  * A set of rows
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
  */
-public class RowSet implements Serializable {
+public class RowSet implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1492499772279795327L;
     
@@ -60,6 +59,7 @@ public class RowSet implements Serializable {
         size += array[offset] != temp ? 1 : 0; 
     }
     
+    @Override
     public RowSet clone() {
         RowSet set = new RowSet(this.length);
         set.size = this.size;

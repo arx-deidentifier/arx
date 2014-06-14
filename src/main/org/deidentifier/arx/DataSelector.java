@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.DataType.ARXDate;
+import org.deidentifier.arx.DataType.ARXDecimal;
 
 import de.linearbits.objectselector.IAccessor;
 import de.linearbits.objectselector.Selector;
@@ -32,7 +33,8 @@ import de.linearbits.objectselector.datatypes.DataType;
 
 /**
  * A selector for tuples
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  *
  */
 public class DataSelector {
@@ -72,9 +74,12 @@ public class DataSelector {
             for (int i=0; i<handle.getNumColumns(); i++){
                 String attribute = handle.getAttributeName(i);
                 org.deidentifier.arx.DataType<?> type = definition.getDataType(attribute);
-                if (type == org.deidentifier.arx.DataType.DECIMAL) {
+                if (type instanceof org.deidentifier.arx.DataType.ARXDecimal){
+                    String format = ((ARXDecimal)type).getFormat();
+                    result.put(attribute, DataType.NUMERIC(format));
+                } else if (type instanceof org.deidentifier.arx.DataType.ARXInteger) {
                     result.put(attribute, DataType.NUMERIC);
-                } else if (type == org.deidentifier.arx.DataType.STRING) {
+                } else if (type instanceof org.deidentifier.arx.DataType.ARXString) {
                     result.put(attribute, DataType.STRING);                    
                 } else if (type instanceof org.deidentifier.arx.DataType.ARXDate){
                     String format = ((ARXDate)type).getFormat();

@@ -27,11 +27,13 @@ import java.util.List;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 
 /**
  * This class provides a base class for examples
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class Example {
 
@@ -66,9 +68,7 @@ public abstract class Example {
             identifiers[i] = new StringBuffer();
             generalizations[i] = new StringBuffer();
             identifiers[i].append(qis.get(i));
-            generalizations[i].append(optimum.getGeneralization(qis.get(i)))
-                              .append("/")
-                              .append(data.getDefinition().getHierarchyHeight(qis.get(i)) - 1);
+            generalizations[i].append(optimum.getGeneralization(qis.get(i))).append("/").append(data.getDefinition().getHierarchyHeight(qis.get(i)) - 1);
             lengthI = Math.max(lengthI, identifiers[i].length());
             lengthG = Math.max(lengthG, generalizations[i].length());
         }
@@ -91,10 +91,80 @@ public abstract class Example {
         }
     }
 
+    /**
+     * Prints a given datahandle
+     * @param handle
+     */
+    protected static void print(DataHandle handle) {
+        final Iterator<String[]> itHandle = handle.iterator();
+        print(itHandle);
+    }
+
+    /**
+     * Prints a given iterator
+     * @param iterator
+     */
     protected static void print(Iterator<String[]> iterator) {
         while (iterator.hasNext()) {
             System.out.print("   ");
             System.out.println(Arrays.toString(iterator.next()));
         }
+    }
+
+    /**
+     * Prints java array
+     * @param iterator
+     */
+    protected static void printArray(String[][] array) {
+        System.out.print("{");
+        for (int j=0; j<array.length; j++){
+            String[] next = array[j];
+            System.out.print("{");
+            for (int i = 0; i < next.length; i++) {
+                String string = next[i];
+                System.out.print("\"" + string + "\"");
+                if (i < next.length - 1) {
+                    System.out.print(",");
+                }
+            }
+            System.out.print("}");
+            if (j<array.length-1) {
+                System.out.print(",\n");
+            }
+        }
+        System.out.println("}");
+    }
+    
+    /**
+     * Prints java array
+     * @param iterator
+     */
+    protected static void printIterator(Iterator<String[]> iterator) {
+        System.out.print("{");
+        while (iterator.hasNext()) {
+            System.out.print("{");
+            String[] next = iterator.next();
+            for (int i = 0; i < next.length; i++) {
+                String string = next[i];
+                System.out.print("\"" + string + "\"");
+                if (i < next.length - 1) {
+                    System.out.print(",");
+                }
+            }
+            System.out.print("}");
+            if (iterator.hasNext()) {
+                System.out.print(",");
+            }
+        }
+        System.out.println("}");
+    }
+    
+    /**
+     * Prints a given data handle
+     * @param handle
+     */
+    protected static void printHandle(DataHandle handle) {
+        final Iterator<String[]> itHandle = handle.iterator();
+        printIterator(itHandle);
     }
 }

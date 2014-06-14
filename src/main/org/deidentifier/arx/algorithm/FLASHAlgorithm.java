@@ -24,7 +24,8 @@ import org.deidentifier.arx.framework.lattice.Lattice;
 /**
  * This class provides a static method for instantiating the FLASH algorithm
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithm {
 
@@ -64,18 +65,5 @@ public class FLASHAlgorithm {
                 
             }
         }
-    }
-    
-    /**
-     * Creates a new instance based on a previous one for repeated executions
-     * @param previous
-     * @param checker
-     * @return
-     */
-    public static AbstractAlgorithm create(final AbstractFLASHAlgorithm previous,
-                                           final INodeChecker checker) {
-        
-        /* Iterative FLASH*/
-        return new FLASHAlgorithmIterative(previous.lattice, checker, previous.strategy, previous.sorted);
     }
 }

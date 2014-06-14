@@ -28,7 +28,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides a reference implementation of the Two-Phase FLASH algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
 
@@ -60,42 +61,6 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
         checker.check(node);
         lattice.tagKAnonymous(node, node.isKAnonymous());
         lattice.triggerTagged();
-    }
-
-    /**
-     * Check a node during the second phase
-     * 
-     * @param node
-     */
-    protected void checkNode2(final Node node) {
-        if (!node.isChecked()) {
-
-            // TODO: Rethink var1 & var2
-            final boolean var1 = !checker.getMetric().isMonotonic() && checker.getConfiguration().isCriterionMonotonic();
-
-            final boolean var2 = !checker.getMetric().isMonotonic() && !checker.getConfiguration().isCriterionMonotonic() && checker.getConfiguration().isPracticalMonotonicity();
-
-            // NOTE: Might return non-anonymous result as optimum, when
-            // 1. the criterion is not monotonic, and
-            // 2. practical monotonicity is assumed, and
-            // 3. the metric is non-monotonic BUT independent.
-            // -> Such a metric does currently not exist
-            if (checker.getMetric().isIndependent() && (var1 || var2)) {
-                checker.getMetric().evaluate(node, null);
-            } else {
-                checker.check(node);
-            }
-
-        }
-
-        // In case metric is monotone it can be tagged if the node is anonymous
-        if (checker.getMetric().isMonotonic() && node.isAnonymous()) {
-            lattice.tagAnonymous(node, node.isAnonymous());
-        } else {
-            node.setTagged();
-            lattice.decUntaggedCount(node.getLevel());
-            lattice.triggerTagged();
-        }
     }
 
     /**
@@ -145,8 +110,8 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
 
         pqueue.clear();
         stack.clear();
-        checkBottom();
-
+        if (!lattice.getBottom().isChecked()) checker.check(lattice.getBottom(), true);
+        
         // For each node
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
@@ -191,6 +156,10 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                     }
                 }
             }
+        }
+        
+        if (lattice.getTop().getInformationLoss() == null) {
+            if (!lattice.getTop().isChecked())  checker.check(lattice.getTop(), true);
         }
     }
 }

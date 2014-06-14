@@ -25,10 +25,20 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker applies a transformation
+ * @author Fabian Prasser
+ *
+ */
 public class WorkerTransform extends Worker<DataHandle> {
 
+	/** The model*/
     private final Model model;
 
+    /**
+     * Creates a new instance
+     * @param model
+     */
     public WorkerTransform(final Model model) {
         this.model = model;
     }
@@ -42,7 +52,7 @@ public class WorkerTransform extends Worker<DataHandle> {
 
         try {
             arg0.worked(1);
-            result = model.getResult().getHandle(model.getSelectedNode());
+            result = model.getResult().getOutput(model.getSelectedNode(), false);
         } catch (final Exception e) {
             error = e;
         }

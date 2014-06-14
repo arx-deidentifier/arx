@@ -28,7 +28,8 @@ import java.util.List;
 /**
  * Reads a CSV encoded generalization hierarchy
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser 
+ * @author Florian Kohlmayer
  */
 public class CSVHierarchyInput {
 

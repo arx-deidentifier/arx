@@ -38,7 +38,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to apply the d-presence criterion
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example9 extends Example {
 
@@ -129,11 +130,11 @@ public class Example9 extends Example {
                      
             // Print results
             System.out.println(" - Transformed data:");
-            print(result.getHandle().iterator());
+            print(result.getOutput(false).iterator());
 
             // Print results
             System.out.println(" - Transformed research subset:");
-            print(result.getHandle().getView().iterator());
+            print(result.getOutput(false).getView().iterator());
             
         } catch (final IllegalArgumentException e) {
             throw new RuntimeException(e);

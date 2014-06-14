@@ -38,7 +38,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to pretty-print information loss
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example15 extends Example {
 
@@ -117,8 +118,8 @@ public class Example15 extends Example {
             ARXNode optimum = result.getGlobalOptimum();
 
             // Make sure bottom and top are checked
-            result.getHandle(bottom);
-            result.getHandle(top);
+            result.getOutput(bottom, false);
+            result.getOutput(top, false);
             
             // Obtain infoloss
             InformationLossCombined bottomLoss = (InformationLossCombined)bottom.getMinimumInformationLoss();

@@ -31,7 +31,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides an implementation of the DM metric (non-monotonic)
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricDM extends MetricDefault {
     /**
@@ -46,10 +47,13 @@ public class MetricDM extends MetricDefault {
 
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+        final boolean anonymous = node.isAnonymous();
+
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (m.isNotOutlier) {
+            //only respect outliers in case of anonymous nodes
+            if (!anonymous || m.isNotOutlier) {
                 value += ((double) m.count * (double) m.count);
             } else {
                 value += ((double) rowCount * (double) m.count);

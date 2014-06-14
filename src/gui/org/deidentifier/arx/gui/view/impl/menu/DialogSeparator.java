@@ -61,7 +61,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
     private final List<TableColumn> columns    = new ArrayList<TableColumn>();
     private final char[]            separators = { ';', ',', '|', '\t' };
     private final String[]          labels     = { ";", ",", "|", "Tab" };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    private final Controller        controller;
     private final String            file;
     private final boolean           data;
 
@@ -70,7 +69,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
                            final String file,
                            boolean data) {
         super(parent);
-        this.controller = controller;
         this.file = file;
         this.data = data;
     }
@@ -136,8 +134,11 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
             detect(file);
             read(file);
         } catch (final Exception e) {
-            controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.9"), Resources.getMessage("SeparatorDialog.10"), e); //$NON-NLS-1$ //$NON-NLS-2$
-            close();
+            if (e instanceof RuntimeException){
+                throw (RuntimeException)e;
+            } else {
+                throw new RuntimeException(e);
+            }
         }
 
         final Combo combo = new Combo(parent, SWT.NONE);
@@ -158,8 +159,11 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
                     selection = combo.getSelectionIndex();
                     read(file);
                 } catch (final Exception e) {
-                    controller.actionShowErrorDialog(Resources.getMessage("SeparatorDialog.11"), Resources.getMessage("SeparatorDialog.12"), e); //$NON-NLS-1$ //$NON-NLS-2$
-                    close();
+                    if (e instanceof RuntimeException){
+                        throw (RuntimeException)e;
+                    } else {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         });
@@ -253,7 +257,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         in.close();
 
         // In case of hierarchy, add header
-        if (!this.data) {
+        if (!this.data && data.size() > 0) {
             // Duplicate last entry
             data.add(data.get(data.size() - 1));
 

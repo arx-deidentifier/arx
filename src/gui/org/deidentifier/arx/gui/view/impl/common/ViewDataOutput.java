@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * A view on a <code>Data</code> object
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
  */
 public class ViewDataOutput extends ViewData {
 
@@ -45,12 +45,55 @@ public class ViewDataOutput extends ViewData {
                          final Controller controller) {
         
         super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1
-
-        // Register
-        controller.addListener(ModelPart.INPUT, this);
-        controller.addListener(ModelPart.OUTPUT, this);
     }
     
+    @Override
+    protected void actionCellSelected(CellSelectionEvent arg1) {
+    	super.actionCellSelected(arg1);
+    }
+    
+    @Override
+    protected void actionSort(){
+        controller.actionDataSort(false);
+    }
+
+    @Override
+    protected DataDefinition getDefinition() {
+        if (model == null) return null;
+        else return model.getOutputDefinition();
+    }
+
+    @Override
+    protected DataHandle getHandle() {
+        if (model != null){
+            DataHandle handle = model.getOutput();
+            if (model.getViewConfig().isSubset() && 
+                model.getOutputConfig() != null &&
+                model.getOutputConfig().getConfig() != null) {
+                handle = handle.getView();
+            }
+            return handle;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the research subset
+     */
+    private RowSet getSubset(){
+        if (model != null && model.getOutputConfig() != null){
+            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
+            if (d != null) {
+                return d.getSubset().getSet();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void update(final ModelEvent event) {
         
@@ -101,6 +144,7 @@ public class ViewDataOutput extends ViewData {
             // Redraw
             table.setEnabled(true);
             table.redraw();
+            this.enableSorting();
 
         } else if (event.part == ModelPart.RESEARCH_SUBSET) {
             
@@ -123,53 +167,6 @@ public class ViewDataOutput extends ViewData {
             table.setGroups(model.getGroups());
             table.setResearchSubset(getSubset());
             table.redraw();
-        }
-    }
-    
-    /**
-     * Returns the research subset
-     */
-    private RowSet getSubset(){
-        if (model != null && model.getOutputConfig() != null){
-            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
-            if (d != null) {
-                return d.getSubset().getSet();
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    protected void actionCellSelected(CellSelectionEvent arg1) {
-        // Empty by design
-    }
-
-    @Override
-    protected void actionSort(){
-        controller.actionDataSort(false);
-    }
-    
-    @Override
-    protected DataDefinition getDefinition() {
-        if (model == null) return null;
-        else return model.getOutput().getDefinition();
-    }
-
-    @Override
-    protected DataHandle getHandle() {
-        if (model != null){
-            DataHandle handle = model.getOutput();
-            if (model.getViewConfig().isSubset() && 
-                model.getOutputConfig() != null &&
-                model.getOutputConfig().getConfig() != null) {
-                handle = handle.getView();
-            }
-            return handle;
-        } else {
-            return null;
         }
     }
 }

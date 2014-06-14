@@ -39,7 +39,8 @@ import org.deidentifier.arx.metric.Metric;
  * This class implements an simple example for using multiple sensitive attributes and
  * enforcing different privacy criteria
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example13 extends Example {
 
@@ -80,7 +81,7 @@ public class Example13 extends Example {
             // Process results
             if (result.getGlobalOptimum() != null){
                 System.out.println(" - Transformed data:");
-                final Iterator<String[]> transformed = result.getHandle()
+                final Iterator<String[]> transformed = result.getOutput(false)
                                                              .iterator();
                 while (transformed.hasNext()) {
                     System.out.print("   ");

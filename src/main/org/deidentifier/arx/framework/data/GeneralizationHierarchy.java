@@ -24,7 +24,8 @@ import java.util.HashSet;
 /**
  * The class GeneralizationHierarchy.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class GeneralizationHierarchy {
 

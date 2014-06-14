@@ -25,13 +25,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.io.ImportAdapter;
+import org.deidentifier.arx.io.ImportConfiguration;
 
 /**
  * Encapsulates a definition of the types of attributes contained in a dataset
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class DataDefinition {
+public class DataDefinition implements Cloneable{
+    
+    /** Is this data definition locked*/
+    private boolean locked = false;
 
     /** The mapped attribute types */
     private final Map<String, AttributeType> attributeTypes    = new HashMap<String, AttributeType>();
@@ -62,7 +68,7 @@ public class DataDefinition {
         for (final String attr : maxGeneralization.keySet()) {
             d.maxGeneralization.put(attr, maxGeneralization.get(attr));
         }
-        
+        d.setLocked(this.isLocked());
         return d;
     }
 
@@ -77,7 +83,7 @@ public class DataDefinition {
     }
 
     /**
-     * Returns the Datatype for the coulmn name
+     * Returns the Datatype for the column name
      * 
      * @param columnName
      * @return
@@ -89,31 +95,6 @@ public class DataDefinition {
         } else {
             return t;
         }
-    }
-
-    /**
-     * Returns the data types
-     * 
-     * @return
-     */
-    protected Map<String, DataType<?>> getDataTypes() {
-        return dataTypes;
-    }
-
-    /**
-     * Returns all generalization hierarchies
-     * 
-     * @return
-     */
-    protected Map<String, String[][]> getHierarchies() {
-        final Map<String, String[][]> result = new HashMap<String, String[][]>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
-                result.put(entry.getKey(),
-                           ((Hierarchy) entry.getValue()).getHierarchy());
-            }
-        }
-        return result;
     }
 
     /**
@@ -235,6 +216,7 @@ public class DataDefinition {
     public void setAttributeType(final String attribute,
                                  final AttributeType type) {
     	
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
         if (type == null) { throw new NullPointerException("Type must not be null"); }
         attributeTypes.put(attribute, type);
     }
@@ -246,6 +228,8 @@ public class DataDefinition {
      * @param type
      */
     public void setDataType(final String attribute, final DataType<?> type) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
         if (type == null) { throw new NullPointerException("Type must not be null"); }
         dataTypes.put(attribute, type);
     }
@@ -258,6 +242,8 @@ public class DataDefinition {
      */
     public void setMaximumGeneralization(final String attribute,
                                          final int maximum) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
     	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
     		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
     	}
@@ -272,9 +258,54 @@ public class DataDefinition {
      */
     public void setMinimumGeneralization(final String attribute,
                                          final int minimum) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
     	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
     		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
     	}
         minGeneralization.put(attribute, minimum);
+    }
+
+    /**
+     * Returns all generalization hierarchies
+     * 
+     * @return
+     */
+    protected Map<String, String[][]> getHierarchies() {
+        final Map<String, String[][]> result = new HashMap<String, String[][]>();
+        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
+            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
+                result.put(entry.getKey(),
+                           ((Hierarchy) entry.getValue()).getHierarchy());
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Lock/unlock the definition
+     */
+    protected void setLocked(boolean locked){
+        this.locked = locked;
+    }
+    
+    /**
+     * Returns whether this definition can be altered
+     * @return
+     */
+    public boolean isLocked(){
+        return locked;
+    }
+
+    /**
+     * Parses the configuration of the import adapter
+     * @param adapter
+     */
+    protected void parse(ImportAdapter adapter) {
+        String[] header = adapter.getHeader();
+        ImportConfiguration config = adapter.getConfig();
+        for (int i=0; i<config.getColumns().size(); i++){
+            this.setDataType(header[i], config.getColumns().get(i).getDataType());
+        }
     }
 }

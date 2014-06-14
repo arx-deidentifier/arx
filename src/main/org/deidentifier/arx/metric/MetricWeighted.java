@@ -30,7 +30,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * A metric that consists of several metrics that are evaluated and combined by
  * applying weights
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricWeighted extends Metric<InformationLossCombined> {
 

@@ -22,7 +22,8 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The distinct l-diversity privacy criterion
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DistinctLDiversity extends LDiversity{
 
@@ -36,12 +37,12 @@ public class DistinctLDiversity extends LDiversity{
      * @param l
      */
     public DistinctLDiversity(String attribute, int l){
-        super(attribute, l);
+        super(attribute, l, true);
     }
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
-        return entry.distribution.size() >= minSize; // minSize=(int)l;
+        return entry.distributions[index].size() >= minSize; // minSize=(int)l;
     }
 
 	@Override

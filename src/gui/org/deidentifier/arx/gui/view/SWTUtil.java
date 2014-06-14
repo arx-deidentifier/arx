@@ -34,8 +34,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * This class provides some utility methods for working with SWT
+ * @author Fabian Prasser
+ *
+ */
 public class SWTUtil {
 
+    /**
+     * Centers the given shell
+     * @param shell
+     * @param parent
+     */
     public static void center(final Shell shell, final Shell parent) {
 
         final Rectangle bounds = parent.getBounds();
@@ -45,6 +55,10 @@ public class SWTUtil {
         shell.setBounds(left + bounds.x, top + bounds.y, p.x, p.y);
     }
 
+    /**
+     * Creates grid data
+     * @return
+     */
     public static GridData createFillGridData() {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
@@ -56,6 +70,10 @@ public class SWTUtil {
         return data;
     }
 
+    /**
+     * Creates grid data
+     * @return
+     */
     public static GridData createFillHorizontallyGridData() {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
@@ -67,6 +85,10 @@ public class SWTUtil {
         return data;
     }
 
+    /**
+     * Creates grid data
+     * @return
+     */
     public static GridData createFillVerticallyGridData() {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
@@ -78,6 +100,10 @@ public class SWTUtil {
         return data;
     }
 
+    /**
+     * Creates grid data
+     * @return
+     */
     public static GridData createGridData() {
         final GridData data = new GridData();
         data.horizontalAlignment = SWT.FILL;
@@ -87,50 +113,42 @@ public class SWTUtil {
         return data;
     }
 
-    public static GridData createNoFillGridData() {
-        final GridData d = new GridData();
-        d.horizontalAlignment = SWT.LEFT;
-        d.verticalAlignment = SWT.TOP;
-        d.grabExcessHorizontalSpace = false;
-        d.grabExcessVerticalSpace = false;
-        return d;
+    /**
+     * Creates a grid layout
+     * @param columns
+     * @return
+     */
+    public static GridLayout createGridLayout(int columns) {
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = columns;
+        layout.marginBottom = 0;
+        layout.marginHeight = 0;
+        layout.marginLeft = 0;
+        layout.marginRight = 0;
+        layout.marginTop = 0;
+        layout.marginWidth = 0;
+        return layout;
     }
 
-    public static Object createSpanColumnsAndFillGridData(final int i) {
-        final GridData d = new GridData();
-        d.grabExcessHorizontalSpace = true;
-        d.grabExcessVerticalSpace = true;
-        d.horizontalSpan = i;
-        return d;
+    /**
+     * Creates a grid layout
+     * @param columns
+     * @param compact
+     * @return
+     */
+    public static GridLayout createGridLayout(int columns, boolean compact) {
+        if (compact) return createGridLayout(columns);
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = columns;
+        return layout;
     }
 
-    public static Object createSpanColumnsGridData(final int i) {
-        final GridData d = new GridData();
-        d.grabExcessHorizontalSpace = false;
-        d.grabExcessVerticalSpace = false;
-        d.horizontalSpan = i;
-        return d;
-    }
-
-    public static void disable(final Composite elem) {
-        setEnabled(elem, false);
-    }
-
-    public static void enable(final Composite elem) {
-        setEnabled(elem, true);
-    }
-
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
-    }
-
+    /**
+     * Creates a help button in the given folder
+     * @param controller
+     * @param tabFolder
+     * @param id
+     */
     public static void createHelpButton(final Controller controller, final CTabFolder tabFolder, final String id) {
         ToolBar toolbar = new ToolBar(tabFolder, SWT.FLAT);
         tabFolder.setTopRight( toolbar, SWT.RIGHT );
@@ -148,22 +166,91 @@ public class SWTUtil {
         });
     }
 
-    public static GridLayout createGridLayout(int columns) {
-        final GridLayout layout = new GridLayout();
-        layout.numColumns = columns;
-        layout.marginBottom = 0;
-        layout.marginHeight = 0;
-        layout.marginLeft = 0;
-        layout.marginRight = 0;
-        layout.marginTop = 0;
-        layout.marginWidth = 0;
-        return layout;
+    /**
+     * Creates grid data
+     * @return
+     */
+    public static GridData createNoFillGridData() {
+        final GridData d = new GridData();
+        d.horizontalAlignment = SWT.LEFT;
+        d.verticalAlignment = SWT.TOP;
+        d.grabExcessHorizontalSpace = false;
+        d.grabExcessVerticalSpace = false;
+        return d;
     }
 
-    public static GridLayout createGridLayout(int columns, boolean compact) {
-        if (compact) return createGridLayout(columns);
-        final GridLayout layout = new GridLayout();
-        layout.numColumns = columns;
-        return layout;
+    /**
+     * Creates grid data
+     * @param i
+     * @return
+     */
+    public static Object createSpanColumnsAndFillGridData(final int i) {
+        final GridData d = new GridData();
+        d.grabExcessHorizontalSpace = true;
+        d.grabExcessVerticalSpace = true;
+        d.horizontalSpan = i;
+        return d;
+    }
+
+    /**
+     * Creates grid data
+     * @param i
+     * @return
+     */
+    public static Object createSpanColumnsGridData(final int i) {
+        final GridData d = new GridData();
+        d.grabExcessHorizontalSpace = false;
+        d.grabExcessVerticalSpace = false;
+        d.horizontalSpan = i;
+        return d;
+    }
+
+    /**
+     * Disables the composite and its children
+     * @param elem
+     */
+    public static void disable(final Composite elem) {
+        setEnabled(elem, false);
+    }
+
+
+    /**
+     * Disables the control
+     * @param elem
+     */
+    public static void disable(final Control elem) {
+        elem.setEnabled(false);
+    }
+
+    /**
+     * Enables the control
+     * @param elem
+     */
+    public static void enable(final Control elem) {
+        elem.setEnabled(true);
+    }
+
+    /**
+     * Enables the composite and its children
+     * @param elem
+     */
+    public static void enable(final Composite elem) {
+        setEnabled(elem, true);
+    }
+
+    /**
+     * En-/disables the composite and its children
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
     }
 }

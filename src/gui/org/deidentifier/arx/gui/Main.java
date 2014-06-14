@@ -26,23 +26,23 @@ import java.io.StringWriter;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
-import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
+import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
 
 /**
  * Main entry point
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Main {
 
-	private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
-	private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
-	
-    private static MainSplash splash = null;
+    private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
+    private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
+
+    private static String       loaded      = null;
+    private static MainSplash   splash      = null;
 
     public static void main(final String[] args) {
 
@@ -52,26 +52,35 @@ public class Main {
                 splash = new MainSplash();
                 splash.setVisible(true);
             } else {
-            	try {
-            		Class.forName(JDK16_FRAME);
-            	} catch (Exception e){
-            		SWT_AWT.embeddedFrameClass = JDK17_FRAME;
-            	}
+                try {
+                    Class.forName(JDK16_FRAME);
+                } catch (Exception e) {
+                    SWT_AWT.embeddedFrameClass = JDK17_FRAME;
+                }
             }
 
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
-            MainWindow main = new MainWindow();
-            main.addShellListener(new ShellAdapter() {
-                @Override
-                public void shellActivated(ShellEvent arg0) {
+            final MainWindow main = new MainWindow();
+            
+            main.onShow(new Runnable() {
+                public void run(){
                     hideSplash();
                 }
             });
-            main.show();
-
-        } catch (Throwable e) {
             
+            if (args.length > 0 && args[0].endsWith(".deid")) {
+                main.onShow(new Runnable() {
+                    public void run(){
+                        load(main, args[0]);
+                    }
+                });
+            }
+            
+            main.show();
+            
+        } catch (Throwable e) {
+
             hideSplash();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -84,17 +93,41 @@ public class Main {
         }
     }
 
+    /**
+     * Hides the splash screen
+     */
     private static void hideSplash() {
         new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if (splash != null) splash.setVisible(false);
+                if (splash != null){
+                    splash.setVisible(false);
+                }
             }
         }).start();
     }
-
+    
+    /**
+     * Are we on Mac OSX
+     * @return
+     */
     private static boolean isOSX() {
         String osName = System.getProperty("os.name");
         return osName.contains("OS X");
+    }
+
+    /**
+     * Loads a project
+     * @param main
+     * @param path
+     */
+    private static void load(MainWindow main, String path) {
+        if (loaded == null) {
+            loaded = path;
+            if (splash != null){
+                splash.setVisible(false);
+            }
+            main.getController().actionOpenProject(path);
+        }
     }
 }

@@ -23,7 +23,8 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The entropy l-diversity criterion
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class EntropyLDiversity extends LDiversity {
 
@@ -42,14 +43,14 @@ public class EntropyLDiversity extends LDiversity {
      * @param l
      */
     public EntropyLDiversity(String attribute, double l){
-        super(attribute, l);
+        super(attribute, l, false);
         logL = Math.log(l) / Math.log(2d);
     }
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
-        Distribution d = entry.distribution;
+        Distribution d = entry.distributions[index];
 
         // If less than l values are present skip
         if (d.size() < minSize) { return false; }

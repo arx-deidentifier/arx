@@ -44,6 +44,10 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import cern.colt.Arrays;
 
+/**
+ * This class implements the global application tool bar
+ * @author Fabian Prasser
+ */
 public class MainToolBar implements IView {
 
     private final ToolBar    toolBar;
@@ -57,6 +61,11 @@ public class MainToolBar implements IView {
     private static final int TOOL_BAR_LABEL_OFFSET_Y = 2;
     private static final int TOOL_BAR_LABEL_OFFSET_X = 10;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public MainToolBar(final Shell parent, final Controller controller) {
         toolBar = new ToolBar(parent, SWT.FLAT);
         toolBar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
@@ -69,6 +78,9 @@ public class MainToolBar implements IView {
         toolBar.pack();
     }
 
+    /**
+     * Builds the component
+     */
     private void build() {
         toolitems = new ArrayList<ToolItem>();
 
@@ -266,6 +278,9 @@ public class MainToolBar implements IView {
         return count;
     }
 
+    /**
+     * Performs layouting
+     */
     private void labelLayout() {
         int remaining = toolBar.getBounds().width;
         for (final ToolItem item : toolitems) {

@@ -25,7 +25,8 @@ import java.util.Map;
  * This class implements an abstract base class for information loss defined by
  * combination of different metrics
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class InformationLossCombined extends InformationLossDefault {
 

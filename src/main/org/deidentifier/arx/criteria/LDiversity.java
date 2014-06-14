@@ -27,7 +27,8 @@ import org.deidentifier.arx.ARXConfiguration;
  * l-diversity: Privacy beyond k-anonymity. 
  * Transactions on Knowledge Discovery from Data (TKDD). 2007;1(1):3. 
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class LDiversity extends ExplicitPrivacyCriterion {
 
@@ -41,8 +42,8 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
      * Creates a new instance
      * @param l
      */
-    public LDiversity(String attribute, double l) {
-        super(attribute, false);
+    public LDiversity(String attribute, double l, boolean monotonic) {
+        super(attribute, monotonic);
         this.l = l;
         this.minSize = (int) Math.ceil(l);
     }

@@ -38,7 +38,8 @@ import org.junit.Test;
 /**
  * Test for data transformations
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class TestDataTransformationsFromFileAbstract extends AbstractTest {
 
@@ -114,8 +115,8 @@ public abstract class TestDataTransformationsFromFileAbstract extends AbstractTe
     @Override
     @Before
     public void setUp() {
-        // empty by design
-
+        // Empty by design
+        // We also intentionally don't call super.setUp()
     }
 
     @Test

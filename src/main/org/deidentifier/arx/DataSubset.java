@@ -10,7 +10,8 @@ import java.util.Set;
 
 /**
  * This class represents a data subset as required for d-presence
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  *
  */
 public class DataSubset implements Serializable {
@@ -19,7 +20,8 @@ public class DataSubset implements Serializable {
 
     /**
      * Wrapper around a string array
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      *
      */
     private static class Entry implements Serializable {
@@ -40,6 +42,7 @@ public class DataSubset implements Serializable {
 
         @Override
         public boolean equals(Object obj) {
+            if (obj == null) return false;
             Entry other = (Entry) obj;
             return Arrays.equals(data, other.data);
         }
@@ -105,7 +108,7 @@ public class DataSubset implements Serializable {
                 throw new IllegalArgumentException("No match found for: "+Arrays.toString(tuple));
             }
             if (indices.isEmpty()) {
-            	throw new IllegalArgumentException("Too many matches found for: "+tuple);
+            	throw new IllegalArgumentException("Too many matches found for: "+Arrays.toString(tuple));
             }
             int index = indices.remove(0);
             bitset.add(index);

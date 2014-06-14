@@ -37,7 +37,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to apply the t-closeness criterion
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example8 extends Example {
 
@@ -151,7 +152,7 @@ public class Example8 extends Example {
 
             // Process results
             System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getHandle()
+            final Iterator<String[]> transformed = result.getOutput(false)
                                                          .iterator();
             while (transformed.hasNext()) {
                 System.out.print("   ");

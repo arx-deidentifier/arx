@@ -24,15 +24,6 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableArrayDataProvider;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableContext;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableDecorator;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayer;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayerStack;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableHandleDataProvider;
-import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableRowHeaderConfiguration;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
@@ -65,6 +56,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * This component displays a data table. It provides ARX-specific methods for displaying
+ * equivalence classes, research subsets and attribute types.
+ * @author Fabian Prasser
+ */
 public class ComponentDataTable implements IComponent {
 
     private NatTable                table;
@@ -72,6 +68,11 @@ public class ComponentDataTable implements IComponent {
     private DataTableBodyLayerStack bodyLayer;
     private DataTableGridLayer      gridLayer;
 
+    /**
+     * Creates a new instance
+     * @param controller
+     * @param parent
+     */
     public ComponentDataTable(final Controller controller, final Composite parent) {
         
         this.context = new DataTableContext(controller);
@@ -79,113 +80,28 @@ public class ComponentDataTable implements IComponent {
         this.table.setVisible(false);
     }
 
+    /**
+     * Adds a scroll bar listener
+     * @param listener
+     */
     public void addScrollBarListener(final Listener listener) {
         this.table.getVerticalBar().addListener(SWT.Selection, listener);
         this.table.getHorizontalBar().addListener(SWT.Selection, listener);
     }
 
+    /**
+     * Adds a select layer listener
+     * @param listener
+     */
     public void addSelectionLayerListener(ILayerListener listener){
         this.context.getListeners().add(listener);
     }
 
-    public void dispose() {
-        // Nothing to dispose
-    }
-
-    public List<Image> getHeaderImages() {
-        return this.context.getImages();
-    }
-
-    public ViewportLayer getViewportLayer() {
-        return this.gridLayer.getBodyLayer().getViewportLayer();
-    }
-
-    public void redraw() {
-        this.table.redraw();
-    }
-
-    public void reset() {
-        this.table.setRedraw(false);
-        this.context.getImages().clear();
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(null, context), table, context);
-        this.context.reset();
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(false);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(false);
-    }
-
-    public void setAttribute(String attribute) {
-        int index = -1;
-        if (context.getHandle()!=null) {
-            index = context.getHandle().getColumnIndexOf(attribute);
-        }
-        this.context.setSelectedIndex(index);
-    }
-    
-    public void setData(final String[][] data) {
-        this.table.setRedraw(false);
-        this.context.setHandle(null);
-        this.context.setArray(data);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), table, context);
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-    }
-
-    public void setData(final DataHandle handle) {
-        this.table.setRedraw(false);
-        this.context.setHandle(handle);
-        this.context.setArray(null);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(handle, context), table, context);
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
-        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
-        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-    }
-  
-    public void setEnabled(final boolean val) {
-        if (table != null) {
-            table.setEnabled(val);
-        }
-    }
-
-    public void setLayoutData(final Object data) {
-        table.setLayoutData(data);
-    }
-
-    public void setResearchSubset(RowSet researchSubset) {
-        this.context.setRows(researchSubset);
-    }
-    
-    public void setGroups(int[] groups) {
-        this.context.setGroups(groups);
-    }
-    
+    /**
+     * Creates the control contents
+     * @param parent
+     * @return
+     */
     private NatTable createControl(final Composite parent) {
         final NatTable natTable = createTable(parent);
         createTableStyling(natTable);
@@ -198,9 +114,14 @@ public class ComponentDataTable implements IComponent {
         natTable.setLayoutData(tableLayoutData);
         return natTable;
     }
-    
+
+    /**
+     * Creates the nattable
+     * @param parent
+     * @return
+     */
     private NatTable createTable(final Composite parent) {
-        final IDataProvider provider = new DataTableHandleDataProvider(null, context);
+        final IDataProvider provider = new DataTableHandleDataProvider(context);
         gridLayer = new DataTableGridLayerStack(provider, table, context);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
@@ -261,10 +182,12 @@ public class ComponentDataTable implements IComponent {
         return natTable;
     }
 
+    /**
+     * Creates the table styling
+     * @param natTable
+     */
     private void createTableStyling(final NatTable natTable) {
 
-        // NOTE: Getting the colors and fonts from the GUIHelper ensures that
-        // they are disposed properly (required by SWT)
         final DefaultNatTableStyleConfiguration natTableConfiguration = new DefaultNatTableStyleConfiguration();
         natTableConfiguration.bgColor = GUIHelper.getColor(249, 172, 7);
         natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
@@ -301,7 +224,155 @@ public class ComponentDataTable implements IComponent {
         natTable.addConfiguration(new DataTableColumnHeaderConfiguration(context));
     }
 
+    /**
+     * Disposes the control
+     */
+    public void dispose() {
+        table.dispose();
+    }
+
+    /**
+     * Returns the displayed data
+     * @return
+     */
     public DataHandle getData() {
         return this.context.getHandle();
+    }
+
+    /**
+     * Returns the list of header images
+     * @return
+     */
+    public List<Image> getHeaderImages() {
+        return this.context.getImages();
+    }
+    
+    /**
+     * Returns the viewport layer
+     * @return
+     */
+    public ViewportLayer getViewportLayer() {
+        return this.gridLayer.getBodyLayer().getViewportLayer();
+    }
+
+    /**
+     * Redraws the component
+     */
+    public void redraw() {
+        this.table.redraw();
+    }
+  
+    /**
+     * Resets the component
+     */
+    public void reset() {
+        this.table.setRedraw(false);
+        this.context.getImages().clear();
+        this.context.reset();
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(false);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(false);
+    }
+
+    /**
+     * Sets the selected attribute
+     * @param attribute
+     */
+    public void setSelectedAttribute(String attribute) {
+        int index = -1;
+        if (context.getHandle()!=null) {
+            index = context.getHandle().getColumnIndexOf(attribute);
+        }
+        this.context.setSelectedIndex(index);
+        this.redraw();
+    }
+
+    /**
+     * Sets the displayed data
+     * @param handle
+     */
+    public void setData(final DataHandle handle) {
+        this.table.setRedraw(false);
+        this.context.setHandle(handle);
+        this.context.setArray(null);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
+        ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
+    }
+    
+    /**
+     * Sets the displayed data
+     * @param data
+     */
+    public void setData(final String[][] data) {
+        this.table.setRedraw(false);
+        this.context.setHandle(null);
+        this.context.setArray(data);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), table, context);
+        this.table.setLayer(gridLayer);
+        this.table.refresh();
+        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
+        this.table.getVerticalBar().setVisible(false);
+        this.table.getHorizontalBar().setVisible(false);
+        this.table.setRedraw(true);
+        this.table.redraw();
+        this.table.setVisible(true);
+        this.table.getVerticalBar().setVisible(true);
+        this.table.getHorizontalBar().setVisible(true);
+        this.table.setVisible(true);
+    }
+    
+    /**
+     * Enables/disables the component
+     * @param val
+     */
+    public void setEnabled(final boolean val) {
+        if (table != null) {
+            table.setEnabled(val);
+        }
+    }
+    
+    /**
+     * Sets information about equivalence classes
+     * @param groups
+     */
+    public void setGroups(int[] groups) {
+        this.context.setGroups(groups);
+    }
+
+    /**
+     * Sets layout data
+     * @param data
+     */
+    public void setLayoutData(final Object data) {
+        table.setLayoutData(data);
+    }
+
+    /**
+     * Sets information about the research subset
+     * @param researchSubset
+     */
+    public void setResearchSubset(RowSet researchSubset) {
+        this.context.setRows(researchSubset);
     }
 }

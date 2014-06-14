@@ -33,16 +33,18 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 /**
  * Represents an attribute type
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class AttributeType implements Serializable {
+public class AttributeType implements Serializable, Cloneable {
     
     private static final long serialVersionUID = -7358540408016873823L;
 
     /**
      * This class implements a generalization hierarchy
      * 
-     * @author Prasser, Kohlmayer
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
      */
     public static abstract class Hierarchy extends AttributeType implements Serializable {
 
@@ -51,7 +53,8 @@ public class AttributeType implements Serializable {
 		/**
          * The implementation for arrays
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         static class ArrayHierarchy extends Hierarchy {
 
@@ -78,7 +81,8 @@ public class AttributeType implements Serializable {
          * The default implementation of a generalization hierarchy. It allows
          * the user to programmatically define its content.
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         public static class DefaultHierarchy extends Hierarchy {
 
@@ -133,7 +137,8 @@ public class AttributeType implements Serializable {
         /**
          * The implementation for iterators
          * 
-         * @author Prasser, Kohlmayer
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
          */
         static class IterableHierarchy extends Hierarchy {
 
@@ -389,7 +394,7 @@ public class AttributeType implements Serializable {
         case ATTR_TYPE_QI:
             return "QUASI_IDENTIFYING_ATTRIBUTE";
         default:
-            return null;
+            return "UNKNOWN_ATTRIBUTE_TYPE";
         }
     }
 }

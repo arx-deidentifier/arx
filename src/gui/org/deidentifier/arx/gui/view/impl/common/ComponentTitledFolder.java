@@ -37,14 +37,33 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * This class implements a titled folder
+ * @author Fabian Prasser
+ */
 public class ComponentTitledFolder implements IComponent {
     
     private final CTabFolder folder;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     * @param bar
+     * @param id
+     */
     public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id){
         this(parent, controller, bar, id, false);
     }
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     * @param bar
+     * @param id
+     * @param bottom
+     */
     public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id, boolean bottom){
 
         int flags = SWT.BORDER | SWT.FLAT;
@@ -68,51 +87,20 @@ public class ComponentTitledFolder implements IComponent {
         });
     }
     
+    /**
+     * Adds a selection listener
+     * @param listener
+     */
     public void addSelectionListener(SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
     
-    public Composite createItem(String title, Image image){
-
-        Composite composite = new Composite(folder, SWT.NONE);
-        composite.setLayout(new GridLayout());
-        
-        CTabItem item = new CTabItem(folder, SWT.NULL);
-        item.setText(title);
-        if (image!=null) item.setImage(image);
-        item.setShowClose(false);
-        item.setControl(composite);
-        
-        return composite;
-    }
-
-    public ToolItem getBarItem(String text) {
-        Control c = folder.getTopRight();
-        if (c == null) return null;
-        if (!(c instanceof ToolBar)) return null;
-        ToolBar t = (ToolBar)c;
-        for (ToolItem i : t.getItems()){
-            if (i.getToolTipText().equals(text)) return i;
-        }
-        return null;
-    }
-
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    public void setEnabled(boolean b) {
-        folder.setEnabled(b);
-    }
-
-    public void setLayoutData(Object data){
-        folder.setLayoutData(data);
-    }
-
-    public void setSelection(int index) {
-        folder.setSelection(index);
-    }
-
+    /**
+     * Creates the bar 
+     * @param controller
+     * @param folder
+     * @param bar
+     */
     private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitleBar bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
@@ -145,5 +133,73 @@ public class ComponentTitledFolder implements IComponent {
         
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+    }
+
+    /**
+     * Creates a new entry in the folder
+     * @param title
+     * @param image
+     * @return
+     */
+    public Composite createItem(String title, Image image){
+
+        Composite composite = new Composite(folder, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        
+        CTabItem item = new CTabItem(folder, SWT.NULL);
+        item.setText(title);
+        if (image!=null) item.setImage(image);
+        item.setShowClose(false);
+        item.setControl(composite);
+        
+        return composite;
+    }
+
+    /**
+     * Returns the item for the given title
+     * @param text
+     * @return
+     */
+    public ToolItem getBarItem(String text) {
+        Control c = folder.getTopRight();
+        if (c == null) return null;
+        if (!(c instanceof ToolBar)) return null;
+        ToolBar t = (ToolBar)c;
+        for (ToolItem i : t.getItems()){
+            if (i.getToolTipText().equals(text)) return i;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the currently selected index
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    /**
+     * Enables/disables the component
+     * @param b
+     */
+    public void setEnabled(boolean b) {
+        folder.setEnabled(b);
+    }
+
+    /**
+     * Sets layout data
+     * @param data
+     */
+    public void setLayoutData(Object data){
+        folder.setLayoutData(data);
+    }
+
+    /**
+     * Sets the current selection
+     * @param index
+     */
+    public void setSelection(int index) {
+        folder.setSelection(index);
     }
 }

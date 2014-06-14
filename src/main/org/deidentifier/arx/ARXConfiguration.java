@@ -50,51 +50,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Do the criteria require distributions of sensitive values in the equivalence classes */
     public static final int       REQUIREMENT_DISTRIBUTION      = 0x4;
 
-    /** Do we assume practical monotonicity */
-    private boolean               practicalMonotonicity         = false;
-
-    /** Relative tuple outliers */
-    private double                relMaxOutliers                = -1;
-
-    /** Absolute tuple outliers*/
-    private int                   absMaxOutliers                = 0;
-
-    /** Criteria*/
-    private PrivacyCriterion[]    aCriteria                     = new PrivacyCriterion[0];
-
-    /** The criteria*/
-    private Set<PrivacyCriterion> criteria                      = new HashSet<PrivacyCriterion>();
-
-    /** The requirements per equivalence class*/
-    private int                   requirements                  = 0x0;
-
-    /** The metric. */
-    private Metric<?>             metric                        = Metric.createDMStarMetric();
-
-    /** The snapshot length*/
-    private int                   snapshotLength;
-
-    /** Make sure that no information can be derived from associations between sensitive attributes*/
-    private boolean               protectSensitiveAssociations  = true;
-
-    /**
-     * Clones this config
-     */
-    public ARXConfiguration clone() {
-        ARXConfiguration result = new ARXConfiguration();
-        result.practicalMonotonicity = this.practicalMonotonicity;
-        result.relMaxOutliers = this.relMaxOutliers;
-        result.absMaxOutliers = this.absMaxOutliers;
-        result.aCriteria = this.aCriteria.clone();
-        result.criteria = new HashSet<PrivacyCriterion>(this.criteria);
-        result.requirements = this.requirements;
-        result.metric = this.metric;
-        result.snapshotLength = this.snapshotLength;
-        result.protectSensitiveAssociations = this.protectSensitiveAssociations;
-        return result;
-
-    }
-
     /**
      * Creates a new config without tuple suppression
      */
@@ -128,6 +83,33 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public static ARXConfiguration create(Metric<?> metric) {
         return new ARXConfiguration(metric);
     }
+
+    /** Do we assume practical monotonicity */
+    private boolean               practicalMonotonicity         = false;
+
+    /** Relative tuple outliers */
+    private double                relMaxOutliers                = -1;
+
+    /** Absolute tuple outliers*/
+    private int                   absMaxOutliers                = 0;
+
+    /** Criteria*/
+    private PrivacyCriterion[]    aCriteria                     = new PrivacyCriterion[0];
+
+    /** The criteria*/
+    private Set<PrivacyCriterion> criteria                      = new HashSet<PrivacyCriterion>();
+
+    /** The requirements per equivalence class*/
+    private int                   requirements                  = 0x0;
+
+    /** The metric. */
+    private Metric<?>             metric                        = Metric.createDMStarMetric();
+
+    /** The snapshot length*/
+    private int                   snapshotLength;
+
+    /** Make sure that no information can be derived from associations between sensitive attributes*/
+    private boolean               protectSensitiveAssociations  = false;
 
     /**
      * Creates a new config without tuple suppression
@@ -184,6 +166,29 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return this;
     }
 
+    /**
+     * Clones this config
+     */
+    public ARXConfiguration clone() {
+        ARXConfiguration result = new ARXConfiguration();
+        result.practicalMonotonicity = this.practicalMonotonicity;
+        result.relMaxOutliers = this.relMaxOutliers;
+        result.absMaxOutliers = this.absMaxOutliers;
+        result.aCriteria = this.aCriteria.clone();
+        result.criteria = new HashSet<PrivacyCriterion>(this.criteria);
+        result.requirements = this.requirements;
+        result.metric = this.metric;
+        result.snapshotLength = this.snapshotLength;
+        result.protectSensitiveAssociations = this.protectSensitiveAssociations;
+        return result;
+
+    }
+
+    /**
+     * Returns whether the configuration contains a criterion of the given class
+     * @param clazz
+     * @return
+     */
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
         for (PrivacyCriterion c : criteria) {
             if (clazz.isInstance(c)) { return true; }
@@ -197,14 +202,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public final int getAbsoluteMaxOutliers() {
         return this.absMaxOutliers;
-    }
-
-    /**
-     * Returns all criteria as array. Only used internally.
-     * @return
-     */
-    public PrivacyCriterion[] getCriteriaAsArray() {
-        return this.aCriteria;
     }
 
     /**
@@ -232,6 +229,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Returns all criteria as array. Only used internally.
+     * @return
+     */
+    public PrivacyCriterion[] getCriteriaAsArray() {
+        return this.aCriteria;
+    }
+
+    /**
      * Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.
      * @param clazz
      * @return
@@ -254,12 +259,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Removes the given criterion
-     * @param clazz
+     * Returns the maximum number of allowed outliers
      * @return
      */
-    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion arg) {
-        return criteria.remove(arg);
+    public final double getMaxOutliers() {
+        return relMaxOutliers;
     }
 
     /**
@@ -271,11 +275,27 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the maximum number of allowed outliers
-     * @return
+     * Returns the minimal size of an equivalence class induced by the contained criteria.
+     * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
+     * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
      */
-    public final double getMaxOutliers() {
-        return relMaxOutliers;
+    public int getMinimalGroupSize() {
+        int k = -1;
+        int l = -1;
+
+        if (this.containsCriterion(KAnonymity.class)) {
+            k = this.getCriterion(KAnonymity.class).getK();
+        }
+
+        if (this.containsCriterion(LDiversity.class)) {
+            for (LDiversity c : this.getCriteria(LDiversity.class)) {
+                l = Math.max(l, c.getMinimalGroupSize());
+            }
+        }
+
+        int result = Math.max(k, l);
+        if (result == -1) return Integer.MAX_VALUE;
+        else return result;
     }
 
     /**
@@ -292,6 +312,85 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public int getSnapshotLength() {
         return this.snapshotLength;
+    }
+
+    /**
+     * Determines whether the anonymity criterion is montonic
+     * 
+     * @return
+     */
+    public final boolean isCriterionMonotonic() {
+
+        if (relMaxOutliers == 0d) { return true; }
+
+        for (PrivacyCriterion c : criteria) {
+            if (!c.isMonotonic()) return false;
+        }
+        // Yes
+        return true;
+    }
+
+    /**
+     * Is practical monotonicity assumed
+     * @return
+     */
+    public boolean isPracticalMonotonicity() {
+        return practicalMonotonicity;
+    }
+
+    /**
+     * Returns, whether the anonymizer should take associations between sensitive attributes into account
+     */
+    public boolean isProtectSensitiveAssociations() {
+        return this.protectSensitiveAssociations;
+    }
+
+    /**
+     * Removes the given criterion
+     * @param clazz
+     * @return
+     */
+    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion arg) {
+        return criteria.remove(arg);
+    }
+
+    /**
+     * Convenience method for checking the requirements
+     * @param requirement
+     * @return
+     */
+    public boolean requires(int requirement) {
+        return (this.requirements & requirement) != 0;
+    }
+
+    /**
+     * Allows for a certain percentage of outliers and thus
+     * triggers tuple suppression
+     * @param supp
+     */
+    public void setMaxOutliers(double supp) {
+        this.relMaxOutliers = supp;
+    }
+
+    public void setMetric(Metric<?> metric) {
+        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
+        this.metric = metric;
+    }
+
+    /**
+     * Set, if practical monotonicity assumed
+     * @return
+     */
+    public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
+        this.practicalMonotonicity = assumeMonotonicity;
+    }
+
+    /**
+     * Set, whether the anonymizer should take associations between sensitive attributes into account
+     * @param protect
+     */
+    public void setProtectSensitiveAssociations(boolean protect) {
+        this.protectSensitiveAssociations = protect;
     }
 
     /**
@@ -348,104 +447,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
-            this.snapshotLength += 2;
+            this.snapshotLength += 2 * manager.getDataSE().getHeader().length;
         }
         if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
             this.snapshotLength += 1;
         }
-    }
-
-    /**
-     * Determines whether the anonymity criterion is montonic
-     * 
-     * @return
-     */
-    public final boolean isCriterionMonotonic() {
-
-        if (relMaxOutliers == 0d) { return true; }
-
-        for (PrivacyCriterion c : criteria) {
-            if (!c.isMonotonic()) return false;
-        }
-        // Yes
-        return true;
-    }
-
-    /**
-     * Is practical monotonicity assumed
-     * @return
-     */
-    public boolean isPracticalMonotonicity() {
-        return practicalMonotonicity;
-    }
-
-    /**
-     * Returns, whether the anonymizer should take associations between sensitive attributes into account
-     */
-    public boolean isProtectSensitiveAssociations() {
-        return this.protectSensitiveAssociations;
-    }
-
-    /**
-     * Convenience method for checking the requirements
-     * @param requirement
-     * @return
-     */
-    public boolean requires(int requirement) {
-        return (this.requirements & requirement) != 0;
-    }
-
-    /**
-     * Allows for a certain percentage of outliers and thus
-     * triggers tuple suppresion
-     * @param supp
-     */
-    public void setMaxOutliers(double supp) {
-        this.relMaxOutliers = supp;
-    }
-
-    public void setMetric(Metric<?> metric) {
-        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
-        this.metric = metric;
-    }
-
-    /**
-     * Set, if practical monotonicity assumed
-     * @return
-     */
-    public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
-        this.practicalMonotonicity = assumeMonotonicity;
-    }
-
-    /**
-     * Set, whether the anonymizer should take associations between sensitive attributes into account
-     * @param protect
-     */
-    public void setProtectSensitiveAssociations(boolean protect) {
-        this.protectSensitiveAssociations = protect;
-    }
-
-    /**
-     * Returns the minimal size of an equivalence class induced by the contained criteria.
-     * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
-     * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
-     */
-    public int getMinimalGroupSize() {
-        int k = -1;
-        int l = -1;
-
-        if (this.containsCriterion(KAnonymity.class)) {
-            k = this.getCriterion(KAnonymity.class).getK();
-        }
-
-        if (this.containsCriterion(LDiversity.class)) {
-            for (LDiversity c : this.getCriteria(LDiversity.class)) {
-                l = Math.max(l, c.getMinimalGroupSize());
-            }
-        }
-
-        int result = Math.max(k, l);
-        if (result == -1) return Integer.MAX_VALUE;
-        else return result;
     }
 }

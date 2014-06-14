@@ -3,13 +3,28 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Configuration for the help dialog. Stores help topics and associated URLs
+ * @author Fabian Prasser
+ */
 public class DialogHelpConfig {
 
+    /**
+     * An entry in the help dialog
+     * @author Fabian Prasser
+     */
     public static class Entry {
         
         public final String id;
         public final String title;
         public final String url;
+        
+        /**
+         * Creates a new entry
+         * @param id
+         * @param title
+         * @param url
+         */
         private Entry(String id, String title, String url) {
             this.id = id;
             this.title = title;
@@ -19,6 +34,9 @@ public class DialogHelpConfig {
     
     private List<Entry> entries = new ArrayList<Entry>();
     
+    /**
+     * Creates a new config
+     */
     public DialogHelpConfig(){
         
         entries.add(new Entry("id-70",
@@ -79,14 +97,28 @@ public class DialogHelpConfig {
                               "http://arx.deidentifier.org/?page_id=1071&content-only=1&css=1"));
     }
     
+    /**
+     * Returns all entries
+     * @return
+     */
     public List<Entry> getEntries(){
         return this.entries;
     }
 
+    /**
+     * Returns the URL for a given index
+     * @param index
+     * @return
+     */
     public String getUrlForIndex(int index) {
         return entries.get(index).url;
     }
 
+    /**
+     * Returns the index of a given URL
+     * @param url
+     * @return
+     */
     public int getIndexForUrl(String url) {
         for (int i = 0; i < entries.size(); i++){
             if (entries.get(i).url.equals(url)) {
@@ -96,6 +128,11 @@ public class DialogHelpConfig {
         return -1;
     }
 
+    /**
+     * Returns the index for a given ID
+     * @param id
+     * @return
+     */
     public int getIndexForId(String id) {
         for (int i = 0; i < entries.size(); i++){
             if (entries.get(i).id.equals(id)) {

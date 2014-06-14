@@ -26,7 +26,8 @@ import org.deidentifier.arx.framework.lattice.Node;
 /**
  * This class provides a reference implementation of the Linear FLASH Algorithm.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
 
@@ -61,8 +62,8 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
         // Init
         pqueue.clear();
         stack.clear();
-        checkBottom();
-
+        if (!lattice.getBottom().isChecked()) checker.check(lattice.getBottom(), true);
+        
         // For each node
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
@@ -96,6 +97,10 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
                     }
                 }
             }
+        }
+        
+        if (lattice.getTop().getInformationLoss() == null) {
+            if (!lattice.getTop().isChecked())  checker.check(lattice.getTop(), true);
         }
     }
 }

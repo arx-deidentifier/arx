@@ -1,6 +1,7 @@
 /*
  * ARX: Efficient, Stable and Optimal Data Anonymization
  * Copyright (C) 2012 - 2014 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +33,12 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 
 public class Model implements Serializable {
 
@@ -86,9 +89,13 @@ public class Model implements Serializable {
     private String                                query                = ""; //$NON-NLS-1$
     private String                                subsetOrigin         = "All"; //$NON-NLS-1$
     private ModelViewConfig                       viewConfig           = new ModelViewConfig();
-    private ModelViewConfig                       oldViewConfig        = viewConfig.clone();
-    
-	public Model(final String name, final String description) {
+
+    private Boolean                               showVisualization    = true;
+    private int                                   maximalSizeForComplexOperations  = 5000000;
+
+    private boolean                               debugEnabled         = false;
+
+    public Model(final String name, final String description) {
 		this.name = name;
 		this.description = description;
 		setModified();
@@ -105,17 +112,49 @@ public class Model implements Serializable {
 		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
 		
 		// Add all criteria
-		this.createCriteria(inputConfig);
+		this.createConfig();
 
         // Return the anonymizer
 		return anonymizer;
 	}
+	
+	public void createClonedConfig() {
 
-	public void createCriteria(ModelConfiguration config) {
+        // Clone the config
+        outputConfig = inputConfig.clone();
+        this.setModified();
+	}
+	
+	public void createConfig() {
 
+		ModelConfiguration config = getInputConfig();
+		DataDefinition definition = getInputDefinition();
+		
 		// Initialize the config
 		config.removeAllCriteria();
-		
+
+		// Initialize definition
+        for (String attr : definition.getQuasiIdentifyingAttributes()) {
+            
+            Hierarchy hierarchy = config.getHierarchy(attr);
+            /* Handle non-existent hierarchies*/
+            if (hierarchy == null || hierarchy.getHierarchy()==null) {
+                hierarchy = Hierarchy.create();
+                config.setHierarchy(attr, hierarchy);
+            }
+            Integer min = config.getMinimumGeneralization(attr);
+            Integer max = config.getMaximumGeneralization(attr);
+            
+            if (min==null){ min = 0; }
+            if (max==null) {
+                if (hierarchy.getHierarchy().length==0){ max = 0; } 
+                else { max = hierarchy.getHierarchy()[0].length-1; }
+            }
+            definition.setAttributeType(attr, hierarchy);
+            definition.setMinimumGeneralization(attr, min);
+            definition.setMaximumGeneralization(attr, max);
+        }
+        
 		if (this.kAnonymityModel != null &&
 		    this.kAnonymityModel.isActive() &&
 		    this.kAnonymityModel.isEnabled()) {
@@ -140,18 +179,29 @@ public class Model implements Serializable {
             if (entry.getValue() != null &&
                 entry.getValue().isActive() &&
                 entry.getValue().isEnabled()) {
-                config.addCriterion(entry.getValue().getCriterion(this));
+                
+                if (entry.getValue().getVariant()==1){ // EMD with hierarchy
+                    if (config.getHierarchy(entry.getValue().getAttribute())==null){
+                        config.setHierarchy(entry.getValue().getAttribute(), Hierarchy.create());
+                    }
+                }
+                
+                PrivacyCriterion criterion = entry.getValue().getCriterion(this);
+                config.addCriterion(criterion);
             }
         }
 
         // Allow adding removing tuples
         if (!config.containsCriterion(DPresence.class)){
-            DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                                  getInputConfig().getResearchSubset());
-            config.addCriterion(new Inclusion(subset));
+            if (getInputConfig() != null && getInputConfig().getInput() != null &&
+                getInputConfig().getResearchSubset() != null) {
+                DataSubset subset = DataSubset.create(config.getInput(), 
+                                                      config.getResearchSubset());
+                config.addCriterion(new Inclusion(subset));
+            }
         }
 	}
-
+	
 	public ARXConfiguration createSubsetConfig() {
 
 		// Create a temporary config
@@ -165,18 +215,11 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-	
-	public void createClonedConfig() {
 
-        // Clone the config
-        outputConfig = inputConfig.clone();
-        
-	}
-
-	public ARXAnonymizer getAnonymizer() {
+    public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
-
+    
 	public String[] getAttributePair() {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
@@ -185,7 +228,7 @@ public class Model implements Serializable {
 	public Set<ARXNode> getClipboard() {
 		return clipboard;
 	}
-
+    
 	public String getDescription() {
 		return description;
 	}
@@ -198,7 +241,7 @@ public class Model implements Serializable {
 		// TODO: Refactor to colors[groups[row]]
 		return this.groups;
 	}
-
+	
 	/**
 	 * @return the historySize
 	 */
@@ -218,12 +261,20 @@ public class Model implements Serializable {
 		return inputConfig;
 	}
 
+	public DataDefinition getInputDefinition(){
+		return inputConfig.getInput().getDefinition();
+	}
+
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
 
 	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
 		return lDiversityModel;
+	}
+
+	public int getMaximalSizeForComplexOperations(){
+	    return this.maximalSizeForComplexOperations;
 	}
 
 	public int getMaxNodesInLattice() {
@@ -255,6 +306,11 @@ public class Model implements Serializable {
 
 	public ModelConfiguration getOutputConfig() {
 		return outputConfig;
+	}
+
+	public DataDefinition getOutputDefinition(){
+		if (this.output == null) return null;
+		else return this.output.getDefinition();
 	}
 
 	public ARXNode getOutputNode() {
@@ -311,14 +367,14 @@ public class Model implements Serializable {
 	public String getSubsetOrigin(){
         return this.subsetOrigin;
     }
-
+	
 	/**
 	 * @return the suppressionString
 	 */
 	public String getSuppressionString() {
 		return suppressionString;
 	}
-
+	
 	public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
 		return tClosenessModel;
 	}
@@ -328,9 +384,12 @@ public class Model implements Serializable {
 	}
 
 	public ModelViewConfig getViewConfig() {
-        oldViewConfig = viewConfig.clone();
         return this.viewConfig;
     }
+
+	public boolean isDebugEnabled() {
+	    return debugEnabled;
+	}
 
 	public boolean isModified() {
 		if (inputConfig.isModified()) {
@@ -343,22 +402,38 @@ public class Model implements Serializable {
 	}
 
 	public boolean isQuasiIdentifierSelected() {
-		return (getInputConfig().getInput().getDefinition()
-				.getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
+		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
 
 	public boolean isSensitiveAttributeSelected() {
-		return (getInputConfig().getInput().getDefinition()
-				.getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
+		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
+
+    /**
+     * Checks whether the lattice is too large
+     * 
+     * @return
+     */
 
 	public boolean isValidLatticeSize() {
-		return getInputConfig().isValidLatticeSize(maxNodesInLattice);
+
+		DataDefinition definition = getInputDefinition();
+		int size = 1;
+		for (final String attr : definition.getQuasiIdentifyingAttributes()) {
+			final int factor = definition.getMaximumGeneralization(attr) -
+					           definition.getMinimumGeneralization(attr);
+			size *= factor;
+		}
+		return size <= maxNodesInLattice;
 	}
 
-	public boolean isViewConfigChanged(){
-        return (!oldViewConfig.equals(viewConfig));
-    }
+	public boolean isVisualizationEnabled(){
+	    if (this.showVisualization == null) {
+	        return true;
+	    } else {
+	        return this.showVisualization;
+	    }
+	}
 
 	public void reset() {
 		// TODO: Need to reset more fields
@@ -404,6 +479,11 @@ public class Model implements Serializable {
 		clipboard = set;
 	}
 
+	public void setDebugEnabled(boolean value){
+	    this.debugEnabled = value;
+	    this.setModified();
+	}
+
 	public void setDescription(final String description) {
 		this.description = description;
 		setModified();
@@ -435,6 +515,11 @@ public class Model implements Serializable {
 	public void setInputConfig(final ModelConfiguration config) {
 		inputConfig = config;
 	}
+
+	public void setMaximalSizeForComplexOperations(int numberOfRows) {
+        this.maximalSizeForComplexOperations = numberOfRows;
+        this.setModified();
+    }
 
 	public void setMaxNodesInLattice(final int maxNodesInLattice) {
 		this.maxNodesInLattice = maxNodesInLattice;
@@ -469,19 +554,24 @@ public class Model implements Serializable {
 		this.outputNode = node;
 		if (node != null) {
 			outputNodeAsString = Arrays.toString(node.getTransformation());
+		} else {
+		    outputNodeAsString = null;
 		}
 		setModified();
 	}
+
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
 	public void setPath(final String path) {
 		this.path = path;
 	}
+	
 	public void setQuery(String query){
         this.query = query;
+        setModified();
     }
-
+	
 	/**
 	 * @param result
 	 *            the result to set
@@ -526,7 +616,7 @@ public class Model implements Serializable {
 		this.separator = separator;
 	}
 
-    /**
+	/**
 	 * @param snapshotSizeDataset
 	 *            the snapshotSizeDataset to set
 	 */
@@ -534,7 +624,7 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-    
+
     public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
@@ -558,11 +648,11 @@ public class Model implements Serializable {
 		this.suppressionString = suppressionString;
 		setModified();
 	}
-
+    
     public void setTime(final long time) {
 		this.time = time;
 	}
-    
+
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
@@ -570,8 +660,13 @@ public class Model implements Serializable {
 			outputConfig.setUnmodified();
 		}
 	}
-
+    
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
+    }
+
+    public void setVisualizationEnabled(boolean value){
+        this.showVisualization = value;
+        this.setModified();
     }
 }

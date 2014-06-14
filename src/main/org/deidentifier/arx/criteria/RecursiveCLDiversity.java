@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 /**
  * The recursive-(c,l)-diversity criterion
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class RecursiveCLDiversity extends LDiversity{
 
@@ -43,14 +44,14 @@ public class RecursiveCLDiversity extends LDiversity{
      * @param l
      */
     public RecursiveCLDiversity(String attribute, double c, int l){
-        super(attribute, l);
+        super(attribute, l, false);
         this.c = c;
     }
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
-        Distribution d = entry.distribution;
+        Distribution d = entry.distributions[index];
         
         // if less than l values are present skip
         if (d.size() < minSize) { return false; }

@@ -20,7 +20,8 @@
  * This package implements means for efficiently maintaining distributions of sensitive values
  * for each equivalence class
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 package org.deidentifier.arx.framework.check.distribution;
 

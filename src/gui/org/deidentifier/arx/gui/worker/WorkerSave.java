@@ -27,14 +27,12 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
@@ -42,59 +40,39 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.FileBuilder;
+import org.deidentifier.arx.gui.worker.io.Vocabulary;
+import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
+import org.deidentifier.arx.gui.worker.io.XMLWriter;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This worker saves a project file to disk
+ * @author Fabian Prasser
+ */
 public class WorkerSave extends Worker<Model> {
 
-    /**
-     * Wraps a writer
-     * 
-     * @author Prasser, Kohlmayer
-     */
-    private class FileBuffer {
-        private final OutputStreamWriter w;
-
-        public FileBuffer(final OutputStreamWriter w) {
-            this.w = w;
-        }
-
-        public FileBuffer append(final boolean val) throws IOException {
-            return append(String.valueOf(val));
-        }
-
-        public FileBuffer append(final double val) throws IOException {
-            return append(String.valueOf(val));
-        }
-
-        public FileBuffer append(final int val) throws IOException {
-            return append(String.valueOf(val));
-        }
-
-        public FileBuffer append(final Object val) throws IOException {
-            return append(String.valueOf(val));
-        }
-
-        public FileBuffer append(final String s) throws IOException {
-            w.write(s);
-            return this;
-        }
-
-        public void flush() throws IOException {
-            w.flush();
-        }
-    }
-
+    /** The vocabulary to use*/
+    private Vocabulary vocabulary = new Vocabulary_V2();
+	/** The path*/
     private final String     path;
+    /** The model*/
     private final Model      model;
 
+    /**
+     * Creates a new instance
+     * @param path
+     * @param controller
+     * @param model
+     */
     public WorkerSave(final String path,
                       final Controller controller,
                       final Model model) {
@@ -111,6 +89,7 @@ public class WorkerSave extends Worker<Model> {
         try {
             final FileOutputStream f = new FileOutputStream(path);
             final ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
+            model.createConfig(); 
             writeMetadata(model, zip);
             arg0.worked(1);
             writeModel(model, zip);
@@ -151,68 +130,32 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final boolean a) {
-        return StringEscapeUtils.escapeXml(String.valueOf(a));
-    }
-
-    /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final char a) {
-        return StringEscapeUtils.escapeXml(String.valueOf(a));
-    }
-
-    /**
      * Converts a configuration to XML
      * 
      * @param model
      * @return
+     * @throws IOException 
      */
-    private String toXML(final ModelConfiguration config) {
-        final StringBuffer b = new StringBuffer();
-        b.append("<config>\n"); //$NON-NLS-1$
+    private String toXML(final ModelConfiguration config) throws IOException {
         
-        b.append("\t").append("<removeOutliers>").append(toXML(config.isRemoveOutliers())).append("</removeOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<practicalMonotonicity>").append(toXML(config.isPracticalMonotonicity())).append("</practicalMonotonicity>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<protectSensitiveAssociations>").append(toXML(config.isProtectSensitiveAssociations())).append("</protectSensitiveAssociations>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<relativeMaxOutliers>").append(toXML(config.getAllowedOutliers())).append("</relativeMaxOutliers>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<metric>").append(toXML(config.getMetric().getClass().getSimpleName())).append("</metric>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<criteria>\n");
-        if (config.getCriteria().isEmpty()) model.createCriteria(config);
+    	XMLWriter writer = new XMLWriter(); 
+        writer.indent(vocabulary.getConfig());
+        writer.write(vocabulary.getRemoveOutliers(), config.isRemoveOutliers());
+        writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
+        writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
+        writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
+        writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
+        writer.indent(vocabulary.getCriteria());
         for (PrivacyCriterion c : config.getCriteria()) {
-        	if (!(c instanceof Inclusion)) {
-        		b.append("\t\t").append("<criterion>").append(toXML(c)).append("</criterion>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	if (c != null) {
+        		writer.write(vocabulary.getCriterion(), c.toString());
         	}
         }
-        b.append("\t").append("</criteria>\n");
-        b.append("</config>\n"); //$NON-NLS-1$
-        return b.toString();
+        writer.unindent();
+        writer.unindent();
+        return writer.toString();
     }
     
-
-    /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final PrivacyCriterion c) {
-        if (c == null) {
-            return ""; //$NON-NLS-1$
-        } else {
-            return toXML(c.toString());
-        }
-    }
-
-
     /**
      * Returns an XML representation of the data definition
      * @param config 
@@ -220,60 +163,47 @@ public class WorkerSave extends Worker<Model> {
      * @param handle
      * @param definition
      * @return
+     * @throws IOException 
      */
     private String toXML(final ModelConfiguration config, 
                          final DataHandle handle,
-                         final DataDefinition definition) {
+                         final DataDefinition definition) throws IOException {
         
-        final StringBuffer b = new StringBuffer();
-        b.append("<definition>\n"); //$NON-NLS-1$
+    	XMLWriter writer = new XMLWriter();
+    	writer.indent(vocabulary.getDefinition());
         for (int i = 0; i < handle.getNumColumns(); i++) {
             final String attr = handle.getAttributeName(i);
             AttributeType t = definition.getAttributeType(attr);
             DataType<?> dt = definition.getDataType(attr);
-            if (t == null) {
-                t = AttributeType.IDENTIFYING_ATTRIBUTE;
-            }
-            if (dt == null) {
-                dt = DataType.STRING;
-            }
-            b.append("\t").append("<assigment>\n"); //$NON-NLS-1$ //$NON-NLS-2$
-            b.append("\t\t").append("<name>").append(toXML(attr)).append("</name>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            b.append("\t\t").append("<type>").append(toXML(t.toString())).append("</type>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            b.append("\t\t").append("<datatype>").append(toXML(dt.toString())).append("</datatype>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            if (t instanceof Hierarchy || 
-                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
-                b.append("\t\t").append("<ref>").append("hierarchies/" + toFileName(attr) + ".csv").append("</ref>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                if (t instanceof Hierarchy){
-                    b.append("\t\t").append("<min>").append(toXML(definition.getMinimumGeneralization(attr))).append("</min>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    b.append("\t\t").append("<max>").append(toXML(definition.getMaximumGeneralization(attr))).append("</max>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (t == null) t = AttributeType.IDENTIFYING_ATTRIBUTE;
+            if (dt == null) dt = DataType.STRING;
+            
+            writer.indent(vocabulary.getAssigment());
+            writer.write(vocabulary.getName(), attr);
+            writer.write(vocabulary.getType(), t.toString());
+            writer.write(vocabulary.getDatatype(), dt.getDescription().getLabel());
+            if (dt.getDescription().hasFormat()){
+                String format = ((DataTypeWithFormat)dt).getFormat();
+                if (format != null){
+                    writer.write(vocabulary.getFormat(), format);
                 }
             }
-            b.append("\t").append("</assigment>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            if (t instanceof Hierarchy || 
+                (t == AttributeType.SENSITIVE_ATTRIBUTE && config.getHierarchy(attr)!=null)) {
+            	writer.write(vocabulary.getRef(), "hierarchies/" + toFileName(attr) + ".csv"); //$NON-NLS-1$ //$NON-NLS-2$
+                if (t instanceof Hierarchy){
+                    Integer min = config.getMinimumGeneralization(attr);
+                    Integer max = config.getMaximumGeneralization(attr);
+                	writer.write(vocabulary.getMin(), min==null ? "All" : String.valueOf(min));
+                	writer.write(vocabulary.getMax(), max==null ? "All" : String.valueOf(max));
+                }
+            }
+            writer.unindent();
 
         }
-        b.append("</definition>\n"); //$NON-NLS-1$
-        return b.toString();
-    }
-
-    /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final double a) {
-        return StringEscapeUtils.escapeXml(String.valueOf(a));
-    }
-
-    /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final long a) {
-        return StringEscapeUtils.escapeXml(String.valueOf(a));
+        writer.unindent();
+        return writer.toString();
     }
 
     /**
@@ -301,48 +231,40 @@ public class WorkerSave extends Worker<Model> {
         }
 
         // Write directly because of size
-        final FileBuffer b = new FileBuffer(new OutputStreamWriter(zip));
+        final FileBuilder b = new FileBuilder(new OutputStreamWriter(zip));
+        final XMLWriter writer = new XMLWriter(b);
+        
+        writer.write(vocabulary.getHeader());
 
         // Build xml
-        b.append("<lattice>\n"); //$NON-NLS-1$
+        writer.indent(vocabulary.getLattice());
         for (int i = 0; i < l.getLevels().length; i++) {
-            b.append("\t").append("<level depth=\"").append(i).append("\">\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	
+        	writer.indent(vocabulary.getLevel(), vocabulary.getDepth(), i);
             for (final ARXNode n : l.getLevels()[i]) {
-                final String key = Arrays.toString(n.getTransformation());
+                
+            	final String key = Arrays.toString(n.getTransformation());
                 final int currentId = map.get(key);
-                b.append("\t\t").append("<node id=\"").append(currentId).append("\">\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                b.append("\t\t\t").append("<transformation>").append(Arrays.toString(n.getTransformation())).append("</transformation>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                b.append("\t\t\t").append("<anonymity>").append(n.isAnonymous()).append("</anonymity>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                b.append("\t\t\t").append("<checked>").append(n.isChecked()).append("</checked>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                
+                writer.indent(vocabulary.getNode2(), vocabulary.getId(), currentId);
+                writer.write(vocabulary.getTransformation(), n.getTransformation());
+                writer.write(vocabulary.getAnonymity(), n.isAnonymous());
+                writer.write(vocabulary.getChecked(), n.isChecked());
                 if (n.getPredecessors().length > 0) {
-                    b.append("\t\t\t").append("<predecessors>"); //$NON-NLS-1$ //$NON-NLS-2$
-                    for (int j = 0; j < n.getPredecessors().length; j++) {
-                        b.append(map.get(Arrays.toString(n.getPredecessors()[j].getTransformation())));
-                        if (j < (n.getPredecessors().length - 1)) {
-                            b.append(","); //$NON-NLS-1$
-                        }
-                    }
-                    b.append("</predecessors>\n"); //$NON-NLS-1$
+                	writer.write(vocabulary.getPredecessors(), n.getPredecessors(), map);
                 }
                 if (n.getSuccessors().length > 0) {
-                    b.append("\t\t\t").append("<successors>"); //$NON-NLS-1$ //$NON-NLS-2$
-                    for (int j = 0; j < n.getSuccessors().length; j++) {
-                        b.append(map.get(Arrays.toString(n.getSuccessors()[j].getTransformation())));
-                        if (j < (n.getSuccessors().length - 1)) {
-                            b.append(","); //$NON-NLS-1$
-                        }
-                    }
-                    b.append("</successors>\n"); //$NON-NLS-1$
+                	writer.write(vocabulary.getSuccessors(), n.getSuccessors(), map);
                 }
-                b.append("\t\t\t").append("<infoloss>\n"); //$NON-NLS-1$ //$NON-NLS-2$
-                b.append("\t\t\t\t").append("<max>").append(n.getMaximumInformationLoss().getValue()).append("</max>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                b.append("\t\t\t\t").append("<min>").append(n.getMinimumInformationLoss().getValue()).append("</min>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                b.append("\t\t\t").append("</infoloss>\n"); //$NON-NLS-1$ //$NON-NLS-2$
-                b.append("\t\t").append("</node>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+                writer.indent(vocabulary.getInfoloss());
+                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().getValue());
+                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().getValue());
+                writer.unindent();
+                writer.unindent();
             }
-            b.append("\t").append("</level>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.unindent();
         }
-        b.append("</lattice>\n"); //$NON-NLS-1$
+        writer.unindent();
         b.flush();
     }
 
@@ -352,18 +274,18 @@ public class WorkerSave extends Worker<Model> {
      * @param map
      * @param clipboard
      * @return
+     * @throws IOException 
      */
     private String toXML(final Map<String, Integer> map,
-                         final Set<ARXNode> clipboard) {
+                         final Set<ARXNode> clipboard) throws IOException {
 
-        // Build xml
-        final StringBuffer b = new StringBuffer();
-        b.append("<clipboard>\n"); //$NON-NLS-1$
+        XMLWriter writer = new XMLWriter();
+        writer.indent(vocabulary.getClipboard()); //$NON-NLS-1$
         for (final ARXNode n : clipboard) {
-            b.append("\t").append("<node>").append(Arrays.toString(n.getTransformation())).append("</node>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        	writer.write(vocabulary.getNode(), Arrays.toString(n.getTransformation())); //$NON-NLS-1$
         }
-        b.append("</clipboard>\n"); //$NON-NLS-1$
-        return b.toString();
+        writer.unindent();
+        return writer.toString();
     }
 
     /**
@@ -371,36 +293,26 @@ public class WorkerSave extends Worker<Model> {
      * 
      * @param model
      * @return
+     * @throws IOException 
      */
-    private String toXML(final Model model) {
-        final StringBuffer b = new StringBuffer();
-        b.append("<project>\n"); //$NON-NLS-1$
-        b.append("\t").append("<name>").append(toXML(model.getName())).append("</name>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        b.append("\t").append("<separator>").append(toXML(model.getSeparator())).append("</separator>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<description>").append(toXML(model.getDescription())).append("</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<suppressionString>").append(toXML(model.getSuppressionString())).append("</suppressionString>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<historySize>").append(toXML(model.getHistorySize())).append("</historySize>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<snapshotSizeDataset>").append(toXML(model.getSnapshotSizeDataset())).append("</snapshotSizeDataset>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<snapshotSizeSnapshot>").append(toXML(model.getSnapshotSizeSnapshot())).append("</snapshotSizeSnapshot>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<initialNodesInViewer>").append(toXML(model.getInitialNodesInViewer())).append("</initialNodesInViewer>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<maxNodesInLattice>").append(toXML(model.getMaxNodesInLattice())).append("</maxNodesInLattice>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<maxNodesInViewer>").append(toXML(model.getMaxNodesInViewer())).append("</maxNodesInViewer>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<selectedAttribute>").append(toXML(model.getSelectedAttribute())).append("</selectedAttribute>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        b.append("\t").append("<inputBytes>").append(toXML(model.getInputBytes())).append("</inputBytes>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        b.append("</project>\n"); //$NON-NLS-1$
-        return b.toString();
-    }
-
-    /**
-     * Escape XML
-     * 
-     * @param a
-     * @return
-     */
-    private String toXML(final String a) {
-        return StringEscapeUtils.escapeXml(a);
+    private String toXML(final Model model) throws IOException {
+    	
+        XMLWriter writer = new XMLWriter();
+        writer.indent(vocabulary.getProject());
+        writer.write(vocabulary.getName(), model.getName());
+        writer.write(vocabulary.getSeparator(), model.getSeparator());
+        writer.write(vocabulary.getDescription(), model.getDescription());
+        writer.write(vocabulary.getSuppressionString(), model.getSuppressionString());
+        writer.write(vocabulary.getHistorySize(), model.getHistorySize());
+        writer.write(vocabulary.getSnapshotSizeDataset(), model.getSnapshotSizeDataset());
+        writer.write(vocabulary.getSnapshotSizeSnapshot(), model.getSnapshotSizeSnapshot());
+        writer.write(vocabulary.getInitialNodesInViewer(), model.getInitialNodesInViewer());
+        writer.write(vocabulary.getMaxNodesInLattice(), model.getMaxNodesInLattice());
+        writer.write(vocabulary.getMaxNodesInViewer(), model.getMaxNodesInViewer());
+        writer.write(vocabulary.getSelectedAttribute(), model.getSelectedAttribute());
+        writer.write(vocabulary.getInputBytes(), model.getInputBytes());
+        writer.unindent();
+        return writer.toString();
     }
 
     /**
@@ -472,16 +384,19 @@ public class WorkerSave extends Worker<Model> {
     private void writeDefinition(final ModelConfiguration config,
                                  final String prefix,
                                  final ZipOutputStream zip) throws IOException {
-        if (config.getInput() != null) {
-            if (config.getInput().getDefinition() != null) {
-                zip.putNextEntry(new ZipEntry(prefix + "definition.xml")); //$NON-NLS-1$
-                final Writer w = new OutputStreamWriter(zip);
-                w.write(toXML(config,
-                              config.getInput().getHandle(),
-                              config.getInput().getDefinition()));
-                w.flush();
-            }
-        }
+    	
+    	// Obtain definition
+    	DataDefinition definition = null;
+    	if (config == model.getInputConfig()) definition = model.getInputDefinition();
+    	else definition = model.getOutputDefinition();
+    	
+    	// Store
+		if (definition != null) {
+			zip.putNextEntry(new ZipEntry(prefix + "definition.xml")); //$NON-NLS-1$
+			final Writer w = new OutputStreamWriter(zip);
+			w.write(toXML(config, config.getInput().getHandle(), definition));
+			w.flush();
+		}
     }
 
     /**
@@ -508,43 +423,10 @@ public class WorkerSave extends Worker<Model> {
                                   final String prefix,
                                   final ZipOutputStream zip) throws IOException {
 
-        Set<String> done = new HashSet<String>();
-        
-        // Write hierarchies of QIs
-        if (config.getInput() != null) {
-            if (config.getInput().getDefinition() != null) {
-                for (final String a : config.getInput()
-                                            .getDefinition()
-                                            .getQuasiIdentifyingAttributes()) {
-                    final String[][] h = config.getInput()
-                                               .getDefinition()
-                                               .getHierarchy(a);
-                    if (h != null) {
-                        zip.putNextEntry(new ZipEntry(prefix +
-                                                      "hierarchies/" + toFileName(a) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-                        final CSVDataOutput out = new CSVDataOutput(zip,
-                                                                    model.getSeparator());
-                        out.write(h);
-                        done.add(a);
-                    }
-                }
-            }
-        }
-        
-        // Write hierarchies for sensitive attributes
         for (Entry<String, Hierarchy> entry : config.getHierarchies().entrySet()) {
-
-            final String[][] h = entry.getValue().getHierarchy();
-            String a = entry.getKey();
-            
-            if (!done.contains(a)) {
-    
-                if (h != null) {
-                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(a) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-                    final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
-                    out.write(h);
-                }
-            }
+            zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(entry.getKey()) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
+            final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+            out.write(entry.getValue().getHierarchy());
         }
     }
 
@@ -558,8 +440,7 @@ public class WorkerSave extends Worker<Model> {
         if (model.getInputConfig().getInput() != null) {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip,
-                                                            model.getSeparator());
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
@@ -575,8 +456,7 @@ public class WorkerSave extends Worker<Model> {
      * @return
      * @throws IOException
      */
-    private Map<String, Integer>
-            writeLattice(final Model model, final ZipOutputStream zip) throws IOException {
+    private Map<String, Integer> writeLattice(final Model model, final ZipOutputStream zip) throws IOException {
 
         // Mapping
         final Map<String, Integer> map = new HashMap<String, Integer>();
@@ -597,7 +477,7 @@ public class WorkerSave extends Worker<Model> {
                              .getAttributeMap());
         oos.flush();
 
-        // Write infoloss
+        // Write information loss
         zip.putNextEntry(new ZipEntry("infoloss.dat")); //$NON-NLS-1$
         final Map<Integer, InformationLoss> max = new HashMap<Integer, InformationLoss>();
         final Map<Integer, InformationLoss> min = new HashMap<Integer, InformationLoss>();
@@ -634,21 +514,22 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the metadata to the file
+     * Writes the meta data to the file
      * 
      * @param map
      * @param zip
      * @throws IOException
      */
-    private void
-            writeMetadata(final Model model, final ZipOutputStream zip) throws IOException {
-
+    private void writeMetadata(final Model model, final ZipOutputStream zip) throws IOException {
+    	
         // Write metadata
-        zip.putNextEntry(new ZipEntry("metadata.xml")); //$NON-NLS-1$
-        final Writer w = new OutputStreamWriter(zip);
-        w.write("<metadata>\n"); //$NON-NLS-1$
-        w.write("\t<version>" + toXML(Resources.getVersion()) + "</version>\n"); //$NON-NLS-1$ //$NON-NLS-2$
-        w.write("</metadata>\n"); //$NON-NLS-1$
+        zip.putNextEntry(new ZipEntry("metadata.xml"));
+        final OutputStreamWriter w = new OutputStreamWriter(zip);
+        XMLWriter writer = new XMLWriter(new FileBuilder(w));
+        writer.indent(vocabulary.getMetadata());
+        writer.write(vocabulary.getVersion(), Resources.getVersion());
+        writer.write(vocabulary.getVocabulary(), vocabulary.getVocabularyVersion());
+        writer.unindent();
         w.flush();
 
     }

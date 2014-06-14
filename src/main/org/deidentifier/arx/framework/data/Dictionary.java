@@ -23,7 +23,8 @@ import java.util.HashMap;
 /**
  * A dictionary mapping integers to strings for different dimensions.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Dictionary {
 

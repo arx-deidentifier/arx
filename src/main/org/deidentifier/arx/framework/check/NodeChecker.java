@@ -32,9 +32,16 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class orchestrates the process of checking a node for k-anonymity
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class NodeChecker implements INodeChecker {
+
+    /** The config */
+    private final ARXConfiguration config;
+
+    /** The data. */
+    private final Data             data;
 
     /** The current hash groupify. */
     protected IHashGroupify        currentGroupify;
@@ -53,12 +60,6 @@ public class NodeChecker implements INodeChecker {
 
     /** The data transformer. */
     protected Transformer          transformer;
-
-    /** The data. */
-    private final Data             data;
-
-    /** The config */
-    private final ARXConfiguration config;
 
     /**
      * Creates a new NodeChecker instance.
@@ -101,12 +102,16 @@ public class NodeChecker implements INodeChecker {
         this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
-
         this.transformer = new Transformer(manager.getDataQI().getArray(), manager.getHierarchies(), manager.getDataSE().getArray(), config, dictionarySensValue, dictionarySensFreq);
     }
 
     @Override
     public void check(final Node node) {
+        check(node, false);
+    }
+
+    @Override
+    public void check(final Node node, final boolean forceMeasureInfoLoss) {
 
         // Store snapshot from last check
         if (stateMachine.getLastNode() != null) {
@@ -141,13 +146,20 @@ public class NodeChecker implements INodeChecker {
         // Propagate k-anonymity
         node.setKAnonymous(currentGroupify.isKAnonymous());
 
-        // Propagate anonymity and information loss
+        // Propagate anonymity
+        boolean measureInfoLoss = forceMeasureInfoLoss;
         if (currentGroupify.isAnonymous()) {
             node.setAnonymous(true);
+            measureInfoLoss = true;
+        } else {
+            node.setAnonymous(false);
+        }
+
+        // Propagate information loss
+        if (measureInfoLoss) {
             metric.evaluate(node, currentGroupify);
         } else {
             node.setInformationLoss(null);
-            node.setAnonymous(false);
         }
     }
 
@@ -167,18 +179,8 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getNumberOfGroups() {
-        return currentGroupify.size();
-    }
-
-    @Override
     public IHashGroupify getGroupify() {
         return currentGroupify;
-    }
-
-    @Override
-    public int getNumberOfOutlyingGroups() {
-        return currentGroupify.getGroupOutliersCount();
     }
 
     /**
@@ -192,10 +194,7 @@ public class NodeChecker implements INodeChecker {
     @Override
     @Deprecated
     public double getInformationLoss(final Node node) {
-        check(node);
-        metric.evaluate(node, currentGroupify);
-        return node.getInformationLoss().getValue();
-
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     @Override
@@ -204,19 +203,12 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public int getNumberOfOutlyingTuples() {
-        return currentGroupify.getTupleOutliersCount();
+    public int getNumberOfGroups() {
+        return currentGroupify.size();
     }
 
     @Override
-    @Deprecated
-    public Data transform(final Node node) {
-
-        throw new RuntimeException("Not implemented!");
-    }
-
-    @Override
-    public Data transformAndMarkOutliers(final Node node) {
+    public TransformedData getTransformedData(final Node node) {
 
         // Apply transition and groupify
         currentGroupify.clear();
@@ -224,18 +216,24 @@ public class NodeChecker implements INodeChecker {
 
         // Determine outliers and set infoloss
         node.setAnonymous(currentGroupify.isAnonymous());
-        if (!node.isChecked()) {
-            node.setChecked();
+        node.setChecked();
+        node.setTagged();
+        if (node.getInformationLoss() == null) {
             metric.evaluate(node, currentGroupify);
-            node.setTagged();
         }
 
-        // Find outliers
-        if (config.getAbsoluteMaxOutliers() != 0) {
+        // Find outliers only if node is anonymous
+        if (node.isAnonymous() && config.getAbsoluteMaxOutliers() != 0) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
 
         // Return the buffer
-        return getBuffer();
+        return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics(node.isAnonymous()));
+    }
+
+    @Override
+    @Deprecated
+    public Data transform(final Node node) {
+        throw new UnsupportedOperationException("Not implemented!");
     }
 }

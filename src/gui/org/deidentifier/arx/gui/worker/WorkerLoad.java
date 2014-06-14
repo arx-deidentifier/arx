@@ -38,16 +38,21 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataHandleOutput;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.Vocabulary;
+import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
+import org.deidentifier.arx.gui.worker.io.XMLHandler;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,23 +62,31 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+/**
+ * This worker loads a project file from disk
+ * @author Fabian Prasser
+ */
 public class WorkerLoad extends Worker<Model> {
 
-	private final ZipFile    zipfile;
-	private ARXLattice       lattice;
-	private Model            model;
+	/** The vocabulary to use*/
+	private Vocabulary vocabulary = null;
+	/** The zip file*/
+	private ZipFile    zipfile;
+	/** The lattice*/
+	private ARXLattice lattice;
+	/** The model*/
+	private Model      model;
 
 	/**
-	 * Constructor
+	 * Creates a new instance
 	 * 
 	 * @param file
 	 * @param controller
 	 * @throws ZipException
 	 * @throws IOException
 	 */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException,
-                                                                   IOException {
-        zipfile = new ZipFile(file);
+    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
+        this.zipfile = new ZipFile(file);
     }
 
     /**
@@ -85,6 +98,39 @@ public class WorkerLoad extends Worker<Model> {
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
         this.zipfile = new ZipFile(path);
+    }
+
+    @Override
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
+                                                        InterruptedException {
+
+        arg0.beginTask(Resources.getMessage("WorkerLoad.2"), 8); //$NON-NLS-1$
+
+        try {
+            final ZipFile zip = zipfile;
+            readMetadata(zip);
+            arg0.worked(1);
+            readModel(zip);
+            arg0.worked(2);
+            final Map<String, ARXNode> map = readLattice(zip);
+            arg0.worked(3);
+            readClipboard(map, zip);
+            arg0.worked(4);
+            readFilter(zip);
+            arg0.worked(5);
+            readConfiguration(map, zip);
+            arg0.worked(6);
+            zip.close();
+            arg0.worked(7);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            error = e;
+            arg0.done();
+            return;
+        }
+        result = model;
+        arg0.worked(8);
+        arg0.done();
     }
 
     /**
@@ -110,14 +156,14 @@ public class WorkerLoad extends Worker<Model> {
         // Parse
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
             @Override
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
-                if (localName.equals("clipboard")) { //$NON-NLS-1$
+                if (vocabulary.isClipboard(localName)) {
                     return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                } else if (vocabulary.isNode(localName)) {
                     final ARXNode node = map.get(payload.trim());
                     model.getClipboard().add(node);
                     return true;
@@ -132,9 +178,8 @@ public class WorkerLoad extends Worker<Model> {
                           final String localName,
                           final String qName,
                           final Attributes attributes) throws SAXException {
-                if (localName.equals("clipboard")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                if (vocabulary.isClipboard(localName) ||
+                    vocabulary.isNode(localName)) {
                     return true;
                 } else {
                     return false;
@@ -193,20 +238,20 @@ public class WorkerLoad extends Worker<Model> {
         // Attach data
         if (!output) {
             
+            // Read input, config and definition
         	readInput(config, zip);
             model.setInputConfig(config);
+            readDefinition(config, model.getInputDefinition(), prefix, zip);
             
         } else {
+            
+            // Read input, config and definition
             config.setInput(model.getInputConfig().getInput());
             model.setOutputConfig(config);
-        }
-
-        // Attach definition
-        readDefinition(config, prefix, zip);
-
-        if (output) {
-        	
-            // Parse
+            DataDefinition definition = new DataDefinition();
+            readDefinition(config, definition, prefix, zip);
+            
+            // Create Handles
             final String suppressionString = model.getSuppressionString();
             final int historySize = model.getHistorySize();
             final double snapshotSizeSnapshot = model.getSnapshotSizeSnapshot();
@@ -230,18 +275,18 @@ public class WorkerLoad extends Worker<Model> {
             model.setSelectedNode(outputNode);
             
             // Update model
-            model.setResult(new DataHandleOutput(config.getInput().getHandle(),
-                                                 config.getInput().getDefinition(),
-                                                 lattice,
-                                                 removeOutliers,
-                                                 suppressionString,
-                                                 historySize,
-                                                 snapshotSizeSnapshot,
-                                                 snapshotSizeDataset,
-                                                 metric,
-                                                 model.getOutputConfig().getConfig(),
-                                                 optimalNode,
-                                                 time));
+            model.setResult(new ARXResult(config.getInput().getHandle(),
+                                          definition,
+                                          lattice,
+                                          removeOutliers,
+                                          suppressionString,
+                                          historySize,
+                                          snapshotSizeSnapshot,
+                                          snapshotSizeDataset,
+                                          metric,
+                                          model.getOutputConfig().getConfig(),
+                                          optimalNode,
+                                          time));
 
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();
@@ -258,13 +303,14 @@ public class WorkerLoad extends Worker<Model> {
      * Reads the data definition from the file
      * 
      * @param config
+     * @param definition 
      * @param prefix
      * @param zip
      * @throws IOException
      * @throws SAXException
      */
     private void readDefinition(final ModelConfiguration config,
-                                final String prefix,
+                                final DataDefinition definition, final String prefix,
                                 final ZipFile zip) throws IOException,
                                                           SAXException {
     	
@@ -275,72 +321,122 @@ public class WorkerLoad extends Worker<Model> {
         // Read xml
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max;
+            String attr, dtype, atype, ref, min, max, format;
 
             @Override
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
             	
-                if (localName.equals("definition")) { //$NON-NLS-1$
+                if (vocabulary.isDefinition(localName)) {
                     return true;
-                } else if (localName.equals("assigment")) { //$NON-NLS-1$
+                } else if (vocabulary.isAssigment(localName)) {
 
                     // Attribute name
                     if (attr == null) { throw new SAXException(Resources.getMessage("WorkerLoad.3")); } //$NON-NLS-1$
-
-                    // Data type
-                    if (dtype.equals(DataType.STRING.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setDataType(attr, DataType.STRING);
-                    } else if (dtype.equals(DataType.DECIMAL.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setDataType(attr, DataType.DECIMAL);
-                    } else {
-                        config.getInput()
-                              .getDefinition()
-                              .setDataType(attr, DataType.DATE(dtype));
+                    
+                    // TODO: For backwards compatibility only
+                    if (vocabulary.getVocabularyVersion().equals("1.0")) {
+                        
+                        // Data type
+                        if (dtype.equals(DataType.STRING.toString())) {
+                            definition.setDataType(attr, DataType.STRING);
+                        } else if (dtype.equals(DataType.DECIMAL.toString())) {
+                            definition.setDataType(attr, DataType.DECIMAL);
+                        } else {
+                            definition.setDataType(attr, DataType.createDate(dtype));
+                        }
+                    } else if (vocabulary.getVocabularyVersion().equals("2.0")) {
+                        
+                        // Find matching data type
+                        DataType<?> datatype = null;
+                        for (DataTypeDescription<?> description : DataType.list()) {
+                            if (description.getLabel().equals(dtype)){
+                                
+                                // Check format
+                                if (format != null){
+                                    if (!description.hasFormat()) {
+                                        throw new RuntimeException("Invalid format specified for data type");
+                                    }
+                                    datatype = description.newInstance(format);
+                                } else {
+                                    datatype = description.newInstance();
+                                }
+                                break;
+                            }
+                        }
+                        
+                        // Check if found
+                        if (datatype == null){
+                            throw new RuntimeException("No data type specified for attribute: "+attr);
+                        }
+                        
+                        // Store
+                        definition.setDataType(attr, datatype);
                     }
 
                     // Attribute type
                     if (atype.equals(AttributeType.IDENTIFYING_ATTRIBUTE.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, AttributeType.IDENTIFYING_ATTRIBUTE);
+                        definition.setAttributeType(attr, AttributeType.IDENTIFYING_ATTRIBUTE);
                     } else if (atype.equals(AttributeType.SENSITIVE_ATTRIBUTE.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
+                        definition.setAttributeType(attr, AttributeType.SENSITIVE_ATTRIBUTE);
                         if (ref != null){
                             try {
-                                config.setHierarchy(attr, readHierarchy(zip, prefix, ref));
+                                /*For backwards compatibility*/
+                                if (config.getHierarchy(attr) == null) {
+                                    config.setHierarchy(attr, readHierarchy(zip, prefix, ref));
+                                }
                             } catch (final IOException e) {
                                 throw new SAXException(e);
                             }
                         }
                         
                     } else if (atype.equals(AttributeType.INSENSITIVE_ATTRIBUTE.toString())) {
-                        config.getInput()
-                              .getDefinition()
-                              .setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
+                        definition.setAttributeType(attr, AttributeType.INSENSITIVE_ATTRIBUTE);
                     } else if (atype.equals(Hierarchy.create().toString())) {
-                        try {
-                            config.getInput()
-                                  .getDefinition()
-                                  .setAttributeType(attr, readHierarchy(zip, prefix, ref));
-                        } catch (final IOException e) {
-                            throw new SAXException(e);
+                        Hierarchy hierarchy = config.getHierarchy(attr);
+                        /*For backwards compatibility*/
+                        if (hierarchy == null){ 
+                            try {
+                                hierarchy = readHierarchy(zip, prefix, ref);
+                            } catch (final IOException e) {
+                                throw new SAXException(e);
+                            }
+                        } 
+                        definition.setAttributeType(attr, hierarchy);
+                        config.setHierarchy(attr, hierarchy); /*For backwards compatibility*/
+                        
+                        int height = hierarchy.getHierarchy().length>0 ?
+                                     hierarchy.getHierarchy()[0].length : 0;
+                        if (min.equals("All")) {
+                            config.setMinimumGeneralization(attr, null);
+                            definition.setMinimumGeneralization(attr, 0);
+                        } else {
+                            config.setMinimumGeneralization(attr, Integer.valueOf(min));
+                            definition.setMinimumGeneralization(attr, Integer.valueOf(min));
                         }
-                        config.getInput()
-                              .getDefinition()
-                              .setMinimumGeneralization(attr,Double.valueOf(min).intValue());
-                        config.getInput()
-                              .getDefinition()
-                              .setMaximumGeneralization(attr,Double.valueOf(max).intValue());
+                        if (max.equals("All")) {
+                            config.setMaximumGeneralization(attr, null);
+                            definition.setMaximumGeneralization(attr, height-1);
+                        } else {
+                            config.setMaximumGeneralization(attr, Integer.valueOf(max));
+                            definition.setMaximumGeneralization(attr, Integer.valueOf(max));
+                        }
+
+                        // TODO: For backwards compatibility only
+                        if (vocabulary.getVocabularyVersion().equals("1.0")) {
+                            if (config.getMinimumGeneralization(attr) != null &&
+                                config.getMinimumGeneralization(attr).equals(0)){
+                                config.setMinimumGeneralization(attr, null);
+                            }
+                            if (config.getMaximumGeneralization(attr) != null &&
+                                config.getMaximumGeneralization(attr).equals(height-1)){
+                                config.setMaximumGeneralization(attr, null);
+                            }
+                        }
+                        
                     } else {
                         throw new SAXException(Resources.getMessage("WorkerLoad.4")); //$NON-NLS-1$
                     }
@@ -351,25 +447,29 @@ public class WorkerLoad extends Worker<Model> {
                     ref = null;
                     min = null;
                     max = null;
+                    format = null;
                     
                     return true;
 
-                } else if (localName.equals("name")) { //$NON-NLS-1$
+                } else if (vocabulary.isName(localName)) {
                     attr = payload;
                     return true;
-                } else if (localName.equals("type")) { //$NON-NLS-1$
+                } else if (vocabulary.isType(localName)) {
                     atype = payload;
                     return true;
-                } else if (localName.equals("datatype")) { //$NON-NLS-1$
+                } else if (vocabulary.isDatatype(localName)) {
                     dtype = payload;
                     return true;
-                } else if (localName.equals("ref")) { //$NON-NLS-1$
+                } else if (vocabulary.isFormat(localName)) {
+                    format = payload;
+                    return true;
+                } else if (vocabulary.isRef(localName)) {
                     ref = payload;
                     return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
+                } else if (vocabulary.isMin(localName)) {
                     min = payload;
                     return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
+                } else if (vocabulary.isMax(localName)) {
                     max = payload;
                     return true;
                 } else {
@@ -383,9 +483,9 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
             	
-                if (localName.equals("definition")) { //$NON-NLS-1$
+                if (vocabulary.isDefinition(localName)) {
                     return true;
-                } else if (localName.equals("assigment")) { //$NON-NLS-1$
+                } else if (vocabulary.isAssigment(localName)) {
                     attr = null;
                     dtype = null;
                     atype = null;
@@ -393,17 +493,13 @@ public class WorkerLoad extends Worker<Model> {
                     min = null;
                     max = null;
                     return true;
-                } else if (localName.equals("name")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("type")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("datatype")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("ref")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
+                } else if (vocabulary.isName(localName) ||
+                           vocabulary.isType(localName) ||
+                           vocabulary.isDatatype(localName) ||
+                           vocabulary.isFormat(localName) ||
+                           vocabulary.isRef(localName) ||
+                           vocabulary.isMin(localName) ||
+                           vocabulary.isMax(localName)) {
                     return true;
                 } else {
                     return false;
@@ -464,6 +560,12 @@ public class WorkerLoad extends Worker<Model> {
         // Read input
         config.setInput(Data.create(zip.getInputStream(entry),
                                     model.getSeparator()));
+        
+        // Disable visualization
+        if (model.getMaximalSizeForComplexOperations() > 0 &&
+            config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
+            model.setVisualizationEnabled(false);
+        }
 
         // And encode
         config.getInput().getHandle();
@@ -520,7 +622,7 @@ public class WorkerLoad extends Worker<Model> {
         final Map<Integer, ARXNode> map = new HashMap<Integer, ARXNode>();
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
 
             private int       level = 0;
             private int       id    = 0;
@@ -533,21 +635,15 @@ public class WorkerLoad extends Worker<Model> {
                                   final String localName,
                                   final String qName) throws SAXException {
             	
-                if (localName.equals("lattice")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                if (vocabulary.isLattice(localName) ||
+                    vocabulary.isLevel(localName) ||
+                    vocabulary.isPredecessors(localName) ||
+                    vocabulary.isSuccessors(localName) ||
+                    vocabulary.isInfoloss(localName) ||
+                    vocabulary.isMax2(localName) ||
+                    vocabulary.isMin2(localName)) {
+                        return true;
+                } else if (vocabulary.isNode2(localName)) {
                     final ARXNode node = lattice.new ARXNode();
                     node.access().setAnonymity(anonymity);
                     node.access().setChecked(checked);
@@ -559,13 +655,13 @@ public class WorkerLoad extends Worker<Model> {
                     levels.get(level).add(node);
                     map.put(id, node);
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
+                } else if (vocabulary.isTransformation(localName)) {
                     transformation = readTransformation(payload);
                     return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
+                } else if (vocabulary.isAnonymity(localName)) {
                     anonymity = Anonymity.valueOf(payload);
                     return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
+                } else if (vocabulary.isChecked(localName)) {
                     checked = Boolean.valueOf(payload);
                     return true;
                 } else {
@@ -579,32 +675,25 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
 
-                if (localName.equals("lattice")) { //$NON-NLS-1$
+                if (vocabulary.isLattice(localName)) {
                     return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
-                    level = Integer.valueOf(attributes.getValue("depth")); //$NON-NLS-1$
+                } else if (vocabulary.isLevel(localName)) {
+                    level = Integer.valueOf(attributes.getValue(vocabulary.getDepth()));
                     if (!levels.containsKey(level)) {
                         levels.put(level, new ArrayList<ARXNode>());
                     }
                     return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
-                    id = Integer.valueOf(attributes.getValue("id")); //$NON-NLS-1$
+                } else if (vocabulary.isNode2(localName)) {
+                    id = Integer.valueOf(attributes.getValue(vocabulary.getId()));
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
+                } else if (vocabulary.isTransformation(localName) ||
+                           vocabulary.isAnonymity(localName) || 
+                           vocabulary.isChecked(localName) || 
+                           vocabulary.isPredecessors(localName) ||
+                           vocabulary.isSuccessors(localName) ||
+                           vocabulary.isInfoloss(localName) ||
+                           vocabulary.isMax2(localName) ||
+                           vocabulary.isMin2(localName)) {
                     return true;
                 } else {
                     return false;
@@ -617,7 +706,7 @@ public class WorkerLoad extends Worker<Model> {
         entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
         xmlReader = XMLReaderFactory.createXMLReader();
         inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
         	
             private int                   id;
             private final List<ARXNode> predecessors = new ArrayList<ARXNode>();
@@ -627,11 +716,11 @@ public class WorkerLoad extends Worker<Model> {
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
-                if (localName.equals("lattice")) { //$NON-NLS-1$
+                if (vocabulary.isLattice(localName)) {
                     return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
+                } else if (vocabulary.isLevel(localName)) {
                     return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
+                } else if (vocabulary.isNode2(localName)) {
                     map.get(id)
                        .access()
                        .setPredecessors(predecessors.toArray(new ARXNode[predecessors.size()]));
@@ -639,19 +728,14 @@ public class WorkerLoad extends Worker<Model> {
                        .access()
                        .setSuccessors(successors.toArray(new ARXNode[successors.size()]));
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
+                } else if (vocabulary.isTransformation(localName) ||
+                           vocabulary.isAnonymity(localName) ||
+                           vocabulary.isChecked(localName) ||
+                           vocabulary.isInfoloss(localName) || 
+                           vocabulary.isMax2(localName) ||
+                           vocabulary.isMin2(localName)) {
                     return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
+                } else if (vocabulary.isPredecessors(localName)) {
 
                     final String[] a = payload.trim().split(","); //$NON-NLS-1$
                     for (final String s : a) {
@@ -661,7 +745,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                     }
                     return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
+                } else if (vocabulary.isSuccessors(localName)) {
                     final String[] a = payload.trim().split(","); //$NON-NLS-1$
                     for (final String s : a) {
                         final String b = s.trim();
@@ -670,7 +754,7 @@ public class WorkerLoad extends Worker<Model> {
                         }
                     }
                     return true;
-                } else if (localName.equals("attribute")) { //$NON-NLS-1$
+                } else if (vocabulary.isAttribute(localName)) {
                     return true;
                 } else {
                     return false;
@@ -683,32 +767,22 @@ public class WorkerLoad extends Worker<Model> {
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
 
-                if (localName.equals("lattice")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("level")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("node")) { //$NON-NLS-1$
-                    id = Integer.valueOf(attributes.getValue("id")); //$NON-NLS-1$
+                if (vocabulary.isNode2(localName)) {
+                    id = Integer.valueOf(attributes.getValue(vocabulary.getId()));
                     successors.clear();
                     predecessors.clear();
                     return true;
-                } else if (localName.equals("transformation")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("anonymity")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("checked")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("predecessors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("successors")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("attribute")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("infoloss")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("max")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("min")) { //$NON-NLS-1$
+                }   else if (vocabulary.isTransformation(localName) ||
+                             vocabulary.isLattice(localName) ||
+                             vocabulary.isLevel(localName) ||
+                             vocabulary.isAnonymity(localName) ||
+                             vocabulary.isChecked(localName) ||
+                             vocabulary.isPredecessors(localName) ||
+                             vocabulary.isSuccessors(localName) ||
+                             vocabulary.isAttribute(localName) ||
+                             vocabulary.isInfoloss(localName) ||
+                             vocabulary.isMax2(localName) ||
+                             vocabulary.isMin2(localName)) {
                     return true;
                 } else {
                     return false;
@@ -718,12 +792,17 @@ public class WorkerLoad extends Worker<Model> {
         xmlReader.parse(inputSource);
 
         // Set lattice
+        int bottomLevel = Integer.MAX_VALUE;
         final ARXNode[][] llevels = new ARXNode[levels.size()][];
         for (final Entry<Integer, List<ARXNode>> e : levels.entrySet()) {
             llevels[e.getKey()] = e.getValue().toArray(new ARXNode[] {});
+            if (!e.getValue().isEmpty()) {
+                bottomLevel = Math.min(e.getKey(), bottomLevel);
+            }
         }
+        
         lattice.access().setLevels(llevels);
-        lattice.access().setBottom(llevels[0][0]);
+        lattice.access().setBottom(llevels[bottomLevel][0]);
         lattice.access().setTop(llevels[llevels.length - 1][0]);
 
         // Return the map
@@ -747,41 +826,53 @@ public class WorkerLoad extends Worker<Model> {
      */
     private void readMetadata(final ZipFile zip) throws IOException,
                                                 SAXException {
+        
         final ZipEntry entry = zip.getEntry("metadata.xml"); //$NON-NLS-1$
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.9")); } //$NON-NLS-1$
 
+        // Read vocabulary
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(zip.getInputStream(entry));
-        xmlReader.setContentHandler(new WorkerLoadXMLHandler() {
+        xmlReader.setContentHandler(new XMLHandler() {
+            
+            Vocabulary_V2 vocabulary = new Vocabulary_V2();
+            String version = null;
+            String vocabularyVersion = null;
+            
             @Override
             protected boolean end(final String uri,
                                   final String localName,
                                   final String qName) throws SAXException {
-            	
-                if (localName.equals("metadata")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("version")) { //$NON-NLS-1$
-                    if (!payload.equals(Resources.getVersion())) { throw new SAXException(Resources.getMessage("WorkerLoad.10") + payload); } //$NON-NLS-1$
-                    return true;
+                
+                if (vocabulary.isMetadata(localName)) {
+                    if (vocabularyVersion == null){ vocabularyVersion = "1.0"; } //$NON-NLS-1$
+                    WorkerLoad.this.vocabulary = Vocabulary.forVersion(vocabularyVersion);
+                    WorkerLoad.this.vocabulary.checkVersion(version);
+                } else if (vocabulary.isVersion(localName)) {
+                    version = payload;
+                } else if (vocabulary.isVocabulary(localName)) {
+                    vocabularyVersion = payload;
                 } else {
                     return false;
                 }
+                return true;
             }
-
+            
             @Override
             protected boolean start(final String uri,
                                     final String localName,
                                     final String qName,
                                     final Attributes attributes) throws SAXException {
-            	
-                if (localName.equals("metadata")) { //$NON-NLS-1$
-                    return true;
-                } else if (localName.equals("version")) { //$NON-NLS-1$
+                
+                if (vocabulary.isMetadata(localName) ||
+                    vocabulary.isVersion(localName) ||
+                    vocabulary.isVocabulary(localName)) {
                     return true;
                 } else {
                     return false;
                 }
             }
+
         });
         xmlReader.parse(inputSource);
     }
@@ -819,38 +910,5 @@ public class WorkerLoad extends Worker<Model> {
             r[i - 1] = Integer.valueOf(a[i].trim());
         }
         return r;
-    }
-
-    @Override
-    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                                        InterruptedException {
-
-        arg0.beginTask(Resources.getMessage("WorkerLoad.2"), 8); //$NON-NLS-1$
-
-        try {
-            final ZipFile zip = zipfile;
-            readMetadata(zip);
-            arg0.worked(1);
-            readModel(zip);
-            arg0.worked(2);
-            final Map<String, ARXNode> map = readLattice(zip);
-            arg0.worked(3);
-            readClipboard(map, zip);
-            arg0.worked(4);
-            readFilter(zip);
-            arg0.worked(5);
-            readConfiguration(map, zip);
-            arg0.worked(6);
-            zip.close();
-            arg0.worked(7);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            error = e;
-            arg0.done();
-            return;
-        }
-        result = model;
-        arg0.worked(8);
-        arg0.done();
     }
 }

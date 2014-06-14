@@ -37,7 +37,8 @@ import org.deidentifier.arx.metric.Metric;
  * This class implements an example on how to apply the d-presence criterion
  * and create a research subset by providing a data subset
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example10 extends Example {
 
@@ -137,11 +138,11 @@ public class Example10 extends Example {
                      
             // Print results
             System.out.println(" - Transformed data:");
-            print(result.getHandle().iterator());
+            print(result.getOutput(false).iterator());
 
             // Print results
             System.out.println(" - Transformed research subset:");
-            print(result.getHandle().getView().iterator());
+            print(result.getOutput(false).getView().iterator());
             
             
         } catch (final IllegalArgumentException e) {

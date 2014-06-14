@@ -31,7 +31,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
  * This class implements an example on how to use the API by providing CSV files
  * as input
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example2 extends Example {
 
@@ -76,7 +77,7 @@ public class Example2 extends Example {
 
             // Write results
             System.out.print(" - Writing data...");
-            result.getHandle().save("data/test_anonymized.csv", ';');
+            result.getOutput(false).save("data/test_anonymized.csv", ';');
             System.out.println("Done!");
 
         } catch (final IllegalArgumentException e) {

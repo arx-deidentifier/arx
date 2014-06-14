@@ -46,7 +46,8 @@ import org.junit.Test;
 /**
  * Test for data transformations
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class TestDataTransformations extends AbstractTest {
 
@@ -279,16 +280,19 @@ public class TestDataTransformations extends AbstractTest {
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
+        data.getHandle().release();
 
         config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
         final String[][] result3 = resultToArray(anonymizer.anonymize(data, config));
+        data.getHandle().release();
 
         config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result2 = resultToArray(anonymizer.anonymize(data, config));
+        data.getHandle().release();
 
         final String[][] expected = { { "age", "gender", "zipcode" },
                 { "<50", "*", "816**" },

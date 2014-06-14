@@ -27,7 +27,8 @@ import org.deidentifier.arx.framework.data.DataManager;
  * This is a special criterion that does not enforce any privacy guarantees
  * but allows to define a data subset
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Inclusion extends DPresence {
     
@@ -56,5 +57,10 @@ public class Inclusion extends DPresence {
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Inclusion";
     }
 }

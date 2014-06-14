@@ -37,7 +37,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 /**
  * This class implements an example on how to use the API for tools such as GUIs
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example4 extends Example {
 
@@ -96,7 +97,7 @@ public class Example4 extends Example {
             final ARXResult result = anonymizer.anonymize(data, config);
 
             // Obtain a handle for the transformed data
-            final DataHandle outHandle = result.getHandle();
+            final DataHandle outHandle = result.getOutput(false);
 
             // Sort the data. This operation is implicitly performed on both
             // representations of the dataset.
@@ -107,7 +108,7 @@ public class Example4 extends Example {
 
             // Process results
             System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getHandle()
+            final Iterator<String[]> transformed = result.getOutput(false)
                                                          .iterator();
             while (transformed.hasNext()) {
                 System.out.print("   ");

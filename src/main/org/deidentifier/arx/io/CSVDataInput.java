@@ -28,7 +28,8 @@ import java.io.InputStreamReader;
 /**
  * This class implements a reader for CSV encoded information
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser 
+ * @author Florian Kohlmayer
  */
 public class CSVDataInput extends CSVAbstractInput {
 
@@ -122,6 +123,9 @@ public class CSVDataInput extends CSVAbstractInput {
         int index = 0;
         while (column < (columns - 1)) {
             index = line.indexOf(separator, offset);
+            if (index < 0) {
+                throw new IOException("Each line must have at least ("+tuple.length+") columns");
+            }
             tuple[column++] = line.substring(offset, index);
             offset = index + 1;
         }

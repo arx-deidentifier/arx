@@ -26,31 +26,50 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * An about dialog
+ * @author Fabian Prasser
+ */
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
-    private static final String LICENSE = Resources.getMessage("AboutDialog.0") + Resources.getMessage("AboutDialog.1") //$NON-NLS-1$ //$NON-NLS-2$
-                                          +
-                                          Resources.getMessage("AboutDialog.2") + Resources.getMessage("AboutDialog.3") + "\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                          +
-                                          Resources.getMessage("AboutDialog.5") + Resources.getMessage("AboutDialog.6") //$NON-NLS-1$ //$NON-NLS-2$
-                                          +
-                                          Resources.getMessage("AboutDialog.7") + Resources.getMessage("AboutDialog.8") + "\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                          +
-                                          Resources.getMessage("AboutDialog.10") + Resources.getMessage("AboutDialog.11"); //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String LICENSE = Resources.getMessage("AboutDialog.0") + Resources.getMessage("AboutDialog.1") +
+                                          Resources.getMessage("AboutDialog.2") + Resources.getMessage("AboutDialog.3") + "\n" +
+                                          Resources.getMessage("AboutDialog.5") + Resources.getMessage("AboutDialog.6") +
+                                          Resources.getMessage("AboutDialog.7") + Resources.getMessage("AboutDialog.8") + "\n" +
+                                          Resources.getMessage("AboutDialog.10") + Resources.getMessage("AboutDialog.11");
+    
+    private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" +
+                                          Resources.getMessage("AboutDialog.18") + "\n\n" +
+                                          Resources.getMessage("AboutDialog.21") + Resources.getVersion();
+    
+    private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" +
+                                               "Ledian Xhani (hierarchy editor)\n" +
+                                               "Ljubomir Dshevlekov (hierarchy editor)";
+    
     private Image image;
 
+    /**
+     * Constructor
+     * @param parentShell
+     * @param controller
+     */
     public DialogAbout(final Shell parentShell, final Controller controller) {
         super(parentShell);
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
@@ -88,30 +107,73 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
 
         // Text
         final Label label = new Label(parent, SWT.CENTER | SWT.NONE);
-        final StringBuffer text = new StringBuffer();
-        text.append(Resources.getMessage("AboutDialog.16")); //$NON-NLS-1$
-        text.append("\n"); //$NON-NLS-1$
-        text.append(Resources.getMessage("AboutDialog.18")); //$NON-NLS-1$
-        text.append("\n"); //$NON-NLS-1$
-        text.append("\n"); //$NON-NLS-1$
-        text.append(Resources.getMessage("AboutDialog.21") + Resources.getVersion()); //$NON-NLS-1$
-        text.append("\n"); //$NON-NLS-1$
-        text.append(Resources.getMessage("AboutDialog.23")); //$NON-NLS-1$
-        label.setText(text.toString());
-        label.setLayoutData(SWTUtil.createFillGridData());
-
-        // Separator
-        new Label(parent, SWT.NONE);
-
+        label.setText(ABOUT);
+        label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        
+        // Folder
+        CTabFolder folder = new CTabFolder(parent, SWT.BORDER);
+        folder.setSimple(false);
+        folder.setLayoutData(SWTUtil.createFillGridData());
+        
         // License
-        final Text license = new Text(parent, SWT.NONE | SWT.MULTI |
-                                              SWT.V_SCROLL | SWT.BORDER);
+        CTabItem item1 = new CTabItem(folder, SWT.NULL);
+        item1.setText("License");
+        final Text license = new Text(folder, SWT.NONE | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         license.setText(LICENSE);
-        final GridData d = SWTUtil.createFillGridData();
-        d.heightHint = 100;
-        license.setLayoutData(d);
-
+        license.setEditable(false);
+        license.setLayoutData(SWTUtil.createFillGridData());
+        item1.setControl(license);
+        
+        // Contributors
+        CTabItem item2 = new CTabItem(folder, SWT.NULL);
+        item2.setText("Contributors");
+        Composite composite = new Composite(folder, SWT.BORDER);
+        composite.setBackground(license.getBackground());
+        item2.setControl(composite);
+        composite.setLayout(SWTUtil.createGridLayout(1, false));
+        
+        final Label contributors = new Label(composite, SWT.NONE);
+        contributors.setText(CONTRIBUTORS);
+        contributors.setBackground(license.getBackground());
+        contributors.setLayoutData(SWTUtil.createFillGridData());
+        
+        // Information
+        CTabItem item3 = new CTabItem(folder, SWT.NULL);
+        item3.setText("Links");
+        Composite composite3 = new Composite(folder, SWT.BORDER);
+        composite3.setBackground(license.getBackground());
+        item3.setControl(composite3);
+        composite3.setLayout(SWTUtil.createGridLayout(1, false));
+        createLink(composite3, "Website: <a>arx.deidentifier.org</a>", "Website", "http://arx.deidentifier.org");
+        createLink(composite3, "Manual: <a>arx.deidentifier.org/anonymization-tool</a>", "Manual", "http://arx.deidentifier.org/anonymization-tool/");
+        createLink(composite3, "API: <a>arx.deidentifier.org/api</a>", "API", "http://arx.deidentifier.org/api");
+        createLink(composite3, "Downloads: <a>arx.deidentifier.org/downloads</a>", "Downloads", "http://arx.deidentifier.org/downloads");
+        createLink(composite3, "Github: <a>github.com/arx-deidentifier</a>", "Github", "https://github.com/arx-deidentifier");
         return parent;
+    }
+    
+    /**
+     * Creates a link
+     * @param parent
+     * @param text
+     * @param tooltip
+     * @param url
+     */
+    private void createLink(Composite parent, String text, String tooltip, final String url){
+        Link link = new Link(parent, SWT.NONE);
+        link.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        link.setText(text);
+        link.setToolTipText(tooltip);
+        link.setBackground(parent.getBackground());
+        link.addListener (SWT.Selection, new Listener () {
+            public void handleEvent(Event event) {
+                try {
+                    Program.launch(url);
+                } catch (Exception e){
+                    /* Ignore*/
+                }
+            }
+        });
     }
 
     @Override

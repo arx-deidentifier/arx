@@ -48,19 +48,12 @@ import org.eclipse.swt.widgets.TableItem;
 import cern.colt.Arrays;
 
 /**
- * This class implements a list view on selected nodes
+ * This class implements a list view on selected nodes.
+ * TODO: Highlight optimum and currently selected node in list
  * 
  * @author prasser
  */
 public class ViewList implements IView {
-
-    /** The optimum */
-	// TODO: Highlight in list
-    private ARXNode             optimum;
-
-    /** The selected node */
-	// TODO: Highlight in list
-    private ARXNode             selectedNode;
 
     /** The controller */
     private final Controller    controller;
@@ -92,6 +85,7 @@ public class ViewList implements IView {
         controller.addListener(ModelPart.SELECTED_NODE, this);
         controller.addListener(ModelPart.FILTER, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.RESULT, this);
 
         this.controller = controller;
 
@@ -126,20 +120,29 @@ public class ViewList implements IView {
      */
     @Override
     public void reset() {
-        optimum = null;
-        selectedNode = null;
         table.setRedraw(false);
-        table.clearAll();
+        for (final TableItem i : table.getItems()) {
+            i.dispose();
+        }
+        list.clear();
         table.setRedraw(true);
+        if (listener != null) {
+            table.removeListener(SWT.SetData, listener);
+        }
+        SWTUtil.disable(table);
     }
 
     @Override
     public void update(final ModelEvent event) {
 
-        if (event.part == ModelPart.SELECTED_NODE) {
-            selectedNode = (ARXNode) event.data;
+        if (event.part == ModelPart.RESULT) {
+            if (model.getResult() == null) reset();
+        } else  if (event.part == ModelPart.SELECTED_NODE) {
+            // selectedNode = (ARXNode) event.data;
         } else if (event.part == ModelPart.MODEL) {
+            reset();
             model = (Model) event.data;
+            update(model.getResult(), model.getNodeFilter());
         } else if (event.part == ModelPart.FILTER) {
             if (model != null) {
                 update(model.getResult(), (ModelNodeFilter) event.data);
@@ -154,15 +157,16 @@ public class ViewList implements IView {
      * @return
      */
     private double asRelativeValue(final InformationLoss infoLoss) {
-        return ((infoLoss.getValue() - model.getResult()
-                                            .getLattice()
-                                            .getBottom()
-                                            .getMinimumInformationLoss()
-                                            .getValue()) / model.getResult()
-                                                                .getLattice()
-                                                                .getTop()
-                                                                .getMaximumInformationLoss()
-                                                                .getValue()) * 100d;
+        
+        if (model != null && model.getResult() != null && model.getResult().getLattice() != null && 
+            model.getResult().getLattice().getBottom() != null &&
+            model.getResult().getLattice().getTop() != null) {
+                double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
+                double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
+                return ((infoLoss.getValue() - min) / (max-min)) * 100d;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -205,17 +209,22 @@ public class ViewList implements IView {
      * @param filter
      */
     private void update(final ARXResult result, final ModelNodeFilter filter) {
-
+        
+        if (result == null || result.getLattice() == null) return;
+        if (filter == null) return;
+        
         controller.getResources().getDisplay().asyncExec(new Runnable() {
 
             @Override
             public void run() {
                 table.setRedraw(false);
-                table.clearAll();
+                SWTUtil.enable(table);
+                for (final TableItem i : table.getItems()) {
+                    i.dispose();
+                }
                 list.clear();
-
+                
                 final ARXLattice l = result.getLattice();
-                optimum = result.getGlobalOptimum();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         if (filter.isAllowed(node)) {

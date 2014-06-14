@@ -18,24 +18,39 @@
 
 package org.deidentifier.arx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
  * An implementation of the DataHandle interface for input data
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class DataHandleInput extends DataHandle {
 
     /** The data */
-    protected int[][]    data         = null;
+    protected int[][]    data       = null;
 
     /** The dictionary */
-    protected Dictionary dictionary   = null;
+    protected Dictionary dictionary = null;
+
+    /** The data */
+    private int[][]      dataQI     = null;
+
+    /** The data */
+    private int[][]      dataSE     = null;
+
+    /** The data */
+    private int[][]      dataIS     = null;
+    
+    /** Is this handle locked?*/
+    private boolean      locked     = false;
 
     /**
      * Creates a new data handle
@@ -43,25 +58,27 @@ public class DataHandleInput extends DataHandle {
      * @param data
      */
     protected DataHandleInput(final Data data) {
+        
+        // Obtain and check iterator
+        final Iterator<String[]> iterator = data.iterator();
+        if (!iterator.hasNext()) { 
+            throw new IllegalArgumentException("Data object is empty!"); 
+        }
 
+        // Register
         this.setRegistry(new DataRegistry());
         this.getRegistry().updateInput(this);
-        this.definition = data.getDefinition();
-
-        // Obtain iterator
-        final Iterator<String[]> iterator = data.iterator();
-
-        if (!iterator.hasNext()) { throw new IllegalArgumentException("Data object is empty!"); }
+        this.definition = data.getDefinition().clone();
 
         // Obtain header
         final String[] columns = iterator.next();
         super.header = Arrays.copyOf(columns, columns.length);
 
         // Init dictionary
-        dictionary = new Dictionary(header.length);
+        this.dictionary = new Dictionary(header.length);
 
         // Encode data
-        final LinkedList<int[]> vals = new LinkedList<int[]>();
+        List<int[]> vals = new ArrayList<int[]>();
         while (iterator.hasNext()) {
 
             // Process a tuple
@@ -74,41 +91,16 @@ public class DataHandleInput extends DataHandle {
         }
 
         // Build array
-        this.data = new int[vals.size()][];
-        final Iterator<int[]> i = vals.iterator();
-        int index = 0;
-        while (i.hasNext()) {
-            this.data[index++] = i.next();
-        }
+        this.data = vals.toArray(new int[vals.size()][]);
 
         // finalize dictionary
-        dictionary.finalizeAll();
+        this.dictionary.finalizeAll();
 
         // Create datatype array
-        createDataTypeArray();
-    }
-
-    /**
-     * Alternative constructor for deserialization
-     * @param other
-     * @param definition
-     */
-    protected DataHandleInput(final DataHandleInput other,
-                              final DataDefinition definition) {
-
-        // TODO: This is a clone constructor. Share or clone registry?
-        this.definition = definition;
-        this.setRegistry(new DataRegistry(other.getRegistry()));
-        this.getRegistry().updateInput(this);
-
-        // Obtain header
-        super.header = other.header;
-        dictionary = other.dictionary;
-        data = other.data;
-
-        // Create datatype array
-        createDataTypeArray();
-
+        this.dataTypes = getDataTypeArray();
+        
+        // Create statistics
+        this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), null);
     }
 
     @Override
@@ -189,9 +181,9 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected void createDataTypeArray() {
+    protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
-        dataTypes = new DataType[1][header.length];
+        DataType<?>[][] dataTypes = new DataType[1][header.length];
         for (int i = 0; i < header.length; i++) {
             final DataType<?> type = definition.getDataType(header[i]);
             if (type != null) {
@@ -200,6 +192,37 @@ public class DataHandleInput extends DataHandle {
                 dataTypes[0][i] = DataType.STRING;
             }
         }
+        return dataTypes;
+    }
+    
+    /**
+     * Update the definition
+     * @param data
+     */
+    protected void update(Data data){
+
+        if (!this.isLocked()) {
+            this.definition = data.getDefinition().clone();
+            this.dataTypes = getDataTypeArray();
+            this.definition.setLocked(true);
+        }
+    }
+    
+    /**
+     * Updates the definition with further data to swap
+     * @param dataQI
+     * @param dataSE
+     * @param dataIS
+     */
+    protected void update(int[][] dataQI, int[][] dataSE, int[][] dataIS) {
+        this.dataQI = dataQI;
+        this.dataSE = dataSE;
+        this.dataIS = dataIS;
+    }
+
+    @Override
+    public boolean isOutlier(int row){
+        return false;
     }
     
     /*
@@ -224,8 +247,60 @@ public class DataHandleInput extends DataHandle {
         checkRow(row2, data.length);
 
         // Swap
+        swap(row1, row2, data);
+        if (dataQI != null) swap(row1, row2, dataQI);
+        if (dataSE != null) swap(row1, row2, dataSE);
+        if (dataIS != null) swap(row1, row2, dataIS);
+    }
+    
+    /**
+     * Swaps two rows
+     * @param row1
+     * @param row2
+     * @param data
+     */
+    private void swap(int row1, int row2, int[][] data){
         final int[] temp = data[row1];
         data[row1] = data[row2];
         data[row2] = temp;
+    }
+
+    @Override
+    protected DataType<?> getBaseDataType(final String attribute) {
+        return this.getDataType(attribute);
+    }
+    
+    /**
+     * Lock/unlock this handle
+     * @param locked
+     */
+    protected void setLocked(boolean locked){
+        this.locked = locked;
+    }
+    
+    /**
+     * Is this handle locked?
+     * @return
+     */
+    protected boolean isLocked(){
+        return this.locked;
+    }
+
+    /**
+     * Releases all resources
+     */
+    protected void doRelease() {
+        this.setLocked(false);
+        dataQI = null;
+        dataSE = null;
+        dataIS = null;
+    }
+
+    /**
+     * Overrides the handles data definition
+     * @param definition
+     */
+    protected void setDefinition(DataDefinition definition) {
+        this.definition = definition;
     }
 }

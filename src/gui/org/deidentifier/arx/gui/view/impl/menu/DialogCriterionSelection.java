@@ -33,6 +33,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,6 +47,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * A dialog for selecting privacy criteria
+ * @author Fabian Prasser
+ */
 public class DialogCriterionSelection extends TitleAreaDialog implements IDialog {
 
     private Button                       ok         = null;
@@ -54,6 +61,12 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     private Image                        symbolT    = null;
     private Controller                   controller = null;
 
+    /**
+     * Constructor
+     * @param controller
+     * @param parent
+     * @param elements
+     */
     public DialogCriterionSelection(final Controller controller,
                                     final Shell parent,
                                     List<ModelExplicitCriterion> elements) {
@@ -69,6 +82,10 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         return super.close();
     }
 
+    /**
+     * Returns the selected criterion
+     * @return
+     */
     public ModelExplicitCriterion getCriterion() {
         return this.selection;
     }
@@ -163,5 +180,15 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     @Override
     protected boolean isResizable() {
         return false;
+    }
+
+    @Override
+    protected ShellListener getShellListener() {
+        return new ShellAdapter() {
+            @Override
+            public void shellClosed(final ShellEvent event) {
+                setReturnCode(Window.CANCEL);
+            }
+        };
     }
 }

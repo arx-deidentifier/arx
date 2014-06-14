@@ -23,7 +23,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * The t-closeness criterion with equal-distance EMD
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class EqualDistanceTCloseness extends TCloseness {
 
@@ -45,6 +46,7 @@ public class EqualDistanceTCloseness extends TCloseness {
 
     @Override
     public void initialize(DataManager manager) {
+        super.initialize(manager);
         distribution = manager.getDistribution(attribute);
     }
 
@@ -52,20 +54,32 @@ public class EqualDistanceTCloseness extends TCloseness {
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
-        int[] buckets = entry.distribution.getBuckets();
-        int totalElements = 0;
-        for (int i = 0; i < buckets.length; i += 2) {
-            if (buckets[i] != -1) { // bucket not empty
-                totalElements += buckets[i + 1];
-            }
-        }
-
+        int[] buckets = entry.distributions[index].getBuckets();
+        double count = entry.count;
+        
+        /* 
+         * P = Set of ids of values in local frequency set
+         * Q = Set of ids of values in global dataset
+         * 
+         * According to Li et al., EMD with equal ground distance is:
+         * D[P, Q] = 1/2 SUM_{i \in Q} (|p_i - q_i|)
+         * 
+         * This can be reformulated as:
+         * D[P, Q] = 1/2 * (SUM_{i \in Q\P} q_i + SUM_{i \in P}(|p_i - q_i|))
+         * 
+         * Additionally,
+         * SUM_{i \in Q\P} q_i = 1 - SUM_{i \in P} q_i = 1 + SUM_{i \in P} - q_i
+         * 
+         * As a result, we implement the metric as follows
+         * 
+         * D[P, Q] = 1/2 * ( 1 + SUM_{i \in P} (|p_i - q_i| - q_i))
+         */
+        
         double val = 1.0d;
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 double frequency = distribution[buckets[i]];
-                // TODO: Can this be simplified (only one appearance of frequency)
-                val += Math.abs((frequency - ((double) buckets[i + 1] / (double) totalElements))) - frequency;
+                val += Math.abs((frequency - ((double) buckets[i + 1] / count))) - frequency;
             }
         }
         val /= 2;

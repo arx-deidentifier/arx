@@ -24,7 +24,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * The t-closeness criterion with hierarchical-distance EMD
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class HierarchicalDistanceTCloseness extends TCloseness {
 
@@ -54,6 +55,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 
     @Override
     public void initialize(DataManager manager) {
+        super.initialize(manager);
         this.tree = manager.getTree(attribute);
         this.start = this.tree[1] + 3;
         this.empty = new int[this.tree[1]];
@@ -75,7 +77,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
 
         // Copy and count
         int totalElementsQ = 0;
-        int[] buckets = entry.distribution.getBuckets();
+        int[] buckets = entry.distributions[index].getBuckets();
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 final int value = buckets[i];

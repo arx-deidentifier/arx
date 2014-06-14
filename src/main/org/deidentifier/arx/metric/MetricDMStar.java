@@ -26,7 +26,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * This class provides an implementation of the DM* metric (monotonic variant of
  * the Discernability Metric).
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricDMStar extends MetricDefault {
 

@@ -47,29 +47,38 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * This class displays a filter for the lattice
+ * @author Fabian Prasser
+ */
 public class ViewFilter implements IView {
 
     private static final int SCALE_MAX_VALUE = 1000;
     
-    private final Image      IMG_RED;
+    private Combo            anonymous;
+    private Combo            attribute;
+    private final Controller controller;
+
+    private ModelNodeFilter  filter = null;
+    private Table            generalization;
     private final Image      IMG_GREEN;
     private final Image      IMG_ORANGE;
-
-    private final Controller controller;
-    private ModelNodeFilter  filter = null;
-    private int[]            maxlevels;
-    private ARXResult        result;
-    private Combo            attribute;
-    private Combo            anonymous;
-    private Combo            notanonymous;
-    private Combo            unknown;
-    private Scale            min;
+    private final Image      IMG_RED;
     private Scale            max;
-    private Table            generalization;
-    private int              selectedDimension;
+    private int[]            maxlevels;
+    private Scale            min;
     private Model            model;
+    private Combo            notanonymous;
+    private ARXResult        result;
     private final Composite  root;
+    private int              selectedDimension;
+    private Combo            unknown;
 
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewFilter(final Composite parent, final Controller controller) {
 
         this.controller = controller;
@@ -92,10 +101,73 @@ public class ViewFilter implements IView {
         root.setLayout(groupLayout);
 
         create(root);
-
         reset();
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        filter = null;
+        result = null;
+        maxlevels = null;
+        attribute.removeAll();
+        anonymous.select(-1);
+        notanonymous.select(-1);
+        unknown.select(-1);
+        min.setSelection(min.getMinimum());
+        min.setMinimum(0);
+        min.setMaximum(SCALE_MAX_VALUE);
+        max.setSelection(max.getMaximum());
+        max.setMinimum(0);
+        max.setMaximum(SCALE_MAX_VALUE);
+        attribute.setEnabled(false);
+        anonymous.setEnabled(false);
+        notanonymous.setEnabled(false);
+        unknown.setEnabled(false);
+        min.setEnabled(false);
+        max.setEnabled(false);
+        generalization.removeAll();
+        generalization.setEnabled(false);
+        SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.INPUT) {
+            reset();
+        } else if (event.part == ModelPart.RESULT) {
+            if (model.getResult() == null || model.getResult().getLattice() == null){
+                reset();
+                SWTUtil.disable(root);
+            } else {
+                initialize(model.getResult(), null);
+                SWTUtil.enable(root);
+            }
+        } else if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+            reset();
+        } else if (event.part == ModelPart.FILTER) {
+            // Only update if we receive a new filter
+            if ((filter == null) || (model.getNodeFilter() != filter)) {
+                if (model.getResult() == null || model.getResult().getLattice() == null){
+                    reset();
+                    SWTUtil.disable(root);
+                } else {
+                    initialize(model.getResult(), model.getNodeFilter());
+                    SWTUtil.enable(root);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates the view
+     * @param parent
+     */
     private void create(final Composite parent) {
 
         final IView outer = this;
@@ -232,8 +304,10 @@ public class ViewFilter implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 if (filter != null) {
-                    filter.allowInformationLoss(intToInformationLoss(min.getSelection()),
-                                                filter.getAllowedMaxInformationLoss());
+                    
+                    double minLoss = intToInformationLoss(min.getSelection());
+                    double maxLoss = filter.getAllowedMaxInformationLoss();
+                    filter.allowInformationLoss(minLoss, maxLoss);
                     controller.update(new ModelEvent(outer,
                                                      ModelPart.FILTER,
                                                      filter));
@@ -290,11 +364,14 @@ public class ViewFilter implements IView {
         }
     }
 
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
+    /**
+     * Returns an image representing the distribution of anonymous and non-anonymous nodes
+     * on the given level of the lattice
+     * @param lattice
+     * @param dimension
+     * @param level
+     * @return
+     */
     private Image getImage(final ARXLattice lattice,
                            final int dimension,
                            final int level) {
@@ -337,32 +414,31 @@ public class ViewFilter implements IView {
      */
     private int informationLossToInt(final double value) {
 
-        // Baseline is bottom.min
-        double val = value -
-                     result.getLattice()
-                           .getBottom()
-                           .getMinimumInformationLoss()
-                           .getValue();
-        // In relation to top.max - bottom.min
-        val = val /
-              (result.getLattice()
-                     .getTop()
-                     .getMaximumInformationLoss()
-                     .getValue() - result.getLattice()
-                                         .getBottom()
-                                         .getMinimumInformationLoss()
-                                         .getValue());
+        // Relative
+        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
+        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
+        double val = (value - min) / (max - min);
+        
         // Scaled with integer.max
         val = val * SCALE_MAX_VALUE;
+        
         // Return
         return (int) val;
     }
 
+    /**
+     * Initializes the view
+     * @param result
+     * @param nodeFilter
+     */
     private void initialize(final ARXResult result,
                             final ModelNodeFilter nodeFilter) {
 
         // Reset
         reset();
+        
+        // Return if there is no lattice
+        if (result==null || result.getLattice() == null) return;
 
         // Reset filter
         maxlevels = result.getLattice().getTop().getTransformation();
@@ -434,86 +510,28 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Converter TODO: Seems to not work
+     * Converter 
+     * TODO: Seems to not work
      * 
      * @param value
      * @return
      */
     private double intToInformationLoss(final int value) {
 
+        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
+        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
+        
         // Corner cases
         if (value == 0) {
-            return result.getLattice()
-                         .getBottom()
-                         .getMinimumInformationLoss()
-                         .getValue();
-        } else if (value >= SCALE_MAX_VALUE - 1) { return result.getLattice()
-                                                                  .getTop()
-                                                                  .getMaximumInformationLoss()
-                                                                  .getValue(); }
+            return min;
+        } else if (value >= SCALE_MAX_VALUE - 1) { 
+            return max; 
+        }
 
         // In relation to integer.max
-        double val = (double) value / (double) SCALE_MAX_VALUE;
-        // Scaled with top.max-bottom.min
-        val *= (result.getLattice()
-                      .getTop()
-                      .getMaximumInformationLoss()
-                      .getValue() - result.getLattice()
-                                          .getBottom()
-                                          .getMinimumInformationLoss()
-                                          .getValue());
-        // Baseline is bottom.min
-        val += result.getLattice()
-                     .getBottom()
-                     .getMinimumInformationLoss()
-                     .getValue();
+        double val = min + (((double) value / (double) SCALE_MAX_VALUE) * (max - min));
 
         // Return
-        return (int) val;
-    }
-
-    @Override
-    public void reset() {
-        filter = null;
-        result = null;
-        maxlevels = null;
-        attribute.removeAll();
-        anonymous.select(-1);
-        notanonymous.select(-1);
-        unknown.select(-1);
-        min.setSelection(min.getMinimum());
-        min.setMinimum(0);
-        min.setMaximum(SCALE_MAX_VALUE);
-        max.setSelection(max.getMaximum());
-        max.setMinimum(0);
-        max.setMaximum(SCALE_MAX_VALUE);
-        attribute.setEnabled(false);
-        anonymous.setEnabled(false);
-        notanonymous.setEnabled(false);
-        unknown.setEnabled(false);
-        min.setEnabled(false);
-        max.setEnabled(false);
-        generalization.removeAll();
-        generalization.setEnabled(false);
-        SWTUtil.disable(root);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.INPUT) {
-            reset();
-        } else if (event.part == ModelPart.RESULT) {
-            initialize(model.getResult(), null);
-            SWTUtil.enable(root);
-        } else if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-            reset();
-        } else if (event.part == ModelPart.FILTER) {
-            // Only update if we receive a new filter
-            if ((filter == null) || (model.getNodeFilter() != filter)) {
-                initialize(model.getResult(), model.getNodeFilter());
-                SWTUtil.enable(root);
-            }
-        }
+        return val;
     }
 }

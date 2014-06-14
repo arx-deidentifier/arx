@@ -38,7 +38,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  * information loss induced by suppressing the transformed representation of the
  * outliers.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class MetricNMEntropy extends MetricEntropy {
 
@@ -56,10 +57,14 @@ public class MetricNMEntropy extends MetricEntropy {
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
-        final double originalInfoLoss = super.evaluateInternal(node, g).getValue();
-
+        final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
+        
+        // Ignore outliers if node is not anonymous
+        if (!node.isAnonymous()) return originalInfoLossDefault;
+        
         // Compute loss induced by suppression
         // TODO: Use lightweight alternative to Map<Integer, Integer>();
+        final double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
         int key;

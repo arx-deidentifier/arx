@@ -34,32 +34,50 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 
+/**
+ * This class layouts the analysis view
+ * @author Fabian Prasser
+ */
 public class LayoutAnalyze implements ILayout {
 
+    /**
+     * A runnable for synchronizing both tables
+     * @author Fabian Prasser
+     */
     private class Synchronizer implements Runnable {
+
         final ViewData in;
         final ViewData out;
-        Boolean         stop     = false;
-        Runnable        runnable = null;
+        
+        Boolean        stop     = false;
+        Runnable       runnable = null;
 
+        /**
+         * Creates a new instance
+         * @param in
+         * @param out
+         */
         public Synchronizer(final ViewData in, final ViewData out) {
             this.in = in;
             this.out = out;
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    out.getViewportLayer()
-                       .setOriginRowPosition(in.getViewportLayer()
-                                               .getOriginRowPosition());
-                    out.getViewportLayer()
-                       .setOriginColumnPosition(in.getViewportLayer()
-                                                  .getOriginColumnPosition());
+                    ViewportLayer outLayer = out.getViewportLayer();
+                    ViewportLayer inLayer = in.getViewportLayer();
+                    outLayer.setOriginRowPosition(inLayer.getOriginRowPosition());
+                    outLayer.setOriginColumnPosition(inLayer.getOriginColumnPosition());
                 }
             };
             new Thread(this).start();
         }
 
+        /**
+         * Returns the input view
+         * @return
+         */
         public ViewData getIn() {
             return in;
         }
@@ -76,50 +94,60 @@ public class LayoutAnalyze implements ILayout {
                             Display.getDefault().syncExec(runnable);
                         }
                     } catch (final Exception e) {
-                    } // Catch nattable bugs
+                        // Die silently
+                    } 
                 }
                 try {
                     Thread.sleep(10);
                 } catch (final InterruptedException e) {
+                    // Die silently
                 }
             }
             synchronizer = null;
-            synchronized (stop) {
-                stop.notify();
+            synchronized (monitor) {
+                monitor.notify();
             }
         }
 
         public void stop() {
             stop = true;
-            synchronized (stop) {
+            synchronized (monitor) {
                 try {
-                    stop.wait();
+                    while (synchronizer != null){
+                        monitor.wait();
+                    }
                 } catch (final InterruptedException e) {
+                    // Die silently
                 }
             }
         }
     }
 
-    private static final int      WEIGHT_TOP        = 75;
-    private static final int      WEIGHT_BOTTOM     = 25;
-    private static final int      WEIGHT_LEFT       = 50;
-    private static final int      WEIGHT_RIGHT      = 50;
-    
-    private final Composite       centerLeft;
-    private final Composite       centerRight;
-    private final Composite       bottomLeft;
+    private static final int       WEIGHT_TOP    = 75;
+    private static final int       WEIGHT_BOTTOM = 25;
+    private static final int       WEIGHT_LEFT   = 50;
+    private static final int       WEIGHT_RIGHT  = 50;
 
-    private final Composite       bottomRight;
-    private final ViewData        dataInputView;
-    private final ViewData        dataOutputView;
+    private final Composite        centerLeft;
+    private final Composite        centerRight;
+    private final Composite        bottomLeft;
+    private final Composite        bottomRight;
+    private final SashForm         centerSash;
+    
+    private final ViewData         dataInputView;
+    private final ViewData         dataOutputView;
 
     private final LayoutStatistics statisticsInputLayout;
     private final LayoutStatistics statisticsOutputLayout;
 
-    private final SashForm        centerSash;
+    private Synchronizer           synchronizer  = null;
+    private String[]               monitor = new String[0];
 
-    private Synchronizer          synchronizer      = null;
-
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public LayoutAnalyze(final Composite parent, final Controller controller) {
 
         // Create the SashForm with HORIZONTAL
@@ -157,8 +185,7 @@ public class LayoutAnalyze implements ILayout {
                                              .getOriginColumnPosition();
                 if (dataOutputView != null) {
                     dataOutputView.getViewportLayer().setOriginRowPosition(row);
-                    dataOutputView.getViewportLayer()
-                                  .setOriginColumnPosition(col);
+                    dataOutputView.getViewportLayer().setOriginColumnPosition(col);
                     synchronize(dataInputView, dataOutputView);
                 }
             }

@@ -25,12 +25,21 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 public abstract class EditorSelection implements IEditor<String> {
 
     private final String   category;
     private final String   label;
     private final String[] elems;
+    private Combo combo;
+
+    public EditorSelection(Composite composite, final String[] elems) {
+        this.category = null;
+        this.label = null;
+        this.elems = elems;
+        this.createControl(composite);
+    }
 
     public EditorSelection(final String category,
                            final String label,
@@ -47,15 +56,15 @@ public abstract class EditorSelection implements IEditor<String> {
 
     @Override
     public void createControl(final Composite parent) {
-        final Combo result = new Combo(parent, SWT.NONE);
-        result.setItems(elems);
-        result.select(indexOf(getValue()));
-        result.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        result.addSelectionListener(new SelectionAdapter() {
+        combo = new Combo(parent, SWT.READ_ONLY);
+        combo.setItems(elems);
+        combo.select(indexOf(getValue()));
+        combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (result.getSelectionIndex() != -1) {
-                    setValue(elems[result.getSelectionIndex()]);
+                if (combo.getSelectionIndex() >= 0) {
+                    setValue(elems[combo.getSelectionIndex()]);
                 }
             }
         });
@@ -76,5 +85,25 @@ public abstract class EditorSelection implements IEditor<String> {
             if (elems[i].equals(value)) { return i; }
         }
         return -1;
+    }
+
+    /**
+     * Update
+     */
+    public void update(){
+        if (combo!=null){
+            int index = indexOf(getValue());
+            if (index != combo.getSelectionIndex()){
+                if (index == -1){
+                    combo.deselect(combo.getSelectionIndex());
+                } else {
+                    combo.select(index);
+                }
+            }
+        }
+    }
+    
+    public Control getControl(){
+        return combo;
     }
 }

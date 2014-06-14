@@ -41,10 +41,12 @@ import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A view on a <code>Data</code> object
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
  */
 public abstract class ViewData implements IView {
-
+    
+    private final Image                IMAGE_ASCENDING;
+    private final Image                IMAGE_DESCENDING;
     private final Image                IMAGE_INSENSITIVE;
     private final Image                IMAGE_SENSITIVE;
     private final Image                IMAGE_QUASI_IDENTIFYING;
@@ -52,6 +54,8 @@ public abstract class ViewData implements IView {
 
     private final ToolItem             groupsButton;
     private final ToolItem             subsetButton;
+    private final ToolItem             ascendingButton;
+    private final ToolItem             descendingButton;
 
     protected final ComponentDataTable table;
     protected final Controller         controller;
@@ -73,24 +77,38 @@ public abstract class ViewData implements IView {
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.VIEW_CONFIG, this);
+        controller.addListener(ModelPart.INPUT, this);
         
         // Store
         this.controller = controller;
         
         // Load images
-        IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png"); //$NON-NLS-1$
+        IMAGE_INSENSITIVE       = controller.getResources().getImage("bullet_green.png");   //$NON-NLS-1$
+        IMAGE_SENSITIVE         = controller.getResources().getImage("bullet_purple.png");  //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getImage("bullet_yellow.png");  //$NON-NLS-1$
+        IMAGE_IDENTIFYING       = controller.getResources().getImage("bullet_red.png");     //$NON-NLS-1$
+        IMAGE_ASCENDING         = controller.getResources().getImage("sort_ascending.png"); //$NON-NLS-1$
+        IMAGE_DESCENDING        = controller.getResources().getImage("sort_descending.png");//$NON-NLS-1$
 
         // Create title bar
         ComponentTitleBar bar = new ComponentTitleBar("id-140");
         bar.add(Resources.getMessage("DataView.1"), //$NON-NLS-1$ 
-                controller.getResources().getImage("sort_column.png"),
+                IMAGE_ASCENDING,
                 new Runnable() {
                     @Override
                     public void run() {
+                        model.getViewConfig().setSortOrder(true);
+                        actionSort();
+                    }
+                });
+        bar.add(Resources.getMessage("DataView.4"), //$NON-NLS-1$ 
+                IMAGE_DESCENDING,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        model.getViewConfig().setSortOrder(false);
                         actionSort();
                     }
                 });
@@ -139,8 +157,53 @@ public abstract class ViewData implements IView {
         this.groupsButton.setEnabled(false);
         this.subsetButton = folder.getBarItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
         this.subsetButton.setEnabled(false);
+        this.ascendingButton = folder.getBarItem(Resources.getMessage("DataView.1")); //$NON-NLS-1$
+        this.ascendingButton.setEnabled(false);
+        this.descendingButton = folder.getBarItem(Resources.getMessage("DataView.4")); //$NON-NLS-1$
+        this.descendingButton.setEnabled(false);
     }
     
+    /**
+     * Cell selection event
+     * @param arg1
+     */
+    protected void actionCellSelected(CellSelectionEvent arg1){
+        if (model != null) {
+            int column = arg1.getColumnPosition() - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Column selection event
+     * @param arg1
+     */
+    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
+        if (model != null) {
+            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Selects the given column
+     * @param index
+     */
+    private void actionColumnSelected(int index){
+    	DataHandle handle = getHandle();
+        if (handle != null){
+            final String attr = handle.getAttributeName(index);
+            model.setSelectedAttribute(attr);
+            table.setSelectedAttribute(attr);
+            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
+        }
+    }
+
+    /**
+     * Called when the sort button is pressed
+     */
+    protected abstract void actionSort();
+
     /**
      * Add a scrollbar listener to this view
      * @param listener
@@ -148,7 +211,7 @@ public abstract class ViewData implements IView {
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
-    
+
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -159,6 +222,18 @@ public abstract class ViewData implements IView {
         table.dispose();
     }
 
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataDefinition getDefinition();
+    
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataHandle getHandle();
+    
     /**
      * Returns the NatTable viewport layer
      * @return
@@ -172,7 +247,18 @@ public abstract class ViewData implements IView {
         table.reset();
         groupsButton.setEnabled(false);
         subsetButton.setEnabled(false);
+        ascendingButton.setEnabled(false);
+        descendingButton.setEnabled(false);
     }
+    
+    /**
+     * Enable sorting
+     */
+    protected void enableSorting(){
+        ascendingButton.setEnabled(true);
+        descendingButton.setEnabled(true);
+    }
+    
 
     @Override
     public void update(final ModelEvent event) {
@@ -200,51 +286,11 @@ public abstract class ViewData implements IView {
         if (event.part == ModelPart.VIEW_CONFIG) {          
             subsetButton.setSelection(model.getViewConfig().isSubset());
         }
-    }
-
-    /**
-     * Cell selection event
-     * @param arg1
-     */
-    protected abstract void actionCellSelected(CellSelectionEvent arg1) ;
-    
-    /**
-     * Column selection event
-     * @param arg1
-     */
-    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
-        if (model != null) {
-            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
-            if (column>=0){
-                DataHandle handle = getHandle();
-                if (handle != null){
-                    final String attr = handle.getAttributeName(column);
-                    table.setAttribute(attr);
-                    table.redraw();
-                    model.setSelectedAttribute(attr);
-                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
-                }
-            }
+        
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+        	table.setSelectedAttribute((String)event.data);
         }
     }
-    
-    /**
-     * Called when the sort button is pressed
-     */
-    protected abstract void actionSort();
-
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataDefinition getDefinition();
-    
-
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataHandle getHandle();
 
     /**
      * Updates the header image in the table

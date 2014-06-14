@@ -28,10 +28,6 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewDPresence;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewKAnonymity;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewLDiversity;
-import org.deidentifier.arx.gui.view.impl.define.criteria.ViewTCloseness;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -46,11 +42,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * This view displays most settings regarding privacy criteria
+ * @author Fabian Prasser
+ */
 public class ViewCriterionDefinition implements IView {
 
     private static final int       SLIDER_MAX      = 1000;
     private static final int       LABEL_WIDTH     = 50;
     private static final int       LABEL_HEIGHT    = 20;
+    
     private static final String    LABELS_METRIC[] = { 
             Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
@@ -60,6 +61,7 @@ public class ViewCriterionDefinition implements IView {
             Resources.getMessage("CriterionDefinitionView.5"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.52"), //$NON-NLS-1$
     };
+    
     private static final Metric<?> ITEMS_METRIC[]  = { 
             Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
@@ -77,15 +79,20 @@ public class ViewCriterionDefinition implements IView {
     private Button                 buttonPracticalMonotonicity;
     private Button                 buttonProtectSensitiveAssociations;
     private Combo                  comboMetric;
-    private Composite			   root;
-    
-    private ComponentTitledFolder           folder;
+    private Composite              root;
+
+    private ComponentTitledFolder  folder;
     private ToolItem               enable;
     private ToolItem               push;
     private ToolItem               pull;
-    
+
     private ViewCriteriaList       clv;
     
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param controller
+     */
     public ViewCriterionDefinition(final Composite parent,
                                    final Controller controller) {
 
@@ -153,9 +160,7 @@ public class ViewCriterionDefinition implements IView {
         group.setLayoutData(SWTUtil.createFillGridData());
         group.setLayout(SWTUtil.createGridLayout(2));
 
-        /*
-         *  Add tab folder for criteria
-         */
+        // Add tab folder for criteria
         GridData gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.grabExcessHorizontalSpace = true;
@@ -191,13 +196,13 @@ public class ViewCriterionDefinition implements IView {
         folder = new ComponentTitledFolder(group, controller, bar, null);
         folder.setLayoutData(gd1);
         Composite item1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.19"), controller.getResources().getImage("symbol_k.png"));        
-        new ViewKAnonymity(item1, controller, model);
+        new ViewCriterionKAnonymity(item1, controller, model);
         Composite item2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.60"), controller.getResources().getImage("symbol_d.png"));
-        new ViewDPresence(item2, controller, model);
+        new ViewCriterionDPresence(item2, controller, model);
         Composite item3 = folder.createItem(Resources.getMessage("CriterionDefinitionView.20"), controller.getResources().getImage("symbol_l.png"));
-        new ViewLDiversity(item3, controller, model);
+        new ViewCriterionLDiversity(item3, controller, model);
         Composite item4 = folder.createItem(Resources.getMessage("CriterionDefinitionView.21"), controller.getResources().getImage("symbol_t.png"));
-        new ViewTCloseness(item4, controller, model);
+        new ViewCriterionTCloseness(item4, controller, model);
         folder.setSelection(0);
         
         folder.addSelectionListener(new SelectionAdapter() {
@@ -215,9 +220,7 @@ public class ViewCriterionDefinition implements IView {
         push.setEnabled(false);
         pull.setEnabled(false);
       
-        /*
-         * Add general view
-         */
+        // Add general view
         gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.horizontalSpan = 2;

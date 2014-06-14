@@ -35,6 +35,10 @@ import org.deidentifier.arx.gui.resources.Resources;
 
 import com.sun.awt.AWTUtilities;
 
+/**
+ * This class implements a splash window
+ * @author Fabian Prasser, Florian Kohlmayer
+ */
 public class MainSplash extends Frame{
 
     private static final long serialVersionUID = -4661666752999055995L;
@@ -47,8 +51,13 @@ public class MainSplash extends Frame{
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
         this.setUndecorated(true);
-        this.setIconImage(Resources.getImageIcon()); //$NON-NLS-1$);
-        AWTUtilities.setWindowOpaque(this, false);
+        this.setIconImage(Resources.getImageIcon());
+        
+        try {
+        	AWTUtilities.setWindowOpaque(this, false);
+        } catch (Exception e){
+        	// No big deal
+        }
         
         this.addComponentListener(new ComponentAdapter(){
         	@Override
@@ -58,17 +67,11 @@ public class MainSplash extends Frame{
         });
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.JWindow#update(java.awt.Graphics)
-     */
     @Override
     public void update(Graphics g) {
         paint(g);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Window#paint(java.awt.Graphics)
-     */
     @Override
     public void paint(Graphics g) {
     	

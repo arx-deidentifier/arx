@@ -24,7 +24,8 @@ import java.util.Iterator;
 /**
  * Abstract class for reading CSV encoded information
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser 
+ * @author Florian Kohlmayer
  */
 public abstract class CSVAbstractInput {
 

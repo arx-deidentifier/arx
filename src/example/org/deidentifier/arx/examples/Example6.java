@@ -35,7 +35,8 @@ import org.deidentifier.arx.metric.Metric;
 /**
  * This class implements an example on how to use the API for tools such as GUIs
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Example6 extends Example {
 
@@ -102,7 +103,7 @@ public class Example6 extends Example {
 
             // Process results
             System.out.println(" - Transformed data:");
-            final Iterator<String[]> transformed = result.getHandle()
+            final Iterator<String[]> transformed = result.getOutput(false)
                                                          .iterator();
             while (transformed.hasNext()) {
                 System.out.print("   ");

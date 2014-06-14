@@ -19,6 +19,7 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
+import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
 public interface IHashGroupify {
 
@@ -34,19 +35,6 @@ public interface IHashGroupify {
      */
     public abstract HashGroupifyEntry getFirstEntry();
 
-    /**
-     * Returns the number of outlying groups
-     * 
-     * @return
-     */
-    public abstract int getGroupOutliersCount();
-
-    /**
-     * Returns the number of outlying tuples
-     * 
-     * @return
-     */
-    public abstract int getTupleOutliersCount();
 
     /**
      * Min groupsize greater equals.
@@ -84,7 +72,7 @@ public interface IHashGroupify {
      * @param sensitive
      * @param pcount
      */
-    public abstract void addAll(int[] outtuple, int representant, int count, int sensitive, int pcount);
+    public abstract void addAll(int[] outtuple, int representant, int count, int[] sensitive, int pcount);
     
     /**
      * Generic adder for all combinations of criteria in mode transform GROUPIFY
@@ -94,7 +82,7 @@ public interface IHashGroupify {
      * @param distribution
      * @param pcount
      */
-    public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution distribution, int pcount);
+    public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution[] distribution, int pcount);
     
 
     /**
@@ -106,5 +94,11 @@ public interface IHashGroupify {
      * @param frequencies
      * @param pcount
      */
-    public abstract void addSnapshot(int[] outtuple, int representant, int count, int[] elements, int[] frequencies, int pcount);
+    public abstract void addSnapshot(int[] outtuple, int representant, int count, int[][] elements, int[][] frequencies, int pcount);
+
+    /**
+     * Returns statistics about the groups
+     * @return
+     */
+    public abstract GroupStatistics getGroupStatistics(boolean anonymous);
 }

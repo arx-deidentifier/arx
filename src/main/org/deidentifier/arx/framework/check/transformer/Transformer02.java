@@ -25,7 +25,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 /**
  * The class Transformer02.
  * 
- * @author Prasser, Kohlmayer
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public class Transformer02 extends AbstractTransformer {
 
@@ -39,7 +40,7 @@ public class Transformer02 extends AbstractTransformer {
      */
     public Transformer02(final int[][] data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final int[] sensitiveValues,
+                         final int[][] sensitiveValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfiguration config) {
@@ -57,8 +58,8 @@ public class Transformer02 extends AbstractTransformer {
         for (int i = startIndex; i < stopIndex; i++) {
             intuple = data[i];
             outtuple = buffer[i];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][stateindex1];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
 
             // Call
             delegate.callAll(outtuple, i);
@@ -79,8 +80,8 @@ public class Transformer02 extends AbstractTransformer {
 
             intuple = data[element.representant];
             outtuple = buffer[element.representant];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][stateindex1];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
 
             // Call
             delegate.callGroupify(outtuple, element);
@@ -107,8 +108,8 @@ public class Transformer02 extends AbstractTransformer {
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
             intuple = data[snapshot[i]];
             outtuple = buffer[snapshot[i]];
-            outtuple[outindex0] = idindex0[intuple[index0]][stateindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][stateindex1];
+            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
 
             // Call
             delegate.callSnapshot(outtuple, snapshot, i);
