@@ -36,7 +36,7 @@ public class GeneralizationHierarchy {
     protected final int[][] map;
 
     /** Name. */
-    protected final String  name;
+    protected final String  attribute;
 
     /**
      * Can be used to create a copy of the generalization hierarchy
@@ -48,7 +48,7 @@ public class GeneralizationHierarchy {
     protected GeneralizationHierarchy(final String name,
                                       final int[][] map,
                                       final int[] distinctValues) {
-        this.name = name;
+        this.attribute = name;
         this.map = map;
         this.distinctValues = distinctValues;
     }
@@ -72,7 +72,7 @@ public class GeneralizationHierarchy {
                                                                                      "'"); }
 
         // Init
-        this.name = name;
+        this.attribute = name;
         final int height = hierarchy[0].length;
 
         // Determine number of unique input values
@@ -124,7 +124,7 @@ public class GeneralizationHierarchy {
                                    final Dictionary dictionary) {
 
         // Init
-        this.name = name;
+        this.attribute = name;
 
         // Determine number of unique input values
         final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
@@ -132,7 +132,7 @@ public class GeneralizationHierarchy {
         // Build hierarchy
         map = new int[uniqueIn][1];
         for (int i=0; i<map.length; i++) {
-        	map[i][0] = i;
+            map[i][0] = i;
         }
         
         // Count distinct values on each level
@@ -193,17 +193,33 @@ public class GeneralizationHierarchy {
      * @return
      */
     public String getName() {
-        return name;
+        return attribute;
     }
 
     /**
-     * Returns true if the hierarchy is monotonic
+     * Throws an exception, if the hierarchy is not monotonic. 
      * 
-     * @return
+     * TODO: This is a potentially expensive check that should be done when loading the hierarchy
      */
-    public boolean isMonotonic() {
-        // level value -> level+1 value
+    public void checkMonotonicity(DataManager manager) {
+        
+        // Obtain dictionary
+        String[] dictionary = null;
+        String[] header = manager.getDataQI().getHeader();
+        for (int i=0; i<header.length; i++) {
+            if (header[i].equals(attribute)) {
+                dictionary = manager.getDataQI().getDictionary().getMapping()[i];
+            }
+        }
+        
+        // Check
+        if (dictionary==null) {
+            throw new IllegalStateException("Cannot obtain dictionary for attribute ("+attribute+")");
+        }
+        
+        // Level value -> level+1 value
         final HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
+        
         // Input->level->output.
         for (int level = 0; level < (map[0].length - 1); level++) {
             hashMap.clear();
@@ -212,13 +228,17 @@ public class GeneralizationHierarchy {
                 final int outputNextLevel = map[i][level + 1];
                 if (hashMap.containsKey(outputCurrentLevel)) {
                     final int compare = hashMap.get(outputCurrentLevel);
-                    if (compare != outputNextLevel) { return false; }
+                    if (compare != outputNextLevel) { 
+                        
+                        String in = dictionary[outputCurrentLevel];
+                        String out1 = dictionary[compare];
+                        String out2 = dictionary[outputNextLevel];
+                        throw new IllegalArgumentException("The transformation rule for the attribute '" + attribute + "' is not a hierarchy. ("+in+") can either be transformed to ("+out1+") or to ("+out2+")");
+                    }
                 } else {
                     hashMap.put(outputCurrentLevel, outputNextLevel);
                 }
             }
         }
-        return true;
     }
-
 }
