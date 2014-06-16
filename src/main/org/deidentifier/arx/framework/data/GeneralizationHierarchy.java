@@ -83,7 +83,7 @@ public class GeneralizationHierarchy {
         for (int i = 0; i < hierarchy.length; i++) {
             final String[] input = hierarchy[i];
             final Integer key = dictionary.probe(dimension, input[0]);
-            if (key != null) {
+            if (key != null && key < uniqueIn) {
                 for (int j = 0; j < input.length; j++) {
                     final String value = input[j];
                     final int incode = dictionary.register(dimension, value);
