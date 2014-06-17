@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -131,6 +132,17 @@ public class Dictionary {
         final String[] vals = dictionary.mapping[sourceDimension];
         for (int id = 0; id < vals.length; id++) {
             maps[targetDimension].put(vals[id], id);
+        }
+    }
+
+    public Collection<Integer> getUniqueUnfinalizedValues(int dimension) {
+        return maps[dimension].values();
+    }
+
+    public void finalize(int i) {
+        mapping[i] = new String[maps[i].size()];
+        for (final String val : maps[i].keySet()) {
+            mapping[i][maps[i].get(val)] = val;
         }
     }
 }
