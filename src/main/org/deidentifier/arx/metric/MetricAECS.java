@@ -50,6 +50,7 @@ public class MetricAECS extends MetricDefault {
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         int size = 0;
+        // TODO: This is buggy. All EQs that are suppressed should result in one large equivalence class
         // When enforcing d-presence, use only ECs which contain at least one tuple from the research subset
         if (dPresence) { 
             HashGroupifyEntry m = g.getFirstEntry();
