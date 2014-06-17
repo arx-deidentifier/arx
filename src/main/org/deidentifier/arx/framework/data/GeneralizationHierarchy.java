@@ -18,10 +18,8 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The class GeneralizationHierarchy.
@@ -79,9 +77,6 @@ public class GeneralizationHierarchy {
 
         // Determine number of unique input values
         final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
-        
-        Set<Integer> dataSet = new HashSet<Integer>();
-        dataSet.addAll(dictionary.getUniqueUnfinalizedValues(dimension));
 
         // Build hierarchy
         map = new int[uniqueIn][height];
@@ -107,31 +102,13 @@ public class GeneralizationHierarchy {
                 vals.add(map[k][i]);
             }
             distinctValues[i] = vals.size();
-            
-            if (i==0) {
-                Set<Integer> set = new HashSet<Integer>();
-                set.addAll(dataSet);
-                set.removeAll(vals);
-                
-                if (!set.isEmpty()) {
-                    dictionary.finalize(dimension);
-                    System.out.println(attribute);
-                    for (int k : set){
-                        System.out.println(dictionary.getMapping()[dimension][k]);
-                    }
-                }
-            }
-            
             vals.clear();
         }
 
         // Sanity check
-        if (distinctValues[0] < uniqueIn) {
-            
-            throw new IllegalArgumentException("Not all data elements are contained in the hierarch for attribute '" +
+        if (distinctValues[0] < uniqueIn) { throw new IllegalArgumentException("Not all data elements are contained in the hierarch for attribute '" +
                                                                                name +
-                                                                               "'!"); 
-        }
+                                                                               "'!"); }
     }
     
 
@@ -155,7 +132,7 @@ public class GeneralizationHierarchy {
         // Build hierarchy
         map = new int[uniqueIn][1];
         for (int i=0; i<map.length; i++) {
-            map[i][0] = i;
+        	map[i][0] = i;
         }
         
         // Count distinct values on each level
