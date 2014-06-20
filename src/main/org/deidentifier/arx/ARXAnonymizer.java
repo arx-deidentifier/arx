@@ -357,7 +357,7 @@ public class ARXAnonymizer {
         
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
-            if (!hierarchy.isMonotonic()) { throw new IllegalArgumentException("The hierarchy for the attribute '" + hierarchy.getName() + "' is not monotonic!"); }
+            hierarchy.checkMonotonicity(manager);
         }
 
         // check min and max sizes
