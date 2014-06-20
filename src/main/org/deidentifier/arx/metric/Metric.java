@@ -225,6 +225,8 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
+     * Returns false if the metric is non-monotone using suppression
+     * 
      * @return the monotonic
      */
     public final boolean isMonotonic() {
