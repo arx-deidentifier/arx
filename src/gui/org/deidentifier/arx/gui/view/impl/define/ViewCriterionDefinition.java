@@ -60,6 +60,7 @@ public class ViewCriterionDefinition implements IView {
             Resources.getMessage("CriterionDefinitionView.4"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.5"), //$NON-NLS-1$
             Resources.getMessage("CriterionDefinitionView.52"), //$NON-NLS-1$
+            Resources.getMessage("CriterionDefinitionView.64"), //$NON-NLS-1$
     };
     
     private static final Metric<?> ITEMS_METRIC[]  = { 
@@ -69,7 +70,8 @@ public class ViewCriterionDefinition implements IView {
             Metric.createEntropyMetric(),
             Metric.createDMMetric(),
             Metric.createNMEntropyMetric(),
-            Metric.createAECSMetric()};
+            Metric.createAECSMetric(),
+            Metric.createNDSMetric()};
 
     private final Controller       controller;
     private Model                  model           = null;
