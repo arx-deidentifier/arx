@@ -49,7 +49,7 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 	
     @Override
     public void checkVersion(String version) throws SAXException {
-        if (!(version.equals("2.0") || version.equals("2.1"))) {
+        if (!(version.equals("2.0") || version.equals("2.1") || version.equals("2.1.1"))) {
             throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }
