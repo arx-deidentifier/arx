@@ -218,12 +218,11 @@ public class ViewWeights implements IView {
                 List<Knob<Double>> knobs = new ArrayList<Knob<Double>>();
                 for(int i=0; i<qis.size(); i++){
                     Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobScale.Double(0d, 1d));
-                    knob.setValue(model.getAttributeWeight(qis.get(i)));
                     knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
                     knobs.add(knob);
                 }
 
-                // Create labels2
+                // Create labels
                 for(int i=0; i<qis.size(); i++){
                     
                     final Label label = new Label(composites.get(i), SWT.CENTER);
@@ -242,6 +241,12 @@ public class ViewWeights implements IView {
                         }
                     });
                 }
+                
+                // Set values
+                for(int i=0; i<qis.size(); i++){
+                    knobs.get(i).setValue(model.getAttributeWeight(qis.get(i)));
+                }
+                
                 root.layout(true, true);    
                 root.setRedraw(true);
             }
