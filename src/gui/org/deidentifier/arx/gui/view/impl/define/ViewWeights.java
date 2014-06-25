@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx.gui.view.impl.define;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,9 +34,13 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Scale;
 
 import de.linearbits.swt.widgets.Knob;
 import de.linearbits.swt.widgets.KnobScale;
@@ -46,11 +51,14 @@ import de.linearbits.swt.widgets.KnobScale;
  */
 public class ViewWeights implements IView {
 
-    private Controller  controller;
-    private Model       model = null;
-    private Composite   root;
-    private Composite   panel;
-    private Set<String> attributes = new HashSet<String>();
+    private Controller          controller = null;
+    private Model               model      = null;
+    private Composite           panel      = null;
+
+    private final Composite     root;
+    private final Composite     knobscomposite;
+    private final Set<String>   attributes = new HashSet<String>();
+    private final DecimalFormat format     = new DecimalFormat("0.000");
 
     /**
      * Creates a new instance
@@ -64,14 +72,50 @@ public class ViewWeights implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
+        
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
+        this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(3, 0).create());
+        
+        this.knobscomposite = new Composite(root, SWT.NONE);
+        this.knobscomposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
+        this.knobscomposite.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(3, 0).create());
+        
+        Composite sliderpanel = new Composite(root, SWT.NONE);
+        sliderpanel.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+        sliderpanel.setLayout(GridLayoutFactory.fillDefaults().numColumns(4).create());
+        
+        Label label = new Label(sliderpanel, SWT.NONE);
+        label.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
+        label.setText("Suppression");
+        
+        final Scale slider = new Scale(sliderpanel, SWT.HORIZONTAL);
+        slider.setMinimum(0);
+        slider.setMaximum(1000);
+        slider.setSelection(500);
+        slider.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+        
+        Button button = new Button(sliderpanel, SWT.PUSH);
+        button.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
+        button.setText("Reset");
+        button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent arg0) {
+                slider.setSelection(500);
+            }
+        });
+        
+        Label label2 = new Label(sliderpanel, SWT.NONE);
+        label2.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
+        label2.setText("Generalization");
+        
+        
+        
+        root.pack();
     }
 
     @Override
     public void dispose() {
         controller.removeListener(this);
-        root.dispose();
+        knobscomposite.dispose();
     }
 
     @Override
@@ -130,7 +174,7 @@ public class ViewWeights implements IView {
                 }
                 
                 // Create layout
-                panel = new Composite(root, SWT.NONE);
+                panel = new Composite(knobscomposite, SWT.NONE);
                 panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).create());
                 panel.setLayout(GridLayoutFactory.swtDefaults().numColumns(qis.size()).equalWidth(true).create());
                 
@@ -160,11 +204,19 @@ public class ViewWeights implements IView {
 
                 // Create labels2
                 for(int i=0; i<qis.size(); i++){
-                    Label label = new Label(composites.get(i), SWT.CENTER);
+                    
+                    final Label label = new Label(composites.get(i), SWT.CENTER);
                     label.setText("0.0");
                     label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+                    
+                    final Knob<Double> knob = knobs.get(i);
+                    knob.addSelectionListener(new SelectionAdapter(){
+                        public void widgetSelected(SelectionEvent arg0) {
+                            label.setText(format.format(knob.getValue()));
+                        }
+                    });
                 }
-                root.layout();    
+                root.layout(true, true);    
                 root.setRedraw(true);
             }
         }
