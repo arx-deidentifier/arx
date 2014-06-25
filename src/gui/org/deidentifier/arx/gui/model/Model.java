@@ -33,6 +33,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
@@ -262,7 +263,9 @@ public class Model implements Serializable {
 	}
 
 	public DataDefinition getInputDefinition(){
-		return inputConfig.getInput().getDefinition();
+	    Data data = inputConfig.getInput();
+	    if (data == null) return null;
+		return data.getDefinition();
 	}
 
 	public ModelKAnonymityCriterion getKAnonymityModel() {
