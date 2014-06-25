@@ -684,10 +684,20 @@ public class Model implements Serializable {
     }
     
     public void setAttributeWeight(String attribute, Double weight){
+        
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
         this.attributeWeights.put(attribute, weight);
     }
     
     public double getAttributeWeight(String attribute) {
+        
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
         Double value = this.attributeWeights.get(attribute);
         if (value == null) return 0d;
         else return value;
