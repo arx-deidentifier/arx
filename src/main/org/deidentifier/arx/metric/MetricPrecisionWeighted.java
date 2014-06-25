@@ -21,6 +21,7 @@ package org.deidentifier.arx.metric;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -57,8 +58,11 @@ public class MetricPrecisionWeighted extends MetricDefaultWeighted {
     }
 
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        super.initializeInternal(input, hierarchies, config);
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, hierarchies, config);
 
         // Initialize maximum levels
         maxLevels = new int[hierarchies.length];

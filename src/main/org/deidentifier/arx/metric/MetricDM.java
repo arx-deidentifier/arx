@@ -21,6 +21,7 @@ package org.deidentifier.arx.metric;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
@@ -62,9 +63,12 @@ public class MetricDM extends MetricDefault {
         }
         return new InformationLossDefault(value);
     }
-
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        
         if (config.containsCriterion(DPresence.class)) {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }

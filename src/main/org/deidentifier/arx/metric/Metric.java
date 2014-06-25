@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -147,6 +148,15 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     public static Metric<InformationLossCombined> createWeightedMetric(final Map<Metric<?>, Double> weights) {
         return new MetricWeighted(weights);
     }
+    
+    /**
+     * Creates an instance of the NDS metric
+     * @return
+     */
+    public static Metric<?> createNDSMetric() {
+        return new MetricNDS();
+    }
+
 
     /** The global optimum */
     private transient Node            globalOptimum          = null;
@@ -204,14 +214,15 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
 
     /**
      * Initializes the metric.
+     * @param definition 
      * 
      * @param input
      * @param hierarchies
      */
-    public final void initialize(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+    public final void initialize(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         this.globalOptimum = null;
         this.optimalInformationLoss = null;
-        initializeInternal(input, hierarchies, config);
+        initializeInternal(definition, input, hierarchies, config);
     }
 
     /**
@@ -266,7 +277,7 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @param input
      * @param hierarchies
      */
-    protected abstract void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
+    protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
 
     /**
      * Returns an instance of the maximal value
@@ -281,5 +292,4 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @return
      */
     protected abstract InformationLoss minInternal();
-
 }

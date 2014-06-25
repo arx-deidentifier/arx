@@ -111,9 +111,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Make sure that no information can be derived from associations between sensitive attributes*/
     private boolean               protectSensitiveAssociations  = false;
 
-    /** Perform additional dfs-phase*/
-    private boolean               guaranteeOptimalityForNonMonotonicMetric = false;
-    
     /**
      * Creates a new config without tuple suppression
      */
@@ -342,14 +339,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Should optimality be guaranteed for non-monotonic metrics
-     * @return
-     */
-    public boolean isGuaranteeOptimalityForNonMonotonicMetric(){
-        return this.guaranteeOptimalityForNonMonotonicMetric;
-    }
-
-    /**
      * Returns, whether the anonymizer should take associations between sensitive attributes into account
      */
     public boolean isProtectSensitiveAssociations() {
@@ -374,15 +363,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return (this.requirements & requirement) != 0;
     }
     
-    /**
-     * Perform an additional exhaustive search to find the transformation
-     * with guaranteed minimal information loss?
-     * @param val
-     */
-    public void setGuaranteeOptimalityForNonMonotonicMetric(boolean val){
-        this.guaranteeOptimalityForNonMonotonicMetric = val;
-    }
-
     /**
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression

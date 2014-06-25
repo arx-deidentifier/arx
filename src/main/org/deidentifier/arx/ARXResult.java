@@ -117,7 +117,7 @@ public class ARXResult {
         config.initialize(manager);
 
         // Initialize the metric
-        metric.initialize(manager.getDataQI(), manager.getHierarchies(), config);
+        metric.initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
 
         // Create a node checker
         final INodeChecker checker = new NodeChecker(manager,

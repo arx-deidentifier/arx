@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
@@ -106,9 +107,11 @@ public class MetricNMEntropy extends MetricEntropy {
         // Return sum of both values
         return new InformationLossDefault(originalInfoLoss - additionalInfoLoss);
     }
-
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
-        super.initializeInternal(input, ahierarchies, config);
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] ahierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, ahierarchies, config);
     }
 }

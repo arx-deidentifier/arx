@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
-import org.deidentifier.arx.algorithm.AlgorithmFlashNonMonotonic;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -524,17 +523,11 @@ public class ARXAnonymizer {
         final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
-        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
+        config.getMetric().initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
-        AbstractAlgorithm algorithm;
-        
         FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
-        if (!config.isGuaranteeOptimalityForNonMonotonicMetric()) {
-            algorithm = FLASHAlgorithm.create(lattice, checker, strategy);
-        } else {
-            algorithm = new AlgorithmFlashNonMonotonic(lattice, checker, strategy);
-        }
+        AbstractAlgorithm algorithm = FLASHAlgorithm.create(lattice, checker, strategy);
         
         // Execute
 
