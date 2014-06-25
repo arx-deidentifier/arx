@@ -358,6 +358,11 @@ public class ViewCriterionDefinition implements IView {
         c.setLayout(new FillLayout());
         clv = new ViewCriteriaList(c, controller);
         
+       // Create weights tab
+        Composite c2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
+        c2.setLayout(new FillLayout());
+        new ViewWeights(c2, controller);
+        
         folder2.setSelection(0);
 
         return group;
