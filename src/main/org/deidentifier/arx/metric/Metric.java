@@ -21,7 +21,6 @@ package org.deidentifier.arx.metric;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
@@ -37,7 +36,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  *
  * @param <T>
  */
-public abstract class Metric<T extends InformationLoss> implements Serializable {
+public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
 
     private static final long serialVersionUID = -2657745103125430229L;
 
@@ -48,17 +47,6 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      */
     public static Metric<InformationLossDefault> createAECSMetric() {
         return new MetricAECS();
-    }
-
-    /**
-     * Creates a weighted metric
-     * 
-     * @param main
-     *            the main metric
-     * @return
-     */
-    public static Metric<InformationLossCombined> createCombinedMetric(final Metric<?> main, final Set<Metric<?>> others) {
-        return new MetricCombined(main, others);
     }
 
     /**
@@ -96,6 +84,14 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      */
     public static Metric<InformationLossDefault> createHeightMetric() {
         return new MetricHeight();
+    }
+
+    /**
+     * Creates an instance of the NDS metric
+     * @return
+     */
+    public static Metric<?> createNDSMetric() {
+        return new MetricNDS();
     }
 
     /**
@@ -138,37 +134,17 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
         return new MetricUserDefinedWeighted(infoloss, weights);
     }
 
-    /**
-     * Creates a weighted metric
-     * 
-     * @param weights
-     *            the weights
-     * @return
-     */
-    public static Metric<InformationLossCombined> createWeightedMetric(final Map<Metric<?>, Double> weights) {
-        return new MetricWeighted(weights);
-    }
-    
-    /**
-     * Creates an instance of the NDS metric
-     * @return
-     */
-    public static Metric<?> createNDSMetric() {
-        return new MetricNDS();
-    }
-
-
     /** The global optimum */
-    private transient Node            globalOptimum          = null;
+    private transient Node               globalOptimum          = null;
 
     /** Is the metric independent? */
-    private boolean                   independent            = false;
+    private boolean                      independent            = false;
 
     /** Is the metric monotonic? */
-    private boolean                   monotonic              = false;
+    private boolean                      monotonic              = false;
 
     /** The optimal information loss */
-    private transient InformationLoss optimalInformationLoss = null;
+    private transient InformationLoss<?> optimalInformationLoss = null;
 
     /**
      * Create a new metric
@@ -243,22 +219,18 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
-     * Returns the maximal value
+     * Returns an instance of the maximal value
      * 
      * @return
      */
-    public final InformationLoss max() {
-        return maxInternal().clone();
-    }
+    public abstract InformationLoss<?> max();
 
     /**
-     * Returns the minimal value
+     * Returns an instance of the minimal value
      * 
      * @return
      */
-    public final InformationLoss min() {
-        return minInternal().clone();
-    }
+    public abstract InformationLoss<?> min();
 
     /**
      * Evaluates the metric for the given node
@@ -278,18 +250,4 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @param hierarchies
      */
     protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
-
-    /**
-     * Returns an instance of the maximal value
-     * 
-     * @return
-     */
-    protected abstract InformationLoss maxInternal();
-
-    /**
-     * Returns an instance of the minimal value
-     * 
-     * @return
-     */
-    protected abstract InformationLoss minInternal();
 }

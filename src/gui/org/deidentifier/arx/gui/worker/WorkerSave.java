@@ -257,8 +257,8 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getSuccessors(), n.getSuccessors(), map);
                 }
                 writer.indent(vocabulary.getInfoloss());
-                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().getValue());
-                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().getValue());
+                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().toString());
+                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().toString());
                 writer.unindent();
                 writer.unindent();
             }
@@ -479,8 +479,8 @@ public class WorkerSave extends Worker<Model> {
 
         // Write information loss
         zip.putNextEntry(new ZipEntry("infoloss.dat")); //$NON-NLS-1$
-        final Map<Integer, InformationLoss> max = new HashMap<Integer, InformationLoss>();
-        final Map<Integer, InformationLoss> min = new HashMap<Integer, InformationLoss>();
+        final Map<Integer, InformationLoss<?>> max = new HashMap<Integer, InformationLoss<?>>();
+        final Map<Integer, InformationLoss<?>> min = new HashMap<Integer, InformationLoss<?>>();
         for (final ARXNode[] level : l.getLevels()) {
             for (final ARXNode n : level) {
                 final String key = Arrays.toString(n.getTransformation());

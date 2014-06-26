@@ -43,7 +43,7 @@ public class Node {
     private int             level;
 
     /** The information loss. */
-    private InformationLoss informationLoss;
+    private InformationLoss<?> informationLoss;
 
     /** The transformation. */
     private int[]           transformation;
@@ -117,7 +117,7 @@ public class Node {
      * 
      * @return
      */
-    public InformationLoss getInformationLoss() {
+    public InformationLoss<?> getInformationLoss() {
         return informationLoss;
     }
 
@@ -225,7 +225,7 @@ public class Node {
      * 
      * @param informationLoss
      */
-    public void setInformationLoss(final InformationLoss informationLoss) {
+    public void setInformationLoss(final InformationLoss<?> informationLoss) {
         this.informationLoss = informationLoss;
     }
 

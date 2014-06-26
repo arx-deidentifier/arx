@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
@@ -33,10 +34,10 @@ public class ModelNodeFilter implements Serializable {
 
     private final Set<Anonymity> anonymity          = new HashSet<Anonymity>();
     private Set<Integer>[]       generalizations    = null;
-    private double               maxInformationLoss = Double.MAX_VALUE;
     private int[]                maxLevels          = null;
     private int                  maxNumNodesInitial = 0;
-    private double               minInformationLoss = 0;
+    private double               minInformationLoss = 0d;
+    private double               maxInformationLoss = 1d;
 
     @SuppressWarnings("unchecked")
     public ModelNodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
@@ -54,8 +55,8 @@ public class ModelNodeFilter implements Serializable {
         anonymity.add(Anonymity.NOT_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
-        minInformationLoss = Double.NEGATIVE_INFINITY;
-        maxInformationLoss = Double.MAX_VALUE;
+        minInformationLoss = 0d;
+        maxInformationLoss = 1d;
         for (int i = 0; i < maxLevels.length; i++) {
             for (int j = 0; j < maxLevels[i]; j++) {
                 generalizations[i].add(j);
@@ -64,8 +65,8 @@ public class ModelNodeFilter implements Serializable {
     }
 
     public void allowAllInformationLoss() {
-        minInformationLoss = 0;
-        maxInformationLoss = Double.MAX_VALUE;
+        minInformationLoss = 0d;
+        maxInformationLoss = 1d;
     }
 
     public void allowAnonymous() {
@@ -77,6 +78,9 @@ public class ModelNodeFilter implements Serializable {
     }
 
     public void allowInformationLoss(final double min, final double max) {
+        if (min<0d || min>1d || max <0d || max>1d) {
+            throw new IllegalArgumentException("Threshold must be relative [0,1]");
+        }
         minInformationLoss = min;
         maxInformationLoss = max;
     }
@@ -93,8 +97,8 @@ public class ModelNodeFilter implements Serializable {
 
     public void disallowAll() {
         anonymity.clear();
-        minInformationLoss = Double.MAX_VALUE;
-        maxInformationLoss = 0;
+        minInformationLoss = 0d;
+        maxInformationLoss = 1d;
         for (int i = 0; i < maxLevels.length; i++) {
             generalizations[i].clear();
         }
@@ -157,11 +161,11 @@ public class ModelNodeFilter implements Serializable {
 
             // Allow specializations and generalizations of optimum
             allowAnonymous();
-            final double max = result.getLattice()
+            final double max = (Double)result.getLattice()
                                      .getTop()
                                      .getMaximumInformationLoss()
                                      .getValue();
-            final double min = result.getLattice()
+            final double min = (Double)result.getLattice()
                                      .getBottom()
                                      .getMinimumInformationLoss()
                                      .getValue();
@@ -199,7 +203,7 @@ public class ModelNodeFilter implements Serializable {
                     final int gen = optimum[i] - j;
                     if (gen >= 0) {
                         allowGeneralization(i, gen);
-                        final int current = count(visible, hidden);
+                        final int current = count(result.getLattice(), visible, hidden);
                         if (current > maxNumNodesInitial) {
                             disallowGeneralization(i, gen);
                             return;
@@ -214,7 +218,7 @@ public class ModelNodeFilter implements Serializable {
                     final int gen = optimum[i] + j;
                     if (gen <= result.getLattice().getTop().getTransformation()[i]) {
                         allowGeneralization(i, gen);
-                        final int current = count(visible, hidden);
+                        final int current = count(result.getLattice(), visible, hidden);
                         if (current > maxNumNodesInitial) {
                             disallowGeneralization(i, gen);
                             return;
@@ -224,16 +228,16 @@ public class ModelNodeFilter implements Serializable {
             }
 
             // Clean up
-            clean(visible, optimum);
+            clean(result.getLattice(), visible, optimum);
         } else {
 
             // Allow generalizations of bottom
             allowNonAnonymous();
-            final double max = result.getLattice()
+            final double max = (Double)result.getLattice()
                                      .getTop()
                                      .getMaximumInformationLoss()
                                      .getValue();
-            final double min = result.getLattice()
+            final double min = (Double)result.getLattice()
                                      .getBottom()
                                      .getMinimumInformationLoss()
                                      .getValue();
@@ -273,7 +277,7 @@ public class ModelNodeFilter implements Serializable {
                     final int gen = base[i] + j;
                     if (gen <= result.getLattice().getTop().getTransformation()[i]) {
                         allowGeneralization(i, gen);
-                        final int current = count(visible, hidden);
+                        final int current = count(result.getLattice(), visible, hidden);
                         if (current > maxNumNodesInitial) {
                             disallowGeneralization(i, gen);
                             return;
@@ -283,14 +287,20 @@ public class ModelNodeFilter implements Serializable {
             }
 
             // Clean up
-            clean(visible, base);
+            clean(result.getLattice(), visible, base);
         }
     }
 
-    public boolean isAllowed(final ARXNode node) {
-        if (node.getMaximumInformationLoss().getValue() < minInformationLoss) {
+    public boolean isAllowed(final ARXLattice lattice, final ARXNode node) {
+        
+        double max = node.getMaximumInformationLoss().relativeTo(lattice.getBottom().getMinimumInformationLoss(), 
+                                                                 lattice.getTop().getMaximumInformationLoss());
+        double min = node.getMinimumInformationLoss().relativeTo(lattice.getBottom().getMinimumInformationLoss(), 
+                                                                 lattice.getTop().getMaximumInformationLoss());
+        
+        if (max < minInformationLoss) {
             return false;
-        } else if (node.getMinimumInformationLoss().getValue() > maxInformationLoss) {
+        } else if (min > maxInformationLoss) {
             return false;
         } else if (!anonymity.contains(node.isAnonymous())) { return false; }
         final int[] transformation = node.getTransformation();
@@ -331,13 +341,13 @@ public class ModelNodeFilter implements Serializable {
      * @param lattice
      * @return
      */
-    private void clean(final Set<ARXNode> visible, final int[] optimum) {
+    private void clean(final ARXLattice lattice, final Set<ARXNode> visible, final int[] optimum) {
 
         // Remove hidden from visible
         final Iterator<ARXNode> i = visible.iterator();
         while (i.hasNext()) {
             final ARXNode node = i.next();
-            if (!isAllowed(node)) {
+            if (!isAllowed(lattice, node)) {
                 i.remove();
             }
         }
@@ -372,12 +382,11 @@ public class ModelNodeFilter implements Serializable {
      * @param lattice
      * @return
      */
-    private int
-            count(final Set<ARXNode> visible, final Set<ARXNode> hidden) {
+    private int count(final ARXLattice lattice, final Set<ARXNode> visible, final Set<ARXNode> hidden) {
         final Iterator<ARXNode> i = hidden.iterator();
         while (i.hasNext()) {
             final ARXNode node = i.next();
-            if (isAllowed(node)) {
+            if (isAllowed(lattice, node)) {
                 i.remove();
                 visible.add(node);
             }

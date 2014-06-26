@@ -87,11 +87,10 @@ public class ViewProperties implements IView {
      * @param infoLoss
      * @return
      */
-    private double asRelativeValue(final InformationLoss infoLoss) {
+    private double asRelativeValue(final InformationLoss<?> infoLoss) {
         if (result == null) return 0;
-        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
-        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
-        return ((infoLoss.getValue() - min) / (max - min)) * 100d;
+        return infoLoss.relativeTo(result.getLattice().getBottom().getMinimumInformationLoss(), 
+                                   result.getLattice().getTop().getMaximumInformationLoss()) * 100d;
     }
 
     /**

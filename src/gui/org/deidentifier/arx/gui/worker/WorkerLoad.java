@@ -589,11 +589,11 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return null; }
 
         // Read infoloss
-        final Map<Integer, InformationLoss> max;
-        final Map<Integer, InformationLoss> min;
+        final Map<Integer, InformationLoss<?>> max;
+        final Map<Integer, InformationLoss<?>> min;
         ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
-        min = (Map<Integer, InformationLoss>) oos.readObject();
-        max = (Map<Integer, InformationLoss>) oos.readObject();
+        min = (Map<Integer, InformationLoss<?>>) oos.readObject();
+        max = (Map<Integer, InformationLoss<?>>) oos.readObject();
         oos.close();
 
         entry = zip.getEntry("attributes.dat"); //$NON-NLS-1$

@@ -173,7 +173,7 @@ public class ARXLattice implements Serializable {
              * 
              * @return
              */
-            public void setMaximumInformationLoss(final InformationLoss a) {
+            public void setMaximumInformationLoss(final InformationLoss<?> a) {
                 node.maxInformationLoss = a;
             }
 
@@ -182,7 +182,7 @@ public class ARXLattice implements Serializable {
              * 
              * @return
              */
-            public void setMinimumInformationLoss(final InformationLoss a) {
+            public void setMinimumInformationLoss(final InformationLoss<?> a) {
                 node.minInformationLoss = a;
             }
 
@@ -237,10 +237,10 @@ public class ARXLattice implements Serializable {
         private Map<String, Integer> headermap;
 
         /** The max information loss */
-        private InformationLoss      maxInformationLoss;
+        private InformationLoss<?>      maxInformationLoss;
 
         /** The min information loss */
-        private InformationLoss      minInformationLoss;
+        private InformationLoss<?>      minInformationLoss;
 
         /** The predecessors */
         private ARXNode[]            predecessors;
@@ -334,7 +334,7 @@ public class ARXLattice implements Serializable {
          * 
          * @return
          */
-        public InformationLoss getMaximumInformationLoss() {
+        public InformationLoss<?> getMaximumInformationLoss() {
             return maxInformationLoss;
         }
 
@@ -343,7 +343,7 @@ public class ARXLattice implements Serializable {
          * 
          * @return
          */
-        public InformationLoss getMinimumInformationLoss() {
+        public InformationLoss<?> getMinimumInformationLoss() {
             return minInformationLoss;
         }
 
@@ -615,7 +615,7 @@ public class ARXLattice implements Serializable {
         for (int i = levels.length - 1; i >= 0; i--) {
             final ARXNode[] level = levels[i];
             for (final ARXNode node : level) {
-                final InformationLoss a = node.getMaximumInformationLoss();
+                final InformationLoss<?> a = node.getMaximumInformationLoss();
                 for (final ARXNode n : node.getPredecessors()) {
                     if (n.getMaximumInformationLoss() == null) {
                         n.access().setMaximumInformationLoss(metric.max());
@@ -646,7 +646,7 @@ public class ARXLattice implements Serializable {
         for (int i = 0; i < levels.length; i++) {
             final ARXNode[] level = levels[i];
             for (final ARXNode node : level) {
-                final InformationLoss a = node.getMinimumInformationLoss();
+                final InformationLoss<?> a = node.getMinimumInformationLoss();
                 for (final ARXNode n : node.getSuccessors()) {
                     if (n.getMinimumInformationLoss() == null) {
                         n.access().setMinimumInformationLoss(metric.min());

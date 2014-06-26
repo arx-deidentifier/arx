@@ -31,6 +31,10 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public abstract class MetricDefault extends Metric<InformationLossDefault> {
 
+    private static final InformationLossDefault MAX = 
+            new InformationLossDefault(Integer.MAX_VALUE);
+    private static final InformationLossDefault MIN = 
+            new InformationLossDefault(0d);
     private static final long serialVersionUID = 2672819203235170632L;
 
     public MetricDefault(final boolean monotonic, final boolean independent) {
@@ -38,21 +42,20 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
     }
     
     @Override
+    public InformationLoss<?> max() {
+        return MAX;
+    }
+
+    @Override
+    public InformationLoss<?> min() {
+        return MIN;
+    }
+
+    @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         // Empty by design
     }
-
-    @Override
-    protected InformationLoss maxInternal() {
-        return InformationLossDefault.MAX;
-    }
-
-    @Override
-    protected InformationLoss minInternal() {
-        return InformationLossDefault.MIN;
-    }
-
 }

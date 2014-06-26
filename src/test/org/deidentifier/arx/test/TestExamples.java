@@ -25,7 +25,6 @@ import org.deidentifier.arx.examples.Example10;
 import org.deidentifier.arx.examples.Example11;
 import org.deidentifier.arx.examples.Example12;
 import org.deidentifier.arx.examples.Example13;
-import org.deidentifier.arx.examples.Example15;
 import org.deidentifier.arx.examples.Example16;
 import org.deidentifier.arx.examples.Example17;
 import org.deidentifier.arx.examples.Example18;
@@ -171,16 +170,6 @@ public class TestExamples {
     public void testExample13() {
         try {
             Example13.main(null);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void testExample15() {
-        try {
-            Example15.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
