@@ -39,7 +39,7 @@ public class MetricAECS extends MetricDefault {
     private static final long serialVersionUID = -532478849890959974L;
 
     protected MetricAECS() {
-        super(true, false);
+        super(false, false);
     }
 
     @Override
