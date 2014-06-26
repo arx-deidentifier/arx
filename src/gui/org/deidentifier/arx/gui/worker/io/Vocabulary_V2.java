@@ -48,10 +48,30 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
 	}
 	
     @Override
-    public void checkVersion(String version) throws SAXException {
-        if (!(version.equals("2.0") || version.startsWith("2.1"))) {
-            throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
+    public void checkVersion(String file, String current) throws SAXException {
+        if (!compareVersion(current, file)) {
+            throw new SAXException(Resources.getMessage("WorkerLoad.10") + file); //$NON-NLS-1$
         }
+    }
+    
+    /**
+     * Checks whether the version is smaller than the current one
+     * @param current
+     * @param file
+     * @return
+     */
+    private boolean compareVersion(String current, String file) {
+        String[] _current = current.split(".");
+        String[] _file = current.split(".");
+        
+        for (int i = 0; i<Math.min(_current.length, _file.length); i++) {
+            if (Integer.valueOf(_current[i]) <
+                Integer.valueOf(_file[i])) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     @Override

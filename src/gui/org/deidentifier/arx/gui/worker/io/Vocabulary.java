@@ -140,5 +140,5 @@ public abstract class Vocabulary {
 	public boolean isMax2(String value){return value.equals(getMax2());}
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
 
-    public abstract void checkVersion(String version) throws SAXException;
+    public abstract void checkVersion(String file, String current) throws SAXException;
 }
