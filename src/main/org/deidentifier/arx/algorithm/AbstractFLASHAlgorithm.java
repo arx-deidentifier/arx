@@ -32,27 +32,6 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
         this.history = checker.getHistory();
     }
     
-    /**
-     * Instantiate
-     * @param lattice
-     * @param checker
-     * @param strategy
-     * @param sorted
-     */
-    protected AbstractFLASHAlgorithm(final Lattice lattice, 
-                                     final INodeChecker checker, 
-                                     final FLASHStrategy strategy,
-                                     final boolean[] sorted) {
-
-        super(lattice, checker);
-        this.strategy = strategy;
-        this.pqueue = new PriorityQueue<Node>(11, strategy);
-        this.sorted = sorted;
-        this.path = new ArrayList<Node>();
-        this.stack = new Stack<Node>();
-        this.history = checker.getHistory();
-    }
-
     /** The stack. */
     protected final Stack<Node>         stack;
 
