@@ -132,7 +132,8 @@ public class Model implements Serializable {
 		
 		// Initialize the config
 		config.removeAllCriteria();
-
+		if (definition == null) return;
+		
 		// Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
@@ -262,7 +263,9 @@ public class Model implements Serializable {
 	}
 
 	public DataDefinition getInputDefinition(){
-		return inputConfig.getInput().getDefinition();
+	    if (inputConfig==null) return null;
+	    else if (inputConfig.getInput()==null) return null;
+	    else return inputConfig.getInput().getDefinition();
 	}
 
 	public ModelKAnonymityCriterion getKAnonymityModel() {
