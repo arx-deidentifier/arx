@@ -39,9 +39,9 @@ public class Vocabulary_V1 extends Vocabulary {
     }
 
     @Override
-    public void checkVersion(String file, String current) throws SAXException {
-        if (!file.equals("2.0")) {
-            throw new SAXException(Resources.getMessage("WorkerLoad.10") + file); //$NON-NLS-1$
+    public void checkVersion(String version) throws SAXException {
+        if (!version.equals("2.0")) {
+            throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }
     

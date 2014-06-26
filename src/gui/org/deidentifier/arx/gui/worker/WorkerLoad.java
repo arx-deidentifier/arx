@@ -847,7 +847,7 @@ public class WorkerLoad extends Worker<Model> {
                 if (vocabulary.isMetadata(localName)) {
                     if (vocabularyVersion == null){ vocabularyVersion = "1.0"; } //$NON-NLS-1$
                     WorkerLoad.this.vocabulary = Vocabulary.forVersion(vocabularyVersion);
-                    WorkerLoad.this.vocabulary.checkVersion(version, Resources.getVersion());
+                    WorkerLoad.this.vocabulary.checkVersion(version);
                 } else if (vocabulary.isVersion(localName)) {
                     version = payload;
                 } else if (vocabulary.isVocabulary(localName)) {
