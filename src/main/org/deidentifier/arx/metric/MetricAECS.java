@@ -18,11 +18,8 @@
 
 package org.deidentifier.arx.metric;
 
-import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
-import org.deidentifier.arx.framework.data.Data;
-import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
