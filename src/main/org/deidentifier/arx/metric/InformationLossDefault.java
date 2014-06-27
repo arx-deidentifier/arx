@@ -119,7 +119,7 @@ class InformationLossDefault extends InformationLoss<Double> {
     }
 
     @Override
-    protected InformationLoss<Double> clone() {
+    public InformationLoss<Double> clone() {
         return new InformationLossDefault(value);
     }
 }

@@ -41,13 +41,13 @@ public class ARXLattice implements Serializable {
      * The internal accessor class
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public class Access implements Serializable {
 
-        private static final long  serialVersionUID = 6654627605797832468L;
+        private static final long serialVersionUID = 6654627605797832468L;
 
-        private final ARXLattice lattice;
+        private final ARXLattice  lattice;
 
         public Access(final ARXLattice lattice) {
             this.lattice = lattice;
@@ -73,8 +73,7 @@ public class ARXLattice implements Serializable {
             lattice.metric = metric;
         }
 
-        public void
-                setMonotonicSubcriterion(final boolean containsMonotonicSubcriterion) {
+        public void setMonotonicSubcriterion(final boolean containsMonotonicSubcriterion) {
             lattice.containsMonotonicSubcriterion = containsMonotonicSubcriterion;
         }
 
@@ -90,8 +89,7 @@ public class ARXLattice implements Serializable {
             lattice.top = top;
         }
 
-        public void
-                setUncertainty(final boolean uncertainty) {
+        public void setUncertainty(final boolean uncertainty) {
             lattice.uncertainty = uncertainty;
         }
     }
@@ -107,7 +105,7 @@ public class ARXLattice implements Serializable {
      * A node in the lattice
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public class ARXNode {
 
@@ -115,7 +113,7 @@ public class ARXLattice implements Serializable {
          * Internal access class
          * 
          * @author Fabian Prasser
- * @author Florian Kohlmayer
+         * @author Florian Kohlmayer
          */
         public class Access {
 
@@ -223,7 +221,7 @@ public class ARXLattice implements Serializable {
 
         /** The access */
         private final Access         access     = new Access(this);
-        
+
         /** Is it anonymous */
         private Anonymity            anonymity;
 
@@ -237,10 +235,10 @@ public class ARXLattice implements Serializable {
         private Map<String, Integer> headermap;
 
         /** The max information loss */
-        private InformationLoss<?>      maxInformationLoss;
+        private InformationLoss<?>   maxInformationLoss;
 
         /** The min information loss */
-        private InformationLoss<?>      minInformationLoss;
+        private InformationLoss<?>   minInformationLoss;
 
         /** The predecessors */
         private ARXNode[]            predecessors;
@@ -255,9 +253,9 @@ public class ARXLattice implements Serializable {
          * Internal constructor for deserialization
          */
         public ARXNode() {
-        	// Empty by design
+            // Empty by design
         }
-        
+
         /**
          * Constructor
          * 
@@ -270,17 +268,17 @@ public class ARXLattice implements Serializable {
             if (node.isAnonymous()) {
                 if (uncertainty && !node.isChecked()) {
                     anonymity = Anonymity.PROBABLY_ANONYMOUS;
-                } else  {
+                } else {
                     anonymity = Anonymity.ANONYMOUS;
                 }
             } else {
                 if (uncertainty && !node.isChecked()) {
-                    if (containsMonotonicSubcriterion && !node.isKAnonymous()){
+                    if (containsMonotonicSubcriterion && !node.isKAnonymous()) {
                         anonymity = Anonymity.NOT_ANONYMOUS;
                     } else {
                         anonymity = Anonymity.PROBABLY_NOT_ANONYMOUS;
                     }
-                } else  {
+                } else {
                     anonymity = Anonymity.NOT_ANONYMOUS;
                 }
             }
@@ -447,7 +445,7 @@ public class ARXLattice implements Serializable {
     /** The bottom node */
     private transient ARXNode     bottom;
 
-    /** Is there a monotonic sub-criterion*/
+    /** Is there a monotonic sub-criterion */
     private boolean               containsMonotonicSubcriterion;
 
     /** The levels in the lattice */
@@ -455,7 +453,7 @@ public class ARXLattice implements Serializable {
 
     /** The current max absolute outliers */
     private int                   maxAbsoluteOutliers;
-    
+
     /** Metric */
     private Metric<?>             metric;
 
@@ -470,23 +468,31 @@ public class ARXLattice implements Serializable {
 
     /** Are anonymity properties potentially uncertain */
     private boolean               uncertainty;
+    
+    /** Minimum loss in the lattice*/
+    private InformationLoss<?>    minimumInformationLoss = null;
+
+    /** Maximum loss in the lattice*/
+    private InformationLoss<?>    maximumInformationLoss = null;
 
     /**
      * Constructor
-     * @param lattice The lattice to represent
-     * @param header The header
-     * @param config The config
+     * 
+     * @param lattice
+     *            The lattice to represent
+     * @param header
+     *            The header
+     * @param config
+     *            The config
      */
-    ARXLattice(final Lattice lattice,
-               final String[] header,
-               final ARXConfiguration config) {
+    ARXLattice(final Lattice lattice, final String[] header, final ARXConfiguration config) {
 
         this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
-        this.uncertainty = (config.isPracticalMonotonicity()) || 
+        this.uncertainty = (config.isPracticalMonotonicity()) ||
                            (config.getMetric().isMonotonic() && !config.isCriterionMonotonic());
         this.containsMonotonicSubcriterion = config.getMinimalGroupSize() != Integer.MAX_VALUE;
-        
+
         // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
         int index = 0;
@@ -510,7 +516,7 @@ public class ARXLattice implements Serializable {
                 map.put(level[j], node);
             }
         }
-        
+
         // Create relationships
         for (final Node[] level : lattice.getLevels()) {
             for (final Node node : level) {
@@ -598,17 +604,39 @@ public class ARXLattice implements Serializable {
     public ARXNode getTop() {
         return top;
     }
+    
+    /**
+     * Returns the minimal information loss
+     * @return
+     */
+    public InformationLoss<?> getMinimumInformationLoss(){
+        if (this.minimumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.minimumInformationLoss;
+    }
 
+    /**
+     * Returns the maximal information loss
+     * @return
+     */
+    public InformationLoss<?> getMaximumInformationLoss(){
+        if (this.maximumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.maximumInformationLoss;
+    }
+    
     /**
      * Estimates maximal information loss
      */
-    private void estimateMaxLoss() {
+    private void estimateMonotonicMaxLoss() {
 
         // Estimate with max if not known
         if (top.getMaximumInformationLoss() == null) {
-            // TODO: Check top? First, make sure that this is 
+            // TODO: Check top? First, make sure that this is
             // not already done somewhere, or only in the GUI
-            top.access().setMaximumInformationLoss(metric.max());
+            top.access().setMaximumInformationLoss(metric.createMaxInformationLoss());
         }
 
         // Push
@@ -618,7 +646,7 @@ public class ARXLattice implements Serializable {
                 final InformationLoss<?> a = node.getMaximumInformationLoss();
                 for (final ARXNode n : node.getPredecessors()) {
                     if (n.getMaximumInformationLoss() == null) {
-                        n.access().setMaximumInformationLoss(metric.max());
+                        n.access().setMaximumInformationLoss(metric.createMaxInformationLoss());
                     }
                     // If we dont know the value for sure
                     if (n.getMinimumInformationLoss() != n.getMaximumInformationLoss()) {
@@ -627,19 +655,22 @@ public class ARXLattice implements Serializable {
                 }
             }
         }
+        
+        // Store max
+        this.maximumInformationLoss = this.getTop().getMaximumInformationLoss().clone();
     }
 
     /**
      * Estimates minimal information loss
      */
-    private void estimateMinLoss() {
+    private void estimateMonotonicMinLoss() {
 
         // Estimate with zero if not known
         // TODO: Not correct for DM*
         if (bottom.getMinimumInformationLoss() == null) {
-            // TODO: Check bottom? First, make sure that this is 
+            // TODO: Check bottom? First, make sure that this is
             // not already done somewhere, or only in the GUI
-            bottom.access().setMinimumInformationLoss(metric.min());
+            bottom.access().setMinimumInformationLoss(metric.createMinInformationLoss());
         }
 
         // Push
@@ -649,7 +680,7 @@ public class ARXLattice implements Serializable {
                 final InformationLoss<?> a = node.getMinimumInformationLoss();
                 for (final ARXNode n : node.getSuccessors()) {
                     if (n.getMinimumInformationLoss() == null) {
-                        n.access().setMinimumInformationLoss(metric.min());
+                        n.access().setMinimumInformationLoss(metric.createMinInformationLoss());
                     }
                     // If we dont know the value for sure
                     if (n.getMinimumInformationLoss() != n.getMaximumInformationLoss()) {
@@ -658,6 +689,51 @@ public class ARXLattice implements Serializable {
                 }
             }
         }
+
+        // Store min
+        this.minimumInformationLoss = this.getTop().getMinimumInformationLoss().clone();
+    }
+
+    /**
+     * Estimates minimal information loss
+     */
+    private void estimateNonMonotonicLoss() {
+
+        // Determine min and max
+        InformationLoss<?> min = null;
+        InformationLoss<?> max = null;
+        for (int i = 0; i < levels.length; i++) {
+            final ARXNode[] level = levels[i];
+            for (final ARXNode node : level) {
+
+                InformationLoss<?> nodeMin = node.getMinimumInformationLoss();
+                InformationLoss<?> nodeMax = node.getMaximumInformationLoss();
+
+                if (node.isChecked()) {
+                    if (min == null || min.compareTo(nodeMin) > 0) {
+                        min = nodeMin;
+                    }
+                    if (max == null || max.compareTo(nodeMax) < 0) {
+                        max = nodeMax;
+                    }
+                }
+            }
+        }
+
+        // Propagate
+        for (int i = 0; i < levels.length; i++) {
+            final ARXNode[] level = levels[i];
+            for (final ARXNode node : level) {
+                if (!node.isChecked()) {
+                    node.maxInformationLoss = max.clone();
+                    node.minInformationLoss = min.clone();
+                }
+            }
+        }
+        
+        // Store min & max
+        this.minimumInformationLoss = min.clone();
+        this.maximumInformationLoss = max.clone();
     }
 
     /**
@@ -667,16 +743,11 @@ public class ARXLattice implements Serializable {
      */
     protected void estimateInformationLoss() {
 
-        // only estimate info loss in case of monotonic metrics
-        // or no suppression
         if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
-            estimateMinLoss();
-            estimateMaxLoss();
+            estimateMonotonicMinLoss();
+            estimateMonotonicMaxLoss();
         } else {
-
-            // TODO: Fix this! We currently assume monotonicity for all metrics!
-            estimateMinLoss();
-            estimateMaxLoss();
+            estimateNonMonotonicLoss();
         }
     }
 

@@ -47,10 +47,10 @@ public class MetricNDS extends Metric<InformationLossRCE> {
     private double[] domainSizes = null; 
 
     // Min
-    private InformationLossRCE min = null; 
+    private double[] min = null; 
 
     // Max
-    private InformationLossRCE max = null; 
+    private double[] max = null; 
 
     public MetricNDS(){
         super(false, false);
@@ -236,29 +236,27 @@ public class MetricNDS extends Metric<InformationLossRCE> {
         }
         
         // Min and max
-        double[] min = new double[this.domainSizes.length];
+        this.min = new double[this.domainSizes.length];
         Arrays.fill(min, 0d);
-        double[] max = new double[this.domainSizes.length];
+        this.max = new double[this.domainSizes.length];
         Arrays.fill(max, 1d);
-        this.min = new InformationLossRCE(min);
-        this.max = new InformationLossRCE(max);
     }
 
     @Override
-    public InformationLoss<?> max() {
+    public InformationLoss<?> createMaxInformationLoss() {
         if (max == null) {
             throw new IllegalStateException("Metric must be initialized first");
         } else {
-            return max;
+            return new InformationLossRCE(max);
         }
     }
 
     @Override
-    public InformationLoss<?> min() {
+    public InformationLoss<?> createMinInformationLoss() {
         if (min == null) {
             throw new IllegalStateException("Metric must be intialized first");
         } else {
-            return max;
+            return new InformationLossRCE(min);
         }
     }
 }

@@ -223,14 +223,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * 
      * @return
      */
-    public abstract InformationLoss<?> max();
+    public abstract InformationLoss<?> createMaxInformationLoss();
 
     /**
      * Returns an instance of the minimal value
      * 
      * @return
      */
-    public abstract InformationLoss<?> min();
+    public abstract InformationLoss<?> createMinInformationLoss();
 
     /**
      * Evaluates the metric for the given node

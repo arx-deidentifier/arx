@@ -171,7 +171,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
     }
 
     @Override
-    protected InformationLoss<double[]> clone() {
+    public InformationLoss<double[]> clone() {
         return new InformationLossRCE(value, ints);
     }
 }

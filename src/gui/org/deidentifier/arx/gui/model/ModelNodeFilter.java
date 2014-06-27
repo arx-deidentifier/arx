@@ -161,14 +161,10 @@ public class ModelNodeFilter implements Serializable {
 
             // Allow specializations and generalizations of optimum
             allowAnonymous();
-            final double max = (Double)result.getLattice()
-                                     .getTop()
-                                     .getMaximumInformationLoss()
-                                     .getValue();
-            final double min = (Double)result.getLattice()
-                                     .getBottom()
-                                     .getMinimumInformationLoss()
-                                     .getValue();
+            final double min = 0d;
+            final double max = 1d;
+            
+            
             allowInformationLoss(min, max);
             final int[] optimum = result.getGlobalOptimum().getTransformation();
             for (int i = 0; i < optimum.length; i++) {
@@ -233,14 +229,8 @@ public class ModelNodeFilter implements Serializable {
 
             // Allow generalizations of bottom
             allowNonAnonymous();
-            final double max = (Double)result.getLattice()
-                                     .getTop()
-                                     .getMaximumInformationLoss()
-                                     .getValue();
-            final double min = (Double)result.getLattice()
-                                     .getBottom()
-                                     .getMinimumInformationLoss()
-                                     .getValue();
+            final double max = 1d;
+            final double min = 0d;
             allowInformationLoss(min, max);
             final int[] base = result.getLattice()
                                      .getBottom()
@@ -293,10 +283,10 @@ public class ModelNodeFilter implements Serializable {
 
     public boolean isAllowed(final ARXLattice lattice, final ARXNode node) {
         
-        double max = node.getMaximumInformationLoss().relativeTo(lattice.getBottom().getMinimumInformationLoss(), 
-                                                                 lattice.getTop().getMaximumInformationLoss());
-        double min = node.getMinimumInformationLoss().relativeTo(lattice.getBottom().getMinimumInformationLoss(), 
-                                                                 lattice.getTop().getMaximumInformationLoss());
+        double max = node.getMaximumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
+                                                                 lattice.getMaximumInformationLoss());
+        double min = node.getMinimumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
+                                                                 lattice.getMaximumInformationLoss());
         
         if (max < minInformationLoss) {
             return false;

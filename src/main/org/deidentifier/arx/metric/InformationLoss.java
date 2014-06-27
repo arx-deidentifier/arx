@@ -75,5 +75,5 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      * Returns a clone of this object
      */
     @Override
-    protected abstract InformationLoss<T> clone();
+    public abstract InformationLoss<T> clone();
 }
