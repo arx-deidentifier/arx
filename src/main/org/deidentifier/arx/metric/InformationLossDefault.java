@@ -96,7 +96,8 @@ class InformationLossDefault extends InformationLoss<Double> {
         }
         InformationLossDefault _min = convert(min);
         InformationLossDefault _max = convert(max);
-        return (this.value - _min.getValue()) / (_max.getValue() - _min.getValue());
+        if (_max.value - _min.value == 0d) return 0d;
+        else return (this.value - _min.value) / (_max.value - _min.value);
     }
 
     @Override

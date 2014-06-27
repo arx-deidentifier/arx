@@ -691,7 +691,7 @@ public class ARXLattice implements Serializable {
         }
 
         // Store min
-        this.minimumInformationLoss = this.getTop().getMinimumInformationLoss().clone();
+        this.minimumInformationLoss = this.getBottom().getMinimumInformationLoss().clone();
     }
 
     /**
@@ -711,10 +711,10 @@ public class ARXLattice implements Serializable {
 
                 if (node.isChecked()) {
                     if (min == null || min.compareTo(nodeMin) > 0) {
-                        min = nodeMin;
+                        min = nodeMin.clone();
                     }
                     if (max == null || max.compareTo(nodeMax) < 0) {
-                        max = nodeMax;
+                        max = nodeMax.clone();
                     }
                 }
             }
