@@ -183,7 +183,7 @@ public class ViewProperties implements IView {
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
         if (node.getMinimumInformationLoss() != null) {
-            c.setText(1, String.valueOf(node.getMinimumInformationLoss().getValue()) +
+            c.setText(1, node.getMinimumInformationLoss().toString() +
                          " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class ViewProperties implements IView {
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
         if (node.getMaximumInformationLoss() != null) {
-            c.setText(1, String.valueOf(node.getMaximumInformationLoss().getValue()) +
+            c.setText(1, node.getMaximumInformationLoss().toString() +
                          " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
