@@ -32,7 +32,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Fabian Prasser
  *
  */
-public class MetricNDS extends MetricDefault {
+public class MetricNDS extends Metric<InformationLossRCE> {
 
     private static final long serialVersionUID = 4516435657712614477L;
 
@@ -46,12 +46,18 @@ public class MetricNDS extends MetricDefault {
     // Domain-size per attribute
     private double[] domainSizes = null; 
 
+    // Min
+    private InformationLossRCE min = null; 
+
+    // Max
+    private InformationLossRCE max = null; 
+
     public MetricNDS(){
         super(false, false);
     }
 
     @Override
-    protected InformationLossDefault evaluateInternal(Node node, 
+    protected InformationLossRCE evaluateInternal(Node node, 
                                                       IHashGroupify g) {
         
         // Prepare
@@ -80,27 +86,11 @@ public class MetricNDS extends MetricDefault {
         
         // Normalize
         for (int dimension=0; dimension<dimensions; dimension++){
-            scores[dimension] = getNormalizedAggregate(scores[dimension], dimension);
+            scores[dimension] = normalize(scores[dimension], dimension);
         }
         
-        // Aggregate
-        double aggregate = getAggregate(scores);
-
-
-        // Print debug info
-        boolean debug = false;
-        if (debug) {
-    
-            double mean = getMean(scores);
-            double stddev = getStandardDeviation(mean, scores);
-            System.out.println("Transformation: "+Arrays.toString(transformation));
-            System.out.println(" - Scores:   "+Arrays.toString(scores));
-            System.out.println(" - Mean:     "+mean);
-            System.out.println(" - StdDev:   "+stddev);
-            System.out.println(" - Aggregate:"+aggregate);
-        }
-        
-       return new InformationLossDefault(aggregate);
+        // Return infoloss
+        return new InformationLossRCE(scores);
     }
     
     /**
@@ -109,55 +99,12 @@ public class MetricNDS extends MetricDefault {
      * @param dimension
      * @return
      */
-    private double getNormalizedAggregate(double aggregate, int dimension) {
+    private double normalize(double aggregate, int dimension) {
 
         double min = datasetSize / domainSizes[dimension];
         double max = datasetSize;
         return (aggregate - min) / (max - min);
     }
-
-    /**
-     * Returns the arithmetic mean of the given values
-     * @param values
-     * @return
-     */
-    private final double getMean(double... values) {
-
-        double mean = 0d;
-        for (int i=0; i<values.length; i++){
-            mean += values[i];
-        }
-        mean /= (double)values.length;
-        return mean;
-    }
-    
-    /**
-     * Returns the standard deviation of the given values
-     * @param values
-     * @return
-     */
-    private final double getStandardDeviation(double mean, double... values) {
-        double dev = 0;
-        for (int i=0; i<values.length; i++){
-            dev += Math.pow(values[i] - mean, 2.0d);
-        }
-        
-        return Math.sqrt(dev / (double)values.length);
-    }
-
-    /**
-     * Returns an aggregation of the given values
-     * @param values
-     * @return
-     */
-    private final double getAggregate(double... values) {
-
-        double mean = getMean(values);
-        double stddev = getStandardDeviation(mean, values);
-        return (mean + stddev) / 2d;
-    }
-    
-
     
     /**
      * Computes the number of values from the domain mapped by each value in the hierarchy
@@ -286,6 +233,32 @@ public class MetricNDS extends MetricDefault {
             }   
         } else {
             this.datasetSize = input.getDataLength();
+        }
+        
+        // Min and max
+        double[] min = new double[this.domainSizes.length];
+        Arrays.fill(min, 0d);
+        double[] max = new double[this.domainSizes.length];
+        Arrays.fill(max, 1d);
+        this.min = new InformationLossRCE(min);
+        this.max = new InformationLossRCE(max);
+    }
+
+    @Override
+    public InformationLoss<?> max() {
+        if (max == null) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return max;
+        }
+    }
+
+    @Override
+    public InformationLoss<?> min() {
+        if (min == null) {
+            throw new IllegalStateException("Metric must be intialized first");
+        } else {
+            return max;
         }
     }
 }

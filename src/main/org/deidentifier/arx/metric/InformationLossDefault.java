@@ -19,8 +19,8 @@
 package org.deidentifier.arx.metric;
 
 /**
- * This class implements a default information loss which represents one single
- * metric.
+ * This class implements an information loss which can be represented as
+ * a single decimal number.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -104,6 +104,11 @@ class InformationLossDefault extends InformationLoss<Double> {
         return Double.valueOf(this.value).toString();
     }
 
+    /**
+     * Converter method
+     * @param other
+     * @return
+     */
     private InformationLossDefault convert(InformationLoss<?> other){
         if (other == null) return null;
         if (!(other instanceof InformationLossDefault)) {
