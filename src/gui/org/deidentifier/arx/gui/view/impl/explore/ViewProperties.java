@@ -48,13 +48,13 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class ViewProperties implements IView {
 
-    private ARXResult               result;
-    private Table                   table;
     private final List<TableColumn> columns = new ArrayList<TableColumn>();
-    private final List<TableItem>   items   = new ArrayList<TableItem>();
-    private final NumberFormat      format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
-    private final Composite         root;
     private final Controller        controller;
+    private final NumberFormat      format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
+    private final List<TableItem>   items   = new ArrayList<TableItem>();
+    private ARXResult               result;
+    private final Composite         root;
+    private Table                   table;
 
     /**
      * Creates a new instance
@@ -79,41 +79,6 @@ public class ViewProperties implements IView {
 
         createNodeGroup(root);
         reset();
-    }
-
-    /**
-     * Converts an information loss into a relative value in percent
-     * 
-     * @param infoLoss
-     * @return
-     */
-    private double asRelativeValue(final InformationLoss<?> infoLoss) {
-        if (result == null) return 0;
-        return infoLoss.relativeTo(result.getLattice().getBottom().getMinimumInformationLoss(), 
-                                   result.getLattice().getTop().getMaximumInformationLoss()) * 100d;
-    }
-
-    /**
-     * Creates the required controls
-     * @param groupNode
-     */
-    private void createNodeGroup(final Composite groupNode) {
-
-        table = new Table(groupNode, SWT.BORDER);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        final GridData gdata = SWTUtil.createFillGridData();
-        table.setLayoutData(gdata);
-
-        TableColumn c = new TableColumn(table, SWT.NONE);
-        c.setText(Resources.getMessage("NodePropertiesView.16")); //$NON-NLS-1$
-        columns.add(c);
-        c = new TableColumn(table, SWT.NONE);
-        c.setText(Resources.getMessage("NodePropertiesView.17")); //$NON-NLS-1$
-        columns.add(c);
-        for (final TableColumn col : columns) {
-            col.pack();
-        }
     }
 
     @Override
@@ -163,6 +128,56 @@ public class ViewProperties implements IView {
         table.setRedraw(true);
         table.redraw();
         SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.RESULT) {
+            result = (ARXResult) event.data;
+            reset();
+        } else if (event.part == ModelPart.SELECTED_NODE) {
+            if (event.data == null) {
+                reset();
+            } else {
+                update((ARXNode) event.data);
+                SWTUtil.enable(root);
+            }
+        }
+    }
+
+    /**
+     * Converts an information loss into a relative value in percent
+     * 
+     * @param infoLoss
+     * @return
+     */
+    private double asRelativeValue(final InformationLoss<?> infoLoss) {
+        if (result == null) return 0;
+        return infoLoss.relativeTo(result.getLattice().getBottom().getMinimumInformationLoss(), 
+                                   result.getLattice().getTop().getMaximumInformationLoss()) * 100d;
+    }
+
+    /**
+     * Creates the required controls
+     * @param groupNode
+     */
+    private void createNodeGroup(final Composite groupNode) {
+
+        table = new Table(groupNode, SWT.BORDER);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        final GridData gdata = SWTUtil.createFillGridData();
+        table.setLayoutData(gdata);
+
+        TableColumn c = new TableColumn(table, SWT.NONE);
+        c.setText(Resources.getMessage("NodePropertiesView.16")); //$NON-NLS-1$
+        columns.add(c);
+        c = new TableColumn(table, SWT.NONE);
+        c.setText(Resources.getMessage("NodePropertiesView.17")); //$NON-NLS-1$
+        columns.add(c);
+        for (final TableColumn col : columns) {
+            col.pack();
+        }
     }
 
     /**
@@ -219,20 +234,5 @@ public class ViewProperties implements IView {
         }
         table.setRedraw(true);
         table.redraw();
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.RESULT) {
-            result = (ARXResult) event.data;
-            reset();
-        } else if (event.part == ModelPart.SELECTED_NODE) {
-            if (event.data == null) {
-                reset();
-            } else {
-                update((ARXNode) event.data);
-                SWTUtil.enable(root);
-            }
-        }
     }
 }
