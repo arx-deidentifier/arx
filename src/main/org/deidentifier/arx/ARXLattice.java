@@ -285,9 +285,6 @@ public class ARXLattice implements Serializable {
             minInformationLoss = node.getInformationLoss();
             maxInformationLoss = node.getInformationLoss();
             checked = node.isChecked();
-            if (checked && node.getInformationLoss() == null) {
-                throw new NullPointerException("Information loss is null for checked node");
-            }
         }
 
         /**
@@ -712,7 +709,7 @@ public class ARXLattice implements Serializable {
                 InformationLoss<?> nodeMin = node.getMinimumInformationLoss();
                 InformationLoss<?> nodeMax = node.getMaximumInformationLoss();
 
-                if (node.isChecked()) {
+                if (nodeMin != null && nodeMin.equals(nodeMax)) {
                     if (min == null || min.compareTo(nodeMin) > 0) {
                         min = nodeMin.clone();
                     }
@@ -727,9 +724,11 @@ public class ARXLattice implements Serializable {
         for (int i = 0; i < levels.length; i++) {
             final ARXNode[] level = levels[i];
             for (final ARXNode node : level) {
-                if (!node.isChecked()) {
-                    node.maxInformationLoss = max.clone();
+                if (node.minInformationLoss == null) {
                     node.minInformationLoss = min.clone();
+                }
+                if (node.maxInformationLoss == null) {
+                    node.maxInformationLoss = max.clone();
                 }
             }
         }
