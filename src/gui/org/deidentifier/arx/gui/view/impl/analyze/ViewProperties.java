@@ -161,8 +161,8 @@ public abstract class ViewProperties implements IView {
      * @return
      */
     protected double asRelativeValue(final InformationLoss<?> infoLoss, final ARXResult result) {
-        return infoLoss.relativeTo(model.getResult().getLattice().getBottom().getMinimumInformationLoss(), 
-                                   model.getResult().getLattice().getTop().getMaximumInformationLoss()) * 100d;
+        return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
+                                   model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
     }
     
     /**

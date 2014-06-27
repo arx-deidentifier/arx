@@ -160,8 +160,8 @@ public class ViewList implements IView {
 
         if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
             model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
-            return infoLoss.relativeTo(model.getResult().getLattice().getBottom().getMinimumInformationLoss(), 
-                                       model.getResult().getLattice().getTop().getMaximumInformationLoss()) * 100d;
+            return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
+                                       model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
         } else {
             return 0;
         }
