@@ -56,8 +56,12 @@ public class MetricAECS extends MetricDefault {
         while (m != null) {
             if (m.count > 0) {
                 tuples += m.count;
-                groups += m.isNotOutlier ? 1 : 0;
-                suppressed |= !m.isNotOutlier;
+                // Only respect outliers in case of anonymous nodes
+                if (m.isNotOutlier || !node.isAnonymous()) {
+                    groups++;
+                } else {
+                    suppressed=true;
+                }
             }
             m = m.nextOrdered;
         }

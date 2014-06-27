@@ -53,7 +53,7 @@ public class MetricDM extends MetricDefault {
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            //only respect outliers in case of anonymous nodes
+            // Only respect outliers in case of anonymous nodes
             if (!anonymous || m.isNotOutlier) {
                 value += ((double) m.count * (double) m.count);
             } else {

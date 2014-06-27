@@ -58,19 +58,19 @@ public class MetricNDS extends Metric<InformationLossRCE> {
 
     @Override
     protected InformationLossRCE evaluateInternal(Node node, 
-                                                      IHashGroupify g) {
+                                                  IHashGroupify g) {
         
         // Prepare
         int[] transformation = node.getTransformation();
         int dimensions = transformation.length;
         double[] scores = new double[dimensions];
 
-        // m.count only contains tuples from the research subset
+        // m.count only counts tuples from the research subset
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
             if (m.count>0) {
-                
-                if (m.isNotOutlier) {
+                // Only respect outliers in case of anonymous nodes
+                if (m.isNotOutlier || !node.isAnonymous()) {
                     for (int dimension=0; dimension<dimensions; dimension++){
                         int value = m.key[dimension];
                         scores[dimension] += (double)m.count * frequencies[dimension][transformation[dimension]][value];

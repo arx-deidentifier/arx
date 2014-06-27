@@ -76,26 +76,28 @@ public class MetricNMEntropy extends MetricEntropy {
         }
 
         // Compute counts for suppressed values in each column 
-        // No change for d-presence needed; m.count contains the research subset count already
-        HashGroupifyEntry m = g.getFirstEntry();
-        while (m != null) {
-            if (!m.isNotOutlier && m.count>0) {
-                suppressedTuples += m.count;
-                for (int i = 0; i < original.length; i++) {
-                    key = m.key[i];
-                    val = original[i].get(key);
-                    if (val == null) {
-                        original[i].put(key, m.count);
-                    } else {
-                        original[i].put(key, m.count + val);
+        // m.count only counts tuples from the research subset
+        // Only respect outliers in case of anonymous nodes
+        if (node.isAnonymous()) {
+            HashGroupifyEntry m = g.getFirstEntry();
+            while (m != null) {
+                if (!m.isNotOutlier && m.count>0) {
+                    suppressedTuples += m.count;
+                    for (int i = 0; i < original.length; i++) {
+                        key = m.key[i];
+                        val = original[i].get(key);
+                        if (val == null) {
+                            original[i].put(key, m.count);
+                        } else {
+                            original[i].put(key, m.count + val);
+                        }
                     }
                 }
+                m = m.nextOrdered;
             }
-            m = m.nextOrdered;
         }
 
         // Evaluate entropy for suppressed tuples
-        // TODO: Skipping the whole computation in this case by accessing HashGroupify.currentOutliers possible?
         if (suppressedTuples != 0){
 	        for (int i = 0; i < original.length; i++) {
 	            for (final double count : original[i].values()) {
