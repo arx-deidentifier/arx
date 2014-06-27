@@ -35,26 +35,37 @@ class InformationLossRCE extends InformationLoss<double[]> {
 
     private static final long   serialVersionUID = -602019669402453406L;
 
+    /** The precision in number of digits in the string representation */
+    private static final int    PRECISION_STRING = 2;
+
+    /** The precision as a multiplier */
+    private static final double MULTIPLIER_STRING = Math.pow(10, PRECISION_STRING);
+
     /** The precision in number of digits per attribute */
     private static final int    PRECISION        = 6;
 
     /** The precision as a multiplier */
-    private static final double MULTIPLIER       = 10 ^ PRECISION;
+    private static final double MULTIPLIER       = Math.pow(10, PRECISION);
 
     /** The integer representation */
-    private BigInteger          ints;
+    private BigInteger    ints;
 
-    /** Current value */
-    private double[]            value;
+    /** Value */
+    private double[]      value;
+
+    /** String representation */
+    private String        string;
 
     /**
      * Clone constructor
      * @param value
      * @param ints
+     * @param string
      */
-    InformationLossRCE(final double[] value, final BigInteger ints) {
+    private InformationLossRCE(final double[] value, final BigInteger ints, final String string) {
         this.value = value;
         this.ints = ints;
+        this.string = string;
     }
     
     /**
@@ -79,12 +90,23 @@ class InformationLossRCE extends InformationLoss<double[]> {
             long ival = (long)Math.round(v * MULTIPLIER);
             StringBuilder sval = new StringBuilder();
             sval.append(ival);
-            while (sval.length() != PRECISION) {
+            while (sval.length() < (PRECISION + 1)) {
                 sval.insert(0, "0");
             }
             digits.append(sval);
         }
         this.ints = new BigInteger(digits.toString());
+        
+        // Create string representation
+        digits.setLength(0);
+        digits.append("[");
+        for (double v : value) {
+            long ival = (long)Math.round(v * MULTIPLIER_STRING);
+            digits.append(ival);
+            digits.append(",");
+        }
+        digits.setCharAt(digits.length()-1, ']');
+        this.string = digits.toString();
     }
 
     @Override
@@ -124,6 +146,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
         if (o.compareTo(this)>0) {
             value = o.value;
             ints = o.ints;
+            string = o.string;
         }
     }
 
@@ -134,6 +157,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
         if (o.compareTo(this)<0) {
             value = o.value;
             ints = o.ints;
+            string = o.string;
         }
     }
 
@@ -154,7 +178,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
 
     @Override
     public String toString() {
-        return Arrays.toString(this.value);
+        return string;
     }
 
     /**
@@ -173,6 +197,6 @@ class InformationLossRCE extends InformationLoss<double[]> {
 
     @Override
     public InformationLoss<double[]> clone() {
-        return new InformationLossRCE(value, ints);
+        return new InformationLossRCE(value, ints, string);
     }
 }
