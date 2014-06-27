@@ -341,9 +341,13 @@ public class Controller implements IView {
             if (worker.getError() instanceof InvocationTargetException) {
                 t = worker.getError().getCause();
             }
-            main.showInfoDialog(main.getShell(), 
-                                Resources.getMessage("Controller.13"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.14") + t.getMessage()); //$NON-NLS-1$
+            if (t instanceof NullPointerException) {
+                main.showErrorDialog(main.getShell(), "Internal error", t);
+            } else {
+                main.showInfoDialog(main.getShell(), 
+                                    Resources.getMessage("Controller.13"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.14") + t.getMessage()); //$NON-NLS-1$
+            }
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             worker.getError().printStackTrace(pw);

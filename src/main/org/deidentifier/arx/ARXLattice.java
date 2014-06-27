@@ -264,7 +264,7 @@ public class ARXLattice implements Serializable {
          */
         private ARXNode(final Node node, final Map<String, Integer> headermap) {
             this.headermap = headermap;
-            transformation = node.getTransformation();
+            this.transformation = node.getTransformation();
             if (node.isAnonymous()) {
                 if (uncertainty && !node.isChecked()) {
                     anonymity = Anonymity.PROBABLY_ANONYMOUS;
@@ -285,6 +285,9 @@ public class ARXLattice implements Serializable {
             minInformationLoss = node.getInformationLoss();
             maxInformationLoss = node.getInformationLoss();
             checked = node.isChecked();
+            if (checked && node.getInformationLoss() == null) {
+                throw new NullPointerException("Information loss is null for checked node");
+            }
         }
 
         /**
