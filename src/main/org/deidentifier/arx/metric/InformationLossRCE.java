@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.Arrays;
 
 /**
@@ -146,9 +147,9 @@ class InformationLossRCE extends InformationLoss<double[]> {
         InformationLossRCE _min = convert(min);
         InformationLossRCE _max = convert(max);
         
-        BigDecimal a = new BigDecimal(this.ints.subtract(_min.ints), PRECISION);
-        BigDecimal b = new BigDecimal(_max.ints.subtract(_min.ints), PRECISION);
-        return a.divide(b).doubleValue();
+        BigDecimal a = new BigDecimal(this.ints.subtract(_min.ints));
+        BigDecimal b = new BigDecimal(_max.ints.subtract(_min.ints));
+        return a.divide(b, MathContext.DECIMAL64).doubleValue();
     }
 
     @Override
