@@ -103,7 +103,8 @@ public class MetricNDS extends Metric<InformationLossRCE> {
 
         double min = datasetSize / domainSizes[dimension];
         double max = datasetSize;
-        return (aggregate - min) / (max - min);
+        double result = (aggregate - min) / (max - min);
+        return result >= 0d ? result : 0d;
     }
     
     /**
