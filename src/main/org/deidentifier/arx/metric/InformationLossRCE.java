@@ -18,9 +18,7 @@
 
 package org.deidentifier.arx.metric;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.Arrays;
 
 /**
@@ -33,31 +31,31 @@ import java.util.Arrays;
  */
 class InformationLossRCE extends InformationLoss<double[]> {
 
-    private static final long   serialVersionUID = -602019669402453406L;
+    /** The precision in number of digits per attribute */
+    private static final int    PRECISION        = 6;
 
     /** The precision in number of digits in the string representation */
     private static final int    PRECISION_STRING = 2;
 
     /** The precision as a multiplier */
-    private static final double MULTIPLIER_STRING = Math.pow(10, PRECISION_STRING);
-
-    /** The precision in number of digits per attribute */
-    private static final int    PRECISION        = 6;
+    private static final double MULTIPLIER       = Math.pow(10, PRECISION);
 
     /** The precision as a multiplier */
-    private static final double MULTIPLIER       = Math.pow(10, PRECISION);
+    private static final double MULTIPLIER_STRING = Math.pow(10, PRECISION_STRING);
+
+    private static final long   serialVersionUID = -602019669402453406L;
 
     /** The integer representation */
     private BigInteger    ints;
 
-    /** Value */
-    private double[]      value;
+    /** double representation */
+    private double        perc;
 
     /** String representation */
     private String        string;
 
-    /** double representation */
-    private double        perc;
+    /** Value */
+    private double[]      value;
     
     /**
      * Clone constructor
@@ -119,18 +117,15 @@ class InformationLossRCE extends InformationLoss<double[]> {
     }
 
     @Override
+    public InformationLoss<double[]> clone() {
+        return new InformationLossRCE(value, ints, string, perc);
+    }
+
+    @Override
     public int compareTo(InformationLoss<?> other) {
         InformationLossRCE o = convert(other);
         if (other == null) return +1;
         else return ints.compareTo(o.ints);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(value);
-        return result;
     }
 
     @Override
@@ -146,6 +141,14 @@ class InformationLossRCE extends InformationLoss<double[]> {
     @Override
     public double[] getValue() {
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(value);
+        return result;
     }
 
     @Override
@@ -193,6 +196,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
     public String toString() {
         return string;
     }
+    
 
     /**
      * Converter method
@@ -208,7 +212,6 @@ class InformationLossRCE extends InformationLoss<double[]> {
         }
     }
     
-
     /**
      * Returns the arithmetic mean of the given values
      * @param values
@@ -223,7 +226,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
         mean /= (double)values.length;
         return mean;
     }
-    
+
     /**
      * Returns the standard deviation of the given values
      * @param values
@@ -236,10 +239,5 @@ class InformationLossRCE extends InformationLoss<double[]> {
         }
         
         return Math.sqrt(dev / (double)values.length);
-    }
-
-    @Override
-    public InformationLoss<double[]> clone() {
-        return new InformationLossRCE(value, ints, string, perc);
     }
 }
