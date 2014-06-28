@@ -56,16 +56,21 @@ class InformationLossRCE extends InformationLoss<double[]> {
     /** String representation */
     private String        string;
 
+    /** double representation */
+    private double        perc;
+    
     /**
      * Clone constructor
      * @param value
      * @param ints
      * @param string
+     * @param perc
      */
-    private InformationLossRCE(final double[] value, final BigInteger ints, final String string) {
+    private InformationLossRCE(final double[] value, final BigInteger ints, final String string, final double perc) {
         this.value = value;
         this.ints = ints;
         this.string = string;
+        this.perc = perc;
     }
     
     /**
@@ -107,6 +112,10 @@ class InformationLossRCE extends InformationLoss<double[]> {
         }
         digits.setCharAt(digits.length()-1, ']');
         this.string = digits.toString();
+        
+        // 70% percentile
+        double mean = getMean(value);
+        this.perc = mean + getStandardDeviation(mean, value);
     }
 
     @Override
@@ -147,6 +156,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
             value = o.value;
             ints = o.ints;
             string = o.string;
+            perc = o.perc;
         }
     }
 
@@ -158,6 +168,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
             value = o.value;
             ints = o.ints;
             string = o.string;
+            perc = o.perc;
         }
     }
 
@@ -171,9 +182,11 @@ class InformationLossRCE extends InformationLoss<double[]> {
         InformationLossRCE _min = convert(min);
         InformationLossRCE _max = convert(max);
         
-        BigDecimal a = new BigDecimal(this.ints.subtract(_min.ints));
-        BigDecimal b = new BigDecimal(_max.ints.subtract(_min.ints));
-        return a.divide(b, MathContext.DECIMAL64).doubleValue();
+        // TODO
+//      BigDecimal a = new BigDecimal(this.ints.subtract(_min.ints));
+//      BigDecimal b = new BigDecimal(_max.ints.subtract(_min.ints));
+//      return a.divide(b, MathContext.DECIMAL64).doubleValue();
+        return (perc - _min.perc) / (_max.perc - _min.perc);
     }
 
     @Override
@@ -194,9 +207,39 @@ class InformationLossRCE extends InformationLoss<double[]> {
             return (InformationLossRCE)other;
         }
     }
+    
+
+    /**
+     * Returns the arithmetic mean of the given values
+     * @param values
+     * @return
+     */
+    private double getMean(double... values) {
+
+        double mean = 0d;
+        for (int i=0; i<values.length; i++){
+            mean += values[i];
+        }
+        mean /= (double)values.length;
+        return mean;
+    }
+    
+    /**
+     * Returns the standard deviation of the given values
+     * @param values
+     * @return
+     */
+    private double getStandardDeviation(double mean, double... values) {
+        double dev = 0;
+        for (int i=0; i<values.length; i++){
+            dev += Math.pow(values[i] - mean, 2.0d);
+        }
+        
+        return Math.sqrt(dev / (double)values.length);
+    }
 
     @Override
     public InformationLoss<double[]> clone() {
-        return new InformationLossRCE(value, ints, string);
+        return new InformationLossRCE(value, ints, string, perc);
     }
 }
