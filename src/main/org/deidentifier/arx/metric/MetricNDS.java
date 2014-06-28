@@ -34,65 +34,121 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricNDS extends Metric<InformationLossRCE> {
 
+    /** SUID*/
     private static final long serialVersionUID = 4516435657712614477L;
 
-    // TODO: This array is unnecessarily complex: dimension->dictionary.length * levels
-    // Initialized at runtime: dimension->level->value(||=dictionary.length)->frequency
-    private double[][][] frequencies;
-    
-    // Total number of tuples, depends on existence of research subset
+    /** Total number of tuples, depends on existence of research subset*/
     private double datasetSize = 0d;
     
-    // Domain-size per attribute
-    private double[] domainSizes = null; 
+    /** Domain-size per attribute*/
+    private double[] domainSizes = null;
+    
+    // TODO: This array is unnecessarily complex: dimension->dictionary.length * levels
+    /** Initialized at runtime: dimension->level->value(||=dictionary.length)->frequency*/
+    private double[][][] frequencies; 
 
-    // Min
-    private double[] min = null; 
+    /** Configuration factor*/
+    private final double gFactor; 
+    /** Configuration factor*/
+    private final double gsFactor; 
+    /** Configuration factor*/
+    private final double sFactor;
 
-    // Max
-    private double[] max = null; 
+    /** Max */
+    private double[] max = null;
+    /** Min */
+    private double[] min = null;
 
+    /**
+     * Default constructor which treats all transformation methods and attributes equally
+     */
     public MetricNDS(){
-        super(false, false);
+        this(0.5d);
     }
 
-    @Override
-    protected InformationLossRCE evaluateInternal(Node node, 
-                                                  IHashGroupify g) {
-        
-        // Prepare
-        int[] transformation = node.getTransformation();
-        int dimensions = transformation.length;
-        double[] scores = new double[dimensions];
-
-        // m.count only counts tuples from the research subset
-        HashGroupifyEntry m = g.getFirstEntry();
-        while (m != null) {
-            if (m.count>0) {
-                // Only respect outliers in case of anonymous nodes
-                if (m.isNotOutlier || !node.isAnonymous()) {
-                    for (int dimension=0; dimension<dimensions; dimension++){
-                        int value = m.key[dimension];
-                        scores[dimension] += (double)m.count * frequencies[dimension][transformation[dimension]][value];
-                    }
-                } else {
-                    for (int dimension=0; dimension<dimensions; dimension++){
-                        scores[dimension] += (double)m.count; // *1d
-                    }
-                }
-            }
-            m = m.nextOrdered;
-        }
-        
-        // Normalize
-        for (int dimension=0; dimension<dimensions; dimension++){
-            scores[dimension] = normalize(scores[dimension], dimension);
-        }
-        
-        // Return infoloss
-        return new InformationLossRCE(scores);
+    /**
+     * A contructor that allows to define a factor weighting generalization and suppression.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor generalization, and a factor of 1 will favor
+     *                 suppression. The values in between can be used for
+     *                 balancing both methods.
+     */
+    public MetricNDS(double gsFactor){
+        super(false, false);
+        this.gsFactor = gsFactor;
+        this.sFactor = computeSuppressionFactor(gsFactor);
+        this.gFactor = computeGeneralizationFactor(gsFactor);
     }
     
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        if (max == null) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossRCE(max);
+        }
+    }
+    
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (min == null) {
+            throw new IllegalStateException("Metric must be intialized first");
+        } else {
+            return new InformationLossRCE(min);
+        }
+    }
+
+    /**
+     * Returns the factor used weight generalized values
+     * @return
+     */
+    public double getGeneralizationFactor() {
+        return gFactor;
+    }
+    
+    /**
+     * Returns the factor weighting generalization and suppression
+     * 
+     * @return A factor [0,1] weighting generalization and suppression. 
+     *         The default value is 0.5, which means that generalization
+     *         and suppression will be treated equally. A factor of 0
+     *         will favor generalization, and a factor of 1 will favor
+     *         suppression. The values in between can be used for
+     *         balancing both methods.
+     */
+    public double getGsFactor() {
+        return gsFactor;
+    }
+    
+    /**
+     * Returns the factor used to weight suppressed values
+     * @return
+     */
+    public double getSuppressionFactor() {
+        return sFactor;
+    }
+
+    /**
+     * Returns the generalization factor for a given gs factor
+     * @param gsFactor
+     * @return
+     */
+    private double computeGeneralizationFactor(double gsFactor){
+        return gsFactor <=0.5d ? 1d : 1d - 2d * gsFactor;
+    }
+
+    /**
+     * Returns the suppression factor for a given gs factor
+     * @param gsFactor
+     * @return
+     */
+    private double computeSuppressionFactor(double gsFactor){
+        return gsFactor <0.5d ? 1d - 2d * gsFactor : 1d;
+    }
+
     /**
      * Normalizes the aggregate
      * @param aggregate
@@ -106,7 +162,7 @@ public class MetricNDS extends Metric<InformationLossRCE> {
         double result = (aggregate - min) / (max - min);
         return result >= 0d ? result : 0d;
     }
-    
+
     /**
      * Computes the number of values from the domain mapped by each value in the hierarchy
      * @param hierarchy
@@ -133,6 +189,54 @@ public class MetricNDS extends Metric<InformationLossRCE> {
                 entry.setValue(entry.getValue() / domainSize);
             }
         }
+    }
+
+    @Override
+    protected InformationLossRCE evaluateInternal(Node node, 
+                                                  IHashGroupify g) {
+        
+        // Prepare
+        int[] transformation = node.getTransformation();
+        int dimensions = transformation.length;
+        double[] scores = new double[dimensions];
+
+        // m.count only counts tuples from the research subset
+        HashGroupifyEntry m = g.getFirstEntry();
+        while (m != null) {
+            if (m.count>0) {
+                
+                // Only respect outliers in case of anonymous nodes
+                if (m.isNotOutlier || !node.isAnonymous()) {
+                    for (int dimension=0; dimension<dimensions; dimension++){
+                        
+                        int value = m.key[dimension];
+                        double share = (double)m.count * frequencies[dimension][transformation[dimension]][value];
+                        scores[dimension] += share * gFactor;
+                    }
+                } else {
+                    for (int dimension=0; dimension<dimensions; dimension++){
+                        
+                        if (sFactor == 1d){
+                            double share = (double)m.count; // *1d
+                            scores[dimension] += share;
+                        } else {
+                            int value = m.key[dimension];
+                            double share = (double)m.count * frequencies[dimension][transformation[dimension]][value];
+                            scores[dimension] += share + sFactor * (1d - share);
+                        }
+                    }
+                }
+            }
+            m = m.nextOrdered;
+        }
+        
+        // Normalize
+        for (int dimension=0; dimension<dimensions; dimension++){
+            scores[dimension] = normalize(scores[dimension], dimension);
+        }
+        
+        // Return infoloss
+        return new InformationLossRCE(scores);
     }
 
     @Override
@@ -241,23 +345,5 @@ public class MetricNDS extends Metric<InformationLossRCE> {
         Arrays.fill(min, 0d);
         this.max = new double[this.domainSizes.length];
         Arrays.fill(max, 1d);
-    }
-
-    @Override
-    public InformationLoss<?> createMaxInformationLoss() {
-        if (max == null) {
-            throw new IllegalStateException("Metric must be initialized first");
-        } else {
-            return new InformationLossRCE(max);
-        }
-    }
-
-    @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        if (min == null) {
-            throw new IllegalStateException("Metric must be intialized first");
-        } else {
-            return new InformationLossRCE(min);
-        }
     }
 }
