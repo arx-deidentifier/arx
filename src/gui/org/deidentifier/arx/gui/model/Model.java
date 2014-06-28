@@ -40,6 +40,8 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.MetricNDS;
 
 public class Model implements Serializable {
 
@@ -135,6 +137,17 @@ public class Model implements Serializable {
 		
 		// Initialize the config
 		config.removeAllCriteria();
+		
+		// Initialize NDS, if present
+		if (config.getMetric() instanceof MetricNDS) {
+		    Map<String, Double> weights = new HashMap<String, Double>();
+		    for (String attr : definition.getQuasiIdentifyingAttributes()) {
+		        weights.put(attr, this.getAttributeWeight(attr));
+		    }
+		    MetricNDS metric = Metric.createNDSMetric(this.getSuppressionWeight(), 
+		                                              weights);
+		    config.setMetric(metric);
+		}
 
 		// Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
