@@ -82,6 +82,7 @@ public class MetricNDS extends Metric<InformationLossRCE> {
      *                  
      */
     public MetricNDS(double gsFactor){
+        // TODO: Configure weights via ARXConfig?
         this(gsFactor, new HashMap<String, Double>());
     }
 
@@ -92,6 +93,7 @@ public class MetricNDS extends Metric<InformationLossRCE> {
      *                 map. An attribute not contained in the map will have a factor of 0. 
      */
     public MetricNDS(Map<String, Double> aFactors){
+        // TODO: Configure weights via ARXConfig?
         this(0.5d, aFactors);
     }
 
@@ -110,6 +112,7 @@ public class MetricNDS extends Metric<InformationLossRCE> {
      *                 map. An attribute not contained in the map will have a factor of 0. 
      */
     public MetricNDS(double gsFactor, Map<String, Double> aFactors){
+        // TODO: Configure weights via ARXConfig?
         super(false, false);
         this.gsFactor = gsFactor;
         this.sFactor = computeSuppressionFactor(gsFactor);
