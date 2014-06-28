@@ -56,6 +56,9 @@ class InformationLossRCE extends InformationLoss<double[]> {
 
     /** Value */
     private double[]      value;
+
+    /** Value */
+    private double[]      weights;
     
     /**
      * Clone constructor
@@ -64,32 +67,47 @@ class InformationLossRCE extends InformationLoss<double[]> {
      * @param string
      * @param perc
      */
-    private InformationLossRCE(final double[] value, final BigInteger ints, final String string, final double perc) {
+    private InformationLossRCE(final double[] value, final BigInteger ints, final String string, final double perc, final double[] weights) {
         this.value = value;
         this.ints = ints;
         this.string = string;
         this.perc = perc;
+        this.weights = weights;
     }
-    
+
     /**
      * Creates a new instance
      * @param value
      */
     InformationLossRCE(final double[] value) {
+        this (value, null);
+    } 
+    /**
+     * Creates a new instance
+     * @param value
+     */
+    InformationLossRCE(final double[] value, final double[] weights) {
+        
+        // Create weighted representation
+        double[] weightedValue = null;
+        this.weights = weights;
+        if (weights != null) {
+            weightedValue = Arrays.copyOf(value, value.length);
+            for (int i=0; i<weightedValue.length; i++) {
+                weightedValue[i] *= weights[i];
+            }
+            sortDescending(weightedValue);
+        }
         
         // Create sorted array in descending order
         this.value = value;
-        Arrays.sort(value);
-        for (int i = 0; i < value.length / 2; i++) {
-            int other = value.length - (i + 1);
-            double temp = value[i];
-            value[i] = value[other];
-            value[other] = temp;
-        }
+        sortDescending(this.value);
         
         // Create integer representation
         StringBuilder digits = new StringBuilder();
-        for (double v : value) {
+        double[] source = value;
+        if (weightedValue != null) source = weightedValue;
+        for (double v : source) {
             long ival = (long)Math.round(v * MULTIPLIER);
             StringBuilder sval = new StringBuilder();
             sval.append(ival);
@@ -116,9 +134,23 @@ class InformationLossRCE extends InformationLoss<double[]> {
         this.perc = mean + getStandardDeviation(mean, value);
     }
 
+    /**
+     * Sorts the array in descending order
+     * @param value
+     */
+    private void sortDescending(double[] value) {
+        Arrays.sort(value);
+        for (int i = 0; i < value.length / 2; i++) {
+            int other = value.length - (i + 1);
+            double temp = value[i];
+            value[i] = value[other];
+            value[other] = temp;
+        }
+    }
+
     @Override
     public InformationLoss<double[]> clone() {
-        return new InformationLossRCE(value, ints, string, perc);
+        return new InformationLossRCE(value, ints, string, perc, weights);
     }
 
     @Override
@@ -160,6 +192,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
             ints = o.ints;
             string = o.string;
             perc = o.perc;
+            weights = o.weights;
         }
     }
 
@@ -172,6 +205,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
             ints = o.ints;
             string = o.string;
             perc = o.perc;
+            weights = o.weights;
         }
     }
 
