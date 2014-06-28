@@ -87,11 +87,57 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Creates an instance of the NDS metric
+     * Creates an instance of the NDS metric that treats suppression, generalization and
+     * all attributes equally.
      * @return
      */
     public static Metric<?> createNDSMetric() {
         return new MetricNDS();
+    }
+    
+
+    /**
+     * Creates an NDS metric with factors for weighting generalization and suppression
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor generalization, and a factor of 1 will favor
+     *                 suppression. The values in between can be used for
+     *                 balancing both methods. 
+     */
+    public static MetricNDS createNDSMetric(double gsFactor) {
+        return new MetricNDS(gsFactor);
+    }
+    
+    /**
+     * Creates an NDS metric with factors for weighting generalization, suppression
+     * and individual attributes
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor generalization, and a factor of 1 will favor
+     *                 suppression. The values in between can be used for
+     *                 balancing both methods.
+     *                 
+     * @param aFactors Attribute factors [0,1] defining their importance, represented in a
+     *                 map. An attribute not contained in the map will have a factor of 0. 
+     */
+    public static MetricNDS createNDSMetric(double gsFactor, Map<String, Double> aFactors) {
+        return new MetricNDS(gsFactor, aFactors);
+    }
+
+
+    /**
+     * Creates an NDS metric with factors for weighting 
+     * individual attributes
+     * 
+     * @param aFactors Attribute factors [0,1] defining their importance, represented in a
+     *                 map. An attribute not contained in the map will have a factor of 0. 
+     */
+    public static MetricNDS createNDSMetric(Map<String, Double> aFactors) {
+        return new MetricNDS(aFactors);
     }
 
     /**
