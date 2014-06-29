@@ -272,22 +272,22 @@ public class Vocabulary_V1 extends Vocabulary {
     }
 
     @Override
-    public String getNDSConfig() {
-        return "ndsConfig";
-    }
-
-    @Override
     public String getGSFactor() {
         return "gsFactor";
     }
 
     @Override
-    public String getAttributeFactor() {
-        return "attributeFactor";
+    public String getAttributeWeight() {
+        return "attributeWeight";
     }
 
     @Override
-    public String getFactor() {
-        return "factor";
+    public String getWeight() {
+        return "weight";
+    }
+
+    @Override
+    public String getAttributeWeights() {
+        return "attributeWeights";
     }
 }

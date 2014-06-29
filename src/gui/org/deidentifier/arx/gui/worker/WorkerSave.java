@@ -148,18 +148,24 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
         writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
+
+        // Write nds-specific options
         if (config.getMetric() instanceof MetricNDS) {
             MetricNDS nds = (MetricNDS)config.getMetric();
-            writer.indent(vocabulary.getNDSConfig());
             writer.write(vocabulary.getGSFactor(), nds.getGsFactor());
-            for (Entry<String, Double> entry : nds.getAttributeFactors().entrySet()) {
-                writer.indent(vocabulary.getAttributeFactor());
-                writer.write(vocabulary.getAttribute(), entry.getKey());
-                writer.write(vocabulary.getFactor(), entry.getValue());
-                writer.unindent();
-            }
+        }
+        
+        // Write weights
+        writer.indent(vocabulary.getAttributeWeights());
+        for (Entry<String, Double> entry : config.getAttributeWeights().entrySet()) {
+            writer.indent(vocabulary.getAttributeWeight());
+            writer.write(vocabulary.getAttribute(), entry.getKey());
+            writer.write(vocabulary.getWeight(), entry.getValue());
             writer.unindent();
         }
+        writer.unindent();
+        
+        // Write criteria
         writer.indent(vocabulary.getCriteria());
         for (PrivacyCriterion c : config.getCriteria()) {
         	if (c != null) {
