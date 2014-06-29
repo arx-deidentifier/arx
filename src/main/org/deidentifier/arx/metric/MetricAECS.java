@@ -79,4 +79,9 @@ public class MetricAECS extends MetricDefault {
                                       final GeneralizationHierarchy[] ahierarchies, 
                                       final ARXConfiguration config) {
     }
+
+    @Override
+    public String getName() {
+        return "Average Equivalence Class Size";
+    }
 }

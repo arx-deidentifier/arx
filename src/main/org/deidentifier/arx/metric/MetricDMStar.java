@@ -50,4 +50,9 @@ public class MetricDMStar extends MetricDefault {
         }
         return new InformationLossDefault(value);
     }
+
+    @Override
+    public String getName() {
+        return "DM*";
+    }
 }

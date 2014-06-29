@@ -79,4 +79,9 @@ public class MetricDM extends MetricDefault {
             rowCount = input.getDataLength();
         }
     }
+
+    @Override
+    public String getName() {
+        return "Discernability";
+    }
 }

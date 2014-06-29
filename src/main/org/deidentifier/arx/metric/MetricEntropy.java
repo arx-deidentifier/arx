@@ -172,4 +172,9 @@ public class MetricEntropy extends MetricDefault {
             Arrays.fill(cache[i], NA);
         }
     }
+
+    @Override
+    public String getName() {
+        return "Non-Uniform Entropy";
+    }
 }

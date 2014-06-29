@@ -259,4 +259,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param hierarchies
      */
     protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
+    
+    /**
+     * Returns the name of metric
+     * @return
+     */
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

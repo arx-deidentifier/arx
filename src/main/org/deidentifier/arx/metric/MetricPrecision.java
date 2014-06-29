@@ -81,4 +81,9 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(Double.MIN_VALUE);
     }
+
+    @Override
+    public String getName() {
+        return "Precision";
+    }
 }

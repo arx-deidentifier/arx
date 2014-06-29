@@ -116,4 +116,9 @@ public class MetricNMEntropy extends MetricEntropy {
                                       final ARXConfiguration config) {
         super.initializeInternal(definition, input, ahierarchies, config);
     }
+
+    @Override
+    public String getName() {
+        return "Non-Monotonic Non-Uniform Entropy";
+    }
 }

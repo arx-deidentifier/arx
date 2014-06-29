@@ -351,4 +351,9 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         this.max = new double[this.domainSizes.length];
         Arrays.fill(max, 1d);
     }
+
+    @Override
+    public String getName() {
+        return "Normalized Domain Share ("+gsWeight+")";
+    }
 }
