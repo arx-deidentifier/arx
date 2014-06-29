@@ -51,11 +51,11 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     private double[][][] frequencies; 
 
     /** Configuration factor*/
-    private final double gFactor; 
+    private final double gWeight; 
     /** Configuration factor*/
-    private final double gsFactor; 
+    private final double gsWeight; 
     /** Configuration factor*/
-    private final double sFactor;
+    private final double sWeight;
 
     /** Max */
     private double[] max = null;
@@ -72,18 +72,18 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     /**
      * A constructor that allows to define a factor weighting generalization and suppression
      * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     * @param gsWeight A factor [0,1] weighting generalization and suppression. 
      *                 The default value is 0.5, which means that generalization
      *                 and suppression will be treated equally. A factor of 0
      *                 will favor generalization, and a factor of 1 will favor
      *                 suppression. The values in between can be used for
      *                 balancing both methods. 
      */
-    public MetricNDS(double gsFactor){
+    public MetricNDS(double gsWeight){
         super(false, false);
-        this.gsFactor = gsFactor;
-        this.sFactor = computeSuppressionFactor(gsFactor);
-        this.gFactor = computeGeneralizationFactor(gsFactor);
+        this.gsWeight = gsWeight;
+        this.sWeight = computeSuppressionFactor(gsWeight);
+        this.gWeight = computeGeneralizationFactor(gsWeight);
     }
     
     @Override
@@ -108,8 +108,8 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
      * Returns the factor used weight generalized values
      * @return
      */
-    public double getGeneralizationFactor() {
-        return gFactor;
+    public double getGeneralizationWeight() {
+        return gWeight;
     }
     
     /**
@@ -122,16 +122,16 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
      *         suppression. The values in between can be used for
      *         balancing both methods.
      */
-    public double getGsFactor() {
-        return gsFactor;
+    public double getGeneralizationSuppressionWeight() {
+        return gsWeight;
     }
     
     /**
      * Returns the factor used to weight suppressed values
      * @return
      */
-    public double getSuppressionFactor() {
-        return sFactor;
+    public double getSuppressionWeight() {
+        return sWeight;
     }
 
     /**
@@ -214,18 +214,18 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
                         
                         int value = m.key[dimension];
                         double share = (double)m.count * frequencies[dimension][transformation[dimension]][value];
-                        scores[dimension] += share * gFactor;
+                        scores[dimension] += share * gWeight;
                     }
                 } else {
                     for (int dimension=0; dimension<dimensions; dimension++){
                         
-                        if (sFactor == 1d){
+                        if (sWeight == 1d){
                             double share = (double)m.count; // *1d
                             scores[dimension] += share;
                         } else {
                             int value = m.key[dimension];
                             double share = (double)m.count * frequencies[dimension][transformation[dimension]][value];
-                            scores[dimension] += share + sFactor * (1d - share);
+                            scores[dimension] += share + sWeight * (1d - share);
                         }
                     }
                 }
