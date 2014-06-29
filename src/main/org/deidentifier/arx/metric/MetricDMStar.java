@@ -53,6 +53,6 @@ public class MetricDMStar extends MetricDefault {
 
     @Override
     public String getName() {
-        return "DM*";
+        return "Monotonic Discernability";
     }
 }

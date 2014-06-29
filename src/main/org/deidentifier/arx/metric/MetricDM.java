@@ -82,6 +82,6 @@ public class MetricDM extends MetricDefault {
 
     @Override
     public String getName() {
-        return "Discernability";
+        return "Non-Monotonic Discernability";
     }
 }

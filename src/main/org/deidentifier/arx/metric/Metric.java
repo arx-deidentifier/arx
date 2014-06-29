@@ -267,4 +267,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String getName() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Returns the name of metric
+     * @return
+     */
+    public String getSimpleName() {
+        return this.getName();
+    }
 }
