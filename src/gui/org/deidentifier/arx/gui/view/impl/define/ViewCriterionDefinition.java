@@ -53,17 +53,6 @@ public class ViewCriterionDefinition implements IView {
     private static final int       LABEL_WIDTH     = 50;
     private static final int       LABEL_HEIGHT    = 20;
     
-    private static final String    LABELS_METRIC[] = { 
-            Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.2"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.3"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.4"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.5"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.52"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.64"), //$NON-NLS-1$
-    };
-    
     private static final Metric<?> ITEMS_METRIC[]  = { 
             Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
@@ -73,6 +62,8 @@ public class ViewCriterionDefinition implements IView {
             Metric.createNMEntropyMetric(),
             Metric.createAECSMetric(),
             Metric.createNDSMetric()};
+
+    private static final String    LABELS_METRIC[] = getLabels(ITEMS_METRIC);
 
     private final Controller       controller;
     private Model                  model           = null;
@@ -106,6 +97,19 @@ public class ViewCriterionDefinition implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.root = build(parent);
+    }
+
+    /**
+     * Returns an array of labels
+     * @param metrics
+     * @return
+     */
+    private static String[] getLabels(Metric<?>[] metrics) {
+        String[] labels = new String[metrics.length];
+        for (int i=0; i<metrics.length; i++) {
+            labels[i] = metrics[i].getSimpleName();
+        }
+        return labels;
     }
 
     @Override
