@@ -353,12 +353,12 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Normalized Domain Share ("+gsWeight+")";
     }
     
     @Override
-    public String getSimpleName() {
+    public String getName() {
         return "Normalized Domain Share";
     }
 }

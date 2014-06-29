@@ -52,7 +52,7 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Monotonic Discernability";
     }
 }

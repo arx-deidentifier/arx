@@ -112,7 +112,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Static";
     }
 }

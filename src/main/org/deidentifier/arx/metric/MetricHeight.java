@@ -44,7 +44,7 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Height";
     }
 }

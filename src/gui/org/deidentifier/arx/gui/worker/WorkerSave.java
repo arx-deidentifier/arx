@@ -146,7 +146,7 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
-        writer.write(vocabulary.getMetric(), config.getMetric().getName());
+        writer.write(vocabulary.getMetric(), config.getMetric().toString());
 
         // Write weights
         writer.indent(vocabulary.getAttributeWeights());

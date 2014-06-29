@@ -107,7 +107,7 @@ public class ViewCriterionDefinition implements IView {
     private static String[] getLabels(Metric<?>[] metrics) {
         String[] labels = new String[metrics.length];
         for (int i=0; i<metrics.length; i++) {
-            labels[i] = metrics[i].getSimpleName();
+            labels[i] = metrics[i].getName();
         }
         return labels;
     }

@@ -83,7 +83,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Precision";
     }
 }

@@ -81,7 +81,7 @@ public class MetricAECS extends MetricDefault {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Average Equivalence Class Size";
     }
 }

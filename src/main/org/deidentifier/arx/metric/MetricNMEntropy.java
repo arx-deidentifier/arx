@@ -118,7 +118,7 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "Non-Monotonic Non-Uniform Entropy";
     }
 }
