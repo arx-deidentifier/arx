@@ -97,7 +97,7 @@ public class Model implements Serializable {
 
     private boolean                               debugEnabled                    = false;
 
-    private double                                suppressionWeight               = 0.5d;
+    private Double                                suppressionWeight               = null;
     private Map<String, Double>                   attributeWeights                = new HashMap<String, Double>();
 
     public Model(final String name, final String description) {
@@ -693,6 +693,11 @@ public class Model implements Serializable {
     }
     
     public double getSuppressionWeight() {
+
+        // For backwards compatibility
+        if (this.suppressionWeight == null){
+            this.suppressionWeight = 0.5d;
+        }
         return suppressionWeight;
     }
     
