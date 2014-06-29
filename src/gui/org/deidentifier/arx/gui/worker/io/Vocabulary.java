@@ -100,7 +100,6 @@ public abstract class Vocabulary {
     public abstract String getInputBytes();
 
     public abstract String getAttributeWeights();
-    public abstract String getGSFactor();
     public abstract String getAttributeWeight();
     public abstract String getWeight();
     
@@ -145,7 +144,6 @@ public abstract class Vocabulary {
 	public boolean isMax2(String value){return value.equals(getMax2());}
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
 	
-    public boolean isGSFactor(String value) {return value.equals(getGSFactor());}
     public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
     public boolean isAttributeWeights(String value) {return value.equals(getAttributeWeights());}
     public boolean isWeight(String value) {return value.equals(getWeight());}

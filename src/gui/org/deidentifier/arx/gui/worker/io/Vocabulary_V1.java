@@ -272,11 +272,6 @@ public class Vocabulary_V1 extends Vocabulary {
     }
 
     @Override
-    public String getGSFactor() {
-        return "gsFactor";
-    }
-
-    @Override
     public String getAttributeWeight() {
         return "attributeWeight";
     }

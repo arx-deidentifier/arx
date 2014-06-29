@@ -52,7 +52,6 @@ import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLWriter;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.InformationLoss;
-import org.deidentifier.arx.metric.MetricNDS;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -147,14 +146,8 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
-        writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
+        writer.write(vocabulary.getMetric(), config.getMetric().getName());
 
-        // Write nds-specific options
-        if (config.getMetric() instanceof MetricNDS) {
-            MetricNDS nds = (MetricNDS)config.getMetric();
-            writer.write(vocabulary.getGSFactor(), nds.getGeneralizationSuppressionWeight());
-        }
-        
         // Write weights
         writer.indent(vocabulary.getAttributeWeights());
         for (Entry<String, Double> entry : config.getAttributeWeights().entrySet()) {
