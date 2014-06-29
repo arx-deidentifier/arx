@@ -96,6 +96,8 @@ public class WorkerSave extends Worker<Model> {
             writeModel(model, zip);
             arg0.worked(2);
             writeInput(model, zip);
+            arg0.worked(3);
+            writeInputSubset(model, zip);
             arg0.worked(4);
             writeOutput(model, zip);
             arg0.worked(5);
@@ -458,6 +460,23 @@ public class WorkerSave extends Worker<Model> {
                                .getInput()
                                .getHandle()
                                .iterator());
+            }
+        }
+    }
+    
+
+    /**
+     * Writes the input subset to the file
+     * 
+     * @param zip
+     * @throws IOException
+     */
+    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
+        if (model.getInputConfig().getInput() != null) {
+            if (model.getInputConfig().getInput().getHandle() != null) {
+                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
             }
         }
     }
