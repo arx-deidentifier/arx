@@ -34,7 +34,8 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
 
-    private static final long serialVersionUID = -4310441992550794016L;
+    /** SSUID*/
+    private static final long serialVersionUID = -7612335677779934529L;
 
     /** The maximum levels */
     private int[]             maxLevels;
@@ -51,7 +52,8 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         final int[] state = node.getTransformation();
         for (int i = 0; i < state.length; i++) {
             divisor++;
-            value += ((double) state[i] / (double) maxLevels[i]) * weights[i];
+            double weight = weights != null ? weights[i] : 1d;
+            value += ((double) state[i] / (double) maxLevels[i]) * weight;
         }
         return new InformationLossDefault(value / divisor);
     }

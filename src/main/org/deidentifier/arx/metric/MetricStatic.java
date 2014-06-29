@@ -95,7 +95,8 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
 
             infoloss[i] = new double[basicInfoloss.size()];
             for (int j = 0; j < infoloss[i].length; j++) {
-                infoloss[i][j] = basicInfoloss.get(j) * weights[i];
+                double weight = weights != null ? weights[i] : 1d;
+                infoloss[i][j] = basicInfoloss.get(j) * weight;
             }
         }
     }

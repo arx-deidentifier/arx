@@ -33,6 +33,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metric<T> {
 
+    /** SSUID*/
     private static final long         serialVersionUID = 6508220940790010968L;
     
     /** The weights */
