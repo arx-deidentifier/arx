@@ -52,6 +52,7 @@ import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLWriter;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.MetricNDS;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -145,6 +146,18 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
         writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
+        if (config.getMetric() instanceof MetricNDS) {
+            MetricNDS nds = (MetricNDS)config.getMetric();
+            writer.indent(vocabulary.getNDSConfig());
+            writer.write(vocabulary.getGSFactor(), nds.getGsFactor());
+            for (Entry<String, Double> entry : nds.getAttributeFactors().entrySet()) {
+                writer.indent(vocabulary.getAttributeFactor());
+                writer.write(vocabulary.getAttribute(), entry.getKey());
+                writer.write(vocabulary.getFactor(), entry.getValue());
+                writer.unindent();
+            }
+            writer.unindent();
+        }
         writer.indent(vocabulary.getCriteria());
         for (PrivacyCriterion c : config.getCriteria()) {
         	if (c != null) {

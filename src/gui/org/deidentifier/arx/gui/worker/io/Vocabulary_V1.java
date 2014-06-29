@@ -270,4 +270,24 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getInputBytes() {
         return "inputBytes"; //$NON-NLS-1$
     }
+
+    @Override
+    public String getNDSConfig() {
+        return "ndsConfig";
+    }
+
+    @Override
+    public String getGSFactor() {
+        return "gsFactor";
+    }
+
+    @Override
+    public String getAttributeFactor() {
+        return "attributeFactor";
+    }
+
+    @Override
+    public String getFactor() {
+        return "factor";
+    }
 }

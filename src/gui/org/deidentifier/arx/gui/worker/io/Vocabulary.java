@@ -98,6 +98,11 @@ public abstract class Vocabulary {
     public abstract String getMaxNodesInViewer();
     public abstract String getSelectedAttribute();
     public abstract String getInputBytes();
+
+    public abstract String getNDSConfig();
+    public abstract String getGSFactor();
+    public abstract String getAttributeFactor();
+    public abstract String getFactor();
     
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
 	public boolean isVersion(String value){return value.equals(getVersion());}
@@ -139,6 +144,11 @@ public abstract class Vocabulary {
 	public boolean isMin2(String value){return value.equals(getMin2());}
 	public boolean isMax2(String value){return value.equals(getMax2());}
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
+	
+	public boolean isNDSConfig(String value) {return value.equals(getNDSConfig());}
+    public boolean isGSFactor(String value) {return value.equals(getGSFactor());}
+    public boolean isAttributeFactor(String value) {return value.equals(getAttributeFactor());}
+    public boolean isFactor(String value) {return value.equals(getFactor());}
 
     public abstract void checkVersion(String version) throws SAXException;
 }
