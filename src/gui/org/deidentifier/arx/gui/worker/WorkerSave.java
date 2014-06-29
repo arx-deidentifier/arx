@@ -152,7 +152,7 @@ public class WorkerSave extends Worker<Model> {
         // Write nds-specific options
         if (config.getMetric() instanceof MetricNDS) {
             MetricNDS nds = (MetricNDS)config.getMetric();
-            writer.write(vocabulary.getGSFactor(), nds.getGsFactor());
+            writer.write(vocabulary.getGSFactor(), nds.getGeneralizationSuppressionWeight());
         }
         
         // Write weights

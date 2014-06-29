@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.MetricNDS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -394,7 +395,11 @@ public class ViewCriterionDefinition implements IView {
     private void selectMetricAction(final Metric<?> metric) {
         if (model == null) { return; }
         if (metric != null) {
-            model.getInputConfig().setMetric(metric);
+            if (metric instanceof MetricNDS) {
+                model.getInputConfig().setMetric(Metric.createNDSMetric(model.getInputConfig().getSuppressionWeight()));
+            } else {
+                model.getInputConfig().setMetric(metric);
+            }
             controller.update(new ModelEvent(this, ModelPart.METRIC, metric));
         }
     }

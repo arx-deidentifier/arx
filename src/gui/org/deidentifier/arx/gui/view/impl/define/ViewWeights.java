@@ -31,6 +31,8 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.MetricNDS;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -99,8 +101,12 @@ public class ViewWeights implements IView {
         slider.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         slider.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
-                if (model != null) {
-                    model.setSuppressionWeight(getSuppressionWeight());
+                if (model != null && model.getInputConfig() != null) {
+                    double weight = getSuppressionWeight();
+                    model.getInputConfig().setSuppressionWeight(weight);
+                    if (model.getInputConfig().getMetric() instanceof MetricNDS) {
+                        model.getInputConfig().setMetric(Metric.createNDSMetric(weight));
+                    }
                 }
             }
         });
@@ -111,6 +117,12 @@ public class ViewWeights implements IView {
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
                 setSuppressionWeight(0.5d);
+                if (model != null && model.getInputConfig() != null) {
+                    model.getInputConfig().setSuppressionWeight(0.5d);
+                    if (model.getInputConfig().getMetric() instanceof MetricNDS) {
+                        model.getInputConfig().setMetric(Metric.createNDSMetric(0.5d));
+                    }
+                }
             }
         });
         
@@ -152,7 +164,9 @@ public class ViewWeights implements IView {
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
-            this.setSuppressionWeight(this.model.getSuppressionWeight());
+            if (model.getInputConfig() != null) {
+                this.setSuppressionWeight(this.model.getInputConfig().getSuppressionWeight());
+            }
         } 
         if (event.part == ModelPart.MODEL ||
             event.part == ModelPart.INPUT) {
@@ -235,8 +249,8 @@ public class ViewWeights implements IView {
                         public void widgetSelected(SelectionEvent arg0) {
                             double value = knob.getValue();
                             label.setText(format.format(value));
-                            if (model != null) {
-                                model.setAttributeWeight(attribute, value);
+                            if (model != null && model.getInputConfig() != null) {
+                                model.getInputConfig().setAttributeWeight(attribute, value);
                             }
                         }
                     });
@@ -244,7 +258,9 @@ public class ViewWeights implements IView {
                 
                 // Set values
                 for(int i=0; i<qis.size(); i++){
-                    knobs.get(i).setValue(model.getAttributeWeight(qis.get(i)));
+                    if (model != null && model.getInputConfig() != null) {
+                        knobs.get(i).setValue(model.getInputConfig().getAttributeWeight(qis.get(i)));
+                    }
                 }
                 
                 root.layout(true, true);    
