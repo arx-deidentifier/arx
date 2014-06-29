@@ -40,65 +40,61 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.MetricNDS;
 
 public class Model implements Serializable {
 
 	private static final long serialVersionUID = -7669920657919151279L;
 
-    private transient Set<ARXNode>                clipboard                       = new HashSet<ARXNode>();
-    private transient DataHandle                  output                          = null;
-    private transient ARXNode                     outputNode                      = null;
-    private transient ARXResult                   result                          = null;
-    private transient ARXNode                     selectedNode                    = null;
     private transient ARXAnonymizer               anonymizer                      = null;
-    private transient String                      path                            = null;
-
-    private String                                name                            = null;
-    private char                                  separator                       = ';';                                            //$NON-NLS-1$
+    private transient Set<ARXNode>                clipboard                       = new HashSet<ARXNode>();
+    private boolean                               debugEnabled                    = false;
     private String                                description;
+    private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
+    private int[]                                 groups;
     private int                                   historySize                     = 200;
-    private double                                snapshotSizeDataset             = 0.2d;
-    private double                                snapshotSizeSnapshot            = 0.8d;
+
     private int                                   initialNodesInViewer            = 100;
+    private long                                  inputBytes                      = 0L;
+    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
+    private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
+    private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
+    private int                                   maximalSizeForComplexOperations = 5000000;
     private int                                   maxNodesInLattice               = 100000;
     private int                                   maxNodesInViewer                = 700;
-
-    private String                                selectedAttribute               = null;
-    private ModelNodeFilter                       nodeFilter                      = null;
     private boolean                               modified                        = false;
-    private long                                  inputBytes                      = 0L;
-    private String[]                              pair                            = new String[] { null, null };
 
+    private String                                name                            = null;
+    private ModelNodeFilter                       nodeFilter                      = null;
     private String                                optimalNodeAsString;
-    private String                                outputNodeAsString;
-
-    private long                                  time;
-
-    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
+    private transient DataHandle                  output                          = null;
     private ModelConfiguration                    outputConfig                    = null;
 
+    private transient ARXNode                     outputNode                      = null;
+    private String                                outputNodeAsString;
+
+    private String[]                              pair                            = new String[] { null, null };
+
+    private transient String                      path                            = null;
+    private String                                query                           = "";                                             //$NON-NLS-1$
+
+    private transient ARXResult                   result                          = null;
+
+    private String                                selectedAttribute               = null;
+
+    private transient ARXNode                     selectedNode                    = null;
+    private char                                  separator                       = ';';                                            //$NON-NLS-1$
+    private Boolean                               showVisualization               = true;
+    private double                                snapshotSizeDataset             = 0.2d;
+
+    private double                                snapshotSizeSnapshot            = 0.8d;
+    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
     private String                                suppressionString               = "*";                                            //$NON-NLS-1$
 
-    private int[]                                 groups;
-
-    private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
-    private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
-    private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
     private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
+    private long                                  time;
 
-    private String                                query                           = "";                                             //$NON-NLS-1$
-    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
     private ModelViewConfig                       viewConfig                      = new ModelViewConfig();
 
-    private Boolean                               showVisualization               = true;
-    private int                                   maximalSizeForComplexOperations = 5000000;
-
-    private boolean                               debugEnabled                    = false;
-
-    private Double                                suppressionWeight               = null;
-    private Map<String, Double>                   attributeWeights                = new HashMap<String, Double>();
 
     public Model(final String name, final String description) {
 		this.name = name;
@@ -138,17 +134,6 @@ public class Model implements Serializable {
 		// Initialize the config
 		config.removeAllCriteria();
 		
-		// Initialize NDS, if present
-		if (config.getMetric() instanceof MetricNDS) {
-		    Map<String, Double> weights = new HashMap<String, Double>();
-		    for (String attr : definition.getQuasiIdentifyingAttributes()) {
-		        weights.put(attr, this.getAttributeWeight(attr));
-		    }
-		    MetricNDS metric = Metric.createNDSMetric(this.getSuppressionWeight(), 
-		                                              weights);
-		    config.setMetric(metric);
-		}
-
 		// Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
@@ -549,10 +534,6 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	private void setModified() {
-		modified = true;
-	}
-
 	public void setName(final String name) {
 		this.name = name;
 		setModified();
@@ -581,10 +562,10 @@ public class Model implements Serializable {
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
+
 	public void setPath(final String path) {
 		this.path = path;
 	}
-	
 	public void setQuery(String query){
         this.query = query;
         setModified();
@@ -602,7 +583,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
+	
 	public void setSaved() {
 		modified = false;
 	}
@@ -643,11 +624,11 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-    public void setSnapshotSizeSnapshot(final double snapshotSize) {
+	public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-    
+
     public void setSubsetManual(){
         if (!this.subsetOrigin.endsWith("manual")) {
             this.subsetOrigin += " + manual";
@@ -670,7 +651,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
 		this.time = time;
 	}
-
+    
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
@@ -678,46 +659,17 @@ public class Model implements Serializable {
 			outputConfig.setUnmodified();
 		}
 	}
-    
+
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-
+    
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();
     }
 
-    public void setSuppressionWeight(double suppressionWeight) {
-        this.suppressionWeight = suppressionWeight;
-    }
-    
-    public double getSuppressionWeight() {
-
-        // For backwards compatibility
-        if (this.suppressionWeight == null){
-            this.suppressionWeight = 0.5d;
-        }
-        return suppressionWeight;
-    }
-    
-    public void setAttributeWeight(String attribute, Double weight){
-        
-        // For backwards compatibility
-        if (this.attributeWeights==null) {
-            this.attributeWeights = new HashMap<String, Double>();
-        }
-        this.attributeWeights.put(attribute, weight);
-    }
-    
-    public double getAttributeWeight(String attribute) {
-        
-        // For backwards compatibility
-        if (this.attributeWeights==null) {
-            this.attributeWeights = new HashMap<String, Double>();
-        }
-        Double value = this.attributeWeights.get(attribute);
-        if (value == null) return 0d;
-        else return value;
-    }
+    private void setModified() {
+		modified = true;
+	}
 }
