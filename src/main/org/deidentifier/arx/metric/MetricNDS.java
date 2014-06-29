@@ -140,7 +140,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
      * @return
      */
     private double computeGeneralizationFactor(double gsFactor){
-        return gsFactor <=0.5d ? 1d : 1d - 2d * gsFactor;
+        return gsFactor <=0.5d ? 1d : 1d - 2d * (gsFactor - 0.5d);
     }
 
     /**
@@ -149,7 +149,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
      * @return
      */
     private double computeSuppressionFactor(double gsFactor){
-        return gsFactor <0.5d ? 1d - 2d * gsFactor : 1d;
+        return gsFactor <0.5d ? 2d * gsFactor : 1d;
     }
 
     /**
@@ -354,7 +354,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
 
     @Override
     public String toString() {
-        return "Normalized Domain Share ("+gsWeight+")";
+        return "Normalized Domain Share ("+gsWeight+"/"+gWeight+"/"+sWeight+")";
     }
     
     @Override
