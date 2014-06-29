@@ -231,6 +231,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Returns all configured attribute weights
+     * @return
+     */
+    public Map<String, Double> getAttributeWeights() {
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
+        return new HashMap<String, Double>(this.attributeWeights);
+    }
+
+    /**
      * Returns all criteria.
      * @return
      */
