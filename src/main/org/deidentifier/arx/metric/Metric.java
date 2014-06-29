@@ -89,6 +89,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     /**
      * Creates an instance of the NDS metric that treats suppression, generalization and
      * all attributes equally.
+     * This metric will respect attribute weights defined in the configuration.
      * @return
      */
     public static Metric<?> createNDSMetric() {
@@ -97,7 +98,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
 
     /**
-     * Creates an NDS metric with factors for weighting generalization and suppression
+     * Creates an NDS metric with factors for weighting generalization and suppression.
+     * This metric will respect attribute weights defined in the configuration.
      * 
      * @param gsFactor A factor [0,1] weighting generalization and suppression. 
      *                 The default value is 0.5, which means that generalization
@@ -111,37 +113,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
-     * Creates an NDS metric with factors for weighting generalization, suppression
-     * and individual attributes
-     * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
-     *                 The default value is 0.5, which means that generalization
-     *                 and suppression will be treated equally. A factor of 0
-     *                 will favor generalization, and a factor of 1 will favor
-     *                 suppression. The values in between can be used for
-     *                 balancing both methods.
-     *                 
-     * @param aFactors Attribute factors [0,1] defining their importance, represented in a
-     *                 map. An attribute not contained in the map will have a factor of 0. 
-     */
-    public static MetricNDS createNDSMetric(double gsFactor, Map<String, Double> aFactors) {
-        return new MetricNDS(gsFactor, aFactors);
-    }
-
-
-    /**
-     * Creates an NDS metric with factors for weighting 
-     * individual attributes
-     * 
-     * @param aFactors Attribute factors [0,1] defining their importance, represented in a
-     *                 map. An attribute not contained in the map will have a factor of 0. 
-     */
-    public static MetricNDS createNDSMetric(Map<String, Double> aFactors) {
-        return new MetricNDS(aFactors);
-    }
-
-    /**
-     * Creates an non-monotoncic entropy metric
+     * Creates an non-monotonic entropy metric
      * 
      * @return
      */
@@ -150,7 +122,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Creates a precision metric
+     * Creates a precision metric. 
+     * This metric will respect attribute weights defined in the configuration.
      * 
      * @return
      */
@@ -159,25 +132,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Creates a weighted precision metric
+     * Creates a static metric. It requires a map, which maps the generalization levels
+     * (starting at index of the given list) onto an information loss defined as a
+     * decimal number.
+     * This metric will respect attribute weights defined in the configuration.
      * 
-     * @param weights Contains the weights for each column, indexed by the column name.
      * @return
      */
-    public static Metric<InformationLossDefault> createPrecisionWeightedMetric(Map<String, Double> weights) {
-        return new MetricPrecisionWeighted(weights);
-    }
-
-    /**
-     * Creates a user defined and weighted metric
-     * 
-     * @param infoloss Contains the infoloss for each level of the hierarchy, index by column name
-     * @param weights Contains the weights for each column, indexed by the column name.
-     * @return
-     */
-
-    public static Metric<InformationLossDefault> createUserDefinedWeightedMetric(Map<String, List<Double>> infoloss, Map<String, Double> weights) {
-        return new MetricUserDefinedWeighted(infoloss, weights);
+    public static Metric<InformationLossDefault> createStaticMetric(Map<String, List<Double>> informationLoss) {
+        return new MetricStatic(informationLoss);
     }
 
     /** The global optimum */
@@ -202,6 +165,20 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         this.monotonic = monotonic;
         this.independent = independent;
     }
+
+    /**
+     * Returns an instance of the maximal value
+     * 
+     * @return
+     */
+    public abstract InformationLoss<?> createMaxInformationLoss();
+
+    /**
+     * Returns an instance of the minimal value
+     * 
+     * @return
+     */
+    public abstract InformationLoss<?> createMinInformationLoss();
 
     /**
      * Evaluates the metric for the given node
@@ -263,20 +240,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isMonotonic() {
         return monotonic;
     }
-
-    /**
-     * Returns an instance of the maximal value
-     * 
-     * @return
-     */
-    public abstract InformationLoss<?> createMaxInformationLoss();
-
-    /**
-     * Returns an instance of the minimal value
-     * 
-     * @return
-     */
-    public abstract InformationLoss<?> createMinInformationLoss();
 
     /**
      * Evaluates the metric for the given node

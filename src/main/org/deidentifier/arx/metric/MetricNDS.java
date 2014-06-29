@@ -16,6 +16,9 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
+ * 
+ * This metric will respect attribute weights defined in the configuration.
+ * 
  * Normalized Domain Share: Each node in the hierarchy is associated with the number of tuples 
  * from the *domain* of the attribute represented by it. A suppressed value represents the
  * complete domain.<br>
@@ -32,7 +35,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Fabian Prasser
  *
  */
-public class MetricNDS extends Metric<InformationLossRCE> {
+public class MetricNDS extends MetricWeighted<InformationLossRCE> {
 
     /** SUID*/
     private static final long serialVersionUID = 4516435657712614477L;
@@ -53,10 +56,6 @@ public class MetricNDS extends Metric<InformationLossRCE> {
     private final double gsFactor; 
     /** Configuration factor*/
     private final double sFactor;
-    /** Configuration factor*/
-    private final Map<String, Double> aFactorsMap;
-    /** Configuration factor*/
-    private double[] aFactors;
 
     /** Max */
     private double[] max = null;
@@ -67,57 +66,24 @@ public class MetricNDS extends Metric<InformationLossRCE> {
      * Default constructor which treats all transformation methods and attributes equally
      */
     public MetricNDS(){
-        this(0.5d, new HashMap<String, Double>());
+        this(0.5d);
     }
 
     /**
-     * A constructor that allows to define a factor weighting generalization and suppression.
+     * A constructor that allows to define a factor weighting generalization and suppression
      * 
      * @param gsFactor A factor [0,1] weighting generalization and suppression. 
      *                 The default value is 0.5, which means that generalization
      *                 and suppression will be treated equally. A factor of 0
      *                 will favor generalization, and a factor of 1 will favor
      *                 suppression. The values in between can be used for
-     *                 balancing both methods.
-     *                  
+     *                 balancing both methods. 
      */
     public MetricNDS(double gsFactor){
-        // TODO: Configure weights via ARXConfig?
-        this(gsFactor, new HashMap<String, Double>());
-    }
-
-    /**
-     * A constructor that allows to define a factors weighting individual attributes
-     *                 
-     * @param aFactors Attribute factors [0,1] defining their importance, represented in a
-     *                 map. An attribute not contained in the map will have a factor of 0. 
-     */
-    public MetricNDS(Map<String, Double> aFactors){
-        // TODO: Configure weights via ARXConfig?
-        this(0.5d, aFactors);
-    }
-
-    /**
-     * A constructor that allows to define a factor weighting generalization, suppression
-     * and individual attributes
-     * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
-     *                 The default value is 0.5, which means that generalization
-     *                 and suppression will be treated equally. A factor of 0
-     *                 will favor generalization, and a factor of 1 will favor
-     *                 suppression. The values in between can be used for
-     *                 balancing both methods.
-     *                 
-     * @param aFactors Attribute factors [0,1] defining their importance, represented in a
-     *                 map. An attribute not contained in the map will have a factor of 0. 
-     */
-    public MetricNDS(double gsFactor, Map<String, Double> aFactors){
-        // TODO: Configure weights via ARXConfig?
         super(false, false);
         this.gsFactor = gsFactor;
         this.sFactor = computeSuppressionFactor(gsFactor);
         this.gFactor = computeGeneralizationFactor(gsFactor);
-        this.aFactorsMap = new HashMap<String, Double>(aFactors);
     }
     
     @Override
@@ -158,14 +124,6 @@ public class MetricNDS extends Metric<InformationLossRCE> {
      */
     public double getGsFactor() {
         return gsFactor;
-    }
-    
-    /**
-     * Returns the attribute factors
-     * @return
-     */
-    public Map<String, Double> getAttributeFactors() {
-        return new HashMap<String, Double>(this.aFactorsMap);
     }
     
     /**
@@ -281,7 +239,7 @@ public class MetricNDS extends Metric<InformationLossRCE> {
         }
         
         // Return infoloss
-        return new InformationLossRCE(scores, aFactors);
+        return new InformationLossRCE(scores, weights);
     }
 
     @Override
@@ -290,6 +248,8 @@ public class MetricNDS extends Metric<InformationLossRCE> {
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         
+        // Prepare weights
+        super.initializeInternal(definition, input, hierarchies, config);
 
         // Initialized during construction: attribute->size
         Map<String, Double> _domainSizes = 
@@ -390,25 +350,5 @@ public class MetricNDS extends Metric<InformationLossRCE> {
         Arrays.fill(min, 0d);
         this.max = new double[this.domainSizes.length];
         Arrays.fill(max, 1d);
-        
-        // Prepare weights
-        double totalFactor = 0d;
-        this.aFactors = new double[this.domainSizes.length];
-        for (int i=0; i< aFactors.length; i++){
-            Double factor = aFactorsMap.get(header[i]);
-            factor = factor != null ? factor : 0d;
-            aFactors[i] = factor;
-            totalFactor += factor;
-        }
-
-        // Default case
-        if (totalFactor == 0d) {
-            Arrays.fill(aFactors, 1d);
-        // Weighted case
-        } else {
-            for (int i=0; i<aFactors.length; i++){
-                aFactors[i] /= totalFactor;
-            }
-        }
     }
 }
