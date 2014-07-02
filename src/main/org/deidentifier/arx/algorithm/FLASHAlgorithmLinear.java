@@ -20,6 +20,7 @@ package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
+import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 
@@ -49,6 +50,7 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
 
         super(lattice, checker, strategy);
         history.setPruningStrategy(PruningStrategy.CHECKED);
+        history.setStorageStrategy(StorageStrategy.ALL);
     }
 
     /*
@@ -78,10 +80,13 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
                         // If anonymity is unknown
                         if (!head.isTagged()) {
                         	
-                            // Second phase
-                            final PruningStrategy pruning = history.getPruningStrategy();
+                            // Change strategies
+                            final PruningStrategy pruningStrategy = history.getPruningStrategy();
+                            final StorageStrategy storageStrategy = history.getStorageStrategy();
                             history.setPruningStrategy(PruningStrategy.CHECKED);
+                            history.setStorageStrategy(StorageStrategy.ALL);
 
+                            // Second phase
                             stack.push(head);
                             while (!stack.isEmpty()) {
                                 final Node start = stack.pop();
@@ -91,8 +96,9 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
                                 }
                             }
 
-                            // Switch back to previous strategy
-                            history.setPruningStrategy(pruning);
+                            // Switch back to previous strategies
+                            history.setPruningStrategy(pruningStrategy);
+                            history.setStorageStrategy(storageStrategy);
                         }
                     }
                 }

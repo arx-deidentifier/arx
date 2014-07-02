@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
+import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 
@@ -49,6 +50,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
 
         super(lattice, checker, strategy);
         history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
+        history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
     }
 
     /**
