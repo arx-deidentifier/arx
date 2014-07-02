@@ -36,6 +36,11 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class History {
 
+    public static enum StorageStrategy {
+        NON_ANONYMOUS,
+        ALL
+    }
+
     public static enum PruningStrategy {
         ANONYMOUS,
         CHECKED,
@@ -62,6 +67,9 @@ public class History {
 
     /** The current pruning strategy */
     private PruningStrategy          pruningStrategy;
+
+    /** The current storage strategy */
+    private StorageStrategy          storageStrategy;
 
     /** The current requirements */
     private final int                requirements;
@@ -102,6 +110,8 @@ public class History {
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
         this.requirements = config.getRequirements();
+        this.pruningStrategy = PruningStrategy.ANONYMOUS;
+        this.storageStrategy = StorageStrategy.NON_ANONYMOUS;
     }
 
     /**
@@ -188,6 +198,15 @@ public class History {
     }
 
     /**
+     * Returns the current storage strategy
+     * 
+     * @return
+     */
+    public StorageStrategy getStorageStrategy() {
+        return storageStrategy;
+    }
+
+    /**
      * Clears the history.
      */
     public void reset() {
@@ -201,12 +220,21 @@ public class History {
     /**
      * Set the pruning strategy
      * 
-     * @param pruning
+     * @param strategy
      */
-    public void setPruningStrategy(final PruningStrategy pruning) {
-        pruningStrategy = pruning;
+    public void setPruningStrategy(final PruningStrategy strategy) {
+        pruningStrategy = strategy;
     }
 
+    /**
+     * Set the storage strategy
+     * 
+     * @param strategy
+     */
+    public void setStorageStrategy(final StorageStrategy strategy) {
+        storageStrategy = strategy;
+    }
+    
     /**
      * Sets the size of this history
      * @param size
@@ -230,7 +258,8 @@ public class History {
      */
     public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
 
-        if ((node.isAnonymous() || (g.size() > snapshotSizeDataset) || canPrune(node))) { return false; }
+        boolean store = storageStrategy == StorageStrategy.NON_ANONYMOUS ? !node.isAnonymous() : true;
+        if ((!store || (g.size() > snapshotSizeDataset) || canPrune(node))) { return false; }
 
         // Store only if significantly smaller
         if (usedSnapshot != null) {
