@@ -134,8 +134,12 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                             // Second phase
                             if (head != null) {
 
-                                final PruningStrategy pruning = history.getPruningStrategy();
+                                // Change strategies
+                                final PruningStrategy pruningStrategy = history.getPruningStrategy();
+                                final StorageStrategy storageStrategy = history.getStorageStrategy();
                                 history.setPruningStrategy(PruningStrategy.CHECKED);
+                                history.setStorageStrategy(StorageStrategy.ALL);
+
 
                                 // Untag all nodes above first anonymous node if
                                 // they have already been tagged in first phase.
@@ -151,8 +155,9 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                                     }
                                 }
 
-                                // Switch back to previous strategy
-                                history.setPruningStrategy(pruning);
+                                // Switch back to previous strategies
+                                history.setPruningStrategy(pruningStrategy);
+                                history.setStorageStrategy(storageStrategy);
                             }
                         }
                     }
