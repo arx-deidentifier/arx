@@ -453,6 +453,8 @@ public class StatisticsBuilder {
             Entry old = iter.next();
             int index1 = (int)Math.round((double)old.value1 * factor1);
             int index2 = (int)Math.round((double)old.value2 * factor2);
+            index1 = index1 < size1 ? index1 : size1 - 1;
+            index2 = index2 < size2 ? index2 : size2 - 1;
             Entry entry = new Entry(index1, index2);
             Double previous = entries.get(entry);
             double value = previous != null ? previous + old.frequency : old.frequency;
