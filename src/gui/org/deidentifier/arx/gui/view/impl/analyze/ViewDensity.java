@@ -55,11 +55,11 @@ public class ViewDensity implements IView {
     private final ModelPart   reset;
     /** Internal stuff */
     private final ModelPart   target;
-    /** The heatmap widget */
+    /** The heat map widget */
     private final JHC         jhc;
-    /** The heatmap config */
+    /** The heat map configuration */
     private final JHCGradient gradient;
-    /** The heatmap config */
+    /** The heat map configuration */
     private final JHCLayout   layout;
 
 	/**
