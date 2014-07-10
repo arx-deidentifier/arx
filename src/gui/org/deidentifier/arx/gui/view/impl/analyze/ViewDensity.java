@@ -30,7 +30,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import de.linearbits.jhc.JHC;
 import de.linearbits.jhc.JHCConfiguration;
@@ -97,7 +96,7 @@ public class ViewDensity implements IView {
         // Update some settings
         FontData[] fd = jhc.getFont().getFontData();
         fd[0].setHeight(8);
-        jhc.setFont(new Font(Display.getCurrent(), fd[0]));
+        jhc.setFont(new Font(jhc.getDisplay(), fd[0]));
     }
     
 
