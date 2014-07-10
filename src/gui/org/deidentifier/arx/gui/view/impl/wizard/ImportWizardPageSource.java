@@ -123,7 +123,9 @@ public class ImportWizardPageSource extends WizardPage {
             }
         });
 
-        /* Mark page as incomplete until a button is pressed */
-        setPageComplete(false);
+        /* Preselect CSV source*/
+        btnCsv.setSelection(true);
+        wizardImport.getData().setSourceType(SourceType.CSV);
+        setPageComplete(true);
     }
 }
