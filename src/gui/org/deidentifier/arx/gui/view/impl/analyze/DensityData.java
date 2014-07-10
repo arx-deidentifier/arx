@@ -151,9 +151,9 @@ public class DensityData extends JHCData{
     }
 
     /** Width*/
-    private final int width;
+    private int width = -1;
     /** Height*/
-    private final int height;
+    private int height = -1;
     /** First column*/
     private final int column1;
     /** Second column*/
@@ -171,9 +171,6 @@ public class DensityData extends JHCData{
         this.statistics = handle.getStatistics();
         this.column1 = column1;
         this.column2 = column2;
-        // TODO: These two calls should be avoided
-        this.width = statistics.getDistinctValues(column1).length;
-        this.height = statistics.getDistinctValues(column2).length;
     }
 
     @Override
@@ -183,11 +180,19 @@ public class DensityData extends JHCData{
        
     @Override
     public int getHeight() {
+        if (height == -1) {
+            // Perform this process when called by the background thread
+            this.height = statistics.getDistinctValues(column2).length;    
+        }
         return height;
     }
 
     @Override
     public int getWidth() {
+        if (width == -1) {
+            // Perform this process when called by the background thread
+            this.width = statistics.getDistinctValues(column1).length;
+        }
         return width;
     }
 }
