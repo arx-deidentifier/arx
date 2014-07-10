@@ -432,19 +432,19 @@ public class StatisticsBuilder {
         // Compute factors and values
         if (table.values1.length>size1) {
             factor1 = (double)size1 / (double)table.values1.length;
-            values1 = getScaledValues(table.values1, factor1);
+            values1 = getScaledValues(table.values1, size1);
         } else {
             factor1 = 1;
             values1 = table.values1;
         }
         if (table.values2.length>size2) {
             factor2 = (double)size2 / (double)table.values2.length;
-            values2 = getScaledValues(table.values2, factor2);
+            values2 = getScaledValues(table.values2, size2);
         } else {
             factor2 = 1;
             values2 = table.values2;
         }
-        
+
         // Create entry set
         final Map<Entry, Double> entries = new HashMap<Entry, Double>();
         Iterator<Entry> iter = table.iterator;
@@ -504,24 +504,32 @@ public class StatisticsBuilder {
     /**
      * Scales the given string array
      * @param values
-     * @param factor
+     * @param length The resulting length
      * @return
      */
-    private String[] getScaledValues(String[] values, double factor) {
-        AggregateFunction<String> function = AggregateFunction.forType(DataType.STRING).createSetFunction(); 
-        String[] result = new String[(int)Math.round(factor * (double)values.length)];
-        int previous = -1;
+    private String[] getScaledValues(String[] values, int length) {
+        
+        // Init
+        AggregateFunction<String> function = AggregateFunction.forType(DataType.STRING).createSetFunction();
+        double factor = (double)length / (double)values.length;
+        String[] result = new String[length];
+        
+        // Aggregate
+        int previous = 0;
         List<String> toAggregate = new ArrayList<String>();
         for (int i=0; i<values.length; i++){
+            
             int index = (int)Math.round((double)i * factor);
-            if (index == previous) {
-                toAggregate.add(values[i]);
-            } else if (previous != -1){
+            index = index < length ? index : length -1;
+            
+            if (index != previous) {
                 result[previous] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
                 toAggregate.clear();
                 previous = index;
             }
+            toAggregate.add(values[i]);
         }
+        
         return result;
     }
 
