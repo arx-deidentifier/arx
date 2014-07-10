@@ -20,7 +20,6 @@
             <filename name="**/commons-logging-1.1.jar" />
             <filename name="**/dom4j-1.6.1.jar" />
             <filename name="**/stax-api-1.0.1.jar" />
-            <filename name="**/libjhc-swt-1.0.0.jar" />
             <filename name="**/xmlbeans-2.3.0.jar" />
             <filename name="**/poi-3.10-FINAL-20140208.jar" />
             <filename name="**/poi-ooxml-3.10-FINAL-20140208.jar" />
@@ -39,6 +38,7 @@
             <filename name="**/org.eclipse.core.runtime_3.8.0.v20120912-155025.jar" />
             <filename name="**/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar" />
             <filename name="**/org.eclipse.jface_3.8.102.v20130123-162658.jar" />
+            <filename name="**/libjhc-1.0.0-swt.jar" />
             <filename name="**/junit-4.11.jar" />
             <filename name="**/log4j-1.2.17.jar" />
             <filename name="**/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" />
