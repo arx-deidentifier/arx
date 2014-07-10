@@ -530,6 +530,7 @@ public class StatisticsBuilder {
             toAggregate.add(values[i]);
         }
         
+        result[length-1] = function.aggregate(toAggregate.toArray(new String[toAggregate.size()]));
         return result;
     }
 
