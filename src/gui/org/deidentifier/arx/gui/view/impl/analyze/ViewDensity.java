@@ -93,10 +93,15 @@ public class ViewDensity implements IView {
         this.gradient = JHCGradient.GRADIENT_HEAT;
         this.layout = new JHCLayout();
         
-        // Update some settings
-        FontData[] fd = jhc.getFont().getFontData();
-        fd[0].setHeight(8);
-        jhc.setFont(new Font(jhc.getDisplay(), fd[0]));
+        // Update font settings
+        Font font = jhc.getFont();
+        if (font != null) {
+            FontData[] fd = font.getFontData();
+            if (fd != null && fd.length>0){
+                fd[0].setHeight(8);
+                jhc.setFont(new Font(jhc.getDisplay(), fd[0]));
+            }
+        }
     }
     
 
