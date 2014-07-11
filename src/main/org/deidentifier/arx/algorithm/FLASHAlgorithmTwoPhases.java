@@ -19,6 +19,8 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Stack;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
@@ -33,6 +35,12 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
+
+    /** The heap. */
+    protected final PriorityQueue<Node> pqueue;
+
+    /** The stack. */
+    protected final Stack<Node>         stack;
 
     /**
      * Creates a new instance of the FLASH algorithm.
@@ -49,8 +57,10 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
     public FLASHAlgorithmTwoPhases(final Lattice lattice, final INodeChecker checker, final FLASHStrategy strategy) {
 
         super(lattice, checker, strategy);
-        history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
-        history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
+        this.stack = new Stack<Node>();
+        this.pqueue = new PriorityQueue<Node>(11, strategy);
+        this.history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
+        this.history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
     }
 
     /**
@@ -140,7 +150,6 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                                 history.setPruningStrategy(PruningStrategy.CHECKED);
                                 history.setStorageStrategy(StorageStrategy.ALL);
 
-
                                 // Untag all nodes above first anonymous node if
                                 // they have already been tagged in first phase.
                                 // They will all be tagged again in the second phase
@@ -151,7 +160,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                                     final Node start = stack.pop();
                                     if (!start.isTagged()) {
                                         findPath(start);
-                                        checkPathLinear(path);
+                                        checkPathLinear(path, stack);
                                     }
                                 }
 

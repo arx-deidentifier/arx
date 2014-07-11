@@ -3,7 +3,6 @@ package org.deidentifier.arx.algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Stack;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
@@ -25,19 +24,11 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
 
         super(lattice, checker);
         this.strategy = strategy;
-        this.pqueue = new PriorityQueue<Node>(11, strategy);
         this.sorted = new boolean[lattice.getSize()];
         this.path = new ArrayList<Node>();
-        this.stack = new Stack<Node>();
         this.history = checker.getHistory();
     }
     
-    /** The stack. */
-    protected final Stack<Node>         stack;
-
-    /** The heap. */
-    protected final PriorityQueue<Node> pqueue;
-
     /** The current path. */
     protected final ArrayList<Node>     path;
 
@@ -127,7 +118,7 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
      * @param path
      *            The path
      */
-    protected final void checkPathLinear(final List<Node> path) {
+    protected final void checkPathLinear(final List<Node> path, final Stack<Node> stack) {
 
         for (final Node node : path) {
             if (!node.isTagged()) { 

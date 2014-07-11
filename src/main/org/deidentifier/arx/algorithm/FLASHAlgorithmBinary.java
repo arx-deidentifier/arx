@@ -19,6 +19,7 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.List;
+import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
@@ -33,6 +34,10 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
+
+    /** The heap. */
+    protected final PriorityQueue<Node> pqueue;
+
 
     /**
      * Creates a new instance of the FLASH algorithm.
@@ -49,8 +54,9 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
     public FLASHAlgorithmBinary(final Lattice lattice, final INodeChecker checker, final FLASHStrategy strategy) {
 
         super(lattice, checker, strategy);
-        history.setPruningStrategy(PruningStrategy.ANONYMOUS);
-        history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
+        this.pqueue = new PriorityQueue<Node>(11, strategy);
+        this.history.setPruningStrategy(PruningStrategy.ANONYMOUS);
+        this.history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
     }
 
     /*
@@ -63,8 +69,12 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
 
         // Init
         pqueue.clear();
-        stack.clear();
-        if (!lattice.getBottom().isChecked()) checker.check(lattice.getBottom(), true);
+        if (!lattice.getBottom().isChecked()){
+            checker.check(lattice.getBottom(), true);
+            lattice.getBottom().setTagged();
+            lattice.decUntaggedCount(lattice.getBottom().getLevel());
+            lattice.triggerTagged();
+        }
         
         // For each node
         final int length = lattice.getLevels().length;
@@ -87,7 +97,9 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
         }
         
         if (lattice.getTop().getInformationLoss() == null) {
-            if (!lattice.getTop().isChecked())  checker.check(lattice.getTop(), true);
+            if (!lattice.getTop().isChecked()) {
+                checker.check(lattice.getTop(), true);
+            }
         }
     }
 

@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.algorithm;
 
+import java.util.Stack;
+
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
@@ -31,6 +33,9 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
+    
+    /** The stack. */
+    protected final Stack<Node>         stack;
 
     /**
      * Creates a new instance of the FLASH algorithm.
@@ -49,8 +54,9 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
                           final FLASHStrategy strategy) {
 
         super(lattice, checker, strategy);
-        history.setPruningStrategy(PruningStrategy.CHECKED);
-        history.setStorageStrategy(StorageStrategy.ALL);
+        this.stack = new Stack<Node>();
+        this.history.setPruningStrategy(PruningStrategy.CHECKED);
+        this.history.setStorageStrategy(StorageStrategy.ALL);
     }
 
     /*
@@ -62,9 +68,13 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
     public void traverse() {
         
         // Init
-        pqueue.clear();
         stack.clear();
-        if (!lattice.getBottom().isChecked()) checker.check(lattice.getBottom(), true);
+        if (!lattice.getBottom().isChecked()) {
+            checker.check(lattice.getBottom(), true);
+            lattice.getBottom().setTagged();
+            lattice.decUntaggedCount(lattice.getBottom().getLevel());
+            lattice.triggerTagged();
+        }
         
         // For each node
         final int length = lattice.getLevels().length;
@@ -73,32 +83,13 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
             level = this.sort(i);
             for (final Node node : level) {
                 if (!node.isTagged()) { 
-                    pqueue.add(node);
-                    while (!pqueue.isEmpty()) {
-                        Node head = pqueue.poll();
-                        
-                        // If anonymity is unknown
-                        if (!head.isTagged()) {
-                        	
-                            // Change strategies
-                            final PruningStrategy pruningStrategy = history.getPruningStrategy();
-                            final StorageStrategy storageStrategy = history.getStorageStrategy();
-                            history.setPruningStrategy(PruningStrategy.CHECKED);
-                            history.setStorageStrategy(StorageStrategy.ALL);
-
-                            // Second phase
-                            stack.push(head);
-                            while (!stack.isEmpty()) {
-                                final Node start = stack.pop();
-                                if (!start.isTagged()) {
-                                    findPath(start);
-                                    checkPathLinear(path);
-                                }
-                            }
-
-                            // Switch back to previous strategies
-                            history.setPruningStrategy(pruningStrategy);
-                            history.setStorageStrategy(storageStrategy);
+                    // Second phase
+                    stack.push(node);
+                    while (!stack.isEmpty()) {
+                        final Node start = stack.pop();
+                        if (!start.isTagged()) {
+                            findPath(start);
+                            checkPathLinear(path, stack);
                         }
                     }
                 }
@@ -106,7 +97,9 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
         }
         
         if (lattice.getTop().getInformationLoss() == null) {
-            if (!lattice.getTop().isChecked())  checker.check(lattice.getTop(), true);
+            if (!lattice.getTop().isChecked()) {
+                checker.check(lattice.getTop(), true);
+            }
         }
     }
 }
