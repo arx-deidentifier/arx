@@ -63,9 +63,9 @@ public class TestDataHandle extends AbstractTest {
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getOutput(false);
-        outHandle.sort(false, 2);
+        outHandle.sort(true, 2);
 
-        outHandle.getView().sort(true, 0);
+        outHandle.getView().sort(false, 0);
 
         String[][] given = iteratorToArray(inHandle.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" }, { "70", "female", "81931" }, { "70", "male", "81931" }, { "34", "male", "81667" }, { "34", "female", "81931" } };
@@ -95,9 +95,9 @@ public class TestDataHandle extends AbstractTest {
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getOutput(false);
-        outHandle.sort(false, 2);
+        outHandle.sort(true, 2);
 
-        outHandle.getView().sort(true, 0);
+        outHandle.getView().sort(false, 0);
 
         String[][] given = iteratorToArray(outHandle.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" }, { "70", "*", "81***" }, { "70", "*", "81***" }, { "34", "*", "81***" }, { "34", "*", "81***" } };
@@ -125,7 +125,7 @@ public class TestDataHandle extends AbstractTest {
         final ARXResult result = anonymizer.anonymize(data, config);
         final DataHandle outHandle = result.getOutput(false);
 
-        data.getHandle().sort(true, 0);
+        data.getHandle().sort(false, 0);
 
         String[][] given = iteratorToArray(outHandle.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" }, { ">=61", "male", "81825" }, { ">=61", "male", "81925" }, { "20-60", "male", "82667" }, { "20-60", "male", "82451" } };
@@ -175,7 +175,7 @@ public class TestDataHandle extends AbstractTest {
         ARXResult result = anonymizer.anonymize(data, config);
 
         // Sort
-        data.getHandle().sort(true, 0, 1, 2);
+        data.getHandle().sort(false, 0, 1, 2);
 
         // Transform
         ARXNode n = result.getLattice().getLevels()[2][1];
@@ -217,7 +217,7 @@ public class TestDataHandle extends AbstractTest {
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getOutput(false);
         final DataHandle inHandle = provider.getData().getHandle();
-        inHandle.sort(false, 0);
+        inHandle.sort(true, 0);
 
         final String[][] inArray = iteratorToArray(inHandle.iterator());
         final String[][] resultArray = iteratorToArray(outHandle.iterator());
@@ -249,7 +249,7 @@ public class TestDataHandle extends AbstractTest {
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
         final DataHandle outHandle = result.getOutput(false);
-        outHandle.sort(false, 2);
+        outHandle.sort(true, 2);
 
         final String[][] inArray = iteratorToArray(inHandle.iterator());
         final String[][] resultArray = iteratorToArray(outHandle.iterator());
@@ -329,7 +329,9 @@ public class TestDataHandle extends AbstractTest {
             @SuppressWarnings("unused")
             DataHandle top = result.getOutput(topNode);
         } catch (RuntimeException e) {
-            if (e.getMessage().contains("locked")) { return; }
+            if (e.getMessage().contains("locked")) {
+                return;
+            }
         }
         Assert.fail();
 
@@ -364,7 +366,9 @@ public class TestDataHandle extends AbstractTest {
         try {
             top.getValue(0, 0);
         } catch (RuntimeException e) {
-            if (e.getMessage().contains("orphaned")) { return; }
+            if (e.getMessage().contains("orphaned")) {
+                return;
+            }
         }
         Assert.fail();
 
@@ -396,10 +400,10 @@ public class TestDataHandle extends AbstractTest {
         DataHandle bottom = result.getOutput(bottomNode);
 
         // sort input data
-        optimal.sort(true, 0);
+        optimal.sort(false, 0);
 
         // sort bottom handle
-        bottom.sort(false, 2);
+        bottom.sort(true, 2);
 
         final String[][] inArray = iteratorToArray(inHandle.iterator());
         final String[][] optimalArray = iteratorToArray(optimal.iterator());
