@@ -40,7 +40,7 @@
             <filename name="**/org.eclipse.jface_3.8.102.v20130123-162658.jar" />
             <filename name="**/junit-4.11.jar" />
             <filename name="**/log4j-1.2.17.jar" />
-            <filename name="**/swtknob-0.2.0.jar" />
+            <filename name="**/swtknob-1.0.0.jar" />
             <filename name="**/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" />
             <filename name="**/org.swtchart_0.8.0.v20120301.jar" />
         </or>

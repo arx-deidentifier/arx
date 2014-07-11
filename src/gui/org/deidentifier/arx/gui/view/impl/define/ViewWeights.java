@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 import de.linearbits.swt.widgets.Knob;
-import de.linearbits.swt.widgets.KnobScale;
+import de.linearbits.swt.widgets.KnobRange;
 
 /**
  * This class allows to define weights for attributes
@@ -239,7 +239,7 @@ public class ViewWeights implements IView {
                 // Create knob widgets
                 List<Knob<Double>> knobs = new ArrayList<Knob<Double>>();
                 for(int i=0; i<qis.size(); i++){
-                    Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobScale.Double(0d, 1d));
+                    Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobRange.Double(0d, 1d));
                     knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(30, 30).create());
                     knobs.add(knob);
                 }
