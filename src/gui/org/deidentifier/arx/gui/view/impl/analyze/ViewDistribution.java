@@ -153,7 +153,7 @@ public class ViewDistribution implements IView {
                         ISeries[] data = chart.getSeriesSet().getSeries();
                         if (data != null && data.length>0 && series != null) {
                             int x = (int) Math.round(xAxis.getDataCoordinate(event.x));
-                            if (x >= 0 && x <= series.length) {
+                            if (x >= 0 && x < series.length) {
                                 chart.getPlotArea().setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")");
                                 return;
                             }
