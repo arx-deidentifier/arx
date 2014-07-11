@@ -89,7 +89,7 @@ public class ViewDensity implements IView {
 
         // Create controls
         parent.setLayout(new FillLayout());
-        this.jhc = new JHC(parent, SWT.NONE);
+        this.jhc = new JHC(parent, SWT.NULL);
         this.gradient = JHCGradient.GRADIENT_HEAT;
         this.layout = new JHCLayout();
         
