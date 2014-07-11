@@ -71,9 +71,6 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
         pqueue.clear();
         if (!lattice.getBottom().isChecked()){
             checker.check(lattice.getBottom(), true);
-            lattice.getBottom().setTagged();
-            lattice.decUntaggedCount(lattice.getBottom().getLevel());
-            lattice.triggerTagged();
         }
         
         // For each node

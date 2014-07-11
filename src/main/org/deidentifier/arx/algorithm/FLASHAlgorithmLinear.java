@@ -69,13 +69,7 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
         
         // Init
         stack.clear();
-        if (!lattice.getBottom().isChecked()) {
-            checker.check(lattice.getBottom(), true);
-            lattice.getBottom().setTagged();
-            lattice.decUntaggedCount(lattice.getBottom().getLevel());
-            lattice.triggerTagged();
-        }
-        
+
         // For each node
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
