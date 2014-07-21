@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -83,35 +84,45 @@ public class NodeChecker implements INodeChecker {
         this.metric = metric;
         this.config = config;
         this.data = manager.getDataQI();
-        final int initialSize = (int) (manager.getDataQI().getDataLength() * 0.01d);
-
-        final IntArrayDictionary dictionarySensValue;
-        final IntArrayDictionary dictionarySensFreq;
-
+        
+        int initialSize = (int) (manager.getDataQI().getDataLength() * 0.01d);
+        IntArrayDictionary dictionarySensValue;
+        IntArrayDictionary dictionarySensFreq;
         if ((config.getRequirements() & ARXConfiguration.REQUIREMENT_DISTRIBUTION) != 0) {
             dictionarySensValue = new IntArrayDictionary(initialSize);
             dictionarySensFreq = new IntArrayDictionary(initialSize);
         } else {
-            // Just to allow bytecode instrumentation
+            // Just to allow byte code instrumentation
             dictionarySensValue = new IntArrayDictionary(0);
             dictionarySensFreq = new IntArrayDictionary(0);
         }
 
-        this.history = new History(manager.getDataQI().getArray().length, historyMaxSize, snapshotSizeDataset, snapshotSizeSnapshot, config, dictionarySensValue, dictionarySensFreq);
-
+        this.history = new History(manager.getDataQI().getArray().length,
+                                   historyMaxSize,
+                                   snapshotSizeDataset,
+                                   snapshotSizeSnapshot,
+                                   config,
+                                   dictionarySensValue,
+                                   dictionarySensFreq);
+        
         this.stateMachine = new StateMachine(history);
         this.currentGroupify = new HashGroupify(initialSize, config);
         this.lastGroupify = new HashGroupify(initialSize, config);
-        this.transformer = new Transformer(manager.getDataQI().getArray(), manager.getHierarchies(), manager.getDataSE().getArray(), config, dictionarySensValue, dictionarySensFreq);
+        this.transformer = new Transformer(manager.getDataQI().getArray(),
+                                           manager.getHierarchies(),
+                                           manager.getDataSE().getArray(),
+                                           config,
+                                           dictionarySensValue,
+                                           dictionarySensFreq);
     }
 
     @Override
-    public void check(final Node node) {
-        check(node, false);
+    public INodeChecker.Result check(final Node node) {
+        return check(node, false);
     }
 
     @Override
-    public void check(final Node node, final boolean forceMeasureInfoLoss) {
+    public INodeChecker.Result check(final Node node, final boolean forceMeasureInfoLoss) {
 
         // Store snapshot from last check
         if (stateMachine.getLastNode() != null) {
@@ -140,27 +151,14 @@ public class NodeChecker implements INodeChecker {
             break;
         }
 
-        // Mark as checked
-        node.setChecked();
-
-        // Propagate k-anonymity
-        node.setKAnonymous(currentGroupify.isKAnonymous());
-
-        // Propagate anonymity
-        boolean measureInfoLoss = forceMeasureInfoLoss;
-        if (currentGroupify.isAnonymous()) {
-            node.setAnonymous(true);
-            measureInfoLoss = true;
-        } else {
-            node.setAnonymous(false);
-        }
-
-        // Propagate information loss
-        if (measureInfoLoss) {
-            metric.evaluate(node, currentGroupify);
-        } else {
-            node.setInformationLoss(null);
-        }
+        // Compute information loss
+        InformationLoss infoLoss = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
+                                    metric.evaluate(node, currentGroupify) : null;
+        
+        // Return result;
+        return new INodeChecker.Result(currentGroupify.isAnonymous(), 
+                                       currentGroupify.isKAnonymous(),
+                                       infoLoss);
     }
 
     @Override
@@ -215,20 +213,24 @@ public class NodeChecker implements INodeChecker {
         currentGroupify = transformer.apply(0L, node.getTransformation(), currentGroupify);
 
         // Determine outliers and set infoloss
-        node.setAnonymous(currentGroupify.isAnonymous());
-        node.setChecked();
-        node.setTagged();
+        if (currentGroupify.isAnonymous()){
+            node.setProperty(Node.PROPERTY_ANONYMOUS);
+        } else {
+            node.setProperty(Node.PROPERTY_NOT_ANONYMOUS);
+        }
+        node.setProperty(Node.PROPERTY_CHECKED);
         if (node.getInformationLoss() == null) {
-            metric.evaluate(node, currentGroupify);
+            node.setInformationLoss(metric.evaluate(node, currentGroupify));
         }
 
         // Find outliers only if node is anonymous
-        if (node.isAnonymous() && config.getAbsoluteMaxOutliers() != 0) {
+        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) && config.getAbsoluteMaxOutliers() != 0) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
 
         // Return the buffer
-        return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics(node.isAnonymous()));
+        return new TransformedData(getBuffer(), 
+                                   currentGroupify.getGroupStatistics(node.hasProperty(Node.PROPERTY_ANONYMOUS)));
     }
 
     @Override

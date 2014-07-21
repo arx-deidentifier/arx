@@ -24,6 +24,7 @@ import java.util.List;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * Abstract class for an algorithm, which provides some generic methods.
@@ -33,13 +34,18 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public abstract class AbstractAlgorithm {
 
+    /** The optimal transformation*/
+    private Node globalOptimum = null;
+
+    /** The optimal information loss*/
+    private InformationLoss optimalInformationLoss = null;
+
     /** A node checker. */
     protected INodeChecker  checker  = null;
 
     /** The lattice. */
     protected Lattice       lattice  = null;
-
-
+    
     /**
      * Walks the lattice.
      * 
@@ -53,7 +59,7 @@ public abstract class AbstractAlgorithm {
         this.checker = checker;
         this.lattice = lattice;
     }
-
+    
     /**
      * Returns a list of all anonymous nodes in the lattice.
      * 
@@ -63,17 +69,38 @@ public abstract class AbstractAlgorithm {
         final ArrayList<Node> results = new ArrayList<Node>();
         for (final Node[] level : lattice.getLevels()) {
             for (final Node n : level) {
-                if (n.isAnonymous()) {
+                if (n.hasProperty(Node.PROPERTY_ANONYMOUS)) {
                     results.add(n);
                 }
             }
         }
         return results;
     }
-
+    /**
+     * Returns the global optimum
+     * @return
+     */
+    public Node getGlobalOptimum() {
+        return globalOptimum;
+    }
+    
     /**
      * Implement this method in order to provide a new algorithm.
      */
     public abstract void traverse();
+
+    
+    /**
+     * Keeps track of the global optimum
+     * @param node
+     */
+    protected void trackOptimum(Node node){
+        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) && ((globalOptimum == null) || 
+           (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) || 
+           (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
+            this.globalOptimum = node;
+            this.optimalInformationLoss = node.getInformationLoss();
+        }
+    }
 
 }

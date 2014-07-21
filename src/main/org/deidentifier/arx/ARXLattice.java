@@ -233,7 +233,7 @@ public class ARXLattice implements Serializable {
         /** Has the node been checked */
         private boolean              checked;
 
-        /** The headermap */
+        /** The header map */
         private Map<String, Integer> headermap;
 
         /** The max information loss */
@@ -245,7 +245,7 @@ public class ARXLattice implements Serializable {
         /** The predecessors */
         private ARXNode[]            predecessors;
 
-        /** The sucessors */
+        /** The successors */
         private ARXNode[]            successors;
 
         /** The transformation */
@@ -266,27 +266,27 @@ public class ARXLattice implements Serializable {
          */
         private ARXNode(final Node node, final Map<String, Integer> headermap) {
             this.headermap = headermap;
-            transformation = node.getTransformation();
-            if (node.isAnonymous()) {
-                if (uncertainty && !node.isChecked()) {
+            this.transformation = node.getTransformation();
+            if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                if (uncertainty && !node.hasProperty(Node.PROPERTY_CHECKED)) {
                     anonymity = Anonymity.PROBABLY_ANONYMOUS;
-                } else  {
+                } else {
                     anonymity = Anonymity.ANONYMOUS;
                 }
             } else {
-                if (uncertainty && !node.isChecked()) {
-                    if (containsMonotonicSubcriterion && !node.isKAnonymous()){
+                if (uncertainty && !node.hasProperty(Node.PROPERTY_CHECKED)) {
+                    if (containsMonotonicSubcriterion && !node.hasProperty(Node.PROPERTY_K_ANONYMOUS)) {
                         anonymity = Anonymity.NOT_ANONYMOUS;
                     } else {
                         anonymity = Anonymity.PROBABLY_NOT_ANONYMOUS;
                     }
-                } else  {
+                } else {
                     anonymity = Anonymity.NOT_ANONYMOUS;
                 }
             }
-            minInformationLoss = node.getInformationLoss();
-            maxInformationLoss = node.getInformationLoss();
-            checked = node.isChecked();
+            this.minInformationLoss = node.getInformationLoss();
+            this.maxInformationLoss = node.getInformationLoss();
+            this.checked = node.hasProperty(Node.PROPERTY_CHECKED);
         }
 
         /**
@@ -478,6 +478,7 @@ public class ARXLattice implements Serializable {
      * @param config The config
      */
     ARXLattice(final Lattice lattice,
+               final Node globalOptimum,
                final String[] header,
                final ARXConfiguration config) {
 
@@ -503,7 +504,7 @@ public class ARXLattice implements Serializable {
             levels[i] = new ARXNode[level.length];
             for (int j = 0; j < level.length; j++) {
                 final ARXNode node = new ARXNode(level[j], headermap);
-                if (level[j] == metric.getGlobalOptimum()) {
+                if (level[j] == globalOptimum) {
                     optimum = node;
                 }
                 levels[i][j] = node;

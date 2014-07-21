@@ -101,6 +101,7 @@ public class ARXAnonymizer {
 
 		    // Create lattice
 	        final ARXLattice flattice = new ARXLattice(lattice,
+	                                                   algorithm.getGlobalOptimum(),
 	                                                   manager.getDataQI().getHeader(),
 	                                                   config);
 

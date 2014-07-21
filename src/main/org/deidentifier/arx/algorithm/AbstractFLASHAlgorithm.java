@@ -12,6 +12,15 @@ import org.deidentifier.arx.framework.lattice.Node;
 
 public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
 
+    /** Are the pointers for a node with id 'index' already sorted?. */
+    protected final boolean[]           sorted;
+
+    /** The strategy. */
+    protected final FLASHStrategy       strategy;
+
+    /** The history */
+    protected History                   history;
+
     /**
      * Instantiate
      * @param lattice
@@ -25,22 +34,9 @@ public abstract class AbstractFLASHAlgorithm extends AbstractAlgorithm {
         super(lattice, checker);
         this.strategy = strategy;
         this.sorted = new boolean[lattice.getSize()];
-        this.path = new ArrayList<Node>();
         this.history = checker.getHistory();
     }
     
-    /** The current path. */
-    protected final ArrayList<Node>     path;
-
-    /** Are the pointers for a node with id 'index' already sorted?. */
-    protected final boolean[]           sorted;
-
-    /** The strategy. */
-    protected final FLASHStrategy       strategy;
-
-    /** The history */
-    protected History                   history;
-
     /**
      * Greedily find a path.
      * 
