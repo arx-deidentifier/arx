@@ -286,24 +286,24 @@ public class ARXResult {
         DataHandle handle = registry.getOutputHandle(node);
         if (handle != null) return handle;
 
-        final Node tNode = new Node(0);
+        final Node transformation = new Node(0);
         int level = 0; for (int i : node.getTransformation()) level+= i;
-        tNode.setTransformation(node.getTransformation(), level);
+        transformation.setTransformation(node.getTransformation(), level);
  
         // Apply the transformation
-        TransformedData information = checker.getTransformedData(tNode);
+        TransformedData information = checker.applyAndSetProperties(transformation);
 
         // Store
         if (!node.isChecked()) {
             
             node.access().setChecked(true);
-            if (tNode.isAnonymous()) {
+            if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS)) {
                 node.access().setAnonymous();
             } else {
                 node.access().setNotAnonymous();
             }
-            node.access().setMaximumInformationLoss(tNode.getInformationLoss());
-            node.access().setMinimumInformationLoss(tNode.getInformationLoss());
+            node.access().setMaximumInformationLoss(transformation.getInformationLoss());
+            node.access().setMinimumInformationLoss(transformation.getInformationLoss());
             lattice.estimateInformationLoss();
         }
         

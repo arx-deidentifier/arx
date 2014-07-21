@@ -127,12 +127,12 @@ public interface INodeChecker {
     public abstract int getNumberOfGroups();
 
     /**
-     * Returns the data for a given node
+     * Applies the given transformation and sets its properties
      * 
-     * @param node
+     * @param transformation
      * @return
      */
-    public TransformedData getTransformedData(Node node);
+    public TransformedData applyAndSetProperties(Node transformation);
 
     /**
      * Returns the data for a given state. Only used for NUMA.

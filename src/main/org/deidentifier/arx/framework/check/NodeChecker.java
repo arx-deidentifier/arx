@@ -206,31 +206,31 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public TransformedData getTransformedData(final Node node) {
+    public TransformedData applyAndSetProperties(final Node transformation) {
 
         // Apply transition and groupify
         currentGroupify.clear();
-        currentGroupify = transformer.apply(0L, node.getTransformation(), currentGroupify);
+        currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
 
         // Determine outliers and set infoloss
         if (currentGroupify.isAnonymous()){
-            node.setProperty(Node.PROPERTY_ANONYMOUS);
+            transformation.setProperty(Node.PROPERTY_ANONYMOUS);
         } else {
-            node.setProperty(Node.PROPERTY_NOT_ANONYMOUS);
+            transformation.setProperty(Node.PROPERTY_NOT_ANONYMOUS);
         }
-        node.setProperty(Node.PROPERTY_CHECKED);
-        if (node.getInformationLoss() == null) {
-            node.setInformationLoss(metric.evaluate(node, currentGroupify));
+        transformation.setProperty(Node.PROPERTY_CHECKED);
+        if (transformation.getInformationLoss() == null) {
+            transformation.setInformationLoss(metric.evaluate(transformation, currentGroupify));
         }
 
         // Find outliers only if node is anonymous
-        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) && config.getAbsoluteMaxOutliers() != 0) {
+        if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS) && config.getAbsoluteMaxOutliers() != 0) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
 
         // Return the buffer
         return new TransformedData(getBuffer(), 
-                                   currentGroupify.getGroupStatistics(node.hasProperty(Node.PROPERTY_ANONYMOUS)));
+                                   currentGroupify.getGroupStatistics(transformation.hasProperty(Node.PROPERTY_ANONYMOUS)));
     }
 
     @Override

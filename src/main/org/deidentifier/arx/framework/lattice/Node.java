@@ -237,7 +237,7 @@ public class Node {
      * 
      * @param transformation
      */
-    protected void setTransformation(final int[] transformation, final int level) {
+    public void setTransformation(final int[] transformation, final int level) {
         this.transformation = transformation;
         this.level = level;
     }
