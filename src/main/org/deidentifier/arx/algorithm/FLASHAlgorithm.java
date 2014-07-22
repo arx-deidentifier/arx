@@ -25,8 +25,8 @@ import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeTrigger;
-import org.deidentifier.arx.framework.lattice.NodeTriggerConstant;
-import org.deidentifier.arx.framework.lattice.NodeTriggerInverse;
+import org.deidentifier.arx.framework.lattice.NodeTrigger.NodeTriggerConstant;
+import org.deidentifier.arx.framework.lattice.NodeTrigger.NodeTriggerInverse;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -186,9 +186,9 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createNoneFull(Lattice lattice,
-                                                    INodeChecker checker,
-                                                    FLASHStrategy strategy) {
+    private static AbstractAlgorithm createNoneFull(final Lattice lattice,
+                                                    final INodeChecker checker,
+                                                    final FLASHStrategy strategy) {
 
         // We focus on the anonymity property
         int anonymityProperty = Node.PROPERTY_ANONYMOUS;
@@ -209,11 +209,11 @@ public class FLASHAlgorithm {
         NodeTrigger triggerCheck = new NodeTriggerInverse(triggerSkip);
         
         // We predictively tag nodes with insufficient utility because of the monotonic metric 
-        NodeTrigger triggerTag = new FLASHNodeTrigger(lattice) {
+        NodeTrigger triggerTag = new NodeTrigger() {
             public boolean appliesTo(Node node) {
                 return node.hasProperty(Node.PROPERTY_ANONYMOUS);
             }
-            public void action(Lattice lattice, Node node) {
+            public void action(Node node) {
                 lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
             }
         };
@@ -238,9 +238,9 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createPartialNone(Lattice lattice,
-                                                       INodeChecker checker,
-                                                       FLASHStrategy strategy) {
+    private static AbstractAlgorithm createPartialNone(final Lattice lattice,
+                                                       final INodeChecker checker,
+                                                       final FLASHStrategy strategy) {
         /* *******************************
          *  BINARY PHASE
          *********************************/
@@ -257,8 +257,12 @@ public class FLASHAlgorithm {
         };
 
         // We predictively tag the k-anonymity property
-        NodeTrigger binaryTriggerTag = new FLASHNodeTrigger(binaryTriggerSkip, lattice){
-            public void action(Lattice lattice, Node node) {
+        NodeTrigger binaryTriggerTag = new NodeTrigger(){
+            public boolean appliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_K_ANONYMOUS) || 
+                       node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS);
+            }
+            public void action(Node node) {
                 if (node.hasProperty(Node.PROPERTY_K_ANONYMOUS)) {
                     lattice.setPropertyUpwards(node, false, Node.PROPERTY_K_ANONYMOUS);
                 } else {
@@ -328,9 +332,9 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createPartialFull(Lattice lattice,
-                                                       INodeChecker checker,
-                                                       FLASHStrategy strategy) {
+    private static AbstractAlgorithm createPartialFull(final Lattice lattice,
+                                                       final INodeChecker checker,
+                                                       final FLASHStrategy strategy) {
         /* *******************************
          *  BINARY PHASE
          *********************************/
@@ -348,16 +352,13 @@ public class FLASHAlgorithm {
         };
 
         // We predictively tag the k-anonymity property and the insufficient utility property
-        NodeTrigger binaryTriggerTag = new FLASHNodeTrigger(lattice){
+        NodeTrigger binaryTriggerTag = new NodeTrigger(){
             public boolean appliesTo(Node node) {
-                
                 return node.hasProperty(Node.PROPERTY_K_ANONYMOUS) || 
                        node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS) ||
                        node.hasProperty(Node.PROPERTY_ANONYMOUS);
             }
-            
-            public void action(Lattice lattice, Node node) {
-
+            public void action(Node node) {
                 // Tag k-anonymity
                 if (node.hasProperty(Node.PROPERTY_K_ANONYMOUS)) {
                     lattice.setPropertyUpwards(node, false, Node.PROPERTY_K_ANONYMOUS);
@@ -405,11 +406,11 @@ public class FLASHAlgorithm {
         NodeTrigger linearTriggerCheck = new NodeTriggerInverse(linearTriggerSkip);
 
         // We predictively tag the insufficient utility property
-        NodeTrigger linearTriggerTag = new FLASHNodeTrigger(lattice){
+        NodeTrigger linearTriggerTag = new NodeTrigger(){
             public boolean appliesTo(Node node) {
                 return node.hasProperty(Node.PROPERTY_ANONYMOUS);
             }
-            public void action(Lattice lattice, Node node) {
+            public void action(Node node) {
                 lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
             }
         };
@@ -463,8 +464,12 @@ public class FLASHAlgorithm {
         };
 
         // We predictively tag the anonymity property
-        NodeTrigger binaryTriggerTag = new FLASHNodeTrigger(binaryTriggerSkip, lattice){
-            public void action(Lattice lattice, Node node) {
+        NodeTrigger binaryTriggerTag = new NodeTrigger(){
+            public boolean appliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_ANONYMOUS) || 
+                       node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS);
+            }
+            public void action(Node node) {
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
                     lattice.setPropertyUpwards(node, false, Node.PROPERTY_ANONYMOUS);
                 } else {
@@ -546,9 +551,9 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createFullFull(Lattice lattice,
-                                                    INodeChecker checker,
-                                                    FLASHStrategy strategy) {
+    private static AbstractAlgorithm createFullFull(final Lattice lattice,
+                                                    final INodeChecker checker,
+                                                    final FLASHStrategy strategy) {
         
         // We focus on the anonymity property
         int anonymityProperty = Node.PROPERTY_ANONYMOUS;
@@ -562,8 +567,12 @@ public class FLASHAlgorithm {
         };
 
         // We predictively tag the anonymity property
-        NodeTrigger triggerTag = new FLASHNodeTrigger(triggerSkip, lattice){
-            public void action(Lattice lattice, Node node) {
+        NodeTrigger triggerTag = new NodeTrigger(){
+            public boolean appliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_ANONYMOUS) || 
+                       node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS);
+            }
+            public void action(Node node) {
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
                     lattice.setPropertyUpwards(node, false, Node.PROPERTY_ANONYMOUS);
                 } else {

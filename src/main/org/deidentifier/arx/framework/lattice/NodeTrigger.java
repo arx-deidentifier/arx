@@ -22,9 +22,50 @@ package org.deidentifier.arx.framework.lattice;
  * A trigger for nodes
  * 
  * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
 public abstract class NodeTrigger {
-    
+
+    /**
+     * A trigger for nodes
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
+    public static class NodeTriggerConstant extends NodeTrigger {
+
+        private final boolean result;
+
+        public NodeTriggerConstant(boolean result) {
+            this.result = result;
+        }
+
+        @Override
+        public boolean appliesTo(Node node) {
+            return result;
+        }
+    }
+
+    /**
+     * A trigger for nodes
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
+    public static class NodeTriggerInverse extends NodeTrigger {
+
+        private final NodeTrigger trigger;
+
+        public NodeTriggerInverse(NodeTrigger trigger) {
+            this.trigger = trigger;
+        }
+
+        @Override
+        public boolean appliesTo(Node node) {
+            return !trigger.appliesTo(node);
+        }
+    }
+
     /**
      * Determines whether the trigger action should be performed
      * @param node
