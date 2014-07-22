@@ -151,7 +151,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
                 // First phase
                 List<Node> path = findPath(head, binaryPhaseConfiguration.triggerSkip);
-                head = checkPathBinary(path, binaryPhaseConfiguration.triggerSkip, queue);
+                head = checkPath(path, binaryPhaseConfiguration.triggerSkip, queue);
 
                 // Second phase
                 if (linearPhaseConfiguration.active && head != null) {
@@ -250,7 +250,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      *            The path
      * @param queue 
      */
-    private Node checkPathBinary(List<Node> path, NodeTrigger triggerSkip, PriorityQueue<Node> queue) {
+    private Node checkPath(List<Node> path, NodeTrigger triggerSkip, PriorityQueue<Node> queue) {
 
         // Init
         int low = 0;
@@ -300,7 +300,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @return A sorted array of nodes remaining on this level
      */
 
-    protected final Node[] getUnsetNodesAndSort(int level, NodeTrigger triggerSkip) {
+    private Node[] getUnsetNodesAndSort(int level, NodeTrigger triggerSkip) {
         
         // Create
         List<Node> result = new ArrayList<Node>();
@@ -322,7 +322,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * 
      * @param node The node
      */
-    protected final void sortSuccessors(final Node node) {
+    private void sortSuccessors(final Node node) {
         if (!sorted[node.id]) {
             this.sort(node.getSuccessors());
             sorted[node.id] = true;
@@ -334,7 +334,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * 
      * @param array The array
      */
-    private final void sort(final Node[] array) {
+    private void sort(final Node[] array) {
         Arrays.sort(array, strategy);
     }
 }

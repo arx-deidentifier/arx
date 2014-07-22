@@ -446,6 +446,7 @@ public class FLASHAlgorithm {
     private static AbstractAlgorithm createFullNone(final Lattice lattice,
                                                     final INodeChecker checker,
                                                     final FLASHStrategy strategy) {
+        
         /* *******************************
          *  BINARY PHASE
          *********************************/

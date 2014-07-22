@@ -141,7 +141,7 @@ public abstract class TestDataTransformationsFromFileAbstract extends AbstractTe
                 for (ARXNode[] level : result.getLattice().getLevels()) {
                     for (ARXNode arxNode : level) {
                         if (arxNode.isAnonymous() == Anonymity.ANONYMOUS) {
-                            assertTrue(arxNode.isChecked());
+                            assertTrue(Arrays.toString(arxNode.getTransformation()), arxNode.isChecked());
                         }
                     }
                 }
