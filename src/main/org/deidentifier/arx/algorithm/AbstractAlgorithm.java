@@ -94,9 +94,10 @@ public abstract class AbstractAlgorithm {
      * @param node
      */
     protected void trackOptimum(Node node){
-        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) && ((globalOptimum == null) || 
-           (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) || 
-           (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
+        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) && 
+           ((globalOptimum == null) || 
+            (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) || 
+            (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
             this.globalOptimum = node;
             this.optimalInformationLoss = node.getInformationLoss();
         }
