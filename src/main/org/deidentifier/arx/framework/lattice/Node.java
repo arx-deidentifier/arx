@@ -261,15 +261,6 @@ public class Node {
     }
 
     /**
-     * Unsets the given property
-     * @param property
-     * @return
-     */
-    public void unsetProperty(int property){
-        properties &= ~(1 << property);
-    }
-
-    /**
      * Sets the predecessors
      * 
      * @param nodes
