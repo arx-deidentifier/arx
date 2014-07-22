@@ -47,8 +47,8 @@ public class MetricDM extends MetricDefault {
 
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-        final boolean anonymous = node.hasProperty(Node.PROPERTY_ANONYMOUS);
-
+        
+        final boolean anonymous = g.isAnonymous();
         double value = 0;
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {

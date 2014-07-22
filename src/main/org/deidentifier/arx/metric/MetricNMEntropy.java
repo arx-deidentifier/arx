@@ -60,7 +60,7 @@ public class MetricNMEntropy extends MetricEntropy {
         final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
         
         // Ignore outliers if node is not anonymous
-        if (!node.hasProperty(Node.PROPERTY_ANONYMOUS)) return originalInfoLossDefault;
+        if (!g.isAnonymous()) return originalInfoLossDefault;
         
         // Compute loss induced by suppression
         // TODO: Use lightweight alternative to Map<Integer, Integer>();
