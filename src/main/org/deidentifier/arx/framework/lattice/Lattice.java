@@ -154,7 +154,6 @@ public class Lattice {
      * @param property the property
      */
     public void setPropertyUpwards(Node node, boolean include, int property) {
-        
 
         if (include) {
             setProperty(node, property);

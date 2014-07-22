@@ -196,6 +196,9 @@ public class FLASHAlgorithmImpl extends AbstractFLASHAlgorithm {
             node.setChecked(checker.check(node));
         }  
         
+        // Store optimum
+        trackOptimum(node);
+        
         // Tag
         configuration.triggerTag.apply(node);
     }
