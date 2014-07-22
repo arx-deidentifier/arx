@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
+import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.Lattice;
@@ -55,8 +56,8 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
 
         super(lattice, checker, strategy);
         this.pqueue = new PriorityQueue<Node>(11, strategy);
-        this.history.setPruningStrategy(PruningStrategy.ANONYMOUS);
-        this.history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
+        this.history.setEvictionTrigger(History.EVICTION_TRIGGER_ANONYMOUS);
+        this.history.setStorageTrigger(History.STORAGE_TRIGGER_NON_ANONYMOUS);
     }
 
     /*
@@ -77,7 +78,7 @@ public class FLASHAlgorithmBinary extends AbstractFLASHAlgorithm {
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
             Node[] level;
-            level = this.sort(i);
+            level = this.sortSuccessors(i);
             for (final Node node : level) {
                 if (!node.isTagged()) {
                     pqueue.add(node);

@@ -35,7 +35,7 @@ public abstract class NodeTrigger {
     /**
      * Implements the action to be performed
      */
-    public void apply(Node node) {
+    public void action(Node node) {
         // Empty by design
     }
     
@@ -43,9 +43,9 @@ public abstract class NodeTrigger {
      * Applies the trigger to the given node
      * @param node
      */
-    public void check(Node node){
+    public final void apply(Node node){
         if (appliesTo(node)) {
-            apply(node);
+            action(node);
         }
     }
 }

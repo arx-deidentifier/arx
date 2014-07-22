@@ -89,7 +89,6 @@ public abstract class AbstractAlgorithm {
      */
     public abstract void traverse();
 
-    
     /**
      * Keeps track of the global optimum
      * @param node
@@ -102,5 +101,4 @@ public abstract class AbstractAlgorithm {
             this.optimalInformationLoss = node.getInformationLoss();
         }
     }
-
 }

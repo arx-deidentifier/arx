@@ -23,10 +23,10 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
-import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
-import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
+import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.NodeTrigger;
 
 /**
  * This class provides a reference implementation of the Two-Phase FLASH algorithm.
@@ -59,8 +59,8 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
         super(lattice, checker, strategy);
         this.stack = new Stack<Node>();
         this.pqueue = new PriorityQueue<Node>(11, strategy);
-        this.history.setPruningStrategy(PruningStrategy.K_ANONYMOUS);
-        this.history.setStorageStrategy(StorageStrategy.NON_ANONYMOUS);
+        this.history.setEvictionTrigger(History.EVICTION_TRIGGER_K_ANONYMOUS);
+        this.history.setStorageTrigger(History.STORAGE_TRIGGER_NON_ANONYMOUS);
     }
 
     /**
@@ -130,7 +130,7 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
             Node[] level;
-            level = this.sort(i);
+            level = this.sortSuccessors(i);
             for (final Node node : level) {
                 if (!node.isTagged()) {
                     pqueue.add(node);
@@ -147,10 +147,10 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                             if (head != null) {
 
                                 // Change strategies
-                                final PruningStrategy pruningStrategy = history.getPruningStrategy();
-                                final StorageStrategy storageStrategy = history.getStorageStrategy();
-                                history.setPruningStrategy(PruningStrategy.CHECKED);
-                                history.setStorageStrategy(StorageStrategy.ALL);
+                                NodeTrigger pruningStrategy = history.getEvictionTrigger();
+                                NodeTrigger storageStrategy = history.getStorageTrigger();
+                                history.setEvictionTrigger(History.EVICTION_TRIGGER_CHECKED);
+                                history.setStorageTrigger(History.STORAGE_TRIGGER_ALL);
 
                                 // Untag all nodes above first anonymous node if
                                 // they have already been tagged in first phase.
@@ -167,8 +167,8 @@ public class FLASHAlgorithmTwoPhases extends AbstractFLASHAlgorithm {
                                 }
 
                                 // Switch back to previous strategies
-                                history.setPruningStrategy(pruningStrategy);
-                                history.setStorageStrategy(storageStrategy);
+                                history.setEvictionTrigger(pruningStrategy);
+                                history.setStorageTrigger(storageStrategy);
                             }
                         }
                     }

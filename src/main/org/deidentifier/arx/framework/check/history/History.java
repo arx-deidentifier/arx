@@ -37,6 +37,9 @@ import org.deidentifier.arx.framework.lattice.NodeTrigger;
  */
 public class History {
     
+    /**
+     * Store only non-anonymous transformations
+     */
     public static final NodeTrigger STORAGE_TRIGGER_NON_ANONYMOUS = new NodeTrigger(){
         @Override
         public boolean appliesTo(Node node) {
@@ -44,6 +47,9 @@ public class History {
         }
     };
 
+    /**
+     * Store all transformations
+     */
     public static final NodeTrigger STORAGE_TRIGGER_ALL = new NodeTrigger(){
         @Override
         public boolean appliesTo(Node node) {
@@ -51,6 +57,9 @@ public class History {
         }
     };
 
+    /**
+     * Evict transformations for which all successors are anonymous
+     */
     public static final NodeTrigger EVICTION_TRIGGER_ANONYMOUS = new NodeTrigger(){
         @Override
         public boolean appliesTo(Node node) {
@@ -63,6 +72,9 @@ public class History {
         }
     };
 
+    /**
+     * Evict transformations for which all successors have been checked
+     */
     public static final NodeTrigger EVICTION_TRIGGER_CHECKED = new NodeTrigger(){
         @Override
         public boolean appliesTo(Node node) {
@@ -75,6 +87,9 @@ public class History {
         }
     };
 
+    /**
+     * Evict transformations for which all successors are k-anonymous
+     */
     public static final NodeTrigger EVICTION_TRIGGER_K_ANONYMOUS = new NodeTrigger(){
         @Override
         public boolean appliesTo(Node node) {
@@ -90,7 +105,7 @@ public class History {
     /** The actual buffer. */
     private MRUCache<Node>           cache          = null;
 
-    /** Current config */
+    /** Current configuration */
     private final ARXConfiguration   config;
 
     /** The dictionary for frequencies of the distributions */
@@ -271,7 +286,7 @@ public class History {
      * 
      * @param strategy
      */
-    public void setStorageStrategy(NodeTrigger trigger) {
+    public void setStorageTrigger(NodeTrigger trigger) {
         storageTrigger = trigger;
     }
     
@@ -298,17 +313,21 @@ public class History {
      */
     public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
 
-        // Early abort
-        if (!storageTrigger.appliesTo(node) ||
-            evictionTrigger.appliesTo(node) ||
-            g.size() > snapshotSizeDataset) { 
-                return false; 
+        // Early abort if too large
+        if (g.size() > snapshotSizeDataset) {
+            return false;
         }
 
-        // Store only if significantly smaller
+        // Early abort if too large
         if (usedSnapshot != null) {
-            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
-            if (percentSize > snapshotSizeSnapshot) { return false; }
+            final double relativeSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
+            if (relativeSize > snapshotSizeSnapshot) { return false; }
+        }
+        
+        // Early abort if conditions are not triggered
+        if (!node.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
+            (!storageTrigger.appliesTo(node) || evictionTrigger.appliesTo(node))) {
+            return false;
         }
 
         // Create the snapshot

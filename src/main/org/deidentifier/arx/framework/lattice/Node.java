@@ -20,6 +20,7 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.Arrays;
 
+import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -30,22 +31,44 @@ import org.deidentifier.arx.metric.InformationLoss;
  */
 public class Node {
     
-    /** Internal counter*/
+    /** 
+     * Internal counter
+     */
     private static int PROPERTIES = 0;
     
-    /** All privacy criteria are fulfilled*/
+    /** 
+     * All privacy criteria are fulfilled
+     */
     public static final int PROPERTY_ANONYMOUS = PROPERTIES++;
-    /** Not all privacy criteria are fulfilled*/
+    /** 
+     * Not all privacy criteria are fulfilled
+     */
     public static final int PROPERTY_NOT_ANONYMOUS = PROPERTIES++;
-    /** A k-anonymity sub-criterion is fulfilled*/
+    /** 
+     * A k-anonymity sub-criterion is fulfilled
+     */
     public static final int PROPERTY_K_ANONYMOUS = PROPERTIES++;
-    /** A k-anonymity sub-criterion is not fulfilled*/
+    /** 
+     * A k-anonymity sub-criterion is not fulfilled
+     */
     public static final int PROPERTY_NOT_K_ANONYMOUS = PROPERTIES++;
-    /** The transformation results in insufficient utility*/
+    /** 
+     * The transformation results in insufficient utility
+     */
     public static final int PROPERTY_INSUFFICIENT_UTILITY = PROPERTIES++;
-    /** The transformation has been checked explicitly*/
+    /** 
+     * The transformation has been checked explicitly
+     */
     public static final int PROPERTY_CHECKED = PROPERTIES++;
-    /** The number of available properties*/
+    /** 
+     * A snapshot for this transformation must be created if it fits the size limits,
+     * regardless of whether it triggers the storage condition
+     */
+    public static final int PROPERTY_FORCE_SNAPSHOT = PROPERTIES++;
+    
+    /** 
+     * The number of available properties
+     */
     public static final int NUM_PROPERTIES = PROPERTIES;
 
     /** The id. */
@@ -78,12 +101,12 @@ public class Node {
     /**
      * Instantiates a new node.
      */
-    public Node(final int id) {
+    public Node(int id) {
         this.id = id;
-        informationLoss = null;
-        preIndex = 0;
-        sucIndex = 0;
-        properties = 0;
+        this.informationLoss = null;
+        this.preIndex = 0;
+        this.sucIndex = 0;
+        this.properties = 0;
     }
 
     /**
@@ -91,7 +114,7 @@ public class Node {
      * 
      * @param predecessor
      */
-    public void addPredecessor(final Node predecessor) {
+    public void addPredecessor(Node predecessor) {
         predecessors[preIndex++] = predecessor;
     }
 
@@ -100,7 +123,7 @@ public class Node {
      * 
      * @param successor
      */
-    public void addSuccessor(final Node successor) {
+    public void addSuccessor(Node successor) {
         successors[sucIndex++] = successor;
     }
 
@@ -110,7 +133,7 @@ public class Node {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) { return true; }
         if (obj == null) { return false; }
         if (getClass() != obj.getClass()) { return false; }
@@ -191,7 +214,7 @@ public class Node {
      * 
      * @param informationLoss
      */
-    public void setInformationLoss(final InformationLoss informationLoss) {
+    public void setInformationLoss(InformationLoss informationLoss) {
         this.informationLoss = informationLoss;
     }
 
@@ -203,6 +226,38 @@ public class Node {
      */
     public void setProperty(int property){
         properties |= (1 << property);
+    }
+    
+
+    /**
+     * Sets the properties to the given node
+     * 
+     * @param node the node
+     * @param result the result
+     */
+    public void setChecked(INodeChecker.Result result) {
+        
+        // Set checked
+        setProperty(Node.PROPERTY_CHECKED);
+        
+        // Anonymous
+        if (result.anonymous){
+            setProperty(Node.PROPERTY_ANONYMOUS);
+        } else {
+            setProperty(Node.PROPERTY_NOT_ANONYMOUS);
+        }
+
+        // k-Anonymous
+        if (result.kAnonymous){
+            setProperty(Node.PROPERTY_K_ANONYMOUS);
+        } else {
+            setProperty(Node.PROPERTY_NOT_K_ANONYMOUS);
+        }
+
+        // Infoloss
+        if (informationLoss == null) {
+            informationLoss = result.informationLoss;
+        }
     }
 
     /**
@@ -219,7 +274,7 @@ public class Node {
      * 
      * @param nodes
      */
-    protected void setPredecessors(final Node[] nodes) {
+    protected void setPredecessors(Node[] nodes) {
         predecessors = nodes;
     }
 
@@ -228,7 +283,7 @@ public class Node {
      * 
      * @param nodes
      */
-    protected void setSuccessors(final Node[] nodes) {
+    protected void setSuccessors(Node[] nodes) {
         successors = nodes;
     }
 
@@ -237,7 +292,7 @@ public class Node {
      * 
      * @param transformation
      */
-    public void setTransformation(final int[] transformation, final int level) {
+    public void setTransformation(int[] transformation, int level) {
         this.transformation = transformation;
         this.level = level;
     }

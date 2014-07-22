@@ -31,9 +31,6 @@ public class Lattice {
     /** The levels. */
     private final Node[][] levels;
 
-    /** The number of untagged nodes on each level */
-    private final int[][]  untagged;
-
     /** The maximal transformation levels for each attribute */
     private final int[]    maxLevels;
 
@@ -41,7 +38,7 @@ public class Lattice {
     private final int      size;
 
     /** A listener */
-    private ARXListener   listener = null;
+    private ARXListener    listener = null;
 
     /**
      * Initializes a lattice.
@@ -60,13 +57,6 @@ public class Lattice {
         this.maxLevels = maxLevels;
         this.levels = levels;
         this.size = numNodes;
-        this.untagged = new int[Node.NUM_PROPERTIES][levels.length];
-        for (int i = 0; i < untagged.length; i++) {
-            this.untagged[i] = new int[levels.length];
-            for (int j = 0; j < levels.length; j++) {
-                this.untagged[i][j] = levels[j].length;
-            }
-        }
     }
 
     /**
@@ -128,17 +118,6 @@ public class Lattice {
     }
 
     /**
-     * Return the number of nodes for which the given property has not been set on the given level
-     * 
-     * @param property
-     * @param level
-     * @return
-     */
-    public int getUnsetPropertyCount(int property, int level) {
-        return untagged[property][level];
-    }
-
-    /**
      * Attaches a listener
      * 
      * @param listener
@@ -156,10 +135,8 @@ public class Lattice {
      */
     public void setPropertyDownwards(Node node, boolean include, int property) {
         
-        if (include && !node.hasProperty(property)) {
-            node.setProperty(property);
-            untagged[property][node.getLevel()]--;
-            triggerTagged();
+        if (include) {
+            setProperty(node, property);
         }
 
         for (final Node down : node.getPredecessors()) {
@@ -168,7 +145,6 @@ public class Lattice {
             }
         }
     }
-    
 
     /**
      * Sets the property to all successors of the given node
@@ -179,16 +155,29 @@ public class Lattice {
      */
     public void setPropertyUpwards(Node node, boolean include, int property) {
         
-        if (include && !node.hasProperty(property)) {
-            node.setProperty(property);
-            untagged[property][node.getLevel()]--;
-            triggerTagged();
-        }
 
+        if (include) {
+            setProperty(node, property);
+        }
+        
         for (final Node up : node.getSuccessors()) {
             if (!up.hasProperty(property)) {
                 setPropertyUpwards(up, true, property);
             }
+        }
+    }
+
+    /**
+     * Sets the property to the given node
+     * 
+     * @param node the node
+     * @param property the property
+     */
+    private void setProperty(Node node, int property) {
+        
+        if (!node.hasProperty(property)) {
+            node.setProperty(property);
+            triggerTagged();
         }
     }
 

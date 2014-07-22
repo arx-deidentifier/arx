@@ -21,6 +21,7 @@ package org.deidentifier.arx.algorithm;
 import java.util.Stack;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
+import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.check.history.History.PruningStrategy;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.Lattice;
@@ -55,8 +56,8 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
 
         super(lattice, checker, strategy);
         this.stack = new Stack<Node>();
-        this.history.setPruningStrategy(PruningStrategy.CHECKED);
-        this.history.setStorageStrategy(StorageStrategy.ALL);
+        this.history.setEvictionTrigger(History.EVICTION_TRIGGER_CHECKED);
+        this.history.setStorageTrigger(History.STORAGE_TRIGGER_ALL);
     }
 
     /*
@@ -74,7 +75,7 @@ public class FLASHAlgorithmLinear extends AbstractFLASHAlgorithm {
         final int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
             Node[] level;
-            level = this.sort(i);
+            level = this.sortSuccessors(i);
             for (final Node node : level) {
                 if (!node.isTagged()) { 
                     // Second phase

@@ -212,22 +212,22 @@ public class NodeChecker implements INodeChecker {
         currentGroupify.clear();
         currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
 
-        // Determine outliers and set infoloss
-        if (currentGroupify.isAnonymous()){
-            transformation.setProperty(Node.PROPERTY_ANONYMOUS);
-        } else {
-            transformation.setProperty(Node.PROPERTY_NOT_ANONYMOUS);
-        }
-        transformation.setProperty(Node.PROPERTY_CHECKED);
-        if (transformation.getInformationLoss() == null) {
-            transformation.setInformationLoss(metric.evaluate(transformation, currentGroupify));
-        }
-
         // Find outliers only if node is anonymous
         if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS) && config.getAbsoluteMaxOutliers() != 0) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
-
+        
+        // Determine information loss
+        InformationLoss loss = transformation.getInformationLoss();
+        if (loss == null) {
+            loss = metric.evaluate(transformation, currentGroupify);
+        }
+        
+        // Set properties
+        transformation.setChecked(new Result(currentGroupify.isAnonymous(), 
+                                             currentGroupify.isKAnonymous(),
+                                             loss));
+        
         // Return the buffer
         return new TransformedData(getBuffer(), 
                                    currentGroupify.getGroupStatistics(transformation.hasProperty(Node.PROPERTY_ANONYMOUS)));
