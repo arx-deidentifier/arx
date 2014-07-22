@@ -19,6 +19,7 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -34,13 +35,22 @@ import org.deidentifier.arx.framework.lattice.NodeTrigger;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class FLASHAlgorithmImpl extends AbstractFLASHAlgorithm {
+public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     /** Configuration for the binary phase*/
     private final FLASHConfiguration binaryPhaseConfiguration;
     /** Configuration for the linear phase*/
     private final FLASHConfiguration linearPhaseConfiguration;
-    
+
+    /** Are the pointers for a node with id 'index' already sorted?. */
+    protected final boolean[]           sorted;
+
+    /** The strategy. */
+    protected final FLASHStrategy       strategy;
+
+    /** The history */
+    protected History                   history;
+
     /**
      * Creates a new instance
      * 
@@ -56,7 +66,10 @@ public class FLASHAlgorithmImpl extends AbstractFLASHAlgorithm {
                               FLASHConfiguration binaryPhaseConfiguration,
                               FLASHConfiguration linearPhaseConfiguration) {
         
-        super(lattice, checker, strategy);
+        super(lattice, checker);
+        this.strategy = strategy;
+        this.sorted = new boolean[lattice.getSize()];
+        this.history = checker.getHistory();
         this.binaryPhaseConfiguration = binaryPhaseConfiguration;
         this.linearPhaseConfiguration = linearPhaseConfiguration;
     }
@@ -277,67 +290,51 @@ public class FLASHAlgorithmImpl extends AbstractFLASHAlgorithm {
         }
         return lastAnonymousNode;
     }
-//    
-//
-//    /**
-//     * Checks a path sequentially.
-//     * 
-//     * @param path
-//     *            The path
-//     */                                       
-//    protected final void checkPathLinear(final List<Node> path, final Stack<Node> stack) {
-//
-//        for (final Node node : path) {
-//            if (!node.isTagged()) { 
-//                checkNodeLinear(node);
-//                // Put all untagged nodes on the stack
-//                for (final Node up : node.getSuccessors()) {
-//                    if (!up.isTagged()) {
-//                        stack.push(up);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    /**
-//     * Check a node during the second phase
-//     * 
-//     * @param node
-//     */
-//    protected void checkNodeLinear(final Node node) {
-//        if (!node.isChecked()) {
-//
-//            // TODO: Rethink var1 & var2
-//            final boolean var1 = !checker.getMetric().isMonotonic() &&
-//                                 checker.getConfiguration()
-//                                        .isCriterionMonotonic();
-//
-//            final boolean var2 = !checker.getMetric().isMonotonic() &&
-//                                 !checker.getConfiguration()
-//                                         .isCriterionMonotonic() &&
-//                                 checker.getConfiguration()
-//                                        .isPracticalMonotonicity();
-//
-//            // NOTE: Might return non-anonymous result as optimum, when
-//            // 1. the criterion is not monotonic, and
-//            // 2. practical monotonicity is assumed, and
-//            // 3. the metric is non-monotonic BUT independent.
-//            // -> Such a metric does currently not exist
-//            if (checker.getMetric().isIndependent() && (var1 || var2)) {
-//                checker.getMetric().evaluate(node, null);
-//            } else {
-//                checker.check(node);
-//            }
-//        }
-//
-//        // In case metric is monotone it can be tagged if the node is anonymous
-//        if (checker.getMetric().isMonotonic() && node.isAnonymous()) { 
-//            lattice.tagAnonymous(node, node.isAnonymous());
-//        } else {
-//            node.setTagged();
-//            lattice.decUntaggedCount(node.getLevel());
-//            lattice.triggerTagged();
-//        }
-//    }
+
+    /**
+     * Returns all nodes that do not have the given property and sorts the resulting array
+     * according to the strategy
+     * 
+     * @param level The level which is to be sorted
+     * @param triggerSkip The trigger to be used for limiting the number of nodes to be sorted
+     * @return A sorted array of nodes remaining on this level
+     */
+
+    protected final Node[] getUnsetNodesAndSort(int level, NodeTrigger triggerSkip) {
+        
+        // Create
+        List<Node> result = new ArrayList<Node>();
+        Node[] nlevel = lattice.getLevels()[level];
+        for (Node n : nlevel) {
+            if (!triggerSkip.appliesTo(n)) {
+                result.add(n);
+            }
+        }
+        
+        // Sort
+        Node[] resultArray = result.toArray(new Node[result.size()]);
+        this.sort(resultArray);
+        return resultArray;
+    }
+
+    /**
+     * Sorts pointers to successor nodes according to the strategy
+     * 
+     * @param node The node
+     */
+    protected final void sortSuccessors(final Node node) {
+        if (!sorted[node.id]) {
+            this.sort(node.getSuccessors());
+            sorted[node.id] = true;
+        }
+    }
+
+    /**
+     * Sorts a node array.
+     * 
+     * @param array The array
+     */
+    private final void sort(final Node[] array) {
+        Arrays.sort(array, strategy);
+    }
 }

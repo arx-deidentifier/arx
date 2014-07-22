@@ -32,9 +32,25 @@ import org.deidentifier.arx.framework.lattice.NodeTrigger;
 public abstract class FLASHNodeTrigger extends NodeTrigger {
 
     private final Lattice lattice;
+    private final NodeTrigger trigger;
 
     public FLASHNodeTrigger(Lattice lattice) {
         this.lattice = lattice;
+        this.trigger = null;
+    }
+    
+    public FLASHNodeTrigger(NodeTrigger trigger, Lattice lattice) {
+        this.lattice = lattice;
+        this.trigger = trigger;
+    }
+
+    @Override
+    public boolean appliesTo(Node node) {
+        if (trigger != null) {
+            return trigger.appliesTo(node);
+        } else {
+            throw new IllegalStateException("Please override this method!");
+        }
     }
 
     @Override
