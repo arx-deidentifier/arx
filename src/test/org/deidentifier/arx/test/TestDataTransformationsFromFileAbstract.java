@@ -27,10 +27,10 @@ import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.LDiversity;
@@ -55,18 +55,28 @@ public abstract class TestDataTransformationsFromFileAbstract extends AbstractTe
         public double           optimalInformationLoss;
         public int[]            bestResult;
         public boolean          practical;
+        public int[]            statistics;
 
-        public TestCaseResult(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final double optimalInformationLoss, final int[] bestResult, final boolean practical) {
+        public TestCaseResult(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final double optimalInformationLoss, final int[] bestResult, final boolean practical, int[] statistics) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
             this.optimalInformationLoss = optimalInformationLoss;
             this.bestResult = bestResult;
             this.practical = practical;
+            this.statistics = statistics;
+        }
+
+        public TestCaseResult(final ARXConfiguration config, final String dataset, final double optimalInformationLoss, final int[] bestResult, final boolean practical, int[] statistics) {
+            this(config, "", dataset, optimalInformationLoss, bestResult, practical, statistics);
         }
 
         public TestCaseResult(final ARXConfiguration config, final String dataset, final double optimalInformationLoss, final int[] bestResult, final boolean practical) {
-            this(config, "", dataset, optimalInformationLoss, bestResult, practical);
+            this(config, "", dataset, optimalInformationLoss, bestResult, practical, null);
+        }
+
+        public TestCaseResult(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final double optimalInformationLoss, final int[] bestResult, final boolean practical) {
+            this(config, sensitiveAttribute, dataset, optimalInformationLoss, bestResult, practical, null);
         }
     }
 
@@ -136,26 +146,56 @@ public abstract class TestDataTransformationsFromFileAbstract extends AbstractTe
 
         ARXResult result = anonymizer.anonymize(data, testCase.config);
 
-        // check if no solution possible
+        // check if no solution
         if (testCase.bestResult == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
-            // check if all anonymous nodes are checked if outliers are present and the metric is non-monotonic and no-practical monotonicity is assumed
-            if (!testCase.practical && testCase.config.getAbsoluteMaxOutliers() != 0 && !testCase.config.getMetric().isMonotonic()) {
-                for (ARXNode[] level : result.getLattice().getLevels()) {
-                    for (ARXNode arxNode : level) {
-                        if (arxNode.isAnonymous() == Anonymity.ANONYMOUS) {
-                            assertTrue(arxNode.isChecked());
-                        }
-                    }
-                }
-            }
-
             assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.bestResult) + " is: " + Arrays.toString(result.getGlobalOptimum().getTransformation()), Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.bestResult));
-
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " + result.getGlobalOptimum().getMinimumInformationLoss().getValue(), testCase.optimalInformationLoss, result.getGlobalOptimum().getMinimumInformationLoss().getValue());
         }
 
-    }
+        // check if all anonymous nodes are checked if outliers are present and the metric is non-monotonic and no-practical monotonicity is assumed
+        if (!testCase.practical && testCase.config.getAbsoluteMaxOutliers() != 0 && !testCase.config.getMetric().isMonotonic()) {
+            for (ARXNode[] level : result.getLattice().getLevels()) {
+                for (ARXNode arxNode : level) {
+                    if (arxNode.isAnonymous() == Anonymity.ANONYMOUS) {
+                        assertTrue(arxNode.isChecked());
+                    }
+                }
+            }
+        }
 
+        // collect statistics
+        int[] statistics = new int[7];
+        for (ARXNode[] level : result.getLattice().getLevels()) {
+            for (ARXNode arxNode : level) {
+                statistics[0]++;
+                if (arxNode.isChecked()) {
+                    statistics[1]++;
+                }
+                if (arxNode.isAnonymous() == Anonymity.ANONYMOUS) {
+                    statistics[2]++;
+                }
+                if (arxNode.isAnonymous() == Anonymity.NOT_ANONYMOUS) {
+                    statistics[3]++;
+                }
+                if (arxNode.isAnonymous() == Anonymity.PROBABLY_ANONYMOUS) {
+                    statistics[4]++;
+                }
+                if (arxNode.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+                    statistics[5]++;
+                }
+                if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
+                    statistics[6]++;
+                }
+            }
+        }
+
+        // Test statistics
+        // System.out.println("new int[] {" + Arrays.toString(statistics).substring(1, Arrays.toString(statistics).length() - 1) + "}");
+        if (testCase.statistics != null) {
+            assertTrue(Arrays.equals(statistics, testCase.statistics));
+        }
+
+    }
 }
