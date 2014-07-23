@@ -136,7 +136,6 @@ public class NodeChecker implements INodeChecker {
         final IHashGroupify temp = lastGroupify;
         lastGroupify = currentGroupify;
         currentGroupify = temp;
-        currentGroupify.clear();
 
         // Apply transition
         switch (transition.type) {
@@ -212,7 +211,6 @@ public class NodeChecker implements INodeChecker {
     public TransformedData applyAndSetProperties(final Node transformation) {
 
         // Apply transition and groupify
-        currentGroupify.clear();
         currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
         currentGroupify.analyze();
 
