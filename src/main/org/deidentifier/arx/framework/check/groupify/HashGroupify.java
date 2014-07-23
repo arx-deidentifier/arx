@@ -366,11 +366,11 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void clear() {
         if (elementCount > 0) {
-            elementCount = 0;
+            this.elementCount = 0;
+            this.currentOutliers = 0;
+            this.firstEntry = null;
+            this.lastEntry = null;
             HashTableUtil.nullifyArray(buckets);
-            currentOutliers = 0;
-            firstEntry = null;
-            lastEntry = null;
         }
     }
 
