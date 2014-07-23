@@ -169,7 +169,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 }
             }
         }
-
     }
 
     /**
@@ -219,20 +218,20 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     /**
      * Greedily finds a path to the top node
      * 
-     * @param start The node to start the path with. Will be included
+     * @param current The node to start the path with. Will be included
      * @param triggerSkip All nodes to which this trigger applies will be skipped
      * @return The path as a list
      */
-    private List<Node> findPath(Node start, NodeTrigger triggerSkip) {
+    private List<Node> findPath(Node current, NodeTrigger triggerSkip) {
         List<Node> path = new ArrayList<Node>();
-        path.add(start);
+        path.add(current);
         boolean found = true;
         while (found) {
             found = false;
-            this.sortSuccessors(start);
-            for (final Node candidate : start.getSuccessors()) {
+            this.sortSuccessors(current);
+            for (final Node candidate : current.getSuccessors()) {
                 if (!triggerSkip.appliesTo(candidate)) {
-                    start = candidate;
+                    current = candidate;
                     path.add(candidate);
                     found = true;
                     break;

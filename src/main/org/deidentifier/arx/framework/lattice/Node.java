@@ -65,6 +65,10 @@ public class Node {
      * regardless of whether it triggers the storage condition
      */
     public static final int PROPERTY_FORCE_SNAPSHOT = PROPERTIES++;
+    /** 
+     * This node has already been visited during the second phase
+     */
+    public static final int PROPERTY_VISITED = PROPERTIES++;
     
     /** 
      * The number of available properties
