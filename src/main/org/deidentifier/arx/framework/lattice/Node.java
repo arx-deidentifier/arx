@@ -32,55 +32,48 @@ import org.deidentifier.arx.metric.InformationLoss;
 public class Node {
     
     /** 
-     * Internal counter
-     */
-    private static int PROPERTIES = 0;
-    
-    /** 
      * All privacy criteria are fulfilled
      */
-    public static final int PROPERTY_ANONYMOUS;
+    public static final int PROPERTY_ANONYMOUS = 0;
     
     /** 
      * Not all privacy criteria are fulfilled
      */
-    public static final int PROPERTY_NOT_ANONYMOUS;
+    public static final int PROPERTY_NOT_ANONYMOUS = 1;
     
     /** 
      * A k-anonymity sub-criterion is fulfilled
      */
-    public static final int PROPERTY_K_ANONYMOUS;
+    public static final int PROPERTY_K_ANONYMOUS = 2;
     
     /** 
      * A k-anonymity sub-criterion is not fulfilled
      */
-    public static final int PROPERTY_NOT_K_ANONYMOUS;
+    public static final int PROPERTY_NOT_K_ANONYMOUS = 3;
     
     /** 
      * The transformation results in insufficient utility
      */
-    public static final int PROPERTY_INSUFFICIENT_UTILITY;
+    public static final int PROPERTY_INSUFFICIENT_UTILITY = 4;
     
     /** 
      * The transformation has been checked explicitly
      */
-    public static final int PROPERTY_CHECKED;
+    public static final int PROPERTY_CHECKED = 5;
    
     /** 
      * A snapshot for this transformation must be created if it fits the size limits,
      * regardless of whether it triggers the storage condition
      */
-    public static final int PROPERTY_FORCE_SNAPSHOT;
+    public static final int PROPERTY_FORCE_SNAPSHOT = 6;
     
     /** 
      * This node has already been visited during the second phase
      */
-    public static final int PROPERTY_VISITED;
+    public static final int PROPERTY_VISITED = 7;
     
-    /** 
-     * The number of available properties
-     */
-    public static final int NUM_PROPERTIES;
+    /** Debugging option*/
+    public static final boolean DEBUG_PROPERTIES = false;
 
     /** The id. */
     public final int        id;
@@ -109,21 +102,6 @@ public class Node {
     /** The up index. */
     private int             sucIndex;
     
-    /**
-     * Initialize properties
-     */
-    static {
-        PROPERTY_ANONYMOUS = PROPERTIES++;
-        PROPERTY_NOT_ANONYMOUS = PROPERTIES++;
-        PROPERTY_K_ANONYMOUS = PROPERTIES++;
-        PROPERTY_NOT_K_ANONYMOUS = PROPERTIES++;
-        PROPERTY_INSUFFICIENT_UTILITY = PROPERTIES++;
-        PROPERTY_CHECKED = PROPERTIES++;
-        PROPERTY_FORCE_SNAPSHOT = PROPERTIES++;
-        PROPERTY_VISITED = PROPERTIES++;
-        NUM_PROPERTIES = PROPERTIES;
-    }
-
     /**
      * Instantiates a new node.
      */
@@ -251,6 +229,28 @@ public class Node {
      * @return
      */
     public void setProperty(int property){
+        
+        if (DEBUG_PROPERTIES) {
+            int other = -1;
+            switch(property){
+                case Node.PROPERTY_ANONYMOUS:
+                    other = Node.PROPERTY_NOT_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_NOT_ANONYMOUS:
+                    other = Node.PROPERTY_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_K_ANONYMOUS:
+                    other = Node.PROPERTY_NOT_K_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_NOT_K_ANONYMOUS:
+                    other = Node.PROPERTY_K_ANONYMOUS;
+                    break;
+            }
+            if (hasProperty(other)) {
+                throw new IllegalStateException("Inconsistent properties: "+property+" and "+other);
+            }
+        }
+        
         properties |= (1 << property);
     }
     

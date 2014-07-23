@@ -284,11 +284,10 @@ public class FLASHAlgorithm {
         // We focus on the anonymity property
         int linearAnonymityProperty = Node.PROPERTY_ANONYMOUS;
         
-        // We skip nodes for which the anonymity property is known, or which are not k-anonymous
+        // We skip nodes for which are not k-anonymous and which have not been visited yet in the 2nd phase
         NodeTrigger linearTriggerSkip = new NodeTrigger(){
             public boolean appliesTo(Node node) {
-                return node.hasProperty(Node.PROPERTY_ANONYMOUS) || 
-                       node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS) ||
+                return node.hasProperty(Node.PROPERTY_VISITED) ||
                        node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS);
             }
         };
@@ -298,12 +297,25 @@ public class FLASHAlgorithm {
         NodeTrigger linearTriggerSnapshotEvict = History.EVICTION_TRIGGER_CHECKED;
         NodeTrigger linearTriggerEvaluate = new NodeTriggerConstant(false);
 
-        // We check nodes which have not been skipped
-        NodeTrigger linearTriggerCheck = new NodeTriggerInverse(linearTriggerSkip);
+        // We check nodes which are k-anonymous and have not been checked already
+        NodeTrigger linearTriggerCheck = new NodeTrigger() {
+            public boolean appliesTo(Node node) {
+                return !node.hasProperty(Node.PROPERTY_CHECKED) && 
+                       !node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS);
+            }
+        };
 
-        // We do not predictively tag anything 
-        NodeTrigger linearTriggerTag = new NodeTriggerConstant(false);
+        // Mark nodes as already visited during the second phase
+        NodeTrigger linearTriggerTag = new NodeTrigger() {
+            public boolean appliesTo(Node node) {
+                return true;
+            }
+            public void action(Node node) {
+                node.setProperty(Node.PROPERTY_VISITED);
+            }
+        };
 
+        
         // Binary configuration
         FLASHConfiguration binaryConfiguration = new FLASHConfiguration(binaryAnonymityProperty,
                                                                         binaryTriggerTag,
@@ -390,8 +402,7 @@ public class FLASHAlgorithm {
         // or which have insufficient utility
         NodeTrigger linearTriggerSkip = new NodeTrigger(){
             public boolean appliesTo(Node node) {
-                return node.hasProperty(Node.PROPERTY_ANONYMOUS) || 
-                       node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS) ||
+                return node.hasProperty(Node.PROPERTY_VISITED) ||
                        node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS) ||
                        node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY);
             }
@@ -408,10 +419,14 @@ public class FLASHAlgorithm {
         // We predictively tag the insufficient utility property
         NodeTrigger linearTriggerTag = new NodeTrigger(){
             public boolean appliesTo(Node node) {
-                return node.hasProperty(Node.PROPERTY_ANONYMOUS);
+                return true;
             }
             public void action(Node node) {
-                lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                node.setProperty(Node.PROPERTY_VISITED);
+                if (node.hasProperty(Node.PROPERTY_ANONYMOUS)){
+                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                }
+                
             }
         };
         
