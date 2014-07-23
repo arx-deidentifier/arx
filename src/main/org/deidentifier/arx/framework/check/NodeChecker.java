@@ -150,6 +150,9 @@ public class NodeChecker implements INodeChecker {
             currentGroupify = transformer.applySnapshot(transition.projection, node.getTransformation(), currentGroupify, transition.snapshot);
             break;
         }
+        
+        // We are done with transforming and adding
+        currentGroupify.analyze();
 
         // Compute information loss
         InformationLoss infoLoss = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
@@ -211,6 +214,7 @@ public class NodeChecker implements INodeChecker {
         // Apply transition and groupify
         currentGroupify.clear();
         currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
+        currentGroupify.analyze();
 
         // Find outliers only if node is anonymous
         if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS) && config.getAbsoluteMaxOutliers() != 0) {
@@ -229,13 +233,6 @@ public class NodeChecker implements INodeChecker {
                                              loss));
         
         // Return the buffer
-        return new TransformedData(getBuffer(), 
-                                   currentGroupify.getGroupStatistics(transformation.hasProperty(Node.PROPERTY_ANONYMOUS)));
-    }
-
-    @Override
-    @Deprecated
-    public Data transform(final Node node) {
-        throw new UnsupportedOperationException("Not implemented!");
+        return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics());
     }
 }

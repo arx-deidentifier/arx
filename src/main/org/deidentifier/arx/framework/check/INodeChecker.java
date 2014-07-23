@@ -133,14 +133,4 @@ public interface INodeChecker {
      * @return
      */
     public TransformedData applyAndSetProperties(Node transformation);
-
-    /**
-     * Returns the data for a given state. Only used for NUMA.
-     * 
-     * @param node
-     *            the node
-     * @return the transformed data
-     */
-    @Deprecated
-    public abstract Data transform(final Node node);
 }
