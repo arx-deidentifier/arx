@@ -39,41 +39,48 @@ public class Node {
     /** 
      * All privacy criteria are fulfilled
      */
-    public static final int PROPERTY_ANONYMOUS = PROPERTIES++;
+    public static final int PROPERTY_ANONYMOUS;
+    
     /** 
      * Not all privacy criteria are fulfilled
      */
-    public static final int PROPERTY_NOT_ANONYMOUS = PROPERTIES++;
+    public static final int PROPERTY_NOT_ANONYMOUS;
+    
     /** 
      * A k-anonymity sub-criterion is fulfilled
      */
-    public static final int PROPERTY_K_ANONYMOUS = PROPERTIES++;
+    public static final int PROPERTY_K_ANONYMOUS;
+    
     /** 
      * A k-anonymity sub-criterion is not fulfilled
      */
-    public static final int PROPERTY_NOT_K_ANONYMOUS = PROPERTIES++;
+    public static final int PROPERTY_NOT_K_ANONYMOUS;
+    
     /** 
      * The transformation results in insufficient utility
      */
-    public static final int PROPERTY_INSUFFICIENT_UTILITY = PROPERTIES++;
+    public static final int PROPERTY_INSUFFICIENT_UTILITY;
+    
     /** 
      * The transformation has been checked explicitly
      */
-    public static final int PROPERTY_CHECKED = PROPERTIES++;
+    public static final int PROPERTY_CHECKED;
+   
     /** 
      * A snapshot for this transformation must be created if it fits the size limits,
      * regardless of whether it triggers the storage condition
      */
-    public static final int PROPERTY_FORCE_SNAPSHOT = PROPERTIES++;
+    public static final int PROPERTY_FORCE_SNAPSHOT;
+    
     /** 
      * This node has already been visited during the second phase
      */
-    public static final int PROPERTY_VISITED = PROPERTIES++;
+    public static final int PROPERTY_VISITED;
     
     /** 
      * The number of available properties
      */
-    public static final int NUM_PROPERTIES = PROPERTIES;
+    public static final int NUM_PROPERTIES;
 
     /** The id. */
     public final int        id;
@@ -101,6 +108,21 @@ public class Node {
 
     /** The up index. */
     private int             sucIndex;
+    
+    /**
+     * Initialize properties
+     */
+    static {
+        PROPERTY_ANONYMOUS = PROPERTIES++;
+        PROPERTY_NOT_ANONYMOUS = PROPERTIES++;
+        PROPERTY_K_ANONYMOUS = PROPERTIES++;
+        PROPERTY_NOT_K_ANONYMOUS = PROPERTIES++;
+        PROPERTY_INSUFFICIENT_UTILITY = PROPERTIES++;
+        PROPERTY_CHECKED = PROPERTIES++;
+        PROPERTY_FORCE_SNAPSHOT = PROPERTIES++;
+        PROPERTY_VISITED = PROPERTIES++;
+        NUM_PROPERTIES = PROPERTIES;
+    }
 
     /**
      * Instantiates a new node.
