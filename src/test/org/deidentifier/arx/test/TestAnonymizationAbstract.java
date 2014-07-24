@@ -248,6 +248,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             // Print statistics
             // System.out.println("new int[] {" + Arrays.toString(statistics).substring(1, Arrays.toString(statistics).length() - 1) + "}");
             
+            System.out.println(getClassification(statistics));
+            System.out.println(getClassification(testCase.statistics));
+            
             String algorithmConfiguration = getAlgorithmConfiguration(testCase.config);
             int diff = statistics[1] - testCase.statistics[1];
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
@@ -279,5 +282,24 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             criterion = "Non-monotonic";
         }
         return criterion+" criteria with "+metric+" metric";
+    }
+    
+    /**
+     * Transforms it into a string representation
+     * @param classification
+     * @return
+     */
+    private String getClassification(int[] classification) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Classification {\n");
+        builder.append(" Transformations: ").append(classification[0]).append("\n");
+        builder.append(" Checked: ").append(classification[1]).append("\n");
+        builder.append(" Anonymous: ").append(classification[2]).append("\n");
+        builder.append(" Non-anonymous: ").append(classification[3]).append("\n");
+        builder.append(" Probably anonymous: ").append(classification[4]).append("\n");
+        builder.append(" Probably non-anonymous: ").append(classification[5]).append("\n");
+        builder.append(" Utility available: ").append(classification[6]).append("\n");
+        builder.append("}");
+        return builder.toString();
     }
 }
