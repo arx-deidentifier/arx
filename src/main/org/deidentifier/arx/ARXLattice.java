@@ -487,9 +487,20 @@ public class ARXLattice implements Serializable {
 
         this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
-        this.uncertainty = (config.isPracticalMonotonicity()) || 
-                           (config.getMetric().isMonotonic() && 
-                            !config.isCriterionMonotonic());
+        
+        // Handle uncertainty
+        boolean uncertaintyInducedByPracticalMonotonicity = 
+                config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
+                (!config.isCriterionMonotonic() || !config.getMetric().isMonotonic());
+        
+        // Handle uncertainty
+        boolean uncertaintyInducedByMonotonicMetric = 
+                config.getMaxOutliers()!=0d && !config.isCriterionMonotonic() &&
+                config.getMetric().isMonotonic();
+        
+        // Handle uncertainty
+        this.uncertainty = uncertaintyInducedByMonotonicMetric ||
+                           uncertaintyInducedByPracticalMonotonicity;
         
         // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
