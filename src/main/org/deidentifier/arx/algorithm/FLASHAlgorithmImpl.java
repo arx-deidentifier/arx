@@ -172,30 +172,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
 
     /**
-     * Implements a depth-first search with predictive tagging
-     * @param start
-     */
-    private void linearSearch(Node start) {
-
-        // Skip this node
-        if (!linearPhaseConfiguration.triggerSkip.appliesTo(start)) {
-            
-            // Sort successors
-            this.sortSuccessors(start);
-            
-            // Check and tag
-            this.checkAndTag(start, linearPhaseConfiguration);
-            
-            // DFS
-            for (final Node child : start.getSuccessors()) {
-                if (!linearPhaseConfiguration.triggerSkip.appliesTo(child)) {
-                    linearSearch(child);
-                }
-            }
-        }
-    }
-
-    /**
      * Checks and tags the given transformation
      * @param node
      */
@@ -214,33 +190,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // Tag
         configuration.triggerTag.apply(node);
     }
-
-    /**
-     * Greedily finds a path to the top node
-     * 
-     * @param current The node to start the path with. Will be included
-     * @param triggerSkip All nodes to which this trigger applies will be skipped
-     * @return The path as a list
-     */
-    private List<Node> findPath(Node current, NodeTrigger triggerSkip) {
-        List<Node> path = new ArrayList<Node>();
-        path.add(current);
-        boolean found = true;
-        while (found) {
-            found = false;
-            this.sortSuccessors(current);
-            for (final Node candidate : current.getSuccessors()) {
-                if (!triggerSkip.appliesTo(candidate)) {
-                    current = candidate;
-                    path.add(candidate);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        return path;
-    }
-
 
     /**
      * Checks a path binary.
@@ -291,6 +240,33 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
 
     /**
+     * Greedily finds a path to the top node
+     * 
+     * @param current The node to start the path with. Will be included
+     * @param triggerSkip All nodes to which this trigger applies will be skipped
+     * @return The path as a list
+     */
+    private List<Node> findPath(Node current, NodeTrigger triggerSkip) {
+        List<Node> path = new ArrayList<Node>();
+        path.add(current);
+        boolean found = true;
+        while (found) {
+            found = false;
+            this.sortSuccessors(current);
+            for (final Node candidate : current.getSuccessors()) {
+                if (!triggerSkip.appliesTo(candidate)) {
+                    current = candidate;
+                    path.add(candidate);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        return path;
+    }
+
+
+    /**
      * Returns all nodes that do not have the given property and sorts the resulting array
      * according to the strategy
      * 
@@ -317,14 +293,26 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
 
     /**
-     * Sorts pointers to successor nodes according to the strategy
-     * 
-     * @param node The node
+     * Implements a depth-first search with predictive tagging
+     * @param start
      */
-    private void sortSuccessors(final Node node) {
-        if (!sorted[node.id]) {
-            this.sort(node.getSuccessors());
-            sorted[node.id] = true;
+    private void linearSearch(Node start) {
+
+        // Skip this node
+        if (!linearPhaseConfiguration.triggerSkip.appliesTo(start)) {
+            
+            // Sort successors
+            this.sortSuccessors(start);
+            
+            // Check and tag
+            this.checkAndTag(start, linearPhaseConfiguration);
+            
+            // DFS
+            for (final Node child : start.getSuccessors()) {
+                if (!linearPhaseConfiguration.triggerSkip.appliesTo(child)) {
+                    linearSearch(child);
+                }
+            }
         }
     }
 
@@ -335,5 +323,17 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void sort(final Node[] array) {
         Arrays.sort(array, strategy);
+    }
+
+    /**
+     * Sorts pointers to successor nodes according to the strategy
+     * 
+     * @param node The node
+     */
+    private void sortSuccessors(final Node node) {
+        if (!sorted[node.id]) {
+            this.sort(node.getSuccessors());
+            sorted[node.id] = true;
+        }
     }
 }
