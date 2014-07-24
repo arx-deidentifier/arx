@@ -37,20 +37,20 @@ import org.deidentifier.arx.framework.lattice.NodeTrigger;
  */
 public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
-    /** Configuration for the binary phase*/
+    /** Configuration for the binary phase */
     private final FLASHConfiguration binaryPhaseConfiguration;
-    
-    /** Configuration for the linear phase*/
+
+    /** Configuration for the linear phase */
     private final FLASHConfiguration linearPhaseConfiguration;
 
     /** Are the pointers for a node with id 'index' already sorted?. */
-    protected final boolean[]           sorted;
+    private final boolean[]          sorted;
 
     /** The strategy. */
-    protected final FLASHStrategy       strategy;
+    private final FLASHStrategy      strategy;
 
     /** The history */
-    protected History                   history;
+    private History                  history;
 
     /**
      * Creates a new instance
