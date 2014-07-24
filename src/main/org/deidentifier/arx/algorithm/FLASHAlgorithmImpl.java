@@ -39,6 +39,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     /** Configuration for the binary phase*/
     private final FLASHConfiguration binaryPhaseConfiguration;
+    
     /** Configuration for the linear phase*/
     private final FLASHConfiguration linearPhaseConfiguration;
 
