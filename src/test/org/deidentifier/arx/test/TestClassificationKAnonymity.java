@@ -35,7 +35,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestDataTransformationsFromFileKAnonymityWithStatistics extends TestDataTransformationsFromFileAbstract {
+public class TestClassificationKAnonymity extends TestAnonymizationAbstract {
 
     @Parameters
     public static Collection<Object[]> cases() {
@@ -61,7 +61,7 @@ public class TestDataTransformationsFromFileKAnonymityWithStatistics extends Tes
         });
     }
 
-    public TestDataTransformationsFromFileKAnonymityWithStatistics(final ARXTestCase testCase) {
+    public TestClassificationKAnonymity(final ARXTestCase testCase) {
         super(testCase);
     }
 

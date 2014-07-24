@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestDataTransformationsFromFileCombinationsWithStatistics extends TestDataTransformationsFromFileAbstract {
+public class TestClassificationCombinations extends TestAnonymizationAbstract {
 
     @Parameters
     public static Collection<Object[]> cases() throws IOException {
@@ -181,7 +181,7 @@ public class TestDataTransformationsFromFileCombinationsWithStatistics extends T
         });
     }
 
-    public TestDataTransformationsFromFileCombinationsWithStatistics(final ARXTestCase testCase) {
+    public TestClassificationCombinations(final ARXTestCase testCase) {
         super(testCase);
     }
 

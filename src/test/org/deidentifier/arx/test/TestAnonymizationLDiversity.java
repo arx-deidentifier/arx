@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestDataTransformationsFromFileLDiversity extends TestDataTransformationsFromFileAbstract {
+public class TestAnonymizationLDiversity extends TestAnonymizationAbstract {
 
     @Parameters
     public static Collection<Object[]> cases() {
@@ -101,7 +101,7 @@ public class TestDataTransformationsFromFileLDiversity extends TestDataTransform
         });
     }
 
-    public TestDataTransformationsFromFileLDiversity(final ARXTestCase testCase) {
+    public TestAnonymizationLDiversity(final ARXTestCase testCase) {
         super(testCase);
     }
 

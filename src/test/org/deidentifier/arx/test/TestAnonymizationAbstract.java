@@ -45,7 +45,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class TestDataTransformationsFromFileAbstract extends AbstractTest {
+public abstract class TestAnonymizationAbstract extends AbstractTest {
 
     /**
      * Represents a test case
@@ -129,7 +129,7 @@ public abstract class TestDataTransformationsFromFileAbstract extends AbstractTe
      * Creates a new instance
      * @param testCase
      */
-    public TestDataTransformationsFromFileAbstract(final ARXTestCase testCase) {
+    public TestAnonymizationAbstract(final ARXTestCase testCase) {
         this.testCase = testCase;
     }
 
