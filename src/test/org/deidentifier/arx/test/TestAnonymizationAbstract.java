@@ -248,9 +248,6 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             // Print statistics
             // System.out.println("new int[] {" + Arrays.toString(statistics).substring(1, Arrays.toString(statistics).length() - 1) + "}");
             
-            System.out.println(getClassification(statistics));
-            System.out.println(getClassification(testCase.statistics));
-            
             String algorithmConfiguration = getAlgorithmConfiguration(testCase.config);
             int diff = statistics[1] - testCase.statistics[1];
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
@@ -289,6 +286,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @param classification
      * @return
      */
+     @SuppressWarnings("unused")
     private String getClassification(int[] classification) {
         StringBuilder builder = new StringBuilder();
         builder.append("Classification {\n");
