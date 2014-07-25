@@ -414,7 +414,14 @@ public class FLASHAlgorithm {
         NodeTrigger linearTriggerEvaluate = new NodeTriggerConstant(false);
 
         // We check nodes which have not been skipped
-        NodeTrigger linearTriggerCheck = new NodeTriggerInverse(linearTriggerSkip);
+        NodeTrigger linearTriggerCheck = new NodeTrigger(){
+            public boolean appliesTo(Node node) {
+                return !node.hasProperty(Node.PROPERTY_VISITED) &&
+                       !node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS) &&
+                       !node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY) &&
+                       !node.hasProperty(Node.PROPERTY_CHECKED);
+            }
+        };
 
         // We predictively tag the insufficient utility property
         NodeTrigger linearTriggerTag = new NodeTrigger(){
@@ -426,7 +433,6 @@ public class FLASHAlgorithm {
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)){
                     lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
                 }
-                
             }
         };
         
