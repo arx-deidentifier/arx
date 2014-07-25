@@ -38,10 +38,10 @@ import org.deidentifier.arx.framework.lattice.NodeTrigger;
 public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     /** Configuration for the binary phase */
-    private final FLASHConfiguration binaryPhaseConfiguration;
+    protected final FLASHConfiguration binaryPhaseConfiguration;
 
     /** Configuration for the linear phase */
-    private final FLASHConfiguration linearPhaseConfiguration;
+    protected final FLASHConfiguration linearPhaseConfiguration;
 
     /** Are the pointers for a node with id 'index' already sorted?. */
     private final boolean[]          sorted;
