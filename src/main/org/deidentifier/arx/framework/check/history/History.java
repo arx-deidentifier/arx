@@ -325,8 +325,7 @@ public class History {
         }
         
         // Early abort if conditions are not triggered
-        if (!node.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
-            (!storageTrigger.appliesTo(node) || evictionTrigger.appliesTo(node))) {
+        if (!storageTrigger.appliesTo(node) || evictionTrigger.appliesTo(node)) {
             return false;
         }
 

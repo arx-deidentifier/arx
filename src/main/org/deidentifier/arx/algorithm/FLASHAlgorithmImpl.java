@@ -78,13 +78,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     @Override
     public void traverse() {
         
-        // Check bottom for speed and for estimating information loss
-        if (!lattice.getBottom().hasProperty(Node.PROPERTY_CHECKED)) {
-            INodeChecker.Result result = checker.check(lattice.getBottom(), true);
-            lattice.getBottom().setInformationLoss(result.informationLoss);
-            lattice.getBottom().setProperty(Node.PROPERTY_FORCE_SNAPSHOT);
-        }
-        
         // Determine configuration for the outer loop
         FLASHConfiguration outerLoopConfiguration;
         if (binaryPhaseConfiguration.active){
@@ -117,20 +110,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             }
         }
         
-        // Determine information loss of top-node if it can be 
-        // used for estimating minimum and maximum information
-        // loss for tagged nodes
-        if ((checker.getMetric().isMonotonic() ||
-             checker.getConfiguration().getMaxOutliers() == 0d) &&
-             lattice.getTop().getInformationLoss() == null) {
-            
-            // Independent evaluation or check
-            if (checker.getMetric().isIndependent()) {
-                lattice.getTop().setInformationLoss(checker.getMetric().evaluate(lattice.getTop(), null));
-            } else {
-                lattice.getTop().setChecked(checker.check(lattice.getTop(), true));
-            }
-        }
+        // Potentially allows to better estimate utility in the lattice
+        computeUtilityForMonotonicMetrics(lattice.getBottom());
+        computeUtilityForMonotonicMetrics(lattice.getTop());
     }
     
     /**

@@ -88,6 +88,28 @@ public abstract class AbstractAlgorithm {
      * Implement this method in order to provide a new algorithm.
      */
     public abstract void traverse();
+    
+    
+    /**
+     * Determine information loss of the given node if it can be 
+     * used for estimating minimum and maximum information
+     * loss for tagged nodes
+     * @param node
+     */
+    protected void computeUtilityForMonotonicMetrics(Node node){
+        if ((checker.getMetric().isMonotonic() ||
+             checker.getConfiguration().getMaxOutliers() == 0d) &&
+             node.getInformationLoss() == null) {
+               
+               // Independent evaluation or check
+               if (checker.getMetric().isIndependent()) {
+                   node.setInformationLoss(checker.getMetric().evaluate(node, null));
+               } else {
+                   node.setChecked(checker.check(node, true));
+               }
+           }
+    }
+    
 
     /**
      * Keeps track of the global optimum
