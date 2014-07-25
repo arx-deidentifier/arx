@@ -60,6 +60,12 @@ public class Node {
      * The transformation has been checked explicitly
      */
     public static final int PROPERTY_CHECKED = 5;
+   
+    /** 
+     * A snapshot for this transformation must be created if it fits the size limits,
+     * regardless of whether it triggers the storage condition
+     */
+    public static final int PROPERTY_FORCE_SNAPSHOT = 6;
     
     /** 
      * This node has already been visited during the second phase

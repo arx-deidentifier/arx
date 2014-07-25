@@ -88,6 +88,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Initialize
         PriorityQueue<Node> queue = new PriorityQueue<Node>(11, strategy);
+
+        // Check bottom for speed
+        INodeChecker.Result result = checker.check(lattice.getBottom(), true);
+        lattice.getBottom().setInformationLoss(result.informationLoss);
+        lattice.getBottom().setProperty(Node.PROPERTY_FORCE_SNAPSHOT);
         
         // For each node in the lattice
         int length = lattice.getLevels().length;
