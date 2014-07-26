@@ -49,7 +49,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class TestDataTransformations extends AbstractTest {
+public class TestAnonymization extends AbstractTest {
 
     @Override
     @Before

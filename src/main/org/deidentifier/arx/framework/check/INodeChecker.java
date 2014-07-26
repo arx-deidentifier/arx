@@ -23,31 +23,56 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements a generic interface for node checkers
+ * This interface implements a generic interface for node checkers
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public interface INodeChecker {
 
-    /**
-     * Returns the information loss for the given state. Negative infinity means
-     * not k-anonymous.
-     * 
-     * @param node
-     *            The node to check
-     * @return Information loss, null if not k-anonymous
-     */
-    public abstract void check(final Node node);
+    /** The result of a check*/
+    public static class Result {
+        
+        /** Overall anonymity*/
+        public final boolean anonymous;
+        /** k-Anonymity sub-criterion*/
+        public final boolean kAnonymous;
+        /** Information loss*/
+        public final InformationLoss informationLoss;
+        
+        /**
+         * Creates a new instance
+         * @param anonymous
+         * @param kAnonymous
+         * @param infoLoss
+         */
+        Result(boolean anonymous, boolean kAnonymous, InformationLoss infoLoss) {
+            this.anonymous = anonymous;
+            this.kAnonymous = kAnonymous;
+            this.informationLoss = infoLoss;
+        }
+    }
 
     /**
-     * Returns statistics about the groups
-     * @return
+     * Checks the given node
+     * 
+     * @param node The node to check
+     * @return Result
      */
-    public void check(Node node, boolean forceMeasureInfoLoss);
+    public abstract INodeChecker.Result check(final Node node);
+
+    /**
+     * Checks the given node
+     * 
+     * @param node The node to check
+     * @param forceMeasureInfoLoss
+     * @return Result
+     */
+    public INodeChecker.Result check(Node node, boolean forceMeasureInfoLoss);
 
     /**
      * Returns the buffer as a Data object
@@ -102,20 +127,10 @@ public interface INodeChecker {
     public abstract int getNumberOfGroups();
 
     /**
-     * Returns the data for a given node
+     * Applies the given transformation and sets its properties
      * 
-     * @param node
+     * @param transformation
      * @return
      */
-    public TransformedData getTransformedData(Node node);
-
-    /**
-     * Returns the data for a given state. Only used for NUMA.
-     * 
-     * @param node
-     *            the node
-     * @return the transformed data
-     */
-    @Deprecated
-    public abstract Data transform(final Node node);
+    public TransformedData applyAndSetProperties(Node transformation);
 }

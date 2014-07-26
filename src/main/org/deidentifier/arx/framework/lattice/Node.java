@@ -20,6 +20,7 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.Arrays;
 
+import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -29,15 +30,59 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Florian Kohlmayer
  */
 public class Node {
-
-    /** The anonymous. */
-    private boolean         anonymous;
-
-    /** The downwards. */
-    private Node[]          predecessors;
+    
+    /** 
+     * All privacy criteria are fulfilled
+     */
+    public static final int PROPERTY_ANONYMOUS = 0;
+    
+    /** 
+     * Not all privacy criteria are fulfilled
+     */
+    public static final int PROPERTY_NOT_ANONYMOUS = 1;
+    
+    /** 
+     * A k-anonymity sub-criterion is fulfilled
+     */
+    public static final int PROPERTY_K_ANONYMOUS = 2;
+    
+    /** 
+     * A k-anonymity sub-criterion is not fulfilled
+     */
+    public static final int PROPERTY_NOT_K_ANONYMOUS = 3;
+    
+    /** 
+     * The transformation results in insufficient utility
+     */
+    public static final int PROPERTY_INSUFFICIENT_UTILITY = 4;
+    
+    /** 
+     * The transformation has been checked explicitly
+     */
+    public static final int PROPERTY_CHECKED = 5;
+   
+    /** 
+     * A snapshot for this transformation must be created if it fits the size limits,
+     * regardless of whether it triggers the storage condition
+     */
+    public static final int PROPERTY_FORCE_SNAPSHOT = 6;
+    
+    /** 
+     * This node has already been visited during the second phase
+     */
+    public static final int PROPERTY_VISITED = 7;
+    
+    /** Debugging option*/
+    public static final boolean DEBUG_PROPERTIES = false;
 
     /** The id. */
     public final int        id;
+
+    /** Set of properties */
+    private int             properties;
+
+    /** The predecessors. */
+    private Node[]          predecessors;
 
     /** The level. */
     private int             level;
@@ -48,12 +93,6 @@ public class Node {
     /** The transformation. */
     private int[]           transformation;
 
-    /** The tagged. */
-    private boolean         tagged;
-
-    /** Indicates if the node has been explicitly checked by the algorithm. */
-    private boolean         checked;
-
     /** The upwards. */
     private Node[]          successors;
 
@@ -62,21 +101,16 @@ public class Node {
 
     /** The up index. */
     private int             sucIndex;
-
-    /** K anonymous */
-    private boolean         kAnonymous;
-
+    
     /**
      * Instantiates a new node.
      */
-    public Node(final int id) {
+    public Node(int id) {
         this.id = id;
-        anonymous = false;
-        tagged = false;
-        informationLoss = null;
-        preIndex = 0;
-        sucIndex = 0;
-        checked = false;
+        this.informationLoss = null;
+        this.preIndex = 0;
+        this.sucIndex = 0;
+        this.properties = 0;
     }
 
     /**
@@ -84,7 +118,7 @@ public class Node {
      * 
      * @param predecessor
      */
-    public void addPredecessor(final Node predecessor) {
+    public void addPredecessor(Node predecessor) {
         predecessors[preIndex++] = predecessor;
     }
 
@@ -93,7 +127,7 @@ public class Node {
      * 
      * @param successor
      */
-    public void addSuccessor(final Node successor) {
+    public void addSuccessor(Node successor) {
         successors[sucIndex++] = successor;
     }
 
@@ -103,7 +137,7 @@ public class Node {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) { return true; }
         if (obj == null) { return false; }
         if (getClass() != obj.getClass()) { return false; }
@@ -171,53 +205,12 @@ public class Node {
     }
 
     /**
-     * Is it anonymous
-     * 
+     * Returns whether the node has the given property
+     * @param property
      * @return
      */
-    public boolean isAnonymous() {
-        return anonymous;
-    }
-
-    /**
-     * @return the checked
-     */
-    public boolean isChecked() {
-        return checked;
-    }
-
-    /**
-     * Is it k-anonymous
-     * 
-     * @return
-     */
-    public boolean isKAnonymous() {
-        return kAnonymous;
-    }
-
-    /**
-     * Is it tagged
-     * 
-     * @return
-     */
-    public boolean isTagged() {
-        return tagged;
-    }
-
-    /**
-     * Marks as anonymous
-     * 
-     * @param anonymous2
-     */
-    public void setAnonymous(final boolean anonymous) {
-        this.anonymous = anonymous;
-    }
-
-    /**
-     * Marks as checked
-     */
-    public void setChecked() {
-        checked = true;
+    public boolean hasProperty(int property){
+        return (properties & (1 << property)) != 0;
     }
 
     /**
@@ -225,24 +218,72 @@ public class Node {
      * 
      * @param informationLoss
      */
-    public void setInformationLoss(final InformationLoss informationLoss) {
+    public void setInformationLoss(InformationLoss informationLoss) {
         this.informationLoss = informationLoss;
     }
 
+    
     /**
-     * Is this transformation kAnonymous
-     * 
-     * @param kAnonymous
+     * Sets the given property
+     * @param property
+     * @return
      */
-    public void setKAnonymous(final boolean kAnonymous) {
-        this.kAnonymous = kAnonymous;
+    public void setProperty(int property){
+        
+        if (DEBUG_PROPERTIES) {
+            int other = -1;
+            switch(property){
+                case Node.PROPERTY_ANONYMOUS:
+                    other = Node.PROPERTY_NOT_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_NOT_ANONYMOUS:
+                    other = Node.PROPERTY_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_K_ANONYMOUS:
+                    other = Node.PROPERTY_NOT_K_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_NOT_K_ANONYMOUS:
+                    other = Node.PROPERTY_K_ANONYMOUS;
+                    break;
+            }
+            if (hasProperty(other)) {
+                throw new IllegalStateException("Inconsistent properties: "+property+" and "+other);
+            }
+        }
+        
+        properties |= (1 << property);
     }
+    
 
     /**
-     * Sets a node not tagged
+     * Sets the properties to the given node
+     * 
+     * @param node the node
+     * @param result the result
      */
-    public void setNotTagged() {
-        tagged = false;
+    public void setChecked(INodeChecker.Result result) {
+        
+        // Set checked
+        setProperty(Node.PROPERTY_CHECKED);
+        
+        // Anonymous
+        if (result.anonymous){
+            setProperty(Node.PROPERTY_ANONYMOUS);
+        } else {
+            setProperty(Node.PROPERTY_NOT_ANONYMOUS);
+        }
+
+        // k-Anonymous
+        if (result.kAnonymous){
+            setProperty(Node.PROPERTY_K_ANONYMOUS);
+        } else {
+            setProperty(Node.PROPERTY_NOT_K_ANONYMOUS);
+        }
+
+        // Infoloss
+        if (informationLoss == null) {
+            informationLoss = result.informationLoss;
+        }
     }
 
     /**
@@ -250,7 +291,7 @@ public class Node {
      * 
      * @param nodes
      */
-    public void setPredecessors(final Node[] nodes) {
+    protected void setPredecessors(Node[] nodes) {
         predecessors = nodes;
     }
 
@@ -259,15 +300,8 @@ public class Node {
      * 
      * @param nodes
      */
-    public void setSuccessors(final Node[] nodes) {
+    protected void setSuccessors(Node[] nodes) {
         successors = nodes;
-    }
-
-    /**
-     * Marks as tagged
-     */
-    public void setTagged() {
-        tagged = true;
     }
 
     /**
@@ -275,16 +309,8 @@ public class Node {
      * 
      * @param transformation
      */
-    public void setTransformation(final int[] transformation, final int level) {
+    public void setTransformation(int[] transformation, int level) {
         this.transformation = transformation;
         this.level = level;
     }
-
-    /**
-     * Marks a node as "not checked"
-     */
-	public void setNotChecked() {
-		this.checked = false;
-	}
-
 }

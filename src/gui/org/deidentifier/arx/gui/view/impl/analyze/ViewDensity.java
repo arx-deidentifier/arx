@@ -18,55 +18,48 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Panel;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+
+import de.linearbits.jhc.JHC;
+import de.linearbits.jhc.JHCConfiguration;
+import de.linearbits.jhc.JHCGradient;
+import de.linearbits.jhc.JHCLayout;
 
 /**
  * This class displays a contingency table as a heatmap
  * @author Fabian Prasser
  */
-public class ViewDensity extends Panel implements IView {
+public class ViewDensity implements IView {
 
     /** Static stuff */
-    private static final int  MAX_SIZE         = 500;
-    /** Static stuff */
-    private static final long serialVersionUID = 5938131772944084967L;
-    /** The background color */
-    private Color             background       = null;
-    /** The bridge */
-    private final Composite   bridge;
+    private static final int  MAX_SIZE = 500;
     /** Internal stuff */
-    private AnalysisContext   context          = new AnalysisContext();
+    private AnalysisContext   context  = new AnalysisContext();
     /** Internal stuff */
     private final Controller  controller;
-    /** The bridge */
-    private final Frame       frame;
     /** Internal stuff */
     private Model             model;
-    /** Renderer */
-    private HeatmapRenderer   renderer         = null;
     /** Internal stuff */
     private final ModelPart   reset;
     /** Internal stuff */
     private final ModelPart   target;
+    /** The heat map widget */
+    private final JHC         jhc;
+    /** The heat map configuration */
+    private final JHCGradient gradient;
+    /** The heat map configuration */
+    private final JHCLayout   layout;
 
 	/**
 	 * Creates a new density plot
@@ -94,38 +87,21 @@ public class ViewDensity extends Panel implements IView {
         this.reset = reset;
         this.target = target;
 
-        parent.setLayout(new GridLayout());
-        background = getAWTColor(parent.getBackground());
-        bridge = new Composite(parent, SWT.BORDER | SWT.NO_BACKGROUND | SWT.EMBEDDED);
-        bridge.setLayoutData(SWTUtil.createFillGridData());
-        frame = SWT_AWT.new_Frame(bridge);
-
-        frame.setLayout(new BorderLayout());
-        frame.add(this, BorderLayout.CENTER);
-        frame.setBackground(Color.WHITE);
+        // Create controls
+        parent.setLayout(new FillLayout());
+        this.jhc = new JHC(parent, SWT.DOUBLE_BUFFERED);
+        this.gradient = JHCGradient.GRADIENT_HEAT;
+        this.layout = new JHCLayout();
         
-        renderer = new HeatmapRenderer(background);
-        
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(final ComponentEvent arg0) {
-                renderer.updateBuffer(getWidth(), getHeight());
-                renderer.updatePlot();
-                repaint();
+        // Update font settings
+        Font font = jhc.getFont();
+        if (font != null) {
+            FontData[] fd = font.getFontData();
+            if (fd != null && fd.length>0){
+                fd[0].setHeight(8);
+                jhc.setFont(new Font(jhc.getDisplay(), fd[0]));
             }
-
-            @Override
-            public void componentShown(final ComponentEvent arg0) {
-                renderer.updateBuffer(getWidth(), getHeight());
-                renderer.updatePlot();
-                repaint();
-            }
-        });
-
-        // Reset
-        renderer.updateBuffer(this.getWidth(), this.getHeight());
-        renderer.updatePlot();
-        repaint();
+        }
     }
     
 
@@ -133,30 +109,12 @@ public class ViewDensity extends Panel implements IView {
     public void dispose() {
         controller.removeListener(this);
     }
-    
-    @Override
-    public void paint(final Graphics g) {
-        if (renderer.getBuffer() != null) {
-            g.drawImage(renderer.getBuffer(), 0, 0, this);
-        } else {
-            g.setColor(background);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
-    }
-
 
     @Override
     public void reset() {
-        renderer.updateData(null, null, null);
-        renderer.updatePlot();
-        repaint();
+        jhc.setData(null, new JHCConfiguration("", "", MAX_SIZE, MAX_SIZE, gradient, layout));
     }
     
-    @Override
-    public void update(final Graphics g) {
-        paint(g);
-    }
-
     @Override
     public void update(final ModelEvent event) {
 
@@ -182,15 +140,6 @@ public class ViewDensity extends Panel implements IView {
             
             update();
         }
-    }
-
-    /**
-     * Returns an AWT color
-     * @param in
-     * @return
-     */
-    private Color getAWTColor(final org.eclipse.swt.graphics.Color in) {
-        return new Color(in.getRed(), in.getGreen(), in.getBlue());
     }
 
     /**
@@ -224,12 +173,7 @@ public class ViewDensity extends Panel implements IView {
             String attribute2 = model.getAttributePair()[1];
             int column1 = handle.getColumnIndexOf(attribute1);
             int column2 = handle.getColumnIndexOf(attribute2);
-            renderer.updateData(model.getAttributePair()[0],
-                                model.getAttributePair()[1],
-                                handle.getStatistics().getContingencyTable(column1, MAX_SIZE, 
-                                                                           column2, MAX_SIZE));
-            renderer.updatePlot();
-            repaint();
+            jhc.setData(new DensityData(handle, column1, column2), new JHCConfiguration(attribute1, attribute2, MAX_SIZE, MAX_SIZE, gradient, layout));
             
         } else {
             reset();

@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="2.1.1" />
+    <property name="arx.version" value="2.2.0" />
 
 
     <!-- defines the to be included libraries -->
@@ -38,6 +38,7 @@
             <filename name="**/org.eclipse.core.runtime_3.8.0.v20120912-155025.jar" />
             <filename name="**/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar" />
             <filename name="**/org.eclipse.jface_3.8.102.v20130123-162658.jar" />
+            <filename name="**/libjhc-1.0.0-swt.jar" />
             <filename name="**/junit-4.11.jar" />
             <filename name="**/log4j-1.2.17.jar" />
             <filename name="**/org.eclipse.nebula.widgets.nattable.core-0.9.0.jar" />

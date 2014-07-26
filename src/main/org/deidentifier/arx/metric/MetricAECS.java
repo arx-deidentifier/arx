@@ -18,14 +18,8 @@
 
 package org.deidentifier.arx.metric;
 
-import java.util.Set;
-
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
-import org.deidentifier.arx.framework.data.Data;
-import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
@@ -39,46 +33,37 @@ import org.deidentifier.arx.framework.lattice.Node;
 public class MetricAECS extends MetricDefault {
 
     private static final long serialVersionUID = -532478849890959974L;
-    private double            total  = 0d;
-    private boolean           dPresence        = false;
 
     protected MetricAECS() {
-        super(true, false);
+        super(false, false);
     }
 
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-
-        int size = 0;
-        // When enforcing d-presence, use only ECs which contain at least one tuple from the research subset
-        if (dPresence) { 
-            HashGroupifyEntry m = g.getFirstEntry();
-            while (m != null) {
-                if (m.count > 0) {
-                    size++;
-                }
-                m = m.nextOrdered;
+        
+        // Anonymity: ignore suppression for non-anonymous transformations
+        boolean anonymous = g.isAnonymous();
+        // The total number of groups
+        int groups = 0;
+        // The total number of tuples
+        int tuples = 0;
+        // Are there suppressed tuples
+        boolean suppressed = false;
+        
+        HashGroupifyEntry m = g.getFirstEntry();
+        while (m != null) {
+            if (m.count > 0) {
+                tuples += m.count;
+                groups += !anonymous || m.isNotOutlier ? 1 : 0;
+                suppressed |= !m.isNotOutlier && anonymous;
             }
-        } else {
-            size = g.size();
+            m = m.nextOrdered;
         }
-
-        final double value = total / size;
-        return new InformationLossDefault(value);
-    }
-
-    @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
-
-        if (config.containsCriterion(DPresence.class)) {
-            dPresence = true;
-            Set<DPresence> crits = config.getCriteria(DPresence.class);
-            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
-            for (DPresence dPresence : crits) {
-                total = dPresence.getSubset().getArray().length;
-            }
-        } else {
-            total = input.getDataLength();
-        }
+        
+        // If there are suppressed tuples, they form one additional group
+        groups += suppressed ? 1 : 0;
+        
+        // Compute AECS
+        return new InformationLossDefault((double)tuples / (double)groups);
     }
 }

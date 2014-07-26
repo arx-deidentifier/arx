@@ -165,6 +165,12 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
+    /** Is the result k-anonymous? */
+    private boolean                  kAnonymous;
+
+    /** Is the result anonymous */
+   private boolean                   anonymous;
+
     /** The current outliers. */
     private int                      currentOutliers;
 
@@ -217,14 +223,62 @@ public class HashGroupify implements IHashGroupify {
 
         // Extract research subset
         if (config.containsCriterion(DPresence.class)) {
-            subset = config.getCriterion(DPresence.class).getSubset().getSet();
+            this.subset = config.getCriterion(DPresence.class).getSubset().getSet();
         } else {
-            subset = null;
+            this.subset = null;
         }
 
         // Extract criteria
-        criteria = config.getCriteriaAsArray();
-        k = config.getMinimalGroupSize();
+        this.criteria = config.getCriteriaAsArray();
+        this.k = config.getMinimalGroupSize();
+    }
+    
+    @Override
+    public void analyze(){
+        
+        // We have only checked k-anonymity so far
+        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
+        
+        // Abort early, if only k-anonymity was specified
+        if (criteria.length == 0) { 
+            anonymous = kAnonymous;
+            return;
+        }
+        
+        // Abort early, if k-anonymity subcriterion is not fulfilled
+        // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+        //          for non-anonymous transformations
+        if (k != Integer.MAX_VALUE && !kAnonymous) {
+            anonymous = false;
+            return; 
+        }
+        
+        // Iterate over all classes
+        currentOutliers = 0;
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            final boolean anonymous = isAnonymous(entry);
+            
+            // Determine outliers
+            if (!anonymous) {
+                currentOutliers += entry.count;
+                
+                // Break as soon as too many classes are not anonymous
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                //          for non-anonymous transformations
+                if (currentOutliers > absoluteMaxOutliers) { 
+                    this.anonymous = false;
+                    return;
+                }
+            }
+            // Next class
+            entry.isNotOutlier = anonymous;
+            entry = entry.nextOrdered;
+        }
+        
+        this.anonymous = true;
     }
 
     @Override
@@ -312,11 +366,11 @@ public class HashGroupify implements IHashGroupify {
     @Override
     public void clear() {
         if (elementCount > 0) {
-            elementCount = 0;
+            this.elementCount = 0;
+            this.currentOutliers = 0;
+            this.firstEntry = null;
+            this.lastEntry = null;
             HashTableUtil.nullifyArray(buckets);
-            currentOutliers = 0;
-            firstEntry = null;
-            lastEntry = null;
         }
     }
 
@@ -333,7 +387,7 @@ public class HashGroupify implements IHashGroupify {
     }
 
     @Override
-    public GroupStatistics getGroupStatistics(boolean anonymous) {
+    public GroupStatistics getGroupStatistics() {
 
         // Statistics about equivalence classes
         double averageEquivalenceClassSize = 0;
@@ -349,7 +403,7 @@ public class HashGroupify implements IHashGroupify {
         while (entry != null) {
             if (entry.count > 0){
                 numberOfEquivalenceClasses++;
-                if (anonymous && !isAnonymous(entry)) {
+                if (this.anonymous && !entry.isNotOutlier) { 
                      numberOfOutlyingEquivalenceClasses++;
                      numberOfOutlyingTuples += entry.count;
                 } else {
@@ -402,56 +456,22 @@ public class HashGroupify implements IHashGroupify {
                                     numberOfOutlyingEquivalenceClasses,
                                     numberOfOutlyingTuples);
     }
-
+    
     @Override
     public boolean isAnonymous() {
-
-        if (criteria.length == 0) { return isKAnonymous(); }
-
-        if (k != Integer.MAX_VALUE && !isKAnonymous()) { return false; }
-
-        // Iterate over all classes
-        currentOutliers = 0;
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-
-            // Check for anonymity
-            final boolean anonymous = isAnonymous(entry);
-
-            // Determine outliers
-            if (!anonymous) {
-                currentOutliers += entry.count;
-
-                // Break as soon as too many classes are not anonymous
-                if (currentOutliers > absoluteMaxOutliers) { return false; }
-            }
-
-            // Next class
-            entry.isNotOutlier = anonymous;
-            entry = entry.nextOrdered;
-        }
-
-        // All classes are anonymous
-        return true;
+        return anonymous;
     }
-
-    /**
-     * Is the current transformation k-anonymous? CAUTION: Call before
-     * isAnonymous()!
-     * 
-     * @return
-     */
+    
     @Override
     public boolean isKAnonymous() {
-        if (currentOutliers > absoluteMaxOutliers) {
-            return false;
-        } else {
-            return true;
-        }
+        return kAnonymous;
     }
 
     @Override
     public void markOutliers(final int[][] data) {
+        
+        if (!anonymous) return;
+        
         for (int row = 0; row < data.length; row++) {
             final int[] key = data[row];
             final int hash = HashTableUtil.hashcode(key);

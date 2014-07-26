@@ -232,6 +232,16 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                     style.foreground = GUIHelper.COLOR_DARK_GRAY;
                     styles.add(style);
                 }
+
+                @Override
+                public void neq(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
             };
         }
         

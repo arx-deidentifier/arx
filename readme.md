@@ -77,7 +77,7 @@ More details can be found at: http://arx.deidentifier.org/
 License
 ------
 
-The ARX framework is copyright (C) 2012 Florian Kohlmayer and Fabian Prasser. It is licensed under the GNU GPL3:
+The ARX framework is copyright (C) 2012-2014 Florian Kohlmayer and Fabian Prasser. It is licensed under the GNU GPL3:
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  
