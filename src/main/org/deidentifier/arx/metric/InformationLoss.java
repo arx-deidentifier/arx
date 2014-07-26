@@ -26,38 +26,54 @@ import java.io.Serializable;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class InformationLoss implements Comparable<InformationLoss>, Serializable {
+public abstract class InformationLoss<T> implements Comparable<InformationLoss<?>>, Serializable {
 
     private static final long serialVersionUID = -5347658129539223333L;
 
     InformationLoss() {
         // Package visibility
     }
+    
+    public abstract T getValue();
+    
+    /**
+     * Returns the value relative to the other instance
+     * @param other
+     * @return
+     */
+    public abstract double relativeTo(InformationLoss<?> min, InformationLoss<?> max);
+    
+    /**
+     * Compares the loss to the other
+     * @param other
+     * @return
+     */
+    public abstract int compareTo(InformationLoss<?> other);
 
     /**
-     * Returns the information loss
+     * Returns a string representation
      * 
      * @return
      */
-    public abstract double getValue();
+    public abstract String toString();
 
     /**
      * Retains the maximum of this and other
      * 
      * @param other
      */
-    public abstract void max(InformationLoss other);
+    public abstract void max(InformationLoss<?> other);
 
     /**
      * Retains the minimum of this and other
      * 
      * @param other
      */
-    public abstract void min(InformationLoss other);
+    public abstract void min(InformationLoss<?> other);
 
     /**
      * Returns a clone of this object
      */
     @Override
-    protected abstract InformationLoss clone();
+    public abstract InformationLoss<T> clone();
 }

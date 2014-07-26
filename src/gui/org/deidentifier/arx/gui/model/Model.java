@@ -44,56 +44,56 @@ public class Model implements Serializable {
 
 	private static final long serialVersionUID = -7669920657919151279L;
 
-	// TODO: Check if all initial values are ok
-    private transient Set<ARXNode>                clipboard            = new HashSet<ARXNode>();
-    private transient DataHandle                  output               = null;
-    private transient ARXNode                     outputNode           = null;
-    private transient ARXResult                   result               = null;
-    private transient ARXNode                     selectedNode         = null;
-    private transient ARXAnonymizer               anonymizer           = null;
-    private transient String                      path                 = null;
-
-    private String                                name                 = null;
-    private char                                  separator            = ';'; //$NON-NLS-1$
+    private transient ARXAnonymizer               anonymizer                      = null;
+    private transient Set<ARXNode>                clipboard                       = new HashSet<ARXNode>();
+    private boolean                               debugEnabled                    = false;
     private String                                description;
-    private int                                   historySize          = 200;
-    private double                                snapshotSizeDataset  = 0.2d;
-    private double                                snapshotSizeSnapshot = 0.8d;
-    private int                                   initialNodesInViewer = 100;
-    private int                                   maxNodesInLattice    = 100000;
-    private int                                   maxNodesInViewer     = 700;
+    private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
+    private int[]                                 groups;
+    private int                                   historySize                     = 200;
 
-    private String                                selectedAttribute    = null;
-    private ModelNodeFilter                       nodeFilter           = null;
-    private boolean                               modified             = false;
-    private long                                  inputBytes           = 0L;
-    private String[]                              pair                 = new String[] { null, null };
+    private int                                   initialNodesInViewer            = 100;
+    private long                                  inputBytes                      = 0L;
+    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
+    private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
+    private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
+    private int                                   maximalSizeForComplexOperations = 5000000;
+    private int                                   maxNodesInLattice               = 100000;
+    private int                                   maxNodesInViewer                = 700;
+    private boolean                               modified                        = false;
 
+    private String                                name                            = null;
+    private ModelNodeFilter                       nodeFilter                      = null;
     private String                                optimalNodeAsString;
+    private transient DataHandle                  output                          = null;
+    private ModelConfiguration                    outputConfig                    = null;
+
+    private transient ARXNode                     outputNode                      = null;
     private String                                outputNodeAsString;
 
+    private String[]                              pair                            = new String[] { null, null };
+
+    private transient String                      path                            = null;
+    private String                                query                           = "";                                             //$NON-NLS-1$
+
+    private transient ARXResult                   result                          = null;
+
+    private String                                selectedAttribute               = null;
+
+    private transient ARXNode                     selectedNode                    = null;
+    private char                                  separator                       = ';';                                            //$NON-NLS-1$
+    private Boolean                               showVisualization               = true;
+    private double                                snapshotSizeDataset             = 0.2d;
+
+    private double                                snapshotSizeSnapshot            = 0.8d;
+    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
+    private String                                suppressionString               = "*";                                            //$NON-NLS-1$
+
+    private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
     private long                                  time;
 
-    private ModelConfiguration                    inputConfig          = new ModelConfiguration();
-    private ModelConfiguration                    outputConfig         = null;
+    private ModelViewConfig                       viewConfig                      = new ModelViewConfig();
 
-    private String                                suppressionString    = "*"; //$NON-NLS-1$
-
-    private int[]                                 groups;
-
-    private ModelKAnonymityCriterion              kAnonymityModel      = new ModelKAnonymityCriterion();
-    private ModelDPresenceCriterion               dPresenceModel       = new ModelDPresenceCriterion();
-    private Map<String, ModelLDiversityCriterion> lDiversityModel      = new HashMap<String, ModelLDiversityCriterion>();
-    private Map<String, ModelTClosenessCriterion> tClosenessModel      = new HashMap<String, ModelTClosenessCriterion>();
-
-    private String                                query                = ""; //$NON-NLS-1$
-    private String                                subsetOrigin         = "All"; //$NON-NLS-1$
-    private ModelViewConfig                       viewConfig           = new ModelViewConfig();
-
-    private Boolean                               showVisualization    = true;
-    private int                                   maximalSizeForComplexOperations  = 5000000;
-
-    private boolean                               debugEnabled         = false;
 
     public Model(final String name, final String description) {
 		this.name = name;
@@ -133,7 +133,7 @@ public class Model implements Serializable {
 		// Initialize the config
 		config.removeAllCriteria();
 		if (definition == null) return;
-		
+
 		// Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
             
@@ -534,10 +534,6 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	private void setModified() {
-		modified = true;
-	}
-
 	public void setName(final String name) {
 		this.name = name;
 		setModified();
@@ -566,10 +562,10 @@ public class Model implements Serializable {
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
+
 	public void setPath(final String path) {
 		this.path = path;
 	}
-	
 	public void setQuery(String query){
         this.query = query;
         setModified();
@@ -587,7 +583,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
+	
 	public void setSaved() {
 		modified = false;
 	}
@@ -628,11 +624,11 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-    public void setSnapshotSizeSnapshot(final double snapshotSize) {
+	public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-    
+
     public void setSubsetManual(){
         if (!this.subsetOrigin.endsWith("manual")) {
             this.subsetOrigin += " + manual";
@@ -655,7 +651,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
 		this.time = time;
 	}
-
+    
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
@@ -663,13 +659,17 @@ public class Model implements Serializable {
 			outputConfig.setUnmodified();
 		}
 	}
-    
+
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-
+    
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();
     }
+
+    private void setModified() {
+		modified = true;
+	}
 }

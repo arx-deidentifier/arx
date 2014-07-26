@@ -19,19 +19,13 @@
 package org.deidentifier.arx.metric;
 
 /**
- * This class implements a default information loss which represents one single
- * metric.
+ * This class implements an information loss which can be represented as
+ * a single decimal number.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-class InformationLossDefault extends InformationLoss {
-
-    /** Max value */
-    public static final InformationLoss MAX              = new InformationLossDefault(Double.MAX_VALUE);
-
-    /** Min value */
-    public static final InformationLoss MIN              = new InformationLossDefault(0);
+class InformationLossDefault extends InformationLoss<Double> {
 
     /** serialVersionUID */
     private static final long           serialVersionUID = -4341081298410703417L;
@@ -44,40 +38,25 @@ class InformationLossDefault extends InformationLoss {
     }
 
     @Override
-    public int compareTo(final InformationLoss o) {
-        if (getValue() > o.getValue()) {
-            return 1;
-        } else if (getValue() < o.getValue()) {
-            return -1;
-        } else {
-            return 0;
-        }
+    public int compareTo(InformationLoss<?> other) {
+        InformationLossDefault o = convert(other);
+        if (other == null) return +1;
+        else return Double.valueOf(value).compareTo(o.getValue());
     }
 
     @Override
-    public double getValue() {
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        InformationLossDefault other = (InformationLossDefault) obj;
+        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
+        return true;
+    }
+
+    @Override
+    public Double getValue() {
         return value;
-    }
-
-    @Override
-    public void max(final InformationLoss other) {
-        if (other == null) { return; }
-        if (other.getValue() > getValue()) {
-            value = other.getValue();
-        }
-    }
-
-    @Override
-    public void min(final InformationLoss other) {
-        if (other == null) { return; }
-        if (other.getValue() < getValue()) {
-            value = other.getValue();
-        }
-    }
-
-    @Override
-    protected InformationLoss clone() {
-        return new InformationLossDefault(value);
     }
 
     @Override
@@ -91,12 +70,57 @@ class InformationLossDefault extends InformationLoss {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        InformationLossDefault other = (InformationLossDefault) obj;
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
-        return true;
+    public void max(final InformationLoss<?> other) {
+        InformationLossDefault o = convert(other);
+        if (other == null) { return; }
+        if (o.getValue() > getValue()) {
+            value = o.getValue();
+        }
+    }
+
+    @Override
+    public void min(final InformationLoss<?> other) {
+        InformationLossDefault o = convert(other);
+        if (other == null) { return; }
+        if (o.getValue() < getValue()) {
+            value = o.getValue();
+        }
+    }
+
+    @Override
+    public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
+        if (min == null) {
+            throw new IllegalArgumentException("Minimum is null");
+        } else if (max == null) {
+            throw new IllegalArgumentException("Maximum is null");
+        }
+        InformationLossDefault _min = convert(min);
+        InformationLossDefault _max = convert(max);
+        if (_max.value - _min.value == 0d) return 0d;
+        else return (this.value - _min.value) / (_max.value - _min.value);
+    }
+
+    @Override
+    public String toString() {
+        return Double.valueOf(this.value).toString();
+    }
+
+    /**
+     * Converter method
+     * @param other
+     * @return
+     */
+    private InformationLossDefault convert(InformationLoss<?> other){
+        if (other == null) return null;
+        if (!(other instanceof InformationLossDefault)) {
+            throw new IllegalStateException("Information loss must be of the same type");
+        } else {
+            return (InformationLossDefault)other;
+        }
+    }
+
+    @Override
+    public InformationLoss<Double> clone() {
+        return new InformationLossDefault(value);
     }
 }

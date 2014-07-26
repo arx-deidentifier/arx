@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
@@ -108,9 +109,11 @@ public class MetricEntropy extends MetricDefault {
         }
         return new InformationLossDefault(-result);
     }
-
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] ahierarchies, 
+                                      final ARXConfiguration config) {
 
         // Obtain dictionary
         final Dictionary dictionary = input.getDictionary();
@@ -168,5 +171,10 @@ public class MetricEntropy extends MetricDefault {
             cache[i] = new double[ahierarchies[i].getArray()[0].length];
             Arrays.fill(cache[i], NA);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Non-Uniform Entropy";
     }
 }

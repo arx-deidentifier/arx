@@ -19,23 +19,24 @@
 package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * This class provides an implementation of the Precision metric.
+ * This class provides an implementation of a weighted precision metric.
+ * This metric will respect attribute weights defined in the configuration.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricPrecision extends MetricDefault {
+public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
 
-    /**
-     * 
-     */
+    /** SSUID*/
     private static final long serialVersionUID = -7612335677779934529L;
+
     /** The maximum levels */
     private int[]             maxLevels;
 
@@ -51,18 +52,38 @@ public class MetricPrecision extends MetricDefault {
         final int[] state = node.getTransformation();
         for (int i = 0; i < state.length; i++) {
             divisor++;
-            value += (double) state[i] / (double) maxLevels[i];
+            double weight = weights != null ? weights[i] : 1d;
+            value += ((double) state[i] / (double) maxLevels[i]) * weight;
         }
         return new InformationLossDefault(value / divisor);
     }
 
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, hierarchies, config);
 
         // Initialize maximum levels
         maxLevels = new int[hierarchies.length];
         for (int j = 0; j < maxLevels.length; j++) {
             maxLevels[j] = hierarchies[j].getArray()[0].length;
         }
+    }
+
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        return new InformationLossDefault(Double.MAX_VALUE);
+    }
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        return new InformationLossDefault(Double.MIN_VALUE);
+    }
+
+    @Override
+    public String toString() {
+        return "Precision";
     }
 }

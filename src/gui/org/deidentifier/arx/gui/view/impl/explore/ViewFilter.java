@@ -25,8 +25,8 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -119,11 +119,7 @@ public class ViewFilter implements IView {
         notanonymous.select(-1);
         unknown.select(-1);
         min.setSelection(min.getMinimum());
-        min.setMinimum(0);
-        min.setMaximum(SCALE_MAX_VALUE);
         max.setSelection(max.getMaximum());
-        max.setMinimum(0);
-        max.setMaximum(SCALE_MAX_VALUE);
         attribute.setEnabled(false);
         anonymous.setEnabled(false);
         notanonymous.setEnabled(false);
@@ -305,7 +301,7 @@ public class ViewFilter implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 if (filter != null) {
                     
-                    double minLoss = intToInformationLoss(min.getSelection());
+                    double minLoss = (double)min.getSelection() / (double)SCALE_MAX_VALUE;
                     double maxLoss = filter.getAllowedMaxInformationLoss();
                     filter.allowInformationLoss(minLoss, maxLoss);
                     controller.update(new ModelEvent(outer,
@@ -325,8 +321,12 @@ public class ViewFilter implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 if (filter != null) {
-                    filter.allowInformationLoss(filter.getAllowedMinInformationLoss(),
-                                                intToInformationLoss(max.getSelection()));
+                    
+                    double maxLoss = (double)max.getSelection() / (double)SCALE_MAX_VALUE;
+                    double minLoss = filter.getAllowedMinInformationLoss();
+                    
+                    filter.allowInformationLoss(minLoss,
+                                                maxLoss);
                     controller.update(new ModelEvent(outer,
                                                      ModelPart.FILTER,
                                                      filter));
@@ -407,26 +407,6 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Converter TODO: Seems to not work
-     * 
-     * @param value
-     * @return
-     */
-    private int informationLossToInt(final double value) {
-
-        // Relative
-        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
-        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
-        double val = (value - min) / (max - min);
-        
-        // Scaled with integer.max
-        val = val * SCALE_MAX_VALUE;
-        
-        // Return
-        return (int) val;
-    }
-
-    /**
      * Initializes the view
      * @param result
      * @param nodeFilter
@@ -484,16 +464,8 @@ public class ViewFilter implements IView {
         unknown.setEnabled(true);
 
         // Min and max
-        min.setMinimum(informationLossToInt(result.getLattice()
-                                                  .getBottom()
-                                                  .getMinimumInformationLoss()
-                                                  .getValue()));
-        max.setMaximum(informationLossToInt(result.getLattice()
-                                                  .getTop()
-                                                  .getMaximumInformationLoss()
-                                                  .getValue()));
-        min.setSelection(informationLossToInt(filter.getAllowedMinInformationLoss()));
-        max.setSelection(informationLossToInt(filter.getAllowedMaxInformationLoss()));
+        min.setSelection((int)Math.round(filter.getAllowedMinInformationLoss() * (double)SCALE_MAX_VALUE));
+        max.setSelection((int)Math.round(filter.getAllowedMaxInformationLoss() * (double)SCALE_MAX_VALUE));
         min.setEnabled(true);
         max.setEnabled(true);
 
@@ -508,30 +480,5 @@ public class ViewFilter implements IView {
             controller.update(new ModelEvent(this, ModelPart.FILTER, filter));
         }
     }
-
-    /**
-     * Converter 
-     * TODO: Seems to not work
-     * 
-     * @param value
-     * @return
-     */
-    private double intToInformationLoss(final int value) {
-
-        double min = result.getLattice().getBottom().getMinimumInformationLoss().getValue();
-        double max = result.getLattice().getTop().getMaximumInformationLoss().getValue();
-        
-        // Corner cases
-        if (value == 0) {
-            return min;
-        } else if (value >= SCALE_MAX_VALUE - 1) { 
-            return max; 
-        }
-
-        // In relation to integer.max
-        double val = min + (((double) value / (double) SCALE_MAX_VALUE) * (max - min));
-
-        // Return
-        return val;
-    }
 }
+

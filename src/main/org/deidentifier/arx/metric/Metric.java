@@ -21,9 +21,9 @@ package org.deidentifier.arx.metric;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -36,7 +36,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  *
  * @param <T>
  */
-public abstract class Metric<T extends InformationLoss> implements Serializable {
+public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
 
     private static final long serialVersionUID = -2657745103125430229L;
 
@@ -47,17 +47,6 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      */
     public static Metric<InformationLossDefault> createAECSMetric() {
         return new MetricAECS();
-    }
-
-    /**
-     * Creates a weighted metric
-     * 
-     * @param main
-     *            the main metric
-     * @return
-     */
-    public static Metric<InformationLossCombined> createCombinedMetric(final Metric<?> main, final Set<Metric<?>> others) {
-        return new MetricCombined(main, others);
     }
 
     /**
@@ -98,7 +87,33 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
-     * Creates an non-monotoncic entropy metric
+     * Creates an instance of the NDS metric that treats suppression, generalization and
+     * all attributes equally.
+     * This metric will respect attribute weights defined in the configuration.
+     * @return
+     */
+    public static Metric<?> createNDSMetric() {
+        return new MetricNDS();
+    }
+    
+
+    /**
+     * Creates an NDS metric with factors for weighting generalization and suppression.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor generalization, and a factor of 1 will favor
+     *                 suppression. The values in between can be used for
+     *                 balancing both methods. 
+     */
+    public static MetricNDS createNDSMetric(double gsFactor) {
+        return new MetricNDS(gsFactor);
+    }
+    
+    /**
+     * Creates an non-monotonic entropy metric
      * 
      * @return
      */
@@ -107,7 +122,8 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
-     * Creates a precision metric
+     * Creates a precision metric. 
+     * This metric will respect attribute weights defined in the configuration.
      * 
      * @return
      */
@@ -116,40 +132,19 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
-     * Creates a weighted precision metric
+     * Creates a static metric. It requires a map, which maps the generalization levels
+     * (starting at index of the given list) onto an information loss defined as a
+     * decimal number.
+     * This metric will respect attribute weights defined in the configuration.
      * 
-     * @param weights Contains the weights for each column, indexed by the column name.
      * @return
      */
-    public static Metric<InformationLossDefault> createPrecisionWeightedMetric(Map<String, Double> weights) {
-        return new MetricPrecisionWeighted(weights);
-    }
-
-    /**
-     * Creates a user defined and weighted metric
-     * 
-     * @param infoloss Contains the infoloss for each level of the hierarchy, index by column name
-     * @param weights Contains the weights for each column, indexed by the column name.
-     * @return
-     */
-
-    public static Metric<InformationLossDefault> createUserDefinedWeightedMetric(Map<String, List<Double>> infoloss, Map<String, Double> weights) {
-        return new MetricUserDefinedWeighted(infoloss, weights);
-    }
-
-    /**
-     * Creates a weighted metric
-     * 
-     * @param weights
-     *            the weights
-     * @return
-     */
-    public static Metric<InformationLossCombined> createWeightedMetric(final Map<Metric<?>, Double> weights) {
-        return new MetricWeighted(weights);
+    public static Metric<InformationLossDefault> createStaticMetric(Map<String, List<Double>> informationLoss) {
+        return new MetricStatic(informationLoss);
     }
 
     /** Is the metric independent? */
-    private boolean                   independent            = false;
+    private boolean                      independent            = false;
 
     /** Is the metric monotonic? */
     private boolean                   monotonic              = false;
@@ -166,6 +161,20 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
+     * Returns an instance of the maximal value
+     * 
+     * @return
+     */
+    public abstract InformationLoss<?> createMaxInformationLoss();
+
+    /**
+     * Returns an instance of the minimal value
+     * 
+     * @return
+     */
+    public abstract InformationLoss<?> createMinInformationLoss();
+
+    /**
      * Evaluates the metric for the given node
      * 
      * @param node
@@ -174,18 +183,19 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      *            The groupify operator of the previous check
      * @return the information loss
      */
-    public final InformationLoss evaluate(final Node node, final IHashGroupify groupify) {
+    public final T evaluate(final Node node, final IHashGroupify groupify) {
         return this.evaluateInternal(node, groupify);
     }
 
     /**
      * Initializes the metric.
+     * @param definition 
      * 
      * @param input
      * @param hierarchies
      */
-    public final void initialize(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        initializeInternal(input, hierarchies, config);
+    public final void initialize(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+        initializeInternal(definition, input, hierarchies, config);
     }
 
     /**
@@ -208,24 +218,6 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
     }
 
     /**
-     * Returns the maximal value
-     * 
-     * @return
-     */
-    public final InformationLoss max() {
-        return maxInternal().clone();
-    }
-
-    /**
-     * Returns the minimal value
-     * 
-     * @return
-     */
-    public final InformationLoss min() {
-        return minInternal().clone();
-    }
-
-    /**
      * Evaluates the metric for the given node
      * 
      * @param node
@@ -242,20 +234,21 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @param input
      * @param hierarchies
      */
-    protected abstract void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
-
+    protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
+    
     /**
-     * Returns an instance of the maximal value
-     * 
+     * Returns the name of metric
      * @return
      */
-    protected abstract InformationLoss maxInternal();
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 
     /**
-     * Returns an instance of the minimal value
-     * 
+     * Returns the name of metric
      * @return
      */
-    protected abstract InformationLoss minInternal();
-
+    public String getName() {
+        return this.toString();
+    }
 }

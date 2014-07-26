@@ -20,8 +20,10 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.criteria.DPresence;
@@ -38,17 +40,17 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXConfiguration implements Serializable, Cloneable {
 
-    /** For serialization*/
-    private static final long     serialVersionUID              = -6713510386735241964L;
-
     /** Do the criteria require a counter per equivalence class*/
     public static final int       REQUIREMENT_COUNTER           = 0x1;
+
+    /** Do the criteria require distributions of sensitive values in the equivalence classes */
+    public static final int       REQUIREMENT_DISTRIBUTION      = 0x4;
 
     /** Do the criteria require a second counter */
     public static final int       REQUIREMENT_SECONDARY_COUNTER = 0x2;
 
-    /** Do the criteria require distributions of sensitive values in the equivalence classes */
-    public static final int       REQUIREMENT_DISTRIBUTION      = 0x4;
+    /** For serialization*/
+    private static final long     serialVersionUID              = -6713510386735241964L;
 
     /**
      * Creates a new config without tuple suppression
@@ -84,32 +86,35 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return new ARXConfiguration(metric);
     }
 
-    /** Do we assume practical monotonicity */
-    private boolean               practicalMonotonicity         = false;
-
-    /** Relative tuple outliers */
-    private double                relMaxOutliers                = -1;
-
     /** Absolute tuple outliers*/
     private int                   absMaxOutliers                = 0;
 
     /** Criteria*/
     private PrivacyCriterion[]    aCriteria                     = new PrivacyCriterion[0];
 
+    /** A map of weights per attribute*/
+    private Map<String, Double>   attributeWeights             = null;
+
     /** The criteria*/
     private Set<PrivacyCriterion> criteria                      = new HashSet<PrivacyCriterion>();
-
-    /** The requirements per equivalence class*/
-    private int                   requirements                  = 0x0;
 
     /** The metric. */
     private Metric<?>             metric                        = Metric.createDMStarMetric();
 
-    /** The snapshot length*/
-    private int                   snapshotLength;
+    /** Do we assume practical monotonicity */
+    private boolean               practicalMonotonicity         = false;
 
     /** Make sure that no information can be derived from associations between sensitive attributes*/
     private boolean               protectSensitiveAssociations  = false;
+
+    /** Relative tuple outliers */
+    private double                relMaxOutliers                = -1;
+
+    /** The requirements per equivalence class*/
+    private int                   requirements                  = 0x0;
+
+    /** The snapshot length*/
+    private int                   snapshotLength;
 
     /**
      * Creates a new config without tuple suppression
@@ -180,6 +185,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.metric = this.metric;
         result.snapshotLength = this.snapshotLength;
         result.protectSensitiveAssociations = this.protectSensitiveAssociations;
+        if (this.attributeWeights != null) {
+            result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
+        } else {
+            result.attributeWeights = null;
+        }
         return result;
 
     }
@@ -202,6 +212,34 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public final int getAbsoluteMaxOutliers() {
         return this.absMaxOutliers;
+    }
+
+    /**
+     * Returns the weight for the given attribute
+     * @param attribute
+     * @return
+     */
+    public double getAttributeWeight(String attribute) {
+        
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
+        Double value = this.attributeWeights.get(attribute);
+        if (value == null) return 0d;
+        else return value;
+    }
+
+    /**
+     * Returns all configured attribute weights
+     * @return
+     */
+    public Map<String, Double> getAttributeWeights() {
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
+        return new HashMap<String, Double>(this.attributeWeights);
     }
 
     /**
@@ -330,7 +368,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Yes
         return true;
     }
-
+    
     /**
      * Is practical monotonicity assumed
      * @return
@@ -354,7 +392,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion arg) {
         return criteria.remove(arg);
     }
-
+    
     /**
      * Convenience method for checking the requirements
      * @param requirement
@@ -362,6 +400,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public boolean requires(int requirement) {
         return (this.requirements & requirement) != 0;
+    }
+
+    /**
+     * Sets the weight for the given attribute
+     * @param attribute
+     * @param weight
+     */
+    public void setAttributeWeight(String attribute, Double weight){
+    
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
+        this.attributeWeights.put(attribute, weight);
     }
 
     /**
@@ -385,7 +437,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
     }
-
+    
     /**
      * Set, whether the anonymizer should take associations between sensitive attributes into account
      * @param protect
@@ -393,7 +445,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setProtectSensitiveAssociations(boolean protect) {
         this.protectSensitiveAssociations = protect;
     }
-
+    
     /**
      * Initializes the configuration
      * @param manager

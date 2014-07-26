@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.MetricNDS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -52,16 +53,6 @@ public class ViewCriterionDefinition implements IView {
     private static final int       LABEL_WIDTH     = 50;
     private static final int       LABEL_HEIGHT    = 20;
     
-    private static final String    LABELS_METRIC[] = { 
-            Resources.getMessage("CriterionDefinitionView.0"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.1"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.2"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.3"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.4"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.5"), //$NON-NLS-1$
-            Resources.getMessage("CriterionDefinitionView.52"), //$NON-NLS-1$
-    };
-    
     private static final Metric<?> ITEMS_METRIC[]  = { 
             Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
@@ -69,7 +60,10 @@ public class ViewCriterionDefinition implements IView {
             Metric.createEntropyMetric(),
             Metric.createDMMetric(),
             Metric.createNMEntropyMetric(),
-            Metric.createAECSMetric()};
+            Metric.createAECSMetric(),
+            Metric.createNDSMetric()};
+
+    private static final String    LABELS_METRIC[] = getLabels(ITEMS_METRIC);
 
     private final Controller       controller;
     private Model                  model           = null;
@@ -103,6 +97,19 @@ public class ViewCriterionDefinition implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.root = build(parent);
+    }
+
+    /**
+     * Returns an array of labels
+     * @param metrics
+     * @return
+     */
+    private static String[] getLabels(Metric<?>[] metrics) {
+        String[] labels = new String[metrics.length];
+        for (int i=0; i<metrics.length; i++) {
+            labels[i] = metrics[i].getName();
+        }
+        return labels;
     }
 
     @Override
@@ -358,6 +365,11 @@ public class ViewCriterionDefinition implements IView {
         c.setLayout(new FillLayout());
         clv = new ViewCriteriaList(c, controller);
         
+       // Create weights tab
+        Composite c2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
+        c2.setLayout(new FillLayout());
+        new ViewWeights(c2, controller);
+        
         folder2.setSelection(0);
 
         return group;
@@ -387,7 +399,11 @@ public class ViewCriterionDefinition implements IView {
     private void selectMetricAction(final Metric<?> metric) {
         if (model == null) { return; }
         if (metric != null) {
-            model.getInputConfig().setMetric(metric);
+            if (metric instanceof MetricNDS) {
+                model.getInputConfig().setMetric(Metric.createNDSMetric(model.getInputConfig().getSuppressionWeight()));
+            } else {
+                model.getInputConfig().setMetric(metric);
+            }
             controller.update(new ModelEvent(this, ModelPart.METRIC, metric));
         }
     }

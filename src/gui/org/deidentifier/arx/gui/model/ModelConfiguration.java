@@ -43,7 +43,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     private boolean                removeOutliers   = true;
     private boolean                modified         = false;
     private Map<String, Hierarchy> hierarchies      = new HashMap<String, Hierarchy>();
-    private RowSet                 researchSubset   = null;
+    private RowSet                 researchSubset    = null;
+    private Double                 suppressionWeight = null;
 
     /**
      * Delegates to an instance of ARXConfiguration
@@ -66,6 +67,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
         c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
+        c.suppressionWeight = this.suppressionWeight;
         return c;
     }
     
@@ -381,5 +383,54 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeHierarchyBuilder(String attr){
         if (hierarchyBuilders==null) return;
         hierarchyBuilders.remove(attr);
+    }
+    
+    /**
+     * Sets the suppression/generalization weight, that will be respected by
+     * the NDS metric
+     * @param suppressionWeight
+     */
+    public void setSuppressionWeight(double suppressionWeight) {
+        this.suppressionWeight = suppressionWeight;
+    }
+    
+    /**
+     * Returns the suppression/generalization weight, that will be respected by
+     * the NDS metric
+     * @return
+     */
+    public double getSuppressionWeight() {
+
+        // For backwards compatibility
+        if (this.suppressionWeight == null){
+            this.suppressionWeight = 0.5d;
+        }
+        return suppressionWeight;
+    }
+
+    /**
+     * Returns all weights
+     * @return
+     */
+    public Map<String, Double> getAttributeWeights() {
+        return config.getAttributeWeights();
+    }
+
+    /**
+     * Returns the associated attribute weight
+     * @param attribute
+     * @return
+     */
+    public double getAttributeWeight(String attribute) {
+        return config.getAttributeWeight(attribute);
+    }
+
+    /**
+     * Sets the according attribute weight
+     * @param attribute
+     * @param weight
+     */
+    public void setAttributeWeight(String attribute, Double weight) {
+        config.setAttributeWeight(attribute, weight);
     }
 }

@@ -40,8 +40,8 @@ public class MetricAECS extends MetricDefault {
 
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-        
-        // Anonymity: ignore suppression for non-anonymous transformations
+
+        // Is the transformation anonymous
         boolean anonymous = g.isAnonymous();
         // The total number of groups
         int groups = 0;
@@ -65,5 +65,10 @@ public class MetricAECS extends MetricDefault {
         
         // Compute AECS
         return new InformationLossDefault((double)tuples / (double)groups);
+    }
+
+    @Override
+    public String toString() {
+        return "Average Equivalence Class Size";
     }
 }

@@ -98,6 +98,10 @@ public abstract class Vocabulary {
     public abstract String getMaxNodesInViewer();
     public abstract String getSelectedAttribute();
     public abstract String getInputBytes();
+
+    public abstract String getAttributeWeights();
+    public abstract String getAttributeWeight();
+    public abstract String getWeight();
     
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
 	public boolean isVersion(String value){return value.equals(getVersion());}
@@ -139,6 +143,12 @@ public abstract class Vocabulary {
 	public boolean isMin2(String value){return value.equals(getMin2());}
 	public boolean isMax2(String value){return value.equals(getMax2());}
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
+	
+    public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
+    public boolean isAttributeWeights(String value) {return value.equals(getAttributeWeights());}
+    public boolean isWeight(String value) {return value.equals(getWeight());}
 
     public abstract void checkVersion(String version) throws SAXException;
+
+    
 }

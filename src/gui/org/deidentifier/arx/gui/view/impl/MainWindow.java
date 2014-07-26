@@ -255,7 +255,7 @@ public class MainWindow implements IView {
     public void showErrorDialog(final Shell shell, final String message, final Throwable t) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        t.printStackTrace(pw);
+        if (t != null) t.printStackTrace(pw);
         final String trace = sw.toString();
         final DialogError dialog = new DialogError(shell, controller, message, trace);
         dialog.create();

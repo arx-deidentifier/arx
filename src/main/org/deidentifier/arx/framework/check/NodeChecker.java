@@ -154,7 +154,7 @@ public class NodeChecker implements INodeChecker {
         currentGroupify.analyze();
 
         // Compute information loss
-        InformationLoss infoLoss = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
+        InformationLoss<?> infoLoss = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
                                     metric.evaluate(node, currentGroupify) : null;
         
         // Return result;
@@ -220,7 +220,7 @@ public class NodeChecker implements INodeChecker {
         }
         
         // Determine information loss
-        InformationLoss loss = transformation.getInformationLoss();
+        InformationLoss<?> loss = transformation.getInformationLoss();
         if (loss == null) {
             loss = metric.evaluate(transformation, currentGroupify);
         }
