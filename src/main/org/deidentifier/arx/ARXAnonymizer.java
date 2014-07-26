@@ -69,6 +69,9 @@ public class ARXAnonymizer {
 
         /** The metric. */
         final Metric<?>         metric;
+        
+        /** The time*/
+        final long              time;  
 
         /**
          * Creates a new instance.
@@ -82,12 +85,14 @@ public class ARXAnonymizer {
                final INodeChecker checker,
                final Lattice lattice,
                final DataManager manager,
-               final AbstractAlgorithm algorithm) {
+               final AbstractAlgorithm algorithm,
+               final long time) {
             this.metric = metric;
             this.checker = checker;
             this.lattice = lattice;
             this.manager = manager;
             this.algorithm = algorithm;
+            this.time = time;
         }
 
         /**
@@ -97,7 +102,7 @@ public class ARXAnonymizer {
          * @param time
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle, long time) {
+		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
 		    // Create lattice
 	        final ARXLattice flattice = new ARXLattice(lattice,
@@ -214,13 +219,12 @@ public class ARXAnonymizer {
         
         DataHandle handle = data.getHandle();
         
-        final long time = System.currentTimeMillis();
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         handle.getRegistry().createInputSubset(config);
 
         // Execute
-        return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle, time);
+        return anonymizeInternal(handle, handle.getDefinition(), config).asResult(config, handle);
     }
     
     /**
@@ -456,7 +460,7 @@ public class ARXAnonymizer {
         
         // Perform sanity checks
         Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
-        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() >= 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1["); }
+        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
         if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
         if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
     }
@@ -520,12 +524,15 @@ public class ARXAnonymizer {
         final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
-        config.getMetric().initialize(manager.getDataQI(), manager.getHierarchies(), config);
+        config.getMetric().initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);
 
         // Create an algorithm instance
-        AbstractAlgorithm algorithm = FLASHAlgorithm.create(lattice, checker, 
-                                              new FLASHStrategy(lattice, manager.getHierarchies()));
+        FLASHStrategy strategy = new FLASHStrategy(lattice, manager.getHierarchies());
+        AbstractAlgorithm algorithm = FLASHAlgorithm.create(lattice, checker, strategy);
+        
         // Execute
+
+        final long time = System.currentTimeMillis();
         algorithm.traverse();
         
         // Deactivate history to prevent bugs when sorting data
@@ -533,6 +540,6 @@ public class ARXAnonymizer {
         checker.getHistory().setSize(0);
         
         // Return the result
-        return new Result(config.getMetric(), checker, lattice, manager, algorithm);
+        return new Result(config.getMetric(), checker, lattice, manager, algorithm, time);
     }
 }

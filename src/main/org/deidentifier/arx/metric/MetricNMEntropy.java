@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
@@ -64,7 +65,7 @@ public class MetricNMEntropy extends MetricEntropy {
         
         // Compute loss induced by suppression
         // TODO: Use lightweight alternative to Map<Integer, Integer>();
-        final double originalInfoLoss = originalInfoLossDefault.getValue();
+        double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
         int key;
@@ -75,10 +76,10 @@ public class MetricNMEntropy extends MetricEntropy {
         }
 
         // Compute counts for suppressed values in each column 
-        // No change for d-presence needed; m.count contains the research subset count already
+        // m.count only counts tuples from the research subset
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (!m.isNotOutlier && m.count>0) {
+            if (!m.isNotOutlier && m.count > 0) {
                 suppressedTuples += m.count;
                 for (int i = 0; i < original.length; i++) {
                     key = m.key[i];
@@ -94,7 +95,6 @@ public class MetricNMEntropy extends MetricEntropy {
         }
 
         // Evaluate entropy for suppressed tuples
-        // TODO: Skipping the whole computation in this case by accessing HashGroupify.currentOutliers possible?
         if (suppressedTuples != 0){
 	        for (int i = 0; i < original.length; i++) {
 	            for (final double count : original[i].values()) {
@@ -106,9 +106,16 @@ public class MetricNMEntropy extends MetricEntropy {
         // Return sum of both values
         return new InformationLossDefault(originalInfoLoss - additionalInfoLoss);
     }
+    @Override
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] ahierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, ahierarchies, config);
+    }
 
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] ahierarchies, final ARXConfiguration config) {
-        super.initializeInternal(input, ahierarchies, config);
+    public String toString() {
+        return "Non-Monotonic Non-Uniform Entropy";
     }
 }

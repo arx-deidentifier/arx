@@ -42,7 +42,7 @@ public interface INodeChecker {
         /** k-Anonymity sub-criterion*/
         public final boolean kAnonymous;
         /** Information loss*/
-        public final InformationLoss informationLoss;
+        public final InformationLoss<?> informationLoss;
         
         /**
          * Creates a new instance
@@ -50,7 +50,7 @@ public interface INodeChecker {
          * @param kAnonymous
          * @param infoLoss
          */
-        Result(boolean anonymous, boolean kAnonymous, InformationLoss infoLoss) {
+        Result(boolean anonymous, boolean kAnonymous, InformationLoss<?> infoLoss) {
             this.anonymous = anonymous;
             this.kAnonymous = kAnonymous;
             this.informationLoss = infoLoss;

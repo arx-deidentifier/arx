@@ -95,6 +95,8 @@ public class WorkerSave extends Worker<Model> {
             writeModel(model, zip);
             arg0.worked(2);
             writeInput(model, zip);
+            arg0.worked(3);
+            writeInputSubset(model, zip);
             arg0.worked(4);
             writeOutput(model, zip);
             arg0.worked(5);
@@ -144,7 +146,19 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
-        writer.write(vocabulary.getMetric(), config.getMetric().getClass().getSimpleName());
+        writer.write(vocabulary.getMetric(), config.getMetric().toString());
+
+        // Write weights
+        writer.indent(vocabulary.getAttributeWeights());
+        for (Entry<String, Double> entry : config.getAttributeWeights().entrySet()) {
+            writer.indent(vocabulary.getAttributeWeight());
+            writer.write(vocabulary.getAttribute(), entry.getKey());
+            writer.write(vocabulary.getWeight(), entry.getValue());
+            writer.unindent();
+        }
+        writer.unindent();
+        
+        // Write criteria
         writer.indent(vocabulary.getCriteria());
         for (PrivacyCriterion c : config.getCriteria()) {
         	if (c != null) {
@@ -257,8 +271,8 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getSuccessors(), n.getSuccessors(), map);
                 }
                 writer.indent(vocabulary.getInfoloss());
-                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().getValue());
-                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().getValue());
+                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().toString());
+                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().toString());
                 writer.unindent();
                 writer.unindent();
             }
@@ -449,6 +463,23 @@ public class WorkerSave extends Worker<Model> {
         }
     }
     
+
+    /**
+     * Writes the input subset to the file
+     * 
+     * @param zip
+     * @throws IOException
+     */
+    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
+        if (model.getInputConfig().getInput() != null) {
+            if (model.getInputConfig().getInput().getHandle() != null) {
+                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
+                final CSVDataOutput out = new CSVDataOutput(zip, model.getSeparator());
+                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
+            }
+        }
+    }
+    
     /**
      * Writes the lattice to the file
      * 
@@ -479,8 +510,8 @@ public class WorkerSave extends Worker<Model> {
 
         // Write information loss
         zip.putNextEntry(new ZipEntry("infoloss.dat")); //$NON-NLS-1$
-        final Map<Integer, InformationLoss> max = new HashMap<Integer, InformationLoss>();
-        final Map<Integer, InformationLoss> min = new HashMap<Integer, InformationLoss>();
+        final Map<Integer, InformationLoss<?>> max = new HashMap<Integer, InformationLoss<?>>();
+        final Map<Integer, InformationLoss<?>> min = new HashMap<Integer, InformationLoss<?>>();
         for (final ARXNode[] level : l.getLevels()) {
             for (final ARXNode n : level) {
                 final String key = Arrays.toString(n.getTransformation());

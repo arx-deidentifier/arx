@@ -156,14 +156,12 @@ public class ViewList implements IView {
      * @param infoLoss
      * @return
      */
-    private double asRelativeValue(final InformationLoss infoLoss) {
-        
-        if (model != null && model.getResult() != null && model.getResult().getLattice() != null && 
-            model.getResult().getLattice().getBottom() != null &&
-            model.getResult().getLattice().getTop() != null) {
-                double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
-                double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
-                return ((infoLoss.getValue() - min) / (max-min)) * 100d;
+    private double asRelativeValue(final InformationLoss<?> infoLoss) {
+
+        if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
+            model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
+            return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
+                                       model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
         } else {
             return 0;
         }
@@ -227,7 +225,7 @@ public class ViewList implements IView {
                 final ARXLattice l = result.getLattice();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
-                        if (filter.isAllowed(node)) {
+                        if (filter.isAllowed(result.getLattice(), node)) {
                             list.add(node);
                         }
                     }

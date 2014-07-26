@@ -22,32 +22,39 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * This class provides an implementation of a weighted metric with user-defined information loss per generalization level.
+ * This class provides an implementation of a static metric in
+ * which information loss is user-defined per generalization level.
+ * This metric will respect attribute weights defined in the configuration.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricUserDefinedWeighted extends MetricDefaultWeighted {
+public class MetricStatic extends MetricWeighted<InformationLossDefault> {
 
     private static final long               serialVersionUID = 3778891174824606177L;
 
-    /** The user defined infoloss per level, indexed by column name */
-    private final Map<String, List<Double>> infoLossMap;
+    /** The user defined information loss per level, indexed by column name */
+    private final Map<String, List<Double>> _infoloss;
 
-    /** The pre-calculated infoloss */
+    /** The pre-calculated information loss */
     private double[][]                      infoloss;
 
-    protected MetricUserDefinedWeighted(final Map<String, List<Double>> infolossMap, final Map<String, Double> weightMap) {
-        super(true, true, weightMap);
-        infoLossMap = infolossMap;
+    /**
+     * Constructor
+     * @param infoloss
+     */
+    protected MetricStatic(final Map<String, List<Double>> infoloss) {
+        super(true, true);
+        _infoloss = infoloss;
     }
-
+    
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
@@ -60,15 +67,19 @@ public class MetricUserDefinedWeighted extends MetricDefaultWeighted {
     }
 
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        super.initializeInternal(input, hierarchies, config);
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        
+        super.initializeInternal(definition, input, hierarchies, config);
 
-        // Initialize infoloss
+        // Initialize
         infoloss = new double[hierarchies.length][];
         for (int i = 0; i < hierarchies.length; i++) {
             final String attribute = hierarchies[i].getName();
 
-            final List<Double> basicInfoloss = infoLossMap.get(attribute);
+            final List<Double> basicInfoloss = _infoloss.get(attribute);
             if (basicInfoloss == null) {
                 throw new RuntimeException("No information loss defined for attribute [" + attribute + "]");
             }
@@ -84,8 +95,24 @@ public class MetricUserDefinedWeighted extends MetricDefaultWeighted {
 
             infoloss[i] = new double[basicInfoloss.size()];
             for (int j = 0; j < infoloss[i].length; j++) {
-                infoloss[i][j] = basicInfoloss.get(j) * weights[i];
+                double weight = weights != null ? weights[i] : 1d;
+                infoloss[i][j] = basicInfoloss.get(j) * weight;
             }
         }
+    }
+
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        return new InformationLossDefault(Double.MAX_VALUE);
+    }
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        return new InformationLossDefault(Double.MIN_VALUE);
+    }
+
+    @Override
+    public String toString() {
+        return "Static";
     }
 }

@@ -270,4 +270,19 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getInputBytes() {
         return "inputBytes"; //$NON-NLS-1$
     }
+
+    @Override
+    public String getAttributeWeight() {
+        return "attributeWeight";
+    }
+
+    @Override
+    public String getWeight() {
+        return "weight";
+    }
+
+    @Override
+    public String getAttributeWeights() {
+        return "attributeWeights";
+    }
 }

@@ -84,7 +84,7 @@ public abstract class Example {
         }
 
         // Print
-        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMaximumInformationLoss().getValue());
+        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMaximumInformationLoss());
         System.out.println(" - Optimal generalization");
         for (int i = 0; i < qis.size(); i++) {
             System.out.println("   * " + identifiers[i] + ": " + generalizations[i]);

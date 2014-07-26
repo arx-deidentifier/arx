@@ -369,10 +369,9 @@ public class ViewLattice extends Panel implements IView {
      * @param infoLoss
      * @return
      */
-    private double asRelativeValue(final InformationLoss infoLoss) {
-        Double min = model.getResult().getLattice().getBottom().getMinimumInformationLoss().getValue();
-        Double max = model.getResult().getLattice().getTop().getMaximumInformationLoss().getValue();
-        return (infoLoss.getValue() - min) / (max - min) * 100d;
+    private double asRelativeValue(final InformationLoss<?> infoLoss) {
+        return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
+                                   model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
     }
 
     /**
@@ -660,7 +659,7 @@ public class ViewLattice extends Panel implements IView {
         for (final ARXNode[] level : l.getLevels()) {
             final List<ARXNode> lvl = new ArrayList<ARXNode>();
             for (final ARXNode node : level) {
-                if (filter.isAllowed(node)) {
+                if (filter.isAllowed(r.getLattice(), node)) {
                     lvl.add(node);
                     numNodes++;
                     node.getAttributes().put(ATTRIBUTE_VISIBLE, true);

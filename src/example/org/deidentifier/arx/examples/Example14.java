@@ -19,29 +19,26 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.metric.InformationLossCombined;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to pretty-print information loss
+ * This class implements an example on how to use the NDS Metric
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Example15 extends Example {
+public class Example14 extends Example {
 
     /**
      * Entry point.
@@ -80,76 +77,35 @@ public class Example15 extends Example {
         zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
 
-        // Define the different attribute types
         data.getDefinition().setAttributeType("age", age);
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
 
-        // set the minimal generalization height
-        data.getDefinition().setMinimumGeneralization("zipcode", 3);
-        data.getDefinition().setMinimumGeneralization("gender", 1);
-
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.setMaxOutliers(0.1d);
+        config.addCriterion(new KAnonymity(3));
         
-        // Evaluate multiple metrics at once
-        Set<Metric<?>> metrics = new HashSet<Metric<?>>();
-        metrics.add(Metric.createAECSMetric());
-        metrics.add(Metric.createDMMetric());
-        metrics.add(Metric.createDMStarMetric());
-        metrics.add(Metric.createEntropyMetric());
-        metrics.add(Metric.createHeightMetric());
-        metrics.add(Metric.createNMEntropyMetric());
-        metrics.add(Metric.createPrecisionMetric());
-        config.setMetric(Metric.createCombinedMetric(Metric.createNMEntropyMetric(), metrics));
+        // NDS-specific settings
+        config.setMaxOutliers(1d); // Recommended default: 1d
+        config.setAttributeWeight("age", 0.5d); // attribute weight
+        config.setAttributeWeight("gender", 0.3d); // attribute weight
+        config.setAttributeWeight("zipcode", 0.5d); // attribute weight
+        config.setMetric(Metric.createNDSMetric(0.5d)); // suppression/generalization-factor
         
         try {
+            final ARXResult result = anonymizer.anonymize(data, config);
 
-            // Now anonymize
-            ARXResult result = anonymizer.anonymize(data, config);
-            
-            // Obtain results
-            ARXLattice lattice = result.getLattice();
-            ARXNode bottom = lattice.getBottom();
-            ARXNode top = lattice.getTop();
-            ARXNode optimum = result.getGlobalOptimum();
+            // Print info
+            printResult(result, data);
 
-            // Make sure bottom and top are checked
-            result.getOutput(bottom, false);
-            result.getOutput(top, false);
-            
-            // Obtain infoloss
-            InformationLossCombined bottomLoss = (InformationLossCombined)bottom.getMinimumInformationLoss();
-            InformationLossCombined topLoss = (InformationLossCombined)top.getMinimumInformationLoss();
-            InformationLossCombined optimumLoss = (InformationLossCombined)optimum.getMinimumInformationLoss();
-            
-            // Print results for all metrics
-            System.out.println("Information loss per metric:");
-            for (Metric<?> metric : metrics) {
-
-                double loss = (optimumLoss.getValue(metric).getValue() - bottomLoss.getValue(metric).getValue()) /
-                              (topLoss.getValue(metric).getValue() - bottomLoss.getValue(metric).getValue());
-                
-                System.out.print(" - ");
-                System.out.print(metric.getClass().getSimpleName());
-                System.out.print(": ");
-                System.out.print(loss * 100);
-                System.out.println(" [%]");
-            }
-            
-            // Print results for all QIs
-            System.out.println("Information loss per QI:");
-            for (String attr : data.getDefinition().getQuasiIdentifyingAttributes()) {
-                
-                double loss = (double)optimum.getGeneralization(attr) / (double)(data.getDefinition().getHierarchyHeight(attr)-1);
-                System.out.print(" - ");
-                System.out.print(attr);
-                System.out.print(": ");
-                System.out.print(loss * 100);
-                System.out.println(" [%]");
+            // Process results
+            System.out.println(" - Transformed data:");
+            final Iterator<String[]> transformed = result.getOutput(false)
+                                                         .iterator();
+            while (transformed.hasNext()) {
+                System.out.print("   ");
+                System.out.println(Arrays.toString(transformed.next()));
             }
 
         } catch (final IllegalArgumentException e) {

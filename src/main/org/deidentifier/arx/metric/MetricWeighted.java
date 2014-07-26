@@ -18,106 +18,60 @@
 
 package org.deidentifier.arx.metric;
 
-import java.util.Map;
+import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * A metric that consists of several metrics that are evaluated and combined by
- * applying weights
+ * This class provides an abstract skeleton for the implementation of weighted metrics.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricWeighted extends Metric<InformationLossCombined> {
+public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metric<T> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 8922811727606112026L;
-
-    /**
-     * Determines whether the metric is independent
-     * 
-     * @param weights
-     * @return
-     */
-    private static boolean isIndependent(final Map<Metric<?>, Double> weights) {
-        boolean independent = true;
-        for (final Metric<?> key : weights.keySet()) {
-            independent &= key.isMonotonic();
-        }
-        return independent;
-    }
-
-    /**
-     * Determines whether the combination is montonic
-     * 
-     * @param weights
-     * @return
-     */
-    private static boolean isMonotonic(final Map<Metric<?>, Double> weights) {
-        boolean monotonic = true;
-        for (final Metric<?> key : weights.keySet()) {
-            monotonic &= key.isMonotonic();
-        }
-        return monotonic;
-    }
-
+    /** SSUID*/
+    private static final long         serialVersionUID = 6508220940790010968L;
+    
     /** The weights */
-    private final Map<Metric<?>, Double> weights;
+    protected double[]                weights;
 
     /**
-     * Creates a new weighted metric
-     * 
-     * @param main
+     * Constructor
+     * @param monotonic
+     * @param independent
      */
-    protected MetricWeighted(final Map<Metric<?>, Double> weights) {
-        super(isMonotonic(weights), isIndependent(weights));
-        this.weights = weights;
+    public MetricWeighted(final boolean monotonic, final boolean independent) {
+        super(monotonic, independent);
     }
 
     @Override
-    protected InformationLossCombined evaluateInternal(final Node node, final IHashGroupify groupify) {
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
 
-        double value = 0;
-        for (final Metric<?> metric : weights.keySet()) {
-            value += metric.evaluateInternal(node, groupify).getValue() * weights.get(metric);
+        // Initialize weights
+        weights = new double[hierarchies.length];
+        double total = 0d;
+        for (int i = 0; i < hierarchies.length; i++) {
+            String attribute = hierarchies[i].getName();
+            double weight = config.getAttributeWeight(attribute);
+            weights[i] = weight;
+            total += weight;
         }
-        final InformationLossCombined result = new InformationLossCombined(value);
-        for (final Metric<?> metric : weights.keySet()) {
-            result.setValue(metric, metric.evaluateInternal(node, groupify));
+        
+        // Normalize: default case
+        if (total == 0d) {
+            Arrays.fill(weights, 1d);
+        // Weighted case
+        } else {
+            for (int i=0; i<weights.length; i++){
+                weights[i] /= total;
+            }
         }
-        return result;
-    }
-
-    @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        for (final Metric<?> metric : weights.keySet()) {
-            metric.initializeInternal(input, hierarchies, config);
-        }
-    }
-
-    @Override
-    protected InformationLoss maxInternal() {
-        final InformationLossCombined max = new InformationLossCombined(InformationLossDefault.MAX.getValue());
-        for (final Metric<?> metric : weights.keySet()) {
-            max.setValue(metric, metric.max());
-        }
-        return max;
-    }
-
-    @Override
-    protected InformationLoss minInternal() {
-
-        final InformationLossCombined min = new InformationLossCombined(InformationLossDefault.MIN.getValue());
-        for (final Metric<?> metric : weights.keySet()) {
-            min.setValue(metric, metric.min());
-        }
-        return min;
     }
 }

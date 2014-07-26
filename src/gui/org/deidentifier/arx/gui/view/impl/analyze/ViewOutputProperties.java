@@ -219,10 +219,10 @@ public class ViewOutputProperties extends ViewProperties {
         }
         
         // Print information loss
-        if (node.getMaximumInformationLoss().getValue() == 
-            node.getMinimumInformationLoss().getValue()) {
+        if (node.getMaximumInformationLoss().getValue().equals( 
+            node.getMinimumInformationLoss().getValue())) {
             
-            final String infoloss = String.valueOf(node.getMinimumInformationLoss().getValue()) +
+            final String infoloss = node.getMinimumInformationLoss().toString() +
                                     " [" + format.format(asRelativeValue(node.getMinimumInformationLoss(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
             new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
 

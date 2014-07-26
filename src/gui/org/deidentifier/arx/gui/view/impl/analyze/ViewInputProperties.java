@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.gui.view.impl.analyze;
 
+import java.text.DecimalFormat;
+
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -187,6 +189,10 @@ public class ViewInputProperties extends ViewProperties {
         column5.setAlignment(SWT.LEFT);
         column5.setText(Resources.getMessage("PropertiesView.8")); //$NON-NLS-1$
         column5.setWidth(50);
+        final TreeColumn column8 = new TreeColumn(tree, SWT.RIGHT);
+        column8.setAlignment(SWT.LEFT);
+        column8.setText(Resources.getMessage("PropertiesView.113")); //$NON-NLS-1$
+        column8.setWidth(50);
 
         treeViewer.setContentProvider(new InputContentProvider());
         treeViewer.setLabelProvider(new InputLabelProvider());
@@ -229,6 +235,7 @@ public class ViewInputProperties extends ViewProperties {
         // Print basic properties
         new Property(Resources.getMessage("PropertiesView.9"), new String[] { String.valueOf(data.getNumRows()) }); //$NON-NLS-1$
         new Property(Resources.getMessage("PropertiesView.10"), new String[] { String.valueOf(config.getAllowedOutliers() * 100d) + Resources.getMessage("PropertiesView.11") }); //$NON-NLS-1$ //$NON-NLS-2$
+        new Property(Resources.getMessage("PropertiesView.114"), new String[] { config.getMetric().toString() }); //$NON-NLS-1$
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         
         // Print identifying attributes
@@ -245,12 +252,13 @@ public class ViewInputProperties extends ViewProperties {
         }
 
         // Print quasi-identifying attributes
+        final DecimalFormat format = new DecimalFormat("0.000");
         final Property quasiIdentifying = new Property(attributes, Resources.getMessage("PropertiesView.20"), new String[] { String.valueOf(definition.getQuasiIdentifyingAttributes().size()) }); //$NON-NLS-1$
         index = 0;
         for (int i = 0; i < data.getNumColumns(); i++) {
             final String s = data.getAttributeName(i);
             if (definition.getQuasiIdentifyingAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" , ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                final String[] values = new String[] { "", "", "", "", "" , "", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 values[0] = s;
                 if (definition.getHierarchy(s) != null) {
                     DataType<?> type = definition.getDataType(s);
@@ -263,6 +271,7 @@ public class ViewInputProperties extends ViewProperties {
                     values[4] = String.valueOf(definition.getMinimumGeneralization(s));
                     values[5] = String.valueOf(definition.getMaximumGeneralization(s));
                 }
+                values[6] = format.format(config.getAttributeWeight(s));
                 new Property(quasiIdentifying, Resources.getMessage("PropertiesView.26") + (index++), values); //$NON-NLS-1$
             }
         }

@@ -38,7 +38,7 @@ public abstract class AbstractAlgorithm {
     private Node globalOptimum = null;
 
     /** The optimal information loss*/
-    private InformationLoss optimalInformationLoss = null;
+    private InformationLoss<?> optimalInformationLoss = null;
 
     /** A node checker. */
     protected INodeChecker  checker  = null;

@@ -19,6 +19,7 @@
 package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
@@ -35,20 +36,22 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
     public MetricDefault(final boolean monotonic, final boolean independent) {
         super(monotonic, independent);
     }
+    
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        return new InformationLossDefault(Double.MAX_VALUE);
+    }
 
     @Override
-    protected void initializeInternal(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
+    public InformationLoss<?> createMinInformationLoss() {
+        return new InformationLossDefault(Double.MIN_VALUE);
+    }
+
+    @Override
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
         // Empty by design
     }
-
-    @Override
-    protected InformationLoss maxInternal() {
-        return InformationLossDefault.MAX;
-    }
-
-    @Override
-    protected InformationLoss minInternal() {
-        return InformationLossDefault.MIN;
-    }
-
 }
