@@ -148,17 +148,11 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
         return new MetricWeighted(weights);
     }
 
-    /** The global optimum */
-    private transient Node            globalOptimum          = null;
-
     /** Is the metric independent? */
     private boolean                   independent            = false;
 
     /** Is the metric monotonic? */
     private boolean                   monotonic              = false;
-
-    /** The optimal information loss */
-    private transient InformationLoss optimalInformationLoss = null;
 
     /**
      * Create a new metric
@@ -178,28 +172,10 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      *            The node for which to compute the information loss
      * @param groupify
      *            The groupify operator of the previous check
-     * @return the double
+     * @return the information loss
      */
-    public final void evaluate(final Node node, final IHashGroupify groupify) {
-
-        // Store the computed values
-        node.setInformationLoss(this.evaluateInternal(node, groupify));
-
-        // Store optimum
-        // Store global optimum
-        if (node.isAnonymous() && ((globalOptimum == null) || (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) || (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
-            this.globalOptimum = node;
-            this.optimalInformationLoss = node.getInformationLoss();
-        }
-    }
-
-    /**
-     * Returns the global optimum
-     * 
-     * @return
-     */
-    public final Node getGlobalOptimum() {
-        return globalOptimum;
+    public final InformationLoss evaluate(final Node node, final IHashGroupify groupify) {
+        return this.evaluateInternal(node, groupify);
     }
 
     /**
@@ -209,8 +185,6 @@ public abstract class Metric<T extends InformationLoss> implements Serializable 
      * @param hierarchies
      */
     public final void initialize(final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
-        this.globalOptimum = null;
-        this.optimalInformationLoss = null;
         initializeInternal(input, hierarchies, config);
     }
 

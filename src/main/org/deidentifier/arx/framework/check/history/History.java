@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.framework.lattice.NodeTrigger;
 
 /**
  * The Class History.
@@ -35,22 +36,76 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class History {
+    
+    /**
+     * Store only non-anonymous transformations
+     */
+    public static final NodeTrigger STORAGE_TRIGGER_NON_ANONYMOUS = new NodeTrigger(){
+        @Override
+        public boolean appliesTo(Node node) {
+            return node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS);
+        }
+    };
 
-    public static enum StorageStrategy {
-        NON_ANONYMOUS,
-        ALL
-    }
+    /**
+     * Store all transformations
+     */
+    public static final NodeTrigger STORAGE_TRIGGER_ALL = new NodeTrigger(){
+        @Override
+        public boolean appliesTo(Node node) {
+            return true;
+        }
+    };
 
-    public static enum PruningStrategy {
-        ANONYMOUS,
-        CHECKED,
-        K_ANONYMOUS
-    }
+    /**
+     * Evict transformations for which all successors are anonymous
+     */
+    public static final NodeTrigger EVICTION_TRIGGER_ANONYMOUS = new NodeTrigger(){
+        @Override
+        public boolean appliesTo(Node node) {
+            for (final Node upNode : node.getSuccessors()) {
+                if (!upNode.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
+    /**
+     * Evict transformations for which all successors have been checked
+     */
+    public static final NodeTrigger EVICTION_TRIGGER_CHECKED = new NodeTrigger(){
+        @Override
+        public boolean appliesTo(Node node) {
+            for (final Node upNode : node.getSuccessors()) {
+                if (!upNode.hasProperty(Node.PROPERTY_CHECKED)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
+    /**
+     * Evict transformations for which all successors are k-anonymous
+     */
+    public static final NodeTrigger EVICTION_TRIGGER_K_ANONYMOUS = new NodeTrigger(){
+        @Override
+        public boolean appliesTo(Node node) {
+            for (final Node upNode : node.getSuccessors()) {
+                if (!upNode.hasProperty(Node.PROPERTY_K_ANONYMOUS)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
 
     /** The actual buffer. */
     private MRUCache<Node>           cache          = null;
 
-    /** Current config */
+    /** Current configuration */
     private final ARXConfiguration   config;
 
     /** The dictionary for frequencies of the distributions */
@@ -66,10 +121,10 @@ public class History {
     private HashMap<Node, int[]>     nodeToSnapshot = null;
 
     /** The current pruning strategy */
-    private PruningStrategy          pruningStrategy;
+    private NodeTrigger              evictionTrigger;
 
     /** The current storage strategy */
-    private StorageStrategy          storageStrategy;
+    private NodeTrigger              storageTrigger;
 
     /** The current requirements */
     private final int                requirements;
@@ -110,8 +165,8 @@ public class History {
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
         this.requirements = config.getRequirements();
-        this.pruningStrategy = PruningStrategy.ANONYMOUS;
-        this.storageStrategy = StorageStrategy.NON_ANONYMOUS;
+        this.evictionTrigger = EVICTION_TRIGGER_ANONYMOUS;
+        this.storageTrigger = STORAGE_TRIGGER_NON_ANONYMOUS;
     }
 
     /**
@@ -193,8 +248,8 @@ public class History {
      * 
      * @return
      */
-    public PruningStrategy getPruningStrategy() {
-        return pruningStrategy;
+    public NodeTrigger getEvictionTrigger() {
+        return evictionTrigger;
     }
 
     /**
@@ -202,8 +257,8 @@ public class History {
      * 
      * @return
      */
-    public StorageStrategy getStorageStrategy() {
-        return storageStrategy;
+    public NodeTrigger getStorageTrigger() {
+        return storageTrigger;
     }
 
     /**
@@ -222,8 +277,8 @@ public class History {
      * 
      * @param strategy
      */
-    public void setPruningStrategy(final PruningStrategy strategy) {
-        pruningStrategy = strategy;
+    public void setEvictionTrigger(NodeTrigger trigger) {
+        evictionTrigger = trigger;
     }
 
     /**
@@ -231,8 +286,8 @@ public class History {
      * 
      * @param strategy
      */
-    public void setStorageStrategy(final StorageStrategy strategy) {
-        storageStrategy = strategy;
+    public void setStorageTrigger(NodeTrigger trigger) {
+        storageTrigger = trigger;
     }
     
     /**
@@ -258,13 +313,21 @@ public class History {
      */
     public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
 
-        boolean store = storageStrategy == StorageStrategy.NON_ANONYMOUS ? !node.isAnonymous() : true;
-        if ((!store || (g.size() > snapshotSizeDataset) || canPrune(node))) { return false; }
+        // Early abort if too large
+        if (g.size() > snapshotSizeDataset) {
+            return false;
+        }
 
-        // Store only if significantly smaller
+        // Early abort if too large
         if (usedSnapshot != null) {
-            final double percentSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
-            if (percentSize > snapshotSizeSnapshot) { return false; }
+            final double relativeSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
+            if (relativeSize > snapshotSizeSnapshot) { return false; }
+        }
+        
+        // Early abort if conditions are not triggered
+        if (!node.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
+            (!storageTrigger.appliesTo(node) || evictionTrigger.appliesTo(node))) {
+            return false;
         }
 
         // Create the snapshot
@@ -283,44 +346,6 @@ public class History {
     }
 
     /**
-     * Can a node be pruned.
-     * 
-     * @param node
-     *            the node
-     * @return true, if successful
-     */
-    private final boolean canPrune(final Node node) {
-        boolean prune = true;
-        switch (pruningStrategy) {
-        case ANONYMOUS:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isAnonymous()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        case CHECKED:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isChecked()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        case K_ANONYMOUS:
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.isKAnonymous()) {
-                    prune = false;
-                    break;
-                }
-            }
-            break;
-        }
-        return prune;
-    }
-
-    /**
      * Creates a generic snapshot for all criteria
      * 
      * @param g
@@ -328,7 +353,7 @@ public class History {
      * @return the int[]
      */
     private final int[] createSnapshot(final IHashGroupify g) {
-        // Copy Groupify
+
         final int[] data = new int[g.size() * config.getSnapshotLength()];
         int index = 0;
         HashGroupifyEntry m = g.getFirstEntry();
@@ -383,7 +408,7 @@ public class History {
         final Iterator<Node> it = cache.iterator();
         while (it.hasNext()) {
             final Node node = it.next();
-            if (canPrune(node)) {
+            if (evictionTrigger.appliesTo(node)) {
                 purged++;
                 it.remove();
                 removeHistoryEntry(node);

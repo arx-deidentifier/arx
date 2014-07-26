@@ -229,7 +229,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns all criteria as array. Only used internally.
+     * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
+     * group size should be obtained and enforced 
      * @return
      */
     public PrivacyCriterion[] getCriteriaAsArray() {

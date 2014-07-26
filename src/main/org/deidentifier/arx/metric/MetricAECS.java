@@ -40,7 +40,9 @@ public class MetricAECS extends MetricDefault {
 
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-
+        
+        // Anonymity: ignore suppression for non-anonymous transformations
+        boolean anonymous = g.isAnonymous();
         // The total number of groups
         int groups = 0;
         // The total number of tuples
@@ -52,8 +54,8 @@ public class MetricAECS extends MetricDefault {
         while (m != null) {
             if (m.count > 0) {
                 tuples += m.count;
-                groups += m.isNotOutlier ? 1 : 0;
-                suppressed |= !m.isNotOutlier;
+                groups += !anonymous || m.isNotOutlier ? 1 : 0;
+                suppressed |= !m.isNotOutlier && anonymous;
             }
             m = m.nextOrdered;
         }

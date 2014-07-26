@@ -37,14 +37,20 @@ public interface IHashGroupify {
 
 
     /**
-     * Min groupsize greater equals.
+     * Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples
      * 
      * @return true, if successful
      */
     public abstract boolean isAnonymous();
+    
+    /**
+     * Computes the anonymity properties and suppressed tuples etc. Must be called
+     * when all tuples have been passed to the operator.
+     */
+    public abstract void analyze();
 
     /**
-     * Is it k-anonymous?
+     * Is the current transformation k-anonymous. Always returns true, if no k-anonymity (sub-)criterion was specified
      * 
      * @return
      */
@@ -100,5 +106,5 @@ public interface IHashGroupify {
      * Returns statistics about the groups
      * @return
      */
-    public abstract GroupStatistics getGroupStatistics(boolean anonymous);
+    public abstract GroupStatistics getGroupStatistics();
 }

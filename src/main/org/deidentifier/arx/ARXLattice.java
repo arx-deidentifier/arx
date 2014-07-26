@@ -73,11 +73,6 @@ public class ARXLattice implements Serializable {
             lattice.metric = metric;
         }
 
-        public void
-                setMonotonicSubcriterion(final boolean containsMonotonicSubcriterion) {
-            lattice.containsMonotonicSubcriterion = containsMonotonicSubcriterion;
-        }
-
         public void setOptimum(final ARXNode node) {
             lattice.optimum = node;
         }
@@ -233,7 +228,7 @@ public class ARXLattice implements Serializable {
         /** Has the node been checked */
         private boolean              checked;
 
-        /** The headermap */
+        /** The header map */
         private Map<String, Integer> headermap;
 
         /** The max information loss */
@@ -245,7 +240,7 @@ public class ARXLattice implements Serializable {
         /** The predecessors */
         private ARXNode[]            predecessors;
 
-        /** The sucessors */
+        /** The successors */
         private ARXNode[]            successors;
 
         /** The transformation */
@@ -265,28 +260,39 @@ public class ARXLattice implements Serializable {
          * @param headermap
          */
         private ARXNode(final Node node, final Map<String, Integer> headermap) {
+            
+            // Set properties
             this.headermap = headermap;
-            transformation = node.getTransformation();
-            if (node.isAnonymous()) {
-                if (uncertainty && !node.isChecked()) {
-                    anonymity = Anonymity.PROBABLY_ANONYMOUS;
-                } else  {
-                    anonymity = Anonymity.ANONYMOUS;
+            this.transformation = node.getTransformation();
+            this.minInformationLoss = node.getInformationLoss();
+            this.maxInformationLoss = node.getInformationLoss();
+            this.checked = node.hasProperty(Node.PROPERTY_CHECKED);
+            
+            // Transfer anonymity property without uncertainty
+            if (!uncertainty || node.hasProperty(Node.PROPERTY_CHECKED)){
+                if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                    this.anonymity = Anonymity.ANONYMOUS;
+                } else {
+                    this.anonymity = Anonymity.NOT_ANONYMOUS;
                 }
+            // This is a node for which the property is unknown
             } else {
-                if (uncertainty && !node.isChecked()) {
-                    if (containsMonotonicSubcriterion && !node.isKAnonymous()){
-                        anonymity = Anonymity.NOT_ANONYMOUS;
-                    } else {
-                        anonymity = Anonymity.PROBABLY_NOT_ANONYMOUS;
-                    }
-                } else  {
-                    anonymity = Anonymity.NOT_ANONYMOUS;
+                
+                if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                    this.anonymity = Anonymity.PROBABLY_ANONYMOUS;
+                } else if (node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS)) {
+                    this.anonymity = Anonymity.PROBABLY_NOT_ANONYMOUS;
+                } else if (node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS)) {
+                    this.anonymity = Anonymity.NOT_ANONYMOUS;
+                } else if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
+                    // Such nodes are k-anonymous (if such a subcriterion exists) and are
+                    // successors of an anonymous node. We thus assume that it is more likely
+                    // for them to be anonymous
+                    this.anonymity = Anonymity.PROBABLY_ANONYMOUS;
+                } else {
+                    throw new IllegalStateException("Missing node information");
                 }
             }
-            minInformationLoss = node.getInformationLoss();
-            maxInformationLoss = node.getInformationLoss();
-            checked = node.isChecked();
         }
 
         /**
@@ -447,9 +453,6 @@ public class ARXLattice implements Serializable {
     /** The bottom node */
     private transient ARXNode     bottom;
 
-    /** Is there a monotonic sub-criterion*/
-    private boolean               containsMonotonicSubcriterion;
-
     /** The levels in the lattice */
     private transient ARXNode[][] levels;
 
@@ -478,14 +481,26 @@ public class ARXLattice implements Serializable {
      * @param config The config
      */
     ARXLattice(final Lattice lattice,
+               final Node globalOptimum,
                final String[] header,
                final ARXConfiguration config) {
 
         this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
-        this.uncertainty = (config.isPracticalMonotonicity()) || 
-                           (config.getMetric().isMonotonic() && !config.isCriterionMonotonic());
-        this.containsMonotonicSubcriterion = config.getMinimalGroupSize() != Integer.MAX_VALUE;
+        
+        // Handle uncertainty
+        boolean uncertaintyInducedByPracticalMonotonicity = 
+                config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
+                (!config.isCriterionMonotonic() || !config.getMetric().isMonotonic());
+        
+        // Handle uncertainty
+        boolean uncertaintyInducedByMonotonicMetric = 
+                config.getMaxOutliers()!=0d && !config.isCriterionMonotonic() &&
+                config.getMetric().isMonotonic();
+        
+        // Handle uncertainty
+        this.uncertainty = uncertaintyInducedByMonotonicMetric ||
+                           uncertaintyInducedByPracticalMonotonicity;
         
         // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
@@ -503,7 +518,7 @@ public class ARXLattice implements Serializable {
             levels[i] = new ARXNode[level.length];
             for (int j = 0; j < level.length; j++) {
                 final ARXNode node = new ARXNode(level[j], headermap);
-                if (level[j] == metric.getGlobalOptimum()) {
+                if (level[j] == globalOptimum) {
                     optimum = node;
                 }
                 levels[i][j] = node;
