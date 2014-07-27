@@ -401,7 +401,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean requires(int requirement) {
         return (this.requirements & requirement) != 0;
     }
-
+    /**
+     * Sets the weight for the given attribute
+     * @param attribute
+     * @param weight
+     */
+    public void setAttributeWeight(String attribute, double weight){
+        setAttributeWeight(attribute, Double.valueOf(weight));
+    }
+    
     /**
      * Sets the weight for the given attribute
      * @param attribute
