@@ -215,7 +215,7 @@ public class NodeChecker implements INodeChecker {
         currentGroupify.analyze();
 
         // Find outliers only if node is anonymous
-        if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS) && config.getAbsoluteMaxOutliers() != 0) {
+        if (currentGroupify.isAnonymous() && config.getAbsoluteMaxOutliers() != 0) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
         
