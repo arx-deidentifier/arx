@@ -123,6 +123,11 @@ public class NodeChecker implements INodeChecker {
 
     @Override
     public INodeChecker.Result check(final Node node, final boolean forceMeasureInfoLoss) {
+        
+        // If the result is already know, simply return it
+        if (node.getData() != null && node.getData() instanceof INodeChecker.Result) {
+            return (INodeChecker.Result)node.getData();
+        }
 
         // Store snapshot from last check
         if (stateMachine.getLastNode() != null) {
