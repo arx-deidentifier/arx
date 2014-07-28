@@ -93,6 +93,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         INodeChecker.Result result = checker.check(lattice.getBottom(), true);
         lattice.getBottom().setInformationLoss(result.informationLoss);
         lattice.getBottom().setProperty(Node.PROPERTY_FORCE_SNAPSHOT);
+        
+        // Remember the result to prevent repeated checks
         lattice.getBottom().setData(result);
         
         // For each node in the lattice
@@ -119,6 +121,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // Potentially allows to better estimate utility in the lattice
         computeUtilityForMonotonicMetrics(lattice.getBottom());
         computeUtilityForMonotonicMetrics(lattice.getTop());
+        
+        // Remove the associated result information to leave the lattice in a consistent state
+        lattice.getBottom().setData(null);
     }
     
     /**
