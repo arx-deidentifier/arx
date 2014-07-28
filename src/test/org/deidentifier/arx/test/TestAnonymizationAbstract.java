@@ -249,10 +249,10 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                 }
             }
         }
-        
+
         if (testCase.statistics != null) {
             
-            // collect statistics
+            // Collect statistics
             int[] statistics = new int[7];
             for (ARXNode[] level : result.getLattice().getLevels()) {
                 for (ARXNode arxNode : level) {
@@ -277,16 +277,16 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                     }
                 }
             }
-            
-            // Print statistics
-            // System.out.println("new int[] {" + Arrays.toString(statistics).substring(1, Arrays.toString(statistics).length() - 1) + "}");
-            
+
+            // Compare
             String algorithmConfiguration = getAlgorithmConfiguration(testCase.config);
-            int diff = statistics[1] - testCase.statistics[1];
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of checks", testCase.statistics[1], statistics[1]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of anonymous transformations", testCase.statistics[2], statistics[2]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of non-anonymous transformations", testCase.statistics[3], statistics[3]);
-            assertTrue(algorithmConfiguration + ". Too many or too few checks. Expected: " + testCase.statistics[1] + " but was: " + statistics[1], diff <= 0 && diff >= -5);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations", testCase.statistics[4], statistics[4]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations", testCase.statistics[5], statistics[5]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
         }
     }
     
