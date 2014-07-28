@@ -102,6 +102,9 @@ public class Node {
     /** The up index. */
     private int             sucIndex;
     
+    /** Associated data*/
+    private Object data;
+    
     /**
      * Instantiates a new node.
      */
@@ -144,6 +147,11 @@ public class Node {
         final Node other = (Node) obj;
         if (!Arrays.equals(transformation, other.transformation)) { return false; }
         return true;
+    }
+
+    /** Associated data*/
+    public Object getData() {
+        return data;
     }
 
     /**
@@ -214,48 +222,6 @@ public class Node {
     }
 
     /**
-     * Sets the information loss
-     * 
-     * @param informationLoss
-     */
-    public void setInformationLoss(InformationLoss informationLoss) {
-        this.informationLoss = informationLoss;
-    }
-
-    
-    /**
-     * Sets the given property
-     * @param property
-     * @return
-     */
-    public void setProperty(int property){
-        
-        if (DEBUG_PROPERTIES) {
-            int other = -1;
-            switch(property){
-                case Node.PROPERTY_ANONYMOUS:
-                    other = Node.PROPERTY_NOT_ANONYMOUS;
-                    break;
-                case Node.PROPERTY_NOT_ANONYMOUS:
-                    other = Node.PROPERTY_ANONYMOUS;
-                    break;
-                case Node.PROPERTY_K_ANONYMOUS:
-                    other = Node.PROPERTY_NOT_K_ANONYMOUS;
-                    break;
-                case Node.PROPERTY_NOT_K_ANONYMOUS:
-                    other = Node.PROPERTY_K_ANONYMOUS;
-                    break;
-            }
-            if (hasProperty(other)) {
-                throw new IllegalStateException("Inconsistent properties: "+property+" and "+other);
-            }
-        }
-        
-        properties |= (1 << property);
-    }
-    
-
-    /**
      * Sets the properties to the given node
      * 
      * @param node the node
@@ -286,6 +252,63 @@ public class Node {
         }
     }
 
+    /** Associated data*/
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    
+    /**
+     * Sets the information loss
+     * 
+     * @param informationLoss
+     */
+    public void setInformationLoss(InformationLoss informationLoss) {
+        this.informationLoss = informationLoss;
+    }
+    
+
+    /**
+     * Sets the given property
+     * @param property
+     * @return
+     */
+    public void setProperty(int property){
+        
+        if (DEBUG_PROPERTIES) {
+            int other = -1;
+            switch(property){
+                case Node.PROPERTY_ANONYMOUS:
+                    other = Node.PROPERTY_NOT_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_NOT_ANONYMOUS:
+                    other = Node.PROPERTY_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_K_ANONYMOUS:
+                    other = Node.PROPERTY_NOT_K_ANONYMOUS;
+                    break;
+                case Node.PROPERTY_NOT_K_ANONYMOUS:
+                    other = Node.PROPERTY_K_ANONYMOUS;
+                    break;
+            }
+            if (hasProperty(other)) {
+                throw new IllegalStateException("Inconsistent properties: "+property+" and "+other);
+            }
+        }
+        
+        properties |= (1 << property);
+    }
+
+    /**
+     * Sets the transformation
+     * 
+     * @param transformation
+     */
+    public void setTransformation(int[] transformation, int level) {
+        this.transformation = transformation;
+        this.level = level;
+    }
+
     /**
      * Sets the predecessors
      * 
@@ -302,15 +325,5 @@ public class Node {
      */
     protected void setSuccessors(Node[] nodes) {
         successors = nodes;
-    }
-
-    /**
-     * Sets the transformation
-     * 
-     * @param transformation
-     */
-    public void setTransformation(int[] transformation, int level) {
-        this.transformation = transformation;
-        this.level = level;
     }
 }

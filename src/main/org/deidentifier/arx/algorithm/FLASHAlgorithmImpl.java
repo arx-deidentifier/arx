@@ -93,6 +93,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         INodeChecker.Result result = checker.check(lattice.getBottom(), true);
         lattice.getBottom().setInformationLoss(result.informationLoss);
         lattice.getBottom().setProperty(Node.PROPERTY_FORCE_SNAPSHOT);
+        lattice.getBottom().setData(result);
         
         // For each node in the lattice
         int length = lattice.getLevels().length;
