@@ -365,10 +365,15 @@ public class ViewCriterionDefinition implements IView {
         c.setLayout(new FillLayout());
         clv = new ViewCriteriaList(c, controller);
         
-       // Create weights tab
+        // Create weights tab
         Composite c2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
         c2.setLayout(new FillLayout());
-        new ViewWeights(c2, controller);
+        new ViewAttributeWeights(c2, controller);
+
+        // Create coding model tab
+        Composite c3 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
+        c3.setLayout(new FillLayout());
+        new ViewCodingModel(c3, controller);
         
         folder2.setSelection(0);
 
