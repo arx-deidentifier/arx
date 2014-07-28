@@ -82,6 +82,7 @@ public class ViewCodingModel implements IView {
         this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(3, 3).create());
         
         // Triangle view
+        final int WIDTH = 3;
         final int OFFSET = 10;
         final Canvas canvas = new Canvas(root, SWT.DOUBLE_BUFFERED);
         canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -89,40 +90,53 @@ public class ViewCodingModel implements IView {
             @Override
             public void paintControl(PaintEvent e) {
                 
+                final Color COLOR_BACKGROUND = root.getBackground();
                 Point size = canvas.getSize();
                 int width = size.x;
                 int height = size.y;
+                int x = (int) Math.round(getSuppressionWeight() * (double) (width - OFFSET / 2 - WIDTH * 2 + 2));
+
                 int[] left = new int[] {0, 0, 
-                                        width-3, 0,
+                                        width-OFFSET/2, 0,
                                         0, height - OFFSET};
-                int[] right = new int[] {width-3, OFFSET/2,
-                                         width-3, height - OFFSET/2,
+                int[] right = new int[] {width-OFFSET/2, OFFSET/2,
+                                         width-OFFSET/2, height - OFFSET/2,
                                          0, height - OFFSET/2};
+                int[] center = new int[] {left[2], left[3],
+                                          left[4], left[5],
+                                          right[4], right[5],
+                                          right[0], right[1]};
                 
                 e.gc.setForeground(COLOR_DARK);
-                e.gc.setBackground(root.getBackground());
+                e.gc.setBackground(COLOR_BACKGROUND);
                 e.gc.fillRectangle(0, 0, width, height);
-                
+
                 e.gc.setBackground(COLOR_MEDIUM);
                 e.gc.fillPolygon(left);
-
-                e.gc.setForeground(COLOR_DARK);
-                e.gc.drawPolygon(left);
 
                 e.gc.setForeground(COLOR_TEXT);
                 e.gc.drawText("Suppression", OFFSET, OFFSET);
 
-
                 e.gc.setBackground(COLOR_LIGHT);
                 e.gc.fillPolygon(right);
-
-                e.gc.setForeground(COLOR_DARK);
-                e.gc.drawPolygon(right);
 
                 final String string = "Generalization";
                 e.gc.setForeground(COLOR_TEXT);
                 Point extent = e.gc.textExtent(string);
-                e.gc.drawText(string, width-OFFSET-extent.x, height-OFFSET-extent.y);
+                e.gc.drawText(string, width - OFFSET - extent.x, height - OFFSET - extent.y);
+
+                e.gc.setForeground(COLOR_DARK);
+                e.gc.setLineWidth(3);
+                e.gc.drawLine(WIDTH + x - 1, 0, WIDTH + x - 1, height - OFFSET / 2);
+
+                e.gc.setBackground(COLOR_BACKGROUND);
+                e.gc.fillPolygon(center);
+
+                e.gc.setForeground(COLOR_DARK);
+                e.gc.setLineWidth(1);
+                e.gc.drawPolygon(left);
+                e.gc.drawPolygon(right);
+
             }
         });
         
@@ -141,6 +155,7 @@ public class ViewCodingModel implements IView {
         slider.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 if (model != null && model.getInputConfig() != null) {
+                    canvas.redraw();
                     double weight = getSuppressionWeight();
                     model.getInputConfig().setSuppressionWeight(weight);
                     if (model.getInputConfig().getMetric() instanceof MetricNDS) {
