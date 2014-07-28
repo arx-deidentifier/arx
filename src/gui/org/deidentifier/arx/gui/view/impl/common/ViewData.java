@@ -153,13 +153,13 @@ public abstract class ViewData implements IView {
         });
         
         // Build buttons
-        this.groupsButton = folder.getBarItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
+        this.groupsButton = folder.getButtonItem(Resources.getMessage("DataView.2")); //$NON-NLS-1$
         this.groupsButton.setEnabled(false);
-        this.subsetButton = folder.getBarItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
+        this.subsetButton = folder.getButtonItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
         this.subsetButton.setEnabled(false);
-        this.ascendingButton = folder.getBarItem(Resources.getMessage("DataView.1")); //$NON-NLS-1$
+        this.ascendingButton = folder.getButtonItem(Resources.getMessage("DataView.1")); //$NON-NLS-1$
         this.ascendingButton.setEnabled(false);
-        this.descendingButton = folder.getBarItem(Resources.getMessage("DataView.4")); //$NON-NLS-1$
+        this.descendingButton = folder.getButtonItem(Resources.getMessage("DataView.4")); //$NON-NLS-1$
         this.descendingButton.setEnabled(false);
     }
     

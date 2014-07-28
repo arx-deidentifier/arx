@@ -154,13 +154,27 @@ public class ComponentTitledFolder implements IComponent {
         
         return composite;
     }
-
+    
     /**
-     * Returns the item for the given title
+     * Returns the tab item for the given text
      * @param text
      * @return
      */
-    public ToolItem getBarItem(String text) {
+    public CTabItem getTabItem(String text) {
+        for (CTabItem item : folder.getItems()){
+            if (item.getText().equals(text)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the button item for the given text
+     * @param text
+     * @return
+     */
+    public ToolItem getButtonItem(String text) {
         Control c = folder.getTopRight();
         if (c == null) return null;
         if (!(c instanceof ToolBar)) return null;
@@ -201,5 +215,17 @@ public class ComponentTitledFolder implements IComponent {
      */
     public void setSelection(int index) {
         folder.setSelection(index);
+    }
+
+    /**
+     * Disposes the given item
+     * @param string
+     */
+    public void disposeItem(String text) {
+        for (CTabItem item : folder.getItems()) {
+            if (item.getText().equals(text)) {
+                item.dispose();
+            }
+        }
     }
 }

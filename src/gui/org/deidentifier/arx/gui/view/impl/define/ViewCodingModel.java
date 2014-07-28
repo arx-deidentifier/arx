@@ -58,6 +58,7 @@ public class ViewCodingModel implements IView {
 
     private final Scale      slider;
     private final Composite  root;
+    private final Canvas     canvas;
 
     /**
      * Creates a new instance
@@ -84,17 +85,18 @@ public class ViewCodingModel implements IView {
         // Triangle view
         final int WIDTH = 3;
         final int OFFSET = 10;
-        final Canvas canvas = new Canvas(root, SWT.DOUBLE_BUFFERED);
-        canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        canvas.addPaintListener(new PaintListener() {
+        this.canvas = new Canvas(root, SWT.DOUBLE_BUFFERED);
+        this.canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        this.canvas.addPaintListener(new PaintListener() {
+            
             @Override
             public void paintControl(PaintEvent e) {
                 
                 final Color COLOR_BACKGROUND = root.getBackground();
-                Point size = canvas.getSize();
-                int width = size.x;
-                int height = size.y;
-                int x = (int) Math.round(getSuppressionWeight() * (double) (width - OFFSET / 2 - WIDTH * 2 + 2));
+                final Point size = canvas.getSize();
+                final int width = size.x;
+                final int height = size.y;
+                final int x = (int) Math.round(getSuppressionWeight() * (double) (width - OFFSET / 2 - WIDTH * 2 + 2));
 
                 int[] left = new int[] {0, 0, 
                                         width-OFFSET/2, 0,
@@ -136,7 +138,6 @@ public class ViewCodingModel implements IView {
                 e.gc.setLineWidth(1);
                 e.gc.drawPolygon(left);
                 e.gc.drawPolygon(right);
-
             }
         });
         
@@ -149,9 +150,7 @@ public class ViewCodingModel implements IView {
         slider.setMinimum(MINIMUM);
         slider.setMaximum(MAXIMUM);
         this.setSuppressionWeight(0.5d);
-        slider.setLayoutData(GridDataFactory.fillDefaults()
-                                            .grab(true, false)
-                                            .create());
+        slider.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         slider.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
                 if (model != null && model.getInputConfig() != null) {
@@ -165,12 +164,14 @@ public class ViewCodingModel implements IView {
             }
         });
         
+        // Button
         Button button = new Button(sliderBase, SWT.PUSH);
         button.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
         button.setText("Reset");
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
                 setSuppressionWeight(0.5d);
+                canvas.redraw();
                 if (model != null && model.getInputConfig() != null) {
                     model.getInputConfig().setSuppressionWeight(0.5d);
                     if (model.getInputConfig().getMetric() instanceof MetricNDS) {
@@ -189,7 +190,8 @@ public class ViewCodingModel implements IView {
      */
     private void setSuppressionWeight(double d) {
         int value = (int)(MINIMUM + d * (double)(MAXIMUM - MINIMUM));
-        slider.setSelection(value);
+        this.slider.setSelection(value);
+        this.canvas.redraw();
     }
 
     /**

@@ -146,10 +146,10 @@ public class ViewSubsetDefinition implements IView{
         origin.setText("");
         origin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
-        all = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.1"));
-        none = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.2"));
-        file = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.3"));
-        filter = folder.getBarItem(Resources.getMessage("SubsetDefinitionView.4"));
+        all = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.1"));
+        none = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.2"));
+        file = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.3"));
+        filter = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.4"));
         
         return group;
     }

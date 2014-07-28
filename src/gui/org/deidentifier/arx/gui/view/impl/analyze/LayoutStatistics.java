@@ -86,7 +86,7 @@ public class LayoutStatistics implements ILayout, IView {
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
         item3.setLayout(new FillLayout());
         folder.setSelection(0);
-        this.enable = folder.getBarItem(label);
+        this.enable = folder.getButtonItem(label);
         this.enable.setEnabled(false);
         
         // Create the views

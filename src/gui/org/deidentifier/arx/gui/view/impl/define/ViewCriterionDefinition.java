@@ -76,12 +76,15 @@ public class ViewCriterionDefinition implements IView {
     private Composite              root;
 
     private ComponentTitledFolder  folder;
+    private ComponentTitledFolder  folder2;
     private ToolItem               enable;
     private ToolItem               push;
     private ToolItem               pull;
 
     private ViewCriteriaList       clv;
-    
+    private IView                  viewCodingModel;
+    private IView                  viewAttributeWeights;
+
     /**
      * Creates a new instance
      * @param parent
@@ -92,6 +95,7 @@ public class ViewCriterionDefinition implements IView {
 
         this.controller = controller;
         this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.METRIC, this);
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
@@ -131,7 +135,6 @@ public class ViewCriterionDefinition implements IView {
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
-            
             model = (Model) event.data;
             root.setRedraw(false);
             sliderOutliers.setSelection(doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
@@ -152,7 +155,8 @@ public class ViewCriterionDefinition implements IView {
             updateControlls();
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE ||
                    event.part == ModelPart.ATTRIBUTE_TYPE ||
-                   event.part == ModelPart.CRITERION_DEFINITION) {
+                   event.part == ModelPart.CRITERION_DEFINITION ||
+                   event.part == ModelPart.METRIC) {
             
             if (model != null){
                 updateControlls();
@@ -219,9 +223,9 @@ public class ViewCriterionDefinition implements IView {
             }
         });
         
-        enable = folder.getBarItem(Resources.getMessage("CriterionDefinitionView.59"));
-        push = folder.getBarItem(Resources.getMessage("CriterionDefinitionView.57"));
-        pull = folder.getBarItem(Resources.getMessage("CriterionDefinitionView.58"));
+        enable = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.59"));
+        push = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.57"));
+        pull = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.58"));
         
         enable.setEnabled(false);
         push.setEnabled(false);
@@ -231,7 +235,7 @@ public class ViewCriterionDefinition implements IView {
         gd1 = SWTUtil.createFillGridData();
         gd1.grabExcessVerticalSpace = false;
         gd1.horizontalSpan = 2;
-        ComponentTitledFolder folder2 = new ComponentTitledFolder(parent, controller, null, "id-60");
+        folder2 = new ComponentTitledFolder(parent, controller, null, "id-60");
         folder2.setLayoutData(gd1);
         
         // Create general tab
@@ -365,19 +369,47 @@ public class ViewCriterionDefinition implements IView {
         c.setLayout(new FillLayout());
         clv = new ViewCriteriaList(c, controller);
         
+        // Select first and finish
+        folder2.setSelection(0);
+        return group;
+    }
+
+    /**
+     * Shows the NDS settings
+     */
+    private void showNDSSettings(){
+        
+        if (this.viewAttributeWeights != null) return;
+        if (this.viewCodingModel != null) return;
+
         // Create weights tab
-        Composite c2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
-        c2.setLayout(new FillLayout());
-        new ViewAttributeWeights(c2, controller);
+        Composite composite1 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
+        composite1.setLayout(new FillLayout());
+        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
+        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
 
         // Create coding model tab
-        Composite c3 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
-        c3.setLayout(new FillLayout());
-        new ViewCodingModel(c3, controller);
-        
-        folder2.setSelection(0);
+        Composite composite2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
+        composite2.setLayout(new FillLayout());
+        this.viewCodingModel = new ViewCodingModel(composite2, controller);
+        this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
+    }
+    
+    /**
+     * Hides the NDS settings
+     */
+    private void hideNDSSettings(){
 
-        return group;
+        if (this.viewAttributeWeights != null) {
+            this.viewAttributeWeights.dispose();
+            this.viewAttributeWeights = null;
+            folder2.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
+        }
+        if (this.viewCodingModel != null) {
+            this.viewCodingModel.dispose();
+            this.viewCodingModel = null;
+            folder2.disposeItem(Resources.getMessage("CriterionDefinitionView.65"));  //$NON-NLS-1$
+        }
     }
 
     /**
@@ -410,6 +442,12 @@ public class ViewCriterionDefinition implements IView {
                 model.getInputConfig().setMetric(metric);
             }
             controller.update(new ModelEvent(this, ModelPart.METRIC, metric));
+            
+            if (metric instanceof MetricNDS) {
+                this.showNDSSettings();
+            } else {
+                this.hideNDSSettings();
+            }
         }
     }
 
@@ -514,6 +552,16 @@ public class ViewCriterionDefinition implements IView {
             enable.setEnabled(false);
             enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
         }
+        
+        if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
+            model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
+            model.getInputConfig().getMetric() == null ||
+           !(model.getInputConfig().getMetric() instanceof MetricNDS)) {
+            hideNDSSettings();
+        } else {
+            showNDSSettings();
+        }
+        
         root.setRedraw(true);
     }
 }
