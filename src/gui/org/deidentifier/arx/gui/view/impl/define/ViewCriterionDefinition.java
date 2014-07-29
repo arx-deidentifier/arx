@@ -266,7 +266,7 @@ public class ViewCriterionDefinition implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getInputConfig()
                      .setAllowedOutliers(sliderToDouble(0d,
-                                                            0.999d,
+                                                            1d,
                                                             sliderOutliers.getSelection()));
                 labelOutliers.setText(String.valueOf(model.getInputConfig()
                                                              .getAllowedOutliers()));
