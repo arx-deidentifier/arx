@@ -78,7 +78,7 @@ public class StatisticsBuilder {
     }
 
     /**
-     * Returns an order list of the distinct set of data items from the given column
+     * Returns an ordered list of the distinct set of data items from the given column
      * 
      * @param column                   The column
      * @param orderFromDefinition      Indicates whether the order that should be assumed for string data 
@@ -91,7 +91,7 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns an order list of the distinct set of data items from the given column. This method assumes 
+     * Returns an ordered list of the distinct set of data items from the given column. This method assumes 
      * that the order of string data items can (and should) be derived from the hierarchy provided in the 
      * data definition (if any)
      * 
@@ -104,7 +104,7 @@ public class StatisticsBuilder {
     
 
     /**
-     * Returns an order list of the distinct set of data items from the given column. This method assumes 
+     * Returns an ordered list of the distinct set of data items from the given column. This method assumes 
      * that the order of string data items can (and should) be derived from the provided hierarchy
      * 
      * @param column The column
