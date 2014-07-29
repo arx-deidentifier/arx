@@ -92,6 +92,9 @@ public class ViewCodingModel implements IView {
             @Override
             public void paintControl(PaintEvent e) {
                 
+                e.gc.setAdvanced(true);
+                e.gc.setAntialias(SWT.ON);
+                
                 final Color COLOR_BACKGROUND = root.getBackground();
                 final Point size = canvas.getSize();
                 final int width = size.x;
