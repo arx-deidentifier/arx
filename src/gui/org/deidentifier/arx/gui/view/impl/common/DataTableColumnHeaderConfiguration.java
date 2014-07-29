@@ -30,8 +30,6 @@ import org.eclipse.nebula.widgets.nattable.sort.painter.SortableHeaderTextPainte
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.ui.util.CellEdgeEnum;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -49,8 +47,8 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
      * @param context
      */
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
-        this.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
         this.context = context;
+        this.font = context.getFont();
         IMAGE_COL_BACK   = context.getController().getResources().getImage("column_header_bg.png"); //$NON-NLS-1$
         IMAGE_COL_SELECT = context.getController().getResources().getImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }

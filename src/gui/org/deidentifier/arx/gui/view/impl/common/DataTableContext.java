@@ -25,6 +25,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -33,6 +34,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DataTableContext {
 
+    private Font                 font          = null;
     private List<Image>          images        = new ArrayList<Image>();
     private List<ILayerListener> listeners     = new ArrayList<ILayerListener>();
     private RowSet               rows          = null;
@@ -179,5 +181,21 @@ public class DataTableContext {
      */
     public void setSelectedIndex(int index) {
         this.selectedIndex = index;
+    }
+
+    /**
+     * Sets the font
+     * @return
+     */
+    public Font getFont() {
+        return font;
+    }
+
+    /**
+     * Gets the font
+     * @param font
+     */
+    public void setFont(Font font) {
+        this.font = font;
     }
 }

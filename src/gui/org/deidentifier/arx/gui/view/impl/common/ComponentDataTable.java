@@ -50,7 +50,7 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -67,6 +67,7 @@ public class ComponentDataTable implements IComponent {
     private DataTableContext        context;
     private DataTableBodyLayerStack bodyLayer;
     private DataTableGridLayer      gridLayer;
+    private Font                    font;
 
     /**
      * Creates a new instance
@@ -76,8 +77,10 @@ public class ComponentDataTable implements IComponent {
     public ComponentDataTable(final Controller controller, final Composite parent) {
         
         this.context = new DataTableContext(controller);
+        this.context.setFont(parent.getFont());
         this.table = createControl(parent); 
         this.table.setVisible(false);
+        this.font = parent.getFont();
     }
 
     /**
@@ -193,7 +196,7 @@ public class ComponentDataTable implements IComponent {
         natTableConfiguration.fgColor = GUIHelper.getColor(0, 0, 0);
         natTableConfiguration.hAlign = HorizontalAlignmentEnum.LEFT;
         natTableConfiguration.vAlign = VerticalAlignmentEnum.TOP;
-        natTableConfiguration.font = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        natTableConfiguration.font = this.font;
 
         // A custom painter can be plugged in to paint the cells differently
         natTableConfiguration.cellPainter = new PaddingDecorator(new TextPainter(), 1);
@@ -205,14 +208,14 @@ public class ComponentDataTable implements IComponent {
 
         // Setup selection styling
         final DefaultSelectionStyleConfiguration selectionStyle = new DefaultSelectionStyleConfiguration();
-        selectionStyle.selectionFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        selectionStyle.selectionFont = this.font;
         selectionStyle.selectionBgColor = GUIHelper.getColor(220, 220, 220);
         selectionStyle.selectionFgColor = GUIHelper.COLOR_BLACK;
         selectionStyle.anchorBorderStyle = new BorderStyle(1, GUIHelper.COLOR_DARK_GRAY, LineStyleEnum.SOLID);
         selectionStyle.anchorBgColor = GUIHelper.getColor(220, 220, 220);
         selectionStyle.anchorFgColor = GUIHelper.getColor(0, 0, 0);
         selectionStyle.selectedHeaderBgColor = GUIHelper.getColor(156, 209, 103);
-        selectionStyle.selectedHeaderFont = GUIHelper.getFont(new FontData("Verdana", 8, SWT.NORMAL)); //$NON-NLS-1$
+        selectionStyle.selectedHeaderFont = this.font;
 
         // Add all style configurations to NatTable
         natTable.addConfiguration(natTableConfiguration);
