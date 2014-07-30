@@ -220,6 +220,7 @@ public class NodeChecker implements INodeChecker {
         currentGroupify.analyze();
 
         // Determine information loss
+        // TODO: This may already be known
         InformationLoss<?> loss = transformation.getInformationLoss();
         if (loss == null) {
             loss = metric.evaluate(transformation, currentGroupify);
