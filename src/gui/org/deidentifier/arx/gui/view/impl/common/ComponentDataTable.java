@@ -25,6 +25,7 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.DefaultNatTableStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
@@ -37,6 +38,10 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnOverrideLabelAccumul
 import org.eclipse.nebula.widgets.nattable.painter.cell.CheckBoxPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.PaddingDecorator;
+import org.eclipse.nebula.widgets.nattable.resize.action.AutoResizeColumnAction;
+import org.eclipse.nebula.widgets.nattable.resize.action.ColumnResizeCursorAction;
+import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEventMatcher;
+import org.eclipse.nebula.widgets.nattable.resize.mode.ColumnResizeDragMode;
 import org.eclipse.nebula.widgets.nattable.selection.config.DefaultSelectionStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle.LineStyleEnum;
@@ -46,6 +51,10 @@ import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.style.editor.command.DisplayColumnStyleEditorCommandHandler;
+import org.eclipse.nebula.widgets.nattable.ui.action.ClearCursorAction;
+import org.eclipse.nebula.widgets.nattable.ui.action.NoOpMouseAction;
+import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
@@ -225,6 +234,35 @@ public class ComponentDataTable implements IComponent {
         // Column/Row header style and custom painters
         natTable.addConfiguration(new DataTableRowHeaderConfiguration(context));
         natTable.addConfiguration(new DataTableColumnHeaderConfiguration(context));
+
+        // Make corner resizable
+        natTable.addConfiguration(new AbstractUiBindingConfiguration() {
+
+            @Override
+            public void configureUiBindings(UiBindingRegistry uiBindingRegistry) {
+                // Mouse move - Show resize cursor
+                uiBindingRegistry.registerFirstMouseMoveBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                             GridRegion.CORNER,
+                                                                                             0),
+                                                                new ColumnResizeCursorAction());
+                uiBindingRegistry.registerMouseMoveBinding(new MouseEventMatcher(), new ClearCursorAction());
+
+                // Column resize
+                uiBindingRegistry.registerFirstMouseDragMode(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                          GridRegion.CORNER,
+                                                                                          1),
+                                                             new ColumnResizeDragMode());
+
+                uiBindingRegistry.registerDoubleClickBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                          GridRegion.CORNER,
+                                                                                          1),
+                                                             new AutoResizeColumnAction());
+                uiBindingRegistry.registerSingleClickBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                          GridRegion.CORNER,
+                                                                                          1), new NoOpMouseAction());
+            }
+        });
+        
     }
 
     /**
