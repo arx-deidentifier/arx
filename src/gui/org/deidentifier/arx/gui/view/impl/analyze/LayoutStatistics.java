@@ -41,7 +41,8 @@ public class LayoutStatistics implements ILayout, IView {
 
     private static final String         TAB_DISTRIBUTION       = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
     private static final String         TAB_DISTRIBUTION_TABLE = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
-    private static final String         TAB_HEATMAP            = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
+    private static final String         TAB_CONTINGENCY        = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
+    private static final String         TAB_CONTINGENCY_TABLE  = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
     private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
     private final ComponentTitledFolder folder;
@@ -84,8 +85,10 @@ public class LayoutStatistics implements ILayout, IView {
         item1.setLayout(new FillLayout());
         final Composite item1b = folder.createItem(TAB_DISTRIBUTION_TABLE, null);
         item1b.setLayout(new FillLayout());
-        final Composite item2 = folder.createItem(TAB_HEATMAP, null);
+        final Composite item2 = folder.createItem(TAB_CONTINGENCY, null);
         item2.setLayout(new FillLayout());
+        final Composite item2b = folder.createItem(TAB_CONTINGENCY_TABLE, null);
+        item2b.setLayout(new FillLayout());
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
         item3.setLayout(new FillLayout());
         folder.setSelection(0);
@@ -96,6 +99,7 @@ public class LayoutStatistics implements ILayout, IView {
         new ViewDistribution(item1, controller, target, reset);
         new ViewDistributionTable(item1b, controller, target, reset);
         new ViewDensity(item2, controller, target, reset);
+        new ViewDensityTable(item2b, controller, target, reset);
         if (target == ModelPart.INPUT) {
             new ViewInputProperties(item3, controller);
         } else {

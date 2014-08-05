@@ -17,6 +17,7 @@
  */
 package org.deidentifier.arx.gui.view.impl.analyze;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -225,6 +226,7 @@ public class ViewDistributionTable implements IView {
         // Retrieve
         final double[] frequencies = cachedFrequencies.get(attribute);
         final String[] labels = cachedValues.get(attribute);
+        final DecimalFormat format = new DecimalFormat("##0.00000");
 
         // Now update the table
         table.setTable(new IDataProvider() {
@@ -232,7 +234,7 @@ public class ViewDistributionTable implements IView {
                 return 2;
             }
             public Object getDataValue(int arg0, int arg1) {
-                return arg0 == 0 ? labels[arg1] : frequencies[arg1];
+                return arg0 == 0 ? labels[arg1] : format.format(frequencies[arg1]*100d)+"%";
             }
             public int getRowCount() {
                 return labels.length;
