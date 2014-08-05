@@ -231,7 +231,7 @@ public class ComponentDataTable implements IComponent {
      * Disposes the control
      */
     public void dispose() {
-        table.dispose();
+        if (!table.isDisposed()) table.dispose();
     }
 
     /**
