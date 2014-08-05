@@ -91,7 +91,7 @@ public class ViewDensity implements IView {
         parent.setLayout(new FillLayout());
         this.jhc = new JHC(parent, SWT.DOUBLE_BUFFERED);
         this.gradient = JHCGradient.GRADIENT_HEAT;
-        this.layout = new JHCLayout();
+        this.layout = new JHCLayout(2,10,20,2,15,2);
         
         // Update font settings
         Font font = jhc.getFont();
