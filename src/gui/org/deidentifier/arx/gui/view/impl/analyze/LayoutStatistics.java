@@ -39,9 +39,10 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class LayoutStatistics implements ILayout, IView {
 
-    private static final String TAB_DISTRIBUTION = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
-    private static final String TAB_HEATMAP      = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
-    private static final String TAB_PROPERTIES   = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
+    private static final String         TAB_DISTRIBUTION       = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
+    private static final String         TAB_DISTRIBUTION_TABLE = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
+    private static final String         TAB_HEATMAP            = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
+    private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
     private final ComponentTitledFolder folder;
     private final ToolItem              enable;
@@ -81,6 +82,8 @@ public class LayoutStatistics implements ILayout, IView {
         folder = new ComponentTitledFolder(parent, controller, bar, null);
         final Composite item1 = folder.createItem(TAB_DISTRIBUTION, null);
         item1.setLayout(new FillLayout());
+        final Composite item1b = folder.createItem(TAB_DISTRIBUTION_TABLE, null);
+        item1b.setLayout(new FillLayout());
         final Composite item2 = folder.createItem(TAB_HEATMAP, null);
         item2.setLayout(new FillLayout());
         final Composite item3 = folder.createItem(TAB_PROPERTIES, null);
@@ -91,6 +94,7 @@ public class LayoutStatistics implements ILayout, IView {
         
         // Create the views
         new ViewDistribution(item1, controller, target, reset);
+        new ViewDistributionTable(item1b, controller, target, reset);
         new ViewDensity(item2, controller, target, reset);
         if (target == ModelPart.INPUT) {
             new ViewInputProperties(item3, controller);
