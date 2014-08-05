@@ -193,8 +193,8 @@ public class ViewCodingModel implements IView {
      */
     private void setSuppressionWeight(double d) {
         int value = (int)(MINIMUM + d * (double)(MAXIMUM - MINIMUM));
-        this.slider.setSelection(value);
-        this.canvas.redraw();
+        if (!this.slider.isDisposed()) this.slider.setSelection(value);
+        if (!this.canvas.isDisposed()) this.canvas.redraw();
     }
 
     /**
