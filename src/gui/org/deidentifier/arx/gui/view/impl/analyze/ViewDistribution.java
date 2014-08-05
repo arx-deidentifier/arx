@@ -73,7 +73,7 @@ public class ViewDistribution implements IView {
     /** Cache */
     private final Map<String, double[]> cachedFrequencies = new HashMap<String, double[]>();
     /** Cache */
-    private final Map<String, String[]> cachedLabels      = new HashMap<String, String[]>();
+    private final Map<String, String[]> cachedValues      = new HashMap<String, String[]>();
 
     /** Internal stuff */
     private String                      attribute;
@@ -256,7 +256,7 @@ public class ViewDistribution implements IView {
         } else if (event.part == ModelPart.DATA_TYPE) {
 
             this.cachedFrequencies.remove((String) event.data);
-            this.cachedLabels.remove((String) event.data);
+            this.cachedValues.remove((String) event.data);
             if (this.attribute.equals((String) event.data)) {
                 if (chart != null) chart.setEnabled(true);
                 update();
@@ -285,7 +285,7 @@ public class ViewDistribution implements IView {
      */
     private void clearCache() {
         cachedFrequencies.clear();
-        cachedLabels.clear();
+        cachedValues.clear();
     }
 
     /**
@@ -328,7 +328,7 @@ public class ViewDistribution implements IView {
                 Hierarchy hierarchy = acontext.getHierarchy(context, attribute); 
                 StatisticsFrequencyDistribution distribution = handle.getStatistics().getFrequencyDistribution(column, hierarchy);
                 cachedFrequencies.put(attribute, distribution.frequency);
-                cachedLabels.put(attribute, distribution.values);
+                cachedValues.put(attribute, distribution.values);
             }
         }
         
@@ -354,7 +354,7 @@ public class ViewDistribution implements IView {
         yAxis.adjustRange();
 
         IAxis xAxis = axisSet.getXAxis(0);
-        xAxis.setCategorySeries(cachedLabels.get(attribute));
+        xAxis.setCategorySeries(cachedValues.get(attribute));
         xAxis.adjustRange();
         updateCategories();
 
