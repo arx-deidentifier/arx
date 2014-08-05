@@ -1,5 +1,5 @@
 /*
- * ARX: Efficient, Stable and Optimal Data Anonymization
+ * ARX: Powerful Data Anonymization
  * Copyright (C) 2014 Karol Babioch <karol@babioch.de>
  * Copyright (C) 2014 Fabian Prasser
  * 
