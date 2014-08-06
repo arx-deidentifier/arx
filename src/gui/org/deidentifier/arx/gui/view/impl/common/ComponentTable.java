@@ -22,6 +22,9 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
+import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
+import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.data.IColumnAccessor;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
@@ -34,10 +37,22 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.RowHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
+import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
+import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
+import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.BeveledBorderDecorator;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
+import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
+import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
+import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
+import org.eclipse.nebula.widgets.nattable.style.Style;
+import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -46,6 +61,85 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class ComponentTable implements IComponent {
+    
+    /**
+     * Header style
+     * @author Fabian Prasser
+     */
+    private static class DefaultHeaderStyleConfiguration extends AbstractRegistryConfiguration {
+
+        private final Font font;
+        private final Color bgColor = GUIHelper.COLOR_WIDGET_BACKGROUND;
+        private final Color fgColor = GUIHelper.COLOR_WIDGET_FOREGROUND;
+        private final Color gradientBgColor = GUIHelper.COLOR_WHITE;
+        private final Color gradientFgColor = GUIHelper.getColor(136, 212, 215);
+        private final HorizontalAlignmentEnum hAlign = HorizontalAlignmentEnum.CENTER;
+        private final VerticalAlignmentEnum vAlign = VerticalAlignmentEnum.MIDDLE;
+        private final BorderStyle borderStyle = null;
+        private final ICellPainter cellPainter = new BeveledBorderDecorator(new TextPainter());
+        private final Boolean renderGridLines = Boolean.FALSE;
+        private final String region;
+        
+        /**
+         * Creates a new instance
+         * @param parent
+         * @param region
+         */
+        public DefaultHeaderStyleConfiguration(Composite parent, String region){
+            this.font = parent.getFont();
+            this.region = region;
+        }
+        
+        @Override
+        public void configureRegistry(IConfigRegistry configRegistry) {
+            //configure the painter
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_PAINTER, 
+                    cellPainter, 
+                    DisplayMode.NORMAL, 
+                    region);
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_PAINTER, 
+                    cellPainter, 
+                    DisplayMode.NORMAL, 
+                    GridRegion.CORNER);
+
+            //configure whether to render grid lines or not
+            //e.g. for the BeveledBorderDecorator the rendering of the grid lines should be disabled
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.RENDER_GRID_LINES, 
+                    renderGridLines, 
+                    DisplayMode.NORMAL, 
+                    region);
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.RENDER_GRID_LINES, 
+                    renderGridLines, 
+                    DisplayMode.NORMAL, 
+                    GridRegion.CORNER);
+            
+            //configure the normal style
+            Style cellStyle = new Style();
+            cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, bgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, fgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.GRADIENT_BACKGROUND_COLOR, gradientBgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.GRADIENT_FOREGROUND_COLOR, gradientFgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, hAlign);
+            cellStyle.setAttributeValue(CellStyleAttributes.VERTICAL_ALIGNMENT, vAlign);
+            cellStyle.setAttributeValue(CellStyleAttributes.BORDER_STYLE, borderStyle);
+            cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
+
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.NORMAL, 
+                    region);
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.NORMAL, 
+                    GridRegion.CORNER);
+        }
+    }
 
     /**
      * The body layer
@@ -94,16 +188,20 @@ public class ComponentTable implements IComponent {
         
         /**
          * Creates a new instance
+         * @param parent
          * @param dataProvider
          * @param bodyLayer
          */
-        public ColumnHeaderLayerStack(IDataProvider dataProvider,
+        public ColumnHeaderLayerStack(Composite parent,
+                                      IDataProvider dataProvider,
                                       BodyLayerStack bodyLayer) {
             
             DataLayer dataLayer = new DataLayer(dataProvider);
             ColumnHeaderLayer colHeaderLayer = new ColumnHeaderLayer(dataLayer,
                                                                      bodyLayer,
-                                                                     bodyLayer.getSelectionLayer());
+                                                                     bodyLayer.getSelectionLayer(),
+                                                                     false);
+            colHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.COLUMN_HEADER));
             setUnderlyingLayer(colHeaderLayer);
         }
     }
@@ -116,13 +214,16 @@ public class ComponentTable implements IComponent {
         
         /**
          * Creates a new instance
+         * @param parent
          * @param dataProvider
          * @param bodyLayer
          */
-        public RowHeaderLayerStack(IDataProvider dataProvider,
+        public RowHeaderLayerStack(Composite parent,
+                                   IDataProvider dataProvider,
                                    BodyLayerStack bodyLayer) {
             DataLayer dataLayer = new DataLayer(dataProvider, 50, 20);
-            RowHeaderLayer rowHeaderLayer = new RowHeaderLayer(dataLayer, bodyLayer, bodyLayer.getSelectionLayer());
+            RowHeaderLayer rowHeaderLayer = new RowHeaderLayer(dataLayer, bodyLayer, bodyLayer.getSelectionLayer(), false);
+            rowHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.ROW_HEADER));
             setUnderlyingLayer(rowHeaderLayer);
         }
     }
@@ -164,7 +265,7 @@ public class ComponentTable implements IComponent {
 
         // Create layers
         BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
-        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(columnHeaderDataProvider, bodyLayer);
+        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(parent, columnHeaderDataProvider, bodyLayer);
         CompositeLayer compositeLayer = new CompositeLayer(1, 2);
         compositeLayer.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
         compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
@@ -241,8 +342,8 @@ public class ComponentTable implements IComponent {
 
         // Create layers
         BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
-        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(columnHeaderDataProvider, bodyLayer);
-        RowHeaderLayerStack rowHeaderLayer = new RowHeaderLayerStack(rowHeaderDataProvider, bodyLayer);
+        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(parent, columnHeaderDataProvider, bodyLayer);
+        RowHeaderLayerStack rowHeaderLayer = new RowHeaderLayerStack(parent, rowHeaderDataProvider, bodyLayer);
         CornerLayer cornerLayer = new CornerLayer(new DataLayer(cornerDataProvider), rowHeaderLayer, columnHeaderLayer);
         GridLayer gridLayer = new GridLayer(bodyLayer, columnHeaderLayer, rowHeaderLayer, cornerLayer); 
         
