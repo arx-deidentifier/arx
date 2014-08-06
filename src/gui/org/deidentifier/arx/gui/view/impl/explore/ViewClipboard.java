@@ -167,7 +167,8 @@ public class ViewClipboard implements IView {
                         Rectangle bounds = i.getBounds();
                         bounds.x = table.toDisplay(bounds.x, bounds.y).x;
                         bounds.y = table.toDisplay(bounds.x, bounds.y).y;
-                        controller.getContextMenu().show(menu, point.x, point.y);
+                        menu.setLocation(point);
+                        menu.setVisible(true);
                     }
                 }
             }

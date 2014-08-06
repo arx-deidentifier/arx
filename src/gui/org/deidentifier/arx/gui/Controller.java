@@ -60,8 +60,6 @@ import org.deidentifier.arx.gui.model.ModelViewConfig;
 import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.MainContextMenu;
-import org.deidentifier.arx.gui.view.impl.MainToolTip;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
@@ -1181,14 +1179,6 @@ public class Controller implements IView {
     }
     
     /**
-     * Returns the popup
-     * @return
-     */
-    public MainContextMenu getContextMenu() {
-        return main.getPopUp();
-    }
-
-    /**
      * Returns debug data
      * @return
      */
@@ -1203,14 +1193,6 @@ public class Controller implements IView {
     public Resources getResources() {
         // TODO: Move resources from controller to view?
         return resources;
-    }
-
-    /**
-     * Returns the tooltip
-     * @return
-     */
-    public MainToolTip getToolTip() {
-        return main.getToolTip();
     }
 
     /**

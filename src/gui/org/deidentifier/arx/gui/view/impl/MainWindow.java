@@ -79,8 +79,6 @@ public class MainWindow implements IView {
     private final Display               display;
     private final Shell                 shell;
     private final Controller            controller;
-    private final MainToolTip           tooltip;
-    private final MainContextMenu       popup;
     private final MainMenu              menu;
 
     private final ComponentTitledFolder root;
@@ -104,10 +102,6 @@ public class MainWindow implements IView {
         shell.setMaximized(true);
         shell.setText(TITLE);
         shell.setMinimumSize(800, 600);
-
-        tooltip = new MainToolTip(shell);
-        popup = new MainContextMenu(shell, tooltip);
-        tooltip.setPopUp(popup);
 
         // Close listener
         shell.addListener(SWT.Close, new Listener() {
@@ -166,30 +160,12 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Returns the popup window
-     * 
-     * @return
-     */
-    public MainContextMenu getPopUp() {
-        return popup;
-    }
-
-    /**
      * Returns the shell
      * 
      * @return
      */
     public Shell getShell() {
         return shell;
-    }
-
-    /**
-     * Returns the tooltip window
-     * 
-     * @return
-     */
-    public MainToolTip getToolTip() {
-        return tooltip;
     }
 
     /**
