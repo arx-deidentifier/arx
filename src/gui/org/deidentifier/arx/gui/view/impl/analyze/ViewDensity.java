@@ -163,6 +163,8 @@ public class ViewDensity implements IView {
      */
     private void update() {
 
+        if (!this.status.isVisible()) return;
+        
         if (model != null && !model.isVisualizationEnabled()) {
             reset();
             return;

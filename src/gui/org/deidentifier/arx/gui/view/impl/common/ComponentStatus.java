@@ -67,6 +67,35 @@ public class ComponentStatus {
         this.parent.layout(true);
     }
     
+    /** Is the current status visible*/
+    public boolean isVisible(){
+        return this.parent.isVisible();
+    }
+
+    /**
+     * Enables status 'done'. Shows the actual control.
+     */
+    public void setDone(){
+        this.layout.topControl = child;
+        this.parent.layout();
+    }
+
+    /**
+     * Enables status 'empty'.
+     */
+    public void setEmpty(){
+        this.layout.topControl = empty;
+        this.parent.layout();
+    }
+    
+    /**
+     * Enables status 'working'
+     */
+    public void setWorking(){
+        this.layout.topControl = working;
+        this.parent.layout();
+    }
+    
     /**
      * Creates a composite for the empty status
      * @param parent
@@ -79,7 +108,7 @@ public class ComponentStatus {
         label.setText("No data available.");
         return composite;
     }
-
+    
     /**
      * Creates a composite for the working status
      * @param parent
@@ -92,29 +121,5 @@ public class ComponentStatus {
         label.setGIF(controller.getResources().getStream("working.gif"));
         label.setText("Analyzing...");
         return composite;
-    }
-
-    /**
-     * Enables status 'working'
-     */
-    public void setWorking(){
-        this.layout.topControl = working;
-        this.parent.layout();
-    }
-    
-    /**
-     * Enables status 'done'. Shows the actual control.
-     */
-    public void setDone(){
-        this.layout.topControl = child;
-        this.parent.layout();
-    }
-    
-    /**
-     * Enables status 'empty'.
-     */
-    public void setEmpty(){
-        this.layout.topControl = empty;
-        this.parent.layout();
     }
 }

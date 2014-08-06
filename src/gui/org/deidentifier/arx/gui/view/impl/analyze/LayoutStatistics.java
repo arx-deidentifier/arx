@@ -27,6 +27,8 @@ import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -105,6 +107,14 @@ public class LayoutStatistics implements ILayout, IView {
         } else {
             new ViewOutputProperties(item3, controller);
         }
+        
+        // Hack to update visualizations
+        folder.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, model.isVisualizationEnabled()));
+            }
+        });
     }
 
     public void addSelectionListener(final SelectionListener listener) {

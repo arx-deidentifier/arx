@@ -100,6 +100,8 @@ public class ViewDensityTable implements IView {
                                           parent, 
                                           table.getControl());
         this.manager = new AnalysisManager(parent.getDisplay());
+        
+        reset();
     }
     
 
@@ -146,6 +148,8 @@ public class ViewDensityTable implements IView {
      */
     private void update() {
 
+        if (!this.status.isVisible()) return;
+        
         if (model != null && !model.isVisualizationEnabled()) {
             reset();
             return;

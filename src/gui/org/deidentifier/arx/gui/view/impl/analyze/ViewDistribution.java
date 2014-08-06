@@ -129,7 +129,7 @@ public class ViewDistribution implements IView {
         this.status = new ComponentStatus(controller,
                                           parent, 
                                           this.root);
-        
+
         reset();
     }
 
@@ -306,6 +306,8 @@ public class ViewDistribution implements IView {
      * Updates the view
      */
     private void update() {
+
+        if (!this.status.isVisible()) return;
         
         if (model != null && !model.isVisualizationEnabled()) {
             clearCache();

@@ -108,6 +108,7 @@ public class ViewDistributionTable implements IView {
                                           parent, 
                                           this.table.getControl());
         this.manager = new AnalysisManager(this.parent.getDisplay());
+
         reset();
     }
 
@@ -191,6 +192,8 @@ public class ViewDistributionTable implements IView {
      * Updates the view
      */
     private void update() {
+        
+        if (!this.status.isVisible()) return;
         
         if (model != null && !model.isVisualizationEnabled()) {
             clearCache();

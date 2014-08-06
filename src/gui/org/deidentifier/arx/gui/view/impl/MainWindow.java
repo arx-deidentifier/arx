@@ -57,6 +57,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -123,9 +125,6 @@ public class MainWindow implements IView {
         root = new ComponentTitledFolder(shell, controller, null, "id-70");
         root.setLayoutData(SWTUtil.createFillGridData());
 
-        // TODO: Remove? Fixes an SWT Bug!
-        // root.setBackground(shell.getBackground());
-
         // Create the subviews
         Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$
         new LayoutDefinition(item1, controller);
@@ -134,6 +133,14 @@ public class MainWindow implements IView {
         Composite item3 = root.createItem(TAB_ANALYZE_DATA, controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$
         new LayoutAnalyze(item3, controller);
 
+        // Hack to update visualizations
+        root.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, null));
+            }
+        });
+        
         // Now reset and disable
         controller.reset();
     }
