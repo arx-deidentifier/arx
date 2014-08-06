@@ -31,11 +31,9 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.RowHeaderLayer;
-import org.eclipse.nebula.widgets.nattable.hideshow.ColumnHideShowLayer;
 import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
-import org.eclipse.nebula.widgets.nattable.reorder.ColumnReorderLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.events.ControlAdapter;
@@ -66,9 +64,7 @@ public class ComponentTable implements IComponent {
          */
         public BodyLayerStack(IDataProvider dataProvider) {
             dataLayer = new DataLayer(dataProvider);
-            ColumnReorderLayer columnReorderLayer = new ColumnReorderLayer(dataLayer);
-            ColumnHideShowLayer columnHideShowLayer = new ColumnHideShowLayer(columnReorderLayer);
-            selectionLayer = new SelectionLayer(columnHideShowLayer);
+            selectionLayer = new SelectionLayer(dataLayer);
             ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
             setUnderlyingLayer(viewportLayer);
         }
