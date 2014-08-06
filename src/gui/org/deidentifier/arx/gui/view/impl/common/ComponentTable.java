@@ -280,11 +280,12 @@ public class ComponentTable implements IComponent {
                 int width = table.getSize().x;
                 
                 // Check if larger than parent
-                int total = layout.columnWidth * dataProvider.getColumnCount();
+                int columns = dataProvider.getColumnCount();
+                int total = layout.columnWidth * columns;
                 total += cornerLayer != null ? cornerLayer.getColumnWidthByPosition(0) : 0;
                 if (total >= width) {
-                    for (int i=0; i<dataProvider.getColumnCount(); i++){
-                        dataLayer.setColumnWidthByPosition(i, layout.columnWidth);
+                    for (int i=0; i<columns; i++){
+                        dataLayer.setColumnWidthByPosition(i, layout.columnWidth, i==columns-1);
                     }
                 } else {
                     // If not, extend to cover the whole area
@@ -292,11 +293,11 @@ public class ComponentTable implements IComponent {
                     columnWidth -= (cornerLayer != null) ? cornerLayer.getColumnWidthByPosition(0) : 0;
                     columnWidth = (int)Math.round((double)columnWidth / (double)dataProvider.getColumnCount());
                     total = (cornerLayer != null) ? cornerLayer.getColumnWidthByPosition(0) : 0;
-                    for (int i=0; i<dataProvider.getColumnCount(); i++){
+                    for (int i=0; i<columns; i++){
                         if (total + columnWidth > width) {
                             columnWidth = width - total;
                         }
-                        dataLayer.setColumnWidthByPosition(i, columnWidth);
+                        dataLayer.setColumnWidthByPosition(i, columnWidth, i==columns-1);
                         total += columnWidth;
                     }   
                 }
