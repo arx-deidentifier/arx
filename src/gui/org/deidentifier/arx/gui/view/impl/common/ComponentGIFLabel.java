@@ -5,94 +5,112 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
- * @see https://stackoverflow.com/questions/6896632/is-there-a-custom-label-widget
+ * Adapted from https://stackoverflow.com/questions/6896632/is-there-a-custom-label-widget
  *      -which-supports-animated-gif
  */
 public class ComponentGIFLabel extends Canvas {
-
-    private class GifThread extends Thread {
+    
+    private class GIFHandler implements Runnable {
 
         private int         imageNumber = 0;
         private ImageLoader loader      = null;
-        private boolean     run         = true;
+        private boolean     stop        = false;
 
-        public GifThread(ImageLoader loader) {
+        public GIFHandler(ImageLoader loader) {
             this.loader = loader;
         }
-
+        
+        @Override
         public void run() {
-            while (run) {
-                int delayTime = loader.data[imageNumber].delayTime;
-                try {
-                    Thread.sleep(delayTime * 10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            int delayTime = loader.data[imageNumber].delayTime;
+            if (!ComponentGIFLabel.this.isDisposed()) {
+                imageNumber = imageNumber == loader.data.length - 1 ? 0 : imageNumber + 1;
+                if (!ComponentGIFLabel.this.image.isDisposed()) ComponentGIFLabel.this.image.dispose();
+                ImageData nextFrameData = loader.data[imageNumber];
+                ComponentGIFLabel.this.image = new Image(ComponentGIFLabel.this.getDisplay(), nextFrameData);
+                ComponentGIFLabel.this.redraw();
+                if (!stop) {
+                    ComponentGIFLabel.this.getDisplay().timerExec(delayTime * 10, this);
                 }
-                if (!ComponentGIFLabel.this.isDisposed()) {
-                    ComponentGIFLabel.this.getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            if (!run) { return; }
-                            if (!ComponentGIFLabel.this.isDisposed()) {
-                                imageNumber = imageNumber == loader.data.length - 1 ? 0 : imageNumber + 1;
-                                if (!ComponentGIFLabel.this.image.isDisposed()) ComponentGIFLabel.this.image.dispose();
-                                ImageData nextFrameData = loader.data[imageNumber];
-                                ComponentGIFLabel.this.image = new Image(ComponentGIFLabel.this.getDisplay(),
-                                                                         nextFrameData);
-                                ComponentGIFLabel.this.redraw();
-                            } else stopRunning();
-                        }
-                    });
-                } else stopRunning();
             }
-        }
-
-        public void stopRunning() {
-            run = false;
+        } 
+        
+        public void stop(){
+            this.stop = true;
         }
     }
+    
     /** Gap between icon and text */
     private static final int    GAP            = 5;
     /** Left and right margins */
     private static final int    DEFAULT_MARGIN = 3;
-    /** a string inserted in the middle of text that has been shortened */
-    private static final String ELLIPSIS       = "...";             //$NON-NLS-1$ // could use the ellipsis glyph on some platforms "\u2026"
+    /** A string inserted in the middle of text that has been shortened */
+    private static final String ELLIPSIS       = "..."; //$NON-NLS-1$
+
+    /** The alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
+    private int        align        = SWT.LEFT;
+    private int        leftMargin   = DEFAULT_MARGIN;
+    private int        topMargin    = DEFAULT_MARGIN;
+    private int        rightMargin  = DEFAULT_MARGIN;
+    private int        bottomMargin = DEFAULT_MARGIN;
+    private String     text;
+    private Image      image;
+
+    private String     appToolTipText;
+    private boolean    ignoreDispose;
+    private Image      backgroundImage;
+    private Color[]    gradientColors;
+    private int[]      gradientPercents;
+
+    private boolean    gradientVertical;
+
+    private Color      background;
+
+    private GIFHandler thread       = null;
+
+    private static int DRAW_FLAGS   = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
+
+    /**
+     * Checkstyle method
+     * @param style
+     * @return
+     */
     private static int checkStyle(int style) {
         if ((style & SWT.BORDER) != 0) style |= SWT.SHADOW_IN;
         int mask = SWT.SHADOW_IN | SWT.SHADOW_OUT | SWT.SHADOW_NONE | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
         style = style & mask;
         return style |= SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED;
     }
-    /** the alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
-    private int                 align          = SWT.LEFT;
-    private int                 leftMargin     = DEFAULT_MARGIN;
-    private int                 topMargin      = DEFAULT_MARGIN;
-    private int                 rightMargin    = DEFAULT_MARGIN;
-    private int                 bottomMargin   = DEFAULT_MARGIN;
-    private String              text;
-    private Image               image;
-
-    private String              appToolTipText;
-    private boolean             ignoreDispose;
-    private Image               backgroundImage;
-    private Color[]             gradientColors;
-    private int[]               gradientPercents;
-
-    private boolean             gradientVertical;
-
-    private Color               background;
-
-    private GifThread           thread         = null;
-
-    private static int          DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT |
-                                                 SWT.DRAW_DELIMITER;
-
+    
     public ComponentGIFLabel(Composite parent, int style) {
         super(parent, checkStyle(style));
         if ((style & (SWT.CENTER | SWT.RIGHT)) == 0) style |= SWT.LEFT;
@@ -143,7 +161,6 @@ public class ComponentGIFLabel extends Canvas {
     @Override
     public void dispose() {
         super.dispose();
-        if (thread != null) thread.stopRunning();
     }
 
     public int getAlignment() {
@@ -321,7 +338,10 @@ public class ComponentGIFLabel extends Canvas {
 
     public void setGIF(InputStream inputStream) {
         checkWidget();
-        if (thread != null) thread.stopRunning();
+        if (thread != null) {
+            thread.stop();
+            this.getDisplay().timerExec(-1, thread);
+        }
 
         ImageLoader loader = new ImageLoader();
 
@@ -335,8 +355,8 @@ public class ComponentGIFLabel extends Canvas {
         if (loader.data[0] != null) this.image = new Image(this.getDisplay(), loader.data[0]);
 
         if (loader.data.length > 1) {
-            thread = new GifThread(loader);
-            thread.start();
+            thread = new GIFHandler(loader);
+            thread.run();
         }
 
         redraw();
@@ -354,12 +374,8 @@ public class ComponentGIFLabel extends Canvas {
     public void setImage(Image image) {
         checkWidget();
         if (thread != null) {
-            thread.stopRunning();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            thread.stop();
+            getDisplay().timerExec(-1, thread);
         }
 
         if (image != this.image) {
