@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -30,7 +31,9 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -38,6 +41,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -65,7 +69,7 @@ public class ViewDistribution implements IView {
     private Chart                       chart;
 
     /** Internal stuff */
-    private final Composite             parent;
+    private final Composite             root;
     /** Internal stuff */
     private final ModelPart             reset;
     /** Internal stuff */
@@ -84,7 +88,11 @@ public class ViewDistribution implements IView {
     /** Internal stuff */
     private Model                       model;
     /** Internal stuff */
-    private AnalysisContext             acontext          = new AnalysisContext();
+    private AnalysisContext             acontext           = new AnalysisContext();
+    /** Internal stuff */
+    private AnalysisManager             manager;
+    /** Internal stuff */
+    private final ComponentStatus       status;
 
     /**
      * Creates a new instance
@@ -112,9 +120,15 @@ public class ViewDistribution implements IView {
             controller.addListener(reset, this);
         }
         
+        this.manager = new AnalysisManager(parent.getDisplay());
         this.reset = reset;
         this.target = target;
-        this.parent = parent;
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
+        parent.setLayout(new StackLayout());
+        this.status = new ComponentStatus(controller,
+                                          parent, 
+                                          this.root);
         
         reset();
     }
@@ -130,7 +144,7 @@ public class ViewDistribution implements IView {
         if (chart != null) {
             chart.dispose();
         }
-        chart = new Chart(parent, SWT.NONE);
+        chart = new Chart(root, SWT.NONE);
         chart.setOrientation(SWT.HORIZONTAL);
         
         // Show/Hide axis
@@ -175,9 +189,8 @@ public class ViewDistribution implements IView {
         graphTitle.setFont(chart.getFont());
         
         // Set colors
-        chart.setBackground(parent.getBackground());
-        chart.setForeground(parent.getForeground());
-        
+        chart.setBackground(root.getBackground());
+        chart.setForeground(root.getForeground());
         
         // OSX workaround
         if (System.getProperty("os.name").toLowerCase().contains("mac")){
@@ -216,6 +229,7 @@ public class ViewDistribution implements IView {
         yAxisTitle.setText("Frequency"); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
+        status.setEmpty();
     }
 
     @Override
@@ -300,7 +314,7 @@ public class ViewDistribution implements IView {
         }
 
         // Obtain context
-        Context context = acontext.getContext();
+        final Context context = acontext.getContext();
         if (context==null) {
             clearCache();
             reset();
@@ -318,50 +332,83 @@ public class ViewDistribution implements IView {
             return; 
         }
 
-        // Update cache
-        if (!cachedFrequencies.containsKey(attribute)) {
-            
-            DataHandle handle = context.handle;
-            int column = handle.getColumnIndexOf(attribute);
-            
-            if (column >= 0){
-                Hierarchy hierarchy = acontext.getHierarchy(context, attribute); 
-                StatisticsFrequencyDistribution distribution = handle.getStatistics().getFrequencyDistribution(column, hierarchy);
-                cachedFrequencies.put(attribute, distribution.frequency);
-                cachedValues.put(attribute, distribution.values);
-            }
-        }
+        // The statistics builder
+        final StatisticsBuilder builder = context.handle.getStatistics().clone();
+        final Hierarchy hierarchy = acontext.getHierarchy(context, attribute);
+        final DataHandle handle = context.handle;
+        final int column = handle.getColumnIndexOf(attribute);
         
-        // Check
-        if (cachedFrequencies.isEmpty() || (cachedFrequencies.get(attribute) == null)) { return; }
+        // Create an analysis
+        Analysis analysis = new Analysis(){
+            
+            @Override
+            public void stop() {
+                builder.stop();
+            }
 
-        // Update chart
-        chart.setRedraw(false);
+            @Override
+            public void run() {
 
-        ISeriesSet seriesSet = chart.getSeriesSet();
-        IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR,
-                                                                Resources.getMessage("DistributionView.9")); //$NON-NLS-1$
-        series.getLabel().setVisible(false);
-        series.getLabel().setFont(chart.getFont());
-        series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-        series.setYSeries(cachedFrequencies.get(attribute));
-        chart.getLegend().setVisible(false);
+                // Update cache
+                if (!cachedFrequencies.containsKey(attribute)) {
+                    if (column >= 0){ 
+                        StatisticsFrequencyDistribution distribution = builder.getFrequencyDistribution(column, hierarchy);
+                        cachedFrequencies.put(attribute, distribution.frequency);
+                        cachedValues.put(attribute, distribution.values);
+                    }
+                }  
+            }
 
-        IAxisSet axisSet = chart.getAxisSet();
+            @Override
+            public void onFinish() {
+                if (cachedFrequencies.isEmpty() || (cachedFrequencies.get(attribute) == null)) {
+                    // Reset
+                    reset();
+                } else {
+                    // Update chart
+                    chart.setRedraw(false);
 
-        IAxis yAxis = axisSet.getYAxis(0);
-        yAxis.setRange(new Range(0d, 1d));
-        yAxis.adjustRange();
+                    ISeriesSet seriesSet = chart.getSeriesSet();
+                    IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR,
+                                                                            Resources.getMessage("DistributionView.9")); //$NON-NLS-1$
+                    series.getLabel().setVisible(false);
+                    series.getLabel().setFont(chart.getFont());
+                    series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+                    series.setYSeries(cachedFrequencies.get(attribute));
+                    chart.getLegend().setVisible(false);
 
-        IAxis xAxis = axisSet.getXAxis(0);
-        xAxis.setCategorySeries(cachedValues.get(attribute));
-        xAxis.adjustRange();
-        updateCategories();
+                    IAxisSet axisSet = chart.getAxisSet();
 
-        chart.updateLayout();
-        chart.update();
-        chart.setRedraw(true);
-        chart.redraw();
+                    IAxis yAxis = axisSet.getYAxis(0);
+                    yAxis.setRange(new Range(0d, 1d));
+                    yAxis.adjustRange();
+
+                    IAxis xAxis = axisSet.getXAxis(0);
+                    xAxis.setCategorySeries(cachedValues.get(attribute));
+                    xAxis.adjustRange();
+                    updateCategories();
+
+                    chart.updateLayout();
+                    chart.update();
+                    chart.setRedraw(true);
+                    chart.redraw();
+                    status.setDone();
+                }
+            }
+
+            @Override
+            public void onError() {
+                status.setEmpty();
+            }
+
+            @Override
+            public void onInterrupt() {
+                status.setEmpty();
+            }
+        };
+        
+        this.status.setWorking();
+        this.manager.start(analysis);
     }
     
     /**

@@ -896,7 +896,9 @@ public class ViewLattice implements IView {
                 }
                 oldTooltipX = tooltipX;
                 oldTooltipY = tooltipY;
-                canvas.getDisplay().timerExec(TOOLTIP_WAIT, this);
+                if (!canvas.isDisposed()) {
+                    canvas.getDisplay().timerExec(TOOLTIP_WAIT, this);
+                }
             }
         });
     }

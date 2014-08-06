@@ -49,11 +49,14 @@ import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * A virtual table implemented with NatTable
@@ -229,7 +232,7 @@ public class ComponentTable implements IComponent {
     }
     
     /** The parent*/
-    private final Composite parent;
+    private final Composite root;
     /** The underlying nattable instance*/
     private NatTable table = null;
     /** The layout data*/
@@ -242,7 +245,8 @@ public class ComponentTable implements IComponent {
      * @param parent
      */
     public ComponentTable(Composite parent) {
-        this.parent = parent;  
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
     }
 
     /**
@@ -253,7 +257,7 @@ public class ComponentTable implements IComponent {
     public void setTable(IDataProvider dataProvider, String[] columns) {
 
         // Disable redrawing
-        this.parent.setRedraw(false);
+        this.root.setRedraw(false);
         
         // Dispose
         if (table != null && !table.isDisposed()) {
@@ -265,13 +269,13 @@ public class ComponentTable implements IComponent {
 
         // Create layers
         BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
-        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(parent, columnHeaderDataProvider, bodyLayer);
+        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
         CompositeLayer compositeLayer = new CompositeLayer(1, 2);
         compositeLayer.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
         compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
 
         // Create table
-        table = new NatTable(parent, compositeLayer);
+        table = new NatTable(root, compositeLayer);
         addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), null);
         
         // Set layout
@@ -280,8 +284,8 @@ public class ComponentTable implements IComponent {
         }
         
         // Redraw
-        this.parent.setRedraw(true);
-        this.parent.layout(true);
+        this.root.setRedraw(true);
+        this.root.layout(true);
     }
     
     /**
@@ -291,7 +295,7 @@ public class ComponentTable implements IComponent {
     public void setLayout(ComponentTableLayout layout){
         this.layout = layout;
         if (this.table != null && !this.table.isDisposed()) {
-            parent.layout(true);
+            root.layout(true);
         }
     }
     
@@ -328,7 +332,7 @@ public class ComponentTable implements IComponent {
     public void setData(IDataProvider dataProvider, String[] rows, String[] columns) {
 
         // Disable redrawing
-        this.parent.setRedraw(false);
+        this.root.setRedraw(false);
         
         // Dispose
         if (table != null && !table.isDisposed()) {
@@ -342,13 +346,13 @@ public class ComponentTable implements IComponent {
 
         // Create layers
         BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
-        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(parent, columnHeaderDataProvider, bodyLayer);
-        RowHeaderLayerStack rowHeaderLayer = new RowHeaderLayerStack(parent, rowHeaderDataProvider, bodyLayer);
+        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
+        RowHeaderLayerStack rowHeaderLayer = new RowHeaderLayerStack(root, rowHeaderDataProvider, bodyLayer);
         CornerLayer cornerLayer = new CornerLayer(new DataLayer(cornerDataProvider), rowHeaderLayer, columnHeaderLayer);
         GridLayer gridLayer = new GridLayer(bodyLayer, columnHeaderLayer, rowHeaderLayer, cornerLayer); 
         
         // Create table
-        table = new NatTable(parent, gridLayer);
+        table = new NatTable(root, gridLayer);
         addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), cornerLayer);
         
         // Set layout
@@ -357,8 +361,8 @@ public class ComponentTable implements IComponent {
         }
         
         // Redraw
-        this.parent.setRedraw(true);
-        this.parent.layout(true);
+        this.root.setRedraw(true);
+        this.root.layout(true);
     }
 
     /**
@@ -375,7 +379,7 @@ public class ComponentTable implements IComponent {
         table.addControlListener(new ControlAdapter(){
             public void controlResized(ControlEvent arg0) {
                 
-                parent.setRedraw(false);
+                root.setRedraw(false);
                 
                 // Prepare
                 int width = table.getSize().x;
@@ -403,7 +407,7 @@ public class ComponentTable implements IComponent {
                     }   
                 }
                 
-                parent.setRedraw(true);
+                root.setRedraw(true);
                 table.redraw();
             } 
         });
@@ -505,9 +509,13 @@ public class ComponentTable implements IComponent {
      */
     public void setEmpty() {
         if (this.table == null || this.table.isDisposed()) return;
-        this.parent.setRedraw(false);
+        this.root.setRedraw(false);
         this.table.dispose();
-        this.parent.setRedraw(true);
-        this.parent.layout(true);
+        this.root.setRedraw(true);
+        this.root.layout(true);
+    }
+
+    public Control getControl() {
+        return this.root;
     }
 }

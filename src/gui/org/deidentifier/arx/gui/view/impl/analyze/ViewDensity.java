@@ -25,10 +25,13 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import de.linearbits.jhc.JHC;
@@ -43,23 +46,25 @@ import de.linearbits.jhc.JHCLayout;
 public class ViewDensity implements IView {
 
     /** Static stuff */
-    private static final int  MAX_SIZE = 500;
+    private static final int      MAX_SIZE = 500;
     /** Internal stuff */
-    private AnalysisContext   context  = new AnalysisContext();
+    private AnalysisContext       context  = new AnalysisContext();
     /** Internal stuff */
-    private final Controller  controller;
+    private final Controller      controller;
     /** Internal stuff */
-    private Model             model;
+    private Model                 model;
     /** Internal stuff */
-    private final ModelPart   reset;
+    private final ModelPart       reset;
     /** Internal stuff */
-    private final ModelPart   target;
+    private final ModelPart       target;
     /** The heat map widget */
-    private final JHC         jhc;
+    private final JHC             jhc;
     /** The heat map configuration */
-    private final JHCGradient gradient;
+    private final JHCGradient     gradient;
     /** The heat map configuration */
-    private final JHCLayout   layout;
+    private final JHCLayout       layout;
+    /** Internal stuff */
+    private final ComponentStatus status;
 
 	/**
 	 * Creates a new density plot
@@ -88,7 +93,7 @@ public class ViewDensity implements IView {
         this.target = target;
 
         // Create controls
-        parent.setLayout(new FillLayout());
+        parent.setLayout(new StackLayout());
         this.jhc = new JHC(parent, SWT.DOUBLE_BUFFERED);
         this.gradient = JHCGradient.GRADIENT_HEAT;
         this.layout = new JHCLayout(2,10,20,2,15,2);
@@ -102,6 +107,16 @@ public class ViewDensity implements IView {
                 jhc.setFont(new Font(jhc.getDisplay(), fd[0]));
             }
         }
+
+        this.status = new ComponentStatus(controller,
+                                          parent, 
+                                          jhc.getControl());
+        
+        jhc.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent arg0) {
+                status.setDone();
+            }
+        });
     }
     
 
@@ -113,6 +128,7 @@ public class ViewDensity implements IView {
     @Override
     public void reset() {
         jhc.setData(null, new JHCConfiguration("", "", MAX_SIZE, MAX_SIZE, gradient, layout));
+        status.setEmpty();
     }
     
     @Override
@@ -169,12 +185,20 @@ public class ViewDensity implements IView {
                 return;
             }
             
+            // Update data
             String attribute1 = model.getAttributePair()[0];
             String attribute2 = model.getAttributePair()[1];
             int column1 = handle.getColumnIndexOf(attribute1);
             int column2 = handle.getColumnIndexOf(attribute2);
-            jhc.setData(new DensityData(handle, column1, column2), new JHCConfiguration(attribute1, attribute2, MAX_SIZE, MAX_SIZE, gradient, layout));
+            jhc.setData(new DensityData(handle, column1, column2), new JHCConfiguration(attribute1,
+                                                                                        attribute2,
+                                                                                        MAX_SIZE,
+                                                                                        MAX_SIZE,
+                                                                                        gradient,
+                                                                                        layout));
             
+            // Update status
+            status.setWorking();
         } else {
             reset();
             return; 

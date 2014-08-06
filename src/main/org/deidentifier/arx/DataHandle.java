@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
@@ -134,6 +135,21 @@ public abstract class DataHandle {
     }
 
     /**
+     * Returns an array containing the distinct values in the given column
+     * 
+     * @param column
+     *            The column to process
+     * @return
+     */
+    public final String[] getDistinctValues(int column) {
+        return getDistinctValues(column, new WrappedBoolean(){
+            public boolean getValue() {
+                return false;
+            }
+        });
+    }
+
+    /**
      * Returns a double value from the specified cell
      * 
      * @param row
@@ -154,7 +170,7 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
-
+    
     /**
      * Returns a float value from the specified cell
      * 
@@ -176,7 +192,7 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
-    
+
     /**
      * Returns the generalization level for the attribute
      * 
@@ -204,7 +220,7 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
-
+    
     /**
      * Returns a long value from the specified cell
      * 
@@ -224,7 +240,7 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
-    
+
     /** Returns the number of columns in the dataset */
     public abstract int getNumColumns();
 
@@ -239,7 +255,7 @@ public abstract class DataHandle {
     public StatisticsBuilder getStatistics(){
         return statistics;
     }
-
+    
     /**
      * Returns the transformation 
      * @return
@@ -247,7 +263,7 @@ public abstract class DataHandle {
     public ARXNode getTransformation(){
         return node;
     }
-    
+
     /**
      * Returns the value in the specified cell
      * 
@@ -290,14 +306,14 @@ public abstract class DataHandle {
         checkRegistry();
         return registry.isOutlier(this, row);
     }
-
+    
     /**
      * Returns an iterator over the data
      * 
      * @return
      */
     public abstract Iterator<String[]> iterator();
-    
+
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
@@ -366,7 +382,7 @@ public abstract class DataHandle {
         checkRegistry();
         registry.sort(this, ascending, columns);
     }
-
+    
     /**
      * Sorts the dataset according to the given columns and the given range.
      * Will sort input and output analogously.
@@ -384,7 +400,7 @@ public abstract class DataHandle {
         checkRegistry();
         registry.sort(this, from, to, ascending, columns);
     }
-    
+
     /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
@@ -429,7 +445,7 @@ public abstract class DataHandle {
         checkRegistry();
         registry.swap(this, row1, row2);
     }
-
+    
     /**
      * Checks a column index
      * 
@@ -441,7 +457,7 @@ public abstract class DataHandle {
             throw new IndexOutOfBoundsException("Column index out of range: "+column1+". Valid: 0 - " + (header.length - 1)); 
         }
     }
-    
+
     /**
      * Checks the column indexes
      * 
@@ -476,7 +492,7 @@ public abstract class DataHandle {
                                        this.hashCode()+") is orphaned");
         }
     }
-
+    
     /**
      * Checks a row index
      * 
@@ -493,7 +509,7 @@ public abstract class DataHandle {
      * Releases all resources
      */
     protected abstract void doRelease();
-    
+
     /**
      * Returns the base data type without generalization
      * @param attribute
@@ -512,13 +528,12 @@ public abstract class DataHandle {
     protected abstract DataType<?>[][] getDataTypeArray();
 
     /**
-     * Returns an array containing the distinct values in the given column
-     * 
+     * Returns the distinct values
      * @param column
-     *            The column to process
+     * @param stop
      * @return
      */
-    protected abstract String[] getDistinctValues(int column);
+    protected abstract String[] getDistinctValues(int column, WrappedBoolean stop);
 
     /**
      * Returns the registry associated with this handle
@@ -568,8 +583,8 @@ public abstract class DataHandle {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
+    }  
+    
     /**
      * Internal representation of get value
      * 
@@ -577,7 +592,7 @@ public abstract class DataHandle {
      * @param col
      * @return
      */
-    protected abstract String internalGetValue(int row, int col);  
+    protected abstract String internalGetValue(int row, int col);
     
     /**
      * Updates the registry
@@ -586,7 +601,7 @@ public abstract class DataHandle {
     protected void setRegistry(DataRegistry registry){
         this.registry = registry;
     }
-    
+
     /**
      * Sets the subset
      * @param handle

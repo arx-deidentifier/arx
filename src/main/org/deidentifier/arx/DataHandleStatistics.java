@@ -20,11 +20,14 @@ package org.deidentifier.arx;
 
 /**
  * Stupid wrapper class that provides information to StatisticsBuilder
- * TODO: Get rid of this
  * @author Fabian Prasser
  *
  */
 public class DataHandleStatistics {
+
+    public static interface WrappedBoolean {
+        public boolean getValue();
+    }
     
     private DataHandle handle;
     
@@ -32,8 +35,8 @@ public class DataHandleStatistics {
         this.handle = handle;
     }
 
-    public String[] getDistinctValues(int column) {
-        return handle.getDistinctValues(column);
+    public String[] getDistinctValues(int column, WrappedBoolean stop) {
+        return handle.getDistinctValues(column, stop);
     }
 
     public String getAttributeName(int column) {

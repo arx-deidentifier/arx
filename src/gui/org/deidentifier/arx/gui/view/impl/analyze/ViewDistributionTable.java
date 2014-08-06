@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -30,9 +31,10 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -45,6 +47,9 @@ public class ViewDistributionTable implements IView {
     private final Composite             parent;
     /** Internal stuff */
     private final ComponentTable        table;
+    /** Internal stuff */
+    private final ComponentStatus       status;
+    
     /** Internal stuff */
     private final ModelPart             reset;
     /** Internal stuff */
@@ -64,7 +69,9 @@ public class ViewDistributionTable implements IView {
     private Model                       model;
     /** Internal stuff */
     private AnalysisContext             acontext          = new AnalysisContext();
-
+    /** Internal stuff */
+    private AnalysisManager             manager;
+    
     /**
      * Creates a new instance
      * @param parent
@@ -95,9 +102,12 @@ public class ViewDistributionTable implements IView {
         this.target = target;
         this.parent = parent;
         
-        this.parent.setLayout(new FillLayout());
+        this.parent.setLayout(new StackLayout());
         this.table = new ComponentTable(parent);
-        
+        this.status = new ComponentStatus(controller,
+                                          parent, 
+                                          this.table.getControl());
+        this.manager = new AnalysisManager(this.parent.getDisplay());
         reset();
     }
 
@@ -110,6 +120,7 @@ public class ViewDistributionTable implements IView {
     @Override
     public void reset() {
         this.table.setEmpty();
+        this.status.setEmpty();
     }
 
     @Override
@@ -188,7 +199,7 @@ public class ViewDistributionTable implements IView {
         }
 
         // Obtain context
-        Context context = acontext.getContext();
+        final Context context = acontext.getContext();
         if (context==null) {
             clearCache();
             reset();
@@ -206,42 +217,77 @@ public class ViewDistributionTable implements IView {
             return; 
         }
 
-        // Update cache
-        if (!cachedFrequencies.containsKey(attribute)) {
+        // The statistics builder
+        final StatisticsBuilder builder = context.handle.getStatistics().clone();
+        final Hierarchy hierarchy = acontext.getHierarchy(context, attribute);
+        final DataHandle handle = context.handle;
+        final int column = handle.getColumnIndexOf(attribute);
+        
+        // Create an analysis
+        Analysis analysis = new Analysis(){
             
-            DataHandle handle = context.handle;
-            int column = handle.getColumnIndexOf(attribute);
-            
-            if (column >= 0){
-                Hierarchy hierarchy = acontext.getHierarchy(context, attribute); 
-                StatisticsFrequencyDistribution distribution = handle.getStatistics().getFrequencyDistribution(column, hierarchy);
-                cachedFrequencies.put(attribute, distribution.frequency);
-                cachedValues.put(attribute, distribution.values);
+            @Override
+            public void stop() {
+                builder.stop();
             }
-        }
-        
-        // Check
-        if (cachedFrequencies.isEmpty() || (cachedFrequencies.get(attribute) == null)) { return; }
-        
-        // Retrieve
-        final double[] frequencies = cachedFrequencies.get(attribute);
-        final String[] labels = cachedValues.get(attribute);
-        final DecimalFormat format = new DecimalFormat("##0.00000");
 
-        // Now update the table
-        table.setTable(new IDataProvider() {
-            public int getColumnCount() {
-                return 2;
+            @Override
+            public void run() {
+
+                // Update cache
+                if (!cachedFrequencies.containsKey(attribute)) {
+                    if (column >= 0){
+                        StatisticsFrequencyDistribution distribution = builder.getFrequencyDistribution(column, hierarchy);
+                        cachedFrequencies.put(attribute, distribution.frequency);
+                        cachedValues.put(attribute, distribution.values);
+                    }
+                }  
             }
-            public Object getDataValue(int arg0, int arg1) {
-                return arg0 == 0 ? labels[arg1] : format.format(frequencies[arg1]*100d)+"%";
+
+            @Override
+            public void onFinish() {
+                if (cachedFrequencies.isEmpty() || (cachedFrequencies.get(attribute) == null)) {
+                    // Reset
+                    reset();
+                } else {
+                    // Update chart
+
+                    // Retrieve
+                    final double[] frequencies = cachedFrequencies.get(attribute);
+                    final String[] labels = cachedValues.get(attribute);
+                    final DecimalFormat format = new DecimalFormat("##0.00000");
+
+                    // Now update the table
+                    table.setTable(new IDataProvider() {
+                        public int getColumnCount() {
+                            return 2;
+                        }
+                        public Object getDataValue(int arg0, int arg1) {
+                            return arg0 == 0 ? labels[arg1] : format.format(frequencies[arg1]*100d)+"%";
+                        }
+                        public int getRowCount() {
+                            return labels.length;
+                        }
+                        public void setDataValue(int arg0, int arg1, Object arg2) { 
+                            /* Ignore */
+                        }
+                    }, new String[] { "Value", "Frequency" });
+                    status.setDone();
+                }
             }
-            public int getRowCount() {
-                return labels.length;
+
+            @Override
+            public void onError() {
+                status.setEmpty();
             }
-            public void setDataValue(int arg0, int arg1, Object arg2) { 
-                /* Ignore */
+
+            @Override
+            public void onInterrupt() {
+                status.setEmpty();
             }
-        }, new String[] { "Value", "Frequency" });
+        };
+        
+        this.status.setWorking();
+        this.manager.start(analysis);
     }
 }

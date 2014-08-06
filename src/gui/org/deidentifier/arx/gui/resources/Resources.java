@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.resources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -119,8 +120,18 @@ public class Resources {
      * @return
      */
     public Image getImage(final String name) {
+        if (shell.isDisposed()) return null;
         return new Image(shell.getDisplay(), this.getClass()
                                                  .getResourceAsStream(name));
+    }
+
+    /**
+     * Returns a stream
+     * @param name
+     * @return
+     */
+    public InputStream getStream(final String name) {
+        return this.getClass().getResourceAsStream(name);
     }
 
     /**

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 
@@ -57,17 +58,18 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    public String[] getDistinctValues(int column) {
+    protected String[] getDistinctValues(int column, WrappedBoolean stop) {
 
         // Check
         checkRegistry();
         checkColumn(column);
 
-        // TODO: Inefficient
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
+            if (stop.getValue()) return null;
             vals.add(getValue(i, column));
         }
+        if (stop.getValue()) return null;
         return vals.toArray(new String[vals.size()]);
     }
 

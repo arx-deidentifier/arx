@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.data.Data;
@@ -257,17 +258,18 @@ public class DataHandleOutput extends DataHandle {
      * @return the distinct values
      */
     @Override
-    public String[] getDistinctValues(final int col) {
+    protected String[] getDistinctValues(final int col, WrappedBoolean stop) {
 
         // Check
         checkRegistry();
         checkColumn(col);
 
-        // TODO: Inefficient
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
+            if (stop.getValue()) return null;
             vals.add(getValue(i, col));
         }
+        if (stop.getValue()) return null;
         return vals.toArray(new String[vals.size()]);
     }
 
