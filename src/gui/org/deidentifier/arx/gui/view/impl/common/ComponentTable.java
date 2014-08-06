@@ -40,6 +40,8 @@ import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.BeveledBorderDecorator;
+import org.eclipse.nebula.widgets.nattable.resize.config.DefaultColumnResizeBindings;
+import org.eclipse.nebula.widgets.nattable.resize.config.DefaultRowResizeBindings;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
@@ -205,6 +207,7 @@ public class ComponentTable implements IComponent {
                                                                      bodyLayer.getSelectionLayer(),
                                                                      false);
             colHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.COLUMN_HEADER));
+            colHeaderLayer.addConfiguration(new DefaultColumnResizeBindings());
             setUnderlyingLayer(colHeaderLayer);
         }
     }
@@ -227,6 +230,7 @@ public class ComponentTable implements IComponent {
             DataLayer dataLayer = new DataLayer(dataProvider, 50, 20);
             RowHeaderLayer rowHeaderLayer = new RowHeaderLayer(dataLayer, bodyLayer, bodyLayer.getSelectionLayer(), false);
             rowHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.ROW_HEADER));
+            rowHeaderLayer.addConfiguration(new DefaultRowResizeBindings());
             setUnderlyingLayer(rowHeaderLayer);
         }
     }
