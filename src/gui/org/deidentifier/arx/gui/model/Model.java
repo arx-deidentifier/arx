@@ -110,6 +110,7 @@ public class Model implements Serializable {
 		this.anonymizer.setSuppressionString(getSuppressionString());
 		this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
 		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
+		this.anonymizer.setMaxTransformations(getMaxNodesInLattice());
 		
 		// Add all criteria
 		this.createConfig();

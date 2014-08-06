@@ -20,7 +20,6 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
@@ -51,7 +50,7 @@ public class ARXAnonymizer {
      * Temporary result of the ARX algorithm.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     class Result {
 
@@ -125,22 +124,28 @@ public class ARXAnonymizer {
     }
 
     /** History size. */
-    private int           historySize           = 200;
+    private int         historySize          = 200;
 
     /** The listener, if any. */
-    private ARXListener   listener              = null;
+    private ARXListener listener             = null;
 
     /** Remove outliers? */
-    private boolean       removeOutliers        = true;
+    private boolean     removeOutliers       = true;
 
     /** Snapshot size. */
-    private double        snapshotSizeDataset   = 0.2d;
+    private double      snapshotSizeDataset  = 0.2d;
 
     /** Snapshot size snapshot */
-    private double        snapshotSizeSnapshot  = 0.8d;
+    private double      snapshotSizeSnapshot = 0.8d;
 
     /** The string to insert for outliers. */
-    private String        suppressionString     = "*";
+    private String      suppressionString    = "*";
+
+    /** The maximal number of QIs that can be processed */
+    private int         maxQuasiIdentifiers  = Integer.MAX_VALUE;
+
+    /** The maximal size of the search space that can be processed */
+    private int         maxTransformations   = 200000;
 
 
     /**
@@ -256,6 +261,22 @@ public class ARXAnonymizer {
     }
 
     /**
+     * Returns the maximal number of quasi-identifiers.
+     * @return
+     */
+    public int getMaxQuasiIdentifiers() {
+        return maxQuasiIdentifiers;
+    }
+
+    /**
+     * Returns the maximal size of the search space
+     * @return
+     */
+    public int getMaxTransformations() {
+        return maxTransformations;
+    }
+    
+    /**
      * Returns the string with which outliers are replaced.
      * 
      * @return the relativeMaxOutliers string
@@ -272,7 +293,7 @@ public class ARXAnonymizer {
     public boolean isRemoveOutliers() {
         return removeOutliers;
     }
-    
+
     /**
      * Sets the maximum number of snapshots allowed to store in the history.
      * 
@@ -318,6 +339,24 @@ public class ARXAnonymizer {
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
     }
 
+    /**
+     * Sets the maximal number of quasi-identifiers. Set to Integer.MAX_VALUE to disable the 
+     * restriction. By default, the restriction is disabled.
+     * @param maxQuasiIdentifiers
+     */
+    public void setMaxQuasiIdentifiers(int maxQuasiIdentifiers) {
+        this.maxQuasiIdentifiers = maxQuasiIdentifiers;
+    }
+
+    /**
+     * Sets the maximal size of the search space. Set to Integer.MAX_VALUE to disable the 
+     * restriction. Default is 200,000.
+     * @param maxTransformations
+     */
+    public void setMaxTransformations(int maxTransformations) {
+        this.maxTransformations = maxTransformations;
+    }
+    
     /**
      * Set whether the anonymizer should remove outliers
      * 
@@ -433,6 +472,7 @@ public class ARXAnonymizer {
         if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
 
         // Check if all defines are correct
+        DataDefinition definition = handle.getDefinition();
         Set<String> attributes = new HashSet<String>();
         for (int i=0; i<handle.getNumColumns(); i++){
             attributes.add(handle.getAttributeName(i));
@@ -459,12 +499,21 @@ public class ARXAnonymizer {
         }
         
         // Perform sanity checks
-        Map<String, String[][]> hierarchies = handle.getDefinition().getHierarchies();
+        Set<String> qis = definition.getQuasiIdentifyingAttributes();
         if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
-        if (hierarchies.size() > 15) { throw new IllegalArgumentException("The curse of dimensionality strikes. Too many quasi-identifiers: " + hierarchies.size()); }
-        if (hierarchies.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
+        if (qis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier"); }
+        if (qis.size() > maxQuasiIdentifiers) { 
+            throw new IllegalArgumentException("Too many quasi-identifiers (" + qis.size()+"). This can be changed."); 
+        }
+        int transformations = 1;
+        for (String qi : qis) {
+            transformations *= definition.getMaximumGeneralization(qi) - definition.getMinimumGeneralization(qi) + 1;
+        }
+        if (transformations > maxTransformations) { 
+            throw new IllegalArgumentException("Too many transformations in the search space (" + transformations+ "). This can be changed."); 
+        }
     }
-    
+
     /**
      * Prepares the data manager.
      * 
