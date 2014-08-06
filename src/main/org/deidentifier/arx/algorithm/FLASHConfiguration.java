@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.algorithm;
 
-import org.deidentifier.arx.framework.lattice.NodeTrigger;
+import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
  * This class parameterizes a phase the interwoven two-phase Flash algorithm
@@ -33,22 +33,22 @@ public class FLASHConfiguration {
     public final boolean active;
     
     /** A trigger for tagging nodes in this phase*/
-    public final NodeTrigger triggerTag;
+    public final NodeAction triggerTag;
 
     /** A trigger for checking nodes in this phase*/
-    public final NodeTrigger triggerCheck;
+    public final NodeAction triggerCheck;
     
     /** A trigger for evaluating nodes in this phase*/
-    public final NodeTrigger triggerEvaluate;
+    public final NodeAction triggerEvaluate;
     
     /** A trigger for skipping nodes in this phase*/
-    public final NodeTrigger triggerSkip;
+    public final NodeAction triggerSkip;
 
     /** A trigger controlling which transformations are snapshotted*/
-    public final NodeTrigger triggerSnapshotStore;
+    public final NodeAction triggerSnapshotStore;
     
     /** A trigger controlling snapshots of which transformations can be evicted*/
-    public final NodeTrigger triggerSnapshotEvict;
+    public final NodeAction triggerSnapshotEvict;
     
     /** The main anonymity property*/
     public final int anonymityProperty;
@@ -64,12 +64,12 @@ public class FLASHConfiguration {
      * @param triggerSnapshotEvict
      */
     public FLASHConfiguration(int anonymityProperty,
-                              NodeTrigger triggerTag,
-                              NodeTrigger triggerCheck,
-                              NodeTrigger triggerEvaluate,
-                              NodeTrigger triggerSkip,
-                              NodeTrigger triggerSnapshotStore,
-                              NodeTrigger triggerSnapshotEvict) {
+                              NodeAction triggerTag,
+                              NodeAction triggerCheck,
+                              NodeAction triggerEvaluate,
+                              NodeAction triggerSkip,
+                              NodeAction triggerSnapshotStore,
+                              NodeAction triggerSnapshotEvict) {
         this.active = true;
         this.anonymityProperty = anonymityProperty;
         this.triggerTag = triggerTag;

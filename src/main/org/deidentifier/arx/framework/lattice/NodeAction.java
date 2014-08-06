@@ -24,7 +24,7 @@ package org.deidentifier.arx.framework.lattice;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class NodeTrigger {
+public abstract class NodeAction {
 
     /**
      * A trigger for nodes
@@ -32,11 +32,11 @@ public abstract class NodeTrigger {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public static class NodeTriggerConstant extends NodeTrigger {
+    public static class NodeActionConstant extends NodeAction {
 
         private final boolean result;
 
-        public NodeTriggerConstant(boolean result) {
+        public NodeActionConstant(boolean result) {
             this.result = result;
         }
 
@@ -52,11 +52,11 @@ public abstract class NodeTrigger {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public static class NodeTriggerInverse extends NodeTrigger {
+    public static class NodeActionInverse extends NodeAction {
 
-        private final NodeTrigger trigger;
+        private final NodeAction trigger;
 
-        public NodeTriggerInverse(NodeTrigger trigger) {
+        public NodeActionInverse(NodeAction trigger) {
             this.trigger = trigger;
         }
 

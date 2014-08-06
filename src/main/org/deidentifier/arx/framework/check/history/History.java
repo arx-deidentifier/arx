@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.framework.lattice.NodeTrigger;
+import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
  * The Class History.
@@ -40,7 +40,7 @@ public class History {
     /**
      * Store only non-anonymous transformations
      */
-    public static final NodeTrigger STORAGE_TRIGGER_NON_ANONYMOUS = new NodeTrigger(){
+    public static final NodeAction STORAGE_TRIGGER_NON_ANONYMOUS = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
             return node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS);
@@ -50,7 +50,7 @@ public class History {
     /**
      * Store all transformations
      */
-    public static final NodeTrigger STORAGE_TRIGGER_ALL = new NodeTrigger(){
+    public static final NodeAction STORAGE_TRIGGER_ALL = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
             return true;
@@ -60,7 +60,7 @@ public class History {
     /**
      * Evict transformations for which all successors are anonymous
      */
-    public static final NodeTrigger EVICTION_TRIGGER_ANONYMOUS = new NodeTrigger(){
+    public static final NodeAction EVICTION_TRIGGER_ANONYMOUS = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
             for (final Node upNode : node.getSuccessors()) {
@@ -75,7 +75,7 @@ public class History {
     /**
      * Evict transformations for which all successors have been checked
      */
-    public static final NodeTrigger EVICTION_TRIGGER_CHECKED = new NodeTrigger(){
+    public static final NodeAction EVICTION_TRIGGER_CHECKED = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
             for (final Node upNode : node.getSuccessors()) {
@@ -90,7 +90,7 @@ public class History {
     /**
      * Evict transformations for which all successors are k-anonymous
      */
-    public static final NodeTrigger EVICTION_TRIGGER_K_ANONYMOUS = new NodeTrigger(){
+    public static final NodeAction EVICTION_TRIGGER_K_ANONYMOUS = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
             for (final Node upNode : node.getSuccessors()) {
@@ -121,10 +121,10 @@ public class History {
     private HashMap<Node, int[]>     nodeToSnapshot = null;
 
     /** The current pruning strategy */
-    private NodeTrigger              evictionTrigger;
+    private NodeAction              evictionTrigger;
 
     /** The current storage strategy */
-    private NodeTrigger              storageTrigger;
+    private NodeAction              storageTrigger;
 
     /** The current requirements */
     private final int                requirements;
@@ -248,7 +248,7 @@ public class History {
      * 
      * @return
      */
-    public NodeTrigger getEvictionTrigger() {
+    public NodeAction getEvictionTrigger() {
         return evictionTrigger;
     }
 
@@ -257,7 +257,7 @@ public class History {
      * 
      * @return
      */
-    public NodeTrigger getStorageTrigger() {
+    public NodeAction getStorageTrigger() {
         return storageTrigger;
     }
 
@@ -277,7 +277,7 @@ public class History {
      * 
      * @param strategy
      */
-    public void setEvictionTrigger(NodeTrigger trigger) {
+    public void setEvictionTrigger(NodeAction trigger) {
         evictionTrigger = trigger;
     }
 
@@ -286,7 +286,7 @@ public class History {
      * 
      * @param strategy
      */
-    public void setStorageTrigger(NodeTrigger trigger) {
+    public void setStorageTrigger(NodeAction trigger) {
         storageTrigger = trigger;
     }
     

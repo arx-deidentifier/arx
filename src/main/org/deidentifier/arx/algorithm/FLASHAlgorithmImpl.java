@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.framework.lattice.NodeTrigger;
+import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
  * This class implements the FLASH algorithm
@@ -192,7 +192,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      *            The path
      * @param queue 
      */
-    private Node checkPath(List<Node> path, NodeTrigger triggerSkip, PriorityQueue<Node> queue) {
+    private Node checkPath(List<Node> path, NodeAction triggerSkip, PriorityQueue<Node> queue) {
 
         // Init
         int low = 0;
@@ -240,7 +240,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param triggerSkip All nodes to which this trigger applies will be skipped
      * @return The path as a list
      */
-    private List<Node> findPath(Node current, NodeTrigger triggerSkip) {
+    private List<Node> findPath(Node current, NodeAction triggerSkip) {
         List<Node> path = new ArrayList<Node>();
         path.add(current);
         boolean found = true;
@@ -269,7 +269,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @return A sorted array of nodes remaining on this level
      */
 
-    private Node[] getUnsetNodesAndSort(int level, NodeTrigger triggerSkip) {
+    private Node[] getUnsetNodesAndSort(int level, NodeAction triggerSkip) {
         
         // Create
         List<Node> result = new ArrayList<Node>();
