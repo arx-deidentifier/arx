@@ -308,6 +308,7 @@ public class ViewLattice implements IView {
         canvas.redraw();
         menu.setLocation(x, y);
         menu.setVisible(true);
+        dragType = DragType.NONE;
     }
 
     /**
@@ -714,26 +715,6 @@ public class ViewLattice implements IView {
 
             @Override
             public void mouseDown(MouseEvent arg0) {
-                
-                if (arg0.button == 1) {
-                    final ARXNode node = getNode(arg0.x, arg0.y);
-                    if (node != null) {
-                        actionButtonClicked1(node);
-                    }
-                } else if (arg0.button == 3) {
-                    final ARXNode node = getNode(arg0.x, arg0.y);
-                    if (node != null) {
-                        Point display = canvas.toDisplay(arg0.x, arg0.y);
-                        actionButtonClicked3(node, display.x, display.y);
-                    }
-                }
-            }            
-        });
-
-        canvas.addMouseListener(new MouseAdapter(){
-
-            @Override
-            public void mouseDown(MouseEvent arg0) {
                 dragX = arg0.x;
                 dragY = arg0.y;
                 dragStartX = arg0.x;
@@ -752,15 +733,31 @@ public class ViewLattice implements IView {
                 dragType = DragType.NONE;
             }
         });
-        
+
+        canvas.addMouseListener(new MouseAdapter(){
+
+            @Override
+            public void mouseDown(MouseEvent arg0) {
+                
+                if (arg0.button == 1) {
+                    final ARXNode node = getNode(arg0.x, arg0.y);
+                    if (node != null) {
+                        actionButtonClicked1(node);
+                    }
+                } else if (arg0.button == 3) {
+                    final ARXNode node = getNode(arg0.x, arg0.y);
+                    if (node != null) {
+                        Point display = canvas.toDisplay(arg0.x, arg0.y);
+                        actionButtonClicked3(node, display.x, display.y);
+                    }
+                }
+            }            
+        });
+
         canvas.addMouseMoveListener(new MouseMoveListener(){
 
             @Override
             public void mouseMove(MouseEvent arg0) {
-                
-                if (arg0.button != 1 && arg0.button != 2) {
-                    dragType = DragType.NONE;
-                }
                 
                 if (dragType != DragType.NONE) {
                     final int deltaX = arg0.x - dragX;
