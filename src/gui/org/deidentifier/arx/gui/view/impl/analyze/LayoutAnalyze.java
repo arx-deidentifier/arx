@@ -25,6 +25,8 @@ import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ViewData;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataOutput;
+import org.eclipse.nebula.widgets.nattable.coordinate.PixelCoordinate;
+import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,7 +36,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 
 /**
  * This class layouts the analysis view
@@ -67,8 +68,11 @@ public class LayoutAnalyze implements ILayout {
                 public void run() {
                     ViewportLayer outLayer = out.getViewportLayer();
                     ViewportLayer inLayer = in.getViewportLayer();
-                    outLayer.setOriginRowPosition(inLayer.getOriginRowPosition());
-                    outLayer.setOriginColumnPosition(inLayer.getOriginColumnPosition());
+                    PixelCoordinate coordinate = inLayer.getOrigin();
+                    final int y = coordinate.getY();
+                    final int x = coordinate.getX();
+                    outLayer.setOriginY(y);
+                    outLayer.setOriginX(x);
                 }
             };
             new Thread(this).start();
@@ -179,13 +183,12 @@ public class LayoutAnalyze implements ILayout {
         dataInputView.addScrollBarListener(new Listener() {
             @Override
             public void handleEvent(final Event arg0) {
-                final int row = dataInputView.getViewportLayer()
-                                             .getOriginRowPosition();
-                final int col = dataInputView.getViewportLayer()
-                                             .getOriginColumnPosition();
+                PixelCoordinate coordinate = dataInputView.getViewportLayer().getOrigin();
+                final int row = coordinate.getY();
+                final int col = coordinate.getX();
                 if (dataOutputView != null) {
-                    dataOutputView.getViewportLayer().setOriginRowPosition(row);
-                    dataOutputView.getViewportLayer().setOriginColumnPosition(col);
+                    dataOutputView.getViewportLayer().setOriginY(row);
+                    dataOutputView.getViewportLayer().setOriginX(col);
                     synchronize(dataInputView, dataOutputView);
                 }
             }
@@ -193,14 +196,12 @@ public class LayoutAnalyze implements ILayout {
         dataOutputView.addScrollBarListener(new Listener() {
             @Override
             public void handleEvent(final Event arg0) {
-                final int row = dataOutputView.getViewportLayer()
-                                              .getOriginRowPosition();
-                final int col = dataOutputView.getViewportLayer()
-                                              .getOriginColumnPosition();
+                PixelCoordinate coordinate = dataOutputView.getViewportLayer().getOrigin();
+                final int row = coordinate.getY();
+                final int col = coordinate.getX();
                 if (dataInputView != null) {
-                    dataInputView.getViewportLayer().setOriginRowPosition(row);
-                    dataInputView.getViewportLayer()
-                                 .setOriginColumnPosition(col);
+                    dataInputView.getViewportLayer().setOriginY(row);
+                    dataInputView.getViewportLayer().setOriginX(col);
                     synchronize(dataOutputView, dataInputView);
                 }
             }
