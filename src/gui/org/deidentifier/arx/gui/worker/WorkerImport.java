@@ -68,9 +68,13 @@ public class WorkerImport extends Worker<Data> {
             public void run() {
                 int progress = 0;
                 while (progress < 100 && !stop) {
-                    progress = adapter.getProgress();
-                    arg0.worked(Math.min(progress, 99));
-                    try { Thread.sleep(10); } catch (final InterruptedException e) {/* Ignore*/ }
+                    int work = Math.min(adapter.getProgress(), 99);
+                    if (work != progress) {
+                        arg0.worked(work - progress);
+                        progress = work;
+                    }
+                    try { Thread.sleep(100); } 
+                    catch (final InterruptedException e) {/* Ignore*/ }
                 }
             }
         });
@@ -80,10 +84,9 @@ public class WorkerImport extends Worker<Data> {
         // Load the data
         try {
             result = Data.create(adapter);
-            arg0.beginTask(Resources.getMessage("WorkerImport.1"), 1); //$NON-NLS-1$
             result.getHandle(); // Prepare the handle
             stop = true;
-            arg0.worked(100);
+            arg0.worked(1);
             arg0.done();
         } catch (final Exception e) {
             error = e;

@@ -45,9 +45,8 @@ public class WorkerAnonymize extends Worker<ARXResult> {
     }
 
     @Override
-    public void
-            run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                            InterruptedException {
+    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
+                                                        InterruptedException {
 
         // Track progress
         arg0.beginTask(Resources.getMessage("WorkerAnonymize.0"), 110); //$NON-NLS-1$
@@ -55,15 +54,24 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         // Initialize anonymizer
         final ARXAnonymizer anonymizer = model.createAnonymizer();
 
-        // Add listener
+        // Update the progress bar
         anonymizer.setListener(new ARXListener() {
             int count = 0;
-
-            @Override
-            public void nodeTagged(final int numNodes) {
-                final int val = (int) (((double) (++count) / (double) numNodes) * 100d);
-                arg0.worked(10 + Math.min(val, 99));
-                if (arg0.isCanceled()) { throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); } //$NON-NLS-1$
+            int previous = 0;
+            public void nodeTagged(final int searchSpaceSize) {
+                if (arg0.isCanceled()) { 
+                    throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
+                } 
+                if (count==0) {
+                    arg0.worked(10);
+                }
+                
+                count++;
+                int progress = (int) ((double)count / (double) searchSpaceSize * 100d);
+                if (progress != previous) {
+                    previous = progress;
+                    arg0.worked(1);
+                }
             }
         });
 
@@ -75,13 +83,13 @@ public class WorkerAnonymize extends Worker<ARXResult> {
         	result = anonymizer.anonymize(model.getInputConfig().getInput(), model.getInputConfig().getConfig());
 
             // Apply optimal transformation, if any
-            arg0.beginTask(Resources.getMessage("WorkerAnonymize.3"), 1); //$NON-NLS-1$
+            arg0.beginTask(Resources.getMessage("WorkerAnonymize.3"), 10); //$NON-NLS-1$
             if (result.isResultAvailable()) {
                 result.getOutput(false);
             }
             model.setAnonymizer(anonymizer);
             model.setTime(result.getTime());
-            arg0.worked(1);
+            arg0.worked(10);
             arg0.done();
         } catch (final Exception e) {
             error = e;

@@ -111,17 +111,17 @@ public class WorkerLoad extends Worker<Model> {
             readMetadata(zip);
             arg0.worked(1);
             readModel(zip);
-            arg0.worked(2);
+            arg0.worked(1);
             final Map<String, ARXNode> map = readLattice(zip);
-            arg0.worked(3);
+            arg0.worked(1);
             readClipboard(map, zip);
-            arg0.worked(4);
+            arg0.worked(1);
             readFilter(zip);
-            arg0.worked(5);
+            arg0.worked(1);
             readConfiguration(map, zip);
-            arg0.worked(6);
+            arg0.worked(1);
             zip.close();
-            arg0.worked(7);
+            arg0.worked(1);
         } catch (final Exception e) {
             e.printStackTrace();
             error = e;
@@ -129,7 +129,7 @@ public class WorkerLoad extends Worker<Model> {
             return;
         }
         result = model;
-        arg0.worked(8);
+        arg0.worked(1);
         arg0.done();
     }
 

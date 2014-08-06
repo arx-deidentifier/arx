@@ -48,7 +48,7 @@ public class WorkerTransform extends Worker<DataHandle> {
             run(final IProgressMonitor arg0) throws InvocationTargetException,
                                             InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerTransform.0"), 100); //$NON-NLS-1$
+        arg0.beginTask(Resources.getMessage("WorkerTransform.0"), 1); //$NON-NLS-1$
 
         try {
             arg0.worked(1);

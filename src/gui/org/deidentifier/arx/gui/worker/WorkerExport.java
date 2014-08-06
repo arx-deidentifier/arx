@@ -89,13 +89,15 @@ public class WorkerExport extends Worker<DataHandle> {
         final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                int previous = 0;
                 while ((cout.getByteCount() != bytes) && !stop) {
-                    final int value = (int) (((double) cout.getByteCount() / (double) bytes) * 100d);
-                    arg0.worked(Math.min(value, 99));
-                    try {
-                        Thread.sleep(10);
-                    } catch (final InterruptedException e) {
+                    int progress = (int) ((double) cout.getByteCount() / (double) bytes * 100d);
+                    if (progress != previous) {
+                        arg0.worked(progress - previous);
+                        previous = progress;
                     }
+                    try { Thread.sleep(100); } 
+                    catch (final InterruptedException e) {/* Ignore*/}
                 }
             }
         });
@@ -109,7 +111,6 @@ public class WorkerExport extends Worker<DataHandle> {
             cout.close();
             result = handle;
             stop = true;
-            arg0.worked(100);
             arg0.done();
         } catch (final Exception e) {
             error = e;
