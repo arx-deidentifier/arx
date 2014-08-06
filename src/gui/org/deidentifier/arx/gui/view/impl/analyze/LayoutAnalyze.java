@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.analyze;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
@@ -233,12 +234,16 @@ public class LayoutAnalyze implements ILayout {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 statisticsOutputLayout.setSelectionIdex(statisticsInputLayout.getSelectionIndex());
+                // Hack to update visualizations
+                controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, null));
             }
         });
         statisticsOutputLayout.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 statisticsInputLayout.setSelectionIdex(statisticsOutputLayout.getSelectionIndex());
+                // Hack to update visualizations
+                controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, null));
             }
         });
 

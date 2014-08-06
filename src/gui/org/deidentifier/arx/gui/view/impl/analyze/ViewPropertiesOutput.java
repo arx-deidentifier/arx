@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewOutputProperties extends ViewProperties {
+public class ViewPropertiesOutput extends ViewProperties {
 
     /**
      * A content provider
@@ -147,7 +147,7 @@ public class ViewOutputProperties extends ViewProperties {
      * @param parent
      * @param controller
      */
-    public ViewOutputProperties(final Composite parent,
+    public ViewPropertiesOutput(final Composite parent,
                           final Controller controller) {
         
         super(parent, controller, ModelPart.OUTPUT, ModelPart.INPUT);

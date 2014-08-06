@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewInputProperties extends ViewProperties {
+public class ViewPropertiesInput extends ViewProperties {
 
     /**
      * A content provider
@@ -142,7 +142,7 @@ public class ViewInputProperties extends ViewProperties {
      * @param parent
      * @param controller
      */
-    public ViewInputProperties(final Composite parent,
+    public ViewPropertiesInput(final Composite parent,
                                final Controller controller) {
         
         super(parent, controller, ModelPart.INPUT, null);

@@ -83,7 +83,7 @@ public class AnalysisContext {
 
     /**
      * Returns the current context, consisting of a consistent combination of
-     * a config and a data handle
+     * a configuration and a data handle
      * @return
      */
     public Context getContext(){
@@ -99,7 +99,8 @@ public class AnalysisContext {
         if (target == ModelPart.INPUT){
             
             // If output available
-            if (model.getOutputConfig() != null && model.getOutputConfig().getInput() != null){
+            if (model.getOutputConfig() != null && 
+                model.getOutputConfig().getInput() != null){
                 config = model.getOutputConfig();
             } else {
                 config = model.getInputConfig();
@@ -157,18 +158,34 @@ public class AnalysisContext {
         return null;
     }
 
+    /**
+     * Gets the target
+     * @return
+     */
     public ModelPart getTarget() {
         return target;
     }
 
+    /**
+     * Sets the target
+     * @param target
+     */
     public void setTarget(ModelPart target) {
         this.target = target;
     }
 
+    /**
+     * Returns the model
+     * @return
+     */
     public Model getModel() {
         return model;
     }
 
+    /**
+     * Sets the model
+     * @param model
+     */
     public void setModel(Model model) {
         this.model = model;
     }
