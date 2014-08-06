@@ -103,9 +103,9 @@ public abstract class AbstractAlgorithm {
                
                // Independent evaluation or check
                if (checker.getMetric().isIndependent()) {
-                   node.setInformationLoss(checker.getMetric().evaluate(node, null));
+                   lattice.setInformationLoss(node, checker.getMetric().evaluate(node, null));
                } else {
-                   node.setChecked(checker.check(node, true));
+                   lattice.setChecked(node, checker.check(node, true));
                }
            }
     }

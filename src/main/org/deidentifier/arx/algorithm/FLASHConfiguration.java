@@ -49,6 +49,9 @@ public class FLASHConfiguration {
     
     /** A trigger controlling snapshots of which transformations can be evicted*/
     public final NodeAction triggerSnapshotEvict;
+
+    /** A trigger firing when a tag event should be triggered*/
+    public final NodeAction triggerTagEvent;
     
     /** The main anonymity property*/
     public final int anonymityProperty;
@@ -62,6 +65,7 @@ public class FLASHConfiguration {
      * @param triggerSkip
      * @param triggerSnapshotStore
      * @param triggerSnapshotEvict
+     * @param triggerTagEvent
      */
     public FLASHConfiguration(int anonymityProperty,
                               NodeAction triggerTag,
@@ -69,7 +73,8 @@ public class FLASHConfiguration {
                               NodeAction triggerEvaluate,
                               NodeAction triggerSkip,
                               NodeAction triggerSnapshotStore,
-                              NodeAction triggerSnapshotEvict) {
+                              NodeAction triggerSnapshotEvict,
+                              NodeAction triggerTagEvent) {
         this.active = true;
         this.anonymityProperty = anonymityProperty;
         this.triggerTag = triggerTag;
@@ -78,6 +83,7 @@ public class FLASHConfiguration {
         this.triggerSkip = triggerSkip;
         this.triggerSnapshotStore = triggerSnapshotStore;
         this.triggerSnapshotEvict = triggerSnapshotEvict;
+        this.triggerTagEvent = triggerTagEvent;
     }
 
     /**
@@ -92,5 +98,6 @@ public class FLASHConfiguration {
         this.triggerSkip = null;
         this.triggerSnapshotStore = null;
         this.triggerSnapshotEvict = null;
+        this.triggerTagEvent = null;
     }
 }

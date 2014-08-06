@@ -20,7 +20,6 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.Arrays;
 
-import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -72,9 +71,6 @@ public class Node {
      */
     public static final int PROPERTY_VISITED = 7;
     
-    /** Debugging option*/
-    public static final boolean DEBUG_PROPERTIES = false;
-
     /** The id. */
     public final int        id;
 
@@ -221,84 +217,23 @@ public class Node {
         return (properties & (1 << property)) != 0;
     }
 
-    /**
-     * Sets the properties to the given node
-     * 
-     * @param node the node
-     * @param result the result
-     */
-    public void setChecked(INodeChecker.Result result) {
-        
-        // Set checked
-        setProperty(Node.PROPERTY_CHECKED);
-        
-        // Anonymous
-        if (result.anonymous){
-            setProperty(Node.PROPERTY_ANONYMOUS);
-        } else {
-            setProperty(Node.PROPERTY_NOT_ANONYMOUS);
-        }
-
-        // k-Anonymous
-        if (result.kAnonymous){
-            setProperty(Node.PROPERTY_K_ANONYMOUS);
-        } else {
-            setProperty(Node.PROPERTY_NOT_K_ANONYMOUS);
-        }
-
-        // Infoloss
-        if (informationLoss == null) {
-            informationLoss = result.informationLoss;
-        }
-    }
-
     /** Associated data*/
     public void setData(Object data) {
         this.data = data;
     }
 
-    
     /**
      * Sets the information loss
      * 
      * @param informationLoss
      */
-    public void setInformationLoss(final InformationLoss<?> informationLoss) {
-        this.informationLoss = informationLoss;
-    }
-    
-
-    /**
-     * Sets the given property
-     * @param property
-     * @return
-     */
-    public void setProperty(int property){
-        
-        if (DEBUG_PROPERTIES) {
-            int other = -1;
-            switch(property){
-                case Node.PROPERTY_ANONYMOUS:
-                    other = Node.PROPERTY_NOT_ANONYMOUS;
-                    break;
-                case Node.PROPERTY_NOT_ANONYMOUS:
-                    other = Node.PROPERTY_ANONYMOUS;
-                    break;
-                case Node.PROPERTY_K_ANONYMOUS:
-                    other = Node.PROPERTY_NOT_K_ANONYMOUS;
-                    break;
-                case Node.PROPERTY_NOT_K_ANONYMOUS:
-                    other = Node.PROPERTY_K_ANONYMOUS;
-                    break;
-            }
-            if (hasProperty(other)) {
-                throw new IllegalStateException("Inconsistent properties: "+property+" and "+other);
-            }
+    protected void setInformationLoss(final InformationLoss<?> informationLoss) {
+        if (this.informationLoss == null) {
+            this.informationLoss = informationLoss;
         }
-        
-        properties |= (1 << property);
     }
 
+    
     /**
      * Sets the transformation
      * 
@@ -308,7 +243,7 @@ public class Node {
         this.transformation = transformation;
         this.level = level;
     }
-
+  
     /**
      * Sets the predecessors
      * 
@@ -316,6 +251,15 @@ public class Node {
      */
     protected void setPredecessors(Node[] nodes) {
         predecessors = nodes;
+    }
+
+    /**
+     * Sets the given property
+     * @param property
+     * @return
+     */
+    protected void setProperty(int property){
+        properties |= (1 << property);
     }
 
     /**

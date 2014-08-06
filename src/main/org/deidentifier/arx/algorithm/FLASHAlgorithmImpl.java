@@ -86,16 +86,18 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             outerLoopConfiguration = linearPhaseConfiguration;
         }
 
+        // Set node trigger
+        lattice.setTagTrigger(outerLoopConfiguration.triggerTagEvent);
+
         // Initialize
         PriorityQueue<Node> queue = new PriorityQueue<Node>(11, strategy);
-
-        // Check bottom for speed
-        INodeChecker.Result result = checker.check(lattice.getBottom(), true);
-        lattice.getBottom().setInformationLoss(result.informationLoss);
-        lattice.getBottom().setProperty(Node.PROPERTY_FORCE_SNAPSHOT);
         
-        // Remember the result to prevent repeated checks
-        lattice.getBottom().setData(result);
+        // Check bottom for speed and remember the result to prevent repeated checks
+        Node bottom = lattice.getBottom();
+        INodeChecker.Result result = checker.check(bottom, true);
+        lattice.setInformationLoss(bottom, result.informationLoss);
+        lattice.setProperty(bottom, Node.PROPERTY_FORCE_SNAPSHOT);
+        bottom.setData(result);
         
         // For each node in the lattice
         int length = lattice.getLevels().length;
@@ -132,6 +134,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param queue
      */
     private void binarySearch(Node start, PriorityQueue<Node> queue) {
+        
+        // Set node trigger
+        lattice.setTagTrigger(binaryPhaseConfiguration.triggerTagEvent);
 
         // Add to queue
         queue.add(start);
@@ -173,9 +178,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Check or evaluate
         if (configuration.triggerEvaluate.appliesTo(node)) {
-            node.setInformationLoss(checker.getMetric().evaluate(node, null));
+            lattice.setInformationLoss(node, checker.getMetric().evaluate(node, null));
         } else if (configuration.triggerCheck.appliesTo(node)) {
-            node.setChecked(checker.check(node));
+            lattice.setChecked(node, checker.check(node));
         }  
         
         // Store optimum
@@ -292,6 +297,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void linearSearch(Node start) {
 
+        // Set node trigger
+        lattice.setTagTrigger(linearPhaseConfiguration.triggerTagEvent);
+        
         // Skip this node
         if (!linearPhaseConfiguration.triggerSkip.appliesTo(start)) {
             

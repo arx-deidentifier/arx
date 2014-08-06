@@ -174,7 +174,8 @@ public class FLASHAlgorithm {
                                                                         triggerEvaluate,
                                                                         triggerSkip,
                                                                         triggerSnapshotStore,
-                                                                        triggerSnapshotEvict);
+                                                                        triggerSnapshotEvict,
+                                                                        triggerSkip);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
     }
@@ -226,7 +227,8 @@ public class FLASHAlgorithm {
                                                                         triggerEvaluate,
                                                                         triggerSkip,
                                                                         triggerSnapshotStore,
-                                                                        triggerSnapshotEvict);
+                                                                        triggerSnapshotEvict,
+                                                                        triggerSkip);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
     }
@@ -311,7 +313,7 @@ public class FLASHAlgorithm {
                 return true;
             }
             public void action(Node node) {
-                node.setProperty(Node.PROPERTY_VISITED);
+                lattice.setProperty(node, Node.PROPERTY_VISITED);
             }
         };
 
@@ -323,7 +325,8 @@ public class FLASHAlgorithm {
                                                                         binaryTriggerEvaluate,
                                                                         binaryTriggerSkip,
                                                                         binaryTriggerSnapshotStore,
-                                                                        binaryTriggerSnapshotEvict);
+                                                                        binaryTriggerSnapshotEvict,
+                                                                        linearTriggerSkip);
         
         // Linear configuration
         FLASHConfiguration linearConfiguration = new FLASHConfiguration(linearAnonymityProperty,
@@ -332,7 +335,8 @@ public class FLASHAlgorithm {
                                                                         linearTriggerEvaluate,
                                                                         linearTriggerSkip,
                                                                         linearTriggerSnapshotStore,
-                                                                        linearTriggerSnapshotEvict);
+                                                                        linearTriggerSnapshotEvict,
+                                                                        linearTriggerSkip);
 
         return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
     }
@@ -429,7 +433,7 @@ public class FLASHAlgorithm {
                 return true;
             }
             public void action(Node node) {
-                node.setProperty(Node.PROPERTY_VISITED);
+                lattice.setProperty(node, Node.PROPERTY_VISITED);
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)){
                     lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
                 }
@@ -444,7 +448,8 @@ public class FLASHAlgorithm {
                                                                         binaryTriggerEvaluate,
                                                                         binaryTriggerSkip,
                                                                         binaryTriggerSnapshotStore,
-                                                                        binaryTriggerSnapshotEvict);
+                                                                        binaryTriggerSnapshotEvict,
+                                                                        linearTriggerSkip);
         
         // Linear configuration
         FLASHConfiguration linearConfiguration = new FLASHConfiguration(linearAnonymityProperty,
@@ -453,7 +458,8 @@ public class FLASHAlgorithm {
                                                                         linearTriggerEvaluate,
                                                                         linearTriggerSkip,
                                                                         linearTriggerSnapshotStore,
-                                                                        linearTriggerSnapshotEvict);
+                                                                        linearTriggerSnapshotEvict,
+                                                                        linearTriggerSkip);
 
         return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
     }
@@ -547,7 +553,7 @@ public class FLASHAlgorithm {
                 return true;
             }
             public void action(Node node) {
-                node.setProperty(Node.PROPERTY_VISITED);
+                lattice.setProperty(node, Node.PROPERTY_VISITED);
             }
         };
 
@@ -558,7 +564,8 @@ public class FLASHAlgorithm {
                                                                         binaryTriggerEvaluate,
                                                                         binaryTriggerSkip,
                                                                         binaryTriggerSnapshotStore,
-                                                                        binaryTriggerSnapshotEvict);
+                                                                        binaryTriggerSnapshotEvict,
+                                                                        linearTriggerSkip);
         
         // Linear configuration
         FLASHConfiguration linearConfiguration = new FLASHConfiguration(linearAnonymityProperty,
@@ -567,7 +574,8 @@ public class FLASHAlgorithm {
                                                                         linearTriggerEvaluate,
                                                                         linearTriggerSkip,
                                                                         linearTriggerSnapshotStore,
-                                                                        linearTriggerSnapshotEvict);
+                                                                        linearTriggerSnapshotEvict,
+                                                                        linearTriggerSkip);
 
         return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
     }
@@ -622,7 +630,8 @@ public class FLASHAlgorithm {
                                                                         triggerEvaluate,
                                                                         triggerSkip,
                                                                         triggerSnapshotStore,
-                                                                        triggerSnapshotEvict);
+                                                                        triggerSnapshotEvict,
+                                                                        triggerSkip);
         
         FLASHConfiguration linearConfiguration = new FLASHConfiguration();
         

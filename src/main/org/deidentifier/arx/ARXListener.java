@@ -27,11 +27,10 @@ package org.deidentifier.arx;
 public interface ARXListener {
 
     /**
-     * Is called when a node is tagged
+     * Is called when a node has been processed
      * 
-     * @param numNodes
-     *            The total number of nodes in the lattice
+     * @param searchSpaceSize The total number of transformations in the search space
      */
-    public void nodeTagged(int numNodes);
+    public void nodeTagged(int searchSpaceSize);
 
 }

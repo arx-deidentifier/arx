@@ -19,6 +19,8 @@
 package org.deidentifier.arx.framework.lattice;
 
 import org.deidentifier.arx.ARXListener;
+import org.deidentifier.arx.framework.check.INodeChecker;
+import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * The class Lattice.
@@ -39,6 +41,9 @@ public class Lattice {
 
     /** A listener */
     private ARXListener    listener = null;
+
+    /** Tag trigger */
+    private NodeAction     tagTrigger = null;
 
     /**
      * Initializes a lattice.
@@ -116,6 +121,44 @@ public class Lattice {
         }
         throw new RuntimeException("Empty lattice!");
     }
+    
+    /**
+     * Sets the properties to the given node
+     * 
+     * @param node the node
+     * @param result the result
+     */
+    public void setChecked(Node node, INodeChecker.Result result) {
+        
+        // Set checked
+        setProperty(node, Node.PROPERTY_CHECKED);
+        
+        // Anonymous
+        if (result.anonymous){
+            setProperty(node, Node.PROPERTY_ANONYMOUS);
+        } else {
+            setProperty(node, Node.PROPERTY_NOT_ANONYMOUS);
+        }
+
+        // k-Anonymous
+        if (result.kAnonymous){
+            setProperty(node, Node.PROPERTY_K_ANONYMOUS);
+        } else {
+            setProperty(node, Node.PROPERTY_NOT_K_ANONYMOUS);
+        }
+
+        // Infoloss
+        node.setInformationLoss(result.informationLoss);
+    }
+
+    /**
+     * Sets the information loss
+     * @param node
+     * @param informationLoss
+     */
+    public void setInformationLoss(Node node, InformationLoss<?> informationLoss) {
+        node.setInformationLoss(informationLoss);
+    }
 
     /**
      * Attaches a listener
@@ -126,6 +169,20 @@ public class Lattice {
         this.listener = listener;
     }
 
+    /**
+     * Sets the property to the given node
+     * 
+     * @param node the node
+     * @param property the property
+     */
+    public void setProperty(Node node, int property) {
+        
+        if (!node.hasProperty(property)) {
+            node.setProperty(property);
+            triggerTagged(node);
+        }
+    }
+    
     /**
      * Sets the property to all predecessors of the given node
      * 
@@ -167,23 +224,21 @@ public class Lattice {
     }
 
     /**
-     * Sets the property to the given node
-     * 
-     * @param node the node
-     * @param property the property
+     * When this trigger executed, a tagged event will be fired
+     * @param trigger
      */
-    private void setProperty(Node node, int property) {
-        
-        if (!node.hasProperty(property)) {
-            node.setProperty(property);
-            triggerTagged();
-        }
+    public void setTagTrigger(NodeAction trigger){
+        this.tagTrigger = trigger;
     }
 
     /**
      * Triggers a tagged event at the listener
      */
-    private void triggerTagged() {
-        if (this.listener != null) this.listener.nodeTagged(size);
+    private void triggerTagged(Node node) {
+        if (this.listener != null){
+            if (tagTrigger == null || tagTrigger.appliesTo(node)) {
+                this.listener.nodeTagged(size);
+            }
+        }
     }
 }

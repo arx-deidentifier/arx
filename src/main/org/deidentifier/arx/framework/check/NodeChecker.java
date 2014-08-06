@@ -26,6 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
@@ -232,9 +233,10 @@ public class NodeChecker implements INodeChecker {
         }
         
         // Set properties
-        transformation.setChecked(new Result(currentGroupify.isAnonymous(), 
-                                             currentGroupify.isKAnonymous(),
-                                             loss));
+        Lattice lattice = new Lattice(new Node[][]{{transformation}}, null, 0);
+        lattice.setChecked(transformation, new Result(currentGroupify.isAnonymous(), 
+                                                      currentGroupify.isKAnonymous(),
+                                                      loss));
         
         // Return the buffer
         return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics());
