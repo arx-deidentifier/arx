@@ -592,14 +592,7 @@ public class ViewLattice implements IView {
      * @return
      */
     private Color getLineColor(double nodeWidth) {
-
-        int value = (int) (nodeWidth / 50d * 128d);
-        value = value < 0 ? 0 : value;
-        value = value > 255 ? 255 : value;
-        value = 255 - value;
-        value = value < 64 ? 64 : value;
-        value = value > 200 ? 200 : value;
-        return new Color(canvas.getDisplay(), value, value, value);
+        return new Color(canvas.getDisplay(), 200, 200, 200);
     }
 
     /**
