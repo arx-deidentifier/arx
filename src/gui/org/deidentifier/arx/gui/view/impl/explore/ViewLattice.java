@@ -23,7 +23,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -121,9 +123,14 @@ public class ViewLattice implements IView {
     private static final int    ATTRIBUTE_BOUNDS        = 4;
     /** Attribute constant */
     private static final int    ATTRIBUTE_LABEL         = 5;
-
     /** Attribute constant */
     private static final int    ATTRIBUTE_VISIBLE       = 6;
+    /** Attribute constant */
+    private static final int    ATTRIBUTE_PATH          = 7;
+    /** Attribute constant */
+    private static final int    ATTRIBUTE_EXTENT        = 8;
+    
+    
     /** Time to wait for a tool tip to show */
     private static final int    TOOLTIP_WAIT            = 200;
     /** Global settings */
@@ -175,7 +182,6 @@ public class ViewLattice implements IView {
     private int                 dragStartX              = 0;
     /** Drag parameters */
     private int                 dragStartY              = 0;
-
     /** Drag parameters */
     private DragType            dragType                = DragType.NONE;
 
@@ -259,6 +265,10 @@ public class ViewLattice implements IView {
         this.numNodes = 0;
         this.optimum = null;
         this.selectedNode = null;
+        for (ARXNode node : lattice) {
+            Path path = (Path)node.getAttributes().get(ATTRIBUTE_PATH);
+            if (path!=null) path.dispose();
+        }
         this.lattice.clear();
         this.latticeWidth = 0;
         this.latticeHeight = 0;
@@ -370,42 +380,82 @@ public class ViewLattice implements IView {
 
         if (lattice.isEmpty() || (screen == null)) { return; }
 
-        // Set style
-        g.setLineWidth(STROKE_WIDTH_CONNECTION);
-        g.setForeground(COLOR_BLACK);
-
         // Draw connections
-        for (final ARXNode node : lattice) {
-            drawConnections(node, g);
-        }
-
-        // Set style
-        g.setLineWidth(STROKE_WIDTH_NODE);
-
+        drawConnections(g);
+        
         // Draw nodes
-        for (final ARXNode node : lattice) {
-            drawNode(node, g);
-        }
+        drawNodes(g);
     }
 
     /**
      * Draws the connections
      * 
-     * @param node
      * @param g
      */
-    private void drawConnections(final ARXNode node, final GC g) {
+    private void drawConnections(GC g) {
+        
+        // Prepare
+        Color color = null;
+        Set<ARXNode> done = new HashSet<ARXNode>();
+        SWTLineDrawer drawer = new SWTLineDrawer(g, screen);
 
-        // Obtain coordinates
-        final Bounds center = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
+        // Set style
+        g.setLineWidth(STROKE_WIDTH_CONNECTION);
+        g.setForeground(COLOR_BLACK);
 
-        // Draw
-        for (final ARXNode n : node.getSuccessors()) {
-            if ((Boolean) n.getAttributes().get(ATTRIBUTE_VISIBLE)) {
-                final Bounds centerN = (Bounds) n.getAttributes().get(ATTRIBUTE_BOUNDS);
-                g.drawLine((int) center.centerX, (int) center.centerY, (int) centerN.centerX, (int) centerN.centerY);
+        // For each node
+        for (final ARXNode node : lattice) {
+            
+            // If visible
+            if ((Boolean) node.getAttributes().get(ATTRIBUTE_VISIBLE)) {
+                
+                // Obtain coordinates
+                Bounds center1 = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
+                if (color == null) {
+                    color = getLineColor(nodeWidth);
+                    g.setForeground(color);
+                } 
+                
+                // Draw
+                for (final ARXNode n : node.getSuccessors()) {
+                    
+                    // If other visible and not already processed
+                    if (!done.contains(n) && (Boolean) n.getAttributes().get(ATTRIBUTE_VISIBLE)) {
+
+                       // Obtain coordinates
+                       Bounds center2 = (Bounds) n.getAttributes().get(ATTRIBUTE_BOUNDS);
+                       
+                       // Draw
+                       drawer.drawLine((int)center1.centerX, (int)center1.centerY,
+                                       (int)center2.centerX, (int)center2.centerY);
+                    }
+                }
             }
+            
+            // Add to set of already processed nodes
+            done.add(node);
         }
+        
+        // Dispose color
+        if (color != null && !color.isDisposed()) {
+            color.dispose();
+        }
+    }
+
+    /**
+     * Returns a line color for drawing the connections
+     * @param node
+     * @return
+     */
+    private Color getLineColor(double nodeWidth) {
+
+        int value = (int) (nodeWidth / 50d * 128d);
+        value = value < 0 ? 0 : value;
+        value = value > 255 ? 255 : value;
+        value = 255 - value;
+        value = value < 64 ? 64 : value;
+        value = value > 200 ? 200 : value;
+        return new Color(canvas.getDisplay(), value, value, value);
     }
 
     /**
@@ -414,70 +464,94 @@ public class ViewLattice implements IView {
      * @param node
      * @param g
      */
-    private boolean drawNode(final ARXNode node, final GC g) {
+    private void drawNodes(final GC g) {
 
-        // Obtain coordinates
-        final Bounds dbounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
-        final Rectangle bounds = new Rectangle((int) dbounds.x, (int) dbounds.y, (int) nodeWidth, (int) nodeHeight);
+        // Prepare
+        Rectangle bounds = new Rectangle(0, 0, (int)nodeWidth, (int)nodeHeight);
+        Transform transform = new Transform(g.getDevice());
+        
+        // Set style
+        g.setLineWidth(STROKE_WIDTH_NODE);
+        g.setFont(font);
 
-        // Clipping
-        if (!bounds.intersects(new Rectangle(0, 0, screen.x, screen.y))) { return false; }
-
-        // Degrade if too far away
-        if (bounds.width <= 4) {
-            g.setBackground(getInnerColor(node));
-            g.setAntialias(SWT.OFF);
-            g.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-
-            // Draw real node
-        } else {
-            final Color b = g.getBackground();
-            g.setBackground(getInnerColor(node));
-            g.setAntialias(SWT.OFF);
-            if (node != selectedNode) {
-                g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
-            } else {
-                g.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-            }
-            int s = g.getLineWidth();
-            Color f = g.getForeground();
-            g.setLineWidth(getOuterStrokeWidth(node, bounds.width));
-            g.setForeground(getOuterColor(node));
-            g.setAntialias(SWT.ON);
-            if (node != selectedNode) {
-                g.drawOval(bounds.x, bounds.y, bounds.width, bounds.height);
-            } else {
-                g.drawRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-            }
-            g.setLineWidth(s);
-            g.setBackground(b);
-            g.setForeground(f);
-
-            if (bounds.width >= 20) {
+        // Draw nodes
+        for (final ARXNode node : lattice) {
+            
+            // Obtain coordinates
+            Bounds _bounds = (Bounds) node.getAttributes().get(ATTRIBUTE_BOUNDS);
+            bounds.x = (int) _bounds.x;
+            bounds.y = (int) _bounds.y;
+            
+            // Clipping
+            if (bounds.intersects(new Rectangle(0, 0, screen.x, screen.y))) { 
                 
-                g.setTextAntialias(SWT.ON);
-                g.setFont(font);
-                String text = (String) node.getAttributes().get(ATTRIBUTE_LABEL);
-                Point extent = g.textExtent(text);
-                float factor1 = (bounds.width * 0.7f) / (float)extent.x;
-                float factor2 = (bounds.height * 0.7f) / (float)extent.y;
-                float factor = Math.min(factor1, factor2);
-                
-                int positionX = bounds.x + (int)(((float)bounds.width - (float)extent.x * factor) / 2f); 
-                int positionY = bounds.y + (int)(((float)bounds.height - (float)extent.y * factor) / 2f);
-                Transform transform = new Transform(g.getDevice());
-                transform.translate(positionX, positionY);
-                transform.scale(factor, factor);
-                g.setTransform(transform);
-                Path path = new Path(g.getDevice());
-                path.addString(text, 0, 0, font);
-                g.setBackground(COLOR_BLACK);
-                g.fillPath(path);
-                g.setTransform(null);
-                transform.dispose();
+                // Retrieve/compute some data
+                Path path = (Path) node.getAttributes().get(ATTRIBUTE_PATH);
+                Point extent = (Point) node.getAttributes().get(ATTRIBUTE_EXTENT);
+                if (path == null) {
+                    String text = (String) node.getAttributes().get(ATTRIBUTE_LABEL);
+                    path = new Path(canvas.getDisplay());
+                    path.addString(text, 0, 0, font);
+                    node.getAttributes().put(ATTRIBUTE_PATH, path);
+                    extent = g.textExtent(text);
+                    node.getAttributes().put(ATTRIBUTE_EXTENT, extent);
+                }
+        
+                // Degrade if too far away
+                if (bounds.width <= 4) {
+                    g.setBackground(getInnerColor(node));
+                    g.setAntialias(SWT.OFF);
+                    g.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        
+                    // Draw real node
+                } else {
+                    
+                    // Fill background
+                    g.setBackground(getInnerColor(node));
+                    g.setAntialias(SWT.OFF);
+                    if (node != selectedNode) {
+                        g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
+                    } else {
+                        g.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+                    }
+                    
+                    // Draw line
+                    g.setLineWidth(getOuterStrokeWidth(node, bounds.width));
+                    g.setForeground(getOuterColor(node));
+                    g.setAntialias(SWT.ON);
+                    if (node != selectedNode) {
+                        g.drawOval(bounds.x, bounds.y, bounds.width, bounds.height);
+                    } else {
+                        g.drawRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+                    }
+                    
+                    // Draw text
+                    if (bounds.width >= 20) {
+                        
+                        g.setTextAntialias(SWT.ON);
+                        
+                        float factor1 = (bounds.width * 0.7f) / (float)extent.x;
+                        float factor2 = (bounds.height * 0.7f) / (float)extent.y;
+                        float factor = Math.min(factor1, factor2);
+                        
+                        int positionX = bounds.x + (int)(((float)bounds.width - (float)extent.x * factor) / 2f); 
+                        int positionY = bounds.y + (int)(((float)bounds.height - (float)extent.y * factor) / 2f);
+                        
+                        transform.identity();
+                        transform.translate(positionX, positionY);
+                        transform.scale(factor, factor);
+                        g.setTransform(transform);
+                        
+                        g.setBackground(COLOR_BLACK);
+                        g.fillPath(path);
+                        g.setTransform(null);
+                    }
+                }
             }
         }
-        return true;
+        
+        // Clean up
+        transform.dispose();
     }
 
     /**
@@ -561,8 +635,8 @@ public class ViewLattice implements IView {
      */
     private int getOuterStrokeWidth(final ARXNode node, final int width) {
         int result = node.isChecked() ? width / 100 : 1;
-        result = node.isChecked() ? result + 2 : result;
-        return result>=1 ? result : 1;
+        result = node.isChecked() ? result + 1 : result;
+        return result >=1 ? result < 1 ? 1 : result : 1;
     }
 
     /**
@@ -628,8 +702,14 @@ public class ViewLattice implements IView {
         // Check
         if (numNodes > model.getMaxNodesInViewer()) { return; }
 
-        // Now initialize the data structures
+        // Cleanup
+        for (ARXNode node : this.lattice) {
+            Path path = (Path)node.getAttributes().get(ATTRIBUTE_PATH);
+            if (path!=null) path.dispose();
+        }
         this.lattice.clear();
+        
+        // Now initialize the data structures
         int y = latticeHeight - 1;
         for (final List<ARXNode> level : lattice) {
             for (int i = 0; i < level.size(); i++) {
@@ -735,23 +815,36 @@ public class ViewLattice implements IView {
         });
 
         canvas.addMouseListener(new MouseAdapter(){
-
+            /** Drag parameters */
+            private int clickX = 0;
+            /** Drag parameters */
+            private int clickY = 0;
             @Override
             public void mouseDown(MouseEvent arg0) {
+                
+                clickX = arg0.x;
+                clickY = arg0.y;
                 
                 if (arg0.button == 1) {
                     final ARXNode node = getNode(arg0.x, arg0.y);
                     if (node != null) {
                         actionButtonClicked1(node);
                     }
-                } else if (arg0.button == 3) {
+                } 
+            }
+            @Override
+            public void mouseUp(MouseEvent arg0) {
+                if (arg0.button == 3 && arg0.x == clickX && arg0.y == clickY) {
                     final ARXNode node = getNode(arg0.x, arg0.y);
                     if (node != null) {
                         Point display = canvas.toDisplay(arg0.x, arg0.y);
                         actionButtonClicked3(node, display.x, display.y);
                     }
                 }
-            }            
+                clickX = arg0.x;
+                clickY = arg0.y;
+            }       
+            
         });
 
         canvas.addMouseMoveListener(new MouseMoveListener(){
@@ -902,46 +995,4 @@ public class ViewLattice implements IView {
             }
         });
     }
-    
-    /**
-     * Line/line intersection
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     * @param x3
-     * @param y3
-     * @param x4
-     * @param y4
-     * @param result
-     * @return
-     */
-    private double[] getIntersectionPoint(double x1, double y1, 
-                                          double x2, double y2, 
-                                          double x3, double y3, 
-                                          double x4, double y4,
-                                          double[] result) {
-
-        // Prepare
-        double det1And2 = det(x1, y1, x2, y2);
-        double det3And4 = det(x3, y3, x4, y4);
-        double x1LessX2 = x1 - x2;
-        double y1LessY2 = y1 - y2;
-        double x3LessX4 = x3 - x4;
-        double y3LessY4 = y3 - y4;
-        double det1Less2And3Less4 = det(x1LessX2, y1LessY2, x3LessX4, y3LessY4);
-        
-        // Lines are parallel
-        if (det1Less2And3Less4 == 0){
-           return null;
-        }
-        
-        // Return intersection point
-        result[0] = (det(det1And2, x1LessX2, det3And4, x3LessX4) / det1Less2And3Less4);
-        result[1] = (det(det1And2, y1LessY2, det3And4, y3LessY4) / det1Less2And3Less4);
-        return result;
-     }
-     protected static double det(double a, double b, double c, double d) {
-        return a * d - b * c;
-     }
 }
