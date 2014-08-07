@@ -184,7 +184,7 @@ public class ViewList implements IView {
 
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
-            min = String.valueOf(node.getMinimumInformationLoss().getValue()) +
+            min = node.getMinimumInformationLoss().toString() +
                   " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
@@ -193,7 +193,7 @@ public class ViewList implements IView {
 
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
-            max = String.valueOf(node.getMaximumInformationLoss().getValue()) +
+            max = node.getMaximumInformationLoss().toString() +
                   " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
