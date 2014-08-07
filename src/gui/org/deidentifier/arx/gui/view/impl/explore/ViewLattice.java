@@ -400,7 +400,7 @@ public class ViewLattice implements IView {
         // Prepare
         Color color = null;
         Set<ARXNode> done = new HashSet<ARXNode>();
-        SWTLineDrawer drawer = new SWTLineDrawer(g, screen);
+        int[] clip = new int[4];
 
         // Set style
         g.setLineWidth(STROKE_WIDTH_CONNECTION);
@@ -429,8 +429,12 @@ public class ViewLattice implements IView {
                        Bounds center2 = (Bounds) n.getAttributes().get(ATTRIBUTE_BOUNDS);
                        
                        // Draw
-                       drawer.drawLine((int)center1.centerX, (int)center1.centerY,
-                                       (int)center2.centerX, (int)center2.centerY);
+                       if (liangBarsky(0, screen.x, 0, screen.y, 
+                                       center1.centerX, center1.centerY,
+                                       center2.centerX, center2.centerY,
+                                       clip)) {
+                           g.drawLine(clip[0], clip[1], clip[2], clip[3]);
+                       }
                     }
                 }
             }
@@ -665,6 +669,57 @@ public class ViewLattice implements IView {
         b.setLength(b.length() - 1);
         return b.toString();
     }
+    
+
+    /**
+     * Liang-Barsky line clipping function. Adapted from Daniel White
+     * @see http://www.skytopia.com/project/articles/compsci/clipping.html
+     * @param edgeLeft
+     * @param edgeRight
+     * @param edgeTop
+     * @param edgeBottom
+     * @param x0src
+     * @param y0src
+     * @param x1src
+     * @param y1src
+     * @param clip
+     * @return
+     */
+     private boolean liangBarsky (double edgeLeft, double edgeRight, double edgeTop, double edgeBottom,
+                       double x0src, double y0src, double x1src, double y1src, 
+                       int[] clip) {
+    
+         // Init
+         double t0 = 0.0;    
+         double t1 = 1.0;
+         double xdelta = x1src-x0src;
+         double ydelta = y1src-y0src;
+         double p = 0, q = 0,r = 0;
+    
+         for(int edge=0; edge<4; edge++) {   // Traverse through left, right, bottom, top edges.
+             if (edge==0) {  p = -xdelta;    q = -(edgeLeft-x0src);  }
+             if (edge==1) {  p = xdelta;     q =  (edgeRight-x0src); }
+             if (edge==2) {  p = -ydelta;    q = -(edgeTop-y0src);}
+             if (edge==3) {  p = ydelta;     q =  (edgeBottom-y0src);   }   
+             r = q/p;
+             if(p==0 && q<0) return false;   // Don't draw line at all. (parallel line outside)
+    
+             if(p<0) {
+                 if(r>t1) return false;         // Don't draw line at all.
+                 else if(r>t0) t0=r;            // Line is clipped!
+             } else if(p>0) {
+                 if(r<t0) return false;      // Don't draw line at all.
+                 else if(r<t1) t1=r;         // Line is clipped!
+             }
+         }
+    
+         // Clip
+         clip[0] = (int)(x0src + t0*xdelta);
+         clip[1] = (int)(y0src + t0*ydelta);
+         clip[2] = (int)(x0src + t1*xdelta);
+         clip[3] = (int)(y0src + t1*ydelta);
+         return true;
+     }
 
     /**
      * Initializes the data structures for displaying a new lattice
