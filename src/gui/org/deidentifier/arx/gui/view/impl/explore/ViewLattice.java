@@ -267,7 +267,10 @@ public class ViewLattice implements IView {
         this.selectedNode = null;
         for (ARXNode node : lattice) {
             Path path = (Path)node.getAttributes().get(ATTRIBUTE_PATH);
-            if (path!=null) path.dispose();
+            if (path!=null) {
+                node.getAttributes().put(ATTRIBUTE_PATH, null);
+                path.dispose();
+            }
         }
         this.lattice.clear();
         this.latticeWidth = 0;
@@ -705,7 +708,10 @@ public class ViewLattice implements IView {
         // Cleanup
         for (ARXNode node : this.lattice) {
             Path path = (Path)node.getAttributes().get(ATTRIBUTE_PATH);
-            if (path!=null) path.dispose();
+            if (path!=null) {
+                path.dispose();
+                node.getAttributes().put(ATTRIBUTE_PATH, null);
+            }
         }
         this.lattice.clear();
         
