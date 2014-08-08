@@ -28,6 +28,7 @@ import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
+import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * This class implements the FLASH algorithm
@@ -146,7 +147,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
             // Remove head and process
             Node head = queue.poll();
-            if (!binaryPhaseConfiguration.triggerSkip.appliesTo(head)) {
+            if (!skip(binaryPhaseConfiguration.triggerSkip, head)) {
 
                 // First phase
                 List<Node> path = findPath(head, binaryPhaseConfiguration.triggerSkip);
@@ -212,7 +213,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             final Node node = path.get(mid);
 
             // Skip
-            if (!triggerSkip.appliesTo(node)) {
+            if (!skip(triggerSkip, node)) {
 
                 // Check and tag
                 checkAndTag(node, binaryPhaseConfiguration);
@@ -220,7 +221,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 // Add nodes to queue
                 if (!node.hasProperty(binaryPhaseConfiguration.anonymityProperty)) {
                     for (final Node up : node.getSuccessors()) {
-                        if (!triggerSkip.appliesTo(up)) {
+                        if (!skip(triggerSkip, up)) {
                             queue.add(up);
                         }
                     }
@@ -253,7 +254,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             found = false;
             this.sortSuccessors(current);
             for (final Node candidate : current.getSuccessors()) {
-                if (!triggerSkip.appliesTo(candidate)) {
+                if (!skip(triggerSkip, candidate)) {
                     current = candidate;
                     path.add(candidate);
                     found = true;
@@ -280,7 +281,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         List<Node> result = new ArrayList<Node>();
         Node[] nlevel = lattice.getLevels()[level];
         for (Node n : nlevel) {
-            if (!triggerSkip.appliesTo(n)) {
+            if (!skip(triggerSkip, n)) {
                 result.add(n);
             }
         }
@@ -301,7 +302,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         lattice.setTagTrigger(linearPhaseConfiguration.triggerTagEvent);
         
         // Skip this node
-        if (!linearPhaseConfiguration.triggerSkip.appliesTo(start)) {
+        if (!skip(linearPhaseConfiguration.triggerSkip, start)) {
             
             // Sort successors
             this.sortSuccessors(start);
@@ -311,7 +312,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             
             // DFS
             for (final Node child : start.getSuccessors()) {
-                if (!linearPhaseConfiguration.triggerSkip.appliesTo(child)) {
+                if (!skip(linearPhaseConfiguration.triggerSkip, child)) {
                     linearSearch(child);
                 }
             }
@@ -336,6 +337,27 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         if (!sorted[node.id]) {
             this.sort(node.getSuccessors());
             sorted[node.id] = true;
+        }
+    }
+    
+    /**
+     * Returns whether a node should be skipped
+     * @param trigger
+     * @param node
+     * @return
+     */
+    private boolean skip(NodeAction trigger, Node node){
+        
+        // If the trigger applies, skip
+        if (trigger.appliesTo(node)) return true;
+        
+        // Check, if we can prune based on a monotonic sub-metric
+        if (getGlobalOptimum() != null && 
+            node.getData() != null && 
+            (node.getData() instanceof InformationLoss<?>)) {
+            return getGlobalOptimum().getInformationLoss().compareTo((InformationLoss<?>)node.getData()) <= 0;
+        } else {
+            return false;
         }
     }
 }
