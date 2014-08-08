@@ -175,6 +175,12 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public abstract InformationLoss<?> createMinInformationLoss();
 
     /**
+     * Returns a monotonic sub-metric, if any, null otherwise.
+     * @return
+     */
+    public abstract Metric<T> createMonotonicSubMetric();
+    
+    /**
      * Evaluates the metric for the given node
      * 
      * @param node
@@ -185,6 +191,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public final T evaluate(final Node node, final IHashGroupify groupify) {
         return this.evaluateInternal(node, groupify);
+    }
+
+    /**
+     * Returns the name of metric
+     * @return
+     */
+    public String getName() {
+        return this.toString();
     }
 
     /**
@@ -204,7 +218,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * 
      * @return
      */
-    public boolean isIndependent() {
+    public final boolean isIndependent() {
         return independent;
     }
 
@@ -217,6 +231,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return monotonic;
     }
 
+    /**
+     * Returns the name of metric
+     * @return
+     */
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
+    
     /**
      * Evaluates the metric for the given node
      * 
@@ -235,20 +257,4 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param hierarchies
      */
     protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
-    
-    /**
-     * Returns the name of metric
-     * @return
-     */
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
-
-    /**
-     * Returns the name of metric
-     * @return
-     */
-    public String getName() {
-        return this.toString();
-    }
 }

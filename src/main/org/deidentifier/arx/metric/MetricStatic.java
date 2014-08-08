@@ -56,6 +56,26 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
     
     @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        return new InformationLossDefault(Double.MAX_VALUE);
+    }
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        return new InformationLossDefault(Double.MIN_VALUE);
+    }
+
+    @Override
+    public Metric<InformationLossDefault> createMonotonicSubMetric() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Static";
+    }
+
+    @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
@@ -99,20 +119,5 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
                 infoloss[i][j] = basicInfoloss.get(j) * weight;
             }
         }
-    }
-
-    @Override
-    public InformationLoss<?> createMaxInformationLoss() {
-        return new InformationLossDefault(Double.MAX_VALUE);
-    }
-
-    @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        return new InformationLossDefault(Double.MIN_VALUE);
-    }
-
-    @Override
-    public String toString() {
-        return "Static";
     }
 }

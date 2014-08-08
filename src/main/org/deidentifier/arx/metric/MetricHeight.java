@@ -39,12 +39,17 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-        return new InformationLossDefault(node.getLevel());
+    public Metric<InformationLossDefault> createMonotonicSubMetric() {
+        return null;
     }
 
     @Override
     public String toString() {
         return "Height";
+    }
+
+    @Override
+    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+        return new InformationLossDefault(node.getLevel());
     }
 }

@@ -80,6 +80,15 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
+    public Metric<InformationLossDefault> createMonotonicSubMetric() {
+        return null;
+    }
+    @Override
+    public String toString() {
+        return "Non-Uniform Entropy";
+    }
+
+    @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Init
@@ -109,6 +118,7 @@ public class MetricEntropy extends MetricDefault {
         }
         return new InformationLossDefault(-result);
     }
+
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -171,10 +181,5 @@ public class MetricEntropy extends MetricDefault {
             cache[i] = new double[ahierarchies[i].getArray()[0].length];
             Arrays.fill(cache[i], NA);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Non-Uniform Entropy";
     }
 }

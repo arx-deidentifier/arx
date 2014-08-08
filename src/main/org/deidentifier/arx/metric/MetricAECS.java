@@ -39,6 +39,16 @@ public class MetricAECS extends MetricDefault {
     }
 
     @Override
+    public Metric<InformationLossDefault> createMonotonicSubMetric() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Average Equivalence Class Size";
+    }
+
+    @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Is the transformation anonymous
@@ -65,10 +75,5 @@ public class MetricAECS extends MetricDefault {
         
         // Compute AECS
         return new InformationLossDefault((double)tuples / (double)groups);
-    }
-
-    @Override
-    public String toString() {
-        return "Average Equivalence Class Size";
     }
 }

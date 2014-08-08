@@ -95,14 +95,12 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         }
     }
 
-    /**
-     * Returns the factor used weight generalized values
-     * @return
-     */
-    public double getGeneralizationWeight() {
-        return gWeight;
+    @Override
+    public Metric<InformationLossRCE> createMonotonicSubMetric() {
+        // TODO: Implement
+        return null;
     }
-    
+
     /**
      * Returns the factor weighting generalization and suppression
      * 
@@ -118,11 +116,29 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     }
     
     /**
+     * Returns the factor used weight generalized values
+     * @return
+     */
+    public double getGeneralizationWeight() {
+        return gWeight;
+    }
+    
+    @Override
+    public String getName() {
+        return "Normalized Domain Share";
+    }
+
+    /**
      * Returns the factor used to weight suppressed values
      * @return
      */
     public double getSuppressionWeight() {
         return sWeight;
+    }
+
+    @Override
+    public String toString() {
+        return "Normalized Domain Share ("+gsWeight+"/"+gWeight+"/"+sWeight+")";
     }
 
     /**
@@ -233,7 +249,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         // Return infoloss
         return new InformationLossRCE(scores, weights);
     }
-
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -342,15 +358,5 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         Arrays.fill(min, 0d);
         this.max = new double[this.domainSizes.length];
         Arrays.fill(max, 1d);
-    }
-
-    @Override
-    public String toString() {
-        return "Normalized Domain Share ("+gsWeight+"/"+gWeight+"/"+sWeight+")";
-    }
-    
-    @Override
-    public String getName() {
-        return "Normalized Domain Share";
     }
 }

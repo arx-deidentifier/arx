@@ -45,6 +45,26 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        return new InformationLossDefault(Double.MAX_VALUE);
+    }
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        return new InformationLossDefault(Double.MIN_VALUE);
+    }
+
+    @Override
+    public Metric<InformationLossDefault> createMonotonicSubMetric() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Precision";
+    }
+
+    @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
@@ -70,20 +90,5 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         for (int j = 0; j < maxLevels.length; j++) {
             maxLevels[j] = hierarchies[j].getArray()[0].length;
         }
-    }
-
-    @Override
-    public InformationLoss<?> createMaxInformationLoss() {
-        return new InformationLossDefault(Double.MAX_VALUE);
-    }
-
-    @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        return new InformationLossDefault(Double.MIN_VALUE);
-    }
-
-    @Override
-    public String toString() {
-        return "Precision";
     }
 }

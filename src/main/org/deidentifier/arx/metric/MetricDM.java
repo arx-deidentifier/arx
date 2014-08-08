@@ -47,6 +47,16 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
+    public Metric<InformationLossDefault> createMonotonicSubMetric() {
+        // TODO: Maybe, DM* is a monotonic sub-metric?
+        return null;
+    }
+    @Override
+    public String toString() {
+        return "Non-Monotonic Discernability";
+    }
+
+    @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         
         final boolean anonymous = g.isAnonymous();
@@ -63,6 +73,7 @@ public class MetricDM extends MetricDefault {
         }
         return new InformationLossDefault(value);
     }
+
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -78,10 +89,5 @@ public class MetricDM extends MetricDefault {
         } else {
             rowCount = input.getDataLength();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Non-Monotonic Discernability";
     }
 }
