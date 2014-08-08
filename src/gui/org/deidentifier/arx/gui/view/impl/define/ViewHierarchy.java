@@ -452,7 +452,7 @@ public class ViewHierarchy implements IView {
         int index = table.indexOf(targetRow);
         if (index >= (table.getItemCount() - 1)) { return; }
 
-        table.setRedraw(false);
+        base.setRedraw(false);
         TableItem o1 = table.getItems()[index];
         TableItem o2 = table.getItems()[index + 1];
         
@@ -491,7 +491,7 @@ public class ViewHierarchy implements IView {
         final int index = table.indexOf(targetRow);
         if (index <= 0) { return; }
 
-        table.setRedraw(false);
+        base.setRedraw(false);
         final TableItem o1 = table.getItems()[index - 1];
         final TableItem o2 = table.getItems()[index];
 
