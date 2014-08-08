@@ -155,11 +155,7 @@ public class StateMachine {
     }
 
     /**
-     * Is node1 a predecessor of or equal to node2 ?
-     * 
-     * @param currentNode
-     *            the current node
-     * @return true, if is possible rollup
+     * Is node2 a predecessor of or equal to node1?
      */
     private boolean isPredecessor(final Node node1, final Node node2) {
         for (int i = 0; i < node2.getTransformation().length; i++) {

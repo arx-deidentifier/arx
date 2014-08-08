@@ -164,7 +164,7 @@ public class MRUCache<T> {
      * 
      * @return the first
      */
-    public MRUCacheEntry<T> getFirst() {
+    public MRUCacheEntry<T> getHead() {
         return first;
     }
 

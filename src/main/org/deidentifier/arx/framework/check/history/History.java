@@ -182,7 +182,7 @@ public class History {
         Node rNode = null;
 
         // Iterate over nodes with snapshots
-        MRUCacheEntry<Node> entry = cache.getFirst();
+        MRUCacheEntry<Node> entry = cache.getHead();
         while (entry != null) {
             final Node cNode = entry.data;
 
