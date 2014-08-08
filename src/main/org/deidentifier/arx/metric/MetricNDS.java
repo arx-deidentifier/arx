@@ -326,7 +326,6 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
                 
             // Transform
             for (int level=0; level < hierarchy.getHeight(); level++){
-                
                 double[] levelFrequency = frequency[level];
                 Map<String, Double> map = maps[level];
                 for (int valIdx = 0; valIdx < array.length; valIdx++){
