@@ -127,6 +127,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         
         // Remove the associated result information to leave the lattice in a consistent state
         lattice.getBottom().setData(null);
+        
+        // Free cache
+        checker.getMetric().freeCache();
     }
     
     /**
