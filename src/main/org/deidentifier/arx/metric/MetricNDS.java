@@ -96,7 +96,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     }
 
     @Override
-    public Metric<InformationLossRCE> createMonotonicSubMetric() {
+    public InformationLossRCE getLowerBound(final Node node) {
         // TODO: Implement
         return null;
     }

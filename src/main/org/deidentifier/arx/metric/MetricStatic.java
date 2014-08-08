@@ -66,11 +66,6 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "Static";
     }

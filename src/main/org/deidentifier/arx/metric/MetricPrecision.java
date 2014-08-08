@@ -34,7 +34,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
 
-    /** SSUID*/
+    /** SVUID*/
     private static final long serialVersionUID = -7612335677779934529L;
 
     /** The maximum levels */
@@ -52,11 +52,6 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(Double.MIN_VALUE);
-    }
-
-    @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return null;
     }
 
     @Override

@@ -39,11 +39,6 @@ public class MetricAECS extends MetricDefault {
     }
 
     @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "Average Equivalence Class Size";
     }

@@ -22,6 +22,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * This class provides an abstract skeleton for the implementation of metrics.
@@ -45,6 +46,11 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(Double.MIN_VALUE);
+    }
+    
+    @Override
+    public InformationLossDefault getLowerBound(final Node node) {
+        return null;
     }
 
     @Override

@@ -44,9 +44,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricNMEntropy extends MetricEntropy {
 
-    /**
-     * 
-     */
+    /** SVUID*/
     private static final long serialVersionUID = 5789738609326541247L;
 
     protected MetricNMEntropy() {
@@ -54,9 +52,10 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return Metric.createEntropyMetric();
+    public InformationLossDefault getLowerBound(final Node node) {
+        return super.evaluateInternal(node, null);
     }
+    
     @Override
     public String toString() {
         return "Non-Monotonic Non-Uniform Entropy";

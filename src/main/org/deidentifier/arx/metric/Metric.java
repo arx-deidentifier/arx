@@ -175,10 +175,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public abstract InformationLoss<?> createMinInformationLoss();
 
     /**
-     * Returns a monotonic sub-metric, if any, null otherwise.
+     * Returns a lower bound for the information loss for the given node. 
+     * This can be used to expose the results of monotonic sub-metrics,
+     * which can significantly speed-up the anonymization process. If no
+     * such criterion exists, simply return <code>null</code>.
+     * 
+     * @param node
      * @return
      */
-    public abstract Metric<T> createMonotonicSubMetric();
+    public abstract T getLowerBound(final Node node);
     
     /**
      * Evaluates the metric for the given node

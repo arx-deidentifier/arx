@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
+import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * This class provides an abstract skeleton for the implementation of weighted metrics.
@@ -46,6 +47,11 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
      */
     public MetricWeighted(final boolean monotonic, final boolean independent) {
         super(monotonic, independent);
+    }
+    
+    @Override
+    public T getLowerBound(final Node node) {
+        return null;
     }
 
     @Override

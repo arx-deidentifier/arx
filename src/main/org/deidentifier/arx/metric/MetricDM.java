@@ -36,9 +36,7 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class MetricDM extends MetricDefault {
-    /**
-     * 
-     */
+    /** SVUID*/
     private static final long serialVersionUID = 4886262855672670521L;
     private int               rowCount;
 
@@ -46,11 +44,6 @@ public class MetricDM extends MetricDefault {
         super(false, false);
     }
 
-    @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        // TODO: Maybe, DM* is a monotonic sub-metric?
-        return null;
-    }
     @Override
     public String toString() {
         return "Non-Monotonic Discernability";

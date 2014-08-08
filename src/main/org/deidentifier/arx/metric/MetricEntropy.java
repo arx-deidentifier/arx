@@ -46,7 +46,7 @@ public class MetricEntropy extends MetricDefault {
     /** Value unknown */
     private static final double NA               = Double.POSITIVE_INFINITY;
 
-    /** */
+    /** SVUID */
     private static final long   serialVersionUID = -8618697919821588987L;
 
     /** Log 2 */
@@ -79,10 +79,6 @@ public class MetricEntropy extends MetricDefault {
         super(monotonic, independent);
     }
 
-    @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return null;
-    }
     @Override
     public String toString() {
         return "Non-Uniform Entropy";

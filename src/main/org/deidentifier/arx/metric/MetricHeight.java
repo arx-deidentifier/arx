@@ -29,18 +29,11 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricHeight extends MetricDefault {
 
-    /**
-     * 
-     */
+    /** SVUID */
     private static final long serialVersionUID = 5911337622032778562L;
 
     protected MetricHeight() {
         super(true, true);
-    }
-
-    @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return null;
     }
 
     @Override

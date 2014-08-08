@@ -31,18 +31,11 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricDMStar extends MetricDefault {
 
-    /**
-     * 
-     */
+    /** SVUID */
     private static final long serialVersionUID = -3324788439890959974L;
 
     protected MetricDMStar() {
         super(true, false);
-    }
-
-    @Override
-    public Metric<InformationLossDefault> createMonotonicSubMetric() {
-        return null;
     }
 
     @Override
