@@ -19,7 +19,10 @@
 package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
@@ -75,16 +78,25 @@ public class FLASHAlgorithm {
             monotonicityMetric = Monotonicity.NONE;
         }
         
+        // Determine type of criteria to be enforced
+        boolean containsTCloseness = config.containsCriterion(TCloseness.class);
+        boolean containsLDiversity = config.containsCriterion(LDiversity.class);
+        boolean containsDPresence = false; 
+        for (DPresence d : config.getCriteria(DPresence.class)) {
+            containsDPresence |= !(d instanceof Inclusion);
+        }
+        
         // Determine monotonicity of criteria
         Monotonicity monotonicityCriteria;
         if (config.getMaxOutliers() == 0d || config.isPracticalMonotonicity()) {
             monotonicityCriteria = Monotonicity.FULL;
         } else {
             if (config.getMinimalGroupSize() != Integer.MAX_VALUE) {
-                if (config.getCriteria().size() == 1 && config.containsCriterion(KAnonymity.class)) {
-                    monotonicityCriteria = Monotonicity.FULL;
-                } else {
+                if (containsTCloseness || containsLDiversity || containsDPresence) {
                     monotonicityCriteria = Monotonicity.PARTIAL;
+                } else {
+                    monotonicityCriteria = Monotonicity.FULL;
+                    
                 }
             } else {
                 monotonicityCriteria = Monotonicity.NONE;
