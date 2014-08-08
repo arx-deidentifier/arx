@@ -166,7 +166,6 @@ public class StateMachine {
             if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
         }
         return true;
-
     }
 
     /**
