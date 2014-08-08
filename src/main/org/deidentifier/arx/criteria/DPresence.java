@@ -61,7 +61,7 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
     
     /**
-     * For building the enclosure criterion
+     * For building the inclusion criterion
      * @param subset
      */
     protected DPresence(DataSubset subset) {

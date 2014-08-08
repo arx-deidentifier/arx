@@ -19,10 +19,7 @@
 package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.Inclusion;
-import org.deidentifier.arx.criteria.LDiversity;
-import org.deidentifier.arx.criteria.TCloseness;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
@@ -78,30 +75,19 @@ public class FLASHAlgorithm {
             monotonicityMetric = Monotonicity.NONE;
         }
         
-        // Determine type of criteria to be enforced
-        boolean containsTCloseness = config.containsCriterion(TCloseness.class);
-        boolean containsLDiversity = config.containsCriterion(LDiversity.class);
-        boolean containsDPresence = false; 
-        for (DPresence d : config.getCriteria(DPresence.class)) {
-            containsDPresence |= !(d instanceof Inclusion);
-        }
-        
-        // Determine monotonicity of criteria
-        Monotonicity monotonicityCriteria;
-        if (config.getMaxOutliers() == 0d || config.isPracticalMonotonicity()) {
-            monotonicityCriteria = Monotonicity.FULL;
-        } else {
-            if (config.getMinimalGroupSize() != Integer.MAX_VALUE) {
-                if (containsTCloseness || containsLDiversity || containsDPresence) {
+        // First, determine whether the overall set of criteria is monotonic
+        Monotonicity monotonicityCriteria = Monotonicity.FULL;
+        for (PrivacyCriterion criterion : config.getCriteria()) {
+            if (!(criterion.isMonotonic() || config.getMaxOutliers() == 0d || config.isPracticalMonotonicity())) {
+                if (config.getMinimalGroupSize() != Integer.MAX_VALUE) {
                     monotonicityCriteria = Monotonicity.PARTIAL;
                 } else {
-                    monotonicityCriteria = Monotonicity.FULL;
-                    
+                    monotonicityCriteria = Monotonicity.NONE;
                 }
-            } else {
-                monotonicityCriteria = Monotonicity.NONE;
+                break;
             }
         }
+        
         // *********************************************
         // PREPARE PRUNING BASED ON MONOTONIC SUB-METRIC
         // *********************************************
