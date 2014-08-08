@@ -18,8 +18,11 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Map.Entry;
+
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.check.history.MRUCache;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
@@ -37,6 +40,44 @@ public class MetricAECS extends MetricDefault {
     protected MetricAECS() {
         super(false, false);
     }
+    
+    /** A MRU cache for estimating lower bounds*/
+    private MRUCache<Node> cache = new MRUCache<Node>(200);
+    
+    @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        
+        while (cache.size()>200) {
+            getCache().remove(cache.removeHead());
+        }
+
+        InformationLossDefault maximum = null;
+        for (Entry<Node, InformationLossDefault> entry : getCache().entrySet()) {
+            if (isPredecessor(node, entry.getKey())){
+                if (maximum == null || maximum.compareTo(entry.getValue())<0) {
+                    maximum = entry.getValue();
+                    cache.touch(entry.getKey());
+                }
+            }
+        }
+        return maximum;
+    }
+    
+    /**
+     * Is node2 a predecessor of or equal to node1?
+     */
+    private boolean isPredecessor(final Node node1, final Node node2) {
+        for (int i = 0; i < node2.getTransformation().length; i++) {
+            if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
+        }
+        return true;
+    }
+    
+    @Override
+    public void freeCache() {
+        this.cache.clear();
+        super.freeCache();
+    }
 
     @Override
     public String toString() {
@@ -48,7 +89,7 @@ public class MetricAECS extends MetricDefault {
 
         // Is the transformation anonymous
         boolean anonymous = g.isAnonymous();
-        // The total number of groups
+        // The total number of groups with suppression
         int groups = 0;
         // The total number of tuples
         int tuples = 0;
@@ -67,6 +108,10 @@ public class MetricAECS extends MetricDefault {
         
         // If there are suppressed tuples, they form one additional group
         groups += suppressed ? 1 : 0;
+        
+        // Fill the cache
+        cache.append(node);
+        getCache().put(node, new InformationLossDefault((double)tuples / (double)g.size()));
         
         // Compute AECS
         return new InformationLossDefault((double)tuples / (double)groups);
