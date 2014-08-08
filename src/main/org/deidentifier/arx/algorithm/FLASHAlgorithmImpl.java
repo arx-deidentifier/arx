@@ -349,15 +349,29 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private boolean skip(NodeAction trigger, Node node){
         
         // If the trigger applies, skip
-        if (trigger.appliesTo(node)) return true;
+        if (trigger.appliesTo(node)) {
+            return true;
+        }
         
         // Check, if we can prune based on a monotonic sub-metric
-        if (getGlobalOptimum() != null && 
-            node.getData() != null && 
-            (node.getData() instanceof InformationLoss<?>)) {
-            return getGlobalOptimum().getInformationLoss().compareTo((InformationLoss<?>)node.getData()) <= 0;
-        } else {
-            return false;
+        if (getGlobalOptimum() != null) {
+            
+            // We skip, if we already know that this node has insufficient utility
+            if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
+                return true;
+            }
+            
+            // Check whether this node has insufficient utility based on a lower bound
+            InformationLoss<?> lowerBound = checker.getMetric().getLowerBound(node);
+            if (lowerBound != null) {
+                if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
+                    lattice.setProperty(node, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                    return true;
+                }
+            }
         }
+        
+        // We need to process this node
+        return false;
     }
 }

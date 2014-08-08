@@ -19,6 +19,7 @@
 package org.deidentifier.arx.metric;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +38,6 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @param <T>
  */
 public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
-
-    private static final long serialVersionUID = -2657745103125430229L;
 
     /**
      * Creates an average equivalence class size
@@ -95,7 +94,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<?> createNDSMetric() {
         return new MetricNDS();
     }
-    
 
     /**
      * Creates an NDS metric with factors for weighting generalization and suppression.
@@ -112,6 +110,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return new MetricNDS(gsFactor);
     }
     
+
     /**
      * Creates an non-monotonic entropy metric
      * 
@@ -120,7 +119,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<InformationLossDefault> createNMEntropyMetric() {
         return new MetricNMEntropy();
     }
-
+    
     /**
      * Creates a precision metric. 
      * This metric will respect attribute weights defined in the configuration.
@@ -143,12 +142,17 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return new MetricStatic(informationLoss);
     }
 
+    private static final long serialVersionUID = -2657745103125430229L;
+
     /** Is the metric independent? */
-    private boolean                      independent            = false;
+    private boolean           independent      = false;
 
     /** Is the metric monotonic? */
-    private boolean                   monotonic              = false;
+    private boolean           monotonic        = false;
 
+    /** A cache */
+    private Map<Node, T>      cache            = new HashMap<Node, T>();
+    
     /**
      * Create a new metric
      * 
@@ -160,31 +164,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         this.independent = independent;
     }
 
-    /**
-     * Returns an instance of the maximal value
-     * 
-     * @return
-     */
-    public abstract InformationLoss<?> createMaxInformationLoss();
-
-    /**
-     * Returns an instance of the minimal value
-     * 
-     * @return
-     */
-    public abstract InformationLoss<?> createMinInformationLoss();
-
-    /**
-     * Returns a lower bound for the information loss for the given node. 
-     * This can be used to expose the results of monotonic sub-metrics,
-     * which can significantly speed-up the anonymization process. If no
-     * such criterion exists, simply return <code>null</code>.
-     * 
-     * @param node
-     * @return
-     */
-    public abstract T getLowerBound(final Node node);
-    
     /**
      * Evaluates the metric for the given node
      * 
@@ -199,13 +178,45 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * This method is called when the metric may clear its cache.
+     */
+    public void freeCache() {
+        cache.clear();
+    }
+
+    /**
+     * Returns a lower bound for the information loss for the given node. 
+     * This can be used to expose the results of monotonic sub-metrics,
+     * which can significantly speed-up the anonymization process. If no
+     * such criterion exists, simply return <code>null</code>.
+     * 
+     * @param node
+     * @return
+     */
+    public abstract T getLowerBound(final Node node);
+    
+    /**
+     * Returns an instance of the maximal value
+     * 
+     * @return
+     */
+    public abstract InformationLoss<?> createMaxInformationLoss();
+
+    /**
+     * Returns an instance of the minimal value
+     * 
+     * @return
+     */
+    public abstract InformationLoss<?> createMinInformationLoss();
+    
+    /**
      * Returns the name of metric
      * @return
      */
     public String getName() {
         return this.toString();
     }
-
+    
     /**
      * Initializes the metric.
      * @param definition 
@@ -262,4 +273,13 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param hierarchies
      */
     protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
+    
+    /**
+     * Returns a cache that may be used for arbitrary things
+     * @param node
+     * @return
+     */
+    protected Map<Node, T> getCache() {
+        return this.cache;
+    }
 }

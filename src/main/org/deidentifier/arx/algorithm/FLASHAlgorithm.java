@@ -88,17 +88,6 @@ public class FLASHAlgorithm {
             }
         }
         
-        // *********************************************
-        // PREPARE PRUNING BASED ON MONOTONIC SUB-METRIC
-        // *********************************************
-        if (monotonicityMetric == Monotonicity.NONE) {
-            for (Node[] level : lattice.getLevels()) {
-                for (Node node : level) {
-                    node.setData(metric.getLowerBound(node));
-                }
-            }
-        }
-        
         // ******************************
         // CASE 1
         // ******************************

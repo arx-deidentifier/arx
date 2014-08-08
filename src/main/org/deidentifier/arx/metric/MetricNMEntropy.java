@@ -46,14 +46,22 @@ public class MetricNMEntropy extends MetricEntropy {
 
     /** SVUID*/
     private static final long serialVersionUID = 5789738609326541247L;
-
+    
+    /**
+     * Creates a new instance
+     */
     protected MetricNMEntropy() {
         super(false, false);
     }
 
     @Override
     public InformationLossDefault getLowerBound(final Node node) {
-        return super.evaluateInternal(node, null);
+        InformationLossDefault result = getCache().get(node);
+        if (result == null) {
+            result = super.evaluateInternal(node, null);
+            getCache().put(node, result);
+        }
+        return result;
     }
     
     @Override
@@ -66,7 +74,7 @@ public class MetricNMEntropy extends MetricEntropy {
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
-        final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
+        final InformationLossDefault originalInfoLossDefault = getLowerBound(node);
         
         // Ignore outliers if node is not anonymous
         if (!g.isAnonymous()) return originalInfoLossDefault;
