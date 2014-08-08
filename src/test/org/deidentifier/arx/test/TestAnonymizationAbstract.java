@@ -238,18 +238,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.optimalTransformation) + " is: " + Arrays.toString(result.getGlobalOptimum().getTransformation()), Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation));
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " + result.getGlobalOptimum().getMinimumInformationLoss().getValue(), testCase.optimalInformationLoss, result.getGlobalOptimum().getMinimumInformationLoss().toString());
         }
-
-        // check if all anonymous nodes are checked if outliers are present and the metric is non-monotonic and no-practical monotonicity is assumed
-        if (!testCase.practical && testCase.config.getAbsoluteMaxOutliers() != 0 && !testCase.config.getMetric().isMonotonic()) {
-            for (ARXNode[] level : result.getLattice().getLevels()) {
-                for (ARXNode arxNode : level) {
-                    if (arxNode.isAnonymous() == Anonymity.ANONYMOUS) {
-                        assertTrue(arxNode.isChecked());
-                    }
-                }
-            }
-        }
-
+        
         if (testCase.statistics != null) {
             
             // Collect statistics
