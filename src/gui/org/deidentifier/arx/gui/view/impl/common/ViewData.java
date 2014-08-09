@@ -164,54 +164,13 @@ public abstract class ViewData implements IView {
     }
     
     /**
-     * Cell selection event
-     * @param arg1
-     */
-    protected void actionCellSelected(CellSelectionEvent arg1){
-        if (model != null) {
-            int column = arg1.getColumnPosition() - 1;
-            if (column>=0) actionColumnSelected(column);
-        }
-    }
-    
-    /**
-     * Column selection event
-     * @param arg1
-     */
-    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
-        if (model != null) {
-            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
-            if (column>=0) actionColumnSelected(column);
-        }
-    }
-    
-    /**
-     * Selects the given column
-     * @param index
-     */
-    private void actionColumnSelected(int index){
-    	DataHandle handle = getHandle();
-        if (handle != null){
-            final String attr = handle.getAttributeName(index);
-            model.setSelectedAttribute(attr);
-            table.setSelectedAttribute(attr);
-            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
-        }
-    }
-
-    /**
-     * Called when the sort button is pressed
-     */
-    protected abstract void actionSort();
-
-    /**
      * Add a scrollbar listener to this view
      * @param listener
      */
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
-
+    
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -219,20 +178,10 @@ public abstract class ViewData implements IView {
         IMAGE_SENSITIVE.dispose();
         IMAGE_QUASI_IDENTIFYING.dispose();
         IMAGE_IDENTIFYING.dispose();
+        IMAGE_ASCENDING.dispose();
+        IMAGE_DESCENDING.dispose();
         table.dispose();
     }
-
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataDefinition getDefinition();
-    
-    /**
-     * Returns the data definition
-     * @return
-     */
-    protected abstract DataHandle getHandle();
     
     /**
      * Returns the NatTable viewport layer
@@ -250,15 +199,6 @@ public abstract class ViewData implements IView {
         ascendingButton.setEnabled(false);
         descendingButton.setEnabled(false);
     }
-    
-    /**
-     * Enable sorting
-     */
-    protected void enableSorting(){
-        ascendingButton.setEnabled(true);
-        descendingButton.setEnabled(true);
-    }
-    
 
     @Override
     public void update(final ModelEvent event) {
@@ -291,6 +231,68 @@ public abstract class ViewData implements IView {
         	table.setSelectedAttribute((String)event.data);
         }
     }
+
+    /**
+     * Selects the given column
+     * @param index
+     */
+    private void actionColumnSelected(int index){
+    	DataHandle handle = getHandle();
+        if (handle != null){
+            final String attr = handle.getAttributeName(index);
+            model.setSelectedAttribute(attr);
+            table.setSelectedAttribute(attr);
+            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
+        }
+    }
+
+    /**
+     * Cell selection event
+     * @param arg1
+     */
+    protected void actionCellSelected(CellSelectionEvent arg1){
+        if (model != null) {
+            int column = arg1.getColumnPosition() - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Column selection event
+     * @param arg1
+     */
+    protected void actionColumnSelected(ColumnSelectionEvent arg1) {
+        if (model != null) {
+            int column = arg1.getColumnPositionRanges().iterator().next().start - 1;
+            if (column>=0) actionColumnSelected(column);
+        }
+    }
+    
+    /**
+     * Called when the sort button is pressed
+     */
+    protected abstract void actionSort();
+
+    /**
+     * Enable sorting
+     */
+    protected void enableSorting(){
+        ascendingButton.setEnabled(true);
+        descendingButton.setEnabled(true);
+    }
+    
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataDefinition getDefinition();
+    
+
+    /**
+     * Returns the data definition
+     * @return
+     */
+    protected abstract DataHandle getHandle();
 
     /**
      * Updates the header image in the table
