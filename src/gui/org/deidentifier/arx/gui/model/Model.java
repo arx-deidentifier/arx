@@ -20,12 +20,12 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -45,7 +45,7 @@ public class Model implements Serializable {
 	private static final long serialVersionUID = -7669920657919151279L;
 
     private transient ARXAnonymizer               anonymizer                      = null;
-    private transient Set<ARXNode>                clipboard                       = new HashSet<ARXNode>();
+    private transient List<ARXNode>               clipboard                       = new ArrayList<ARXNode>();
     private boolean                               debugEnabled                    = false;
     private String                                description;
     private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
@@ -101,6 +101,34 @@ public class Model implements Serializable {
 		setModified();
 	}
 
+	public void addAllToClipboard(List<ARXNode> list) {
+        this.setModified();
+        if (this.clipboard == null) {
+            this.clipboard = new ArrayList<ARXNode>();
+        }
+        this.clipboard.addAll(list);
+    }
+	
+	public void addToClipboard(ARXNode node) {
+		if (this.clipboard == null) {
+            this.clipboard = new ArrayList<ARXNode>();
+        }
+		if (!this.clipboard.contains(node)) {
+		    setModified();
+		    clipboard.add(node);
+		}
+	}
+	
+	public void clearClipboard() {
+	    if (this.clipboard == null) {
+	        this.clipboard = new ArrayList<ARXNode>();
+	    }
+	    if (!this.clipboard.isEmpty()) {
+	        setModified();
+	    }
+		clipboard.clear();
+	}
+	
 	public ARXAnonymizer createAnonymizer() {
 	    
 		// Initialize anonymizer
@@ -118,14 +146,14 @@ public class Model implements Serializable {
         // Return the anonymizer
 		return anonymizer;
 	}
-	
-	public void createClonedConfig() {
+
+    public void createClonedConfig() {
 
         // Clone the config
         outputConfig = inputConfig.clone();
         this.setModified();
 	}
-	
+    
 	public void createConfig() {
 
 		ModelConfiguration config = getInputConfig();
@@ -203,7 +231,7 @@ public class Model implements Serializable {
             }
         }
 	}
-	
+
 	public ARXConfiguration createSubsetConfig() {
 
 		// Create a temporary config
@@ -217,20 +245,23 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-
-    public ARXAnonymizer getAnonymizer() {
+    
+	public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
-    
+
 	public String[] getAttributePair() {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
 
-	public Set<ARXNode> getClipboard() {
-		return clipboard;
-	}
-    
+	public List<ARXNode> getClipboardEntries() {
+        if (this.clipboard == null) {
+            this.clipboard = new ArrayList<ARXNode>();
+        }
+        return new ArrayList<ARXNode>(this.clipboard);
+    }
+	
 	public String getDescription() {
 		return description;
 	}
@@ -243,7 +274,7 @@ public class Model implements Serializable {
 		// TODO: Refactor to colors[groups[row]]
 		return this.groups;
 	}
-	
+
 	/**
 	 * @return the historySize
 	 */
@@ -356,14 +387,14 @@ public class Model implements Serializable {
 	public char getSeparator() {
 		return separator;
 	}
-
+	
 	/**
 	 * @return the snapshotSizeDataset
 	 */
 	public double getSnapshotSizeDataset() {
 		return snapshotSizeDataset;
 	}
-
+	
 	public double getSnapshotSizeSnapshot() {
 		return snapshotSizeSnapshot;
 	}
@@ -371,14 +402,14 @@ public class Model implements Serializable {
 	public String getSubsetOrigin(){
         return this.subsetOrigin;
     }
-	
+
 	/**
 	 * @return the suppressionString
 	 */
 	public String getSuppressionString() {
 		return suppressionString;
 	}
-	
+
 	public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
 		return tClosenessModel;
 	}
@@ -395,7 +426,7 @@ public class Model implements Serializable {
 	    return debugEnabled;
 	}
 
-	public boolean isModified() {
+    public boolean isModified() {
 		if (inputConfig.isModified()) {
 			return true;
 		}
@@ -413,7 +444,7 @@ public class Model implements Serializable {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
 
-    /**
+	/**
      * Checks whether the lattice is too large
      * 
      * @return
@@ -439,6 +470,15 @@ public class Model implements Serializable {
 	    }
 	}
 
+	public void removeFromClipboard(ARXNode node) {
+        if (this.clipboard == null) {
+            this.clipboard = new ArrayList<ARXNode>();
+        }
+        if (this.clipboard.remove(node)){
+            setModified();
+        }
+    }
+
 	public void reset() {
 		// TODO: Need to reset more fields
 		resetCriteria();
@@ -448,13 +488,13 @@ public class Model implements Serializable {
 		result = null;
 	}
 
-	public void resetAttributePair() {
+    public void resetAttributePair() {
 		if (pair == null)
 			pair = new String[] { null, null };
 		pair[0] = null;
 		pair[1] = null;
 	}
-
+    
 	public void resetCriteria() {
 		
 		if (inputConfig==null || inputConfig.getInput()==null) return;
@@ -476,11 +516,6 @@ public class Model implements Serializable {
 	public void setAnonymizer(final ARXAnonymizer anonymizer) {
 		setModified();
 		this.anonymizer = anonymizer;
-	}
-
-	public void setClipboard(final HashSet<ARXNode> set) {
-		setModified();
-		clipboard = set;
 	}
 
 	public void setDebugEnabled(boolean value){
@@ -559,19 +594,19 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
-
+	
 	public void setPath(final String path) {
 		this.path = path;
 	}
+	
 	public void setQuery(String query){
         this.query = query;
         setModified();
     }
-	
+
 	/**
 	 * @param result
 	 *            the result to set
@@ -584,7 +619,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-	
+
 	public void setSaved() {
 		modified = false;
 	}
@@ -616,7 +651,7 @@ public class Model implements Serializable {
 		this.separator = separator;
 	}
 
-	/**
+    /**
 	 * @param snapshotSizeDataset
 	 *            the snapshotSizeDataset to set
 	 */
@@ -624,12 +659,12 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-
-	public void setSnapshotSizeSnapshot(final double snapshotSize) {
+    
+    public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-
+    
     public void setSubsetManual(){
         if (!this.subsetOrigin.endsWith("manual")) {
             this.subsetOrigin += " + manual";
@@ -648,7 +683,7 @@ public class Model implements Serializable {
 		this.suppressionString = suppressionString;
 		setModified();
 	}
-    
+
     public void setTime(final long time) {
 		this.time = time;
 	}
@@ -664,7 +699,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-    
+
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();

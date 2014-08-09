@@ -135,7 +135,7 @@ public class ViewClipboard implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 if (selectedTableItem != null) {
                     ARXNode node = (ARXNode)selectedTableItem.getData();
-                    model.getClipboard().remove(node);
+                    model.removeFromClipboard(node);
                     removeItem(selectedTableItem);
                     controller.update(new ModelEvent(ViewClipboard.this, ModelPart.CLIPBOARD, null));
                 }
@@ -268,8 +268,7 @@ public class ViewClipboard implements IView {
                 i.dispose();
             }
             items.clear();
-            final List<ARXNode> nodes = new ArrayList<ARXNode>();
-            nodes.addAll(model.getClipboard());
+            List<ARXNode> nodes = model.getClipboardEntries();
             Collections.sort(nodes, new Comparator<ARXNode>() {
                 @Override
                 public int compare(final ARXNode arg0, final ARXNode arg1) {

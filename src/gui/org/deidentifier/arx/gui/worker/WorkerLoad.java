@@ -26,7 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -150,8 +149,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return; }
 
         // Clear
-        model.setClipboard(new HashSet<ARXNode>());
-        model.getClipboard().clear();
+        model.clearClipboard();
 
         // Parse
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
@@ -165,7 +163,7 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isNode(localName)) {
                     final ARXNode node = map.get(payload.trim());
-                    model.getClipboard().add(node);
+                    model.addToClipboard(node);
                     return true;
                 } else {
                     return false;

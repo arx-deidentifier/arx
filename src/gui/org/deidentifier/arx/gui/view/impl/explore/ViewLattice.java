@@ -80,6 +80,23 @@ public class ViewLattice implements IView {
     private static class Bounds implements Serializable {
         private static final long serialVersionUID = -7472570696920782588L;
     }
+    
+    /** This class is here for serializability, only*/
+    private static class SerializablePath implements Serializable {
+        private static final long serialVersionUID = -4572722688452678425L;
+        private final transient Path path;
+        public SerializablePath(Path path){
+            this.path = path;
+        }
+        public void dispose(){
+            if (!this.path.isDisposed()) {
+                this.path.dispose();
+            }
+        }
+        public Path getPath(){
+            return this.path;
+        }
+    }
 
     /** The current drag type */
     private static enum DragType {
@@ -341,8 +358,8 @@ public class ViewLattice implements IView {
     private void clearLatticeAndDisposePaths() {
         for (List<ARXNode> level : lattice) {
             for (ARXNode node : level) {
-                Path path = (Path)node.getAttributes().get(ATTRIBUTE_PATH);
-                if (path!=null) {
+                SerializablePath path = (SerializablePath)node.getAttributes().get(ATTRIBUTE_PATH);
+                if (path!=null && path.getPath()!=null) {
                     node.getAttributes().put(ATTRIBUTE_PATH, null);
                     path.dispose();
                 }
@@ -475,12 +492,12 @@ public class ViewLattice implements IView {
                 if (bounds.intersects(new Rectangle(0, 0, screen.x, screen.y))) { 
                     
                     // Retrieve/compute text rendering data
-                    Path path = (Path) node.getAttributes().get(ATTRIBUTE_PATH);
+                    SerializablePath path = (SerializablePath) node.getAttributes().get(ATTRIBUTE_PATH);
                     Point extent = (Point) node.getAttributes().get(ATTRIBUTE_EXTENT);
-                    if (path == null) {
+                    if (path == null || path.getPath() == null) {
                         String text = (String) node.getAttributes().get(ATTRIBUTE_LABEL);
-                        path = new Path(canvas.getDisplay());
-                        path.addString(text, 0, 0, font);
+                        path = new SerializablePath(new Path(canvas.getDisplay()));
+                        path.getPath().addString(text, 0, 0, font);
                         node.getAttributes().put(ATTRIBUTE_PATH, path);
                         extent = g.textExtent(text);
                         node.getAttributes().put(ATTRIBUTE_EXTENT, extent);
@@ -535,7 +552,7 @@ public class ViewLattice implements IView {
                             
                             // Draw and reset
                             g.setBackground(COLOR_BLACK);
-                            g.fillPath(path);
+                            g.fillPath(path.getPath());
                             g.setTransform(null);
                             g.setTextAntialias(SWT.OFF);
                         }
@@ -930,7 +947,7 @@ public class ViewLattice implements IView {
         item1.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getClipboard().add(selectedNode);
+                model.addToClipboard(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.CLIPBOARD, selectedNode));
                 model.setSelectedNode(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));

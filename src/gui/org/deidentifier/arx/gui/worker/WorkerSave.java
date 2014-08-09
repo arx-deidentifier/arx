@@ -27,9 +27,9 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -291,7 +291,7 @@ public class WorkerSave extends Worker<Model> {
      * @throws IOException 
      */
     private String toXML(final Map<String, Integer> map,
-                         final Set<ARXNode> clipboard) throws IOException {
+                         final List<ARXNode> clipboard) throws IOException {
 
         XMLWriter writer = new XMLWriter();
         writer.indent(vocabulary.getClipboard()); //$NON-NLS-1$
@@ -339,12 +339,12 @@ public class WorkerSave extends Worker<Model> {
     private void writeClipboard(final Model model,
                                 final Map<String, Integer> map,
                                 final ZipOutputStream zip) throws IOException {
-        if ((model.getClipboard() == null) || model.getClipboard().isEmpty()) { return; }
+        if (model.getClipboardEntries().isEmpty()) { return; }
 
         // Write clipboard
         zip.putNextEntry(new ZipEntry("clipboard.xml")); //$NON-NLS-1$
         final Writer w = new OutputStreamWriter(zip);
-        w.write(toXML(map, model.getClipboard()));
+        w.write(toXML(map, model.getClipboardEntries()));
         w.flush();
 
     }
