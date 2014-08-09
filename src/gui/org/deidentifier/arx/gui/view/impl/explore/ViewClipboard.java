@@ -29,10 +29,12 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -53,22 +55,31 @@ import cern.colt.Arrays;
  */
 public class ViewClipboard implements IView {
 
-    /** Identifier for key in the nodes' attribute maps*/
-    private static final int        NODE_COMMENT      = 111;
-    /** Component*/
-    private final Table             table;
-    /** Component*/
-    private final List<TableColumn> columns           = new ArrayList<TableColumn>();
-    /** Component*/
-    private final Composite         root;
-    /** Component*/
-    private final Menu              menu;
-    /** Component*/
-    private TableItem               selectedTableItem = null;
+    /** Identifier for key in the nodes' attribute maps */
+    private static final int        NODE_COMMENT = 111;
+    /** Image */
+    private final Image             IMAGE_DOWN;
+    /** Image */
+    private final Image             IMAGE_UP;
+    /** Image */
+    private final Image             IMAGE_SORT;
+    /** Image */
+    private final Image             IMAGE_REMOVE;
 
-    /** Model*/
+    /** Component */
+    private final Table             table;
+    /** Component */
+    private final List<TableColumn> columns      = new ArrayList<TableColumn>();
+    /** Component */
+    private final Composite         root;
+    /** Component */
+    private final Menu              menu;
+    /** Component */
+    private TableItem               selectedItem = null;
+
+    /** Model */
     private Model                   model;
-    /** Controller*/
+    /** Controller */
     private final Controller        controller;
     
     /**
@@ -78,22 +89,49 @@ public class ViewClipboard implements IView {
      */
     public ViewClipboard(final Composite parent, final Controller controller) {
 
+        IMAGE_DOWN = controller.getResources().getImage("arrow_down.png"); //$NON-NLS-1$
+        IMAGE_UP = controller.getResources().getImage("arrow_up.png");//$NON-NLS-1$
+        IMAGE_SORT = controller.getResources().getImage("table_sort.png");//$NON-NLS-1$
+        IMAGE_REMOVE = controller.getResources().getImage("delete.png");//$NON-NLS-1$
+
         // Listen
         controller.addListener(ModelPart.CLIPBOARD, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_NODE, this);
         this.controller = controller;
 
+        ComponentTitleBar bar = new ComponentTitleBar("id-23"); //$NON-NLS-1$
+        bar.add("Remove", IMAGE_REMOVE, new Runnable(){
+            public void run() {
+                actionRemove();
+            }
+        });
+        bar.add("Move up", IMAGE_UP, new Runnable(){
+            public void run() {
+                actionUp();
+            }
+        });
+        bar.add("Move down", IMAGE_DOWN, new Runnable(){
+            public void run() {
+                actionDown();
+            }
+        });
+        bar.add("Sort by information loss", IMAGE_SORT, new Runnable(){
+            public void run() {
+                actionSort();
+            }
+        });
+
         // Create group
-        ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, 
-                                                                 Resources.getMessage("NodeClipboardView.0"), //$NON-NLS-1$ 
-                                                                 "id-23"); //$NON-NLS-1$
+        ComponentTitledFolder border = new ComponentTitledFolder(parent, controller,  bar, null); //$NON-NLS-1$
+        border.setLayoutData(SWTUtil.createFillGridData());
         
         // Create root
-        root = new Composite(border.getControl(), SWT.NONE);
-        border.setChild(root);
-        border.setLayoutData(SWTUtil.createFillGridData());
+        root = border.createItem(Resources.getMessage("NodeClipboardView.0"), //$NON-NLS-1$
+                                 null);
         root.setLayout(new FillLayout());
+        border.setSelection(0);
+        border.setEnabled(true);
 
         // Create table
         table = new Table(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -107,6 +145,7 @@ public class ViewClipboard implements IView {
                 final TableItem[] s = table.getSelection();
                 if (s.length > 0) {
                     final ARXNode node = (ARXNode) s[0].getData();
+                    selectedItem = s[0];
                     model.setSelectedNode(node);
                     controller.update(new ModelEvent(ViewClipboard.this, ModelPart.SELECTED_NODE, node));
                 }
@@ -115,6 +154,7 @@ public class ViewClipboard implements IView {
         
         // Menu
         this.menu = createMenu(parent);
+        
         
         // Add menu to table
         table.addListener(SWT.MouseDown, new Listener() {
@@ -126,7 +166,7 @@ public class ViewClipboard implements IView {
                         final ARXNode node = (ARXNode) i.getData();
                         model.setSelectedNode(node);
                         controller.update(new ModelEvent(ViewClipboard.this, ModelPart.SELECTED_NODE, node));
-                        selectedTableItem = i;
+                        selectedItem = i;
                         Point point = table.toDisplay(event.x, event.y);
                         Rectangle bounds = i.getBounds();
                         bounds.x = table.toDisplay(bounds.x, bounds.y).x;
@@ -155,6 +195,10 @@ public class ViewClipboard implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+        IMAGE_DOWN.dispose();
+        IMAGE_UP.dispose();
+        IMAGE_SORT.dispose();
+        IMAGE_REMOVE.dispose();
     }
 
     @Override
@@ -182,6 +226,7 @@ public class ViewClipboard implements IView {
                 for (final TableItem i : table.getItems()) {
                     if (i.getText(0).equals(trans)) {
                         table.setSelection(i);
+                        this.selectedItem = i;
                     }
                 }
                 SWTUtil.enable(root);
@@ -194,13 +239,20 @@ public class ViewClipboard implements IView {
             table.setRedraw(true);
             table.redraw();
             SWTUtil.enable(root);
+            
+            if (table.getItemCount()!=0) {
+                this.selectedItem = table.getItem(0);
+                table.select(0);
+            } else {
+                this.selectedItem = null;
+            }
         }
     }
     /**
      * Action
      */
     private void actionApplyTransformation() {
-        if (selectedTableItem != null) {
+        if (selectedItem != null) {
             controller.actionApplySelectedTransformation();
             controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
         }
@@ -210,16 +262,18 @@ public class ViewClipboard implements IView {
      * Action
      */
     private void actionDown() {
-        if (selectedTableItem != null) {
-            int index = getItemIndex(selectedTableItem);
+        if (selectedItem != null) {
+            int index = getItemIndex(selectedItem);
             if (index != -1 && index<table.getItemCount()-1) {
                 table.setRedraw(false);
-                ARXNode node = (ARXNode)selectedTableItem.getData();
-                removeItem(selectedTableItem);
+                ARXNode node = (ARXNode)selectedItem.getData();
+                removeItem(selectedItem);
                 addItem(node, index+1);
                 table.setRedraw(true);
                 table.redraw();
                 model.getClipboard().moveEntryDown(node);
+                table.select(index+1);
+                this.selectedItem = table.getItem(index+1);
             }
         }
     }
@@ -228,15 +282,15 @@ public class ViewClipboard implements IView {
      * Action
      */
     private void actionEditComment() {
-        if (selectedTableItem != null) {
-            ARXNode node = (ARXNode)selectedTableItem.getData(); 
+        if (selectedItem != null) {
+            ARXNode node = (ARXNode)selectedItem.getData(); 
             final String label = Arrays.toString(node.getTransformation());
             final String value = controller.actionShowInputDialog(controller.getResources().getShell(),
                                                                   Resources.getMessage("NodeClipboardView.4"),  //$NON-NLS-1$
                                                                   Resources.getMessage("NodeClipboardView.5") + label, //$NON-NLS-1$
-                                                                  selectedTableItem.getText(1));
+                                                                  selectedItem.getText(1));
             if (value != null) {
-                selectedTableItem.setText(1, value);
+                selectedItem.setText(1, value);
                 node.getAttributes().put(NODE_COMMENT, value);
             }
         }
@@ -245,15 +299,26 @@ public class ViewClipboard implements IView {
     /**
      * Action
      */
-    private void actionRemoveEntry() {
-        if (selectedTableItem != null) {
-            ARXNode node = (ARXNode)selectedTableItem.getData();
+    private void actionRemove() {
+        if (selectedItem != null) {
+            int index = getItemIndex(selectedItem);
+            ARXNode node = (ARXNode)selectedItem.getData();
             model.getClipboard().removeFromClipboard(node);
             table.setRedraw(false);
-            removeItem(selectedTableItem);
+            removeItem(selectedItem);
             table.setRedraw(true);
             table.redraw();
             controller.update(new ModelEvent(ViewClipboard.this, ModelPart.CLIPBOARD, null));
+            if (table.getItemCount()==0){
+                this.selectedItem = null;
+                index = -1;
+            } else if (index >= table.getItemCount()) {
+                index = table.getItemCount()-1;
+            }
+            if (index != -1) {
+                this.selectedItem = table.getItem(index);
+                table.select(index);
+            }
         }
     }
 
@@ -261,12 +326,19 @@ public class ViewClipboard implements IView {
      * Action
      */
     private void actionSort() {
-        if (selectedTableItem != null) {
+        if (selectedItem != null) {
+            int index = table.getSelectionIndex();
             table.setRedraw(false);
             removeAllItems();
             model.getClipboard().sort();
             addAllItemsFromModel();
             table.setRedraw(true);
+            if (index!=-1) {
+                table.select(index);
+                this.selectedItem = table.getItem(index);
+            } else {
+                this.selectedItem = null;
+            }
         }
     }
 
@@ -274,16 +346,18 @@ public class ViewClipboard implements IView {
      * Action
      */
     private void actionUp() {
-        if (selectedTableItem != null) {
-            int index = getItemIndex(selectedTableItem);
+        if (selectedItem != null) {
+            int index = getItemIndex(selectedItem);
             if (index > 0) {
                 table.setRedraw(false);
-                ARXNode node = (ARXNode)selectedTableItem.getData();
-                removeItem(selectedTableItem);
+                ARXNode node = (ARXNode)selectedItem.getData();
+                removeItem(selectedItem);
                 addItem(node, index-1);
                 table.setRedraw(true);
                 table.redraw();
                 model.getClipboard().moveEntryUp(node);
+                table.select(index-1);
+                this.selectedItem = table.getItem(index-1);
             }
         }
     }
@@ -341,7 +415,7 @@ public class ViewClipboard implements IView {
         item2.setText(Resources.getMessage("NodeClipboardView.2")); //$NON-NLS-1$
         item2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent arg0) {
-                actionRemoveEntry();
+                actionRemove();
             }
         });
         
