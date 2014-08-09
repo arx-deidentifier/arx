@@ -421,13 +421,10 @@ public class ViewClipboard implements IView {
      * Removes all items
      */
     private void removeAllItems() {
-        table.setRedraw(false);
         for (final TableItem i : table.getItems()) {
             i.dispose();
         }
         table.removeAll();
-        table.setRedraw(true);
-        table.redraw();
     }
     
     /**
