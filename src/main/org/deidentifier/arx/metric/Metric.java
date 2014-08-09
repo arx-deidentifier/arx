@@ -181,7 +181,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * This method is called when the metric may clear its cache.
      */
     public void freeCache() {
-        cache.clear();
+        if (cache != null) cache.clear();
     }
 
     /**
@@ -280,6 +280,9 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected Map<Node, T> getCache() {
+        if (cache == null) {
+            cache = new HashMap<Node, T>();
+        }
         return this.cache;
     }
 }
