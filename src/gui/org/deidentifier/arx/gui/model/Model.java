@@ -40,67 +40,148 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 
+/**
+ * This class implements a large portion of the model used by the GUI
+ * 
+ * @author Fabian Prasser
+ */
 public class Model implements Serializable {
 
-	private static final long serialVersionUID = -7669920657919151279L;
+    /** SVUID */
+    private static final long                     serialVersionUID                = -7669920657919151279L;
 
+    /* *****************************************
+     * TRANSIENT VARIABLES
+     *******************************************/
+
+    /** The current anonymizer, if any */
     private transient ARXAnonymizer               anonymizer                      = null;
+    /** The clipboard, an ordered list of nodes */
     private transient List<ARXNode>               clipboard                       = new ArrayList<ARXNode>();
-    private boolean                               debugEnabled                    = false;
-    private String                                description;
-    private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
-    private int[]                                 groups;
-    private int                                   historySize                     = 200;
-
-    private int                                   initialNodesInViewer            = 100;
-    private long                                  inputBytes                      = 0L;
-    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
-    private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
-    private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
-    private int                                   maximalSizeForComplexOperations = 5000000;
-    private int                                   maxNodesInLattice               = 100000;
-    private int                                   maxNodesInViewer                = 700;
-    private boolean                               modified                        = false;
-
-    private String                                name                            = null;
-    private ModelNodeFilter                       nodeFilter                      = null;
-    private String                                optimalNodeAsString;
+    /** The current output data */
     private transient DataHandle                  output                          = null;
-    private ModelConfiguration                    outputConfig                    = null;
-
+    /** The currently displayed transformation */
     private transient ARXNode                     outputNode                      = null;
-    private String                                outputNodeAsString;
-
-    private String[]                              pair                            = new String[] { null, null };
-
+    /** The path to the project file */
     private transient String                      path                            = null;
-    private String                                query                           = "";                                             //$NON-NLS-1$
-
+    /** The current result */
     private transient ARXResult                   result                          = null;
-
-    private String                                selectedAttribute               = null;
-
+    /** The currently selected node */
     private transient ARXNode                     selectedNode                    = null;
-    private char                                  separator                       = ';';                                            //$NON-NLS-1$
-    private Boolean                               showVisualization               = true;
+
+
+    /* *****************************************
+     * PARAMETERS AND THRESHOLDS
+     *******************************************/
+
+    /** Anonymization parameter */
     private double                                snapshotSizeDataset             = 0.2d;
-
+    /** Anonymization parameter */
     private double                                snapshotSizeSnapshot            = 0.8d;
-    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
-    private String                                suppressionString               = "*";                                            //$NON-NLS-1$
+    /** Anonymization parameter */
+    private int                                   historySize                     = 200;
+    /** Threshold */
+    private int                                   maximalSizeForComplexOperations = 5000000;
+    /** Threshold */
+    private int                                   maxNodesInLattice               = 100000;
+    /** Threshold */
+    private int                                   initialNodesInViewer            = 100;
+    /** Threshold */
+    private int                                   maxNodesInViewer                = 700;
 
-    private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
+    /* *****************************************
+     * PROJECT METADATA
+     ******************************************/
+
+    /** The project description */
+    private String                                description;
+    /** The size of the input file */
+    private long                                  inputBytes                      = 0L;
+    /** Suppression string */
+    private String                                suppressionString               = "*";                                            //$NON-NLS-1$
+    /** Is the project file modified */
+    private boolean                               modified                        = false;
+    /** The project name */
+    private String                                name                            = null;
+    /** The project's separator */
+    private char                                  separator                       = ';';                                            //$NON-NLS-1$
+    /** Execution time of last anonymization */
     private long                                  time;
 
+    /* *****************************************
+     * DEBUGGING
+     ******************************************/
+
+    /** Is the debugging mode enabled */
+    private boolean                               debugEnabled                    = false;
+
+    /* *****************************************
+     * VISUALIZATIONS
+     ******************************************/
+
+    /** Indices of groups in the current output view */
+    private int[]                                 groups;
+    /** Label */
+    private String                                optimalNodeAsString;
+    /** Label */
+    private String                                outputNodeAsString;
+    /** Current selection */
+    private String                                selectedAttribute               = null;
+    /** Enable/disable */
+    private Boolean                               showVisualization               = true;
+    /** Last two selections */
+    private String[]                              pair                            = new String[] { null, null };
+
+    /* *****************************************
+     * SUBSET MANAGEMENT
+     ******************************************/
+    
+    /** Query */
+    private String                                query                           = "";                                             //$NON-NLS-1$
+    /** Origin of current subset */
+    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
+
+    /* *****************************************
+     * SUB-MODELS
+     ******************************************/
+
+    /** The current input configuration */
+    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
+    /** A filter describing which transformations are currently selected */
+    private ModelNodeFilter                       nodeFilter                      = null;
+    /** Configuration of the data view */
     private ModelViewConfig                       viewConfig                      = new ModelViewConfig();
+    /** The current output configuration */
+    private ModelConfiguration                    outputConfig                    = null;
 
+    /* *****************************************
+     * PRIVACY CRITERIA
+     ******************************************/
 
+    /** Model for a specific privacy criterion */
+    private ModelDPresenceCriterion               dPresenceModel                  = new ModelDPresenceCriterion();
+    /** Model for a specific privacy criterion */
+    private ModelKAnonymityCriterion              kAnonymityModel                 = new ModelKAnonymityCriterion();
+    /** Model for a specific privacy criterion */
+    private Map<String, ModelLDiversityCriterion> lDiversityModel                 = new HashMap<String, ModelLDiversityCriterion>();
+    /** Model for a specific privacy criterion */
+    private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
+
+    /**
+     * Creates a new instance
+     * @param name
+     * @param description
+     */
     public Model(final String name, final String description) {
 		this.name = name;
 		this.description = description;
 		setModified();
 	}
 
+    /**
+     * Add a set of elements to the clipboard
+     * @param list
+     */
 	public void addAllToClipboard(List<ARXNode> list) {
         this.setModified();
         if (this.clipboard == null) {
@@ -109,6 +190,10 @@ public class Model implements Serializable {
         this.clipboard.addAll(list);
     }
 	
+	/**
+	 * Add a node to the clipboard
+	 * @param node
+	 */
 	public void addToClipboard(ARXNode node) {
 		if (this.clipboard == null) {
             this.clipboard = new ArrayList<ARXNode>();
@@ -119,6 +204,7 @@ public class Model implements Serializable {
 		}
 	}
 	
+	/** Clear the clipboard*/
 	public void clearClipboard() {
 	    if (this.clipboard == null) {
 	        this.clipboard = new ArrayList<ARXNode>();
@@ -129,6 +215,10 @@ public class Model implements Serializable {
 		clipboard.clear();
 	}
 	
+	/**
+	 * Creates an anonymizer for the current config
+	 * @return
+	 */
 	public ARXAnonymizer createAnonymizer() {
 	    
 		// Initialize anonymizer
@@ -147,6 +237,9 @@ public class Model implements Serializable {
 		return anonymizer;
 	}
 
+	/**
+	 * Replaces the output config with a clone of the input config
+	 */
     public void createClonedConfig() {
 
         // Clone the config
@@ -154,6 +247,9 @@ public class Model implements Serializable {
         this.setModified();
 	}
     
+    /**
+     * Creates an ARXConfiguration
+     */
 	public void createConfig() {
 
 		ModelConfiguration config = getInputConfig();
@@ -232,6 +328,10 @@ public class Model implements Serializable {
         }
 	}
 
+	/**
+	 * Creates an ARXConfiguration for the subset
+	 * @return
+	 */
 	public ARXConfiguration createSubsetConfig() {
 
 		// Create a temporary config
@@ -246,15 +346,27 @@ public class Model implements Serializable {
 		return config;
 	}
     
+	/**
+	 * Returns the current anonymizer
+	 * @return
+	 */
 	public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
 
+	/**
+	 * Returns the last two selected attributes
+	 * @return
+	 */
 	public String[] getAttributePair() {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
 
+	/**
+	 * Returns a copy of all clipboard entries
+	 * @return
+	 */
 	public List<ARXNode> getClipboardEntries() {
         if (this.clipboard == null) {
             this.clipboard = new ArrayList<ARXNode>();
@@ -262,72 +374,134 @@ public class Model implements Serializable {
         return new ArrayList<ARXNode>(this.clipboard);
     }
 	
+	/**
+	 * Returns the project description
+	 * @return
+	 */
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * Returns the d-presence model
+	 * @return
+	 */
 	public ModelDPresenceCriterion getDPresenceModel() {
 		return dPresenceModel;
 	}
 
+	/**
+	 * Returns a list of indices of all equivalence classes
+	 * @return
+	 */
 	public int[] getGroups() {
 		// TODO: Refactor to colors[groups[row]]
 		return this.groups;
 	}
 
 	/**
-	 * @return the historySize
+	 * Returns the according parameter
 	 */
 	public int getHistorySize() {
 		return historySize;
 	}
 
+	/**
+	 * Returns an upper bound on the number of nodes that will initially
+	 * be displayed in the lattice viewer
+	 * @return
+	 */
 	public int getInitialNodesInViewer() {
 		return initialNodesInViewer;
 	}
 
+	/**
+	 * Returns the size in bytes of the input file
+	 * @return
+	 */
 	public long getInputBytes() {
 		return inputBytes;
 	}
 
+	/**
+	 * Returns the input configuration
+	 * @return
+	 */
 	public ModelConfiguration getInputConfig() {
 		return inputConfig;
 	}
 
+	/**
+	 * Returns the input definition
+	 * @return
+	 */
 	public DataDefinition getInputDefinition(){
 	    if (inputConfig==null) return null;
 	    else if (inputConfig.getInput()==null) return null;
 	    else return inputConfig.getInput().getDefinition();
 	}
 
+	/**
+	 * Returns the k-anonymity model
+	 * @return
+	 */
 	public ModelKAnonymityCriterion getKAnonymityModel() {
 		return kAnonymityModel;
 	}
 
+	/**
+	 * Returns the l-diversity model
+	 */
 	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
 		return lDiversityModel;
 	}
 
+	/**
+	 * When a dataset has more records than this threshold,
+	 * visualization of statistics will be disabled
+	 * @return
+	 */
 	public int getMaximalSizeForComplexOperations(){
 	    return this.maximalSizeForComplexOperations;
 	}
 
+	/**
+	 * Returns the maximal size of the lattice
+	 * @return
+	 */
 	public int getMaxNodesInLattice() {
 		return maxNodesInLattice;
 	}
 
+	/**
+	 * Returns the maximal size of a sub-lattice that will be displayed
+	 * by the viewer
+	 * @return
+	 */
 	public int getMaxNodesInViewer() {
 		return maxNodesInViewer;
 	}
 
+	/**
+	 * Returns the name of this project
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Returns the current filter
+	 * @return
+	 */
 	public ModelNodeFilter getNodeFilter() {
 		return nodeFilter;
 	}
 
+	/**
+	 * Returns a string representation of the current optimum
+	 * @return
+	 */
 	public String getOptimalNodeAsString() {
 		return optimalNodeAsString;
 	}
@@ -339,32 +513,57 @@ public class Model implements Serializable {
 		return output;
 	}
 
+	/**
+	 * Returns the output config
+	 * @return
+	 */
 	public ModelConfiguration getOutputConfig() {
 		return outputConfig;
 	}
 
+	/**
+	 * Returns the output definition
+	 * @return
+	 */
 	public DataDefinition getOutputDefinition(){
 		if (this.output == null) return null;
 		else return this.output.getDefinition();
 	}
 
+	/**
+	 * Returns the currently applied transformation
+	 * @return
+	 */
 	public ARXNode getOutputNode() {
 		return outputNode;
 	}
 
+	/**
+	 * Returns a string representation of the currently applied transformation
+	 * @return
+	 */
 	public String getOutputNodeAsString() {
 		return outputNodeAsString;
 	}
 
+	/**
+	 * Returns the path of the project
+	 * @return
+	 */
 	public String getPath() {
 		return path;
 	}
 
+	/**
+	 * Returns the current query
+	 * @return
+	 */
 	public String getQuery() {
         return query;
     }
 
 	/**
+	 * Returns the current result
 	 * @return the result
 	 */
 	public ARXResult getResult() {
@@ -380,52 +579,86 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
+	/**
+	 * Returns the selected transformation
+	 * @return
+	 */
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
 
+	/**
+	 * Returns the separator
+	 * @return
+	 */
 	public char getSeparator() {
 		return separator;
 	}
 	
 	/**
-	 * @return the snapshotSizeDataset
+	 * Returns the according parameter
 	 */
 	public double getSnapshotSizeDataset() {
 		return snapshotSizeDataset;
 	}
-	
+
+    /**
+     * Returns the according parameter
+     */
 	public double getSnapshotSizeSnapshot() {
 		return snapshotSizeSnapshot;
 	}
 
+    /**
+     * Returns the origin of the subset
+     */
 	public String getSubsetOrigin(){
         return this.subsetOrigin;
     }
 
 	/**
-	 * @return the suppressionString
+	 * Returns the current suppression string
 	 */
 	public String getSuppressionString() {
 		return suppressionString;
 	}
 
+	/**
+	 * Returns the t-closeness model
+	 * @return
+	 */
 	public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
 		return tClosenessModel;
 	}
 
+	/**
+	 * Returns the execution time of the last anonymization process
+	 * @return
+	 */
 	public long getTime() {
 		return time;
 	}
 
+	/**
+	 * Returns the view configuration
+	 * @return
+	 */
 	public ModelViewConfig getViewConfig() {
         return this.viewConfig;
     }
 
+	/**
+	 * Returns whether debugging is enabled
+	 * @return
+	 */
 	public boolean isDebugEnabled() {
 	    return debugEnabled;
 	}
 
+	/**
+	 * Returns whether this project is modified
+	 * @return
+	 */
     public boolean isModified() {
 		if (inputConfig.isModified()) {
 			return true;
@@ -436,10 +669,18 @@ public class Model implements Serializable {
 		return modified;
 	}
 
+    /**
+     * Returns whether a quasi-identifier is selected
+     * @return
+     */
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
 
+	/**
+	 * Returns whether a sensitive attribute is selected
+	 * @return
+	 */
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
@@ -462,6 +703,10 @@ public class Model implements Serializable {
 		return size <= maxNodesInLattice;
 	}
 
+	/**
+	 * Returns whether visualization is enabled
+	 * @return
+	 */
 	public boolean isVisualizationEnabled(){
 	    if (this.showVisualization == null) {
 	        return true;
@@ -470,6 +715,10 @@ public class Model implements Serializable {
 	    }
 	}
 
+	/**
+	 * Removes an entry from the clipboard
+	 * @param node
+	 */
 	public void removeFromClipboard(ARXNode node) {
         if (this.clipboard == null) {
             this.clipboard = new ArrayList<ARXNode>();
@@ -479,6 +728,9 @@ public class Model implements Serializable {
         }
     }
 
+	/**
+	 * Resets the model
+	 */
 	public void reset() {
 		// TODO: Need to reset more fields
 		resetCriteria();
@@ -488,6 +740,9 @@ public class Model implements Serializable {
 		result = null;
 	}
 
+	/**
+	 * Returns the last two selected attributes
+	 */
     public void resetAttributePair() {
 		if (pair == null)
 			pair = new String[] { null, null };
@@ -495,6 +750,9 @@ public class Model implements Serializable {
 		pair[1] = null;
 	}
     
+    /**
+     * Resets the configuration of the privacy criteria
+     */
 	public void resetCriteria() {
 		
 		if (inputConfig==null || inputConfig.getInput()==null) return;
@@ -513,76 +771,122 @@ public class Model implements Serializable {
 		}
 	}
 
+	/**
+	 * Sets the anonymizer
+	 * @param anonymizer
+	 */
 	public void setAnonymizer(final ARXAnonymizer anonymizer) {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
 
+	/**
+	 * Enables debugging
+	 * @param value
+	 */
 	public void setDebugEnabled(boolean value){
 	    this.debugEnabled = value;
 	    this.setModified();
 	}
 
+	/**
+	 * Sets the project description
+	 * @param description
+	 */
 	public void setDescription(final String description) {
 		this.description = description;
 		setModified();
 	}
 
+	/**
+	 * Sets the indices of equivalence classes
+	 * @param groups
+	 */
 	public void setGroups(int[] groups) {
 		this.groups = groups;
 	}
 
 	/**
-	 * @param historySize
-	 *            the historySize to set
+	 * Sets the according parameter
 	 */
 	public void setHistorySize(final int historySize) {
 		this.historySize = historySize;
 		setModified();
 	}
 
+	/**
+	 * Sets the according parameter
+	 * @param val
+	 */
 	public void setInitialNodesInViewer(final int val) {
 		initialNodesInViewer = val;
 		setModified();
 	}
 
+	/**
+	 * Sets the size of the input in bytes
+	 * @param inputBytes
+	 */
 	public void setInputBytes(final long inputBytes) {
 		setModified();
 		this.inputBytes = inputBytes;
 	}
 
+	/**
+	 * Sets the input config
+	 * @param config
+	 */
 	public void setInputConfig(final ModelConfiguration config) {
 		inputConfig = config;
 	}
 
+	/**
+	 * Sets the according parameter
+	 * @param numberOfRows
+	 */
 	public void setMaximalSizeForComplexOperations(int numberOfRows) {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
 
+	/**
+	 * Sets the according parameter
+	 * @param maxNodesInLattice
+	 */
 	public void setMaxNodesInLattice(final int maxNodesInLattice) {
 		this.maxNodesInLattice = maxNodesInLattice;
 		setModified();
 	}
 
+	/**
+	 * Sets the according parameter
+	 * @param maxNodesInViewer
+	 */
 	public void setMaxNodesInViewer(final int maxNodesInViewer) {
 		this.maxNodesInViewer = maxNodesInViewer;
 		setModified();
 	}
 
+	/**
+	 * Sets the project name
+	 * @param name
+	 */
 	public void setName(final String name) {
 		this.name = name;
 		setModified();
 	}
 
+	/**
+	 * Sets a filter
+	 * @param filter
+	 */
 	public void setNodeFilter(final ModelNodeFilter filter) {
 		nodeFilter = filter;
 		setModified();
 	}
 
 	/**
-	 * @param output
-	 *            the output to set
+	 * Sets the current output
 	 */
 	public void setOutput(final DataHandle output, final ARXNode node) {
 		this.output = output;
@@ -594,22 +898,34 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
+	/**
+	 * Sets the output config
+	 * @param config
+	 */
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
 	
+	/**
+	 * Sets the project path
+	 * @param path
+	 */
 	public void setPath(final String path) {
 		this.path = path;
 	}
 	
+	/**
+	 * Sets the query
+	 * @param query
+	 */
 	public void setQuery(String query){
         this.query = query;
         setModified();
     }
 
 	/**
+	 * Sets the result
 	 * @param result
-	 *            the result to set
 	 */
 	public void setResult(final ARXResult result) {
 		this.result = result;
@@ -620,13 +936,21 @@ public class Model implements Serializable {
 		setModified();
 	}
 
+	/**
+	 * Marks this project as saved
+	 */
 	public void setSaved() {
 		modified = false;
 	}
 
+	/**
+	 * Sets the selected attribute
+	 * @param attribute
+	 */
 	public void setSelectedAttribute(final String attribute) {
 		selectedAttribute = attribute;
 
+		// Track last two selected attributes
 		if (pair == null)
 			pair = new String[] { null, null };
 		if (pair[0] == null) {
@@ -642,11 +966,19 @@ public class Model implements Serializable {
 		setModified();
 	}
 
+	/**
+	 * Sets the selected node
+	 * @param node
+	 */
 	public void setSelectedNode(final ARXNode node) {
 		selectedNode = node;
 		setModified();
 	}
 
+	/**
+	 * Sets the separator
+	 * @param separator
+	 */
 	public void setSeparator(final char separator) {
 		this.separator = separator;
 	}
@@ -660,34 +992,51 @@ public class Model implements Serializable {
 		setModified();
 	}
     
+	/**
+	 * Sets the according parameter
+	 * @param snapshotSize
+	 */
     public void setSnapshotSizeSnapshot(final double snapshotSize) {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
     
+    /**
+     * Sets how the subset was defined
+     */
     public void setSubsetManual(){
         if (!this.subsetOrigin.endsWith("manual")) {
             this.subsetOrigin += " + manual";
         }
     }
     
+    /**
+     * Sets how the subset was defined
+     * @param origin
+     */
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
     
     /**
-	 * @param suppressionString
-	 *            the suppressionString to set
+	 * Sets the suppression string
 	 */
 	public void setSuppressionString(final String suppressionString) {
 		this.suppressionString = suppressionString;
 		setModified();
 	}
 
+	/**
+	 * Sets the execution time of the last anonymization process
+	 * @param time
+	 */
     public void setTime(final long time) {
 		this.time = time;
 	}
     
+    /**
+     * Marks this model as unmodified
+     */
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
@@ -696,15 +1045,26 @@ public class Model implements Serializable {
 		}
 	}
 
+    /**
+     * Sets the view configuration
+     * @param viewConfig
+     */
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
 
+    /**
+     * Sets visualization as enabled/disabled
+     * @param value
+     */
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();
     }
 
+    /**
+     * Marks this project as modified
+     */
     private void setModified() {
 		modified = true;
 	}
