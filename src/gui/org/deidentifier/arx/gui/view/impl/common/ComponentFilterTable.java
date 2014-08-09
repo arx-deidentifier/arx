@@ -85,7 +85,7 @@ public class ComponentFilterTable {
             public void mouseDown(MouseEvent arg0) {
                 int row = getItemRowAt(arg0.x, arg0.y);
                 int column = getItemColumnAt(arg0.x, arg0.y);
-                if (row != -1 && column > 0) {
+                if (row != -1 && column > 0 && column < ComponentFilterTable.this.properties.size()) {
                     String property = ComponentFilterTable.this.properties.get(column-1);
                     String entry = ComponentFilterTable.this.entries.get(row);
                     if (itemProperties.get(entry).contains(property)) {
