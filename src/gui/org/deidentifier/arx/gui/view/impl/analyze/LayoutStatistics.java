@@ -152,7 +152,8 @@ public class LayoutStatistics implements ILayout, IView {
 
     @Override
     public void dispose() {
-        // Nothing to do
+        this.enabled.dispose();
+        this.disabled.dispose();
     }
 
     @Override

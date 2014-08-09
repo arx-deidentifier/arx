@@ -41,8 +41,6 @@ public class ModelNodeFilter implements Serializable {
     private final Set<Anonymity> anonymity          = new HashSet<Anonymity>();
     /** The generalization levels allowed*/
     private Set<Integer>[]       generalizations    = null;
-    /** The max levels*/
-    private int[]                maxLevels          = null;
     /** The initial number of nodes*/
     private int                  maxNumNodesInitial = 0;
     /** Bound for min information loss*/
@@ -58,28 +56,9 @@ public class ModelNodeFilter implements Serializable {
     @SuppressWarnings("unchecked")
     public ModelNodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
         this.maxNumNodesInitial = maxNumNodesInitial;
-        generalizations = new Set[maxLevels.length];
+        this.generalizations = new Set[maxLevels.length];
         for (int i = 0; i < generalizations.length; i++) {
             generalizations[i] = new HashSet<Integer>();
-        }
-        this.maxLevels = maxLevels;
-    }
-
-    /**
-     * Allows all transformations to pass the filter
-     */
-    public void allowAll() {
-    	// TODO: Introduce uncertain values in GUI
-        anonymity.add(Anonymity.ANONYMOUS);
-        anonymity.add(Anonymity.NOT_ANONYMOUS);
-        anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
-        anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
-        minInformationLoss = 0d;
-        maxInformationLoss = 1d;
-        for (int i = 0; i < maxLevels.length; i++) {
-            for (int j = 0; j < maxLevels[i]; j++) {
-                generalizations[i].add(j);
-            }
         }
     }
 
@@ -143,7 +122,7 @@ public class ModelNodeFilter implements Serializable {
         anonymity.clear();
         minInformationLoss = 0d;
         maxInformationLoss = 1d;
-        for (int i = 0; i < maxLevels.length; i++) {
+        for (int i = 0; i < generalizations.length; i++) {
             generalizations[i].clear();
         }
     }
