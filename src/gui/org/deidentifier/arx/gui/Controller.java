@@ -360,7 +360,7 @@ public class Controller implements IView {
             final ARXResult result = worker.getResult();
             model.createClonedConfig();
             model.setResult(result);
-            model.clearClipboard();
+            model.getClipboard().clearClipboard();
 
             // Update view
             update(new ModelEvent(this, ModelPart.RESULT, result));
@@ -805,8 +805,7 @@ public class Controller implements IView {
         final ModelNodeFilter tempNodeFilter = model.getNodeFilter();
         final String tempSelectedAttribute = model.getSelectedAttribute();
         final ARXNode tempSelectedNode = model.getSelectedNode();
-        final List<ARXNode> tempClipboard = new ArrayList<ARXNode>();
-        tempClipboard.addAll(model.getClipboardEntries());
+        final List<ARXNode> tempClipboard = model.getClipboard().getClipboardEntries();
 
         // Update the model
         update(new ModelEvent(this, ModelPart.MODEL, model));
@@ -869,11 +868,11 @@ public class Controller implements IView {
 
         // Update subsets of the model
         if (tempClipboard != null) {
-            model.clearClipboard();
-            model.addAllToClipboard(tempClipboard);
+            model.getClipboard().clearClipboard();
+            model.getClipboard().addAllToClipboard(tempClipboard);
             update(new ModelEvent(this,
                                   ModelPart.CLIPBOARD,
-                                  model.getClipboardEntries()));
+                                  model.getClipboard().getClipboardEntries()));
         }
 
         // Update the attribute types

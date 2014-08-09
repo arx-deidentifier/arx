@@ -149,7 +149,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return; }
 
         // Clear
-        model.clearClipboard();
+        model.getClipboard().clearClipboard();
 
         // Parse
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
@@ -163,7 +163,7 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isNode(localName)) {
                     final ARXNode node = map.get(payload.trim());
-                    model.addToClipboard(node);
+                    model.getClipboard().addToClipboard(node);
                     return true;
                 } else {
                     return false;

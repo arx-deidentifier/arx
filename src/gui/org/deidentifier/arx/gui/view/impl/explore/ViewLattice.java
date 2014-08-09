@@ -947,7 +947,7 @@ public class ViewLattice implements IView {
         item1.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.addToClipboard(selectedNode);
+                model.getClipboard().addToClipboard(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.CLIPBOARD, selectedNode));
                 model.setSelectedNode(selectedNode);
                 controller.update(new ModelEvent(ViewLattice.this, ModelPart.SELECTED_NODE, selectedNode));

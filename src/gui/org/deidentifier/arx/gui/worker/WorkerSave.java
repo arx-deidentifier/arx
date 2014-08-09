@@ -339,12 +339,12 @@ public class WorkerSave extends Worker<Model> {
     private void writeClipboard(final Model model,
                                 final Map<String, Integer> map,
                                 final ZipOutputStream zip) throws IOException {
-        if (model.getClipboardEntries().isEmpty()) { return; }
+        if (model.getClipboard().getClipboardEntries().isEmpty()) { return; }
 
         // Write clipboard
         zip.putNextEntry(new ZipEntry("clipboard.xml")); //$NON-NLS-1$
         final Writer w = new OutputStreamWriter(zip);
-        w.write(toXML(map, model.getClipboardEntries()));
+        w.write(toXML(map, model.getClipboard().getClipboardEntries()));
         w.flush();
 
     }

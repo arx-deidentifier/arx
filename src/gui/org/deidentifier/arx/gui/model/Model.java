@@ -20,10 +20,8 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -56,8 +54,6 @@ public class Model implements Serializable {
 
     /** The current anonymizer, if any */
     private transient ARXAnonymizer               anonymizer                      = null;
-    /** The clipboard, an ordered list of nodes */
-    private transient List<ARXNode>               clipboard                       = new ArrayList<ARXNode>();
     /** The current output data */
     private transient DataHandle                  output                          = null;
     /** The currently displayed transformation */
@@ -68,6 +64,8 @@ public class Model implements Serializable {
     private transient ARXResult                   result                          = null;
     /** The currently selected node */
     private transient ARXNode                     selectedNode                    = null;
+    /** The clipboard */
+    private transient ModelClipboard              clipboard                       = null;
 
 
     /* *****************************************
@@ -178,43 +176,6 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-    /**
-     * Add a set of elements to the clipboard
-     * @param list
-     */
-	public void addAllToClipboard(List<ARXNode> list) {
-        this.setModified();
-        if (this.clipboard == null) {
-            this.clipboard = new ArrayList<ARXNode>();
-        }
-        this.clipboard.addAll(list);
-    }
-	
-	/**
-	 * Add a node to the clipboard
-	 * @param node
-	 */
-	public void addToClipboard(ARXNode node) {
-		if (this.clipboard == null) {
-            this.clipboard = new ArrayList<ARXNode>();
-        }
-		if (!this.clipboard.contains(node)) {
-		    setModified();
-		    clipboard.add(node);
-		}
-	}
-	
-	/** Clear the clipboard*/
-	public void clearClipboard() {
-	    if (this.clipboard == null) {
-	        this.clipboard = new ArrayList<ARXNode>();
-	    }
-	    if (!this.clipboard.isEmpty()) {
-	        setModified();
-	    }
-		clipboard.clear();
-	}
-	
 	/**
 	 * Creates an anonymizer for the current config
 	 * @return
@@ -363,17 +324,6 @@ public class Model implements Serializable {
 		return pair;
 	}
 
-	/**
-	 * Returns a copy of all clipboard entries
-	 * @return
-	 */
-	public List<ARXNode> getClipboardEntries() {
-        if (this.clipboard == null) {
-            this.clipboard = new ArrayList<ARXNode>();
-        }
-        return new ArrayList<ARXNode>(this.clipboard);
-    }
-	
 	/**
 	 * Returns the project description
 	 * @return
@@ -666,9 +616,22 @@ public class Model implements Serializable {
 		if ((outputConfig != null) && outputConfig.isModified()) {
 			return true;
 		}
+        if ((clipboard != null) && clipboard.isModified()) { 
+            return true; 
+        }
 		return modified;
 	}
 
+    /**
+     * Returns the clipboard
+     */
+    public ModelClipboard getClipboard(){
+        if (clipboard==null){
+            clipboard = new ModelClipboard();
+        }
+        return clipboard;
+    }
+    
     /**
      * Returns whether a quasi-identifier is selected
      * @return
@@ -714,19 +677,6 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-
-	/**
-	 * Removes an entry from the clipboard
-	 * @param node
-	 */
-	public void removeFromClipboard(ARXNode node) {
-        if (this.clipboard == null) {
-            this.clipboard = new ArrayList<ARXNode>();
-        }
-        if (this.clipboard.remove(node)){
-            setModified();
-        }
-    }
 
 	/**
 	 * Resets the model
@@ -1042,6 +992,9 @@ public class Model implements Serializable {
 		inputConfig.setUnmodified();
 		if (outputConfig != null) {
 			outputConfig.setUnmodified();
+		}
+		if (clipboard != null) {
+		    clipboard.setUnmodified();
 		}
 	}
 
