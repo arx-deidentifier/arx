@@ -18,8 +18,16 @@
 
 package org.deidentifier.arx.gui.model;
 
+/**
+ * This class implements an event for model changes
+ * @author Fabian Prasser
+ */
 public class ModelEvent {
     
+    /**
+     * The part of the model that has changed
+     * @author Fabian Prasser
+     */
     public static enum ModelPart {
         SELECTED_ATTRIBUTE,
         INPUT,
@@ -41,10 +49,19 @@ public class ModelEvent {
         VISUALIZATION
     }
 
+    /** The part of the model that has changed*/
     public final ModelPart   part;
+    /** The associated data, if any*/
     public final Object      data;
+    /** The sender*/
     public final Object      source;
 
+    /**
+     * Creates a new instance
+     * @param source
+     * @param target
+     * @param data
+     */
     public ModelEvent(final Object source,
                       final ModelPart target,
                       final Object data) {

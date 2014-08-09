@@ -23,50 +23,73 @@ import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 
+/**
+ * This class implements a model for the l-diversity criterion
+ * @author Fabian Prasser
+ *
+ */
 public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 
-	private static final long serialVersionUID = -9172448654255959945L;
+    /** SVUID*/
+    private static final long serialVersionUID = -9172448654255959945L;
+    
+    /** Variant*/
+    public static final int VARIANT_DISTINCT = 0;
+    /** Variant*/
+    public static final int VARIANT_ENTROPY = 1;
+    /** Variant*/
+    public static final int VARIANT_RECURSIVE = 2;
 
-	public ModelLDiversityCriterion(String attribute) {
-		super(attribute);
-	}
+	/** The variant to use*/
 	private int variant = 0;
+	/** L*/
 	private int l = 2;
+	/** C, if any*/
 	private double c = 0.001d;
-	public int getVariant() {
-		return variant;
-	}
-	public void setVariant(int variant) {
-		this.variant = variant;
-	}
-	public int getL() {
-		return l;
-	}
-	public void setL(int l) {
-		this.l = l;
-	}
+
+    /**
+     * Creates a new instance
+     * @param attribute
+     */
+    public ModelLDiversityCriterion(String attribute) {
+        super(attribute);
+    }
+    
+    /**
+	 * Gets C
+	 * @return
+	 */
 	public double getC() {
 		return c;
 	}
-	public void setC(double c) {
-		this.c = c;
-	}
-
+	
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
-		
-		if (variant==0){
-			return new DistinctLDiversity(getAttribute(), l);
-		} else if (variant==1){
-			return new EntropyLDiversity(getAttribute(), l);
-		} else if (variant==2){
-			return new RecursiveCLDiversity(getAttribute(), c, l);
-		} else {
-			throw new RuntimeException("Internal error: invalid variant of l-diversity");
-		}
+	    switch (variant) {
+    	    case VARIANT_DISTINCT: return new DistinctLDiversity(getAttribute(), l);
+    	    case VARIANT_ENTROPY: return new EntropyLDiversity(getAttribute(), l); 
+    	    case VARIANT_RECURSIVE: return new RecursiveCLDiversity(getAttribute(), c, l);
+	        default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
+	    }
 	}
 	
-    @Override
+	/**
+	 * Returns L
+	 * @return
+	 */
+	public int getL() {
+		return l;
+	}
+	
+	/**
+     * Returns the variant
+     * @return
+     */
+	public int getVariant() {
+		return variant;
+	}
+	
+	@Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
             throw new RuntimeException("Invalid type of criterion");
@@ -76,17 +99,38 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
         this.l = other.l;
         this.c = other.c;
     }
+	
+	/**
+	 * Sets C
+	 * @param c
+	 */
+	public void setC(double c) {
+		this.c = c;
+	}
+
+	/**
+	 * Sets L
+	 * @param l
+	 */
+	public void setL(int l) {
+		this.l = l;
+	}
+	
+    /**
+	 * Sets the variant
+	 * @param variant
+	 */
+	public void setVariant(int variant) {
+		this.variant = variant;
+	}
     @Override
     public String toString() {
         // TODO: Move to messages.properties
-        if (variant==0){
-            return "Distinct-"+l+"-diversity";
-        } else if (variant==1){
-            return "Entropy-"+l+"-diversity";
-        } else if (variant==2){
-            return "Recursive-("+String.valueOf(c)+","+l+")-diversity";
-        } else {
-            throw new RuntimeException("Internal error: invalid variant of l-diversity");
+        switch (variant) {
+            case VARIANT_DISTINCT: return "Distinct-"+l+"-diversity";
+            case VARIANT_ENTROPY: return "Entropy-"+l+"-diversity"; 
+            case VARIANT_RECURSIVE: return "Recursive-("+String.valueOf(c)+","+l+")-diversity";
+            default: throw new RuntimeException("Internal error: invalid variant of l-diversity");
         }
     }
 }

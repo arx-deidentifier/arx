@@ -28,17 +28,33 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 
+/**
+ * This class implements a filter for a generalization lattice
+ * @author Fabian Prasser
+ */
 public class ModelNodeFilter implements Serializable {
 
+    /** SVUID*/
     private static final long    serialVersionUID   = 5451641489562102719L;
 
+    /** The anonymity properties allowed*/
     private final Set<Anonymity> anonymity          = new HashSet<Anonymity>();
+    /** The generalization levels allowed*/
     private Set<Integer>[]       generalizations    = null;
+    /** The max levels*/
     private int[]                maxLevels          = null;
+    /** The initial number of nodes*/
     private int                  maxNumNodesInitial = 0;
+    /** Bound for min information loss*/
     private double               minInformationLoss = 0d;
+    /** Bound for max information loss*/
     private double               maxInformationLoss = 1d;
 
+    /**
+     * Creates a new instance
+     * @param maxLevels
+     * @param maxNumNodesInitial
+     */
     @SuppressWarnings("unchecked")
     public ModelNodeFilter(final int[] maxLevels, final int maxNumNodesInitial) {
         this.maxNumNodesInitial = maxNumNodesInitial;
@@ -49,6 +65,9 @@ public class ModelNodeFilter implements Serializable {
         this.maxLevels = maxLevels;
     }
 
+    /**
+     * Allows all transformations to pass the filter
+     */
     public void allowAll() {
     	// TODO: Introduce uncertain values in GUI
         anonymity.add(Anonymity.ANONYMOUS);
@@ -64,19 +83,35 @@ public class ModelNodeFilter implements Serializable {
         }
     }
 
+    /**
+     * Allows transformations with any information loss to pass the filter
+     */
     public void allowAllInformationLoss() {
         minInformationLoss = 0d;
         maxInformationLoss = 1d;
     }
 
+    /**
+     * Allows anonymous transformations to pass the filter
+     */
     public void allowAnonymous() {
         anonymity.add(Anonymity.ANONYMOUS);
     }
 
+    /**
+     * Allows transformations with certain generalization level to pass the filter
+     * @param dimension
+     * @param level
+     */
     public void allowGeneralization(final int dimension, final int level) {
         generalizations[dimension].add(level);
     }
 
+    /**
+     * Allows transformations with certain information loss to pass the filter
+     * @param min
+     * @param max
+     */
     public void allowInformationLoss(final double min, final double max) {
         if (min<0d || min>1d || max <0d || max>1d) {
             throw new IllegalArgumentException("Threshold must be relative [0,1]");
@@ -85,16 +120,25 @@ public class ModelNodeFilter implements Serializable {
         maxInformationLoss = max;
     }
 
+    /**
+     * Allows non-anonymous transformations to pass the filter
+     */
     public void allowNonAnonymous() {
         anonymity.add(Anonymity.NOT_ANONYMOUS);
     }
 
+    /**
+     * Allows unknown transformations to pass the filter
+     */
     public void allowUnknown() {
     	// TODO: Introduce uncertain values in GUI
         anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
     }
 
+    /**
+     * Allows no transformaions to pass the filter
+     */
     public void disallowAll() {
         anonymity.clear();
         minInformationLoss = 0d;
@@ -104,18 +148,32 @@ public class ModelNodeFilter implements Serializable {
         }
     }
 
+    /**
+     * Filters out anonymous transformations
+     */
     public void disallowAnonymous() {
         anonymity.remove(Anonymity.ANONYMOUS);
     }
 
+    /**
+     * Filters out transformations with certain generalization level
+     * @param dimension
+     * @param level
+     */
     public void disallowGeneralization(final int dimension, final int level) {
         generalizations[dimension].remove(level);
     }
 
+    /**
+     * Filters out non-anonymous transformations
+     */
     public void disallowNonAnonymous() {
         anonymity.remove(Anonymity.NOT_ANONYMOUS);
     }
 
+    /**
+     * Filters out unknown transformations
+     */
     public void disallowUnknown() {
     	// TODO: Introduce uncertain values in GUI
         anonymity.remove(Anonymity.PROBABLY_ANONYMOUS);
@@ -281,6 +339,12 @@ public class ModelNodeFilter implements Serializable {
         }
     }
 
+    /**
+     * Returns whether the given node is allowed to pass this filter
+     * @param lattice
+     * @param node
+     * @return
+     */
     public boolean isAllowed(final ARXLattice lattice, final ARXNode node) {
         
         double max = node.getMaximumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
@@ -300,6 +364,10 @@ public class ModelNodeFilter implements Serializable {
         return true;
     }
 
+    /**
+     * Returns setting
+     * @return
+     */
     public boolean isAllowedAnonymous() {
         return anonymity.contains(Anonymity.ANONYMOUS);
     }
@@ -316,10 +384,18 @@ public class ModelNodeFilter implements Serializable {
         return generalizations[dimension].contains(level);
     }
 
+    /**
+     * Returns setting
+     * @return
+     */
     public boolean isAllowedNonAnonymous() {
         return anonymity.contains(Anonymity.NOT_ANONYMOUS);
     }
 
+    /**
+     * Returns setting
+     * @return
+     */
     public boolean isAllowedUnknown() {
         return anonymity.contains(Anonymity.PROBABLY_ANONYMOUS) ||
         	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS); 
