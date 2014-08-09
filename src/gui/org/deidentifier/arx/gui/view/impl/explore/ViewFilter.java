@@ -285,13 +285,11 @@ public class ViewFilter implements IView {
      */
     private void create(final Composite parent) {
 
-        Label tableItem1 = new Label(parent, SWT.NONE);
-        tableItem1.setText(Resources.getMessage("NodeFilterView.20")); //$NON-NLS-1$
-
         // Add table
         generalization = new ComponentFilterTable(parent, controller, new ArrayList<String>());
         GridData data = SWTUtil.createFillGridData();
         data.heightHint = 70;
+        data.horizontalSpan = 2;
         generalization.setLayoutData(data);
         generalization.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
@@ -315,12 +313,12 @@ public class ViewFilter implements IView {
                 }
             });
 
-        Label tableItem2 = new Label(parent, SWT.NONE);
-        tableItem2.setText(Resources.getMessage("NodeFilterView.21")); //$NON-NLS-1$
-        
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        composite.setLayout(GridLayoutFactory.swtDefaults().numColumns(6).spacing(0, 0).margins(0, 0).create());
+        GridData gdata = SWTUtil.createFillHorizontallyGridData();
+        gdata.horizontalSpan = 2;
+        composite.setLayoutData(gdata);
+        composite.setLayout(GridLayoutFactory.swtDefaults().numColumns(6)
+                                             .spacing(0, 0).margins(0, 0).create());
         
         anonymous = new Button(composite, SWT.CHECK | SWT.NO_FOCUS);
         anonymous.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
