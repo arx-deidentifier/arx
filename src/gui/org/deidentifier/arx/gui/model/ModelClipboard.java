@@ -88,6 +88,38 @@ public class ModelClipboard {
     }
 
     /**
+     * Is the clipboard modified
+     * @return
+     */
+    public boolean isModified() {
+        return this.modified;
+    }
+    
+    /**
+     * Moves the entry down
+     * @param node
+     */
+    public void moveEntryDown(ARXNode node){
+        int index = clipboard.indexOf(node);
+        if (index<clipboard.size()-1){
+            clipboard.remove(index);
+            clipboard.add(index+1, node);
+        }
+    }
+
+    /**
+     * Moves the entry up
+     * @param node
+     */
+    public void moveEntryUp(ARXNode node){
+        int index = clipboard.indexOf(node);
+        if (index>0){
+            clipboard.remove(index);
+            clipboard.add(index-1, node);
+        }
+    }
+    
+    /**
      * Removes an entry from the clipboard
      * @param node
      */
@@ -101,49 +133,10 @@ public class ModelClipboard {
     }
     
     /**
-     * Moves the entry up
-     * @param node
-     */
-    public void moveEntryUp(ARXNode node){
-        int index = clipboard.indexOf(node);
-        if (index>0){
-            clipboard.remove(index);
-            clipboard.add(index-1, node);
-        }
-    }
-
-    /**
-     * Moves the entry down
-     * @param node
-     */
-    public void moveEntryDown(ARXNode node){
-        int index = clipboard.indexOf(node);
-        if (index<clipboard.size()-1){
-            clipboard.remove(index);
-            clipboard.add(index+1, node);
-        }
-    }
-    
-    /**
-     * Sets as modified
-     */
-    private void setModified(){
-        this.modified = true;
-    }
-    
-    /**
      * Sets as unmodified
      */
     public void setUnmodified(){
         this.modified = false;
-    }
-
-    /**
-     * Is the clipboard modified
-     * @return
-     */
-    public boolean isModified() {
-        return this.modified;
     }
 
     /**
@@ -161,5 +154,12 @@ public class ModelClipboard {
                 else return loss0.compareTo(loss1);
             } 
         });
+    }
+
+    /**
+     * Sets as modified
+     */
+    private void setModified(){
+        this.modified = true;
     }
 }

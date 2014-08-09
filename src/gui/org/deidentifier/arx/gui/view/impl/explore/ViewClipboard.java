@@ -152,6 +152,174 @@ public class ViewClipboard implements IView {
         c2.pack();
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        
+        table.setRedraw(false);
+        removeAllItems();
+        table.setRedraw(true);
+        table.redraw();
+        SWTUtil.disable(root);
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+        } else if (event.part == ModelPart.SELECTED_NODE) {
+            final ARXNode selected = (ARXNode) event.data;
+
+            // No result available
+            if (selected == null) {
+                reset();
+            } else {
+                final String trans = Arrays.toString(selected.getTransformation());
+                for (final TableItem i : table.getItems()) {
+                    if (i.getText(0).equals(trans)) {
+                        table.setSelection(i);
+                    }
+                }
+                SWTUtil.enable(root);
+            }
+        } else if (event.part == ModelPart.CLIPBOARD) {
+            
+            table.setRedraw(false);
+            removeAllItems();
+            addAllItemsFromModel();
+            table.setRedraw(true);
+            table.redraw();
+            SWTUtil.enable(root);
+        }
+    }
+    /**
+     * Action
+     */
+    private void actionApplyTransformation() {
+        if (selectedTableItem != null) {
+            controller.actionApplySelectedTransformation();
+            controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
+        }
+    }
+
+    /**
+     * Action
+     */
+    private void actionDown() {
+        if (selectedTableItem != null) {
+            int index = getItemIndex(selectedTableItem);
+            if (index != -1 && index<table.getItemCount()-1) {
+                table.setRedraw(false);
+                ARXNode node = (ARXNode)selectedTableItem.getData();
+                removeItem(selectedTableItem);
+                addItem(node, index+1);
+                table.setRedraw(true);
+                table.redraw();
+                model.getClipboard().moveEntryDown(node);
+            }
+        }
+    }
+    
+    /**
+     * Action
+     */
+    private void actionEditComment() {
+        if (selectedTableItem != null) {
+            ARXNode node = (ARXNode)selectedTableItem.getData(); 
+            final String label = Arrays.toString(node.getTransformation());
+            final String value = controller.actionShowInputDialog(controller.getResources().getShell(),
+                                                                  Resources.getMessage("NodeClipboardView.4"),  //$NON-NLS-1$
+                                                                  Resources.getMessage("NodeClipboardView.5") + label, //$NON-NLS-1$
+                                                                  selectedTableItem.getText(1));
+            if (value != null) {
+                selectedTableItem.setText(1, value);
+                node.getAttributes().put(NODE_COMMENT, value);
+            }
+        }
+    }
+
+    /**
+     * Action
+     */
+    private void actionRemoveEntry() {
+        if (selectedTableItem != null) {
+            ARXNode node = (ARXNode)selectedTableItem.getData();
+            model.getClipboard().removeFromClipboard(node);
+            table.setRedraw(false);
+            removeItem(selectedTableItem);
+            table.setRedraw(true);
+            table.redraw();
+            controller.update(new ModelEvent(ViewClipboard.this, ModelPart.CLIPBOARD, null));
+        }
+    }
+
+    /**
+     * Action
+     */
+    private void actionSort() {
+        if (selectedTableItem != null) {
+            table.setRedraw(false);
+            removeAllItems();
+            model.getClipboard().sort();
+            addAllItemsFromModel();
+            table.setRedraw(true);
+        }
+    }
+
+    /**
+     * Action
+     */
+    private void actionUp() {
+        if (selectedTableItem != null) {
+            int index = getItemIndex(selectedTableItem);
+            if (index > 0) {
+                table.setRedraw(false);
+                ARXNode node = (ARXNode)selectedTableItem.getData();
+                removeItem(selectedTableItem);
+                addItem(node, index-1);
+                table.setRedraw(true);
+                table.redraw();
+                model.getClipboard().moveEntryUp(node);
+            }
+        }
+    }
+
+    /**
+     * Adds all items from the model
+     */
+    private void addAllItemsFromModel() {
+        // Add all to table
+        for (final ARXNode node : model.getClipboard().getClipboardEntries()) {
+            addItem(node, table.getItemCount());
+        }
+        
+        // Pack
+        for (final TableColumn c : columns) {
+            c.pack();
+        }
+    }
+
+    /**
+     * Adds an item
+     * 
+     */
+    private TableItem addItem(ARXNode node, int index) {
+        
+        final TableItem item = new TableItem(table, SWT.NONE, index);
+        item.setText(0, Arrays.toString(node.getTransformation()));
+        if (node.getAttributes().get(NODE_COMMENT) != null) {
+            item.setText(1, (String) node.getAttributes().get(NODE_COMMENT));
+        } else {
+            item.setText(1, ""); //$NON-NLS-1$
+        }
+        item.setData(node);
+        return item;
+    }
+
     /**
      * This method creates the context menu
      * @param parent
@@ -214,11 +382,6 @@ public class ViewClipboard implements IView {
         return menu;
     }
 
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
     /**
      * Returns the item at the given location
      * @param pt
@@ -237,6 +400,7 @@ public class ViewClipboard implements IView {
         }
         return null;
     }
+    
     /**
      * Returns the index of the given item
      * @param item
@@ -252,45 +416,7 @@ public class ViewClipboard implements IView {
         }
         return index;
     }
-
-    /**
-     * Adds an item
-     * 
-     */
-    private TableItem addItem(ARXNode node, int index) {
-        
-        final TableItem item = new TableItem(table, SWT.NONE, index);
-        item.setText(0, Arrays.toString(node.getTransformation()));
-        if (node.getAttributes().get(NODE_COMMENT) != null) {
-            item.setText(1, (String) node.getAttributes().get(NODE_COMMENT));
-        } else {
-            item.setText(1, ""); //$NON-NLS-1$
-        }
-        item.setData(node);
-        return item;
-    }
     
-    /**
-     * Removes the item
-     * @param item
-     */
-    private int removeItem(final TableItem item) {
-        int index = getItemIndex(item);
-        if (index == -1) { return -1; }
-        table.remove(index);
-        return index;
-    }
-
-    @Override
-    public void reset() {
-        
-        table.setRedraw(false);
-        removeAllItems();
-        table.setRedraw(true);
-        table.redraw();
-        SWTUtil.disable(root);
-    }
-
     /**
      * Removes all items
      */
@@ -303,141 +429,15 @@ public class ViewClipboard implements IView {
         table.setRedraw(true);
         table.redraw();
     }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
-            model = (Model) event.data;
-        } else if (event.part == ModelPart.SELECTED_NODE) {
-            final ARXNode selected = (ARXNode) event.data;
-
-            // No result available
-            if (selected == null) {
-                reset();
-            } else {
-                final String trans = Arrays.toString(selected.getTransformation());
-                for (final TableItem i : table.getItems()) {
-                    if (i.getText(0).equals(trans)) {
-                        table.setSelection(i);
-                    }
-                }
-                SWTUtil.enable(root);
-            }
-        } else if (event.part == ModelPart.CLIPBOARD) {
-            
-            table.setRedraw(false);
-            removeAllItems();
-            addAllItemsFromModel();
-            table.setRedraw(true);
-            table.redraw();
-            SWTUtil.enable(root);
-        }
-    }
-
-    /**
-     * Adds all items from the model
-     */
-    private void addAllItemsFromModel() {
-        // Add all to table
-        for (final ARXNode node : model.getClipboard().getClipboardEntries()) {
-            addItem(node, table.getItemCount());
-        }
-        
-        // Pack
-        for (final TableColumn c : columns) {
-            c.pack();
-        }
-    }
-
-    /**
-     * Action
-     */
-    private void actionEditComment() {
-        if (selectedTableItem != null) {
-            ARXNode node = (ARXNode)selectedTableItem.getData(); 
-            final String label = Arrays.toString(node.getTransformation());
-            final String value = controller.actionShowInputDialog(controller.getResources().getShell(),
-                                                                  Resources.getMessage("NodeClipboardView.4"),  //$NON-NLS-1$
-                                                                  Resources.getMessage("NodeClipboardView.5") + label, //$NON-NLS-1$
-                                                                  selectedTableItem.getText(1));
-            if (value != null) {
-                selectedTableItem.setText(1, value);
-                node.getAttributes().put(NODE_COMMENT, value);
-            }
-        }
-    }
-
-    /**
-     * Action
-     */
-    private void actionRemoveEntry() {
-        if (selectedTableItem != null) {
-            ARXNode node = (ARXNode)selectedTableItem.getData();
-            model.getClipboard().removeFromClipboard(node);
-            table.setRedraw(false);
-            removeItem(selectedTableItem);
-            table.setRedraw(true);
-            table.redraw();
-            controller.update(new ModelEvent(ViewClipboard.this, ModelPart.CLIPBOARD, null));
-        }
-    }
-
-    /**
-     * Action
-     */
-    private void actionApplyTransformation() {
-        if (selectedTableItem != null) {
-            controller.actionApplySelectedTransformation();
-            controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-        }
-    }
     
     /**
-     * Action
+     * Removes the item
+     * @param item
      */
-    private void actionUp() {
-        if (selectedTableItem != null) {
-            int index = getItemIndex(selectedTableItem);
-            if (index > 0) {
-                table.setRedraw(false);
-                ARXNode node = (ARXNode)selectedTableItem.getData();
-                removeItem(selectedTableItem);
-                addItem(node, index-1);
-                table.setRedraw(true);
-                table.redraw();
-                model.getClipboard().moveEntryUp(node);
-            }
-        }
-    }
-    
-    /**
-     * Action
-     */
-    private void actionDown() {
-        if (selectedTableItem != null) {
-            int index = getItemIndex(selectedTableItem);
-            if (index != -1 && index<table.getItemCount()-1) {
-                table.setRedraw(false);
-                ARXNode node = (ARXNode)selectedTableItem.getData();
-                removeItem(selectedTableItem);
-                addItem(node, index+1);
-                table.setRedraw(true);
-                table.redraw();
-                model.getClipboard().moveEntryDown(node);
-            }
-        }
-    }
-    
-    /**
-     * Action
-     */
-    private void actionSort() {
-        if (selectedTableItem != null) {
-            table.setRedraw(false);
-            removeAllItems();
-            model.getClipboard().sort();
-            addAllItemsFromModel();
-            table.setRedraw(true);
-        }
+    private int removeItem(final TableItem item) {
+        int index = getItemIndex(item);
+        if (index == -1) { return -1; }
+        table.remove(index);
+        return index;
     }
 }
