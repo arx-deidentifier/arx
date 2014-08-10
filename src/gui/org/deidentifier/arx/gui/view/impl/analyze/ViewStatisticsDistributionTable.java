@@ -27,6 +27,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -59,7 +60,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     
     @Override
     protected Control createControl(Composite parent) {
-        this.table = new ComponentTable(parent);
+        this.table = new ComponentTable(parent, SWT.NONE);
         return this.table.getControl();
     }
 

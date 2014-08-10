@@ -62,10 +62,13 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -286,28 +289,48 @@ public class ComponentTable implements IComponent {
         }
     }
 
+    /**
+     * Checkstyle
+     * @param style
+     * @return
+     */
+    private static int checkStyle(int style) {
+        return style & (SWT.BORDER | SWT.NONE);
+    }
+    
     /** The parent */
     private final Composite         root;
     /** The underlying nattable instance */
-    private NatTable                table          = null;
+    private NatTable                table              = null;
     /** The layout data */
-    private Object                  layoutData     = null;
+    private Object                  layoutData         = null;
     /** The layout */
-    private ComponentTableLayout    layout         = new ComponentTableLayout(true, 100);
+    private ComponentTableLayout    layout             = new ComponentTableLayout(true, 100);
     /** State */
-    private Integer                 selectedRow    = null;
+    private Integer                 selectedRow        = null;
     /** State */
-    private Integer                 selectedColumn = null;
+    private Integer                 selectedColumn     = null;
     /** Listeners */
-    private List<SelectionListener> listeners      = new ArrayList<SelectionListener>();
-    
+    private List<SelectionListener> selectionListeners = new ArrayList<SelectionListener>();
+
+    /** Listeners */
+    private List<MouseListener>     mouseListeners     = new ArrayList<MouseListener>();
+
     /**
      * Creates a new instance
      * @param parent
      */
-    public ComponentTable(Composite parent) {
-        this.root = new Composite(parent, SWT.NONE);
+    public ComponentTable(Composite parent, int style) {
+        this.root = new Composite(parent, checkStyle(style));
         this.root.setLayout(new FillLayout());
+    }
+
+    /**
+     * Adds a listener
+     * @param arg0
+     */
+    public void addMouseListener(MouseListener arg0) {
+        mouseListeners.add(arg0);
     }
 
     /**
@@ -316,7 +339,7 @@ public class ComponentTable implements IComponent {
      * @return
      */
     public boolean addSelectionListener(SelectionListener e) {
-        return listeners.add(e);
+        return selectionListeners.add(e);
     }
 
     /**
@@ -342,6 +365,14 @@ public class ComponentTable implements IComponent {
     public Integer getSelectedRow() {
         return selectedRow;
     }
+
+    /**
+     * Removes a listener
+     * @param arg0
+     */
+    public void removeMouseListener(MouseListener arg0) {
+        mouseListeners.remove(arg0);
+    }
     
     /**
      * Removes a selection listener
@@ -349,7 +380,7 @@ public class ComponentTable implements IComponent {
      * @return
      */
     public SelectionListener removeSelectionListener(int index) {
-        return listeners.remove(index);
+        return selectionListeners.remove(index);
     }
     
     /**
@@ -387,23 +418,11 @@ public class ComponentTable implements IComponent {
         CornerLayer cornerLayer = new CornerLayer(new DataLayer(cornerDataProvider), rowHeaderLayer, columnHeaderLayer);
         GridLayer gridLayer = new GridLayer(bodyLayer, columnHeaderLayer, rowHeaderLayer, cornerLayer);
         
-        // Add listener
-        bodyLayer.getSelectionLayer().addLayerListener(new ILayerListener(){
-            @Override
-            public void handleLayerEvent(ILayerEvent arg0) {
-                if (arg0 instanceof CellSelectionEvent) {
-                    actionCellSelected((CellSelectionEvent)arg0);
-                } else if (arg0 instanceof ColumnSelectionEvent) {
-                    actionColumnSelected((ColumnSelectionEvent)arg0);
-                } else if (arg0 instanceof RowSelectionEvent) {
-                    actionRowSelected((RowSelectionEvent)arg0);
-                }
-            }
-        });
-        
         // Create table
         table = new NatTable(root, gridLayer);
         addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), cornerLayer);
+        addSelectionListener(bodyLayer.getSelectionLayer());
+        addMouseListener(table);
         
         // Set layout
         if (this.layoutData != null) {
@@ -460,7 +479,7 @@ public class ComponentTable implements IComponent {
             root.layout(true);
         }
     }
-    
+
     /**
      * Sets the layout data
      * @param data
@@ -469,7 +488,7 @@ public class ComponentTable implements IComponent {
         this.layoutData = data;
         if (table != null) table.setLayoutData(data);
     }
-        
+    
     /**
      * Updates the underlying table. Hides the row header.
      * @param dataProvider
@@ -495,23 +514,11 @@ public class ComponentTable implements IComponent {
         compositeLayer.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
         compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
 
-        // Add listener
-        bodyLayer.getSelectionLayer().addLayerListener(new ILayerListener(){
-            @Override
-            public void handleLayerEvent(ILayerEvent arg0) {
-                if (arg0 instanceof CellSelectionEvent) {
-                    actionCellSelected((CellSelectionEvent)arg0);
-                } else if (arg0 instanceof ColumnSelectionEvent) {
-                    actionColumnSelected((ColumnSelectionEvent)arg0);
-                } else if (arg0 instanceof RowSelectionEvent) {
-                    actionRowSelected((RowSelectionEvent)arg0);
-                }
-            }
-        });
-        
         // Create table
         table = new NatTable(root, compositeLayer);
         addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), null);
+        addSelectionListener(bodyLayer.getSelectionLayer());
+        addMouseListener(table);
         
         // Set layout
         if (this.layoutData != null) {
@@ -526,7 +533,7 @@ public class ComponentTable implements IComponent {
         this.selectedRow = null;
         this.selectedColumn = null;
     }
-
+        
     /**
      * Updates the underlying table. Hides the row header.
      * @param data
@@ -534,6 +541,16 @@ public class ComponentTable implements IComponent {
      */
     public void setTable(String[][] data, String[] columns) {
         setTable(getDataProvider(data), columns);
+    }
+
+    /**
+     * To display coordinates
+     * @param x
+     * @param y
+     * @return
+     */
+    public Point toDisplay(int x, int y) {
+        return table.toDisplay(x, y);
     }
 
     /**
@@ -547,8 +564,8 @@ public class ComponentTable implements IComponent {
         this.selectedRow = null;
         
         // Set
-        int column = arg0.getColumnPosition() - 1;
-        int row = arg0.getRowPosition() -1;
+        int column = arg0.getColumnPosition();
+        int row = arg0.getRowPosition();
         if (column>=0 && row>=0){
             this.selectedColumn = column;
             this.selectedRow = row;
@@ -567,7 +584,7 @@ public class ComponentTable implements IComponent {
         this.selectedRow = null;
         
         // Set
-        int column = arg0.getColumnPositionRanges().iterator().next().start - 1;
+        int column = arg0.getColumnPositionRanges().iterator().next().start;
         if (column>=0) {
             this.selectedColumn = column;
             fireSelectionEvent();
@@ -585,7 +602,7 @@ public class ComponentTable implements IComponent {
         this.selectedRow = null;
         
         // Set
-        int row = arg0.getRowPositionRanges().iterator().next().start - 1;
+        int row = arg0.getRowPositionRanges().iterator().next().start;
         if (row>=0) {
             this.selectedRow = row;
             fireSelectionEvent();
@@ -641,6 +658,50 @@ public class ComponentTable implements IComponent {
     }
 
     /**
+     * Add listener
+     * @param table
+     */
+    private void addMouseListener(NatTable table) {
+        table.addMouseListener(new MouseListener(){
+            public void mouseDoubleClick(MouseEvent arg0) {
+                for (MouseListener listener : mouseListeners) {
+                    listener.mouseDoubleClick(arg0);
+                }
+            }
+            public void mouseDown(MouseEvent arg0) {
+                for (MouseListener listener : mouseListeners) {
+                    listener.mouseDown(arg0);
+                }
+            }
+            public void mouseUp(MouseEvent arg0) {
+                for (MouseListener listener : mouseListeners) {
+                    listener.mouseUp(arg0);
+                }
+            }
+        });
+    }
+
+    /**
+     * Adds a selection listener
+     * @param layer
+     */
+    private void addSelectionListener(SelectionLayer layer) {
+        layer.addLayerListener(new ILayerListener(){
+            @Override
+            public void handleLayerEvent(ILayerEvent arg0) {
+                if (arg0 instanceof CellSelectionEvent) {
+                    actionCellSelected((CellSelectionEvent)arg0);
+                } else if (arg0 instanceof ColumnSelectionEvent) {
+                    actionColumnSelected((ColumnSelectionEvent)arg0);
+                } else if (arg0 instanceof RowSelectionEvent) {
+                    actionRowSelected((RowSelectionEvent)arg0);
+                }
+            }
+        });
+
+    }
+
+    /**
      * Fires a new event
      */
     private void fireSelectionEvent(){
@@ -649,7 +710,7 @@ public class ComponentTable implements IComponent {
         event.item = table;
         event.widget = table;
         SelectionEvent sEvent = new SelectionEvent(event);
-        for (SelectionListener listener : listeners) {
+        for (SelectionListener listener : selectionListeners) {
             listener.widgetSelected(sEvent);
         }
     }
