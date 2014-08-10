@@ -344,35 +344,12 @@ public class ComponentDataTable implements IComponent {
     public void setData(final DataHandle handle) {
         this.table.setRedraw(false);
         this.context.setHandle(handle);
-        this.context.setArray(null);
         this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
         ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnWidthByPosition(0, 18);
         ((DataLayer)this.gridLayer.getBodyDataLayer()).setColumnPositionResizable(0, false);
-        this.table.getVerticalBar().setVisible(false);
-        this.table.getHorizontalBar().setVisible(false);
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.table.setVisible(true);
-        this.table.getVerticalBar().setVisible(true);
-        this.table.getHorizontalBar().setVisible(true);
-        this.table.setVisible(true);
-    }
-    
-    /**
-     * Sets the displayed data
-     * @param data
-     */
-    public void setData(final String[][] data) {
-        this.table.setRedraw(false);
-        this.context.setHandle(null);
-        this.context.setArray(data);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableArrayDataProvider(data, context), table, context);
-        this.table.setLayer(gridLayer);
-        this.table.refresh();
-        this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
         this.table.getVerticalBar().setVisible(false);
         this.table.getHorizontalBar().setVisible(false);
         this.table.setRedraw(true);

@@ -18,7 +18,9 @@
 
 package org.deidentifier.arx.gui.view.impl.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.nebula.widgets.nattable.NatTable;
@@ -37,12 +39,18 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.RowHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.CompositeLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
+import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
+import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
+import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.BeveledBorderDecorator;
 import org.eclipse.nebula.widgets.nattable.resize.config.DefaultColumnResizeBindings;
 import org.eclipse.nebula.widgets.nattable.resize.config.DefaultRowResizeBindings;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
+import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
+import org.eclipse.nebula.widgets.nattable.selection.event.RowSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
@@ -54,11 +62,14 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * A virtual table implemented with NatTable
@@ -68,22 +79,88 @@ import org.eclipse.swt.widgets.Control;
 public class ComponentTable implements IComponent {
     
     /**
+     * The column layer
+     * @author Fabian Prasser
+     */
+    public class ColumnHeaderLayerStack extends AbstractLayerTransform {
+        
+        /**
+         * Creates a new instance
+         * @param parent
+         * @param dataProvider
+         * @param bodyLayer
+         */
+        public ColumnHeaderLayerStack(Composite parent,
+                                      IDataProvider dataProvider,
+                                      BodyLayerStack bodyLayer) {
+            
+            DataLayer dataLayer = new DataLayer(dataProvider);
+            ColumnHeaderLayer colHeaderLayer = new ColumnHeaderLayer(dataLayer,
+                                                                     bodyLayer,
+                                                                     bodyLayer.getSelectionLayer(),
+                                                                     false);
+            colHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.COLUMN_HEADER));
+            colHeaderLayer.addConfiguration(new DefaultColumnResizeBindings());
+            setUnderlyingLayer(colHeaderLayer);
+        }
+    }
+
+    /**
+     * The body layer
+     * @author Fabian Prasser
+     */
+    private static class BodyLayerStack extends AbstractLayerTransform {
+
+        /** Selection layer */
+        private SelectionLayer selectionLayer;
+        /** Data layer */
+        private DataLayer      dataLayer;
+
+        /**
+         * Creates a new instance
+         * @param dataProvider
+         */
+        public BodyLayerStack(IDataProvider dataProvider) {
+            dataLayer = new DataLayer(dataProvider);
+            selectionLayer = new SelectionLayerStack(dataLayer);
+            ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
+            setUnderlyingLayer(viewportLayer);
+        }
+
+        /**
+         * Returns the data layer
+         * @return
+         */
+        public DataLayer getDataLayer(){
+            return dataLayer;
+        }
+        
+        /**
+         * Returns the selection layer
+         * @return
+         */
+        public SelectionLayer getSelectionLayer() {
+            return selectionLayer;
+        }
+    }
+
+    /**
      * Header style
      * @author Fabian Prasser
      */
     private static class DefaultHeaderStyleConfiguration extends AbstractRegistryConfiguration {
 
-        private final Font font;
-        private final Color bgColor = GUIHelper.COLOR_WIDGET_BACKGROUND;
-        private final Color fgColor = GUIHelper.COLOR_WIDGET_FOREGROUND;
-        private final Color gradientBgColor = GUIHelper.COLOR_WHITE;
-        private final Color gradientFgColor = GUIHelper.getColor(136, 212, 215);
-        private final HorizontalAlignmentEnum hAlign = HorizontalAlignmentEnum.CENTER;
-        private final VerticalAlignmentEnum vAlign = VerticalAlignmentEnum.MIDDLE;
-        private final BorderStyle borderStyle = null;
-        private final ICellPainter cellPainter = new BeveledBorderDecorator(new TextPainter());
-        private final Boolean renderGridLines = Boolean.FALSE;
-        private final String region;
+        private final Font                    font;
+        private final Color                   bgColor         = GUIHelper.COLOR_WIDGET_BACKGROUND;
+        private final Color                   fgColor         = GUIHelper.COLOR_WIDGET_FOREGROUND;
+        private final Color                   gradientBgColor = GUIHelper.COLOR_WHITE;
+        private final Color                   gradientFgColor = GUIHelper.getColor(136, 212, 215);
+        private final HorizontalAlignmentEnum hAlign          = HorizontalAlignmentEnum.CENTER;
+        private final VerticalAlignmentEnum   vAlign          = VerticalAlignmentEnum.MIDDLE;
+        private final BorderStyle             borderStyle     = null;
+        private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter());
+        private final Boolean                 renderGridLines = Boolean.FALSE;
+        private final String                  region;
         
         /**
          * Creates a new instance
@@ -147,72 +224,6 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * The body layer
-     * @author Fabian Prasser
-     */
-    private static class BodyLayerStack extends AbstractLayerTransform {
-        
-        /** Selection layer*/
-        private SelectionLayer selectionLayer;
-        /** Data layer*/
-        private DataLayer dataLayer;
-
-        /**
-         * Creates a new instance
-         * @param dataProvider
-         */
-        public BodyLayerStack(IDataProvider dataProvider) {
-            dataLayer = new DataLayer(dataProvider);
-            selectionLayer = new SelectionLayer(dataLayer);
-            ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
-            setUnderlyingLayer(viewportLayer);
-        }
-
-        /**
-         * Returns the selection layer
-         * @return
-         */
-        public SelectionLayer getSelectionLayer() {
-            return selectionLayer;
-        }
-        
-        /**
-         * Returns the data layer
-         * @return
-         */
-        public DataLayer getDataLayer(){
-            return dataLayer;
-        }
-    }
-
-    /**
-     * The column layer
-     * @author Fabian Prasser
-     */
-    public class ColumnHeaderLayerStack extends AbstractLayerTransform {
-        
-        /**
-         * Creates a new instance
-         * @param parent
-         * @param dataProvider
-         * @param bodyLayer
-         */
-        public ColumnHeaderLayerStack(Composite parent,
-                                      IDataProvider dataProvider,
-                                      BodyLayerStack bodyLayer) {
-            
-            DataLayer dataLayer = new DataLayer(dataProvider);
-            ColumnHeaderLayer colHeaderLayer = new ColumnHeaderLayer(dataLayer,
-                                                                     bodyLayer,
-                                                                     bodyLayer.getSelectionLayer(),
-                                                                     false);
-            colHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.COLUMN_HEADER));
-            colHeaderLayer.addConfiguration(new DefaultColumnResizeBindings());
-            setUnderlyingLayer(colHeaderLayer);
-        }
-    }
-
-    /**
      * The row layer
      * @author Fabian Prasser
      */
@@ -234,16 +245,62 @@ public class ComponentTable implements IComponent {
             setUnderlyingLayer(rowHeaderLayer);
         }
     }
-    
-    /** The parent*/
-    private final Composite root;
-    /** The underlying nattable instance*/
-    private NatTable table = null;
-    /** The layout data*/
-    private Object layoutData = null;
-    /** The layout*/
-    private ComponentTableLayout layout = new ComponentTableLayout(true, 100);
+    /**
+     * A selection layer for table views
+     * @author Fabian Prasser
+     *
+     */
+    private static class SelectionLayerStack extends SelectionLayer {
 
+        /**
+         * Creates a new instance
+         * @param underlyingLayer
+         */
+        public SelectionLayerStack(IUniqueIndexLayer underlyingLayer) {
+            super(underlyingLayer);
+        }
+
+        @Override
+        public boolean isCellPositionSelected(int columnPosition, int rowPosition) {
+            return false;
+        }
+
+        @Override
+        public boolean isColumnPositionFullySelected(int columnPosition) {
+            return false;
+        }
+
+        @Override
+        public boolean isColumnPositionSelected(int columnPosition) {
+            return false;
+        }
+
+        @Override
+        public boolean isRowPositionFullySelected(int rowPosition) {
+            return false;
+        }
+
+        @Override
+        public boolean isRowPositionSelected(int rowPosition) {
+            return false;
+        }
+    }
+
+    /** The parent */
+    private final Composite         root;
+    /** The underlying nattable instance */
+    private NatTable                table          = null;
+    /** The layout data */
+    private Object                  layoutData     = null;
+    /** The layout */
+    private ComponentTableLayout    layout         = new ComponentTableLayout(true, 100);
+    /** State */
+    private Integer                 selectedRow    = null;
+    /** State */
+    private Integer                 selectedColumn = null;
+    /** Listeners */
+    private List<SelectionListener> listeners      = new ArrayList<SelectionListener>();
+    
     /**
      * Creates a new instance
      * @param parent
@@ -254,63 +311,47 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * Updates the underlying table. Hides the row header.
-     * @param dataProvider
-     * @param columns
+     * Adds a selection listener
+     * @param e
+     * @return
      */
-    public void setTable(IDataProvider dataProvider, String[] columns) {
+    public boolean addSelectionListener(SelectionListener e) {
+        return listeners.add(e);
+    }
 
-        // Disable redrawing
-        this.root.setRedraw(false);
-        
-        // Dispose
-        if (table != null && !table.isDisposed()) {
-            table.dispose();
-        }
+    /**
+     * Returns the backing widget
+     * @return
+     */
+    public Control getControl() {
+        return this.root;
+    }
 
-        // Create data providers
-        IDataProvider columnHeaderDataProvider = getHeaderDataProvider(dataProvider, columns, false);
+    /** 
+     * Returns the selected column, or null
+     * @return
+     */
+    public Integer getSelectedColumn() {
+        return selectedColumn;
+    }
 
-        // Create layers
-        BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
-        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
-        CompositeLayer compositeLayer = new CompositeLayer(1, 2);
-        compositeLayer.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
-        compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
-
-        // Create table
-        table = new NatTable(root, compositeLayer);
-        addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), null);
-        
-        // Set layout
-        if (this.layoutData != null) {
-            table.setLayoutData(layoutData);
-        }
-        
-        // Redraw
-        this.root.setRedraw(true);
-        this.root.layout(true);
+    /**
+     * Returns the selected row, or null
+     * @return
+     */
+    public Integer getSelectedRow() {
+        return selectedRow;
     }
     
     /**
-     * Sets the layout
-     * @param layout
+     * Removes a selection listener
+     * @param index
+     * @return
      */
-    public void setLayout(ComponentTableLayout layout){
-        this.layout = layout;
-        if (this.table != null && !this.table.isDisposed()) {
-            root.layout(true);
-        }
+    public SelectionListener removeSelectionListener(int index) {
+        return listeners.remove(index);
     }
     
-    /**
-     * Updates the underlying table. Hides the row header.
-     * @param data
-     * @param columns
-     */
-    public void setTable(String[][] data, String[] columns) {
-        setTable(getDataProvider(data), columns);
-    }
     /**
      * Updates the underlying table
      * @param data
@@ -318,15 +359,6 @@ public class ComponentTable implements IComponent {
     public void setData(IDataProvider dataProvider) {
         this.setData(dataProvider, null, null);
     }
-    
-    /**
-     * Updates the underlying table
-     * @param data
-     */
-    public void setData(String[][] data) {
-        this.setData(data, null, null);
-    }
-
     /**
      * Updates the underlying data
      * @param dataProvider
@@ -353,7 +385,21 @@ public class ComponentTable implements IComponent {
         ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
         RowHeaderLayerStack rowHeaderLayer = new RowHeaderLayerStack(root, rowHeaderDataProvider, bodyLayer);
         CornerLayer cornerLayer = new CornerLayer(new DataLayer(cornerDataProvider), rowHeaderLayer, columnHeaderLayer);
-        GridLayer gridLayer = new GridLayer(bodyLayer, columnHeaderLayer, rowHeaderLayer, cornerLayer); 
+        GridLayer gridLayer = new GridLayer(bodyLayer, columnHeaderLayer, rowHeaderLayer, cornerLayer);
+        
+        // Add listener
+        bodyLayer.getSelectionLayer().addLayerListener(new ILayerListener(){
+            @Override
+            public void handleLayerEvent(ILayerEvent arg0) {
+                if (arg0 instanceof CellSelectionEvent) {
+                    actionCellSelected((CellSelectionEvent)arg0);
+                } else if (arg0 instanceof ColumnSelectionEvent) {
+                    actionColumnSelected((ColumnSelectionEvent)arg0);
+                } else if (arg0 instanceof RowSelectionEvent) {
+                    actionRowSelected((RowSelectionEvent)arg0);
+                }
+            }
+        });
         
         // Create table
         table = new NatTable(root, gridLayer);
@@ -367,6 +413,183 @@ public class ComponentTable implements IComponent {
         // Redraw
         this.root.setRedraw(true);
         this.root.layout(true);
+        
+        // Reset state
+        this.selectedRow = null;
+        this.selectedColumn = null;
+    }
+    
+    /**
+     * Updates the underlying table
+     * @param data
+     */
+    public void setData(String[][] data) {
+        this.setData(data, null, null);
+    }
+
+    /**
+     * Updates the underlying data
+     * @param data
+     * @param rows May be null
+     * @param columns May be null
+     */
+    public void setData(String[][] data, String[] rows, String[] columns) {
+        setData(getDataProvider(data), rows, columns);
+    }
+
+    /**
+     * Empties the table
+     */
+    public void setEmpty() {
+        if (this.table == null || this.table.isDisposed()) return;
+        this.root.setRedraw(false);
+        this.table.dispose();
+        this.root.setRedraw(true);
+        this.root.layout(true);
+        this.selectedRow = null;
+        this.selectedColumn = null;
+    }
+
+    /**
+     * Sets the layout
+     * @param layout
+     */
+    public void setLayout(ComponentTableLayout layout){
+        this.layout = layout;
+        if (this.table != null && !this.table.isDisposed()) {
+            root.layout(true);
+        }
+    }
+    
+    /**
+     * Sets the layout data
+     * @param data
+     */
+    public void setLayoutData(Object data){
+        this.layoutData = data;
+        if (table != null) table.setLayoutData(data);
+    }
+        
+    /**
+     * Updates the underlying table. Hides the row header.
+     * @param dataProvider
+     * @param columns
+     */
+    public void setTable(IDataProvider dataProvider, String[] columns) {
+
+        // Disable redrawing
+        this.root.setRedraw(false);
+        
+        // Dispose
+        if (table != null && !table.isDisposed()) {
+            table.dispose();
+        }
+
+        // Create data providers
+        IDataProvider columnHeaderDataProvider = getHeaderDataProvider(dataProvider, columns, false);
+
+        // Create layers
+        BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
+        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
+        CompositeLayer compositeLayer = new CompositeLayer(1, 2);
+        compositeLayer.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
+        compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
+
+        // Add listener
+        bodyLayer.getSelectionLayer().addLayerListener(new ILayerListener(){
+            @Override
+            public void handleLayerEvent(ILayerEvent arg0) {
+                if (arg0 instanceof CellSelectionEvent) {
+                    actionCellSelected((CellSelectionEvent)arg0);
+                } else if (arg0 instanceof ColumnSelectionEvent) {
+                    actionColumnSelected((ColumnSelectionEvent)arg0);
+                } else if (arg0 instanceof RowSelectionEvent) {
+                    actionRowSelected((RowSelectionEvent)arg0);
+                }
+            }
+        });
+        
+        // Create table
+        table = new NatTable(root, compositeLayer);
+        addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), null);
+        
+        // Set layout
+        if (this.layoutData != null) {
+            table.setLayoutData(layoutData);
+        }
+        
+        // Redraw
+        this.root.setRedraw(true);
+        this.root.layout(true);
+
+        // Reset state
+        this.selectedRow = null;
+        this.selectedColumn = null;
+    }
+
+    /**
+     * Updates the underlying table. Hides the row header.
+     * @param data
+     * @param columns
+     */
+    public void setTable(String[][] data, String[] columns) {
+        setTable(getDataProvider(data), columns);
+    }
+
+    /**
+     * Action
+     * @param arg0
+     */
+    private void actionCellSelected(CellSelectionEvent arg0) {
+
+        // Reset
+        this.selectedColumn = null;
+        this.selectedRow = null;
+        
+        // Set
+        int column = arg0.getColumnPosition() - 1;
+        int row = arg0.getRowPosition() -1;
+        if (column>=0 && row>=0){
+            this.selectedColumn = column;
+            this.selectedRow = row;
+            fireSelectionEvent();
+        }
+    }
+
+    /**
+     * Action
+     * @param arg0
+     */
+    private void actionColumnSelected(ColumnSelectionEvent arg0) {
+        
+        // Reset
+        this.selectedColumn = null;
+        this.selectedRow = null;
+        
+        // Set
+        int column = arg0.getColumnPositionRanges().iterator().next().start - 1;
+        if (column>=0) {
+            this.selectedColumn = column;
+            fireSelectionEvent();
+        }
+    }
+
+    /**
+     * Action
+     * @param arg0
+     */
+    private void actionRowSelected(RowSelectionEvent arg0) {
+        
+        // Reset
+        this.selectedColumn = null;
+        this.selectedRow = null;
+        
+        // Set
+        int row = arg0.getRowPositionRanges().iterator().next().start - 1;
+        if (row>=0) {
+            this.selectedRow = row;
+            fireSelectionEvent();
+        }
     }
 
     /**
@@ -418,24 +641,40 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * Updates the underlying data
-     * @param data
-     * @param rows May be null
-     * @param columns May be null
+     * Fires a new event
      */
-    public void setData(String[][] data, String[] rows, String[] columns) {
-        setData(getDataProvider(data), rows, columns);
+    private void fireSelectionEvent(){
+        Event event = new Event();
+        event.display = table.getDisplay();
+        event.item = table;
+        event.widget = table;
+        SelectionEvent sEvent = new SelectionEvent(event);
+        for (SelectionListener listener : listeners) {
+            listener.widgetSelected(sEvent);
+        }
     }
-    
-    /**
-     * Sets the layout data
-     * @param data
-     */
-    public void setLayoutData(Object data){
-        this.layoutData = data;
-        if (table != null) table.setLayoutData(data);
+
+    private IDataProvider getDataProvider(final String[][] data) {
+
+        return new ListDataProvider<String[]>(Arrays.asList(data), new IColumnAccessor<String[]>(){
+
+            @Override
+            public int getColumnCount() {
+                return data==null || data.length==0 || data[0]==null ? 0 : data[0].length;
+            }
+
+            @Override
+            public Object getDataValue(String[] arg0, int arg1) {
+                return arg0[arg1];
+            }
+
+            @Override
+            public void setDataValue(String[] arg0, int arg1, Object arg2) {
+                arg0[arg1] = arg2.toString();
+            }
+        });
     }
-        
+
     private IDataProvider getHeaderDataProvider(final IDataProvider data, 
                                                 final String[] header, 
                                                 final boolean row) {
@@ -485,41 +724,5 @@ public class ComponentTable implements IComponent {
                 }
             };
         }
-    }
-
-    private IDataProvider getDataProvider(final String[][] data) {
-
-        return new ListDataProvider<String[]>(Arrays.asList(data), new IColumnAccessor<String[]>(){
-
-            @Override
-            public int getColumnCount() {
-                return data==null || data.length==0 || data[0]==null ? 0 : data[0].length;
-            }
-
-            @Override
-            public Object getDataValue(String[] arg0, int arg1) {
-                return arg0[arg1];
-            }
-
-            @Override
-            public void setDataValue(String[] arg0, int arg1, Object arg2) {
-                arg0[arg1] = arg2.toString();
-            }
-        });
-    }
-
-    /**
-     * Empties the table
-     */
-    public void setEmpty() {
-        if (this.table == null || this.table.isDisposed()) return;
-        this.root.setRedraw(false);
-        this.table.dispose();
-        this.root.setRedraw(true);
-        this.root.layout(true);
-    }
-
-    public Control getControl() {
-        return this.root;
     }
 }

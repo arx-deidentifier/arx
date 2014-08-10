@@ -47,7 +47,6 @@ public class DataTableGridLayerStack extends DataTableGridLayer {
         List<String> lcolumns = new ArrayList<String>();
         RowSet rows = context.getRows();
         DataHandle handle = context.getHandle();
-        String[][] data = context.getArray();
         if (bodyDataProvider.getColumnCount() != 0) {
             if (rows != null) {
                 lcolumns.add("");
@@ -56,11 +55,7 @@ public class DataTableGridLayerStack extends DataTableGridLayer {
                 for (int i = 0; i < handle.getNumColumns(); i++) {
                     lcolumns.add(handle.getAttributeName(i));
                 }
-            } else if (data != null) {
-                for (int i = 0; i < data[0].length; i++) {
-                    lcolumns.add(data[0][i]);
-                }
-            }
+            } 
         }
         String[] columns = lcolumns.toArray(new String[] {});
         final IDataProvider columnHeaderDataProvider = new DefaultColumnHeaderDataProvider(columns);

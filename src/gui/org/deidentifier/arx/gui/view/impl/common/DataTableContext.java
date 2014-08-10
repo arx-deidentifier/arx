@@ -40,7 +40,6 @@ public class DataTableContext {
     private RowSet               rows          = null;
     private int[]                groups        = null;
     private DataHandle           handle        = null;
-    private String[][]           array         = null;
     private Controller           controller    = null;
     private int                  selectedIndex = -1;
 
@@ -50,14 +49,6 @@ public class DataTableContext {
      */
     public DataTableContext(Controller controller) {
         this.controller = controller;
-    }
-
-    /**
-     * Returns the data array, if any
-     * @return
-     */
-    public String[][] getArray() {
-        return array;
     }
 
     /**
@@ -121,18 +112,9 @@ public class DataTableContext {
      */
     public void reset() {
         this.handle = null;
-        this.array = null;
         this.rows = null;
         this.groups = null;
         this.images.clear();
-    }
-
-    /**
-     * Sets the array data
-     * @param array
-     */
-    public void setArray(String[][] array) {
-        this.array = array;
     }
 
     /**
