@@ -26,7 +26,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.MetricNDS;
@@ -177,7 +177,7 @@ public class ViewCriterionDefinition implements IView {
         gd1.grabExcessHorizontalSpace = true;
         gd1.horizontalSpan = 2;
         
-        ComponentTitleBar bar = new ComponentTitleBar("id-80");
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-80");
         bar.add(Resources.getMessage("CriterionDefinitionView.59"), 
                 controller.getResources().getImage("cross.png"),
                 new Runnable() {

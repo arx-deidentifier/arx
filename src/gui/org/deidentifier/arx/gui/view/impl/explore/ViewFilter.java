@@ -36,7 +36,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentFilterTable;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -107,7 +107,7 @@ public class ViewFilter implements IView {
         IMG_RESET = controller.getResources().getImage("arrow_refresh.png"); //$NON-NLS-1$
 
         // Bar
-        ComponentTitleBar bar = new ComponentTitleBar("id-21"); //$NON-NLS-1$
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-21"); //$NON-NLS-1$
         bar.add("Reset", IMG_RESET, new Runnable(){
             public void run() {
                 actionReset();

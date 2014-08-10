@@ -52,7 +52,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param bar
      * @param id
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id){
         this(parent, controller, bar, id, false);
     }
 
@@ -64,7 +64,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param id
      * @param bottom
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitleBar bar, String id, boolean bottom){
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButton bar, String id, boolean bottom){
 
         int flags = SWT.BORDER | SWT.FLAT;
         if (bottom) flags |= SWT.BOTTOM;
@@ -101,7 +101,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param folder
      * @param bar
      */
-    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitleBar bar) {
+    private void createBar(final Controller controller, final CTabFolder folder, final ComponentTitledFolderButton bar) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
         

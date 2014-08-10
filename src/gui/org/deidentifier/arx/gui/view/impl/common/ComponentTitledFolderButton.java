@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Image;
  * 
  * @author Fabian Prasser
  */
-public class ComponentTitleBar implements IComponent{
+public class ComponentTitledFolderButton implements IComponent{
     
     private List<String> titles = new ArrayList<String>();
     private Map<String, Image> images = new HashMap<String, Image>();
@@ -43,7 +43,7 @@ public class ComponentTitleBar implements IComponent{
      * Creates a new instance
      * @param id
      */
-    public ComponentTitleBar(String id) {    
+    public ComponentTitledFolderButton(String id) {    
         this.id = id;
     }
 

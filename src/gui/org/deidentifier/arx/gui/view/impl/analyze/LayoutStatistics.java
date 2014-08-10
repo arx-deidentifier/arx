@@ -25,7 +25,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitleBar;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -73,7 +73,7 @@ public class LayoutStatistics implements ILayout, IView {
 
         // Create enable/disable button
         final String label = Resources.getMessage("StatisticsView.3");
-        ComponentTitleBar bar = new ComponentTitleBar("id-50");
+        ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-50");
         bar.add(label, disabled, true, new Runnable() { @Override public void run() {
             toggleEnabled();
             toggleImage(); 
