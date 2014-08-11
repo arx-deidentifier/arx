@@ -32,6 +32,7 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
 
     /** Var */
     private final HierarchyWizardModelIntervals<T> model;
+    /** Var */
     private HierarchyWizardEditor<T> editor;
     
     /**

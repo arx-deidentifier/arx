@@ -19,24 +19,27 @@
 package org.deidentifier.arx.gui.view.impl.common;
 
 /**
- * Layout specification for table view
+ * Configuration for table view
  * @author Fabian Prasser
  *
  */
-public class ComponentTableLayout {
-
-    /** Should the table snap to the available space*/
-    protected final boolean grabX;
-    /** Initial width of each column*/
-    protected final int     columnWidth;
+public class ComponentTableSelectionConfiguration {
+    
+    /** Able to select columns */
+    public boolean column;
+    /** Able to select rows */
+    public boolean row;
+    /** Able to select cells */
+    public boolean cell;
     
     /**
      * Creates a new instance
-     * @param grabX
-     * @param columnWidth
      */
-    public ComponentTableLayout(boolean grabX, int columnWidth) {
-        this.grabX = grabX;
-        this.columnWidth = columnWidth;
+    public ComponentTableSelectionConfiguration(boolean row,
+                                                boolean column,
+                                                boolean cell) {
+        this.column = column;
+        this.row = row;
+        this.cell = cell;
     }
 }

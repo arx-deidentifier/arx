@@ -25,6 +25,10 @@ import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTableConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTableHeaderConfigurationList;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,7 +37,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 
 /**
  * A page for configuring the order-based builder
@@ -48,7 +51,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     /** Var */
     private final Controller                   controller;
     /** Var */
-    private List                               list;
+    private ComponentTable                     table;
     /** Var */
     private Combo                              combo;
     /** Var */
@@ -85,12 +88,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
     @Override
     public void updatePage() {
-        list.setRedraw(false);
-        list.removeAll();
-        for (String s : model.getData()) {
-            list.add(s);
-        }
-        list.setRedraw(true);
+        table.setTable(getDataProvider(model.getData()), new String[]{"Values"});
         combo.select(getIndexOfDataType(model.getDataType()));
         if (editor != null) editor.setFunction(model.getDefaultFunction());
         model.update();
@@ -100,17 +98,10 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
      * Moves the selected item down
      */
     private void actionDown() {
-        int index = list.getSelectionIndex();
+        Integer index = table.getSelectedRow();
+        if (index == null) return;
         model.moveDown(index);
-        
-        // After moving in the array, move in the list
-        if (index>=list.getItemCount()-1 || index<0) return;
-        list.setRedraw(false);
-        String temp = list.getItem(index+1);
-        list.setItem(index+1, list.getItem(index));
-        list.setItem(index, temp);
-        list.setSelection(index+1);
-        list.setRedraw(true);
+        table.refresh();
         update();
     }
     
@@ -178,12 +169,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         if (!model.sort(type)) {
             model.sort(DataType.STRING);
         }
-        list.setRedraw(false);
-        list.removeAll();
-        for (String s : model.getData()) {
-            list.add(s);
-        }
-        list.setRedraw(true);
+        table.refresh();
         return returnIndex;
     }
     
@@ -191,19 +177,11 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
      * Moves the selected item up
      */
     private void actionUp() {
-        int index = list.getSelectionIndex();
+        Integer index = table.getSelectedRow();
+        if (index == null) return;
         model.moveUp(index);
-
-        // After moving in the array, move in the list
-        if (index<=0) return;
-        list.setRedraw(false);
-        String temp = list.getItem(index-1);
-        list.setItem(index-1, list.getItem(index));
-        list.setItem(index, temp);
-        list.setSelection(index-1);
-        list.setRedraw(true);
+        table.refresh();
         update();
-
     }
 
     /**
@@ -229,8 +207,18 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         composite.setLayoutData(SWTUtil.createFillVerticallyGridData());
         
-        list = new List(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
-        list.setLayoutData(SWTUtil.createFillGridData());
+
+        // Configure table
+        ComponentTableConfiguration config = new ComponentTableConfiguration();
+        config.alignment.horizontal = SWT.CENTER;
+        config.selection.cell = true;
+        config.selection.column = false;
+        config.selection.row = false;
+        config.header = new ComponentTableHeaderConfigurationList();
+
+        // Create table
+        this.table = new ComponentTable(composite, SWT.BORDER, config);
+        this.table.getControl().setLayoutData(SWTUtil.createFillGridData());
         
         final Button up = new Button(composite, SWT.NONE);
         up.setText(Resources.getMessage("HierarchyWizardPageOrder.3")); //$NON-NLS-1$
@@ -334,5 +322,32 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             }
         }
         return true;
+    }
+    
+    /**
+     * Returns a data provider for the given array
+     * @return
+     */
+    private IDataProvider getDataProvider(final String[] array){
+        return new IDataProvider(){
+            @Override
+            public Object getDataValue(int columnIndex, int rowIndex) {
+                return array[rowIndex];
+            }
+            @Override
+            public void setDataValue(int columnIndex,
+                                     int rowIndex,
+                                     Object newValue) {
+                /* Ignore*/
+            }
+            @Override
+            public int getColumnCount() {
+                return 1;
+            }
+            @Override
+            public int getRowCount() {
+                return array.length;
+            }
+        };
     }
 }

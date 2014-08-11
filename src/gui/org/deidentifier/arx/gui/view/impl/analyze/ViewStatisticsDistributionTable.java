@@ -26,6 +26,8 @@ import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTableConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTableHeaderConfigurationSpanEqual;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -60,7 +62,15 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     
     @Override
     protected Control createControl(Composite parent) {
-        this.table = new ComponentTable(parent, SWT.NONE);
+        
+        ComponentTableConfiguration config = new ComponentTableConfiguration();
+        config.alignment.horizontal = SWT.CENTER;
+        config.selection.cell = false;
+        config.selection.column = false;
+        config.selection.row = false;
+        config.header = new ComponentTableHeaderConfigurationSpanEqual(100);
+        
+        this.table = new ComponentTable(parent, SWT.NONE, config);
         return this.table.getControl();
     }
 

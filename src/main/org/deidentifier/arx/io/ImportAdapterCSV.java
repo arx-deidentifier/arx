@@ -266,7 +266,7 @@ public class ImportAdapterCSV extends ImportAdapter {
     /**
      * Returns an array with indexes of columns that should be imported
      * 
-     * Only columns listed within {@link #columns} will be imported. This
+     * Only columns listed within {@link #column} will be imported. This
      * iterates over the list of columns and returns an array with indexes of
      * columns that should be imported.
      * 

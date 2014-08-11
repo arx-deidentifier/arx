@@ -25,11 +25,13 @@ import java.util.List;
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
+import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.data.IColumnAccessor;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.data.ListDataProvider;
+import org.eclipse.nebula.widgets.nattable.data.convert.DefaultDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
@@ -45,23 +47,38 @@ import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.BeveledBorderDecorator;
+import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.LineBorderDecorator;
 import org.eclipse.nebula.widgets.nattable.resize.config.DefaultColumnResizeBindings;
 import org.eclipse.nebula.widgets.nattable.resize.config.DefaultRowResizeBindings;
+import org.eclipse.nebula.widgets.nattable.search.config.DefaultSearchBindings;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.selection.action.SelectCellAction;
+import org.eclipse.nebula.widgets.nattable.selection.config.DefaultMoveSelectionConfiguration;
+import org.eclipse.nebula.widgets.nattable.selection.config.DefaultSelectionBindings;
+import org.eclipse.nebula.widgets.nattable.selection.config.DefaultSelectionStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.RowSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.style.BorderStyle;
+import org.eclipse.nebula.widgets.nattable.style.BorderStyle.LineStyleEnum;
 import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
+import org.eclipse.nebula.widgets.nattable.style.SelectionStyleLabels;
 import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.VerticalAlignmentEnum;
+import org.eclipse.nebula.widgets.nattable.tickupdate.config.DefaultTickUpdateConfiguration;
+import org.eclipse.nebula.widgets.nattable.ui.action.IMouseAction;
+import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectColumnAction;
+import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectRowAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -81,38 +98,52 @@ import org.eclipse.swt.widgets.Event;
  */
 public class ComponentTable implements IComponent {
     
-    /**
-     * The column layer
-     * @author Fabian Prasser
-     */
-    public class ColumnHeaderLayerStack extends AbstractLayerTransform {
-        
-        /**
-         * Creates a new instance
-         * @param parent
-         * @param dataProvider
-         * @param bodyLayer
-         */
-        public ColumnHeaderLayerStack(Composite parent,
-                                      IDataProvider dataProvider,
-                                      BodyLayerStack bodyLayer) {
-            
-            DataLayer dataLayer = new DataLayer(dataProvider);
-            ColumnHeaderLayer colHeaderLayer = new ColumnHeaderLayer(dataLayer,
-                                                                     bodyLayer,
-                                                                     bodyLayer.getSelectionLayer(),
-                                                                     false);
-            colHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.COLUMN_HEADER));
-            colHeaderLayer.addConfiguration(new DefaultColumnResizeBindings());
-            setUnderlyingLayer(colHeaderLayer);
-        }
-    }
+/**
+ * The table style configuration
+ * @author Fabian Prasser
+ *
+ */
+private class TableStyleConfiguration extends AbstractRegistryConfiguration {
 
+    public Color bgColor = GUIHelper.COLOR_WHITE;
+    public Color fgColor = GUIHelper.COLOR_BLACK;
+    public Color gradientBgColor = GUIHelper.COLOR_WHITE;
+    public Color gradientFgColor = GUIHelper.getColor(136, 212, 215);
+    public Font font = root.getFont();
+    public HorizontalAlignmentEnum hAlign = 
+            config.alignment.horizontal == SWT.LEFT ? HorizontalAlignmentEnum.LEFT : 
+            config.alignment.horizontal == SWT.RIGHT ? HorizontalAlignmentEnum.RIGHT : 
+            HorizontalAlignmentEnum.CENTER ;
+    public VerticalAlignmentEnum vAlign = VerticalAlignmentEnum.MIDDLE;
+    public BorderStyle borderStyle = null;
+
+    public ICellPainter cellPainter = new LineBorderDecorator(new TextPainter());
+    
+    @Override
+    public void configureRegistry(IConfigRegistry configRegistry) {
+        configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, cellPainter);
+
+        Style cellStyle = new Style();
+        cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, bgColor);
+        cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, fgColor);
+        cellStyle.setAttributeValue(CellStyleAttributes.GRADIENT_BACKGROUND_COLOR, gradientBgColor);
+        cellStyle.setAttributeValue(CellStyleAttributes.GRADIENT_FOREGROUND_COLOR, gradientFgColor);
+        cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
+        cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, hAlign);
+        cellStyle.setAttributeValue(CellStyleAttributes.VERTICAL_ALIGNMENT, vAlign);
+        cellStyle.setAttributeValue(CellStyleAttributes.BORDER_STYLE, borderStyle);
+        
+        configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, cellStyle);
+    
+        configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, new DefaultDisplayConverter());
+    }
+}
+    
     /**
      * The body layer
      * @author Fabian Prasser
      */
-    private static class BodyLayerStack extends AbstractLayerTransform {
+    private class BodyLayerStack extends AbstractLayerTransform {
 
         /** Selection layer */
         private SelectionLayer selectionLayer;
@@ -126,6 +157,7 @@ public class ComponentTable implements IComponent {
         public BodyLayerStack(IDataProvider dataProvider) {
             dataLayer = new DataLayer(dataProvider);
             selectionLayer = new SelectionLayerStack(dataLayer);
+            selectionLayer.addConfiguration(new SelectionStyleConfiguration());
             ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
             setUnderlyingLayer(viewportLayer);
         }
@@ -148,16 +180,45 @@ public class ComponentTable implements IComponent {
     }
 
     /**
+     * The column layer
+     * @author Fabian Prasser
+     */
+    private class ColumnHeaderLayerStack extends AbstractLayerTransform {
+        
+        /**
+         * Creates a new instance
+         * @param parent
+         * @param dataProvider
+         * @param bodyLayer
+         */
+        public ColumnHeaderLayerStack(Composite parent,
+                                      IDataProvider dataProvider,
+                                      BodyLayerStack bodyLayer) {
+            
+            DataLayer dataLayer = new DataLayer(dataProvider);
+            ColumnHeaderLayer colHeaderLayer = new ColumnHeaderLayer(dataLayer,
+                                                                     bodyLayer,
+                                                                     bodyLayer.getSelectionLayer(),
+                                                                     false);
+            colHeaderLayer.addConfiguration(new HeaderStyleConfiguration(parent, GridRegion.COLUMN_HEADER));
+            colHeaderLayer.addConfiguration(new DefaultColumnResizeBindings());
+            setUnderlyingLayer(colHeaderLayer);
+        }
+    }
+    
+    /**
      * Header style
      * @author Fabian Prasser
      */
-    private static class DefaultHeaderStyleConfiguration extends AbstractRegistryConfiguration {
+    private class HeaderStyleConfiguration extends AbstractRegistryConfiguration {
 
         private final Font                    font;
         private final Color                   bgColor         = GUIHelper.COLOR_WIDGET_BACKGROUND;
         private final Color                   fgColor         = GUIHelper.COLOR_WIDGET_FOREGROUND;
         private final Color                   gradientBgColor = GUIHelper.COLOR_WHITE;
-        private final Color                   gradientFgColor = GUIHelper.getColor(136, 212, 215);
+        private final Color                   gradientFgColor = GUIHelper.getColor(136,
+                                                                                   212,
+                                                                                   215);
         private final HorizontalAlignmentEnum hAlign          = HorizontalAlignmentEnum.CENTER;
         private final VerticalAlignmentEnum   vAlign          = VerticalAlignmentEnum.MIDDLE;
         private final BorderStyle             borderStyle     = null;
@@ -170,7 +231,7 @@ public class ComponentTable implements IComponent {
          * @param parent
          * @param region
          */
-        public DefaultHeaderStyleConfiguration(Composite parent, String region){
+        public HeaderStyleConfiguration(Composite parent, String region){
             this.font = parent.getFont();
             this.region = region;
         }
@@ -230,7 +291,7 @@ public class ComponentTable implements IComponent {
      * The row layer
      * @author Fabian Prasser
      */
-    private static class RowHeaderLayerStack extends AbstractLayerTransform {
+    private class RowHeaderLayerStack extends AbstractLayerTransform {
         
         /**
          * Creates a new instance
@@ -243,34 +304,58 @@ public class ComponentTable implements IComponent {
                                    BodyLayerStack bodyLayer) {
             DataLayer dataLayer = new DataLayer(dataProvider, 50, 20);
             RowHeaderLayer rowHeaderLayer = new RowHeaderLayer(dataLayer, bodyLayer, bodyLayer.getSelectionLayer(), false);
-            rowHeaderLayer.addConfiguration(new DefaultHeaderStyleConfiguration(parent, GridRegion.ROW_HEADER));
+            rowHeaderLayer.addConfiguration(new HeaderStyleConfiguration(parent, GridRegion.ROW_HEADER));
             rowHeaderLayer.addConfiguration(new DefaultRowResizeBindings());
             setUnderlyingLayer(rowHeaderLayer);
         }
     }
+
     /**
      * A selection layer for table views
      * @author Fabian Prasser
      *
      */
-    private static class SelectionLayerStack extends SelectionLayer {
+    private class SelectionLayerStack extends SelectionLayer {
 
         /**
          * Creates a new instance
          * @param underlyingLayer
          */
         public SelectionLayerStack(IUniqueIndexLayer underlyingLayer) {
-            super(underlyingLayer);
+            super(underlyingLayer, false);
+            addConfiguration(new DefaultSelectionStyleConfiguration());
+            addConfiguration(new DefaultSelectionBindings(){
+                /** Override some default behavior */
+                protected void configureBodyMouseClickBindings(UiBindingRegistry uiBindingRegistry) {
+                    IMouseAction action = new SelectCellAction();
+                    uiBindingRegistry.registerMouseDownBinding(MouseEventMatcher.bodyLeftClick(SWT.NONE), action);
+                }
+                /** Override some default behavior */
+                protected void configureBodyMouseDragMode(UiBindingRegistry uiBindingRegistry) {
+                    // Ignore
+                }
+                /** Override some default behavior */
+                protected void configureColumnHeaderMouseClickBindings(UiBindingRegistry uiBindingRegistry) {
+                    uiBindingRegistry.registerSingleClickBinding(MouseEventMatcher.columnHeaderLeftClick(SWT.NONE), new ViewportSelectColumnAction(false, false));
+                }
+                /** Override some default behavior */
+                protected void configureRowHeaderMouseClickBindings(UiBindingRegistry uiBindingRegistry) {
+                    uiBindingRegistry.registerMouseDownBinding(MouseEventMatcher.rowHeaderLeftClick(SWT.NONE), new ViewportSelectRowAction(false, false));
+                }
+            });
+            addConfiguration(new DefaultSearchBindings());
+            addConfiguration(new DefaultTickUpdateConfiguration());
+            addConfiguration(new DefaultMoveSelectionConfiguration());
         }
 
         @Override
         public boolean isCellPositionSelected(int columnPosition, int rowPosition) {
-            return false;
+            return config.selection.cell && super.isCellPositionSelected(columnPosition, rowPosition);
         }
 
         @Override
         public boolean isColumnPositionFullySelected(int columnPosition) {
-            return false;
+            return config.selection.column && super.isColumnPositionFullySelected(columnPosition);
         }
 
         @Override
@@ -280,12 +365,165 @@ public class ComponentTable implements IComponent {
 
         @Override
         public boolean isRowPositionFullySelected(int rowPosition) {
-            return false;
+            return config.selection.row && super.isRowPositionFullySelected(rowPosition);
         }
 
         @Override
         public boolean isRowPositionSelected(int rowPosition) {
             return false;
+        }
+    }
+    /**
+     * Sets up rendering style used for selected areas and the selection anchor.
+     */
+    private class SelectionStyleConfiguration extends AbstractRegistryConfiguration {
+
+        // General style
+        public Font        font                       = root.getFont();
+        public Color       selectionBgColor           = GUIHelper.COLOR_TITLE_INACTIVE_BACKGROUND;
+        public Color       selectionFgColor           = GUIHelper.COLOR_BLACK;
+        public Color       selectedHeaderBgColor      = GUIHelper.COLOR_TITLE_INACTIVE_BACKGROUND;
+        public Color       selectedHeaderFgColor      = GUIHelper.COLOR_BLACK;
+        public BorderStyle selectedHeaderBorderStyle  = new BorderStyle(-1,
+                                                                        selectedHeaderFgColor,
+                                                                        LineStyleEnum.SOLID);
+        public Color       fullySelectedHeaderBgColor = GUIHelper.COLOR_WIDGET_NORMAL_SHADOW;
+
+        @Override
+        public void configureRegistry(IConfigRegistry configRegistry) {
+            configureSelectionStyle(configRegistry);
+            configureSelectionAnchorStyle(configRegistry);
+            configureHeaderHasSelectionStyle(configRegistry);
+            configureHeaderFullySelectedStyle(configRegistry);
+        }
+
+        protected void configureHeaderFullySelectedStyle(IConfigRegistry configRegistry) {
+            // Header fully selected
+            Style cellStyle = new Style();  
+            cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, fullySelectedHeaderBgColor);
+
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT, 
+                    SelectionStyleLabels.COLUMN_FULLY_SELECTED_STYLE);
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT, 
+                    SelectionStyleLabels.ROW_FULLY_SELECTED_STYLE);
+        }
+
+        protected void configureHeaderHasSelectionStyle(IConfigRegistry configRegistry) {
+            Style cellStyle = new Style();
+
+            cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, selectedHeaderFgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, selectedHeaderBgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
+            
+            switch (config.alignment.horizontal) {
+                case SWT.LEFT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
+                    break;
+                case SWT.RIGHT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT);
+                    break;
+                case SWT.CENTER:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.CENTER);
+                    break;
+            }
+            cellStyle.setAttributeValue(CellStyleAttributes.BORDER_STYLE, selectedHeaderBorderStyle);
+
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT, 
+                    GridRegion.COLUMN_HEADER);
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT, 
+                    GridRegion.CORNER);
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT, 
+                    GridRegion.ROW_HEADER);
+        }
+
+        
+        protected void configureSelectionAnchorStyle(IConfigRegistry configRegistry) {
+            // Selection anchor style for normal display mode
+            Style cellStyle = new Style();
+            cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
+            cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, selectionBgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, selectionFgColor);
+
+            switch (config.alignment.horizontal) {
+                case SWT.LEFT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
+                    break;
+                case SWT.RIGHT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT);
+                    break;
+                case SWT.CENTER:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.CENTER);
+                    break;
+            }
+            
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.NORMAL, 
+                    SelectionStyleLabels.SELECTION_ANCHOR_STYLE);
+
+            // Selection anchor style for select display mode
+            cellStyle = new Style();
+            cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
+            cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, selectionBgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, selectionFgColor);
+
+            switch (config.alignment.horizontal) {
+                case SWT.LEFT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
+                    break;
+                case SWT.RIGHT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT);
+                    break;
+                case SWT.CENTER:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.CENTER);
+                    break;
+            }
+            
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT, 
+                    SelectionStyleLabels.SELECTION_ANCHOR_STYLE);
+        }
+
+        protected void configureSelectionStyle(IConfigRegistry configRegistry) {
+            Style cellStyle = new Style();
+            cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
+            cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, selectionBgColor);
+            cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, selectionFgColor);
+
+            switch (config.alignment.horizontal) {
+                case SWT.LEFT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT);
+                    break;
+                case SWT.RIGHT:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT);
+                    break;
+                case SWT.CENTER:
+                    cellStyle.setAttributeValue(CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.CENTER);
+                    break;
+            }
+            
+            configRegistry.registerConfigAttribute(
+                    CellConfigAttributes.CELL_STYLE, 
+                    cellStyle, 
+                    DisplayMode.SELECT);
         }
     }
 
@@ -297,32 +535,54 @@ public class ComponentTable implements IComponent {
     private static int checkStyle(int style) {
         return style & (SWT.BORDER | SWT.NONE);
     }
-    
+
     /** The parent */
-    private final Composite         root;
+    private final Composite             root;
     /** The underlying nattable instance */
-    private NatTable                table              = null;
+    private NatTable                    table              = null;
+    /** The underlying data provider */
+    private IDataProvider               provider           = null;
+    /** The underlying data layer */
+    private DataLayer                   dataLayer          = null;
+    /** The underlying corner layer */
+    private CornerLayer                 cornerLayer        = null;
     /** The layout data */
-    private Object                  layoutData         = null;
-    /** The layout */
-    private ComponentTableLayout    layout             = new ComponentTableLayout(true, 100);
+    private Object                      layoutData         = null;
+    /** The config */
+    private ComponentTableConfiguration config             = null;
     /** State */
-    private Integer                 selectedRow        = null;
+    private Integer                     selectedRow        = null;
     /** State */
-    private Integer                 selectedColumn     = null;
-    /** Listeners */
-    private List<SelectionListener> selectionListeners = new ArrayList<SelectionListener>();
+    private Integer                     selectedColumn     = null;
 
     /** Listeners */
-    private List<MouseListener>     mouseListeners     = new ArrayList<MouseListener>();
+    private List<SelectionListener>     selectionListeners = new ArrayList<SelectionListener>();
+    /** Listeners */
+    private List<MouseListener>         mouseListeners     = new ArrayList<MouseListener>();
 
     /**
      * Creates a new instance
      * @param parent
+     * @param style
      */
     public ComponentTable(Composite parent, int style) {
+        this(parent, style, null);
+    }
+    
+    /**
+     * Creates a new instance
+     * @param parent
+     * @param style
+     * @param config
+     */
+    public ComponentTable(Composite parent, int style, ComponentTableConfiguration config) {
         this.root = new Composite(parent, checkStyle(style));
         this.root.setLayout(new FillLayout());
+        if (config != null) {
+            this.config = config;
+        } else {
+            this.config = new ComponentTableConfiguration();
+        }
     }
 
     /**
@@ -384,12 +644,44 @@ public class ComponentTable implements IComponent {
     }
     
     /**
+     * Layouts the table, after a column has been removed
+     * @param column
+     */
+    public void doLayoutOnColumnRemoval(int column){
+        if (column<0 || column>=provider.getColumnCount()+1) {
+            return;
+        }
+        
+        if (dataLayer == null) {
+            return;
+        }
+        
+        table.setRedraw(false);
+
+        int total = cornerLayer != null ? cornerLayer.getColumnWidthByPosition(0) : 0;
+        int columns = provider.getColumnCount();
+        for (int i = 0; i < columns; i++) {
+            total += dataLayer.getColumnWidthByPosition(i);
+        }
+
+        // Adjust
+        int width = table.getSize().x;
+        if (total < width) {
+            dataLayer.setColumnWidthByPosition(columns - 1, width - total, true);
+        }
+
+        table.setRedraw(true);
+        table.redraw();
+    }
+    
+    /**
      * Updates the underlying table
      * @param data
      */
     public void setData(IDataProvider dataProvider) {
         this.setData(dataProvider, null, null);
     }
+    
     /**
      * Updates the underlying data
      * @param dataProvider
@@ -415,14 +707,30 @@ public class ComponentTable implements IComponent {
         BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
         ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
         RowHeaderLayerStack rowHeaderLayer = new RowHeaderLayerStack(root, rowHeaderDataProvider, bodyLayer);
-        CornerLayer cornerLayer = new CornerLayer(new DataLayer(cornerDataProvider), rowHeaderLayer, columnHeaderLayer);
+        final CornerLayer cornerLayer = new CornerLayer(new DataLayer(cornerDataProvider), rowHeaderLayer, columnHeaderLayer);
         GridLayer gridLayer = new GridLayer(bodyLayer, columnHeaderLayer, rowHeaderLayer, cornerLayer);
         
         // Create table
-        table = new NatTable(root, gridLayer);
-        addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), cornerLayer);
-        addSelectionListener(bodyLayer.getSelectionLayer());
-        addMouseListener(table);
+        this.table = new NatTable(root, gridLayer, false);
+        this.table.addConfiguration(new TableStyleConfiguration());
+        this.table.configure();
+        this.provider = dataProvider;
+        this.dataLayer = bodyLayer.getDataLayer();
+        this.cornerLayer = cornerLayer;
+        this.addSelectionListener(bodyLayer.getSelectionLayer());
+        this.addMouseListener(table);
+
+        // Add column width handler
+        table.addControlListener(new ControlAdapter(){
+            public void controlResized(ControlEvent arg0) {
+                config.header.update(table.getSize().x);
+            } 
+        });
+        table.addMouseListener(new MouseAdapter(){
+            public void mouseUp(MouseEvent arg0) {
+                config.header.update(table.getSize().x);
+            }
+        });
         
         // Set layout
         if (this.layoutData != null) {
@@ -433,11 +741,14 @@ public class ComponentTable implements IComponent {
         this.root.setRedraw(true);
         this.root.layout(true);
         
+        // Layout
+        this.config.header.init(table, dataLayer, cornerLayer, provider, table.getSize().x);
+        
         // Reset state
         this.selectedRow = null;
         this.selectedColumn = null;
     }
-    
+
     /**
      * Updates the underlying table
      * @param data
@@ -462,22 +773,14 @@ public class ComponentTable implements IComponent {
     public void setEmpty() {
         if (this.table == null || this.table.isDisposed()) return;
         this.root.setRedraw(false);
+        this.provider = null;
+        this.dataLayer = null;
+        this.cornerLayer = null;
         this.table.dispose();
         this.root.setRedraw(true);
         this.root.layout(true);
         this.selectedRow = null;
         this.selectedColumn = null;
-    }
-
-    /**
-     * Sets the layout
-     * @param layout
-     */
-    public void setLayout(ComponentTableLayout layout){
-        this.layout = layout;
-        if (this.table != null && !this.table.isDisposed()) {
-            root.layout(true);
-        }
     }
 
     /**
@@ -495,6 +798,15 @@ public class ComponentTable implements IComponent {
      * @param columns
      */
     public void setTable(IDataProvider dataProvider, String[] columns) {
+        setTable(dataProvider, getHeaderDataProvider(dataProvider, columns, false));
+    }
+
+    /**
+     * Updates the underlying table. Hides the row header.
+     * @param dataProvider
+     * @param columns
+     */
+    public void setTable(IDataProvider dataProvider, IDataProvider columns) {
 
         // Disable redrawing
         this.root.setRedraw(false);
@@ -504,21 +816,35 @@ public class ComponentTable implements IComponent {
             table.dispose();
         }
 
-        // Create data providers
-        IDataProvider columnHeaderDataProvider = getHeaderDataProvider(dataProvider, columns, false);
-
         // Create layers
         BodyLayerStack bodyLayer = new BodyLayerStack(dataProvider);
-        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columnHeaderDataProvider, bodyLayer);
+        ColumnHeaderLayerStack columnHeaderLayer = new ColumnHeaderLayerStack(root, columns, bodyLayer);
         CompositeLayer compositeLayer = new CompositeLayer(1, 2);
         compositeLayer.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
         compositeLayer.setChildLayer(GridRegion.COLUMN_HEADER, columnHeaderLayer, 0, 0);
+        addUIBindings(compositeLayer);
 
         // Create table
-        table = new NatTable(root, compositeLayer);
-        addColumnWidthHandler(table, dataProvider, bodyLayer.getDataLayer(), null);
-        addSelectionListener(bodyLayer.getSelectionLayer());
-        addMouseListener(table);
+        this.table = new NatTable(root, compositeLayer, false);
+        this.table.addConfiguration(new TableStyleConfiguration());
+        this.table.configure();
+        this.provider = dataProvider;
+        this.dataLayer = bodyLayer.getDataLayer();
+        this.cornerLayer = null;
+        this.addSelectionListener(bodyLayer.getSelectionLayer());
+        this.addMouseListener(table);
+        
+        // Add column width handler
+        table.addControlListener(new ControlAdapter(){
+            public void controlResized(ControlEvent arg0) {
+                config.header.update(table.getSize().x);
+            } 
+        });
+        table.addMouseListener(new MouseAdapter(){
+            public void mouseUp(MouseEvent arg0) {
+                config.header.update(table.getSize().x);
+            }
+        });
         
         // Set layout
         if (this.layoutData != null) {
@@ -529,11 +855,14 @@ public class ComponentTable implements IComponent {
         this.root.setRedraw(true);
         this.root.layout(true);
 
+        // Layout
+        this.config.header.init(table, dataLayer, cornerLayer, provider, table.getSize().x);
+        
         // Reset state
         this.selectedRow = null;
         this.selectedColumn = null;
     }
-        
+
     /**
      * Updates the underlying table. Hides the row header.
      * @param data
@@ -610,54 +939,6 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * Adds a handler for automatically resizing columns
-     * @param table
-     * @param dataProvider
-     * @param dataLayer
-     * @param cornerLayer
-     */
-    private void addColumnWidthHandler(final NatTable table, 
-                                       final IDataProvider dataProvider, 
-                                       final DataLayer dataLayer,
-                                       final CornerLayer cornerLayer) {
-        table.addControlListener(new ControlAdapter(){
-            public void controlResized(ControlEvent arg0) {
-                
-                root.setRedraw(false);
-                
-                // Prepare
-                int width = table.getSize().x;
-                
-                // Check if larger than parent
-                int columns = dataProvider.getColumnCount();
-                int total = layout.columnWidth * columns;
-                total += cornerLayer != null ? cornerLayer.getColumnWidthByPosition(0) : 0;
-                if (total >= width) {
-                    for (int i=0; i<columns; i++){
-                        dataLayer.setColumnWidthByPosition(i, layout.columnWidth, i==columns-1);
-                    }
-                } else {
-                    // If not, extend to cover the whole area
-                    int columnWidth = width;
-                    columnWidth -= (cornerLayer != null) ? cornerLayer.getColumnWidthByPosition(0) : 0;
-                    columnWidth = (int)Math.round((double)columnWidth / (double)dataProvider.getColumnCount());
-                    total = (cornerLayer != null) ? cornerLayer.getColumnWidthByPosition(0) : 0;
-                    for (int i=0; i<columns; i++){
-                        if (total + columnWidth > width) {
-                            columnWidth = width - total;
-                        }
-                        dataLayer.setColumnWidthByPosition(i, columnWidth, i==columns-1);
-                        total += columnWidth;
-                    }   
-                }
-                
-                root.setRedraw(true);
-                table.redraw();
-            } 
-        });
-    }
-
-    /**
      * Add listener
      * @param table
      */
@@ -699,6 +980,39 @@ public class ComponentTable implements IComponent {
             }
         });
 
+    }
+
+    /**
+     * Adds some UI bindings
+     * @param layer
+     */
+    private void addUIBindings(CompositeLayer layer) {
+
+        // Make corner resizable
+        layer.addConfiguration(new AbstractUiBindingConfiguration() {
+
+            @Override
+            public void configureUiBindings(UiBindingRegistry uiBindingRegistry) {
+                uiBindingRegistry.registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,GridRegion.BODY, MouseEventMatcher.RIGHT_BUTTON), new SelectCellAction(){
+                    @Override
+                    public void run(NatTable natTable, MouseEvent event) {
+                        if (config == null || config.selection.cell) super.run(natTable, event);
+                    }
+                });
+                uiBindingRegistry.registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,GridRegion.COLUMN_HEADER, MouseEventMatcher.RIGHT_BUTTON), new ViewportSelectColumnAction(true, true){
+                    @Override
+                    public void run(NatTable natTable, MouseEvent event) {
+                        if (config == null || config.selection.column) super.run(natTable, event);
+                    }
+                });
+                uiBindingRegistry.registerMouseDownBinding(new MouseEventMatcher(SWT.NONE,GridRegion.ROW_HEADER, MouseEventMatcher.RIGHT_BUTTON), new ViewportSelectRowAction(true, true){
+                    @Override
+                    public void run(NatTable natTable, MouseEvent event) {
+                        if (config == null || config.selection.row) super.run(natTable, event);
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -785,5 +1099,34 @@ public class ComponentTable implements IComponent {
                 }
             };
         }
+    }
+
+    /**
+     * Redraws the table and resets the layout
+     */
+    public void reset() {
+        if (table==null || table.isDisposed()) return;
+        this.table.refresh();
+        this.selectedRow = null;
+        this.selectedColumn = null;
+        this.config.header.init(table, dataLayer, cornerLayer, provider, table.getSize().x);
+    }
+    /**
+     * Redraws the table
+     */
+    public void refresh() {
+        if (table==null || table.isDisposed()) return;
+        this.table.refresh();
+        if (this.selectedColumn == null ||
+            this.selectedColumn >= provider.getColumnCount() ||
+            this.provider.getColumnCount() == 0) {
+            this.selectedColumn = null;
+        }
+        if (this.selectedRow == null ||
+            this.selectedRow >= provider.getRowCount() ||
+            this.provider.getRowCount() == 0) {
+            this.selectedRow = null;
+        }
+        config.header.update(table.getSize().x);
     }
 }

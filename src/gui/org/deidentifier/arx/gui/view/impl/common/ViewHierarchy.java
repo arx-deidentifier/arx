@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.define;
+package org.deidentifier.arx.gui.view.impl.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -59,37 +59,102 @@ import org.eclipse.swt.widgets.MenuItem;
  */
 public class ViewHierarchy implements IView {
 
+    /**
+     * A data provider for hierarchies
+     * @author Fabian Prasser
+     *
+     */
+    private class HierarchyDataProvider implements IDataProvider {
+
+        @Override
+        public Object getDataValue(int columnIndex, int rowIndex) {
+            return hierarchy[rowIndex][columnIndex];
+        }
+
+        @Override
+        public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
+            // Ignore
+        }
+
+        @Override
+        public int getColumnCount() {
+            if (hierarchy == null) return 0;
+            else if (hierarchy.length == 0) return 0;
+            else if (hierarchy[0] == null) return 0;
+            else return hierarchy[0].length;
+        }
+
+        @Override
+        public int getRowCount() {
+            if (hierarchy == null) return 0;
+            else return hierarchy.length;
+        }
+    }
+
+    /**
+     * A header data provider for hierarchies
+     * @author Fabian Prasser
+     *
+     */
+    private class HierarchyHeaderDataProvider extends HierarchyDataProvider {
+
+        @Override
+        public Object getDataValue(int columnIndex, int rowIndex) {
+            return "Level-"+columnIndex;
+        }
+
+        @Override
+        public int getRowCount() {
+            return 1;
+        }
+    }
+
+    /** Constant */
     private static final String ITEM_ALL  = Resources.getMessage("HierarchyView.0"); //$NON-NLS-1$
 
     /** Controller */
     private Controller          controller;
 
-    /** Bottom parent container */
+    /** Widget */
     private Composite           base;
-
-    /** The column attribute */
-    private final String        attribute;
-
-    /** The model */
-    private Model               model;
-
-    /** The combo for min generalization */
+    /** Widget */
     private Combo               min;
-
-    /** The combo for max generalization */
+    /** Widget */
     private Combo               max;
-
-    /** The current hierarchy */
-    private String[][]          hierarchy = new String[][] { new String[] {} };
-
-    /** Is the view editable? */
-    private boolean             editable  = true;
-
-    /** The underlying table */
+    /** Widget */
     private ComponentTable      table     = null;
+
+    /** Model */
+    private final String        attribute;
+    /** Model */
+    private Model               model;
+    /** Model */
+    private String[][]          hierarchy = new String[][] { new String[] {} };
+    /** Model */
+    private boolean             editable  = true;
 
     /** Menu */
     private Menu                menu      = null;
+    /** Item */
+    private MenuItem            itemInsertRow;
+    /** Item */
+    private MenuItem            itemDeleteRow;
+    /** Item */
+    private MenuItem            itemInsertColumn;
+    /** Item */
+    private MenuItem            itemDeleteColumn;
+    /** Item */
+    private MenuItem            itemMoveRowUp;
+    /** Item */
+    private MenuItem            itemMoveRowDown;
+    /** Item */
+    private MenuItem            itemEditItem;
+    /** Item */
+    private MenuItem            itemRenameItem;
+    /** Item */
+    private MenuItem            itemClear;
+    /** Item */
+    private MenuItem            itemInitialize;
 
     /**
      * Constructor for non-editable views
@@ -100,7 +165,7 @@ public class ViewHierarchy implements IView {
 
         this.attribute = null;
         this.editable = false;
-        create(parent);
+        createTable(parent);
 
     }
     
@@ -114,7 +179,7 @@ public class ViewHierarchy implements IView {
 
         this.attribute = attribute;
         this.editable = false;
-        create(parent);
+        createTable(parent);
 
     }
 
@@ -138,19 +203,23 @@ public class ViewHierarchy implements IView {
 
         // build
         editable = true;
-        create(parent);
+        createTable(parent);
     }
 
     @Override
     public void dispose() {
         controller.removeListener(this);
-        if (!base.isDisposed()) base.dispose();
+        if (!base.isDisposed()) {
+            base.dispose();
+        }
     }
 
     @Override
     public void reset() {
-        setHierarchy(Hierarchy.create());
-        if (!base.isDisposed()) base.redraw();
+        setHierarchy(null);
+        if (!base.isDisposed()) {
+            base.redraw();
+        }
     }
 
     /**
@@ -158,33 +227,9 @@ public class ViewHierarchy implements IView {
      * @param type
      */
     public void setHierarchy(final AttributeType.Hierarchy type) {
-        if (type == null) {
-            this.hierarchy = null;
-            this.table.setEmpty();
-            this.updateCombos();
-        } else {
-            setHierarchyData(type.getHierarchy());
-        }
-    }
-
-    /**
-     * Sets the hierarchy displayed by this view
-     * @param array
-     */
-    private void setHierarchyData(String[][] array) {
-        this.hierarchy = array;
-        if (hierarchy == null || hierarchy.length == 0 || 
-            hierarchy[0] == null || hierarchy[0].length==0){
-            this.hierarchy = new String[][]{new String[]{}};
-            this.table.setEmpty();
-        } else {
-            String[] header = new String[hierarchy[0].length];
-            for (int i=0; i<header.length; i++) {
-                header[i] = Resources.getMessage("HierarchyView.17") + i;
-            }
-            this.table.setTable(hierarchy, header);
-            this.updateCombos();
-        }
+        this.hierarchy = (type == null ? null : type.getHierarchy());
+        this.table.reset();
+        this.updateCombos();
     }
 
     /**
@@ -221,38 +266,6 @@ public class ViewHierarchy implements IView {
     }
 
     /**
-     * Initializes the hierarchy with identity mapping
-     */
-    private void actionInitialize() {
-        
-        // Check
-        if (table.getSelectedColumn() != null ||
-            table.getSelectedRow() != null ||
-            model == null ||
-            model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null) {
-            return;
-        }
-        
-        // Obtain values
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int index = handle.getColumnIndexOf(attribute);
-        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
-        
-        // Create hierarchy
-        String[][] hierarchy = new String[values.length][0];
-        for (int i=0; i<values.length; i++){
-            hierarchy[i] = new String[]{values[i]};
-        }
-        
-        // Set
-        setHierarchyData(hierarchy);
-        pushHierarchy();
-        pushMin();
-        pushMax();
-    }
-    
-    /**
      * Clears the hierarchy
      */
     private void actionClear() {
@@ -262,7 +275,7 @@ public class ViewHierarchy implements IView {
         pushMin();
         pushMax();
     }
-    
+
     /**
      *  Deletes a column
      */
@@ -287,8 +300,11 @@ public class ViewHierarchy implements IView {
         if (columns==0){
             actionClear();
         } else {
-            setHierarchyData(temp);
+            this.hierarchy = temp;
+            this.table.refresh();
+            this.updateCombos();
         }
+        table.doLayoutOnColumnRemoval(selected);
         
         pushHierarchy();
         pushMin();
@@ -315,9 +331,73 @@ public class ViewHierarchy implements IView {
         if (rows==0){
             actionClear();
         } else {
-            setHierarchyData(temp);
+            this.hierarchy = temp;
+            this.table.refresh();
+            this.updateCombos();
         }
         
+        pushHierarchy();
+        pushMin();
+        pushMax();
+    }
+    
+    /**
+     * Renames an item
+     */
+    private void actionEditItem() {
+
+        if (table.getSelectedRow() == null ||
+            table.getSelectedColumn() == null) { 
+            return; 
+        }
+
+        int selectedRow = table.getSelectedRow();
+        int selectedColumn = table.getSelectedColumn();
+        
+        final String oldValue = hierarchy[selectedRow][selectedColumn];
+        final String newValue = controller.actionShowInputDialog(controller.getResources().getShell(),
+                                                                 Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        if (newValue != null) {
+            hierarchy[selectedRow][selectedColumn] = newValue;
+        }
+        
+        this.table.refresh();
+        this.updateCombos();
+        pushHierarchy();
+        pushMin();
+        pushMax();
+    }
+    
+    /**
+     * Initializes the hierarchy with identity mapping
+     */
+    private void actionInitialize() {
+        
+        // Check
+        if (table.getSelectedColumn() != null ||
+            table.getSelectedRow() != null ||
+            model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(attribute);
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] hierarchy = new String[values.length][0];
+        for (int i=0; i<values.length; i++){
+            hierarchy[i] = new String[]{values[i]};
+        }
+        
+        // Set
+        this.hierarchy = hierarchy;
+        this.table.refresh();
+        this.updateCombos();
         pushHierarchy();
         pushMin();
         pushMax();
@@ -331,11 +411,6 @@ public class ViewHierarchy implements IView {
         if (table.getSelectedColumn() == null) { 
             return; 
         }
-        
-        // 0 1 2 3 4 5 6
-        // (insert 2)                
-        // cp 0, 0, 3 (idx+1)
-        // cp 3, 4, 4 (idx+1), (idx+2), length-idx-2
 
         int selected = table.getSelectedColumn();
         int columns = hierarchy[0].length+1;
@@ -349,7 +424,9 @@ public class ViewHierarchy implements IView {
             temp[i] = row;
         }
         
-        setHierarchyData(temp);
+        this.hierarchy = temp;
+        this.table.refresh();
+        this.updateCombos();
         pushHierarchy();
         pushMin();
         pushMax();
@@ -369,29 +446,17 @@ public class ViewHierarchy implements IView {
         int rows = hierarchy.length+1;
         String[][] temp = new String[rows][columns];
         
-
-        // 0 1 2 3 4 5 6
-        // (insert 2)                
-        // cp 0, 0, 3 (idx+1)
-        // cp 3, 4, 4 (idx+1), (idx+2), length-idx-2
         System.arraycopy(hierarchy, 0, temp, 0, selected+1);
         System.arraycopy(hierarchy, selected+1, temp, selected+2, rows-selected-2);
         temp[selected+1] = new String[columns];
         Arrays.fill(temp[selected+1], "");
         
-        setHierarchyData(temp);
+        this.hierarchy = temp;
+        this.table.refresh();
+        this.updateCombos();
         pushHierarchy();
         pushMin();
         pushMax();
-    }
-
-    /**
-     * Mouse down action
-     * @param point
-     */
-    private void onMouseDown(Point point) {
-        this.menu.setLocation(point);
-        this.menu.setVisible(true);
     }
 
     /**
@@ -413,7 +478,8 @@ public class ViewHierarchy implements IView {
         hierarchy[selected+1] = hierarchy[selected];
         hierarchy[selected] = temp;
         
-        setHierarchyData(hierarchy);
+        this.table.refresh();
+        this.updateCombos();
         pushHierarchy();
         pushMin();
         pushMax();
@@ -438,7 +504,8 @@ public class ViewHierarchy implements IView {
         hierarchy[selected-1] = hierarchy[selected];
         hierarchy[selected] = temp;
         
-        setHierarchyData(hierarchy);
+        this.table.refresh();
+        this.updateCombos();
         pushHierarchy();
         pushMin();
         pushMax();
@@ -469,42 +536,18 @@ public class ViewHierarchy implements IView {
             }
         }
         
-        setHierarchyData(hierarchy);
+        this.table.refresh();
+        this.updateCombos();
         pushHierarchy();
         pushMin();
         pushMax();
     }
-    /**
-     * Renames an item
-     */
-    private void actionEditItem() {
 
-        if (table.getSelectedRow() == null ||
-            table.getSelectedColumn() == null) { 
-            return; 
-        }
-
-        int selectedRow = table.getSelectedRow();
-        int selectedColumn = table.getSelectedColumn();
-        
-        final String oldValue = hierarchy[selectedRow][selectedColumn];
-        final String newValue = controller.actionShowInputDialog(controller.getResources().getShell(),
-                                                                 Resources.getMessage("HierarchyView.13"), Resources.getMessage("HierarchyView.14"), oldValue); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        if (newValue != null) {
-            hierarchy[selectedRow][selectedColumn] = newValue;
-        }
-        
-        setHierarchyData(hierarchy);
-        pushHierarchy();
-        pushMin();
-        pushMax();
-    }
     /**
      * Creates the control
      * @param parent
      */
-    private void create(final Composite parent) {
+    private void createTable(final Composite parent) {
 
         // Create base composite
         this.base = new Composite(parent, SWT.NONE);
@@ -522,16 +565,24 @@ public class ViewHierarchy implements IView {
                       Resources.getMessage("HierarchyView.3")); //$NON-NLS-2$
         }
 
+        // Configure table
+        ComponentTableConfiguration config = new ComponentTableConfiguration();
+        config.alignment.horizontal = SWT.LEFT;
+        config.selection.cell = true;
+        config.selection.column = true;
+        config.selection.row = false;
+        config.header = new ComponentTableHeaderConfigurationSpanLast(100);
+
         // Create table
-        this.table = new ComponentTable(base, SWT.BORDER);
+        this.table = new ComponentTable(base, SWT.BORDER, config);
         this.table.getControl().setLayoutData(SWTUtil.createFillGridData());
+        this.table.setTable(new HierarchyDataProvider(), new HierarchyHeaderDataProvider());
 
         // Create the menu and editing controls
         if (editable) {
             createMenu();
         }
     }
-
     /**
      * Creates all components required for making the table editable
      */
@@ -577,15 +628,22 @@ public class ViewHierarchy implements IView {
                 }
             }
         });
+        table.getControl().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(final MouseEvent e) {
+                if (e.button == 3) { 
+                    onMouseDown(table.getControl().toDisplay(e.x, e.y));
+                }
+            }
+        });
 
         // Creates the editors menu
         this.menu = new Menu(table.getControl());
-        table.getControl().setMenu(menu);
         
         // Insert row action
-        final MenuItem insertRow = new MenuItem(menu, SWT.NONE);
-        insertRow.setText(Resources.getMessage("HierarchyView.7")); //$NON-NLS-1$
-        insertRow.addSelectionListener(new SelectionAdapter() {
+        itemInsertRow = new MenuItem(menu, SWT.NONE);
+        itemInsertRow.setText(Resources.getMessage("HierarchyView.7")); //$NON-NLS-1$
+        itemInsertRow.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionInsertRow();
@@ -593,9 +651,9 @@ public class ViewHierarchy implements IView {
         });
 
         // Delete row action
-        final MenuItem deleteRow = new MenuItem(menu, SWT.NONE);
-        deleteRow.setText(Resources.getMessage("HierarchyView.8")); //$NON-NLS-1$
-        deleteRow.addSelectionListener(new SelectionAdapter() {
+        itemDeleteRow = new MenuItem(menu, SWT.NONE);
+        itemDeleteRow.setText(Resources.getMessage("HierarchyView.8")); //$NON-NLS-1$
+        itemDeleteRow.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionDeleteRow();
@@ -604,11 +662,11 @@ public class ViewHierarchy implements IView {
 
         // Separator
         new MenuItem(menu, SWT.SEPARATOR);
-
+        
         // Insert column action
-        final MenuItem insertColumn = new MenuItem(menu, SWT.NONE);
-        insertColumn.setText(Resources.getMessage("HierarchyView.9")); //$NON-NLS-1$
-        insertColumn.addSelectionListener(new SelectionAdapter() {
+        itemInsertColumn = new MenuItem(menu, SWT.NONE);
+        itemInsertColumn.setText(Resources.getMessage("HierarchyView.9")); //$NON-NLS-1$
+        itemInsertColumn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionInsertColumn();
@@ -616,9 +674,9 @@ public class ViewHierarchy implements IView {
         });
 
         // Delete column action
-        final MenuItem deleteColumn = new MenuItem(menu, SWT.NONE);
-        deleteColumn.setText(Resources.getMessage("HierarchyView.10")); //$NON-NLS-1$
-        deleteColumn.addSelectionListener(new SelectionAdapter() {
+        itemDeleteColumn = new MenuItem(menu, SWT.NONE);
+        itemDeleteColumn.setText(Resources.getMessage("HierarchyView.10")); //$NON-NLS-1$
+        itemDeleteColumn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionDeleteColumn();
@@ -629,19 +687,19 @@ public class ViewHierarchy implements IView {
         new MenuItem(menu, SWT.SEPARATOR);
 
         // Move up
-        final MenuItem up = new MenuItem(menu, SWT.NONE);
-        up.setText(Resources.getMessage("HierarchyView.11")); //$NON-NLS-1$
-        up.addSelectionListener(new SelectionAdapter() {
+        itemMoveRowUp = new MenuItem(menu, SWT.NONE);
+        itemMoveRowUp.setText(Resources.getMessage("HierarchyView.11")); //$NON-NLS-1$
+        itemMoveRowUp.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionMoveRowUp();
             }
         });
-
+        
         // Move down
-        final MenuItem down = new MenuItem(menu, SWT.NONE);
-        down.setText(Resources.getMessage("HierarchyView.12")); //$NON-NLS-1$
-        down.addSelectionListener(new SelectionAdapter() {
+        itemMoveRowDown = new MenuItem(menu, SWT.NONE);
+        itemMoveRowDown.setText(Resources.getMessage("HierarchyView.12")); //$NON-NLS-1$
+        itemMoveRowDown.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionMoveRowDown();
@@ -652,9 +710,9 @@ public class ViewHierarchy implements IView {
         new MenuItem(menu, SWT.SEPARATOR);
 
         // Edit item action
-        final MenuItem editItem = new MenuItem(menu, SWT.NONE);
-        editItem.setText(Resources.getMessage("HierarchyView.18")); //$NON-NLS-1$
-        editItem.addSelectionListener(new SelectionAdapter() {
+        itemEditItem = new MenuItem(menu, SWT.NONE);
+        itemEditItem.setText(Resources.getMessage("HierarchyView.18")); //$NON-NLS-1$
+        itemEditItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionEditItem();
@@ -662,22 +720,23 @@ public class ViewHierarchy implements IView {
         });
 
         // Rename item action
-        final MenuItem renameItem = new MenuItem(menu, SWT.NONE);
-        renameItem.setText(Resources.getMessage("HierarchyView.15")); //$NON-NLS-1$
-        renameItem.addSelectionListener(new SelectionAdapter() {
+        itemRenameItem = new MenuItem(menu, SWT.NONE);
+        itemRenameItem.setText(Resources.getMessage("HierarchyView.15")); //$NON-NLS-1$
+        itemRenameItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionRenameItem();
             }
         });
 
+
         // Separator
         new MenuItem(menu, SWT.SEPARATOR);
         
         // Action clear
-        final MenuItem clear = new MenuItem(menu, SWT.NONE);
-        clear.setText(Resources.getMessage("HierarchyView.16")); //$NON-NLS-1$
-        clear.addSelectionListener(new SelectionAdapter() {
+        itemClear = new MenuItem(menu, SWT.NONE);
+        itemClear.setText(Resources.getMessage("HierarchyView.16")); //$NON-NLS-1$
+        itemClear.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionClear();
@@ -685,14 +744,26 @@ public class ViewHierarchy implements IView {
         });
 
         // Action intialize
-        final MenuItem initialize = new MenuItem(menu, SWT.NONE);
-        initialize.setText(Resources.getMessage("HierarchyView.19")); //$NON-NLS-1$
-        initialize.addSelectionListener(new SelectionAdapter() {
+        itemInitialize = new MenuItem(menu, SWT.NONE);
+        itemInitialize.setText(Resources.getMessage("HierarchyView.19")); //$NON-NLS-1$
+        itemInitialize.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 actionInitialize();
             }
         });
+
+    }
+    /**
+     * Returns the index of
+     * @param selection
+     * @return
+     */
+    private int maxIndexOf(String selection){
+        for (int i=0; i<max.getItems().length; i++){
+            if (max.getItem(i).equals(selection)) return i;
+        }
+        return -1;
     }
 
     /**
@@ -708,16 +779,39 @@ public class ViewHierarchy implements IView {
     }
 
     /**
-     * Returns the index of
-     * @param selection
-     * @return
+     * Mouse down action
+     * @param point
      */
-    private int maxIndexOf(String selection){
-        for (int i=0; i<max.getItems().length; i++){
-            if (max.getItem(i).equals(selection)) return i;
-        }
-        return -1;
+    private void onMouseDown(Point point) {
+        
+        // Init
+        boolean cell = table.getSelectedColumn() != null && table.getSelectedRow() != null;
+        boolean row = !cell && table.getSelectedRow() != null;
+        boolean column = !cell && table.getSelectedColumn() != null;
+        
+        // Update menu items
+        itemInsertRow.setEnabled(row || cell);
+        itemDeleteRow.setEnabled(row || cell);
+        itemMoveRowUp.setEnabled(row || cell);
+        itemMoveRowDown.setEnabled(row || cell);
+        // ---------
+        itemInsertColumn.setEnabled(column || cell);
+        itemDeleteColumn.setEnabled(column || cell);
+        // ---------
+        itemEditItem.setEnabled(cell);
+        itemRenameItem.setEnabled(cell);
+        // ---------
+        itemClear.setEnabled(cell || row || column);
+        itemInitialize.setEnabled(hierarchy == null || 
+                                   hierarchy.length==0 ||
+                                   hierarchy[0]==null ||
+                                   hierarchy[0].length==0);
+
+        // Show
+        this.menu.setLocation(point);
+        this.menu.setVisible(true);
     }
+
     /**
      * Updates the global hierarchy definition
      */
@@ -728,45 +822,6 @@ public class ViewHierarchy implements IView {
         Hierarchy h = Hierarchy.create(hierarchy);
         model.getInputConfig().setHierarchy(attribute, h);
     }
-
-    private void updateCombos(){
-        
-        // Check whether min & max are still ok
-        if (model==null || min == null) { return; }
-
-        final List<String> minItems = new ArrayList<String>();
-        final List<String> maxItems = new ArrayList<String>();
-        minItems.add(ITEM_ALL);
-        for (int i = 1; i <= (hierarchy==null ? 0 : hierarchy[0].length); i++) {
-            minItems.add(String.valueOf(i));
-            maxItems.add(String.valueOf(i));
-        }
-        maxItems.add(ITEM_ALL);
-
-        // Compute from model
-        Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
-        String minSelected = ITEM_ALL;
-        if (minModel != null) minSelected = String.valueOf(minModel+1);
-        int minIndex = minIndexOf(minSelected);
-                
-        Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
-        String maxSelected = ITEM_ALL;
-        if (maxModel != null) maxSelected = String.valueOf(maxModel+1);
-        int maxIndex = maxIndexOf(maxSelected);
-
-        if (minIndex > (maxIndex + 1)) {
-            minIndex = maxIndex + 1;
-        }
-
-        min.setItems(minItems.toArray(new String[] {}));
-        max.setItems(maxItems.toArray(new String[] {}));
-
-        min.select(minIndex);
-        max.select(maxIndex);
-        pushMin();
-        pushMax();
-    }
-
     /**
      * Updates the max generalization level
      * @return
@@ -810,5 +865,46 @@ public class ViewHierarchy implements IView {
             }
         }
         return false;
+    }
+
+    /**
+     * Updates the combos
+     */
+    private void updateCombos(){
+        
+        // Check whether min & max are still ok
+        if (model==null || min == null) { return; }
+
+        final List<String> minItems = new ArrayList<String>();
+        final List<String> maxItems = new ArrayList<String>();
+        minItems.add(ITEM_ALL);
+        for (int i = 1; i <= (hierarchy==null ? 0 : hierarchy[0].length); i++) {
+            minItems.add(String.valueOf(i));
+            maxItems.add(String.valueOf(i));
+        }
+        maxItems.add(ITEM_ALL);
+
+        // Compute from model
+        Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
+        String minSelected = ITEM_ALL;
+        if (minModel != null) minSelected = String.valueOf(minModel+1);
+        int minIndex = minIndexOf(minSelected);
+                
+        Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
+        String maxSelected = ITEM_ALL;
+        if (maxModel != null) maxSelected = String.valueOf(maxModel+1);
+        int maxIndex = maxIndexOf(maxSelected);
+
+        if (minIndex > (maxIndex + 1)) {
+            minIndex = maxIndex + 1;
+        }
+
+        min.setItems(minItems.toArray(new String[] {}));
+        max.setItems(maxItems.toArray(new String[] {}));
+
+        min.select(minIndex);
+        max.select(maxIndex);
+        pushMin();
+        pushMax();
     }
 }
