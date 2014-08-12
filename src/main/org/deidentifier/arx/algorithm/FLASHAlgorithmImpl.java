@@ -369,7 +369,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             InformationLoss<?> lowerBound = checker.getMetric().getLowerBound(node);
             if (lowerBound != null) {
                 if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
-                    lattice.setProperty(node, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY);
                     return true;
                 }
             }
