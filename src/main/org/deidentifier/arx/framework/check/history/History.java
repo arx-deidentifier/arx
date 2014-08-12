@@ -64,7 +64,8 @@ public class History {
         @Override
         public boolean appliesTo(Node node) {
             for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.hasProperty(Node.PROPERTY_ANONYMOUS)) {
+                if (!upNode.hasProperty(Node.PROPERTY_ANONYMOUS) &&
+                    !upNode.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
                     return false;
                 }
             }
@@ -79,7 +80,8 @@ public class History {
         @Override
         public boolean appliesTo(Node node) {
             for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.hasProperty(Node.PROPERTY_CHECKED)) {
+                if (!upNode.hasProperty(Node.PROPERTY_CHECKED) &&
+                    !upNode.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
                     return false;
                 }
             }
@@ -94,7 +96,8 @@ public class History {
         @Override
         public boolean appliesTo(Node node) {
             for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.hasProperty(Node.PROPERTY_K_ANONYMOUS)) {
+                if (!upNode.hasProperty(Node.PROPERTY_K_ANONYMOUS) &&
+                    !upNode.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
                     return false;
                 }
             }
