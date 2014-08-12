@@ -873,7 +873,7 @@ public class ViewHierarchy implements IView {
     private void updateCombos(){
         
         // Check whether min & max are still ok
-        if (model==null || min == null) { return; }
+        if (model==null || min == null || min.isDisposed()) { return; }
 
         final List<String> minItems = new ArrayList<String>();
         final List<String> maxItems = new ArrayList<String>();
