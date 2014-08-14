@@ -30,7 +30,7 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleStatistics;
-import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
@@ -42,9 +42,24 @@ import cern.colt.function.IntComparator;
 /**
  * A class offering basic descriptive statistics about data handles
  * @author Fabian Prasser
- *
  */
-public class StatisticsBuilder implements Cloneable {
+public class StatisticsBuilder {
+    
+    /**
+     *  Local class for interrupts
+     * @author Fabian Prasser
+     */
+    class ComputationInterruptedException extends RuntimeException {
+        private static final long serialVersionUID = 5339918851212367422L;
+
+        public ComputationInterruptedException(String message) {
+            super(message);
+        }
+
+        public ComputationInterruptedException(Throwable cause) {
+            super(cause);
+        }
+    }
     
     /** The handle*/
     private DataHandleStatistics handle;
@@ -53,7 +68,7 @@ public class StatisticsBuilder implements Cloneable {
     private StatisticsEquivalenceClasses ecStatistics;
     
     /** The stop flag*/
-    private volatile boolean stop;
+    private volatile boolean interrupt;
     
     /**
      * Creates a new instance
@@ -69,13 +84,6 @@ public class StatisticsBuilder implements Cloneable {
                           StatisticsEquivalenceClasses ecStatistics) {
         this.ecStatistics = ecStatistics;
         this.handle = handle;
-    }
-    
-    /** 
-     * Returns a clone of this object
-     */
-    public StatisticsBuilder clone(){
-        return new StatisticsBuilder(handle, ecStatistics);
     }
     
     /**
@@ -97,7 +105,7 @@ public class StatisticsBuilder implements Cloneable {
         return getContingencyTable(column1, getHierarchy(column1, orderFromDefinition1),
                                    column2, getHierarchy(column2, orderFromDefinition2));
     }
-
+    
     /**
      * Returns a contingency table for the given columns. The order for string data items is derived
      * from the provided hierarchies
@@ -114,7 +122,7 @@ public class StatisticsBuilder implements Cloneable {
                                                           Hierarchy hierarchy2) {
 
         // Reset stop flag
-        stop = false;
+        interrupt = false;
         
         // Init
         String[] values1 = getDistinctValuesOrdered(column1, hierarchy1);
@@ -123,12 +131,12 @@ public class StatisticsBuilder implements Cloneable {
         // Create maps of indexes
         Map<String, Integer> indexes1 = new HashMap<String, Integer>();
         for (int i=0; i<values1.length; i++){
-            if (stop) return null;
+            checkInterrupt();
             indexes1.put(values1[i], i);
         }
         Map<String, Integer> indexes2 = new HashMap<String, Integer>();
         for (int i=0; i<values2.length; i++){
-            if (stop) return null;
+            checkInterrupt();
             indexes2.put(values2[i], i);
         }
         
@@ -136,7 +144,7 @@ public class StatisticsBuilder implements Cloneable {
         int max = Integer.MIN_VALUE;
         final Map<Entry, Integer> entries = new HashMap<Entry, Integer>();
         for (int row=0; row<handle.getNumRows(); row++){
-            if (stop) return null;
+            checkInterrupt();
             int index1 = indexes1.get(handle.getValue(row, column1));
             int index2 = indexes2.get(handle.getValue(row, column2));
             Entry entry = new Entry(index1, index2);
@@ -185,7 +193,7 @@ public class StatisticsBuilder implements Cloneable {
         // Result result
         return new StatisticsContingencyTable(values1, values2, count, (double)max/(double)count, iterator);
     }
-    
+
     /**
      * Returns a contingency table for the given columns. This method assumes that the 
      * order of string data items can (and should) be derived from the hierarchies provided 
@@ -199,7 +207,6 @@ public class StatisticsBuilder implements Cloneable {
         return getContingencyTable(column1, true, column2, true);
     }
     
-
     /**
      * Returns a contingency table for the given columns
      * 
@@ -246,7 +253,7 @@ public class StatisticsBuilder implements Cloneable {
                                                           Hierarchy hierarchy2) {
 
         // Reset stop flag
-        stop = false;
+        interrupt = false;
         
         // Check
         if (size1 <= 0 || size2 <= 0) {
@@ -292,7 +299,7 @@ public class StatisticsBuilder implements Cloneable {
         Iterator<Entry> iter = table.iterator;
         double max = Double.MIN_VALUE;
         while (iter.hasNext()) {
-            if (stop) return null;
+            checkInterrupt();
             Entry old = iter.next();
             int index1 = (int)Math.round((double)old.value1 * factor1);
             int index2 = (int)Math.round((double)old.value2 * factor2);
@@ -361,7 +368,7 @@ public class StatisticsBuilder implements Cloneable {
                                                           int size2) {
         return getContingencyTable(column1, size1, true, column2, size2, true);
     }
-
+    
     /**
      * Returns the distinct set of data items from the given column
      * 
@@ -369,9 +376,10 @@ public class StatisticsBuilder implements Cloneable {
      * @return
      */
     public String[] getDistinctValues(int column) {
-        return this.handle.getDistinctValues(column, new WrappedBoolean(){
-            public boolean getValue() {
-                return stop;
+        return this.handle.getDistinctValues(column, new InterruptHandler(){
+            @Override
+            public void checkInterrupt() {
+                StatisticsBuilder.this.checkInterrupt();
             }
         });
     }
@@ -400,7 +408,7 @@ public class StatisticsBuilder implements Cloneable {
     public String[] getDistinctValuesOrdered(int column, boolean orderFromDefinition) {
         return getDistinctValuesOrdered(column, getHierarchy(column, orderFromDefinition));
     }
-    
+
     /**
      * Returns an ordered list of the distinct set of data items from the given column. This method assumes 
      * that the order of string data items can (and should) be derived from the provided hierarchy
@@ -412,7 +420,7 @@ public class StatisticsBuilder implements Cloneable {
     public String[] getDistinctValuesOrdered(int column, Hierarchy hierarchy) {
 
         // Reset stop flag
-        stop = false;
+        interrupt = false;
         
         // Obtain list and data type
         final String[] list = getDistinctValues(column);
@@ -435,7 +443,7 @@ public class StatisticsBuilder implements Cloneable {
             DataType<?> baseType = handle.getBaseDataType(attribute);
             for (int i = 0; i < _hierarchy.length; i++) {
                 String element = _hierarchy[i][0];
-                if (stop) return null;
+                checkInterrupt();
                 // Make sure that only elements from the hierarchy
                 // are added that are included in the data
                 // TODO: Calling isValid is only a work-around
@@ -445,13 +453,13 @@ public class StatisticsBuilder implements Cloneable {
             sort(baseArray, handle.getBaseDataType(attribute), handle.getSuppressionString());
             Map<String, Integer> baseOrder = new HashMap<String, Integer>();
             for (int i = 0; i < baseArray.length; i++) {
-                if (stop) return null;
+                checkInterrupt();
                 baseOrder.put(baseArray[i], i);
             }
 
             // Build higher level order from base order
             for (int i = 0; i < _hierarchy.length; i++) {
-                if (stop) return null;
+                checkInterrupt();
                 if (!order.containsKey(_hierarchy[i][level])) {
                     Integer position = baseOrder.get(_hierarchy[i][0]);
                     if (position != null) {
@@ -472,7 +480,7 @@ public class StatisticsBuilder implements Cloneable {
         // Done
         return list;
     }
-    
+
     /**
      * Returns statistics about the equivalence classes
      * @return
@@ -492,6 +500,7 @@ public class StatisticsBuilder implements Cloneable {
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column) {
         return getFrequencyDistribution(column, true);
     }
+    
     /**
      * Returns a frequency distribution for the values in the given column
      * 
@@ -516,7 +525,7 @@ public class StatisticsBuilder implements Cloneable {
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column, Hierarchy hierarchy) {
 
         // Reset stop flag
-        stop = false;
+        interrupt = false;
         
         // Init
         String[] values = getDistinctValuesOrdered(column, hierarchy);
@@ -525,13 +534,13 @@ public class StatisticsBuilder implements Cloneable {
         // Create map of indexes
         Map<String, Integer> indexes = new HashMap<String, Integer>();
         for (int i=0; i<values.length; i++){
-            if (stop) return null;
+            checkInterrupt();
             indexes.put(values[i], i);
         }
         
         // Count frequencies
         for (int row=0; row<handle.getNumRows(); row++){
-            if (stop) return null;
+            checkInterrupt();
             String value = handle.getValue(row, column);
             frequencies[indexes.get(value)]++;
         }
@@ -539,12 +548,27 @@ public class StatisticsBuilder implements Cloneable {
         // Divide by count
         int count = handle.getNumRows();
         for (int i=0; i<frequencies.length; i++){
-            if (stop) return null;
+            checkInterrupt();
             frequencies[i] /= (double)count;
         }
         
         // Return
         return new StatisticsFrequencyDistribution(values, frequencies, count);
+    }
+    /** 
+     * Returns an interruptible instance of this object
+     */
+    public StatisticsBuilderInterruptible getInterruptibleInstance(){
+        return new StatisticsBuilderInterruptible(handle, ecStatistics);
+    }
+    
+    /**
+     * Checks whether an interruption happened
+     */
+    private void checkInterrupt(){
+        if (interrupt) {
+            throw new ComputationInterruptedException("Interrupted");
+        }
     }
 
     /**
@@ -590,7 +614,7 @@ public class StatisticsBuilder implements Cloneable {
         List<String> toAggregate = new ArrayList<String>();
         for (int i=0; i<values.length; i++){
             
-            if (stop) return null;
+            checkInterrupt();
             
             int index = (int)Math.round((double)i * factor);
             index = index < length ? index : length -1;
@@ -618,7 +642,7 @@ public class StatisticsBuilder implements Cloneable {
             
             @Override
             public int compare(int arg0, int arg1) {
-                if (stop) throw new RuntimeException("Interrupted");
+                checkInterrupt();
                 try {
                     String s1 = array[arg0];
                     String s2 = array[arg1];
@@ -650,7 +674,7 @@ public class StatisticsBuilder implements Cloneable {
         GenericSorting.mergeSort(0, array.length, new IntComparator(){
             @Override
             public int compare(int arg0, int arg1) {
-                if (stop) throw new RuntimeException("Interrupted");
+                checkInterrupt();
                 Integer order1 = order.get(array[arg0]);
                 Integer order2 = order.get(array[arg1]);
                 if (order1 == null || order2 == null) {
@@ -672,7 +696,7 @@ public class StatisticsBuilder implements Cloneable {
     /**
      * Stops all computations. May lead to exceptions being thrown. Use with care.
      */
-    public void stop(){
-        this.stop = true;
+    void interrupt(){
+        this.interrupt = true;
     }
 }

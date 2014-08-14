@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable;
 import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.gui.Controller;
@@ -99,7 +99,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
 
         final int column1 = context.handle.getColumnIndexOf(context.attribute1);
         final int column2 = context.handle.getColumnIndexOf(context.attribute2);
-        final StatisticsBuilder builder = context.handle.getStatistics().clone();
+        final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
             
         // Create an analysis
         Analysis analysis = new Analysis(){
@@ -116,6 +116,10 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
 
             @Override
             public void onFinish() {
+                
+                if (stopped) {
+                    return;
+                }
 
                 final DecimalFormat format = new DecimalFormat("##0.00000");
 
@@ -149,11 +153,11 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
 
             @Override
             public void onInterrupt() {
-                setStatusEmpty();
+                setStatusWorking();
             }
 
             @Override
-            public void run() {
+            public void run() throws InterruptedException {
 
                 // Timestamp
                 long time = System.currentTimeMillis();
@@ -174,7 +178,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                 // Fill
                 Iterator<Entry> iter = contingency.iterator;
                 while (iter.hasNext()) {
-                    if (stopped) return;
+                    if (stopped) throw new InterruptedException();
                     Entry p = iter.next();
                     inputValues[p.value1].add(p.value2);
                     inputFrequencies[p.value1].add(p.frequency);
@@ -184,13 +188,13 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                 outputValues = new int[inputValues.length][];
                 outputFrequencies = new double[inputFrequencies.length][];
                 for (int i=0; i<outputValues.length; i++){
-                    if (stopped) return;
+                    if (stopped) throw new InterruptedException();
                     List<Integer> rowValuesAsList = inputValues[i];
                     List<Double> rowFrequenciesAsList = inputFrequencies[i];
                     int[] rowValues = new int[rowValuesAsList.size()];
                     double[] rowFrequencies = new double[rowFrequenciesAsList.size()];
                     for (int j=0; j<rowValues.length; j++){
-                        if (stopped) return;
+                        if (stopped) throw new InterruptedException();
                         rowValues[j] = inputValues[i].get(j);
                         rowFrequencies[j] = inputFrequencies[i].get(j);
                     }
@@ -200,37 +204,44 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
                 
                 // Sort
                 for (int i=0; i<outputValues.length; i++) {
-                    if (stopped) return;
+                    if (stopped) throw new InterruptedException();
                     final int[] rowValues = outputValues[i];
                     final double[] rowFrequencies = outputFrequencies[i];
-                    GenericSorting.quickSort(0, rowValues.length, new IntComparator(){
-                        public int compare(int arg0, int arg1) {
-                            if (stopped) throw new RuntimeException("Interrupted");
-                            return rowValues[arg0] - rowValues[arg1];
+                    try {
+                        GenericSorting.quickSort(0, rowValues.length, new IntComparator(){
+                            public int compare(int arg0, int arg1) {
+                                if (stopped) throw new RuntimeException(new InterruptedException());
+                                return rowValues[arg0] - rowValues[arg1];
+                            }
+                        }, new Swapper(){
+                            public void swap(int arg0, int arg1) {
+                                int temp = rowValues[arg0];
+                                rowValues[arg0] = rowValues[arg1];
+                                rowValues[arg1] = temp;
+                                double temp2 = rowFrequencies[arg0];
+                                rowFrequencies[arg0] = rowFrequencies[arg1];
+                                rowFrequencies[arg1] = temp2;
+                            }
+                        });
+                    } catch (RuntimeException e) {
+                        if (e.getCause() instanceof InterruptedException){
+                            throw (InterruptedException)e.getCause();
+                        } else {
+                            throw e;
                         }
-                    }, new Swapper(){
-                        public void swap(int arg0, int arg1) {
-                            int temp = rowValues[arg0];
-                            rowValues[arg0] = rowValues[arg1];
-                            rowValues[arg1] = temp;
-                            double temp2 = rowFrequencies[arg0];
-                            rowFrequencies[arg0] = rowFrequencies[arg1];
-                            rowFrequencies[arg1] = temp2;
-                        }
-                    });
+                    }
                 }
                 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
-                    try { Thread.sleep(10); } 
-                    catch (InterruptedException e) { /* Ignore*/}
+                    Thread.sleep(10);
                 }
             }
 
             @Override
             public void stop() {
                 stopped = true;
-                builder.stop();
+                builder.interrupt();
             }
         };
         

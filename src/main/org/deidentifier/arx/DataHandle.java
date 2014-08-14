@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
@@ -142,9 +142,9 @@ public abstract class DataHandle {
      * @return
      */
     public final String[] getDistinctValues(int column) {
-        return getDistinctValues(column, new WrappedBoolean(){
-            public boolean getValue() {
-                return false;
+        return getDistinctValues(column, new InterruptHandler(){
+            public void checkInterrupt() {
+                // Nothing to do
             }
         });
     }
@@ -530,10 +530,10 @@ public abstract class DataHandle {
     /**
      * Returns the distinct values
      * @param column
-     * @param stop
+     * @param handler
      * @return
      */
-    protected abstract String[] getDistinctValues(int column, WrappedBoolean stop);
+    protected abstract String[] getDistinctValues(int column, InterruptHandler handler);
 
     /**
      * Returns the registry associated with this handle

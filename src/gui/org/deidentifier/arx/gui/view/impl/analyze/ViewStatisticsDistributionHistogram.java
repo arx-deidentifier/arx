@@ -19,7 +19,7 @@ package org.deidentifier.arx.gui.view.impl.analyze;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -208,7 +208,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     protected void doUpdate(AnalysisContextVisualizationDistribution context) {
 
         // The statistics builder
-        final StatisticsBuilder builder = context.handle.getStatistics().clone();
+        final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final Hierarchy hierarchy = context.context.getHierarchy(context.context.getContext(), context.attribute);
         final DataHandle handle = context.handle;
         final int column = handle.getColumnIndexOf(context.attribute);
@@ -226,6 +226,10 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             @Override
             public void onFinish() {
+
+                if (stopped) {
+                    return;
+                }
 
                 // Update chart
                 chart.setRedraw(false);
@@ -259,11 +263,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             @Override
             public void onInterrupt() {
-                setStatusEmpty();
+                setStatusWorking();
             }
 
             @Override
-            public void run() {
+            public void run() throws InterruptedException {
                 
                 // Timestamp
                 long time = System.currentTimeMillis();
@@ -272,15 +276,14 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 this.distribution = builder.getFrequencyDistribution(column, hierarchy);
 
                 // Our users are patient
-                while (System.currentTimeMillis() - time < ViewStatistics.MINIMAL_WORKING_TIME && !stopped){
-                    try { Thread.sleep(10); } 
-                    catch (InterruptedException e) { /* Ignore*/}
+                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
+                    Thread.sleep(10);
                 }
             }
 
             @Override
             public void stop() {
-                builder.stop();
+                builder.interrupt();
                 this.stopped = true;
             }
         };

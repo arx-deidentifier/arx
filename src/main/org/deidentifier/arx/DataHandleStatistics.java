@@ -25,8 +25,8 @@ package org.deidentifier.arx;
  */
 public class DataHandleStatistics {
 
-    public static interface WrappedBoolean {
-        public boolean getValue();
+    public static interface InterruptHandler {
+        public void checkInterrupt();
     }
     
     private DataHandle handle;
@@ -35,7 +35,7 @@ public class DataHandleStatistics {
         this.handle = handle;
     }
 
-    public String[] getDistinctValues(int column, WrappedBoolean stop) {
+    public String[] getDistinctValues(int column, InterruptHandler stop) {
         return handle.getDistinctValues(column, stop);
     }
 

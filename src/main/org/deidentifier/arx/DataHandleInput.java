@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Dictionary;
 
@@ -112,15 +112,15 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected String[] getDistinctValues(final int column, WrappedBoolean stop) {
+    protected String[] getDistinctValues(final int column, InterruptHandler handler) {
         checkRegistry();
-        if (stop.getValue()) return null;
+        handler.checkInterrupt();
         checkColumn(column);
-        if (stop.getValue()) return null;
+        handler.checkInterrupt();
         final String[] dict = dictionary.getMapping()[column];
-        if (stop.getValue()) return null;
+        handler.checkInterrupt();
         final String[] vals = new String[dict.length];
-        if (stop.getValue()) return null;
+        handler.checkInterrupt();
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }

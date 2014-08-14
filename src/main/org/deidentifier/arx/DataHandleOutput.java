@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.DataHandleStatistics.WrappedBoolean;
+import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.framework.data.Data;
@@ -253,12 +253,11 @@ public class DataHandleOutput extends DataHandle {
     /**
      * Gets the distinct values.
      * 
-     * @param col
-     *            the col
+     * @param col the column
      * @return the distinct values
      */
     @Override
-    protected String[] getDistinctValues(final int col, WrappedBoolean stop) {
+    protected String[] getDistinctValues(final int col, InterruptHandler handler) {
 
         // Check
         checkRegistry();
@@ -266,10 +265,10 @@ public class DataHandleOutput extends DataHandle {
 
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
-            if (stop.getValue()) return null;
+            handler.checkInterrupt();
             vals.add(getValue(i, col));
         }
-        if (stop.getValue()) return null;
+        handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
     }
 

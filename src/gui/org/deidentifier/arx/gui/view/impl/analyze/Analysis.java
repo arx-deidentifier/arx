@@ -27,7 +27,7 @@ public abstract class Analysis {
     /** Called to stop the analysis*/
     public abstract void stop();
     /** Implement the analysis here*/
-    public abstract void run();
+    public abstract void run() throws InterruptedException;
     /** Perform finish*/
     public abstract void onFinish();
     /** Perform error handling*/

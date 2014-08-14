@@ -50,15 +50,17 @@ public class AnalysisManager {
             try {
                 this.analysis.run();
                 synchronized(this){
-                    if (this.isStopped()) onInterrupt();
-                    else onFinish(); 
+                    if (this.isStopped()) {
+                        onInterrupt();
+                    }
+                    else {
+                        onFinish(); 
+                    }
                 }
+            } catch (InterruptedException e){
+                onInterrupt();
             } catch (Exception e){
-                if (this.isStopped()) {
-                    onInterrupt();
-                } else {
-                    onError();
-                }
+                onError();
             }
         }
         
@@ -100,6 +102,7 @@ public class AnalysisManager {
          */
         public void start(){
             this.thread = new Thread(this);
+            this.thread.setName("StatisticsBuilder");
             this.thread.setDaemon(true);
             this.thread.start();
         }
@@ -139,10 +142,17 @@ public class AnalysisManager {
     public synchronized void start(Analysis analysis) {
         
         // Stop old work
-        if (worker != null && worker.getThread().isAlive()) {
+        if (worker != null && !worker.isStopped()) {
             worker.stop();
             try {
-                worker.getThread().join();
+                try {
+                    worker.getThread().interrupt();
+                } catch (SecurityException e) {
+                    /* Ignore*/
+                }
+                if (worker.getThread().isAlive()) {
+                    worker.getThread().join();
+                }
             } catch (InterruptedException e) {
                 /* Ignore*/
             }

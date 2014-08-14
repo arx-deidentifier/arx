@@ -34,7 +34,8 @@ import de.linearbits.jhc.JHCGradient;
 import de.linearbits.jhc.JHCLayout;
 
 /**
- * This class displays a contingency table as a heat map
+ * This class displays a contingency table as a heat map.
+ * TODO: Make the stuff in this class interruptible like anything else
  * @author Fabian Prasser
  */
 public class ViewStatisticsContingencyHeatmap extends ViewStatistics<AnalysisContextVisualizationContingency> {
