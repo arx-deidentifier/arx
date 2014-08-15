@@ -29,8 +29,7 @@ import org.deidentifier.arx.aggregates.StatisticsContingencyTable.Entry;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTableConfiguration;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTableHeaderConfigurationSpanEqual;
+import org.deidentifier.arx.gui.view.impl.common.table.CTConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -71,13 +70,15 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
     @Override
     protected Control createControl(Composite parent) {
         
-        ComponentTableConfiguration config = new ComponentTableConfiguration();
-        config.alignment.horizontal = SWT.CENTER;
-        config.selection.cell = false;
-        config.selection.column = false;
-        config.selection.row = false;
-        config.header = new ComponentTableHeaderConfigurationSpanEqual(100);
-        
+        // Configure table
+        CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_GRID);
+        config.setHorizontalAlignment(SWT.CENTER);
+        config.setCellSelectionEnabled(false);
+        config.setColumnSelectionEnabled(false);
+        config.setRowSelectionEnabled(false);
+        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_EQUAL);
+        config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_DEFAULT);
+
         this.table = new ComponentTable(parent, SWT.NONE, config);
         return this.table.getControl();
     }
@@ -91,7 +92,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
 
     @Override
     protected void doReset() {
-        this.table.setEmpty();
+        this.table.clear();
     }
 
     @Override

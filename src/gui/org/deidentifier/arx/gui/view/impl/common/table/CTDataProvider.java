@@ -16,30 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.table;
+
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /**
- * Configuration for table view
+ * 
  * @author Fabian Prasser
  *
  */
-public class ComponentTableSelectionConfiguration {
-    
-    /** Able to select columns */
-    public boolean column;
-    /** Able to select rows */
-    public boolean row;
-    /** Able to select cells */
-    public boolean cell;
-    
-    /**
-     * Creates a new instance
-     */
-    public ComponentTableSelectionConfiguration(boolean row,
-                                                boolean column,
-                                                boolean cell) {
-        this.column = column;
-        this.row = row;
-        this.cell = cell;
-    }
+public interface CTDataProvider extends IDataProvider{
+
+    public void clear();
+    public void setData(IDataProvider data);
 }

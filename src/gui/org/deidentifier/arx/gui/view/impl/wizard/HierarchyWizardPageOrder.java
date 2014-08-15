@@ -26,8 +26,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTableConfiguration;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTableHeaderConfigurationList;
+import org.deidentifier.arx.gui.view.impl.common.table.CTConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -88,7 +87,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
     @Override
     public void updatePage() {
-        table.setTable(getDataProvider(model.getData()), new String[]{"Values"});
+        table.setData(getDataProvider(model.getData()), new String[]{"Values"});
         combo.select(getIndexOfDataType(model.getDataType()));
         if (editor != null) editor.setFunction(model.getDefaultFunction());
         model.update();
@@ -207,14 +206,14 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         composite.setLayout(SWTUtil.createGridLayout(1, false));
         composite.setLayoutData(SWTUtil.createFillVerticallyGridData());
         
-
         // Configure table
-        ComponentTableConfiguration config = new ComponentTableConfiguration();
-        config.alignment.horizontal = SWT.CENTER;
-        config.selection.cell = true;
-        config.selection.column = false;
-        config.selection.row = false;
-        config.header = new ComponentTableHeaderConfigurationList();
+        CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
+        config.setHorizontalAlignment(SWT.CENTER);
+        config.setCellSelectionEnabled(false);
+        config.setColumnSelectionEnabled(false);
+        config.setRowSelectionEnabled(false);
+        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_EQUAL);
+        config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
 
         // Create table
         this.table = new ComponentTable(composite, SWT.BORDER, config);
