@@ -40,26 +40,29 @@ public class LayerBody extends CTLayer {
      */
     public LayerBody(IDataProvider dataProvider, CTConfiguration config, CTContext context) {
         super(config, context);
-        IUniqueIndexLayer dataLayer = new DataLayer(dataProvider);
+        
+        DataLayer dataLayer = new DataLayer(dataProvider);
+
+        selectionLayer = new LayerSelection(dataLayer, config);
+        selectionLayer.addConfiguration(new StyleConfigurationSelection(config));
+        IUniqueIndexLayer layer = selectionLayer;
         
         switch(config.getColumnHeaderLayout()){
             case CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_LAST:
-                dataLayer = new LayerColumnGrabLast(dataLayer, config, context);
+                layer = new LayerColumnGrabLast(layer, config, context);
                 break;
             case CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_EQUAL:
-                dataLayer = new LayerColumnGrabEqual(dataLayer, config, context);
+                layer = new LayerColumnGrabEqual(layer, config, context);
                 break;
         }
      
         switch(config.getRowHeaderLayout()){
             case CTConfiguration.ROW_HEADER_LAYOUT_FILL:
-                dataLayer = new LayerRowFill(dataLayer, config, context);
+                layer = new LayerRowFill(layer, config, context);
                 break;
         }
         
-        selectionLayer = new LayerSelection(dataLayer, config);
-        selectionLayer.addConfiguration(new StyleConfigurationSelection(config));
-        ViewportLayer viewportLayer = new ViewportLayer(selectionLayer);
+        ViewportLayer viewportLayer = new ViewportLayer(layer);
         setUnderlyingLayer(viewportLayer);
     }
 

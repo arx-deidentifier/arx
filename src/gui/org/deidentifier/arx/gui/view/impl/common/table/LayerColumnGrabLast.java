@@ -93,8 +93,9 @@ public class LayerColumnGrabLast extends CTLayer implements IUniqueIndexLayer {
     public Object getDataValueByPosition(final int columnPosition, final int rowPosition) {
         if (isActive() && isAdditionalColumn(columnPosition)) {
             return "";
+        } else {
+            return super.getDataValueByPosition(columnPosition, rowPosition);
         }
-        return super.getDataValueByPosition(columnPosition, rowPosition);
     }
 
     @Override

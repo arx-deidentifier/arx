@@ -42,6 +42,7 @@ public class DataProviderWrapped implements CTDataProvider {
 
     @Override
     public Object getDataValue(int columnIndex, int rowIndex) {
+        if (columnIndex == -1 || rowIndex == -1) return "";
         if (data == null) return null;
         else return data.getDataValue(columnIndex, rowIndex);
     }

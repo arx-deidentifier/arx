@@ -69,8 +69,9 @@ public class LayerRowFill extends CTLayer implements IUniqueIndexLayer {
     public Object getDataValueByPosition(final int columnPosition, final int rowPosition) {
         if (isActive() && isAdditionalRowPosition(rowPosition)) {
             return "";
+        } else {
+            return super.getDataValueByPosition(columnPosition, rowPosition);
         }
-        return super.getDataValueByPosition(columnPosition, rowPosition);
     }
 
     @Override
