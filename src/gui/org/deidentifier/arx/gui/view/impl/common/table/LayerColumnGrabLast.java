@@ -130,7 +130,9 @@ public class LayerColumnGrabLast extends CTLayer implements IUniqueIndexLayer {
     }
 
     private boolean isActive() {
-        return getGapWidth()>0;
+        boolean result = getGapWidth()>0;
+        getContext().setColumnExpanded(result);
+        return result;
     }
     
     private boolean isAdditionalColumn(int columnPosition) {

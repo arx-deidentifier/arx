@@ -128,7 +128,9 @@ public class LayerRowFill extends CTLayer implements IUniqueIndexLayer {
     }
 
     private boolean isActive() {
-        return getGapHeight()>0;
+        boolean result = getGapHeight()>0;
+        getContext().setRowExpanded(result);
+        return result;
     }
 
     private boolean isAdditionalRowPosition(int rowPosition) {

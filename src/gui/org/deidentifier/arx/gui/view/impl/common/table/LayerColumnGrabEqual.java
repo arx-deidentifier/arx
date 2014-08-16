@@ -19,18 +19,24 @@
 package org.deidentifier.arx.gui.view.impl.common.table;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
+import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
+import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
+import org.eclipse.nebula.widgets.nattable.layer.event.StructuralRefreshEvent;
+import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEvent;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 
 /**
  * Equally distributed the columns, if possible
  */
 public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
     
-    private Map<Integer, Integer> previousWidths = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> underlyingWidths = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> widths = new HashMap<Integer, Integer>();
+    private boolean registered = false;
 
     @Override
     public int getColumnPositionByIndex(int columnIndex) {
@@ -45,6 +51,41 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
     @Override
     public int getColumnWidthByPosition(int columnPosition) {
         
+        Integer width = widths.get(columnPosition);
+        if (width == null) {
+            return underlyingLayer.getColumnWidthByPosition(columnPosition);
+        } else {
+            return width;
+        }
+    }
+        
+    @Override
+    public void handleLayerEvent(ILayerEvent event) {
+        if ((event instanceof ColumnResizeEvent) ||
+            (event instanceof StructuralRefreshEvent)){
+            
+            // Register listener
+            if (!registered){
+                registered = true;
+                getContext().getTable().addControlListener(new ControlAdapter(){
+                    public void controlResized(ControlEvent arg0) {
+                        computeWidths();
+                        fireLayerEvent(new StructuralRefreshEvent(LayerColumnGrabEqual.this));
+                    }
+                });
+            }
+            
+            // Compute widths
+            computeWidths();
+        }
+        super.handleLayerEvent(event);
+    }
+
+    /**
+     * Computes the widths
+     */
+    private void computeWidths() {
+
         // Compute total width
         int underlyingWidth = 0;
         for (int i=0; i<underlyingLayer.getColumnCount(); i++){
@@ -54,28 +95,43 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
         // Compare with table width
         int tableWidth = getContext().getTable().getSize().x;
         if (underlyingWidth > tableWidth) {
-            return underlyingLayer.getColumnWidthByPosition(columnPosition);
-        }
-        
-        // Compute difference
-        int deltaWidth = tableWidth - underlyingWidth;
-        
-        // Determine resizable positions
-        Set<Integer> resizablePositions = new HashSet<Integer>();
-        for (int i=0; i<underlyingLayer.getColumnCount(); i++){
-            int width = underlyingLayer.getColumnWidthByPosition(i);
-            Integer previous = previousWidths.get(i);
-            if (previous==null || previous==width) {
-                resizablePositions.add(i);
+            for (int i=0; i<underlyingLayer.getColumnCount(); i++){
+                int width = underlyingLayer.getColumnWidthByPosition(i);
+                widths.put(i, width);
+                underlyingWidths.put(i, width);
             }
-            previousWidths.put(i, width);
-        }
-        
-        // Return width
-        if (!resizablePositions.contains(columnPosition)) {
-            return underlyingLayer.getColumnWidthByPosition(columnPosition);
+            
+            getContext().setColumnExpanded(false);
+            
         } else {
-            return underlyingLayer.getColumnWidthByPosition(columnPosition) + deltaWidth / resizablePositions.size();
+            
+            // Compute difference
+            int deltaWidth = tableWidth - underlyingWidth;
+            
+            // Determine unresizable position
+            int unresizable = -1;
+            int numResizable = 0;
+            for (int i=0; i<underlyingLayer.getColumnCount(); i++){
+                int width = underlyingLayer.getColumnWidthByPosition(i);
+                Integer previous = underlyingWidths.get(i);
+                if (previous!=null && previous!=width && unresizable == -1) {
+                    unresizable = i;
+                } else {
+                    numResizable++;
+                }
+                underlyingWidths.put(i, width);
+            }
+            
+            for (int i=0; i<underlyingLayer.getColumnCount(); i++){
+                int width = underlyingLayer.getColumnWidthByPosition(i);
+                if (i==unresizable) {
+                    widths.put(i, width);
+                } else {
+                    widths.put(i, width  + deltaWidth / numResizable);
+                }
+            }
+            
+            getContext().setColumnExpanded(true);
         }
     }
 
@@ -98,5 +154,35 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
             width += getColumnWidthByPosition(i);
         }
         return width;
+    }
+
+    @Override
+    public int getStartXOfColumnPosition(int columnPosition) {
+        int start = 0;
+        for (int i=0; i<columnPosition; i++){
+            start += getColumnWidthByPosition(i);
+        }
+        return start;
+    }
+
+    @Override
+    public LabelStack getRegionLabelsByXY(int x, int y) {
+        // TODO
+        return super.getRegionLabelsByXY(x, y);
+    }
+
+    @Override
+    public int getColumnPositionByX(int x) {
+        int min = 0;
+        int max = 0;
+        for (int i=0; i<getColumnCount(); i++){
+            min = max;
+            max += getColumnWidthByPosition(i);
+            if (min<= x && max>=x) {
+                return i;
+            }
+        }
+        return -1;
+        
     }
 }

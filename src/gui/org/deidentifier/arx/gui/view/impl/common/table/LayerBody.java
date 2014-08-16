@@ -22,7 +22,6 @@ import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
-import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 
 /**
  * The body layer
@@ -62,7 +61,7 @@ public class LayerBody extends CTLayer {
                 break;
         }
         
-        ViewportLayer viewportLayer = new ViewportLayer(layer);
+        LayerViewport viewportLayer = new LayerViewport(layer, context);
         setUnderlyingLayer(viewportLayer);
     }
 

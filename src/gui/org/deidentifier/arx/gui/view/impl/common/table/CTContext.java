@@ -25,6 +25,26 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
  * @author Fabian Prasser
  *
  */
-public interface CTContext {
+public abstract class CTContext {
+    
+    private boolean columnExpanded = false;
+    private boolean rowExpanded = false;
+    
     public abstract NatTable getTable();
+
+    public boolean isColumnExpanded() {
+        return columnExpanded;
+    }
+
+    public void setColumnExpanded(boolean columnExpanded) {
+        this.columnExpanded = columnExpanded;
+    }
+
+    public boolean isRowExpanded() {
+        return rowExpanded;
+    }
+
+    public void setRowExpanded(boolean rowExpanded) {
+        this.rowExpanded = rowExpanded;
+    }
 }
