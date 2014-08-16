@@ -25,7 +25,6 @@ import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.LayerUtil;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.nebula.widgets.nattable.layer.cell.LayerCell;
-import org.eclipse.nebula.widgets.nattable.summaryrow.SummaryRowLayer;
 
 /**
  * Adds an additional column to fill up the space
@@ -78,11 +77,11 @@ public class LayerColumnGrabLast extends CTLayer implements IUniqueIndexLayer {
 
     @Override
     public LabelStack getConfigLabelsByPosition(int columnPosition, int rowPosition) {
-        if (isActive() && isAdditionalColumn(columnPosition)) { 
-           return new LabelStack(SummaryRowLayer.DEFAULT_SUMMARY_COLUMN_CONFIG_LABEL_PREFIX +
-                                                                       columnPosition, SummaryRowLayer.DEFAULT_SUMMARY_ROW_CONFIG_LABEL); 
-           }
-        return super.getConfigLabelsByPosition(columnPosition, rowPosition);
+        if (isActive() && isAdditionalColumn(columnPosition)) {
+            return new LabelStack(StyleConfigurationNative.DEFAULT_NATIVE_CELL_CONFIG_LABEL);
+        } else {
+            return super.getConfigLabelsByPosition(columnPosition, rowPosition);
+        }
     }
 
     /**

@@ -42,7 +42,6 @@ import org.eclipse.swt.graphics.Font;
 public class StyleConfigurationTable extends CTStyleConfiguration {
 
     public Color bgColor = GUIHelper.COLOR_WHITE;
-
     public Color fgColor = GUIHelper.COLOR_BLACK;
     public Color gradientBgColor = GUIHelper.COLOR_WHITE;
     public Color gradientFgColor = GUIHelper.getColor(136, 212, 215);

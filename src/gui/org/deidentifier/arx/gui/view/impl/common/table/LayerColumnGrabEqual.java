@@ -45,7 +45,6 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
 
     public LayerColumnGrabEqual(IUniqueIndexLayer underlyingDataLayer, CTConfiguration config, CTContext context) {
         super(underlyingDataLayer, config, context);
-        addConfiguration(new StyleConfigurationNative(config));
     }
 
     @Override
