@@ -412,7 +412,7 @@ public class ComponentTable implements IComponent {
      * Action
      * @param arg0
      */
-    private void actionCellSelected(CellSelectionEvent arg0) {
+    private boolean actionCellSelected(CellSelectionEvent arg0) {
 
         // Reset
         this.selectedColumn = null;
@@ -421,10 +421,13 @@ public class ComponentTable implements IComponent {
         // Set
         int column = arg0.getColumnPosition();
         int row = arg0.getRowPosition();
-        if (column>=0 && row>=0){
+        if (column>=0 && row>=0 && row<dataProviderBody.getRowCount() && column<dataProviderBody.getColumnCount()){
             this.selectedColumn = column;
             this.selectedRow = row;
             fireSelectionEvent();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -432,7 +435,7 @@ public class ComponentTable implements IComponent {
      * Action
      * @param arg0
      */
-    private void actionColumnSelected(ColumnSelectionEvent arg0) {
+    private boolean actionColumnSelected(ColumnSelectionEvent arg0) {
         
         // Reset
         this.selectedColumn = null;
@@ -440,9 +443,12 @@ public class ComponentTable implements IComponent {
         
         // Set
         int column = arg0.getColumnPositionRanges().iterator().next().start;
-        if (column>=0) {
+        if (column>=0 && column<dataProviderBody.getColumnCount()){
             this.selectedColumn = column;
             fireSelectionEvent();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -450,7 +456,7 @@ public class ComponentTable implements IComponent {
      * Action
      * @param arg0
      */
-    private void actionRowSelected(RowSelectionEvent arg0) {
+    private boolean actionRowSelected(RowSelectionEvent arg0) {
         
         // Reset
         this.selectedColumn = null;
@@ -458,9 +464,12 @@ public class ComponentTable implements IComponent {
         
         // Set
         int row = arg0.getRowPositionRanges().iterator().next().start;
-        if (row>=0) {
+        if (row>=0 && row<dataProviderBody.getRowCount()){
             this.selectedRow = row;
             fireSelectionEvent();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -468,16 +477,22 @@ public class ComponentTable implements IComponent {
      * Adds a selection listener
      * @param layer
      */
-    private void addSelectionListener(SelectionLayer layer) {
+    private void addSelectionListener(final SelectionLayer layer) {
         layer.addLayerListener(new ILayerListener(){
             @Override
             public void handleLayerEvent(ILayerEvent arg0) {
                 if (arg0 instanceof CellSelectionEvent) {
-                    actionCellSelected((CellSelectionEvent)arg0);
+                    if (!actionCellSelected((CellSelectionEvent)arg0)){
+                        layer.clear(true);
+                    }
                 } else if (arg0 instanceof ColumnSelectionEvent) {
-                    actionColumnSelected((ColumnSelectionEvent)arg0);
+                    if (!actionColumnSelected((ColumnSelectionEvent)arg0)){
+                        layer.clear(true);
+                    }
                 } else if (arg0 instanceof RowSelectionEvent) {
-                    actionRowSelected((RowSelectionEvent)arg0);
+                    if (!actionRowSelected((RowSelectionEvent)arg0)) {
+                        layer.clear(true);
+                    }
                 }
             }
         });
