@@ -38,15 +38,30 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
     private Map<Integer, Integer> widths = new HashMap<Integer, Integer>();
     private boolean registered = false;
 
+    public LayerColumnGrabEqual(IUniqueIndexLayer underlyingDataLayer, CTConfiguration config, CTContext context) {
+        super(underlyingDataLayer, config, context);
+    }
+
     @Override
     public int getColumnPositionByIndex(int columnIndex) {
         return ((IUniqueIndexLayer)underlyingLayer).getColumnPositionByIndex(columnIndex);
     }
 
-    public LayerColumnGrabEqual(IUniqueIndexLayer underlyingDataLayer, CTConfiguration config, CTContext context) {
-        super(underlyingDataLayer, config, context);
+    @Override
+    public int getColumnPositionByX(int x) {
+        int min = 0;
+        int max = 0;
+        for (int i=0; i<getColumnCount(); i++){
+            min = max;
+            max += getColumnWidthByPosition(i);
+            if (min<= x && max>=x) {
+                return i;
+            }
+        }
+        return -1;
+        
     }
-
+        
     @Override
     public int getColumnWidthByPosition(int columnPosition) {
         
@@ -57,14 +72,50 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
             return width;
         }
     }
-        
+
+    @Override
+    public int getPreferredWidth() {
+        return getWidth();
+    }
+
+    @Override
+    public LabelStack getRegionLabelsByXY(int x, int y) {
+        // TODO
+        return super.getRegionLabelsByXY(x, y);
+    }
+    @Override
+    public int getRowPositionByIndex(int rowIndex) {
+        if (rowIndex >= 0 && rowIndex < getRowCount()) {
+            return rowIndex;
+        } else {
+            return -1;
+        }
+    }
+    @Override
+    public int getStartXOfColumnPosition(int columnPosition) {
+        int start = 0;
+        for (int i=0; i<columnPosition; i++){
+            start += getColumnWidthByPosition(i);
+        }
+        return start;
+    }
+
+    @Override
+    public int getWidth() {
+        int width = 0;
+        for (int i=0; i<this.getColumnCount(); i++){
+            width += getColumnWidthByPosition(i);
+        }
+        return width;
+    }
+
     @Override
     public void handleLayerEvent(ILayerEvent event) {
         if ((event instanceof ColumnResizeEvent) ||
             (event instanceof StructuralRefreshEvent)){
             
             // Register listener
-            if (!registered){
+            if (!registered && getContext().getTable() != null){
                 registered = true;
                 getContext().getTable().addControlListener(new ControlAdapter(){
                     public void controlResized(ControlEvent arg0) {
@@ -132,56 +183,5 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
             
             getContext().setColumnExpanded(true);
         }
-    }
-
-    @Override
-    public int getPreferredWidth() {
-        return getWidth();
-    }
-    @Override
-    public int getRowPositionByIndex(int rowIndex) {
-        if (rowIndex >= 0 && rowIndex < getRowCount()) {
-            return rowIndex;
-        } else {
-            return -1;
-        }
-    }
-    @Override
-    public int getWidth() {
-        int width = 0;
-        for (int i=0; i<this.getColumnCount(); i++){
-            width += getColumnWidthByPosition(i);
-        }
-        return width;
-    }
-
-    @Override
-    public int getStartXOfColumnPosition(int columnPosition) {
-        int start = 0;
-        for (int i=0; i<columnPosition; i++){
-            start += getColumnWidthByPosition(i);
-        }
-        return start;
-    }
-
-    @Override
-    public LabelStack getRegionLabelsByXY(int x, int y) {
-        // TODO
-        return super.getRegionLabelsByXY(x, y);
-    }
-
-    @Override
-    public int getColumnPositionByX(int x) {
-        int min = 0;
-        int max = 0;
-        for (int i=0; i<getColumnCount(); i++){
-            min = max;
-            max += getColumnWidthByPosition(i);
-            if (min<= x && max>=x) {
-                return i;
-            }
-        }
-        return -1;
-        
     }
 }

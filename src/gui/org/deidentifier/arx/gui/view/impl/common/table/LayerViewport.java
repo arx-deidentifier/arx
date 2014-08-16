@@ -26,10 +26,13 @@ import org.eclipse.nebula.widgets.nattable.viewport.command.RecalculateScrollBar
 import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportDragCommandHandler;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportSelectColumnCommandHandler;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportSelectRowCommandHandler;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 
 public class LayerViewport extends ViewportLayer{
 
     private CTContext context;
+    private boolean registered = false;
     
     public LayerViewport(IUniqueIndexLayer underlyingLayer, CTContext context) {
         super(underlyingLayer);
@@ -40,6 +43,48 @@ public class LayerViewport extends ViewportLayer{
     @Override
     public boolean doCommand(ILayerCommand command) {
         
+        // Register listener
+        if (!registered && context.getTable() != null){
+            registered = true;
+            context.getTable().addControlListener(new ControlAdapter(){
+                public void controlResized(ControlEvent arg0) {
+                    checkScrollBars();
+                }
+            });
+        }
+        
+        if (context.isColumnExpanded() && context.isRowExpanded()) {
+            return underlyingLayer.doCommand(command);
+        } else {
+            return super.doCommand(command);
+        }
+    }
+
+    @Override
+    public void moveCellPositionIntoViewport(int scrollableColumnPosition, int scrollableRowPosition) {
+        // Ignore
+    }
+
+    @Override
+    public void moveColumnPositionIntoViewport(int scrollableColumnPosition) {
+        // Ignore
+    }
+
+
+    @Override
+    public void moveRowPositionIntoViewport(int scrollableRowPosition) {
+        // Ignore
+    }
+
+
+    @Override
+    public void recalculateScrollBars() {
+        // Ignore
+    }
+
+
+    private void checkScrollBars() {
+
         if (context.isColumnExpanded()) {
             context.getTable().getHorizontalBar().setEnabled(false);
             context.getTable().getHorizontalBar().setMinimum(0);
@@ -52,11 +97,18 @@ public class LayerViewport extends ViewportLayer{
             context.getTable().getVerticalBar().setMaximum(1);
         }
         
-        if (context.isColumnExpanded() && context.isRowExpanded()) {
-            return underlyingLayer.doCommand(command);
-        } else {
-            return super.doCommand(command);
-        }
+    }
+
+    @Override
+    protected boolean isLastColumnCompletelyDisplayed() {
+        if (context.isColumnExpanded()) return true;
+        else return super.isLastColumnCompletelyDisplayed();
+    }
+
+    @Override
+    protected boolean isLastRowCompletelyDisplayed() {
+        if (context.isRowExpanded()) return true;
+        else return super.isLastRowCompletelyDisplayed();
     }
 
 
@@ -67,41 +119,5 @@ public class LayerViewport extends ViewportLayer{
         registerCommandHandler(new ViewportSelectColumnCommandHandler(this));
         registerCommandHandler(new ViewportSelectRowCommandHandler(this));
         registerCommandHandler(new ViewportDragCommandHandler(this));
-    }
-
-
-    @Override
-    protected boolean isLastColumnCompletelyDisplayed() {
-        if (context.isColumnExpanded()) return true;
-        else return super.isLastColumnCompletelyDisplayed();
-    }
-
-
-    @Override
-    protected boolean isLastRowCompletelyDisplayed() {
-        if (context.isRowExpanded()) return true;
-        else return super.isLastRowCompletelyDisplayed();
-    }
-
-
-    @Override
-    public void moveCellPositionIntoViewport(int scrollableColumnPosition, int scrollableRowPosition) {
-        // Ignore
-    }
-
-    @Override
-    public void moveColumnPositionIntoViewport(int scrollableColumnPosition) {
-        // Ignore
-    }
-
-    @Override
-    public void moveRowPositionIntoViewport(int scrollableRowPosition) {
-        // Ignore
-    }
-
-
-    @Override
-    public void recalculateScrollBars() {
-        // Ignore
     }
 }

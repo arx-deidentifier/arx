@@ -36,12 +36,12 @@ public abstract class CTContext {
         return columnExpanded;
     }
 
-    public void setColumnExpanded(boolean columnExpanded) {
-        this.columnExpanded = columnExpanded;
-    }
-
     public boolean isRowExpanded() {
         return rowExpanded;
+    }
+
+    public void setColumnExpanded(boolean columnExpanded) {
+        this.columnExpanded = columnExpanded;
     }
 
     public void setRowExpanded(boolean rowExpanded) {
