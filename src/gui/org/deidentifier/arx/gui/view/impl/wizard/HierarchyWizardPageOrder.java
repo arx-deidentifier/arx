@@ -216,7 +216,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         config.setCellSelectionEnabled(false);
         config.setColumnSelectionEnabled(false);
         config.setRowSelectionEnabled(false);
-        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_EQUAL);
+        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL_EQUAL);
         config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
 
         // Create table
