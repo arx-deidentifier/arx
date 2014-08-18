@@ -19,20 +19,22 @@
 package org.deidentifier.arx.gui.view.impl.common.table;
 
 import org.eclipse.nebula.widgets.nattable.command.ILayerCommand;
+import org.eclipse.nebula.widgets.nattable.command.StructuralRefreshCommand;
+import org.eclipse.nebula.widgets.nattable.grid.command.ClientAreaResizeCommand;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.selection.ScrollSelectionCommandHandler;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.nebula.widgets.nattable.viewport.command.RecalculateScrollBarsCommand;
 import org.eclipse.nebula.widgets.nattable.viewport.command.RecalculateScrollBarsCommandHandler;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportDragCommandHandler;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportSelectColumnCommandHandler;
 import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportSelectRowCommandHandler;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Listener;
 
 public class LayerViewport extends ViewportLayer{
 
     private CTContext context;
-    private boolean registered = false;
     
     public LayerViewport(IUniqueIndexLayer underlyingLayer, CTContext context) {
         super(underlyingLayer);
@@ -43,16 +45,17 @@ public class LayerViewport extends ViewportLayer{
     @Override
     public boolean doCommand(ILayerCommand command) {
         
-        // Register listener
-        if (!registered && context.getTable() != null){
-            registered = true;
-            context.getTable().addControlListener(new ControlAdapter(){
-                public void controlResized(ControlEvent arg0) {
-                    checkScrollBars();
-                }
-            });
+        boolean result = super.doCommand(command);
+        
+        if (command instanceof ClientAreaResizeCommand) {
+            checkScrollBars();
+        } else if (command instanceof RecalculateScrollBarsCommand) {
+            checkScrollBars();
+        } else if (command instanceof StructuralRefreshCommand) {
+            checkScrollBars();
         }
-        return super.doCommand(command);
+        
+        return result;
     }
 
     @Override
@@ -77,27 +80,24 @@ public class LayerViewport extends ViewportLayer{
         }
     }
 
-
-    @Override
-    public void recalculateScrollBars() {
-        // Ignore
-    }
-
-
     private void checkScrollBars() {
 
+        Listener[] listeners = context.getTable().getListeners(SWT.Resize);
+        for (Listener listener : listeners) {
+            context.getTable().removeListener(SWT.Resize, listener);
+        }
+        
         if (context.isColumnExpanded()) {
-            context.getTable().getHorizontalBar().setEnabled(false);
-            context.getTable().getHorizontalBar().setMinimum(0);
-            context.getTable().getHorizontalBar().setMaximum(1);
+            context.getTable().getHorizontalBar().setVisible(false);
         }
 
         if (context.isRowExpanded()) {
-            context.getTable().getVerticalBar().setEnabled(false);
-            context.getTable().getVerticalBar().setMinimum(0);
-            context.getTable().getVerticalBar().setMaximum(1);
+            context.getTable().getVerticalBar().setVisible(false);
         }
         
+        for (Listener listener : listeners) {
+            context.getTable().addListener(SWT.Resize, listener);
+        }
     }
 
     @Override

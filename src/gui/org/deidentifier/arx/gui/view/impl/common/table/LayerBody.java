@@ -50,17 +50,17 @@ public class LayerBody extends CTLayer {
         IUniqueIndexLayer layer = selectionLayer;
         
         switch(config.getColumnHeaderLayout()){
-            case CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_LAST:
-                layer = new LayerColumnGrabLast(layer, config, context);
+            case CTConfiguration.COLUMN_HEADER_LAYOUT_FILL:
+                layer = new LayerColumnFillLayout(layer, config, context);
                 break;
-            case CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_EQUAL:
-                layer = new LayerColumnGrabEqual(layer, config, context);
+            case CTConfiguration.COLUMN_HEADER_LAYOUT_FILL_EQUAL:
+                layer = new LayerColumnFillLayout(layer, config, context, true);
                 break;
         }
      
         switch(config.getRowHeaderLayout()){
             case CTConfiguration.ROW_HEADER_LAYOUT_FILL:
-                layer = new LayerRowFill(layer, config, context);
+                layer = new LayerRowFillLayout(layer, config, context);
                 break;
         }
         

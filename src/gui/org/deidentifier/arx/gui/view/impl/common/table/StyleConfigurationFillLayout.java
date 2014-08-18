@@ -30,52 +30,30 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 
 /**
- * Style config for native cells and headers
+ * Style config for fill layouts
  * @author Fabian Prasser
  *
  */
-public class StyleConfigurationNative extends CTStyleConfiguration {
+public class StyleConfigurationFillLayout extends CTStyleConfiguration {
     
-    public static final String DEFAULT_NATIVE_CELL_CONFIG_LABEL = "NativeCell_";
+    public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_";
 
     private BorderStyle borderStyle = new BorderStyle(0, GUIHelper.getColor(240, 240, 240), LineStyleEnum.SOLID);
     private Color fgColor = GUIHelper.COLOR_BLACK;
     private Color bgColor = GUIHelper.getColor(245, 245, 245);
     private Font font;
     
-    public StyleConfigurationNative(CTConfiguration config) {
+    public StyleConfigurationFillLayout(CTConfiguration config) {
         super(config);
         font = config.getFont();
     }
 
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
-        addNativeStyleConfig(configRegistry);
-//        addSummaryProviderConfig(configRegistry);
-//        addSummaryRowDisplayConverter(configRegistry);
+        addFillLayoutStyleConfig(configRegistry);
     }
-//
-//    protected void addSummaryProviderConfig(IConfigRegistry configRegistry) {
-//        configRegistry.registerConfigAttribute(
-//                SummaryRowConfigAttributes.SUMMARY_PROVIDER,
-//                ISummaryProvider.DEFAULT,
-//                DisplayMode.NORMAL,
-//                SummaryRowLayer.DEFAULT_SUMMARY_ROW_CONFIG_LABEL);
-//    }
-//
-//    /**
-//     * Add a specialized {@link DefaultDisplayConverter} that will show "..." if there is no value
-//     * to show in the summary row yet.
-//     */
-//    protected void addSummaryRowDisplayConverter(IConfigRegistry configRegistry) {
-//        configRegistry.registerConfigAttribute(
-//                CellConfigAttributes.DISPLAY_CONVERTER,
-//                new SummaryDisplayConverter(new DefaultDisplayConverter()), 
-//                DisplayMode.NORMAL,
-//                SummaryRowLayer.DEFAULT_SUMMARY_ROW_CONFIG_LABEL);
-//    }
-//    
-    protected void addNativeStyleConfig(IConfigRegistry configRegistry) {
+    
+    protected void addFillLayoutStyleConfig(IConfigRegistry configRegistry) {
         Style cellStyle = new Style();
         cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);
         cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, bgColor);
@@ -85,6 +63,6 @@ public class StyleConfigurationNative extends CTStyleConfiguration {
                 CellConfigAttributes.CELL_STYLE,
                 cellStyle,
                 DisplayMode.NORMAL,
-                DEFAULT_NATIVE_CELL_CONFIG_LABEL);
+                DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL);
     }
 }

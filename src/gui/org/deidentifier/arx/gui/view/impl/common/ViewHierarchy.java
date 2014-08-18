@@ -571,7 +571,7 @@ public class ViewHierarchy implements IView {
         config.setCellSelectionEnabled(true);
         config.setColumnSelectionEnabled(true);
         config.setRowSelectionEnabled(false);
-        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_LAST);
+        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL);
         config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
 
         // Create table

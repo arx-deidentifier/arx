@@ -3,7 +3,7 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import org.eclipse.nebula.widgets.nattable.command.ILayerCommand;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 
-public class CTLayerCommandReset implements ILayerCommand{
+public class FillLayerResetCommand implements ILayerCommand{
 
     @Override
     public boolean convertToTargetLayer(ILayer targetLayer) {
@@ -12,6 +12,6 @@ public class CTLayerCommandReset implements ILayerCommand{
 
     @Override
     public ILayerCommand cloneCommand() {
-        return new CTLayerCommandReset();
+        return new FillLayerResetCommand();
     }
 }

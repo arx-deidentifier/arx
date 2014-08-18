@@ -28,12 +28,13 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.LayerCell;
 
 /**
  * Adds additional rows at the end that fill up the available height
+ * @author Fabian Prasser
  */
-public class LayerRowFill extends CTLayer implements IUniqueIndexLayer {
+public class LayerRowFillLayout extends CTLayer implements IUniqueIndexLayer {
 
-    public LayerRowFill(IUniqueIndexLayer underlyingDataLayer, CTConfiguration config, CTContext context) {
+    public LayerRowFillLayout(IUniqueIndexLayer underlyingDataLayer, CTConfiguration config, CTContext context) {
         super(underlyingDataLayer, config, context);
-        addConfiguration(new StyleConfigurationNative(config));
+        addConfiguration(new StyleConfigurationFillLayout(config));
     }
 
     @Override
@@ -54,7 +55,7 @@ public class LayerRowFill extends CTLayer implements IUniqueIndexLayer {
     @Override
     public LabelStack getConfigLabelsByPosition(int columnPosition, int rowPosition) {
         if (isActive() && isAdditionalRowPosition(rowPosition)) {
-            return new LabelStack(StyleConfigurationNative.DEFAULT_NATIVE_CELL_CONFIG_LABEL);
+            return new LabelStack(StyleConfigurationFillLayout.DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL);
         } else {
             return super.getConfigLabelsByPosition(columnPosition, rowPosition);
         }

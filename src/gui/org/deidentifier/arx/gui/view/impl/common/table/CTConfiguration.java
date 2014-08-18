@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.Control;
 public class CTConfiguration {
 
     public static final int COLUMN_HEADER_LAYOUT_DEFAULT    = 0;
-    public static final int COLUMN_HEADER_LAYOUT_GRAB_EQUAL = 1;
-    public static final int COLUMN_HEADER_LAYOUT_GRAB_LAST  = 2;
+    public static final int COLUMN_HEADER_LAYOUT_FILL_EQUAL = 1;
+    public static final int COLUMN_HEADER_LAYOUT_FILL  = 2;
 
     public static final int ROW_HEADER_LAYOUT_DEFAULT       = 0;
     public static final int ROW_HEADER_LAYOUT_FILL          = 1;
