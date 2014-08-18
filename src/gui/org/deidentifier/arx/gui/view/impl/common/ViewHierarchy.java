@@ -32,6 +32,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.table.CTConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -228,7 +229,7 @@ public class ViewHierarchy implements IView {
      */
     public void setHierarchy(final AttributeType.Hierarchy type) {
         this.hierarchy = (type == null ? null : type.getHierarchy());
-        this.table.reset();
+        this.table.refresh();
         this.updateCombos();
     }
 
@@ -304,7 +305,6 @@ public class ViewHierarchy implements IView {
             this.table.refresh();
             this.updateCombos();
         }
-        table.doLayoutOnColumnRemoval(selected);
         
         pushHierarchy();
         pushMin();
@@ -566,17 +566,18 @@ public class ViewHierarchy implements IView {
         }
 
         // Configure table
-        ComponentTableConfiguration config = new ComponentTableConfiguration();
-        config.alignment.horizontal = SWT.LEFT;
-        config.selection.cell = true;
-        config.selection.column = true;
-        config.selection.row = false;
-        config.header = new ComponentTableHeaderConfigurationSpanLast(100);
+        CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
+        config.setHorizontalAlignment(SWT.LEFT);
+        config.setCellSelectionEnabled(true);
+        config.setColumnSelectionEnabled(true);
+        config.setRowSelectionEnabled(false);
+        config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_GRAB_LAST);
+        config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_FILL);
 
         // Create table
         this.table = new ComponentTable(base, SWT.BORDER, config);
         this.table.getControl().setLayoutData(SWTUtil.createFillGridData());
-        this.table.setTable(new HierarchyDataProvider(), new HierarchyHeaderDataProvider());
+        this.table.setData(new HierarchyDataProvider(), new HierarchyHeaderDataProvider());
 
         // Create the menu and editing controls
         if (editable) {

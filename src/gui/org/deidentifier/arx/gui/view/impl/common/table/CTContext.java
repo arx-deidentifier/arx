@@ -16,21 +16,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.table;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.nebula.widgets.nattable.NatTable;
 
 /**
- * Configuration for table view
+ * 
  * @author Fabian Prasser
  *
  */
-public class ComponentTableConfiguration {
+public abstract class CTContext {
+    
+    private boolean columnExpanded = false;
+    private boolean rowExpanded = false;
+    
+    public abstract NatTable getTable();
 
-    /** Alignment*/
-    public ComponentTableAlignmentConfiguration alignment = new ComponentTableAlignmentConfiguration(SWT.CENTER);
-    /** Header*/
-    public ComponentTableHeaderConfiguration header = new ComponentTableHeaderConfigurationDefault(100);
-    /** Selection*/
-    public ComponentTableSelectionConfiguration selection = new ComponentTableSelectionConfiguration(false, false, false);
+    public boolean isColumnExpanded() {
+        return columnExpanded;
+    }
+
+    public boolean isRowExpanded() {
+        return rowExpanded;
+    }
+
+    public void setColumnExpanded(boolean columnExpanded) {
+        this.columnExpanded = columnExpanded;
+    }
+
+    public void setRowExpanded(boolean rowExpanded) {
+        this.rowExpanded = rowExpanded;
+    }
 }
