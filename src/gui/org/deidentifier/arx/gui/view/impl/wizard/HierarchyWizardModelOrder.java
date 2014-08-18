@@ -75,24 +75,26 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
      * Moves an item down
      * @param index
      */
-    public void moveDown(int index) {
-        if (index>=data.length-1 || index<0) return;
+    public boolean moveDown(int index) {
+        if (index>=data.length-1 || index<0) return false;
         String temp = data[index+1];
         data[index+1] = data[index];
         data[index] = temp;
         update();
+        return true;
     }
     
     /**
      * Moves an item up
      * @param index
      */
-    public void moveUp(int index) {
-        if (index<=0) return;
+    public boolean moveUp(int index) {
+        if (index<=0) return false;
         String temp = data[index-1];
         data[index-1] = data[index];
         data[index] = temp;
         update();
+        return true;
     }
     
     @Override

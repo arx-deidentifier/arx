@@ -99,9 +99,11 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     private void actionDown() {
         Integer index = table.getSelectedRow();
         if (index == null) return;
-        model.moveDown(index);
-        table.refresh();
-        update();
+        if (model.moveDown(index)) {
+            table.refresh();
+            table.setSelection(index+1, 0);
+            update();
+        }
     }
     
     /**
@@ -178,9 +180,11 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     private void actionUp() {
         Integer index = table.getSelectedRow();
         if (index == null) return;
-        model.moveUp(index);
-        table.refresh();
-        update();
+        if (model.moveUp(index)) {
+            table.refresh();
+            table.setSelection(index-1, 0);
+            update();
+        }
     }
 
     /**

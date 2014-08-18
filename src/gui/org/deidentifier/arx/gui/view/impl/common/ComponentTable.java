@@ -47,6 +47,7 @@ import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.selection.action.SelectCellAction;
+import org.eclipse.nebula.widgets.nattable.selection.command.SelectCellCommand;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.selection.event.RowSelectionEvent;
@@ -101,7 +102,10 @@ public class ComponentTable implements IComponent {
     private Integer                 selectedRow        = null;
     /** State */
     private Integer                 selectedColumn     = null;
-    
+
+    /** Body layer*/
+    private final LayerBody         bodyLayer;
+
     /** Listeners */
     private List<SelectionListener> selectionListeners = new ArrayList<SelectionListener>();
 
@@ -150,37 +154,37 @@ public class ComponentTable implements IComponent {
         if (config.getStyle() == CTConfiguration.STYLE_GRID) {
             
             // Create layers
-            LayerBody layerBody = new LayerBody(this.dataProviderBody, config, context);
+            bodyLayer = new LayerBody(this.dataProviderBody, config, context);
             LayerColumnHeader layerColumnHeader = new LayerColumnHeader(root,
                                                                         dataProviderColumnHeader,
-                                                                        layerBody,
+                                                                        bodyLayer,
                                                                         config,
                                                                         context);
-            LayerRowHeader layerRowHeader = new LayerRowHeader(root, dataProviderRowHeader, layerBody, config, context);
+            LayerRowHeader layerRowHeader = new LayerRowHeader(root, dataProviderRowHeader, bodyLayer, config, context);
             CornerLayer layerCorner = new CornerLayer(new DataLayer(new DefaultCornerDataProvider(dataProviderColumnHeader,
                                                                                                   dataProviderRowHeader)),
                                                                     layerRowHeader,
                                                                     layerColumnHeader);
-            GridLayer gridLayer = new GridLayer(layerBody, layerColumnHeader, layerRowHeader, layerCorner);
+            GridLayer gridLayer = new GridLayer(bodyLayer, layerColumnHeader, layerRowHeader, layerCorner);
 
             // Create table
             this.table = new NatTable(root, gridLayer, false);
             this.table.addConfiguration(new StyleConfigurationTable(config));
             this.table.configure();
-            this.addSelectionListener(layerBody.getSelectionLayer());
+            this.addSelectionListener(bodyLayer.getSelectionLayer());
             
         // Create a table
         } else {
 
             // Create layers
-            LayerBody layerBody = new LayerBody(dataProviderBody, config, context);
+            bodyLayer = new LayerBody(dataProviderBody, config, context);
             LayerColumnHeader layerColumnHeader = new LayerColumnHeader(root,
                                                                         dataProviderColumnHeader,
-                                                                        layerBody,
+                                                                        bodyLayer,
                                                                         config,
                                                                         context);
             CompositeLayer layerComposite = new CompositeLayer(1, 2);
-            layerComposite.setChildLayer(GridRegion.BODY, layerBody, 0, 1);
+            layerComposite.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
             layerComposite.setChildLayer(GridRegion.COLUMN_HEADER, layerColumnHeader, 0, 0);
 
             // Make corner resizable
@@ -213,7 +217,7 @@ public class ComponentTable implements IComponent {
             this.table = new NatTable(root, layerComposite, false);
             this.table.addConfiguration(new StyleConfigurationTable(config));
             this.table.configure();
-            this.addSelectionListener(layerBody.getSelectionLayer());
+            this.addSelectionListener(bodyLayer.getSelectionLayer());
         }
     }
 
@@ -639,5 +643,18 @@ public class ComponentTable implements IComponent {
         for (SelectionListener listener : selectionListeners) {
             listener.widgetSelected(sEvent);
         }
+    }
+
+    /**
+     * Updates the selection
+     * @param row
+     * @param column
+     */
+    public void setSelection(int row, int column) {
+        this.table.doCommand(new SelectCellCommand(bodyLayer.getSelectionLayer(), 
+                                                   column, 
+                                                   row, 
+                                                   false,
+                                                   false));
     }
 }

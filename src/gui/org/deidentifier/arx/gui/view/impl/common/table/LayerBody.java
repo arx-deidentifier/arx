@@ -30,8 +30,11 @@ import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 public class LayerBody extends CTLayer {
 
     /** Selection layer */
-    private SelectionLayer selectionLayer;
+    private final SelectionLayer selectionLayer;
     /** Data layer */
+    private final DataLayer dataLayer;
+    /** Viewport layer */
+    private final LayerViewport viewportLayer;
 
     /**
      * Creates a new instance
@@ -40,7 +43,7 @@ public class LayerBody extends CTLayer {
     public LayerBody(IDataProvider dataProvider, CTConfiguration config, CTContext context) {
         super(config, context);
         
-        DataLayer dataLayer = new DataLayer(dataProvider);
+        dataLayer = new DataLayer(dataProvider);
 
         selectionLayer = new LayerSelection(dataLayer, config);
         selectionLayer.addConfiguration(new StyleConfigurationSelection(config));
@@ -61,7 +64,7 @@ public class LayerBody extends CTLayer {
                 break;
         }
         
-        LayerViewport viewportLayer = new LayerViewport(layer, context);
+        viewportLayer = new LayerViewport(layer, context);
         setUnderlyingLayer(viewportLayer);
     }
 
@@ -71,5 +74,21 @@ public class LayerBody extends CTLayer {
      */
     public SelectionLayer getSelectionLayer() {
         return selectionLayer;
+    }
+    
+    /**
+     * Returns the data layer
+     * @return
+     */
+    public DataLayer getDataLayer() {
+        return dataLayer;
+    }
+    
+    /**
+     * Returns the viewport layer
+     * @return
+     */
+    public LayerViewport getViewportLayer() {
+        return viewportLayer;
     }
 }
