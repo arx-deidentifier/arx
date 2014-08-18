@@ -85,13 +85,8 @@ public class DPresence extends ImplicitPrivacyCriterion{
 
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
-        if (entry.count > 0) {
-            double dCurrent = (double) entry.count / (double) entry.pcount;
-            // current_delta has to be between delta_min and delta_max
-            return (dCurrent >= dMin) && (dCurrent <= dMax);
-        } else {
-            return true;
-        }
+        double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
+        return (delta >= dMin) && (delta <= dMax);
     }
 
     /**
