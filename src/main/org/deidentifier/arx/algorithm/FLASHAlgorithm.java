@@ -157,24 +157,20 @@ public class FLASHAlgorithm {
         };
 
         // No evaluation, no tagging
-        NodeAction triggerSnapshotStore = History.STORAGE_TRIGGER_ALL;
-        NodeAction triggerSnapshotEvict = History.EVICTION_TRIGGER_CHECKED;
         NodeAction triggerEvaluate = new NodeActionConstant(false);
         NodeAction triggerCheck = new NodeActionInverse(triggerSkip);
         NodeAction triggerTag = new NodeActionConstant(false);
 
         // Only one linear phase
-        FLASHConfiguration binaryConfiguration = new FLASHConfiguration();
-        FLASHConfiguration linearConfiguration = new FLASHConfiguration(anonymityProperty,
-                                                                        triggerTag,
-                                                                        triggerCheck,
-                                                                        triggerEvaluate,
-                                                                        triggerSkip,
-                                                                        triggerSnapshotStore,
-                                                                        triggerSnapshotEvict,
-                                                                        triggerSkip);
+        FLASHConfiguration config = FLASHConfiguration.createLinearPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
+                                                                                                                  triggerTag,
+                                                                                                                  triggerCheck,
+                                                                                                                  triggerEvaluate,
+                                                                                                                  triggerSkip),
+                                                                                      History.STORAGE_TRIGGER_ALL,
+                                                                                      triggerSkip);
         
-        return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
+        return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
 
     /**
@@ -201,8 +197,6 @@ public class FLASHAlgorithm {
         };
 
         // No evaluation
-        NodeAction triggerSnapshotStore = History.STORAGE_TRIGGER_ALL;
-        NodeAction triggerSnapshotEvict = History.EVICTION_TRIGGER_CHECKED;
         NodeAction triggerEvaluate = new NodeActionConstant(false);
         NodeAction triggerCheck = new NodeActionInverse(triggerSkip);
         
@@ -212,22 +206,21 @@ public class FLASHAlgorithm {
                 return node.hasProperty(Node.PROPERTY_ANONYMOUS);
             }
             public void action(Node node) {
-                lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
+                lattice.setProperty(node, Node.PROPERTY_SUCCESSORS_PRUNED);
             }
         };
+
+        // Only one linear phase
+        FLASHConfiguration config = FLASHConfiguration.createLinearPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
+                                                                                                                  triggerTag,
+                                                                                                                  triggerCheck,
+                                                                                                                  triggerEvaluate,
+                                                                                                                  triggerSkip),
+                                                                                      History.STORAGE_TRIGGER_ALL,
+                                                                                      triggerSkip);
         
-        // Only one linear search
-        FLASHConfiguration binaryConfiguration = new FLASHConfiguration();
-        FLASHConfiguration linearConfiguration = new FLASHConfiguration(anonymityProperty,
-                                                                        triggerTag,
-                                                                        triggerCheck,
-                                                                        triggerEvaluate,
-                                                                        triggerSkip,
-                                                                        triggerSnapshotStore,
-                                                                        triggerSnapshotEvict,
-                                                                        triggerSkip);
-        
-        return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
+        return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
 
     /**
@@ -271,8 +264,6 @@ public class FLASHAlgorithm {
         };
         
         // No evaluation
-        NodeAction binaryTriggerSnapshotStore = History.STORAGE_TRIGGER_NON_ANONYMOUS;
-        NodeAction binaryTriggerSnapshotEvict = History.EVICTION_TRIGGER_K_ANONYMOUS;
         NodeAction binaryTriggerCheck = new NodeActionInverse(binaryTriggerSkip);
         NodeAction binaryTriggerEvaluate = new NodeActionConstant(false);
         
@@ -292,8 +283,6 @@ public class FLASHAlgorithm {
         };
 
         // No evaluation
-        NodeAction linearTriggerSnapshotStore = History.STORAGE_TRIGGER_ALL;
-        NodeAction linearTriggerSnapshotEvict = History.EVICTION_TRIGGER_CHECKED;
         NodeAction linearTriggerEvaluate = new NodeActionConstant(false);
 
         // We check nodes which are k-anonymous and have not been checked already
@@ -314,28 +303,21 @@ public class FLASHAlgorithm {
             }
         };
 
+        // Two interwoven phases
+        FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
+                                                                                                               binaryTriggerTag,
+                                                                                                               binaryTriggerCheck,
+                                                                                                               binaryTriggerEvaluate,
+                                                                                                               binaryTriggerSkip),
+                                                                                   new FLASHPhaseConfiguration(linearAnonymityProperty,
+                                                                                                               linearTriggerTag,
+                                                                                                               linearTriggerCheck,
+                                                                                                               linearTriggerEvaluate,
+                                                                                                               linearTriggerSkip),
+                                                                                   History.STORAGE_TRIGGER_ALL,
+                                                                                   linearTriggerSkip);
         
-        // Binary configuration
-        FLASHConfiguration binaryConfiguration = new FLASHConfiguration(binaryAnonymityProperty,
-                                                                        binaryTriggerTag,
-                                                                        binaryTriggerCheck,
-                                                                        binaryTriggerEvaluate,
-                                                                        binaryTriggerSkip,
-                                                                        binaryTriggerSnapshotStore,
-                                                                        binaryTriggerSnapshotEvict,
-                                                                        linearTriggerSkip);
-        
-        // Linear configuration
-        FLASHConfiguration linearConfiguration = new FLASHConfiguration(linearAnonymityProperty,
-                                                                        linearTriggerTag,
-                                                                        linearTriggerCheck,
-                                                                        linearTriggerEvaluate,
-                                                                        linearTriggerSkip,
-                                                                        linearTriggerSnapshotStore,
-                                                                        linearTriggerSnapshotEvict,
-                                                                        linearTriggerSkip);
-
-        return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
+        return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
 
     /**
@@ -381,14 +363,13 @@ public class FLASHAlgorithm {
                 
                 // Tag insufficient utility
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
-                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
+                    lattice.setProperty(node, Node.PROPERTY_SUCCESSORS_PRUNED);
                 }
             }
         };
         
         // No evaluation
-        NodeAction binaryTriggerSnapshotStore = History.STORAGE_TRIGGER_NON_ANONYMOUS;
-        NodeAction binaryTriggerSnapshotEvict = History.EVICTION_TRIGGER_K_ANONYMOUS;
         NodeAction binaryTriggerCheck = new NodeActionInverse(binaryTriggerSkip);
         NodeAction binaryTriggerEvaluate = new NodeActionConstant(false);
         
@@ -410,8 +391,6 @@ public class FLASHAlgorithm {
         };
 
         // No evaluation
-        NodeAction linearTriggerSnapshotStore = History.STORAGE_TRIGGER_ALL;
-        NodeAction linearTriggerSnapshotEvict = History.EVICTION_TRIGGER_CHECKED;
         NodeAction linearTriggerEvaluate = new NodeActionConstant(false);
 
         // We check nodes which have not been skipped
@@ -437,28 +416,21 @@ public class FLASHAlgorithm {
             }
         };
         
-
-        // Binary configuration
-        FLASHConfiguration binaryConfiguration = new FLASHConfiguration(binaryAnonymityProperty,
-                                                                        binaryTriggerTag,
-                                                                        binaryTriggerCheck,
-                                                                        binaryTriggerEvaluate,
-                                                                        binaryTriggerSkip,
-                                                                        binaryTriggerSnapshotStore,
-                                                                        binaryTriggerSnapshotEvict,
-                                                                        linearTriggerSkip);
+        // Two interwoven phases
+        FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
+                                                                                                               binaryTriggerTag,
+                                                                                                               binaryTriggerCheck,
+                                                                                                               binaryTriggerEvaluate,
+                                                                                                               binaryTriggerSkip),
+                                                                                   new FLASHPhaseConfiguration(linearAnonymityProperty,
+                                                                                                               linearTriggerTag,
+                                                                                                               linearTriggerCheck,
+                                                                                                               linearTriggerEvaluate,
+                                                                                                               linearTriggerSkip),
+                                                                                   History.STORAGE_TRIGGER_ALL,
+                                                                                   linearTriggerSkip);
         
-        // Linear configuration
-        FLASHConfiguration linearConfiguration = new FLASHConfiguration(linearAnonymityProperty,
-                                                                        linearTriggerTag,
-                                                                        linearTriggerCheck,
-                                                                        linearTriggerEvaluate,
-                                                                        linearTriggerSkip,
-                                                                        linearTriggerSnapshotStore,
-                                                                        linearTriggerSnapshotEvict,
-                                                                        linearTriggerSkip);
-
-        return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
+        return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
 
     /**
@@ -503,8 +475,6 @@ public class FLASHAlgorithm {
         };
         
         // No evaluation
-        NodeAction binaryTriggerSnapshotStore = History.STORAGE_TRIGGER_NON_ANONYMOUS;
-        NodeAction binaryTriggerSnapshotEvict = History.EVICTION_TRIGGER_ANONYMOUS;
         NodeAction binaryTriggerCheck = new NodeActionInverse(binaryTriggerSkip);
         NodeAction binaryTriggerEvaluate = new NodeActionConstant(false);
         
@@ -523,9 +493,6 @@ public class FLASHAlgorithm {
             }
         };
 
-        NodeAction linearTriggerSnapshotStore = History.STORAGE_TRIGGER_ALL;
-        NodeAction linearTriggerSnapshotEvict = History.EVICTION_TRIGGER_CHECKED;
-        
         // We evaluate nodes which have not been skipped, if the metric is independent
         NodeAction linearTriggerEvaluate = new NodeAction() {
             public boolean appliesTo(Node node) {
@@ -554,27 +521,21 @@ public class FLASHAlgorithm {
             }
         };
 
-        // Binary configuration
-        FLASHConfiguration binaryConfiguration = new FLASHConfiguration(binaryAnonymityProperty,
-                                                                        binaryTriggerTag,
-                                                                        binaryTriggerCheck,
-                                                                        binaryTriggerEvaluate,
-                                                                        binaryTriggerSkip,
-                                                                        binaryTriggerSnapshotStore,
-                                                                        binaryTriggerSnapshotEvict,
-                                                                        linearTriggerSkip);
+        // Two interwoven phases
+        FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
+                                                                                                               binaryTriggerTag,
+                                                                                                               binaryTriggerCheck,
+                                                                                                               binaryTriggerEvaluate,
+                                                                                                               binaryTriggerSkip),
+                                                                                   new FLASHPhaseConfiguration(linearAnonymityProperty,
+                                                                                                               linearTriggerTag,
+                                                                                                               linearTriggerCheck,
+                                                                                                               linearTriggerEvaluate,
+                                                                                                               linearTriggerSkip),
+                                                                                   History.STORAGE_TRIGGER_ALL,
+                                                                                   linearTriggerSkip);
         
-        // Linear configuration
-        FLASHConfiguration linearConfiguration = new FLASHConfiguration(linearAnonymityProperty,
-                                                                        linearTriggerTag,
-                                                                        linearTriggerCheck,
-                                                                        linearTriggerEvaluate,
-                                                                        linearTriggerSkip,
-                                                                        linearTriggerSnapshotStore,
-                                                                        linearTriggerSnapshotEvict,
-                                                                        linearTriggerSkip);
-
-        return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
+        return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
 
     /**
@@ -607,7 +568,8 @@ public class FLASHAlgorithm {
             }
             public void action(Node node) {
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
-                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_ANONYMOUS);
+                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_ANONYMOUS | Node.PROPERTY_SUCCESSORS_PRUNED);
+                    lattice.setProperty(node, Node.PROPERTY_SUCCESSORS_PRUNED);
                 } else {
                     lattice.setPropertyDownwards(node, false, Node.PROPERTY_NOT_ANONYMOUS);
                 }
@@ -615,23 +577,18 @@ public class FLASHAlgorithm {
         };
         
         // No evaluation
-        NodeAction triggerSnapshotStore = History.STORAGE_TRIGGER_NON_ANONYMOUS;
-        NodeAction triggerSnapshotEvict = History.EVICTION_TRIGGER_ANONYMOUS;
         NodeAction triggerEvaluate = new NodeActionConstant(false);
         NodeAction triggerCheck = new NodeActionInverse(triggerSkip);
         
         // Only one binary phase
-        FLASHConfiguration binaryConfiguration = new FLASHConfiguration(anonymityProperty,
-                                                                        triggerTag,
-                                                                        triggerCheck,
-                                                                        triggerEvaluate,
-                                                                        triggerSkip,
-                                                                        triggerSnapshotStore,
-                                                                        triggerSnapshotEvict,
-                                                                        triggerSkip);
+        FLASHConfiguration config = FLASHConfiguration.createBinaryPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
+                                                                                                                  triggerTag,
+                                                                                                                  triggerCheck,
+                                                                                                                  triggerEvaluate,
+                                                                                                                  triggerSkip),
+                                                                                      History.STORAGE_TRIGGER_NON_ANONYMOUS,
+                                                                                      triggerSkip);
         
-        FLASHConfiguration linearConfiguration = new FLASHConfiguration();
-        
-        return new FLASHAlgorithmImpl(lattice, checker,strategy, binaryConfiguration, linearConfiguration);
+        return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
 }

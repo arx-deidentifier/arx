@@ -28,76 +28,121 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
  *
  */
 public class FLASHConfiguration {
-
-    /** Determines whether the associated phase is active*/
-    public final boolean active;
     
-    /** A trigger for tagging nodes in this phase*/
-    public final NodeAction triggerTag;
-
-    /** A trigger for checking nodes in this phase*/
-    public final NodeAction triggerCheck;
-    
-    /** A trigger for evaluating nodes in this phase*/
-    public final NodeAction triggerEvaluate;
-    
-    /** A trigger for skipping nodes in this phase*/
-    public final NodeAction triggerSkip;
-
-    /** A trigger controlling which transformations are snapshotted*/
-    public final NodeAction triggerSnapshotStore;
-    
-    /** A trigger controlling snapshots of which transformations can be evicted*/
-    public final NodeAction triggerSnapshotEvict;
-
-    /** A trigger firing when a tag event should be triggered*/
-    public final NodeAction triggerTagEvent;
-    
-    /** The main anonymity property*/
-    public final int anonymityProperty;
-
     /**
-     * Creates a configuration for an active phase
-     * @param anonymityProperty
-     * @param triggerTag
-     * @param triggerCheck
-     * @param triggerEvaluate
-     * @param triggerSkip
+     * Creates a binary-phase only configuration
+     * @param config
      * @param triggerSnapshotStore
-     * @param triggerSnapshotEvict
      * @param triggerTagEvent
+     * @return
      */
-    public FLASHConfiguration(int anonymityProperty,
-                              NodeAction triggerTag,
-                              NodeAction triggerCheck,
-                              NodeAction triggerEvaluate,
-                              NodeAction triggerSkip,
-                              NodeAction triggerSnapshotStore,
-                              NodeAction triggerSnapshotEvict,
-                              NodeAction triggerTagEvent) {
-        this.active = true;
-        this.anonymityProperty = anonymityProperty;
-        this.triggerTag = triggerTag;
-        this.triggerCheck = triggerCheck;
-        this.triggerEvaluate = triggerEvaluate;
-        this.triggerSkip = triggerSkip;
-        this.triggerSnapshotStore = triggerSnapshotStore;
-        this.triggerSnapshotEvict = triggerSnapshotEvict;
-        this.triggerTagEvent = triggerTagEvent;
+    public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config, 
+                                                                    NodeAction triggerSnapshotStore,
+                                                                    NodeAction triggerTagEvent) {
+        return new FLASHConfiguration(config, null, triggerSnapshotStore, triggerTagEvent);
+    }
+    
+    /**
+     * Creates a linear-phase only configuration
+     * @param config
+     * @param triggerSnapshotStore
+     * @param triggerTagEvent
+     * @return
+     */
+    public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config, 
+                                                                    NodeAction triggerSnapshotStore,
+                                                                    NodeAction triggerTagEvent) {
+        return new FLASHConfiguration(null, config, triggerSnapshotStore, triggerTagEvent);
     }
 
     /**
-     * Creates a configuration for an inactive phase
+     * Creates a two-phase configuration
+     * @param config
+     * @param triggerSnapshotStore
+     * @param triggerTagEvent
+     * @return
      */
-    public FLASHConfiguration() {
-        this.active = false;
-        this.anonymityProperty = 0;
-        this.triggerTag = null;
-        this.triggerCheck = null;
-        this.triggerEvaluate = null;
-        this.triggerSkip = null;
-        this.triggerSnapshotStore = null;
-        this.triggerSnapshotEvict = null;
-        this.triggerTagEvent = null;
+    public static FLASHConfiguration createTwoPhaseConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
+                                                                    FLASHPhaseConfiguration linearPhaseConfiguration,
+                                                                    NodeAction triggerSnapshotStore,
+                                                                    NodeAction triggerTagEvent) {
+        return new FLASHConfiguration(binaryPhaseConfiguration, linearPhaseConfiguration, triggerSnapshotStore, triggerTagEvent);
+    }
+
+    /** A configuration for the binary phase*/
+    private final FLASHPhaseConfiguration binaryPhaseConfiguration;
+
+    /** A configuration for the linear phase*/
+    private final FLASHPhaseConfiguration linearPhaseConfiguration;
+
+    /** A trigger controlling which transformations are snapshotted*/
+    private final NodeAction triggerSnapshotStore;
+    
+    /** A trigger firing when a tag event should be triggered*/
+    private final NodeAction triggerTagEvent;
+
+    /**
+     * Creates a new configuration for the FLASH algorithm
+     * @param binaryPhaseConfiguration
+     * @param linearPhaseConfiguration
+     * @param triggerSnapshotStore
+     * @param triggerTagEvent
+     */
+    private FLASHConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
+                               FLASHPhaseConfiguration linearPhaseConfiguration,
+                               NodeAction triggerSnapshotStore,
+                               NodeAction triggerTagEvent) {
+        this.binaryPhaseConfiguration = binaryPhaseConfiguration;
+        this.linearPhaseConfiguration = linearPhaseConfiguration;
+        this.triggerSnapshotStore = triggerSnapshotStore;
+        this.triggerTagEvent = triggerTagEvent;
+    }
+    
+    /**
+     * Getter
+     * @return
+     */
+    public FLASHPhaseConfiguration getBinaryPhaseConfiguration() {
+        return binaryPhaseConfiguration;
+    }
+
+    /**
+     * Getter
+     * @return
+     */
+    public FLASHPhaseConfiguration getLinearPhaseConfiguration() {
+        return linearPhaseConfiguration;
+    }
+
+    /**
+     * Getter: A trigger controlling which transformations are snapshotted
+     * @return
+     */
+    public NodeAction getTriggerSnapshotStore() {
+        return triggerSnapshotStore;
+    }
+
+    /**
+     * Getter:  A trigger firing when a tag event should be triggered on the lattice
+     * @return
+     */
+    public NodeAction getTriggerTagEvent() {
+        return triggerTagEvent;
+    }
+
+    /**
+     * Is a binary phase required
+     * @return
+     */
+    public boolean isBinaryPhaseRequired(){
+        return this.binaryPhaseConfiguration != null;
+    }
+
+    /**
+     * Is a linear phase required
+     * @return
+     */
+    public boolean isLinearPhaseRequired(){
+        return this.linearPhaseConfiguration != null;
     }
 }

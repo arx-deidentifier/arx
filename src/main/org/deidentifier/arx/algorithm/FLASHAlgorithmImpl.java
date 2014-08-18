@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.INodeChecker;
-import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
@@ -38,20 +37,14 @@ import org.deidentifier.arx.metric.InformationLoss;
  */
 public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
-    /** Configuration for the binary phase */
-    protected final FLASHConfiguration binaryPhaseConfiguration;
-
-    /** Configuration for the linear phase */
-    protected final FLASHConfiguration linearPhaseConfiguration;
+    /** Configuration for the algorithm's phases */
+    protected final FLASHConfiguration config;
 
     /** Are the pointers for a node with id 'index' already sorted?. */
     private final boolean[]          sorted;
 
     /** The strategy. */
     private final FLASHStrategy      strategy;
-
-    /** The history */
-    private History                  history;
 
     /**
      * Creates a new instance
@@ -65,30 +58,28 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     public FLASHAlgorithmImpl(Lattice lattice, 
                               INodeChecker checker, 
                               FLASHStrategy strategy,
-                              FLASHConfiguration binaryPhaseConfiguration,
-                              FLASHConfiguration linearPhaseConfiguration) {
+                              FLASHConfiguration config) {
         
         super(lattice, checker);
         this.strategy = strategy;
         this.sorted = new boolean[lattice.getSize()];
-        this.history = checker.getHistory();
-        this.binaryPhaseConfiguration = binaryPhaseConfiguration;
-        this.linearPhaseConfiguration = linearPhaseConfiguration;
+        this.config = config;
     }
 
     @Override
     public void traverse() {
         
         // Determine configuration for the outer loop
-        FLASHConfiguration outerLoopConfiguration;
-        if (binaryPhaseConfiguration.active){
-            outerLoopConfiguration = binaryPhaseConfiguration;
+        FLASHPhaseConfiguration outerLoopConfiguration;
+        if (config.isBinaryPhaseRequired()){
+            outerLoopConfiguration = config.getBinaryPhaseConfiguration();
         } else {
-            outerLoopConfiguration = linearPhaseConfiguration;
+            outerLoopConfiguration = config.getLinearPhaseConfiguration();
         }
 
-        // Set node trigger
-        lattice.setTagTrigger(outerLoopConfiguration.triggerTagEvent);
+        // Set some triggers
+        lattice.setTagTrigger(config.getTriggerTagEvent());
+        checker.getHistory().setStorageTrigger(config.getTriggerSnapshotStore());
 
         // Initialize
         PriorityQueue<Node> queue = new PriorityQueue<Node>(11, strategy);
@@ -103,19 +94,12 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // For each node in the lattice
         int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
-            for (Node node : this.getUnsetNodesAndSort(i, outerLoopConfiguration.triggerSkip)) {
+            for (Node node : this.getUnsetNodesAndSort(i, outerLoopConfiguration.getTriggerSkip())) {
                 
                 // Run the correct phase
-                if (binaryPhaseConfiguration.active){
-                    
-                    checker.getHistory().setEvictionTrigger(binaryPhaseConfiguration.triggerSnapshotEvict);
-                    checker.getHistory().setStorageTrigger(binaryPhaseConfiguration.triggerSnapshotStore);
+                if (config.isBinaryPhaseRequired()){
                     binarySearch(node, queue);
-                    
                 } else {
-                    
-                    checker.getHistory().setEvictionTrigger(linearPhaseConfiguration.triggerSnapshotEvict);
-                    checker.getHistory().setStorageTrigger(linearPhaseConfiguration.triggerSnapshotStore);
                     linearSearch(node);
                 }
             }
@@ -138,10 +122,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param queue
      */
     private void binarySearch(Node start, PriorityQueue<Node> queue) {
-        
-        // Set node trigger
-        lattice.setTagTrigger(binaryPhaseConfiguration.triggerTagEvent);
 
+        // Obtain node action
+        NodeAction triggerSkip = config.getBinaryPhaseConfiguration().getTriggerSkip();
+        
         // Add to queue
         queue.add(start);
 
@@ -150,25 +134,17 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
             // Remove head and process
             Node head = queue.poll();
-            if (!skip(binaryPhaseConfiguration.triggerSkip, head)) {
+            if (!skip(triggerSkip, head)) {
 
                 // First phase
-                List<Node> path = findPath(head, binaryPhaseConfiguration.triggerSkip);
-                head = checkPath(path, binaryPhaseConfiguration.triggerSkip, queue);
+                List<Node> path = findPath(head, triggerSkip);
+                head = checkPath(path, triggerSkip, queue);
 
                 // Second phase
-                if (linearPhaseConfiguration.active && head != null) {
-
-                    // Change strategies
-                    history.setEvictionTrigger(linearPhaseConfiguration.triggerSnapshotEvict);
-                    history.setStorageTrigger(linearPhaseConfiguration.triggerSnapshotStore);
-
+                if (config.isLinearPhaseRequired() && head != null) {
+                    
                     // Run linear search on head
                     linearSearch(head);
-
-                    // Switch back to previous strategies
-                    history.setEvictionTrigger(binaryPhaseConfiguration.triggerSnapshotEvict);
-                    history.setStorageTrigger(binaryPhaseConfiguration.triggerSnapshotStore);
                 }
             }
         }
@@ -178,12 +154,12 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * Checks and tags the given transformation
      * @param node
      */
-    private void checkAndTag(Node node, FLASHConfiguration configuration) {
+    private void checkAndTag(Node node, FLASHPhaseConfiguration configuration) {
 
         // Check or evaluate
-        if (configuration.triggerEvaluate.appliesTo(node)) {
+        if (configuration.getTriggerEvaluate().appliesTo(node)) {
             lattice.setInformationLoss(node, checker.getMetric().evaluate(node, null));
-        } else if (configuration.triggerCheck.appliesTo(node)) {
+        } else if (configuration.getTriggerCheck().appliesTo(node)) {
             lattice.setChecked(node, checker.check(node));
         }  
         
@@ -191,7 +167,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         trackOptimum(node);
         
         // Tag
-        configuration.triggerTag.apply(node);
+        configuration.getTriggerTag().apply(node);
     }
 
     /**
@@ -203,6 +179,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private Node checkPath(List<Node> path, NodeAction triggerSkip, PriorityQueue<Node> queue) {
 
+        // Obtain anonymity property
+        int anonymityProperty = config.getBinaryPhaseConfiguration().getAnonymityProperty();
+        
         // Init
         int low = 0;
         int high = path.size() - 1;
@@ -219,10 +198,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             if (!skip(triggerSkip, node)) {
 
                 // Check and tag
-                checkAndTag(node, binaryPhaseConfiguration);
+                checkAndTag(node, config.getBinaryPhaseConfiguration());
 
                 // Add nodes to queue
-                if (!node.hasProperty(binaryPhaseConfiguration.anonymityProperty)) {
+                if (!node.hasProperty(anonymityProperty)) {
                     for (final Node up : node.getSuccessors()) {
                         if (!skip(triggerSkip, up)) {
                             queue.add(up);
@@ -231,7 +210,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 }
 
                 // Binary search
-                if (node.hasProperty(binaryPhaseConfiguration.anonymityProperty)) {
+                if (node.hasProperty(anonymityProperty)) {
                     lastAnonymousNode = node;
                     high = mid - 1;
                 } else {
@@ -300,26 +279,29 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param start
      */
     private void linearSearch(Node start) {
-
-        // Set node trigger
-        lattice.setTagTrigger(linearPhaseConfiguration.triggerTagEvent);
         
+        // Obtain node action
+        NodeAction triggerSkip = config.getLinearPhaseConfiguration().getTriggerSkip();
+
         // Skip this node
-        if (!skip(linearPhaseConfiguration.triggerSkip, start)) {
+        if (!skip(triggerSkip, start)) {
             
             // Sort successors
             this.sortSuccessors(start);
             
             // Check and tag
-            this.checkAndTag(start, linearPhaseConfiguration);
+            this.checkAndTag(start, config.getLinearPhaseConfiguration());
             
             // DFS
             for (final Node child : start.getSuccessors()) {
-                if (!skip(linearPhaseConfiguration.triggerSkip, child)) {
+                if (!skip(triggerSkip, child)) {
                     linearSearch(child);
                 }
             }
         }
+        
+        // Mark as successors pruned
+        lattice.setProperty(start, Node.PROPERTY_SUCCESSORS_PRUNED);
     }
 
     /**
@@ -369,7 +351,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             InformationLoss<?> lowerBound = checker.getMetric().getLowerBound(node);
             if (lowerBound != null) {
                 if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
-                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
                     return true;
                 }
             }

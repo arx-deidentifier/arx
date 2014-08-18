@@ -56,55 +56,7 @@ public class History {
             return true;
         }
     };
-
-    /**
-     * Evict transformations for which all successors are anonymous
-     */
-    public static final NodeAction EVICTION_TRIGGER_ANONYMOUS = new NodeAction(){
-        @Override
-        public boolean appliesTo(Node node) {
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.hasProperty(Node.PROPERTY_ANONYMOUS) &&
-                    !upNode.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    };
-
-    /**
-     * Evict transformations for which all successors have been checked
-     */
-    public static final NodeAction EVICTION_TRIGGER_CHECKED = new NodeAction(){
-        @Override
-        public boolean appliesTo(Node node) {
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.hasProperty(Node.PROPERTY_CHECKED) &&
-                    !upNode.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    };
-
-    /**
-     * Evict transformations for which all successors are k-anonymous
-     */
-    public static final NodeAction EVICTION_TRIGGER_K_ANONYMOUS = new NodeAction(){
-        @Override
-        public boolean appliesTo(Node node) {
-            for (final Node upNode : node.getSuccessors()) {
-                if (!upNode.hasProperty(Node.PROPERTY_K_ANONYMOUS) &&
-                    !upNode.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    };
-
+    
     /** The actual buffer. */
     private MRUCache<Node>           cache          = null;
 
@@ -122,9 +74,6 @@ public class History {
 
     /** A map from nodes to snapshots. */
     private HashMap<Node, int[]>     nodeToSnapshot = null;
-
-    /** The current pruning strategy */
-    private NodeAction              evictionTrigger;
 
     /** The current storage strategy */
     private NodeAction              storageTrigger;
@@ -168,7 +117,6 @@ public class History {
         this.dictionarySensValue = dictionarySensValue;
         this.config = config;
         this.requirements = config.getRequirements();
-        this.evictionTrigger = EVICTION_TRIGGER_ANONYMOUS;
         this.storageTrigger = STORAGE_TRIGGER_NON_ANONYMOUS;
     }
 
@@ -245,16 +193,7 @@ public class History {
     public Node getNode() {
         return resultNode;
     }
-
-    /**
-     * Returns the current pruning strategy
-     * 
-     * @return
-     */
-    public NodeAction getEvictionTrigger() {
-        return evictionTrigger;
-    }
-
+    
     /**
      * Returns the current storage strategy
      * 
@@ -274,24 +213,6 @@ public class History {
         this.dictionarySensValue.clear();
         this.resultNode = null;
     }
-
-    /**
-     * Set the pruning strategy
-     * 
-     * @param strategy
-     */
-    public void setEvictionTrigger(NodeAction trigger) {
-        evictionTrigger = trigger;
-    }
-
-    /**
-     * Set the storage strategy
-     * 
-     * @param strategy
-     */
-    public void setStorageTrigger(NodeAction trigger) {
-        storageTrigger = trigger;
-    }
     
     /**
      * Sets the size of this history
@@ -299,6 +220,15 @@ public class History {
      */
     public void setSize(int size) {
         this.size = size;
+    }
+    
+    /**
+     * Set the storage strategy
+     * 
+     * @param strategy
+     */
+    public void setStorageTrigger(NodeAction trigger) {
+        storageTrigger = trigger;
     }
 
     public int size() {
@@ -329,17 +259,21 @@ public class History {
         
         // Early abort if conditions are not triggered
         if (!node.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
-            (!storageTrigger.appliesTo(node) || evictionTrigger.appliesTo(node))) {
+            (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED) || !storageTrigger.appliesTo(node))) {
             return false;
         }
+        
+        // Clear the cache
+        cleanUpHistory();
 
+        // Perform LRU eviction, if still too large
+        if (cache.size() >= size) {
+            removeHistoryEntry(cache.removeHead());
+        }
+        
         // Create the snapshot
         final int[] data = createSnapshot(g);
 
-        // if cache size is too large purge
-        if (cache.size() >= size) {
-            purgeCache();
-        }
 
         // assign snapshot and keep reference for cache
         nodeToSnapshot.put(node, data);
@@ -349,10 +283,24 @@ public class History {
     }
 
     /**
+     * Remove pruned entries from the cache
+     */
+    private final void cleanUpHistory() {
+
+        final Iterator<Node> it = cache.iterator();
+        while (it.hasNext()) {
+            final Node node = it.next();
+            if (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                it.remove();
+                removeHistoryEntry(node);
+            }
+        }
+    }
+    
+    /**
      * Creates a generic snapshot for all criteria
      * 
-     * @param g
-     *            the g
+     * @param g the g
      * @return the int[]
      */
     private final int[] createSnapshot(final IHashGroupify g) {
@@ -399,31 +347,6 @@ public class History {
             m = m.nextOrdered;
         }
         return data;
-    }
-    
-    /**
-     * Remove least recently used from cache and index.
-     */
-    private final void purgeCache() {
-        int purged = 0;
-
-        // Purge prunable nodes
-        final Iterator<Node> it = cache.iterator();
-        while (it.hasNext()) {
-            final Node node = it.next();
-            if (evictionTrigger.appliesTo(node)) {
-                purged++;
-                it.remove();
-                removeHistoryEntry(node);
-
-            }
-        }
-
-        // Purge LRU
-        if (purged == 0) {
-            final Node node = cache.removeHead();
-            removeHistoryEntry(node);
-        }
     }
 
     /**

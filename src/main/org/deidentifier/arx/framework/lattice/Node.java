@@ -33,43 +33,48 @@ public class Node {
     /** 
      * All privacy criteria are fulfilled
      */
-    public static final int PROPERTY_ANONYMOUS = 0;
+    public static final int PROPERTY_ANONYMOUS = 1 << 0;
     
     /** 
      * Not all privacy criteria are fulfilled
      */
-    public static final int PROPERTY_NOT_ANONYMOUS = 1;
+    public static final int PROPERTY_NOT_ANONYMOUS = 1 << 1;
     
     /** 
      * A k-anonymity sub-criterion is fulfilled
      */
-    public static final int PROPERTY_K_ANONYMOUS = 2;
+    public static final int PROPERTY_K_ANONYMOUS = 1 << 2;
     
     /** 
      * A k-anonymity sub-criterion is not fulfilled
      */
-    public static final int PROPERTY_NOT_K_ANONYMOUS = 3;
+    public static final int PROPERTY_NOT_K_ANONYMOUS = 1 << 3;
     
     /** 
      * The transformation results in insufficient utility
      */
-    public static final int PROPERTY_INSUFFICIENT_UTILITY = 4;
+    public static final int PROPERTY_INSUFFICIENT_UTILITY = 1 << 4;
     
     /** 
      * The transformation has been checked explicitly
      */
-    public static final int PROPERTY_CHECKED = 5;
+    public static final int PROPERTY_CHECKED = 1 << 5;
    
     /** 
      * A snapshot for this transformation must be created if it fits the size limits,
      * regardless of whether it triggers the storage condition
      */
-    public static final int PROPERTY_FORCE_SNAPSHOT = 6;
+    public static final int PROPERTY_FORCE_SNAPSHOT = 1 << 6;
     
     /** 
      * This node has already been visited during the second phase
      */
-    public static final int PROPERTY_VISITED = 7;
+    public static final int PROPERTY_VISITED = 1 << 7;
+    
+    /** 
+     * Marks nodes for which the search algorithm guarantees to never check any of its successors
+     */
+    public static final int PROPERTY_SUCCESSORS_PRUNED = 1 << 8;
     
     /** The id. */
     public final int        id;
@@ -214,7 +219,7 @@ public class Node {
      * @return
      */
     public boolean hasProperty(int property){
-        return (properties & (1 << property)) != 0;
+        return (properties & property) == property;
     }
 
     /** Associated data*/
@@ -222,6 +227,17 @@ public class Node {
         this.data = data;
     }
 
+    /**
+     * Sets the transformation
+     * 
+     * @param transformation
+     */
+    public void setTransformation(int[] transformation, int level) {
+        this.transformation = transformation;
+        this.level = level;
+    }
+
+    
     /**
      * Sets the information loss
      * 
@@ -231,17 +247,6 @@ public class Node {
         if (this.informationLoss == null) {
             this.informationLoss = informationLoss;
         }
-    }
-
-    
-    /**
-     * Sets the transformation
-     * 
-     * @param transformation
-     */
-    public void setTransformation(int[] transformation, int level) {
-        this.transformation = transformation;
-        this.level = level;
     }
   
     /**
@@ -259,7 +264,7 @@ public class Node {
      * @return
      */
     protected void setProperty(int property){
-        properties |= (1 << property);
+        properties |= property;
     }
 
     /**
