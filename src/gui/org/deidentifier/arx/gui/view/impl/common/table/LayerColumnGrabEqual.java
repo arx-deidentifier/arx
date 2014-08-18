@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.nebula.widgets.nattable.command.ILayerCommand;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
@@ -71,6 +72,15 @@ public class LayerColumnGrabEqual extends CTLayer implements IUniqueIndexLayer {
         } else {
             return width;
         }
+    }
+
+    @Override
+    public boolean doCommand(ILayerCommand command) {
+        if (command instanceof CTLayerCommandReset) {
+            this.underlyingWidths.clear();
+            this.widths.clear();
+        }
+        return super.doCommand(command);
     }
 
     @Override

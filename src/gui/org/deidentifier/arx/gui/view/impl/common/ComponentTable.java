@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.view.def.IComponent;
 import org.deidentifier.arx.gui.view.impl.common.table.CTConfiguration;
 import org.deidentifier.arx.gui.view.impl.common.table.CTContext;
 import org.deidentifier.arx.gui.view.impl.common.table.CTDataProvider;
+import org.deidentifier.arx.gui.view.impl.common.table.CTLayerCommandReset;
 import org.deidentifier.arx.gui.view.impl.common.table.DataProviderWrapped;
 import org.deidentifier.arx.gui.view.impl.common.table.LayerBody;
 import org.deidentifier.arx.gui.view.impl.common.table.LayerColumnHeader;
@@ -237,6 +238,8 @@ public class ComponentTable implements IComponent {
      * Clears the table
      */
     public void clear() {
+
+        this.table.doCommand(new CTLayerCommandReset());
         this.dataProviderBody.clear();
         this.dataProviderColumnHeader.clear();
         this.dataProviderRowHeader.clear();
@@ -336,6 +339,7 @@ public class ComponentTable implements IComponent {
         // Disable redrawing
         this.root.setRedraw(false);
         
+        this.table.doCommand(new CTLayerCommandReset());
         this.dataProviderBody.setData(data);
         this.dataProviderColumnHeader.setData(columns);
         this.dataProviderRowHeader.setData(rows);
