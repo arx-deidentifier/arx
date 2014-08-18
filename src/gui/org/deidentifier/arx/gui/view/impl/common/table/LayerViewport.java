@@ -52,12 +52,7 @@ public class LayerViewport extends ViewportLayer{
                 }
             });
         }
-//        
-//        if (context.isColumnExpanded() && context.isRowExpanded()) {
-//            return underlyingLayer.doCommand(command);
-//        } else {
-            return super.doCommand(command);
-//        }
+        return super.doCommand(command);
     }
 
     @Override
