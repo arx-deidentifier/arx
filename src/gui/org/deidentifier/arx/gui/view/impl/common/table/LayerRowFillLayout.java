@@ -119,12 +119,12 @@ public class LayerRowFillLayout extends CTLayer implements IUniqueIndexLayer {
         return LayerUtil.getRowPositionByY(this, y);
     }
     private int getAdditionalRowCount() {
-        return (int)Math.floor((double)getGapHeight()/(double)DataLayer.DEFAULT_ROW_HEIGHT);
+        return getGapHeight()/DataLayer.DEFAULT_ROW_HEIGHT;
     }
     
     private int getGapHeight() {
         NatTable table = getContext().getTable();
-        return table != null ? table.getSize().y - super.getHeight() : 0;
+        return table != null ? table.getSize().y - DataLayer.DEFAULT_ROW_HEIGHT - super.getHeight() : 0;
     }
 
     private boolean isActive() {
