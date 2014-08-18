@@ -52,28 +52,34 @@ public class LayerViewport extends ViewportLayer{
                 }
             });
         }
-        
-        if (context.isColumnExpanded() && context.isRowExpanded()) {
-            return underlyingLayer.doCommand(command);
-        } else {
+//        
+//        if (context.isColumnExpanded() && context.isRowExpanded()) {
+//            return underlyingLayer.doCommand(command);
+//        } else {
             return super.doCommand(command);
-        }
+//        }
     }
 
     @Override
     public void moveCellPositionIntoViewport(int scrollableColumnPosition, int scrollableRowPosition) {
-        // Ignore
+        if (!(context.isRowExpanded() && context.isColumnExpanded())) {
+            super.moveCellPositionIntoViewport(scrollableColumnPosition, scrollableRowPosition);
+        }
     }
 
     @Override
     public void moveColumnPositionIntoViewport(int scrollableColumnPosition) {
-        // Ignore
+        if (!context.isColumnExpanded()) {
+            super.moveColumnPositionIntoViewport(scrollableColumnPosition);
+        }
     }
 
 
     @Override
     public void moveRowPositionIntoViewport(int scrollableRowPosition) {
-        // Ignore
+        if (!context.isRowExpanded()) {
+            super.moveRowPositionIntoViewport(scrollableRowPosition);
+        }
     }
 
 
