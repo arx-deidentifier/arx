@@ -301,8 +301,11 @@ public class HashGroupify implements IHashGroupify {
                     return;
                 }
             }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
             // Next class
-            entry.isNotOutlier = (anonymous == -1);
             entry = entry.nextOrdered;
         }
         
@@ -561,9 +564,8 @@ public class HashGroupify implements IHashGroupify {
         if (subset != null) {
             entry.pcount += pcount;
             if (count > 0) {
-                // this is a research subset line
-                // reset representant, necessary for rollup / history
-                // (otherwise researchSubset.get(line) would potentially be false)
+                // this is a tuple from the research subset: Reset its representative, necessary for rollup / history
+                // (otherwise subset.contains(tupleID) could potentially return false)
                 entry.representant = representant;
             }
         }
