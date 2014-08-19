@@ -332,7 +332,7 @@ public class ViewFilter implements IView {
         });
         
         final Label anonymousLabel = new Label(composite, SWT.NONE);
-        anonymousLabel.setText("Anonymous");
+        anonymousLabel.setText(" Anonymous");
         anonymousLabel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
         anonymousLabel.addMouseListener(new MouseAdapter(){
             public void mouseDown(MouseEvent arg0) {
@@ -354,7 +354,7 @@ public class ViewFilter implements IView {
         });
         
         final Label nonanonymousLabel = new Label(composite, SWT.NONE);
-        nonanonymousLabel.setText("Non-anonymous");
+        nonanonymousLabel.setText(" Non-anonymous");
         nonanonymousLabel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
         nonanonymousLabel.addMouseListener(new MouseAdapter(){
             public void mouseDown(MouseEvent arg0) {
@@ -375,7 +375,7 @@ public class ViewFilter implements IView {
         });
         
         final Label unknownLabel = new Label(composite, SWT.NONE);
-        unknownLabel.setText("Unknown");
+        unknownLabel.setText(" Unknown");
         unknownLabel.setLayoutData(GridDataFactory.swtDefaults().grab(true, false).create());
         unknownLabel.addMouseListener(new MouseAdapter(){
             public void mouseDown(MouseEvent arg0) {
