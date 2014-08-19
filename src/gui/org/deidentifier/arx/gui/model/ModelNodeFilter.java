@@ -110,9 +110,9 @@ public class ModelNodeFilter implements Serializable {
      * Allows unknown transformations to pass the filter
      */
     public void allowUnknown() {
-    	// TODO: Introduce uncertain values in GUI
         anonymity.add(Anonymity.PROBABLY_NOT_ANONYMOUS);
         anonymity.add(Anonymity.PROBABLY_ANONYMOUS);
+        anonymity.add(Anonymity.UNKNOWN);
     }
 
     /**
@@ -154,9 +154,9 @@ public class ModelNodeFilter implements Serializable {
      * Filters out unknown transformations
      */
     public void disallowUnknown() {
-    	// TODO: Introduce uncertain values in GUI
         anonymity.remove(Anonymity.PROBABLY_ANONYMOUS);
         anonymity.remove(Anonymity.PROBABLY_NOT_ANONYMOUS);
+        anonymity.remove(Anonymity.UNKNOWN);
     }
 
     /**
@@ -377,7 +377,8 @@ public class ModelNodeFilter implements Serializable {
      */
     public boolean isAllowedUnknown() {
         return anonymity.contains(Anonymity.PROBABLY_ANONYMOUS) ||
-        	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS); 
+        	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS) ||
+               anonymity.contains(Anonymity.UNKNOWN);
     }
 
     /**

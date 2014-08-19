@@ -108,13 +108,13 @@ public class ViewLattice implements IView {
     /** Color */
     public static final Color         COLOR_GREEN             = GUIHelper.getColor(50, 205, 50);
     /** Color */
-    public static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(50, 128, 50);
+    public static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(150, 255, 150);
     /** Color */
     public static final Color         COLOR_ORANGE            = GUIHelper.getColor(255, 145, 0);
     /** Color */
     public static final Color         COLOR_RED               = GUIHelper.getColor(255, 99, 71);
     /** Color */
-    public static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(128, 99, 71);
+    public static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(255, 150, 150);
     /** Color */
     public static final Color         COLOR_BLUE              = GUIHelper.getColor(0, 0, 255);
     /** Color */
@@ -125,6 +125,8 @@ public class ViewLattice implements IView {
     public static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
     /** Color */
     public static final Color         COLOR_LIGHT_GRAY        = GUIHelper.getColor(211, 211, 211);
+    /** Color */
+    public static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
 
     /** Attribute constant */
     private static final int          ATTRIBUTE_CENTER        = 4;
@@ -598,6 +600,8 @@ public class ViewLattice implements IView {
             return COLOR_LIGHT_GREEN;
         } else if (node.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
             return COLOR_LIGHT_RED;
+        } else if (node.isAnonymous() == Anonymity.UNKNOWN) {
+            return COLOR_DARK_GRAY;
         } else {
             return COLOR_RED;
         }
