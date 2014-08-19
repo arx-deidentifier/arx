@@ -59,18 +59,16 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     public boolean doCommand(ILayerCommand command) {
         if (command instanceof FillLayerResetCommand) {
             this.modified = false;
-            if (isEqualWidthActive()) {
-                this.ignore = true;
-                for (int i=0; i<getColumnCount(); i++) {
-                    ColumnResizeCommand resize = new ColumnResizeCommand(this, i, DataLayer.DEFAULT_COLUMN_WIDTH);
-                    underlyingLayer.doCommand(resize);
-                }
-                this.ignore = false;
+            this.ignore = true;
+            for (int i = 0; i < getColumnCount(); i++) {
+                ColumnResizeCommand resize = new ColumnResizeCommand(this, i, DataLayer.DEFAULT_COLUMN_WIDTH);
+                underlyingLayer.doCommand(resize);
             }
+            this.ignore = false;
         }
         return super.doCommand(command);
     }
-
+    
     @Override
     public ILayerCell getCellByPosition(int columnPosition, int rowPosition) {
         if (isAdditionalColumnActive() && isAdditionalColumn(columnPosition)) { return new LayerCell(this, columnPosition, rowPosition); }
