@@ -151,7 +151,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     private boolean           monotonic        = false;
 
     /** A cache */
-    private Map<Node, T>      cache            = new HashMap<Node, T>();
+    private transient Map<Node, T> cache            = null;
     
     /**
      * Create a new metric

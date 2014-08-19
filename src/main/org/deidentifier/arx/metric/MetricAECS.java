@@ -42,13 +42,26 @@ public class MetricAECS extends MetricDefault {
     }
     
     /** A MRU cache for estimating lower bounds*/
-    private MRUCache<Node> cache = new MRUCache<Node>(200);
+    private transient MRUCache<Node> mruCache = null;
+    
+    /**
+     * Returns the MRU cache
+     * @return
+     */
+    private MRUCache<Node> getMRUCache(){
+        if (mruCache == null) {
+            this.mruCache = new MRUCache<Node>(200);
+        }
+        return mruCache;
+    }
     
     @Override
     public InformationLossDefault getLowerBound(Node node) {
         
-        while (cache.size()>200) {
-            getCache().remove(cache.removeHead());
+        MRUCache<Node> mruCache = getMRUCache();
+        
+        while (mruCache.size()>200) {
+            getCache().remove(mruCache.removeHead());
         }
 
         InformationLossDefault maximum = null;
@@ -56,7 +69,7 @@ public class MetricAECS extends MetricDefault {
             if (isPredecessor(node, entry.getKey())){
                 if (maximum == null || maximum.compareTo(entry.getValue())<0) {
                     maximum = entry.getValue();
-                    cache.touch(entry.getKey());
+                    mruCache.touch(entry.getKey());
                 }
             }
         }
@@ -75,7 +88,7 @@ public class MetricAECS extends MetricDefault {
     
     @Override
     public void freeCache() {
-        this.cache.clear();
+        this.getMRUCache().clear();
         super.freeCache();
     }
 
@@ -110,7 +123,7 @@ public class MetricAECS extends MetricDefault {
         groups += suppressed ? 1 : 0;
         
         // Fill the cache
-        cache.append(node);
+        getMRUCache().append(node);
         getCache().put(node, new InformationLossDefault((double)tuples / (double)g.size()));
         
         // Compute AECS

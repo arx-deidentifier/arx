@@ -40,26 +40,26 @@ import org.deidentifier.arx.metric.Metric;
 public class ModelConfiguration implements Serializable, Cloneable {
 
     /** SVUID */
-    private static final long      serialVersionUID  = -2887699232096897527L;
+    private static final long                serialVersionUID  = -2887699232096897527L;
     /** Minimum generalization */
-    private Map<String, Integer>   min               = new HashMap<String, Integer>();
+    private Map<String, Integer>             min               = new HashMap<String, Integer>();
     /** Maximum generalization */
-    private Map<String, Integer>   max               = new HashMap<String, Integer>();
+    private Map<String, Integer>             max               = new HashMap<String, Integer>();
     /** Input data */
-    private transient Data         input             = null;
+    private transient Data                   input             = null;
     /** Associated ARXConfiguration */
-    private ARXConfiguration       config            = ARXConfiguration.create();
+    private ARXConfiguration                 config            = ARXConfiguration.create();
     /** Should outliers be removed */
-    private boolean                removeOutliers    = true;
+    private boolean                          removeOutliers    = true;
     /** Is this model modified */
-    private boolean                modified          = false;
+    private boolean                          modified          = false;
     /** The associated hierarchies */
-    private Map<String, Hierarchy> hierarchies       = new HashMap<String, Hierarchy>();
+    private Map<String, Hierarchy>           hierarchies       = new HashMap<String, Hierarchy>();
     /** The associated research subset */
-    private RowSet                 researchSubset    = null;
+    private RowSet                           researchSubset    = null;
     /** The suppression weight */
-    private Double                 suppressionWeight = null;
-
+    private Double                           suppressionWeight = null;
+    /** Hierarchy builder*/
     private Map<String, HierarchyBuilder<?>> hierarchyBuilders = null;
 
     /**
