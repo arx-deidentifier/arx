@@ -92,6 +92,9 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
 
     @Override
     protected void doReset() {
+        if (this.manager != null) {
+            this.manager.stop();
+        }
         this.table.clear();
     }
 

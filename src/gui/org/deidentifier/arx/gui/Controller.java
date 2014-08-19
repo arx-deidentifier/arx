@@ -1343,16 +1343,14 @@ public class Controller implements IView {
         model.getViewConfig().setMode(Mode.UNSORTED);
         model.getViewConfig().setSubset(false);
         model.setGroups(null);
-        update(new ModelEvent(this, ModelPart.VIEW_CONFIG, null));
-        
         model.setResult(null);
         model.setOutputConfig(null);
-        update(new ModelEvent(this, ModelPart.RESULT, null));
-        
         model.setOutput(null, null);
-        update(new ModelEvent(this, ModelPart.OUTPUT, null));
-        
         model.setSelectedNode(null);
+        
+        update(new ModelEvent(this, ModelPart.VIEW_CONFIG, null));
+        update(new ModelEvent(this, ModelPart.RESULT, null));
+        update(new ModelEvent(this, ModelPart.OUTPUT, null));
         update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));
     }
 

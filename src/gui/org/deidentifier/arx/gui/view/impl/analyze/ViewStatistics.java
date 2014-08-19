@@ -118,6 +118,13 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
             this.reset();
         }
         
+        // Reset on null-target
+        if (event.part == target && event.data==null) {
+            this.viewContext = null;
+            this.reset();
+            return;
+        }
+        
         // Invalidate
         if (event.part == ModelPart.OUTPUT ||
             event.part == target ||

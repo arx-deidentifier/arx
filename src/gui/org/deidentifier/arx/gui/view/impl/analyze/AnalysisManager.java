@@ -141,6 +141,19 @@ public class AnalysisManager {
      */
     public synchronized void start(Analysis analysis) {
         
+        // Stop
+        stop();
+        
+        // Start new work
+        worker = new AnalysisWorker(analysis);
+        worker.start();
+    }
+
+    /**
+     * Stops all running analysis threads
+     */
+    public void stop() {
+
         // Stop old work
         if (worker != null && !worker.isStopped()) {
             worker.stop();
@@ -158,9 +171,5 @@ public class AnalysisManager {
             }
             worker = null;
         }
-        
-        // Start new work
-        worker = new AnalysisWorker(analysis);
-        worker.start();
     }
 }

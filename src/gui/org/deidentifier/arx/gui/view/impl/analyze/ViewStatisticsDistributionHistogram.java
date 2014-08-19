@@ -114,6 +114,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
     @Override
     protected void doReset() {
+        
+        if (this.manager != null) {
+            this.manager.stop();
+        }
+        
         if (chart != null) {
             chart.dispose();
         }
