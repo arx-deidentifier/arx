@@ -21,7 +21,6 @@ package org.deidentifier.arx.gui.view.impl.common;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -83,12 +82,7 @@ public class ViewDataOutput extends ViewData {
      */
     private RowSet getSubset(){
         if (model != null && model.getOutputConfig() != null){
-            DPresence d = model.getOutputConfig().getCriterion(DPresence.class);
-            if (d != null) {
-                return d.getSubset().getSet();
-            } else {
-                return null;
-            }
+            return model.getOutputConfig().getResearchSubset();
         } else {
             return null;
         }

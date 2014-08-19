@@ -308,19 +308,6 @@ public class Controller implements IView {
             return;
         }
 
-        model.createConfig();
-        if (!model.isValidLatticeSize()) {
-            final String message = Resources.getMessage("Controller.7") + //$NON-NLS-1$
-                                   Resources.getMessage("Controller.8") + //$NON-NLS-1$
-                                   Resources.getMessage("Controller.9") + //$NON-NLS-1$
-                                   Resources.getMessage("Controller.10"); //$NON-NLS-1$
-            
-            main.showInfoDialog(main.getShell(), 
-                                Resources.getMessage("Controller.11"), //$NON-NLS-1$
-                                message);
-            return;
-        }
-
         if (model.getInputConfig().getResearchSubset().size()==0) {
             final String message = Resources.getMessage("Controller.100"); //$NON-NLS-1$
             main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$

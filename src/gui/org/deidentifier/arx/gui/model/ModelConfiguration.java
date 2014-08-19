@@ -82,7 +82,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.max = new HashMap<String, Integer>(max);
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
-        c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
+        if (this.containsCriterion(DPresence.class)) {
+            c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
+        } else {
+            c.researchSubset = this.researchSubset.clone();
+        }
         c.suppressionWeight = this.suppressionWeight;
         return c;
     }

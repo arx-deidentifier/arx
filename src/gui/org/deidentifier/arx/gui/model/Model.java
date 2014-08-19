@@ -278,13 +278,13 @@ public class Model implements Serializable {
             }
         }
 
-        // Allow adding removing tuples
+        // Allow adding and removing tuples
         if (!config.containsCriterion(DPresence.class)){
-            if (getInputConfig() != null && getInputConfig().getInput() != null &&
-                getInputConfig().getResearchSubset() != null) {
-                DataSubset subset = DataSubset.create(config.getInput(), 
-                                                      config.getResearchSubset());
-                config.addCriterion(new Inclusion(subset));
+            if (config.getInput() != null && config.getResearchSubset() != null && 
+                config.getResearchSubset().size() != config.getInput().getHandle().getNumRows()) {
+                    DataSubset subset = DataSubset.create(config.getInput(), 
+                                                          config.getResearchSubset());
+                    config.addCriterion(new Inclusion(subset));
             }
         }
 	}
@@ -647,25 +647,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-
-	/**
-     * Checks whether the lattice is too large
-     * 
-     * @return
-     */
-
-	public boolean isValidLatticeSize() {
-
-		DataDefinition definition = getInputDefinition();
-		int size = 1;
-		for (final String attr : definition.getQuasiIdentifyingAttributes()) {
-			final int factor = definition.getMaximumGeneralization(attr) -
-					           definition.getMinimumGeneralization(attr);
-			size *= factor;
-		}
-		return size <= maxNodesInLattice;
-	}
-
+	
 	/**
 	 * Returns whether visualization is enabled
 	 * @return
