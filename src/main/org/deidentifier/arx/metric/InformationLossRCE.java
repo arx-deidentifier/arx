@@ -220,8 +220,9 @@ class InformationLossRCE extends InformationLoss<double[]> {
         InformationLossRCE _max = convert(max);
         
         if (_max.perc - _min.perc == 0) return 0d;
-        // TODO
-        return (perc - _min.perc) / (_max.perc - _min.perc);
+        double result = (perc - _min.perc) / (_max.perc - _min.perc); // TODO
+        return result >= 0d ? (result <=1d ? result : 1d) : 0d; // TODO
+        
     }
 
     @Override
