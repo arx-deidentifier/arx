@@ -81,7 +81,7 @@ public class MetricEntropy extends MetricDefault {
 
     @Override
     public String toString() {
-        return "Non-Uniform Entropy";
+        return "Monotonic Non-Uniform Entropy";
     }
 
     @Override
