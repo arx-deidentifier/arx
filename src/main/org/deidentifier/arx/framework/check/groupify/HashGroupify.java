@@ -21,6 +21,7 @@ package org.deidentifier.arx.framework.check.groupify;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.data.Data;
@@ -201,6 +202,9 @@ public class HashGroupify implements IHashGroupify {
     /** The research subset, if d-presence is contained in the set of criteria */
     private final RowSet             subset;
 
+    /** True, if the contained d-presence criterion is not inclusion */
+    private final boolean            dpresence;
+
     /** Criteria*/
     private final PrivacyCriterion[] criteria;
 
@@ -231,6 +235,17 @@ public class HashGroupify implements IHashGroupify {
         // Extract criteria
         this.criteria = config.getCriteriaAsArray();
         this.k = config.getMinimalGroupSize();
+        
+        // Sanity check: by convention, d-presence must be the first criterion 
+        // See analyze() and isAnonymous(Entry) for more details
+        for (int i=1; i<criteria.length; i++) {
+            if (criteria[i] instanceof DPresence) {
+                throw new RuntimeException("D-Presence must be the first criterion in the array");
+            }
+        }
+        
+        // Remember, if (real) d-presence is part of the criteria that must be enforced
+        dpresence = (criteria.length > 0 && (criteria[0] instanceof DPresence) && !(criteria[0] instanceof Inclusion));
     }
     
     @Override
@@ -245,7 +260,7 @@ public class HashGroupify implements IHashGroupify {
             return;
         }
         
-        // Abort early, if k-anonymity subcriterion is not fulfilled
+        // Abort early, if k-anonymity sub-criterion is not fulfilled
         // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
         //          for non-anonymous transformations
         if (k != Integer.MAX_VALUE && !kAnonymous) {
@@ -259,10 +274,23 @@ public class HashGroupify implements IHashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            final boolean anonymous = isAnonymous(entry);
+            int anonymous = isAnonymous(entry);
             
             // Determine outliers
-            if (!anonymous) {
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                //          for non-anonymous transformations
+                if (dpresence && entry.count == 0 && anonymous == 1) {
+                    this.anonymous = false;
+                    return;
+                }
+                
                 currentOutliers += entry.count;
                 
                 // Break as soon as too many classes are not anonymous
@@ -274,7 +302,7 @@ public class HashGroupify implements IHashGroupify {
                 }
             }
             // Next class
-            entry.isNotOutlier = anonymous;
+            entry.isNotOutlier = (anonymous == -1);
             entry = entry.nextOrdered;
         }
         
@@ -617,18 +645,24 @@ public class HashGroupify implements IHashGroupify {
     /**
      * Checks whether the given entry is anonymous
      * @param entry
-     * @return
+     * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private boolean isAnonymous(HashGroupifyEntry entry) {
+    private int isAnonymous(HashGroupifyEntry entry) {
 
         // Check minimal group size
-        if (k != Integer.MAX_VALUE && entry.count < k) { return false; }
+        if (k != Integer.MAX_VALUE && entry.count < k) {
+            return 0;
+        }
 
         // Check other criteria
+        // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
+        //       This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
         for (int i = 0; i < criteria.length; i++) {
-            if (!criteria[i].isAnonymous(entry)) { return false; }
+            if (!criteria[i].isAnonymous(entry)) {
+                return i + 1;
+            }
         }
-        return true;
+        return -1;
     }
 
     /**
