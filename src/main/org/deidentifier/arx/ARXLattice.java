@@ -93,6 +93,7 @@ public class ARXLattice implements Serializable {
     public static enum Anonymity {
         ANONYMOUS,
         NOT_ANONYMOUS,
+        UNKNOWN,
         PROBABLY_ANONYMOUS,
         PROBABLY_NOT_ANONYMOUS
     }
@@ -268,25 +269,24 @@ public class ARXLattice implements Serializable {
             this.checked = node.hasProperty(Node.PROPERTY_CHECKED);
             
             // Transfer anonymity property without uncertainty
-            if (!uncertainty || node.hasProperty(Node.PROPERTY_CHECKED)){
+            if (node.hasProperty(Node.PROPERTY_CHECKED)){
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
                     this.anonymity = Anonymity.ANONYMOUS;
-                } else {
+                } else if(node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS)) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
+                } else {
+                    throw new IllegalStateException("Missing node information");
                 }
             // This is a node for which the property is unknown
             } else {
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
-                    this.anonymity = Anonymity.PROBABLY_ANONYMOUS;
+                    this.anonymity = uncertainty ? Anonymity.PROBABLY_ANONYMOUS : Anonymity.ANONYMOUS;
                 } else if (node.hasProperty(Node.PROPERTY_NOT_ANONYMOUS)) {
-                    this.anonymity = Anonymity.PROBABLY_NOT_ANONYMOUS;
+                    this.anonymity = uncertainty ? Anonymity.PROBABLY_NOT_ANONYMOUS : Anonymity.NOT_ANONYMOUS;
                 } else if (node.hasProperty(Node.PROPERTY_NOT_K_ANONYMOUS)) {
                     this.anonymity = Anonymity.NOT_ANONYMOUS;
                 } else if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
-                    // Such nodes are k-anonymous (if such a subcriterion exists) and are
-                    // successors of an anonymous node. We thus assume that it is more likely
-                    // for them to be anonymous
-                    this.anonymity = Anonymity.PROBABLY_ANONYMOUS;
+                    this.anonymity = Anonymity.UNKNOWN;
                 } else {
                     throw new IllegalStateException("Missing node information");
                 }
@@ -469,7 +469,7 @@ public class ARXLattice implements Serializable {
     /** The top node */
     private transient ARXNode     top;
 
-    /** Are anonymity properties potentially uncertain */
+    /** Is practical monotonicity being assumed */
     private boolean               uncertainty;
     
     /** Minimum loss in the lattice*/
@@ -495,20 +495,10 @@ public class ARXLattice implements Serializable {
         this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
         this.metric = config.getMetric();
  
-        // Handle uncertainty
-        boolean uncertaintyInducedByPracticalMonotonicity = 
-                config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
-                (!config.isCriterionMonotonic() || !config.getMetric().isMonotonic());
+        // Set this flag to true, if practical monotonicity is being assumed
+        this.uncertainty = config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
+                           (!config.isCriterionMonotonic() || !config.getMetric().isMonotonic());
         
-        // Handle uncertainty
-        boolean uncertaintyInducedByMonotonicMetric = 
-                config.getMaxOutliers()!=0d && !config.isCriterionMonotonic() &&
-                config.getMetric().isMonotonic();
-        
-        // Handle uncertainty
-        this.uncertainty = uncertaintyInducedByMonotonicMetric ||
-                           uncertaintyInducedByPracticalMonotonicity;
-
         // Build header map
         final Map<String, Integer> headermap = new HashMap<String, Integer>();
         int index = 0;
