@@ -198,7 +198,9 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
                 }
             }
         }
-        super.handleLayerEvent(event);
+        if (!getContext().getTable().isDisposed()) {
+            super.handleLayerEvent(event);
+        }
     }
     private int getAdditionalColumnPosition() {
         return getColumnCount() - 1;
