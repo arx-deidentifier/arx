@@ -82,7 +82,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         checker.getHistory().setStorageTrigger(config.getTriggerSnapshotStore());
 
         // Initialize
-        PriorityQueue<Node> queue = new PriorityQueue<Node>(11, strategy);
+        PriorityQueue<Node> queue = new PriorityQueue<Node>(lattice.getLevels().length, strategy);
         
         // Check bottom for speed and remember the result to prevent repeated checks
         Node bottom = lattice.getBottom();
