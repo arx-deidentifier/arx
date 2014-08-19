@@ -81,6 +81,10 @@ public class LayerViewport extends ViewportLayer{
     }
 
     private void checkScrollBars() {
+        
+        if (context.getTable().isDisposed()) {
+            return;
+        }
 
         Listener[] listeners = context.getTable().getListeners(SWT.Resize);
         for (Listener listener : listeners) {

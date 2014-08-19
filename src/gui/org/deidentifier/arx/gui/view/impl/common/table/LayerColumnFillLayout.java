@@ -205,8 +205,10 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
 
     private int getEqualWidth() {
+        NatTable table = getContext().getTable();
+        if (table.isDisposed()) return 0;
         int offset = underlyingLayer.getClientAreaProvider().getClientArea().x;
-        int width = getContext().getTable().getSize().x - offset;
+        int width = table.getSize().x - offset;
         if (underlyingLayer.getColumnCount()==0) {
             return width;
         }
@@ -215,6 +217,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
 
     private int getGapWidth() {
         NatTable table = getContext().getTable();
+        if (table.isDisposed()) return 0;
         return table != null ? table.getSize().x - super.getWidth() : 0;
     }
     

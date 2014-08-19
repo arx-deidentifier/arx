@@ -124,6 +124,7 @@ public class LayerRowFillLayout extends CTLayer implements IUniqueIndexLayer {
     
     private int getGapHeight() {
         NatTable table = getContext().getTable();
+        if (table.isDisposed()) return 0;
         return table != null ? table.getSize().y - DataLayer.DEFAULT_ROW_HEIGHT - super.getHeight() : 0;
     }
 
