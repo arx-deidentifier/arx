@@ -339,8 +339,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         }
         
         // Check, if we can prune based on a monotonic sub-metric
-        if (!checker.getConfiguration().isPracticalMonotonicity() && 
-            getGlobalOptimum() != null) {
+        if (!checker.getConfiguration().isPracticalMonotonicity() && getGlobalOptimum() != null) {
             
             // We skip, if we already know that this node has insufficient utility
             if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
