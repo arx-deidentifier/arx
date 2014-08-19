@@ -72,8 +72,8 @@ public class ViewCriterionDPresence extends ViewCriterion{
 
         sliderDMin.setSelection(0);
         sliderDMax.setSelection(0);
-        labelDMin.setText("0.001"); //$NON-NLS-1$
-        labelDMax.setText("0.001"); //$NON-NLS-1$
+        labelDMin.setText("0"); //$NON-NLS-1$
+        labelDMax.setText("0"); //$NON-NLS-1$
         super.reset();
 	}
 
@@ -96,7 +96,7 @@ public class ViewCriterionDPresence extends ViewCriterion{
         d9.minimumWidth = LABEL_WIDTH;
         d9.widthHint = LABEL_WIDTH;
         labelDMin.setLayoutData(d9);
-        labelDMin.setText("0.001"); //$NON-NLS-1$
+        labelDMin.setText("0"); //$NON-NLS-1$
 
         sliderDMin = new Scale(group, SWT.HORIZONTAL);
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
@@ -109,7 +109,7 @@ public class ViewCriterionDPresence extends ViewCriterion{
         sliderDMin.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmin(sliderToDouble(0.001, 1, sliderDMin.getSelection()));
+                model.getDPresenceModel().setDmin(sliderToDouble(0, 1, sliderDMin.getSelection()));
                 labelDMin.setText(String.valueOf(model.getDPresenceModel().getDmin()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
@@ -125,7 +125,7 @@ public class ViewCriterionDPresence extends ViewCriterion{
         d91.minimumWidth = LABEL_WIDTH;
         d91.widthHint = LABEL_WIDTH;
         labelDMax.setLayoutData(d91);
-        labelDMax.setText("0.001"); //$NON-NLS-1$
+        labelDMax.setText("0"); //$NON-NLS-1$
 
         sliderDMax = new Scale(group, SWT.HORIZONTAL);
         final GridData d62 = SWTUtil.createFillHorizontallyGridData();
@@ -137,7 +137,7 @@ public class ViewCriterionDPresence extends ViewCriterion{
         sliderDMax.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmax(sliderToDouble(0.001, 1, sliderDMax.getSelection()));
+                model.getDPresenceModel().setDmax(sliderToDouble(0, 1, sliderDMax.getSelection()));
                 labelDMax.setText(String.valueOf(model.getDPresenceModel().getDmax()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
@@ -155,9 +155,9 @@ public class ViewCriterionDPresence extends ViewCriterion{
 		}
 		root.setRedraw(false);
 		labelDMin.setText(String.valueOf(m.getDmin()));
-		sliderDMin.setSelection(doubleToSlider(0.001d, 1d, m.getDmin()));
+		sliderDMin.setSelection(doubleToSlider(0, 1d, m.getDmin()));
 		labelDMax.setText(String.valueOf(m.getDmax()));
-		sliderDMax.setSelection(doubleToSlider(0.001d, 1d, m.getDmax()));
+		sliderDMax.setSelection(doubleToSlider(0, 1d, m.getDmax()));
 		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {
