@@ -49,7 +49,7 @@ public class SWTUtil {
      */
     public static void center(Shell shell, Monitor monitor) {
         Rectangle shellRect = shell.getBounds();
-        Rectangle displayRect = monitor.getClientArea();
+        Rectangle displayRect = monitor.getBounds();
         int x = (displayRect.width - shellRect.width) / 2;
         int y = (displayRect.height - shellRect.height) / 2;
         shell.setLocation(displayRect.x + x, displayRect.y + y);
