@@ -18,19 +18,19 @@
 
 package org.deidentifier.arx.gui.resources;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import javax.imageio.ImageIO;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -39,15 +39,22 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Resources {
 
-    private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-
     /**
      * Returns the logo
      * @return
      * @throws IOException
      */
-	public static java.awt.Image getImageIcon() throws IOException {
-		return ImageIO.read(Resources.class.getResourceAsStream("logo.png")); //$NON-NLS-1$
+	public static Image[] getIconSet(Display display) {
+	    
+	    if (iconset == null){
+    	    int[] sizes = new int[]{16,24,32,48,64,96,128,256};
+    	    iconset = new Image[sizes.length];
+    	    int idx = 0;
+    	    for (int size : sizes){
+    	        iconset[idx++] = getImage(display, "logo_"+size+".png"); //$NON-NLS-1$ //$NON-NLS-2$
+    	    }
+	    }
+	    return iconset;
 	}
     
     /** 
@@ -61,14 +68,17 @@ public class Resources {
             return '!' + key + '!';
         }
     }
-
+    
     /**
      * Returns the splash image
      * @return
      * @throws IOException
      */
-    public static java.awt.Image getSplash() throws IOException {
-        return ImageIO.read(Resources.class.getResourceAsStream("splash.png")); //$NON-NLS-1$
+    public static Image getSplash(Display display) {
+        if (splash == null) {
+            splash = getImage(display, "splash.png"); //$NON-NLS-1$
+        }
+        return splash;
     }
 
     /**
@@ -78,11 +88,39 @@ public class Resources {
     public static String getVersion() {
         return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
     }
+    
+    /**
+     * Loads an image. Adds a dispose listener that disposes the image when the display is disposed
+     * @param display
+     * @param resource
+     * @return
+     */
+    private static final Image getImage(Display display, String resource){
+        final Image image = new Image(display, Resources.class.getResourceAsStream(resource));
+        display.addListener(SWT.Dispose, new Listener(){
+            public void handleEvent(Event arg0) {
+                if (image != null && !image.isDisposed()) {
+                    image.dispose();
+                }
+            }
+        });
+        return image;
+    }
 
+    private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
+
+    /** The splash*/
+    private static Image splash = null;
+    
+    /** The iconset*/
+    private static Image[] iconset = null;
+
+    /** Logger*/
     private final Logger logger = Logger.getRootLogger();
 
+    /** Shell*/
     private final Shell  shell;
-
+    
     /**
      * Creates a new instance
      * @param shell
@@ -126,15 +164,6 @@ public class Resources {
     }
 
     /**
-     * Returns a stream
-     * @param name
-     * @return
-     */
-    public InputStream getStream(final String name) {
-        return this.getClass().getResourceAsStream(name);
-    }
-
-    /**
      * Returns the logger
      * @return
      */
@@ -148,5 +177,14 @@ public class Resources {
      */
     public Shell getShell() {
         return shell;
+    }
+
+    /**
+     * Returns a stream
+     * @param name
+     * @return
+     */
+    public InputStream getStream(final String name) {
+        return this.getClass().getResourceAsStream(name);
     }
 }

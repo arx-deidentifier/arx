@@ -18,17 +18,15 @@
 
 package org.deidentifier.arx.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Main entry point
@@ -38,37 +36,33 @@ import org.eclipse.swt.awt.SWT_AWT;
  */
 public class Main {
 
-    private static final String JDK16_FRAME = "apple.awt.CEmbeddedFrame";
-    private static final String JDK17_FRAME = "sun.lwawt.macosx.CViewEmbeddedFrame";
+    /** Is the project already loaded*/
+    private static String     loaded = null;
+    /** The splash*/
+    private static MainSplash splash = null;
+    /** The main window*/
+    private static MainWindow main   = null;
 
-    private static String       loaded      = null;
-    private static MainSplash   splash      = null;
-
+    /**
+     * Main entry point
+     * @param args
+     */
     public static void main(final String[] args) {
 
         try {
-
-            if (!isOSX()) {
-                splash = new MainSplash();
-                splash.setVisible(true);
-            } else {
-                try {
-                    Class.forName(JDK16_FRAME);
-                } catch (Exception e) {
-                    SWT_AWT.embeddedFrameClass = JDK17_FRAME;
-                }
-            }
-
-            System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-
-            final MainWindow main = new MainWindow();
             
-            main.onShow(new Runnable() {
-                public void run(){
-                    hideSplash();
-                }
-            });
+            // Display
+            Display display = new Display();
             
+            // Splash
+            splash = new MainSplash(display);
+            splash.show();
+            
+            // Main window
+            main = new MainWindow();
+            main.show();
+
+            // Handler for loading a project
             if (args.length > 0 && args[0].endsWith(".deid")) {
                 main.onShow(new Runnable() {
                     public void run(){
@@ -77,43 +71,43 @@ public class Main {
                 });
             }
             
-            main.show();
+            // Main event loop
+            while (!main.isDisposed()) {
+                try {
+                    
+                    // Event handling                    
+                    if (!display.readAndDispatch()) {
+                        display.sleep();
+                    }
+                } catch (final Exception e) {
+                    
+                    // Error handling
+                    main.showErrorDialog(Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    main.getController().getResources().getLogger().info(sw.toString());
+                }
+            }
             
+            // Dispose display
+            if (!display.isDisposed()) {
+                display.dispose();
+            }
         } catch (Throwable e) {
 
-            hideSplash();
+            // Error handling outside of SWT
+            if (splash != null) splash.hide();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             final String trace = sw.toString();
 
+            // Show message
             JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
 
         }
-    }
-
-    /**
-     * Hides the splash screen
-     */
-    private static void hideSplash() {
-        new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if (splash != null){
-                    splash.setVisible(false);
-                }
-            }
-        }).start();
-    }
-    
-    /**
-     * Are we on Mac OSX
-     * @return
-     */
-    private static boolean isOSX() {
-        String osName = System.getProperty("os.name");
-        return osName.contains("OS X");
     }
 
     /**
@@ -124,9 +118,7 @@ public class Main {
     private static void load(MainWindow main, String path) {
         if (loaded == null) {
             loaded = path;
-            if (splash != null){
-                splash.setVisible(false);
-            }
+            if (splash != null) splash.hide();
             main.getController().actionOpenProject(path);
         }
     }

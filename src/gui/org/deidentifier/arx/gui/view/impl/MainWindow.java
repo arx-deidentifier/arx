@@ -100,7 +100,7 @@ public class MainWindow implements IView {
         controller.addListener(ModelPart.MODEL, this);
 
         // Style
-        shell.setImage(controller.getResources().getImage("logo.png")); //$NON-NLS-1$
+        shell.setImages(Resources.getIconSet(display));
         shell.setMaximized(true);
         shell.setText(TITLE);
         shell.setMinimumSize(800, 600);
@@ -187,22 +187,7 @@ public class MainWindow implements IView {
      * Main SWT event loop
      */
     public void show() {
-
         shell.open();
-        while (!shell.isDisposed()) {
-            try {
-                if (!display.readAndDispatch()) {
-                    display.sleep();
-                }
-            } catch (final Exception e) {
-                controller.actionShowErrorDialog(shell, Resources.getMessage("MainWindow.9") + Resources.getMessage("MainWindow.10"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                controller.getResources().getLogger().info(sw.toString());
-            }
-        }
-        display.dispose();
     }
 
     /**
@@ -222,7 +207,18 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-
+    
+    /**
+     * Shows an error dialog
+     * 
+     * @param header
+     * @param message
+     * @param t
+     */
+    public void showErrorDialog(final String message, final Throwable t) {
+        showErrorDialog(this.shell, message, t);
+    }
+    
     /**
      * Shows an error dialog
      * 
@@ -474,7 +470,19 @@ public class MainWindow implements IView {
         }
     }
 
+    /**
+     * Returns the controller
+     * @return
+     */
     public Controller getController() {
         return this.controller;
+    }
+
+    /**
+     * Is this shell disposed
+     * @return
+     */
+    public boolean isDisposed() {
+        return this.shell.isDisposed();
     }
 }
