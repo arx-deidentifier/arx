@@ -75,6 +75,11 @@ public class Node {
      * Marks nodes for which the search algorithm guarantees to never check any of its successors
      */
     public static final int PROPERTY_SUCCESSORS_PRUNED = 1 << 8;
+
+    /** 
+     * We have already fired an event for this node
+     */
+    public static final int PROPERTY_EVENT_FIRED = 1 << 9;
     
     /** The id. */
     public final int        id;

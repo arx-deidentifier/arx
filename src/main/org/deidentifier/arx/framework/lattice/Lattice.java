@@ -235,8 +235,9 @@ public class Lattice {
      * Triggers a tagged event at the listener
      */
     private void triggerTagged(Node node) {
-        if (this.listener != null){
+        if (this.listener != null && !node.hasProperty(Node.PROPERTY_EVENT_FIRED)){
             if (tagTrigger == null || tagTrigger.appliesTo(node)) {
+                node.setProperty(Node.PROPERTY_EVENT_FIRED);
                 this.listener.nodeTagged(size);
             }
         }
