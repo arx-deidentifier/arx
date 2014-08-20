@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -40,6 +41,19 @@ import org.eclipse.swt.widgets.ToolItem;
  *
  */
 public class SWTUtil {
+
+    /**
+     * Centers the shell on the given monitor
+     * @param shell
+     * @param monitor
+     */
+    public static void center(Shell shell, Monitor monitor) {
+        Rectangle shellRect = shell.getBounds();
+        Rectangle displayRect = monitor.getClientArea();
+        int x = (displayRect.width - shellRect.width) / 2;
+        int y = (displayRect.height - shellRect.height) / 2;
+        shell.setLocation(displayRect.x + x, displayRect.y + y);
+    }
 
     /**
      * Centers the given shell
@@ -205,6 +219,7 @@ public class SWTUtil {
         return d;
     }
 
+
     /**
      * Disables the composite and its children
      * @param elem
@@ -212,7 +227,6 @@ public class SWTUtil {
     public static void disable(final Composite elem) {
         setEnabled(elem, false);
     }
-
 
     /**
      * Disables the control
@@ -223,19 +237,19 @@ public class SWTUtil {
     }
 
     /**
-     * Enables the control
-     * @param elem
-     */
-    public static void enable(final Control elem) {
-        elem.setEnabled(true);
-    }
-
-    /**
      * Enables the composite and its children
      * @param elem
      */
     public static void enable(final Composite elem) {
         setEnabled(elem, true);
+    }
+
+    /**
+     * Enables the control
+     * @param elem
+     */
+    public static void enable(final Control elem) {
+        elem.setEnabled(true);
     }
 
     /**

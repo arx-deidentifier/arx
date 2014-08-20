@@ -64,6 +64,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -88,11 +89,10 @@ public class MainWindow implements IView {
     /**
      * Creates a new instance
      */
-    public MainWindow() {
+    public MainWindow(Display display, Monitor monitor) {
 
         // Init
-        Display current = Display.getCurrent();
-        display = current != null ? current : new Display();
+        this.display = display;
         shell = new Shell(display);
 
         // Build controller
@@ -101,10 +101,15 @@ public class MainWindow implements IView {
 
         // Style
         shell.setImages(Resources.getIconSet(display));
-        shell.setMaximized(true);
         shell.setText(TITLE);
         shell.setMinimumSize(800, 600);
 
+        // Center
+        SWTUtil.center(shell, monitor);
+        
+        // Maximize
+        shell.setMaximized(true);
+        
         // Close listener
         shell.addListener(SWT.Close, new Listener() {
             @Override

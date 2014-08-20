@@ -26,7 +26,9 @@ import javax.swing.JOptionPane;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 
 /**
  * Main entry point
@@ -54,12 +56,15 @@ public class Main {
             // Display
             Display display = new Display();
             
+            // Monitor
+            Monitor monitor = getMonitor(display);
+            
             // Splash
-            splash = new MainSplash(display);
+            splash = new MainSplash(display, monitor);
             splash.show();
             
             // Main window
-            main = new MainWindow();
+            main = new MainWindow(display, monitor);
             main.show();
 
             // Handler for loading a project
@@ -108,6 +113,21 @@ public class Main {
             System.exit(1);
 
         }
+    }
+
+    /**
+     * Returns the monitor on which the application was launched
+     * @param display
+     * @return
+     */
+    private static Monitor getMonitor(Display display) {
+        Point mouse = display.getCursorLocation();
+        for (Monitor monitor : display.getMonitors()) {
+            if (monitor.getBounds().contains(mouse)) {
+                return monitor;
+            }
+        }
+        return display.getPrimaryMonitor();
     }
 
     /**

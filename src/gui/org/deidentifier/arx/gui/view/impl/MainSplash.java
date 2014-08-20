@@ -17,9 +17,8 @@
  */
 package org.deidentifier.arx.gui.view.impl;
 
-import java.io.IOException;
-
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -27,8 +26,8 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -49,7 +48,7 @@ public class MainSplash {
      * @param display
      * @throws IOException
      */
-    public MainSplash(Display display) throws IOException{
+    public MainSplash(Display display, Monitor monitor) {
         
         this.version = Resources.getVersion();
         this.splash = Resources.getSplash(display);
@@ -57,12 +56,10 @@ public class MainSplash {
         this.shell.setImages(Resources.getIconSet(display));
         this.shell.setSize(splash.getBounds().width, splash.getBounds().height);
         
-        Rectangle shellRect = this.shell.getBounds();
-        Rectangle displayRect = this.shell.getMonitor().getBounds();
-        int x = (displayRect.width - shellRect.width) / 2;
-        int y = (displayRect.height - shellRect.height) / 2;
-        shell.setLocation(x, y);
+        // Center
+        SWTUtil.center(shell, monitor);
         
+        // Paint
         shell.addPaintListener(new PaintListener(){
             public void paintControl(PaintEvent arg0) {
                 paint(arg0.gc);
