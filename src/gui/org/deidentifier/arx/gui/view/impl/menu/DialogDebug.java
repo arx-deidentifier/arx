@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -58,12 +59,16 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
     }
 
     @Override
-    protected Control createContents(Composite parent) {
-    	Control contents = super.createContents(parent);
-        setTitle("Debugging Console"); //$NON-NLS-1$
-        setMessage("Displays internal data structures"); //$NON-NLS-1$
-        if (image!=null) setTitleImage(image); //$NON-NLS-1$
-        return contents;
+    public boolean close() {
+        if (image != null)
+            image.dispose();
+        return super.close();
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
     @Override
@@ -94,7 +99,16 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
             }
         });
     }
-
+    
+    @Override
+    protected Control createContents(Composite parent) {
+    	Control contents = super.createContents(parent);
+        setTitle("Debugging Console"); //$NON-NLS-1$
+        setMessage("Displays internal data structures"); //$NON-NLS-1$
+        if (image!=null) setTitleImage(image); //$NON-NLS-1$
+        return contents;
+    }
+    
     @Override
     protected Control createDialogArea(final Composite parent) {
         parent.setLayout(new GridLayout());
@@ -110,16 +124,9 @@ public class DialogDebug extends TitleAreaDialog implements IDialog {
 
         return parent;
     }
-
+    
     @Override
     protected boolean isResizable() {
         return false;
-    }
-    
-    @Override
-    public boolean close() {
-        if (image != null)
-            image.dispose();
-        return super.close();
     }
 }

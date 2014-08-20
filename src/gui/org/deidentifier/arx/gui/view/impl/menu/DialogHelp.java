@@ -74,14 +74,27 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     }
 
     @Override
-    protected Control createContents(Composite parent) {
-    	Control contents = super.createContents(parent);
-        setTitle(Resources.getMessage("DialogHelp.1")); //$NON-NLS-1$
-        setMessage(Resources.getMessage("DialogHelp.2"), IMessageProvider.INFORMATION); //$NON-NLS-1$
-        if (image!=null) setTitleImage(image); //$NON-NLS-1$
-        return contents;
+    public boolean close() {
+        if (image != null)
+            image.dispose();
+        return super.close();
     }
 
+    /**
+     * Returns the index of a url
+     * @param location
+     * @return
+     */
+    private int getIndexOf(String location) {
+        return config.getIndexForUrl(location);
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+    
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -97,6 +110,15 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
                 close();
             }
         });
+    }
+    
+    @Override
+    protected Control createContents(Composite parent) {
+    	Control contents = super.createContents(parent);
+        setTitle(Resources.getMessage("DialogHelp.1")); //$NON-NLS-1$
+        setMessage(Resources.getMessage("DialogHelp.2"), IMessageProvider.INFORMATION); //$NON-NLS-1$
+        if (image!=null) setTitleImage(image); //$NON-NLS-1$
+        return contents;
     }
 
     @Override
@@ -163,6 +185,11 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         browser.setUrl(getUrlOf(index));
         return parent;
     }
+    
+    @Override
+    protected Point getInitialSize() {
+        return new Point(900,600);
+    }
 
     /**
      * Returns the url for an index
@@ -172,30 +199,9 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     protected String getUrlOf(int index) {
         return config.getUrlForIndex(index);
     }
-
-    /**
-     * Returns the index of a url
-     * @param location
-     * @return
-     */
-    private int getIndexOf(String location) {
-        return config.getIndexForUrl(location);
-    }
     
-    @Override
-    protected Point getInitialSize() {
-        return new Point(900,600);
-    }
-
     @Override
     protected boolean isResizable() {
         return true;
-    }
-    
-    @Override
-    public boolean close() {
-        if (image != null)
-            image.dispose();
-        return super.close();
     }
 }

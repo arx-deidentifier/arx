@@ -262,6 +262,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+
+    @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
         parent.setLayoutData(SWTUtil.createFillGridData());
@@ -337,7 +343,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         if (image!=null) setTitleImage(image); //$NON-NLS-1$
         return contents;
     }
-
+    
     @Override
     protected Control createDialogArea(final Composite parent) {
 

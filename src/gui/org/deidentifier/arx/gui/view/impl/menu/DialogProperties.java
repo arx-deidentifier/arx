@@ -131,29 +131,6 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         this.model = model;
     }
 
-    /**
-     * Builds the content for a specific category
-     * 
-     * @param folder
-     * @param category
-     * @param editors
-     * @return
-     */
-    private Composite buildCategory(final TabFolder folder,
-                                    final String category,
-                                    final List<IEditor<?>> editors) {
-        final Composite c = new Composite(folder, SWT.NONE);
-        c.setLayout(new GridLayout(2, false));
-        for (final IEditor<?> e : editors) {
-            if (e.getCategory().equals(category)) {
-                final Label l = new Label(c, SWT.NONE);
-                l.setText(e.getLabel() + ":"); //$NON-NLS-1$
-                e.createControl(c);
-            }
-        }
-        return c;
-    }
-
     @Override
     public void create() {
         super.create();
@@ -183,31 +160,27 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         super.getShell().pack();
     }
 
-    @Override
-    protected void createButtonsForButtonBar(final Composite parent) {
-
-        // Create OK Button
-        parent.setLayoutData(SWTUtil.createFillGridData());
-        ok = createButton(parent,
-                          Window.OK,
-                          Resources.getMessage("PropertyDialog.26"), true); //$NON-NLS-1$
-        ok.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                setReturnCode(Window.OK);
-                close();
+    /**
+     * Builds the content for a specific category
+     * 
+     * @param folder
+     * @param category
+     * @param editors
+     * @return
+     */
+    private Composite buildCategory(final TabFolder folder,
+                                    final String category,
+                                    final List<IEditor<?>> editors) {
+        final Composite c = new Composite(folder, SWT.NONE);
+        c.setLayout(new GridLayout(2, false));
+        for (final IEditor<?> e : editors) {
+            if (e.getCategory().equals(category)) {
+                final Label l = new Label(c, SWT.NONE);
+                l.setText(e.getLabel() + ":"); //$NON-NLS-1$
+                e.createControl(c);
             }
-        });
-    }
-
-    @Override
-    protected Control createDialogArea(final Composite parent) {
-        parent.setLayout(new GridLayout(1, false));
-
-        folder = new TabFolder(parent, SWT.NONE);
-        folder.setLayoutData(SWTUtil.createFillGridData());
-
-        return parent;
+        }
+        return c;
     }
 
     /**
@@ -443,6 +416,39 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         });
         // Return
         return result;
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+    
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+
+        // Create OK Button
+        parent.setLayoutData(SWTUtil.createFillGridData());
+        ok = createButton(parent,
+                          Window.OK,
+                          Resources.getMessage("PropertyDialog.26"), true); //$NON-NLS-1$
+        ok.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setReturnCode(Window.OK);
+                close();
+            }
+        });
+    }
+    
+    @Override
+    protected Control createDialogArea(final Composite parent) {
+        parent.setLayout(new GridLayout(1, false));
+
+        folder = new TabFolder(parent, SWT.NONE);
+        folder.setLayoutData(SWTUtil.createFillGridData());
+
+        return parent;
     }
 
     @Override

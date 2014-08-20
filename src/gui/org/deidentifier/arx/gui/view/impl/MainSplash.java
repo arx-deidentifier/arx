@@ -57,8 +57,8 @@ public class MainSplash {
         this.shell.setImages(Resources.getIconSet(display));
         this.shell.setSize(splash.getBounds().width, splash.getBounds().height);
         
-        Rectangle shellRect = shell.getBounds();
-        Rectangle displayRect = display.getPrimaryMonitor().getBounds();
+        Rectangle shellRect = this.shell.getBounds();
+        Rectangle displayRect = this.shell.getMonitor().getBounds();
         int x = (displayRect.width - shellRect.width) / 2;
         int y = (displayRect.height - shellRect.height) / 2;
         shell.setLocation(x, y);

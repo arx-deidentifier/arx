@@ -91,6 +91,12 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     }
 
     @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+
+    @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
         parent.setLayoutData(SWTUtil.createFillGridData());
@@ -124,7 +130,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         setMessage(Resources.getMessage("CriterionSelectionDialog.0"), IMessageProvider.NONE); //$NON-NLS-1$
         return contents;
     }
-
+    
     @Override
     protected Control createDialogArea(final Composite parent) {
 
@@ -176,12 +182,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
 
         return parent;
     }
-
-    @Override
-    protected boolean isResizable() {
-        return false;
-    }
-
+    
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -190,5 +191,10 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
                 setReturnCode(Window.CANCEL);
             }
         };
+    }
+
+    @Override
+    protected boolean isResizable() {
+        return false;
     }
 }

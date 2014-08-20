@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -97,6 +98,7 @@ public class ARXWizardDialog extends WizardDialog {
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
+        this.getShell().setImages(Resources.getIconSet(getShell().getDisplay()));
         if (buttons != null){
             for (ARXWizardButton button : buttons){
                 Button bt = super.createButton(parent, button.id, button.text, false);

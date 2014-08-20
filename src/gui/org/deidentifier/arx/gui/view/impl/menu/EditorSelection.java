@@ -75,16 +75,13 @@ public abstract class EditorSelection implements IEditor<String> {
         return category;
     }
 
+    public Control getControl(){
+        return combo;
+    }
+
     @Override
     public String getLabel() {
         return label;
-    }
-
-    private int indexOf(final String value) {
-        for (int i = 0; i < elems.length; i++) {
-            if (elems[i].equals(value)) { return i; }
-        }
-        return -1;
     }
 
     /**
@@ -103,7 +100,10 @@ public abstract class EditorSelection implements IEditor<String> {
         }
     }
     
-    public Control getControl(){
-        return combo;
+    private int indexOf(final String value) {
+        for (int i = 0; i < elems.length; i++) {
+            if (elems[i].equals(value)) { return i; }
+        }
+        return -1;
     }
 }

@@ -106,12 +106,17 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the URL for a given index
-     * @param index
+     * Returns the index for a given ID
+     * @param id
      * @return
      */
-    public String getUrlForIndex(int index) {
-        return entries.get(index).url;
+    public int getIndexForId(String id) {
+        for (int i = 0; i < entries.size(); i++){
+            if (entries.get(i).id.equals(id)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     /**
@@ -129,16 +134,11 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the index for a given ID
-     * @param id
+     * Returns the URL for a given index
+     * @param index
      * @return
      */
-    public int getIndexForId(String id) {
-        for (int i = 0; i < entries.size(); i++){
-            if (entries.get(i).id.equals(id)) {
-                return i;
-            }
-        }
-        return 0;
+    public String getUrlForIndex(int index) {
+        return entries.get(index).url;
     }
 }

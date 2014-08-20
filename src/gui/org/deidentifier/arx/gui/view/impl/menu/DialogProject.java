@@ -87,6 +87,20 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         });
     }
 
+    /**
+     * Returns the resulting project
+     * @return
+     */
+    public Model getProject() {
+        return model;
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+    
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -126,7 +140,7 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
             }
         });
     }
-
+    
     @Override
     protected Control createDialogArea(final Composite parent) {
         final GridLayout l = new GridLayout();
@@ -150,14 +164,6 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         description.setLayoutData(SWTUtil.createFillGridData());
         description.setText(""); //$NON-NLS-1$
         return parent;
-    }
-
-    /**
-     * Returns the resulting project
-     * @return
-     */
-    public Model getProject() {
-        return model;
     }
 
     @Override

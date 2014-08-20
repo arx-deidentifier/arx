@@ -107,7 +107,7 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
     public boolean close() {
         return super.close();
     }
-
+    
     public DialogQueryResult getResult() {
         return new DialogQueryResult(queryString, selector);
     }
@@ -214,6 +214,16 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                 }
 
                 @Override
+                public void neq(int start, int length) {
+                    StyleRange style = new StyleRange();
+                    style.start = start;
+                    style.length = length;
+                    style.fontStyle = SWT.BOLD;
+                    style.foreground = GUIHelper.COLOR_BLUE;
+                    styles.add(style);
+                }
+                
+                @Override
                 public void or(int start, int length) {
                     StyleRange style = new StyleRange();
                     style.start = start;
@@ -222,7 +232,7 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                     style.foreground = GUIHelper.COLOR_GRAY;
                     styles.add(style);
                 }
-                
+
                 @Override
                 public void value(int start, int length) {
                     StyleRange style = new StyleRange();
@@ -230,16 +240,6 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                     style.length = length;
                     style.fontStyle = SWT.BOLD;
                     style.foreground = GUIHelper.COLOR_DARK_GRAY;
-                    styles.add(style);
-                }
-
-                @Override
-                public void neq(int start, int length) {
-                    StyleRange style = new StyleRange();
-                    style.start = start;
-                    style.length = length;
-                    style.fontStyle = SWT.BOLD;
-                    style.foreground = GUIHelper.COLOR_BLUE;
                     styles.add(style);
                 }
             };
@@ -253,7 +253,7 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
         text.setStyleRanges(styles.toArray(new StyleRange[styles.size()]));        
         text.setRedraw(true);
     }
-
+    
     private void parse() {
         final String query = text.getText();
         final DataSelector selector;
@@ -270,6 +270,12 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
         this.queryString = text.getText();
         this.selector = selector;
         this.ok.setEnabled(true);
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
     @Override
@@ -338,11 +344,6 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
     }
 
     @Override
-    protected boolean isResizable() {
-        return false;
-    }
-
-    @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
             @Override
@@ -350,5 +351,10 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                 setReturnCode(Window.CANCEL);
             }
         };
+    }
+
+    @Override
+    protected boolean isResizable() {
+        return false;
     }
 }

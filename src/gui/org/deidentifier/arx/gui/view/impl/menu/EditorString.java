@@ -88,11 +88,15 @@ public abstract class EditorString implements IEditor<String> {
         return category;
     }
 
+    public Control getControl() {
+        return text;
+    }
+    
     @Override
     public String getLabel() {
         return label;
     }
-    
+
     /**
      * Update
      */
@@ -103,9 +107,5 @@ public abstract class EditorString implements IEditor<String> {
                 text.setText(value);
             }
         }
-    }
-
-    public Control getControl() {
-        return text;
     }
 }

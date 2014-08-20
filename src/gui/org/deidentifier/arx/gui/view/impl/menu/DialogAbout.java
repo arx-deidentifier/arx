@@ -76,14 +76,42 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     }
 
     @Override
-    protected Control createContents(Composite parent) {
-    	Control contents = super.createContents(parent);
-        setTitle(Resources.getMessage("AboutDialog.12")); //$NON-NLS-1$
-        setMessage(Resources.getMessage("AboutDialog.13"), IMessageProvider.INFORMATION); //$NON-NLS-1$
-        if (image!=null) setTitleImage(image); //$NON-NLS-1$
-        return contents;
+    public boolean close() {
+        if (image != null)
+            image.dispose();
+        return super.close();
     }
 
+    /**
+     * Creates a link
+     * @param parent
+     * @param text
+     * @param tooltip
+     * @param url
+     */
+    private void createLink(Composite parent, String text, String tooltip, final String url){
+        Link link = new Link(parent, SWT.NONE);
+        link.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        link.setText(text);
+        link.setToolTipText(tooltip);
+        link.setBackground(parent.getBackground());
+        link.addListener (SWT.Selection, new Listener () {
+            public void handleEvent(Event event) {
+                try {
+                    Program.launch(url);
+                } catch (Exception e){
+                    /* Ignore*/
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
+    }
+    
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -99,6 +127,15 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                 close();
             }
         });
+    }
+    
+    @Override
+    protected Control createContents(Composite parent) {
+    	Control contents = super.createContents(parent);
+        setTitle(Resources.getMessage("AboutDialog.12")); //$NON-NLS-1$
+        setMessage(Resources.getMessage("AboutDialog.13"), IMessageProvider.INFORMATION); //$NON-NLS-1$
+        if (image!=null) setTitleImage(image); //$NON-NLS-1$
+        return contents;
     }
 
     @Override
@@ -152,39 +189,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         return parent;
     }
     
-    /**
-     * Creates a link
-     * @param parent
-     * @param text
-     * @param tooltip
-     * @param url
-     */
-    private void createLink(Composite parent, String text, String tooltip, final String url){
-        Link link = new Link(parent, SWT.NONE);
-        link.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        link.setText(text);
-        link.setToolTipText(tooltip);
-        link.setBackground(parent.getBackground());
-        link.addListener (SWT.Selection, new Listener () {
-            public void handleEvent(Event event) {
-                try {
-                    Program.launch(url);
-                } catch (Exception e){
-                    /* Ignore*/
-                }
-            }
-        });
-    }
-
     @Override
     protected boolean isResizable() {
         return false;
-    }
-    
-    @Override
-    public boolean close() {
-        if (image != null)
-            image.dispose();
-        return super.close();
     }
 }

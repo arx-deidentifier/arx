@@ -64,12 +64,16 @@ public class DialogError extends TitleAreaDialog implements IDialog {
     }
 
     @Override
-    protected Control createContents(Composite parent) {
-    	Control contents = super.createContents(parent);
-        setTitle("Error");
-        setMessage(message.replaceAll(" \\(\\)\\!", "!"), IMessageProvider.ERROR);
-        if (image!=null) setTitleImage(image); //$NON-NLS-1$
-        return contents;
+    public boolean close() {
+        if (image != null)
+            image.dispose();
+        return super.close();
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
     @Override
@@ -90,6 +94,15 @@ public class DialogError extends TitleAreaDialog implements IDialog {
     }
 
     @Override
+    protected Control createContents(Composite parent) {
+    	Control contents = super.createContents(parent);
+        setTitle("Error");
+        setMessage(message.replaceAll(" \\(\\)\\!", "!"), IMessageProvider.ERROR);
+        if (image!=null) setTitleImage(image); //$NON-NLS-1$
+        return contents;
+    }
+    
+    @Override
     protected Control createDialogArea(final Composite parent) {
 
     	parent.setLayout(new GridLayout());
@@ -101,16 +114,9 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         text.setLayoutData(d);
         return parent;
     }
-
+    
     @Override
     protected boolean isResizable() {
         return false;
-    }
-    
-    @Override
-    public boolean close() {
-        if (image != null)
-            image.dispose();
-        return super.close();
     }
 }

@@ -24,6 +24,7 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -198,6 +199,7 @@ public class DialogComboSelection extends Dialog {
         if (title != null) {
             shell.setText(title);
         }
+        shell.setImages(Resources.getIconSet(shell.getDisplay()));
     }
 
     /*
@@ -274,6 +276,16 @@ public class DialogComboSelection extends Dialog {
         return okButton;
     }
 
+    @Override
+    protected ShellListener getShellListener() {
+        return new ShellAdapter() {
+            @Override
+            public void shellClosed(final ShellEvent event) {
+                setReturnCode(Window.CANCEL);
+            }
+        };
+    }
+
     /**
      * Returns the validator.
      * 
@@ -300,15 +312,5 @@ public class DialogComboSelection extends Dialog {
         // Bug 16256: important not to treat "" (blank error) the same as null
         // (no error)
         setErrorMessage(errorMsg);
-    }
-
-    @Override
-    protected ShellListener getShellListener() {
-        return new ShellAdapter() {
-            @Override
-            public void shellClosed(final ShellEvent event) {
-                setReturnCode(Window.CANCEL);
-            }
-        };
     }
 }

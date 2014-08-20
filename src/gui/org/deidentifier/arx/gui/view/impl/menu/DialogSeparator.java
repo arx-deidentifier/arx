@@ -72,7 +72,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         this.file = file;
         this.data = data;
     }
-
+    
     @Override
     public void create() {
         super.create();
@@ -81,6 +81,127 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         super.getShell().setSize(500, 350);
         super.getShell().layout();
         SWTUtil.center(super.getShell(), super.getParentShell());
+    }
+    
+    public char getSeparator() {
+        return separators[selection];
+    }
+
+    /**
+     * Detects the most frequent separator in the first few lines
+     * 
+     * @param file
+     * @throws IOException
+     */
+    private void detect(final String file) throws IOException {
+
+        // Open file
+        final BufferedReader r = new BufferedReader(new FileReader(new File(file)));
+
+        // Count chars
+        int count = 0;
+        String line = r.readLine();
+        final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        while ((count < LINES) && (line != null)) {
+            final char[] a = line.toCharArray();
+            for (final char c : a) {
+                for (int i = 0; i < separators.length; i++) {
+                    if (c == separators[i]) {
+                        if (!map.containsKey(i)) {
+                            map.put(i, 0);
+                        }
+                        map.put(i, map.get(i) + 1);
+                    }
+                }
+            }
+            line = r.readLine();
+            count++;
+        }
+
+        // Close
+        r.close();
+
+        // Choose max
+        if (map.isEmpty()) { return; }
+        int max = Integer.MIN_VALUE;
+        for (final int key : map.keySet()) {
+            if (map.get(key) > max) {
+                max = map.get(key);
+                selection = key;
+            }
+        }
+    }
+
+    /**
+     * Reds the first few files with chosen separator
+     * 
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    private void read(final String file) throws IOException {
+
+        // Read the first few lines
+        final CSVDataInput in = new CSVDataInput(file, separators[selection]);
+        final Iterator<String[]> it = in.iterator();
+        final List<String[]> data = new ArrayList<String[]>();
+
+        int count = 0;
+        while (it.hasNext() && (count < LINES)) {
+            data.add(it.next());
+            count++;
+        }
+        in.close();
+
+        // In case of hierarchy, add header
+        if (!this.data && data.size() > 0) {
+            // Duplicate last entry
+            data.add(data.get(data.size() - 1));
+
+            // Shift all entries
+            for (int i = data.size() - 2; i >= 0; i--) {
+                data.set(i + 1, data.get(i));
+            }
+
+            // Add header
+            int length = data.get(0).length;
+            String[] header = new String[length];
+            for (int i = 0; i < length; i++) {
+                header[i] = Resources.getMessage("SeparatorDialog.6") + (i + 1); //$NON-NLS-1$
+            }
+            data.set(0, header);
+        }
+
+        // Add to table
+        table.setRedraw(false);
+        table.removeAll();
+        for (final TableColumn c : columns) {
+            c.dispose();
+        }
+        columns.clear();
+
+        if (data.size() == 0) { return; }
+
+        for (final String s : data.get(0)) {
+            final TableColumn c = new TableColumn(table, SWT.NONE);
+            c.setText(s);
+            columns.add(c);
+            c.pack();
+        }
+        for (int i = 1; i < data.size(); i++) {
+            final TableItem item = new TableItem(table, SWT.NONE);
+            for (int j = 0; j < data.get(i).length; j++) {
+                item.setText(j, data.get(i)[j]);
+            }
+        }
+        table.setRedraw(true);
+        table.redraw();
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
     @Override
@@ -171,55 +292,6 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
-    /**
-     * Detects the most frequent separator in the first few lines
-     * 
-     * @param file
-     * @throws IOException
-     */
-    private void detect(final String file) throws IOException {
-
-        // Open file
-        final BufferedReader r = new BufferedReader(new FileReader(new File(file)));
-
-        // Count chars
-        int count = 0;
-        String line = r.readLine();
-        final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        while ((count < LINES) && (line != null)) {
-            final char[] a = line.toCharArray();
-            for (final char c : a) {
-                for (int i = 0; i < separators.length; i++) {
-                    if (c == separators[i]) {
-                        if (!map.containsKey(i)) {
-                            map.put(i, 0);
-                        }
-                        map.put(i, map.get(i) + 1);
-                    }
-                }
-            }
-            line = r.readLine();
-            count++;
-        }
-
-        // Close
-        r.close();
-
-        // Choose max
-        if (map.isEmpty()) { return; }
-        int max = Integer.MIN_VALUE;
-        for (final int key : map.keySet()) {
-            if (map.get(key) > max) {
-                max = map.get(key);
-                selection = key;
-            }
-        }
-    }
-
-    public char getSeparator() {
-        return separators[selection];
-    }
-
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -233,71 +305,5 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
     @Override
     protected boolean isResizable() {
         return false;
-    }
-
-    /**
-     * Reds the first few files with chosen separator
-     * 
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    private void read(final String file) throws IOException {
-
-        // Read the first few lines
-        final CSVDataInput in = new CSVDataInput(file, separators[selection]);
-        final Iterator<String[]> it = in.iterator();
-        final List<String[]> data = new ArrayList<String[]>();
-
-        int count = 0;
-        while (it.hasNext() && (count < LINES)) {
-            data.add(it.next());
-            count++;
-        }
-        in.close();
-
-        // In case of hierarchy, add header
-        if (!this.data && data.size() > 0) {
-            // Duplicate last entry
-            data.add(data.get(data.size() - 1));
-
-            // Shift all entries
-            for (int i = data.size() - 2; i >= 0; i--) {
-                data.set(i + 1, data.get(i));
-            }
-
-            // Add header
-            int length = data.get(0).length;
-            String[] header = new String[length];
-            for (int i = 0; i < length; i++) {
-                header[i] = Resources.getMessage("SeparatorDialog.6") + (i + 1); //$NON-NLS-1$
-            }
-            data.set(0, header);
-        }
-
-        // Add to table
-        table.setRedraw(false);
-        table.removeAll();
-        for (final TableColumn c : columns) {
-            c.dispose();
-        }
-        columns.clear();
-
-        if (data.size() == 0) { return; }
-
-        for (final String s : data.get(0)) {
-            final TableColumn c = new TableColumn(table, SWT.NONE);
-            c.setText(s);
-            columns.add(c);
-            c.pack();
-        }
-        for (int i = 1; i < data.size(); i++) {
-            final TableItem item = new TableItem(table, SWT.NONE);
-            for (int j = 0; j < data.get(i).length; j++) {
-                item.setText(j, data.get(i)[j]);
-            }
-        }
-        table.setRedraw(true);
-        table.redraw();
     }
 }
