@@ -191,7 +191,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         while (low <= high) {
 
             // Init
-            final int mid = (low + high) >>> 1;
+            final int mid = (low + high) / 2;
             final Node node = path.get(mid);
 
             // Skip
@@ -216,6 +216,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 } else {
                     low = mid + 1;
                 }
+            } else {
+                high = mid - 1;
             }
         }
         return lastAnonymousNode;
