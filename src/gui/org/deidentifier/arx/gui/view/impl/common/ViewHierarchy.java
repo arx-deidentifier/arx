@@ -755,29 +755,6 @@ public class ViewHierarchy implements IView {
         });
 
     }
-    /**
-     * Returns the index of
-     * @param selection
-     * @return
-     */
-    private int maxIndexOf(String selection){
-        for (int i=0; i<max.getItems().length; i++){
-            if (max.getItem(i).equals(selection)) return i;
-        }
-        return -1;
-    }
-
-    /**
-     * Returns the index of
-     * @param selection
-     * @return
-     */
-    private int minIndexOf(String selection){
-        for (int i=0; i<min.getItems().length; i++){
-            if (min.getItem(i).equals(selection)) return i;
-        }
-        return -1;
-    }
 
     /**
      * Mouse down action
@@ -828,17 +805,14 @@ public class ViewHierarchy implements IView {
      * @return
      */
     private boolean pushMax(){
-        if (max.getSelectionIndex() >= 0 && max.getItemCount()>1) {
+        
+        if (max.getSelectionIndex() >= 0) {
             if (max.getSelectionIndex() < (min.getSelectionIndex() - 1)) {
                 max.select(min.getSelectionIndex() - 1);
             }
             if (model != null) {
                 String val = max.getItem(max.getSelectionIndex());
-                if (val.equals(ITEM_ALL)) {
-                    model.getInputConfig().setMaximumGeneralization(attribute, null);
-                } else {
-                    model.getInputConfig().setMaximumGeneralization(attribute, Integer.valueOf(val) - 1);
-                }
+                model.getInputConfig().setMaximumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
                 return true;
             } 
         } 
@@ -851,17 +825,13 @@ public class ViewHierarchy implements IView {
      */
     private boolean pushMin() {
         
-        if (min.getSelectionIndex() >= 0 && min.getItemCount() > 1) {
+        if (min.getSelectionIndex() >= 0) {
             if (min.getSelectionIndex() > (max.getSelectionIndex() + 1)) {
                 min.select(max.getSelectionIndex() + 1);
             } 
             if (model != null) {
                 String val = min.getItem(min.getSelectionIndex());
-                if (val.equals(ITEM_ALL)) {
-                    model.getInputConfig().setMinimumGeneralization(attribute, null);
-                } else {
-                    model.getInputConfig().setMinimumGeneralization(attribute, Integer.valueOf(val) - 1);
-                }
+                model.getInputConfig().setMinimumGeneralization(attribute, val.equals(ITEM_ALL) ? null : Integer.valueOf(val));
                 return true;
             }
         }
@@ -876,33 +846,36 @@ public class ViewHierarchy implements IView {
         // Check whether min & max are still ok
         if (model==null || min == null || min.isDisposed()) { return; }
 
+        // Prepare lists
         final List<String> minItems = new ArrayList<String>();
         final List<String> maxItems = new ArrayList<String>();
         minItems.add(ITEM_ALL);
-        for (int i = 1; i <= (hierarchy==null ? 0 : hierarchy[0].length); i++) {
+        for (int i = 0; i < (hierarchy==null ? 0 : hierarchy[0].length); i++) {
             minItems.add(String.valueOf(i));
             maxItems.add(String.valueOf(i));
         }
         maxItems.add(ITEM_ALL);
 
-        // Compute from model
+        // Determine min index
         Integer minModel = model.getInputConfig().getMinimumGeneralization(attribute);
-        String minSelected = ITEM_ALL;
-        if (minModel != null) minSelected = String.valueOf(minModel+1);
-        int minIndex = minIndexOf(minSelected);
-                
+        int minIndex = minModel != null ? minModel + 1 : 0;
+
+        // Determine max index
         Integer maxModel = model.getInputConfig().getMaximumGeneralization(attribute);
-        String maxSelected = ITEM_ALL;
-        if (maxModel != null) maxSelected = String.valueOf(maxModel+1);
-        int maxIndex = maxIndexOf(maxSelected);
+        int maxIndex = maxModel != null ? maxModel : maxItems.size()-1;
+        
+        // Fix indices
+        maxIndex = maxIndex > maxItems.size() - 1 ? maxItems.size() - 1 : maxIndex;
+        maxIndex = maxIndex < 0 ? maxItems.size() - 1 : maxIndex;
+        minIndex = minIndex > minItems.size() - 1 ? minItems.size() - 1 : minIndex;
+        minIndex = minIndex < 0 ? 0 : minIndex;
+        minIndex = minIndex > (maxIndex + 1) ? maxIndex + 1 : minIndex;
 
-        if (minIndex > (maxIndex + 1)) {
-            minIndex = maxIndex + 1;
-        }
+        // Set items
+        min.setItems(minItems.toArray(new String[minItems.size()]));
+        max.setItems(maxItems.toArray(new String[maxItems.size()]));
 
-        min.setItems(minItems.toArray(new String[] {}));
-        max.setItems(maxItems.toArray(new String[] {}));
-
+        // Select
         min.select(minIndex);
         max.select(maxIndex);
         pushMin();
