@@ -65,6 +65,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
 
         /**
          * Creates a new instance
+         * 
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -73,7 +74,13 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          * @param statistics
          */
-        public ARXTestCase(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final String optimalInformationLoss, final int[] optimalTransformation, final boolean practical, int[] statistics) {
+        public ARXTestCase(final ARXConfiguration config,
+                           final String sensitiveAttribute,
+                           final String dataset,
+                           final String optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical,
+                           int[] statistics) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
@@ -82,9 +89,10 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             this.practical = practical;
             this.statistics = statistics;
         }
-        
+
         /**
          * Creates a new instance
+         * 
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -93,7 +101,13 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          * @param statistics
          */
-        public ARXTestCase(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final double optimalInformationLoss, final int[] optimalTransformation, final boolean practical, int[] statistics) {
+        public ARXTestCase(final ARXConfiguration config,
+                           final String sensitiveAttribute,
+                           final String dataset,
+                           final double optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical,
+                           int[] statistics) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
@@ -102,9 +116,10 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             this.practical = practical;
             this.statistics = statistics;
         }
-        
+
         /**
          * Creates a new instance
+         * 
          * @param config
          * @param dataset
          * @param optimalInformationLoss
@@ -112,24 +127,35 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          * @param statistics
          */
-        public ARXTestCase(final ARXConfiguration config, final String dataset, final double optimalInformationLoss, final int[] optimalTransformation, final boolean practical, int[] statistics) {
+        public ARXTestCase(final ARXConfiguration config,
+                           final String dataset,
+                           final double optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical,
+                           int[] statistics) {
             this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics);
         }
 
         /**
          * Creates a new instance
+         * 
          * @param config
          * @param dataset
          * @param optimalInformationLoss
          * @param optimalTransformation
          * @param practical
          */
-        public ARXTestCase(final ARXConfiguration config, final String dataset, final double optimalInformationLoss, final int[] optimalTransformation, final boolean practical) {
+        public ARXTestCase(final ARXConfiguration config,
+                           final String dataset,
+                           final double optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical) {
             this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
 
         /**
          * Creates a new instance
+         * 
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -137,12 +163,18 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param optimalTransformation
          * @param practical
          */
-        public ARXTestCase(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final String optimalInformationLoss, final int[] optimalTransformation, final boolean practical) {
+        public ARXTestCase(final ARXConfiguration config,
+                           final String sensitiveAttribute,
+                           final String dataset,
+                           final String optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical) {
             this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
-        
+
         /**
          * Creates a new instance
+         * 
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -150,16 +182,27 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param optimalTransformation
          * @param practical
          */
-        public ARXTestCase(final ARXConfiguration config, final String sensitiveAttribute, final String dataset, final double optimalInformationLoss, final int[] optimalTransformation, final boolean practical) {
+        public ARXTestCase(final ARXConfiguration config,
+                           final String sensitiveAttribute,
+                           final String dataset,
+                           final double optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical) {
             this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
+        }
+
+        @Override
+        public String toString() {
+            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset;
         }
     }
 
-    /** The test case*/
+    /** The test case */
     protected final ARXTestCase testCase;
 
     /**
      * Creates a new instance
+     * 
      * @param testCase
      */
     public TestAnonymizationAbstract(final ARXTestCase testCase) {
@@ -168,6 +211,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
 
     /**
      * Returns the data object for the test case
+     * 
      * @param testCase
      * @return
      * @throws IOException
@@ -180,7 +224,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {
-                if (name.matches(testCase.dataset.substring(testCase.dataset.lastIndexOf("/") + 1, testCase.dataset.length() - 4) + "_hierarchy_(.)+.csv")) {
+                if (name.matches(testCase.dataset.substring(testCase.dataset.lastIndexOf("/") + 1, testCase.dataset.length() - 4) +
+                                 "_hierarchy_(.)+.csv")) {
                     return true;
                 } else {
                     return false;
@@ -195,7 +240,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         for (final File file : genHierFiles) {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-                
+
                 final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
                 final String attributeName = matcher.group(1);
 
@@ -230,17 +275,22 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         testCase.config.setPracticalMonotonicity(testCase.practical);
 
         ARXResult result = anonymizer.anonymize(data, testCase.config);
-        
+
         // check if no solution
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
-            assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.optimalTransformation) + " is: " + Arrays.toString(result.getGlobalOptimum().getTransformation()), Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation));
-            assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " + result.getGlobalOptimum().getMinimumInformationLoss().getValue(), testCase.optimalInformationLoss, result.getGlobalOptimum().getMinimumInformationLoss().toString());
+            assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.optimalTransformation) + " is: " +
+                       Arrays.toString(result.getGlobalOptimum().getTransformation()),
+                       Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation));
+            assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
+                         result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
+                         testCase.optimalInformationLoss,
+                         result.getGlobalOptimum().getMinimumInformationLoss().toString());
         }
-        
+
         if (testCase.statistics != null) {
-            
+
             // Collect statistics
             int[] statistics = new int[7];
             for (ARXNode[] level : result.getLattice().getLevels()) {
@@ -272,22 +322,31 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of checks", testCase.statistics[1], statistics[1]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of anonymous transformations", testCase.statistics[2], statistics[2]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of non-anonymous transformations", testCase.statistics[3], statistics[3]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations", testCase.statistics[4], statistics[4]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations", testCase.statistics[5], statistics[5]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of non-anonymous transformations",
+                         testCase.statistics[3],
+                         statistics[3]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations",
+                         testCase.statistics[4],
+                         statistics[4]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations",
+                         testCase.statistics[5],
+                         statistics[5]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available",
+                         testCase.statistics[6],
+                         statistics[6]);
         }
     }
-    
+
     /**
      * Returns the configuration of FLASH
+     * 
      * @param config
      * @return
      */
-    private String getAlgorithmConfiguration(ARXConfiguration config){
-        
+    private String getAlgorithmConfiguration(ARXConfiguration config) {
+
         final String metric;
-        if (config.getMetric().isMonotonic() || config.getMaxOutliers()==0d || config.isPracticalMonotonicity()) {
+        if (config.getMetric().isMonotonic() || config.getMaxOutliers() == 0d || config.isPracticalMonotonicity()) {
             metric = "monotonic";
         } else {
             metric = "non-monotonic";
@@ -300,15 +359,16 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         } else {
             criterion = "Non-monotonic";
         }
-        return criterion+" criteria with "+metric+" metric";
+        return criterion + " criteria with " + metric + " metric";
     }
-    
+
     /**
      * Transforms it into a string representation
+     * 
      * @param classification
      * @return
      */
-     @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     private String getClassification(int[] classification) {
         StringBuilder builder = new StringBuilder();
         builder.append("Classification {\n");

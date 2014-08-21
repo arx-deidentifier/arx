@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class TestAnonymizationKAnonymity extends TestAnonymizationAbstract {
 
-    @Parameters
+    @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
 
