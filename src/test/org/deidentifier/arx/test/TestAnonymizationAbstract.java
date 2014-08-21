@@ -193,7 +193,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
 
         @Override
         public String toString() {
-            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset;
+            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+                   config.isPracticalMonotonicity();
         }
     }
 
