@@ -54,17 +54,21 @@ public class MetricDM extends MetricDefault {
         
         final boolean anonymous = g.isAnonymous();
         double value = 0;
+        double lowerBound = 0; // DM*
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
             // Only respect outliers in case of anonymous nodes
             if (!anonymous || m.isNotOutlier) {
-                value += ((double) m.count * (double) m.count);
+                double current = ((double) m.count * (double) m.count);
+                value += current;
+                lowerBound += current;
             } else {
                 value += ((double) rowCount * (double) m.count);
+                lowerBound += ((double) m.count * (double) m.count);
             }
             m = m.nextOrdered;
         }
-        return new InformationLossDefault(value);
+        return new InformationLossDefault(value, lowerBound);
     }
 
     @Override

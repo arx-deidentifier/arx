@@ -69,6 +69,11 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     public String toString() {
         return "Static";
     }
+    
+    @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        return evaluateInternal(node, null);
+    }
 
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
@@ -78,7 +83,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
         for (int i = 0; i < transformation.length; i++) {
             value += infoloss[i][transformation[i]];
         }
-        return new InformationLossDefault(value);
+        return new InformationLossDefault(value, value);
     }
 
     @Override

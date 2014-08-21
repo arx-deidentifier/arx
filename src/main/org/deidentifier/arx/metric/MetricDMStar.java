@@ -42,7 +42,7 @@ public class MetricDMStar extends MetricDefault {
     public String toString() {
         return "Monotonic Discernability";
     }
-
+    
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         double value = 0;
@@ -51,6 +51,6 @@ public class MetricDMStar extends MetricDefault {
             value += (double) m.count * (double) m.count;
             m = m.nextOrdered;
         }
-        return new InformationLossDefault(value);
+        return new InformationLossDefault(value, value);
     }
 }

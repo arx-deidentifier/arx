@@ -60,6 +60,11 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        return this.evaluateInternal(node, null);
+    }
+
+    @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
@@ -70,7 +75,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
             double weight = weights != null ? weights[i] : 1d;
             value += ((double) state[i] / (double) maxLevels[i]) * weight;
         }
-        return new InformationLossDefault(value / divisor);
+        return new InformationLossDefault(value / divisor, value / divisor);
     }
 
     @Override

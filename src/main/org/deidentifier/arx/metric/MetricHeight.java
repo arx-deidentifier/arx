@@ -40,9 +40,15 @@ public class MetricHeight extends MetricDefault {
     public String toString() {
         return "Height";
     }
-
+    
+    @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        return new InformationLossDefault(node.getLevel());
+    }
+    
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-        return new InformationLossDefault(node.getLevel());
+        int level = node.getLevel();
+        return new InformationLossDefault(level, level);
     }
 }
