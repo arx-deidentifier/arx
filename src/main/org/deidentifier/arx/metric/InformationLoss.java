@@ -29,9 +29,11 @@ import java.io.Serializable;
 public abstract class InformationLoss<T> implements Comparable<InformationLoss<?>>, Serializable {
 
     private static final long serialVersionUID = -5347658129539223333L;
-
-    InformationLoss() {
-        // Package visibility
+    
+    private final InformationLoss<T> lowerBound;
+    
+    InformationLoss(InformationLoss<T> lowerBound) {
+        this.lowerBound = lowerBound;
     }
     
     public abstract T getValue();
@@ -76,4 +78,12 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      */
     @Override
     public abstract InformationLoss<T> clone();
+    
+    /**
+     * Returns a monotonic lower bound
+     * @return
+     */
+    public InformationLoss<T> getLowerBound(){
+        return this.lowerBound;
+    }
 }

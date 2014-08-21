@@ -18,11 +18,8 @@
 
 package org.deidentifier.arx.metric;
 
-import java.util.Map.Entry;
-
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
-import org.deidentifier.arx.framework.check.history.MRUCache;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
@@ -41,57 +38,6 @@ public class MetricAECS extends MetricDefault {
         super(false, false);
     }
     
-    /** A MRU cache for estimating lower bounds*/
-    private transient MRUCache<Node> mruCache = null;
-    
-    /**
-     * Returns the MRU cache
-     * @return
-     */
-    private MRUCache<Node> getMRUCache(){
-        if (mruCache == null) {
-            this.mruCache = new MRUCache<Node>(200);
-        }
-        return mruCache;
-    }
-    
-    @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        
-        MRUCache<Node> mruCache = getMRUCache();
-        
-        while (mruCache.size()>200) {
-            getCache().remove(mruCache.removeHead());
-        }
-
-        InformationLossDefault maximum = null;
-        for (Entry<Node, InformationLossDefault> entry : getCache().entrySet()) {
-            if (isPredecessor(node, entry.getKey())){
-                if (maximum == null || maximum.compareTo(entry.getValue())<0) {
-                    maximum = entry.getValue();
-                    mruCache.touch(entry.getKey());
-                }
-            }
-        }
-        return maximum;
-    }
-    
-    /**
-     * Is node2 a predecessor of or equal to node1?
-     */
-    private boolean isPredecessor(final Node node1, final Node node2) {
-        for (int i = 0; i < node2.getTransformation().length; i++) {
-            if (node1.getTransformation()[i] < node2.getTransformation()[i]) { return false; }
-        }
-        return true;
-    }
-    
-    @Override
-    public void freeCache() {
-        this.getMRUCache().clear();
-        super.freeCache();
-    }
-
     @Override
     public String toString() {
         return "Average Equivalence Class Size";
@@ -122,11 +68,8 @@ public class MetricAECS extends MetricDefault {
         // If there are suppressed tuples, they form one additional group
         groups += suppressed ? 1 : 0;
         
-        // Fill the cache
-        getMRUCache().append(node);
-        getCache().put(node, new InformationLossDefault((double)tuples / (double)g.size()));
-        
         // Compute AECS
-        return new InformationLossDefault((double)tuples / (double)groups);
+        return new InformationLossDefault((double)tuples / (double)groups,
+                                          (double)tuples / (double)g.size());
     }
 }

@@ -18,9 +18,6 @@
 
 package org.deidentifier.arx.metric;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -28,6 +25,8 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class provides an efficient implementation of a non-monotonic and
@@ -53,15 +52,10 @@ public class MetricNMEntropy extends MetricEntropy {
     protected MetricNMEntropy() {
         super(false, false);
     }
-
+    
     @Override
-    public InformationLossDefault getLowerBound(final Node node) {
-        InformationLossDefault result = getCache().get(node);
-        if (result == null) {
-            result = super.evaluateInternal(node, null);
-            getCache().put(node, result);
-        }
-        return result;
+    public InformationLossDefault getLowerBound(Node node) {
+        return super.evaluateInternal(node, null);
     }
     
     @Override
@@ -70,25 +64,21 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
-        final InformationLossDefault originalInfoLossDefault = getLowerBound(node);
+        final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
         
         // Ignore outliers if node is not anonymous
         if (!g.isAnonymous()) return originalInfoLossDefault;
         
         // Compute loss induced by suppression
-        // TODO: Use lightweight alternative to Map<Integer, Integer>();
         double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
-        int key;
-        Integer val;
-        final Map<Integer, Integer>[] original = new Map[node.getTransformation().length];
+        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getTransformation().length];
         for (int i = 0; i < original.length; i++) {
-            original[i] = new HashMap<Integer, Integer>();
+            original[i] = new IntIntOpenHashMap();
         }
 
         // Compute counts for suppressed values in each column 
@@ -98,13 +88,7 @@ public class MetricNMEntropy extends MetricEntropy {
             if (!m.isNotOutlier && m.count > 0) {
                 suppressedTuples += m.count;
                 for (int i = 0; i < original.length; i++) {
-                    key = m.key[i];
-                    val = original[i].get(key);
-                    if (val == null) {
-                        original[i].put(key, m.count);
-                    } else {
-                        original[i].put(key, m.count + val);
-                    }
+                    original[i].putOrAdd(m.key[i], m.count, m.count);
                 }
             }
             m = m.nextOrdered;
@@ -113,14 +97,18 @@ public class MetricNMEntropy extends MetricEntropy {
         // Evaluate entropy for suppressed tuples
         if (suppressedTuples != 0){
 	        for (int i = 0; i < original.length; i++) {
-	            for (final double count : original[i].values()) {
-	                additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
+	            IntIntOpenHashMap map = original[i];
+	            for (int j = 0; j < map.allocated.length; j++) {
+	                if (map.allocated[j]) {
+	                    double count = map.values[j];
+	                    additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
+	                }
 	            }
 	        }
         }
         
         // Return sum of both values
-        return new InformationLossDefault(originalInfoLoss - additionalInfoLoss);
+        return new InformationLossDefault(originalInfoLoss - additionalInfoLoss, originalInfoLossDefault.getValue());
     }
 
     @Override

@@ -31,6 +31,8 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
+import com.carrotsearch.hppc.IntDoubleOpenHashMap;
+
 /**
  * This class provides an efficient implementation of the non-uniform entropy
  * metric. It avoids a cell-by-cell process by utilizing a three-dimensional
@@ -43,15 +45,6 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricEntropy extends MetricDefault {
 
-    /** Value unknown */
-    private static final double NA               = Double.POSITIVE_INFINITY;
-
-    /** SVUID */
-    private static final long   serialVersionUID = -8618697919821588987L;
-
-    /** Log 2 */
-    static final double         log2             = Math.log(2);
-
     /**
      * Computes log 2
      * 
@@ -61,6 +54,15 @@ public class MetricEntropy extends MetricDefault {
     static final double log2(final double num) {
         return Math.log(num) / log2;
     }
+    
+    /** Value unknown */
+    private static final double NA               = Double.POSITIVE_INFINITY;
+    
+    /** SVUID */
+    private static final long   serialVersionUID = -8618697919821588987L;
+    
+    /** Log 2 */
+    static final double         log2             = Math.log(2);
 
     /** Column -> Level -> Value */
     private double[][] cache;
@@ -70,6 +72,9 @@ public class MetricEntropy extends MetricDefault {
 
     /** Column -> Id -> Level -> Output */
     private int[][][]  hierarchies;
+    
+    /** A cache*/
+    private transient IntDoubleOpenHashMap cachedInformationLoss = new IntDoubleOpenHashMap();
 
     protected MetricEntropy() {
         super(true, true);
@@ -77,6 +82,11 @@ public class MetricEntropy extends MetricDefault {
 
     protected MetricEntropy(final boolean monotonic, final boolean independent) {
         super(monotonic, independent);
+    }
+    
+    @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        return evaluateInternal(node, null);
     }
 
     @Override
@@ -87,6 +97,12 @@ public class MetricEntropy extends MetricDefault {
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
+        // Check cache
+        if (cachedInformationLoss.containsKey(node.id)) {
+            double result = cachedInformationLoss.get(node.id);
+            return new InformationLossDefault(result, result);
+        }
+        
         // Init
         double result = 0;
 
@@ -112,7 +128,8 @@ public class MetricEntropy extends MetricDefault {
             }
             result += value;
         }
-        return new InformationLossDefault(-result);
+        cachedInformationLoss.put(node.id, -result);
+        return new InformationLossDefault(-result, -result);
     }
 
     @Override
@@ -120,7 +137,14 @@ public class MetricEntropy extends MetricDefault {
                                       final Data input, 
                                       final GeneralizationHierarchy[] ahierarchies, 
                                       final ARXConfiguration config) {
-
+        
+        // Prepare cache
+        if (cachedInformationLoss != null) {
+            cachedInformationLoss.clear();
+        } else {
+            cachedInformationLoss = new IntDoubleOpenHashMap();
+        }
+        
         // Obtain dictionary
         final Dictionary dictionary = input.getDictionary();
 

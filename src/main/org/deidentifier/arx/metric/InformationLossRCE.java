@@ -68,6 +68,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
      * @param perc
      */
     private InformationLossRCE(final double[] value, final BigInteger ints, final String string, final double perc, final double[] weights) {
+        super(null); // TODO
         this.value = value;
         this.ints = ints;
         this.string = string;
@@ -87,7 +88,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
      * @param value
      */
     InformationLossRCE(final double[] value, final double[] weights) {
-        
+        super(null); // TODO        
         // Create weighted representation
         double[] weightedValue = null;
         this.weights = weights;
@@ -134,22 +135,9 @@ class InformationLossRCE extends InformationLoss<double[]> {
         this.perc = mean + getStandardDeviation(mean, value);
     }
 
-    /**
-     * Sorts the array in descending order
-     * @param value
-     */
-    private void sortDescending(double[] value) {
-        Arrays.sort(value);
-        for (int i = 0; i < value.length / 2; i++) {
-            int other = value.length - (i + 1);
-            double temp = value[i];
-            value[i] = value[other];
-            value[other] = temp;
-        }
-    }
-
     @Override
     public InformationLoss<double[]> clone() {
+        // TODO: Clone correctly with lower bound and without
         return new InformationLossRCE(value, ints, string, perc, weights);
     }
 
@@ -229,7 +217,6 @@ class InformationLossRCE extends InformationLoss<double[]> {
     public String toString() {
         return string;
     }
-    
 
     /**
      * Converter method
@@ -245,6 +232,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
         }
     }
     
+
     /**
      * Returns the arithmetic mean of the given values
      * @param values
@@ -259,7 +247,7 @@ class InformationLossRCE extends InformationLoss<double[]> {
         mean /= (double)values.length;
         return mean;
     }
-
+    
     /**
      * Returns the standard deviation of the given values
      * @param values
@@ -272,5 +260,19 @@ class InformationLossRCE extends InformationLoss<double[]> {
         }
         
         return Math.sqrt(dev / (double)values.length);
+    }
+
+    /**
+     * Sorts the array in descending order
+     * @param value
+     */
+    private void sortDescending(double[] value) {
+        Arrays.sort(value);
+        for (int i = 0; i < value.length / 2; i++) {
+            int other = value.length - (i + 1);
+            double temp = value[i];
+            value[i] = value[other];
+            value[other] = temp;
+        }
     }
 }

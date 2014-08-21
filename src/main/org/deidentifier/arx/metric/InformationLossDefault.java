@@ -32,9 +32,33 @@ class InformationLossDefault extends InformationLoss<Double> {
 
     /** Current value */
     private double                      value;
-
-    InformationLossDefault(final double value) {
+    
+    /**
+     * Creates a new instance
+     * @param value
+     */
+    InformationLossDefault(final double value){
+        super(null);
         this.value = value;
+    }
+    
+    /**
+     * Creates a new instance
+     * @param value
+     * @param lowerBound
+     */
+    InformationLossDefault(final double value, final double lowerBound) {
+        super(new InformationLossDefault(lowerBound));
+        this.value = value;
+    }
+
+    @Override
+    public InformationLoss<Double> clone() {
+        if (this.getLowerBound() != null) {
+            return new InformationLossDefault(value, this.getLowerBound().getValue());
+        } else {
+            return new InformationLossDefault(value);
+        }
     }
 
     @Override
@@ -117,10 +141,5 @@ class InformationLossDefault extends InformationLoss<Double> {
         } else {
             return (InformationLossDefault)other;
         }
-    }
-
-    @Override
-    public InformationLoss<Double> clone() {
-        return new InformationLossDefault(value);
     }
 }

@@ -19,7 +19,6 @@
 package org.deidentifier.arx.metric;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -150,9 +149,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     /** Is the metric monotonic? */
     private boolean           monotonic        = false;
 
-    /** A cache */
-    private transient Map<Node, T> cache            = null;
-    
     /**
      * Create a new metric
      * 
@@ -175,13 +171,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public final T evaluate(final Node node, final IHashGroupify groupify) {
         return this.evaluateInternal(node, groupify);
-    }
-
-    /**
-     * This method is called when the metric may clear its cache.
-     */
-    public void freeCache() {
-        if (cache != null) cache.clear();
     }
 
     /**
@@ -273,16 +262,5 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param hierarchies
      */
     protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
-    
-    /**
-     * Returns a cache that may be used for arbitrary things
-     * @param node
-     * @return
-     */
-    protected Map<Node, T> getCache() {
-        if (cache == null) {
-            cache = new HashMap<Node, T>();
-        }
-        return this.cache;
-    }
+
 }
