@@ -18,8 +18,15 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Set;
+
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
@@ -34,6 +41,9 @@ public class MetricAECS extends MetricDefault {
 
     private static final long serialVersionUID = -532478849890959974L;
 
+    /** Number of tuples*/
+    private int rowCount = 0;
+    
     protected MetricAECS() {
         super(false, false);
     }
@@ -42,12 +52,24 @@ public class MetricAECS extends MetricDefault {
     public String toString() {
         return "Average Equivalence Class Size";
     }
-
+    
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        if (rowCount == 0) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossDefault(rowCount);
+        }
+    }
+    
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        return new InformationLossDefault(1);
+    }
+    
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
 
-        // Is the transformation anonymous
-        boolean anonymous = g.isAnonymous();
         // The total number of groups with suppression
         int groups = 0;
         // The total number of tuples
@@ -59,8 +81,8 @@ public class MetricAECS extends MetricDefault {
         while (m != null) {
             if (m.count > 0) {
                 tuples += m.count;
-                groups += !anonymous || m.isNotOutlier ? 1 : 0;
-                suppressed |= !m.isNotOutlier && anonymous;
+                groups += m.isNotOutlier ? 1 : 0;
+                suppressed |= !m.isNotOutlier;
             }
             m = m.nextOrdered;
         }
@@ -71,5 +93,20 @@ public class MetricAECS extends MetricDefault {
         // Compute AECS
         return new InformationLossDefault((double)tuples / (double)groups,
                                           (double)tuples / (double)g.size());
+    }
+
+    @Override
+    protected void
+            initializeInternal(DataDefinition definition, Data input, GeneralizationHierarchy[] hierarchies, ARXConfiguration config) {
+        super.initializeInternal(definition, input, hierarchies, config);
+        if (config.containsCriterion(DPresence.class)) {
+            Set<DPresence> crits = config.getCriteria(DPresence.class);
+            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
+            for (DPresence dPresence : crits) {
+                rowCount = dPresence.getSubset().getArray().length;
+            }
+        } else {
+            rowCount = input.getDataLength();
+        }
     }
 }

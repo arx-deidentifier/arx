@@ -47,7 +47,7 @@ public interface IHashGroupify {
      * Computes the anonymity properties and suppressed tuples etc. Must be called
      * when all tuples have been passed to the operator.
      */
-    public abstract void analyze();
+    public abstract void analyze(boolean force);
 
     /**
      * Is the current transformation k-anonymous. Always returns true, if no k-anonymity (sub-)criterion was specified

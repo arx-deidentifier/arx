@@ -32,6 +32,9 @@ public class MetricHeight extends MetricDefault {
     /** SVUID */
     private static final long serialVersionUID = 5911337622032778562L;
 
+    /**
+     * Creates a new instance
+     */
     protected MetricHeight() {
         super(true, true);
     }

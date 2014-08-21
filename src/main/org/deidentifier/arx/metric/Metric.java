@@ -130,6 +130,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Creates a non-monotonic precision metric. 
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @return
+     */
+    public static Metric<InformationLossDefault> createNMPrecisionMetric() {
+        return new MetricNMPrecision();
+    }
+    /**
      * Creates a precision metric with conservative estimation 
      * This metric will respect attribute weights defined in the configuration.
      * 
@@ -272,5 +281,4 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param hierarchies
      */
     protected abstract void initializeInternal(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config);
-
 }

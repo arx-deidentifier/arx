@@ -206,7 +206,6 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
                                                   IHashGroupify g) {
         
         // Prepare
-        boolean anonymous = g.isAnonymous();
         int[] transformation = node.getTransformation();
         int dimensions = transformation.length;
         double[] scores = new double[dimensions];
@@ -216,10 +215,8 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         while (m != null) {
             if (m.count>0) {
                 
-                // Only respect outliers in case of anonymous nodes
-                if (m.isNotOutlier || !anonymous) {
+                if (m.isNotOutlier) {
                     for (int dimension=0; dimension<dimensions; dimension++){
-                        
                         int value = m.key[dimension];
                         double share = (double)m.count * frequencies[dimension][transformation[dimension]][value];
                         scores[dimension] += share * gWeight;

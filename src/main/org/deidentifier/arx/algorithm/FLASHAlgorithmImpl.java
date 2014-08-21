@@ -86,8 +86,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         
         // Check bottom for speed and remember the result to prevent repeated checks
         Node bottom = lattice.getBottom();
-        INodeChecker.Result result = checker.check(bottom, true);
-        lattice.setInformationLoss(bottom, result.informationLoss);
+        INodeChecker.Result result = checker.check(bottom);
         lattice.setProperty(bottom, Node.PROPERTY_FORCE_SNAPSHOT);
         bottom.setData(result);
         

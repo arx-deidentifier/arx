@@ -38,8 +38,12 @@ import org.deidentifier.arx.framework.lattice.Node;
 public class MetricDM extends MetricDefault {
     /** SVUID*/
     private static final long serialVersionUID = 4886262855672670521L;
-    private int               rowCount;
+    /** Number of tuples*/
+    private int               rowCount = 0;
 
+    /**
+     * Creates a new instance
+     */
     protected MetricDM() {
         super(false, false);
     }
@@ -48,17 +52,24 @@ public class MetricDM extends MetricDefault {
     public String toString() {
         return "Non-Monotonic Discernability";
     }
-
+    
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (rowCount == 0) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossDefault(rowCount);
+        }
+    }
+    
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
         
-        final boolean anonymous = g.isAnonymous();
         double value = 0;
         double lowerBound = 0; // DM*
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            // Only respect outliers in case of anonymous nodes
-            if (!anonymous || m.isNotOutlier) {
+            if (m.isNotOutlier) {
                 double current = ((double) m.count * (double) m.count);
                 value += current;
                 lowerBound += current;
@@ -76,7 +87,7 @@ public class MetricDM extends MetricDefault {
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
-        
+        super.initializeInternal(definition, input, hierarchies, config);
         if (config.containsCriterion(DPresence.class)) {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
             if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }

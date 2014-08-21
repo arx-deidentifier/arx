@@ -18,8 +18,15 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Set;
+
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
@@ -33,11 +40,25 @@ public class MetricDMStar extends MetricDefault {
 
     /** SVUID */
     private static final long serialVersionUID = -3324788439890959974L;
+    /** Number of tuples*/
+    private int               rowCount = 0;
 
+    /**
+     * Creates a new instance
+     */
     protected MetricDMStar() {
         super(true, false);
     }
 
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (rowCount == 0) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossDefault(rowCount);
+        }
+    }
+    
     @Override
     public String toString() {
         return "Monotonic Discernability";
@@ -52,5 +73,22 @@ public class MetricDMStar extends MetricDefault {
             m = m.nextOrdered;
         }
         return new InformationLossDefault(value, value);
+    }
+
+    @Override
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, hierarchies, config);
+        if (config.containsCriterion(DPresence.class)) {
+            Set<DPresence> crits = config.getCriteria(DPresence.class);
+            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
+            for (DPresence dPresence : crits) {
+                rowCount = dPresence.getSubset().getArray().length;
+            }
+        } else {
+            rowCount = input.getDataLength();
+        }
     }
 }

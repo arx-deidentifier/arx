@@ -69,9 +69,6 @@ public class MetricNMEntropy extends MetricEntropy {
         // Obtain "standard" value
         final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
         
-        // Ignore outliers if node is not anonymous
-        if (!g.isAnonymous()) return originalInfoLossDefault;
-        
         // Compute loss induced by suppression
         double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;

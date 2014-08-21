@@ -638,10 +638,8 @@ public class ARXLattice implements Serializable {
      */
     private void estimateMonotonicMaxLoss() {
 
-        // Estimate with max if not known
+        // Estimate if not known
         if (top.getMaximumInformationLoss() == null) {
-            // TODO: Check top? First, make sure that this is
-            // not already done somewhere, or only in the GUI
             top.access().setMaximumInformationLoss(metric.createMaxInformationLoss());
         }
 
@@ -671,11 +669,8 @@ public class ARXLattice implements Serializable {
      */
     private void estimateMonotonicMinLoss() {
 
-        // Estimate with zero if not known
-        // TODO: Not correct for DM*
+        // Estimate if not known
         if (bottom.getMinimumInformationLoss() == null) {
-            // TODO: Check bottom? First, make sure that this is
-            // not already done somewhere, or only in the GUI
             bottom.access().setMinimumInformationLoss(metric.createMinInformationLoss());
         }
 

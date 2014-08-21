@@ -157,7 +157,7 @@ public class NodeChecker implements INodeChecker {
         }
         
         // We are done with transforming and adding
-        currentGroupify.analyze();
+        currentGroupify.analyze(forceMeasureInfoLoss);
 
         // Compute information loss
         InformationLoss<?> infoLoss = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
@@ -218,7 +218,7 @@ public class NodeChecker implements INodeChecker {
 
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
-        currentGroupify.analyze();
+        currentGroupify.analyze(true);
 
         // Determine information loss
         // TODO: This may already be known
@@ -227,8 +227,8 @@ public class NodeChecker implements INodeChecker {
             loss = metric.evaluate(transformation, currentGroupify);
         }
         
-        // Find outliers only if node is anonymous
-        if (currentGroupify.isAnonymous() && config.getAbsoluteMaxOutliers() != 0) {
+        // Find outliers
+        if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isAnonymous()) {
             currentGroupify.markOutliers(transformer.getBuffer());
         }
         

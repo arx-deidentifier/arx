@@ -249,70 +249,6 @@ public class HashGroupify implements IHashGroupify {
     }
     
     @Override
-    public void analyze(){
-        
-        // We have only checked k-anonymity so far
-        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
-        
-        // Abort early, if only k-anonymity was specified
-        if (criteria.length == 0) { 
-            anonymous = kAnonymous;
-            return;
-        }
-        
-        // Abort early, if k-anonymity sub-criterion is not fulfilled
-        // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
-        //          for non-anonymous transformations
-        if (k != Integer.MAX_VALUE && !kAnonymous) {
-            anonymous = false;
-            return; 
-        }
-        
-        // Iterate over all classes
-        currentOutliers = 0;
-        HashGroupifyEntry entry = firstEntry;
-        while (entry != null) {
-            
-            // Check for anonymity
-            int anonymous = isAnonymous(entry);
-            
-            // Determine outliers
-            if (anonymous != -1) {
-                
-                // Note: If d-presence exists, it is stored at criteria[0] by convention.
-                // If it fails, isAnonymous(entry) thus returns 1.
-                // Tuples from the public table that have no matching candidates in the private table
-                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
-                // transformation must be considered to not fulfill the privacy criteria.
-                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
-                //          for non-anonymous transformations
-                if (dpresence && entry.count == 0 && anonymous == 1) {
-                    this.anonymous = false;
-                    return;
-                }
-                
-                currentOutliers += entry.count;
-                
-                // Break as soon as too many classes are not anonymous
-                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
-                //          for non-anonymous transformations
-                if (currentOutliers > absoluteMaxOutliers) { 
-                    this.anonymous = false;
-                    return;
-                }
-            }
-            
-            // We only suppress classes that are contained in the research subset
-            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
-            
-            // Next class
-            entry = entry.nextOrdered;
-        }
-        
-        this.anonymous = true;
-    }
-
-    @Override
     public void addAll(int[] key, int representant, int count, int[] sensitive, int pcount) {
 
         // Add
@@ -389,6 +325,12 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
+    @Override
+    public void analyze(boolean force){
+        if (force) analyzeAll();
+        else analyzeWithEarlyAbort();
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -434,7 +376,7 @@ public class HashGroupify implements IHashGroupify {
         while (entry != null) {
             if (entry.count > 0){
                 numberOfEquivalenceClasses++;
-                if (this.anonymous && !entry.isNotOutlier) { 
+                if (!entry.isNotOutlier) { 
                      numberOfOutlyingEquivalenceClasses++;
                      numberOfOutlyingTuples += entry.count;
                 } else {
@@ -487,37 +429,37 @@ public class HashGroupify implements IHashGroupify {
                                     numberOfOutlyingEquivalenceClasses,
                                     numberOfOutlyingTuples);
     }
-    
+
     @Override
     public boolean isAnonymous() {
         return anonymous;
     }
-    
+
     @Override
     public boolean isKAnonymous() {
         return kAnonymous;
     }
-
+    
     @Override
     public void markOutliers(final int[][] data) {
         
-        if (!anonymous) return;
-        
         for (int row = 0; row < data.length; row++) {
-            final int[] key = data[row];
-            final int hash = HashTableUtil.hashcode(key);
-            final int index = hash & (buckets.length - 1);
-            HashGroupifyEntry m = buckets[index];
-            while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
-                m = m.next;
-            }
-            if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before marking outliers!"); }
-            if (!m.isNotOutlier) {
-                key[0] |= Data.OUTLIER_MASK;
+            if (subset == null || subset.contains(row)){
+                final int[] key = data[row];
+                final int hash = HashTableUtil.hashcode(key);
+                final int index = hash & (buckets.length - 1);
+                HashGroupifyEntry m = buckets[index];
+                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
+                    m = m.next;
+                }
+                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before marking outliers!"); }
+                if (!m.isNotOutlier) {
+                    key[0] |= Data.OUTLIER_MASK;
+                }
             }
         }
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -581,6 +523,110 @@ public class HashGroupify implements IHashGroupify {
         }
 
         return entry;
+    }
+
+    /**
+     * Analyze
+     */
+    private void analyzeAll(){
+        
+        // Iterate over all classes
+        boolean dpresent = true;
+        currentOutliers = 0;
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            int anonymous = isAnonymous(entry);
+            
+            // Determine outliers
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                if (dpresence && entry.count == 0 && anonymous == 1) {
+                    dpresent = false;
+                }
+                
+                currentOutliers += entry.count;
+            }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
+            // Next class
+            entry = entry.nextOrdered;
+        }
+        
+        this.anonymous = (currentOutliers <= absoluteMaxOutliers) && dpresent;
+    }
+
+    /**
+     * Analyze
+     */
+    private void analyzeWithEarlyAbort(){
+        
+        // We have only checked k-anonymity so far
+        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
+        
+        // Abort early, if only k-anonymity was specified
+        if (criteria.length == 0) { 
+            anonymous = kAnonymous;
+            return;
+        }
+        
+        // Abort early, if k-anonymity sub-criterion is not fulfilled
+        // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+        //          for non-anonymous transformations
+        if (k != Integer.MAX_VALUE && !kAnonymous) {
+            anonymous = false;
+            return; 
+        }
+        
+        // Iterate over all classes
+        currentOutliers = 0;
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            
+            // Check for anonymity
+            int anonymous = isAnonymous(entry);
+            
+            // Determine outliers
+            if (anonymous != -1) {
+                
+                // Note: If d-presence exists, it is stored at criteria[0] by convention.
+                // If it fails, isAnonymous(entry) thus returns 1.
+                // Tuples from the public table that have no matching candidates in the private table
+                // and that do not fulfill d-presence cannot be suppressed. In this case, the whole
+                // transformation must be considered to not fulfill the privacy criteria.
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                //          for non-anonymous transformations
+                if (dpresence && entry.count == 0 && anonymous == 1) {
+                    this.anonymous = false;
+                    return;
+                }
+                currentOutliers += entry.count;
+                
+                // Break as soon as too many classes are not anonymous
+                // CAUTION: This leaves GroupifyEntry.isNotOutlier and currentOutliers in an inconsistent state
+                //          for non-anonymous transformations
+                if (currentOutliers > absoluteMaxOutliers) { 
+                    this.anonymous = false;
+                    return;
+                }
+            }
+            
+            // We only suppress classes that are contained in the research subset
+            entry.isNotOutlier = entry.count != 0 ? (anonymous == -1) : true;
+            
+            // Next class
+            entry = entry.nextOrdered;
+        }
+        
+        this.anonymous = true;
     }
 
     /**

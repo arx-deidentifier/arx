@@ -20,65 +20,75 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * This class provides an implementation of a monotonic weighted precision metric.
+ * This class provides an implementation of a weighted precision metric as 
+ * proposed in: <br>
+ * Sweeney, L. (2002). Achieving k-anonymity privacy protection using generalization and suppression.<br> 
+ * International Journal of Uncertainty Fuzziness and, 10(5), 2002.<br>
+ * <br>
  * This metric will respect attribute weights defined in the configuration.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
+public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
 
     /** SVUID */
-    private static final long serialVersionUID = -7612335677779934529L;
-
+    private static final long serialVersionUID = -218192738838711533L;
     /** Height */
     private int[]             height;
+    /** Number of cells*/
+    private double            cells;
 
     /**
      * Creates a new instance
      */
-    protected MetricPrecision() {
-        super(true, true);
+    protected MetricNMPrecision() {
+        super(false, false);
     }
 
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
-        return new InformationLossDefault(1d);
+        return new InformationLossDefault(1);
     }
 
     @Override
     public InformationLoss<?> createMinInformationLoss() {
-        return new InformationLossDefault(0d);
+        return new InformationLossDefault(0);
     }
 
     @Override
     public String toString() {
-        return "Monotonic Precision";
+        return "Non-Monotonic Precision";
     }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        return this.evaluateInternal(node, null);
-    }
-
+    
     @Override
     protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
-
-        double result = 0;
-        final int[] transformation = node.getTransformation();
-        for (int i = 0; i < transformation.length; i++) {
-            double weight = weights != null ? weights[i] : 1d;
-            double level = (double) transformation[i];
-            result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
+        
+        double total = 0d;
+        double lowerBound = 0d;
+        
+        HashGroupifyEntry m = g.getFirstEntry();
+        while (m != null) {
+            if (m.count > 0) {
+                for (int i = 0; i < height.length; i++) {
+                    total += m.isNotOutlier ? (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]) : 1d;
+                    lowerBound += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
+                }
+            }
+            m = m.nextOrdered;
         }
-        result /= (double) transformation.length;
-        return new InformationLossDefault(result, result);
+        
+        total /= cells;
+        
+        // Return
+        return new InformationLossDefault(total, lowerBound);
     }
 
     @Override
@@ -93,5 +103,6 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         for (int j = 0; j < height.length; j++) {
             height[j] = hierarchies[j].getArray()[0].length - 1;
         }
+        this.cells = (double)input.getDataLength() * (double)input.getHeader().length;
     }
 }

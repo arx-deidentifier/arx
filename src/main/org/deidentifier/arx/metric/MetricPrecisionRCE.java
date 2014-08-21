@@ -28,7 +28,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * This class provides an implementation of a weighted variant of the precision metric. Individual
+ * This class provides an implementation of a weighted variant of the monotonic precision metric. Individual
  * losses for each column will be compared with recursive conservative estimation.
  * This metric will respect attribute weights defined in the configuration.
  * 
@@ -76,7 +76,7 @@ public class MetricPrecisionRCE extends MetricWeighted<InformationLossRCE> {
 
     @Override
     public String toString() {
-        return "Precision with conservative estimation";
+        return "Monotonic Precision with Conservative Estimation";
     }
 
     @Override
