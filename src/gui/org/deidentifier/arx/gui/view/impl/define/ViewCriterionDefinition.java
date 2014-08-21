@@ -26,10 +26,11 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.MetricNDS;
+import org.deidentifier.arx.metric.MetricWeighted;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -375,20 +376,10 @@ public class ViewCriterionDefinition implements IView {
     }
 
     /**
-     * Shows the NDS settings
+     * Shows the settings for the coding model
      */
-    private void showNDSSettings(){
-        
-        if (this.viewAttributeWeights != null) return;
+    private void showSettingsCodingModel(){
         if (this.viewCodingModel != null) return;
-
-        // Create weights tab
-        Composite composite1 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
-        composite1.setLayout(new FillLayout());
-        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
-        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-
-        // Create coding model tab
         Composite composite2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
         composite2.setLayout(new FillLayout());
         this.viewCodingModel = new ViewCodingModel(composite2, controller);
@@ -396,15 +387,9 @@ public class ViewCriterionDefinition implements IView {
     }
     
     /**
-     * Hides the NDS settings
+     * Hides the settings for the coding model
      */
-    private void hideNDSSettings(){
-
-        if (this.viewAttributeWeights != null) {
-            this.viewAttributeWeights.dispose();
-            this.viewAttributeWeights = null;
-            folder2.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
-        }
+    private void hideSettingsCodingModel(){
         if (this.viewCodingModel != null) {
             this.viewCodingModel.dispose();
             this.viewCodingModel = null;
@@ -412,6 +397,28 @@ public class ViewCriterionDefinition implements IView {
         }
     }
 
+    /**
+     * Shows the settings for the attribute weights
+     */
+    private void showSettingsAttributeWeights(){
+        if (this.viewAttributeWeights != null) return;
+        Composite composite1 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
+        composite1.setLayout(new FillLayout());
+        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
+        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
+    }
+    
+    /**
+     * Hides the settings for the attribute weights
+     */
+    private void hideSettingsAttributeWeights(){
+
+        if (this.viewAttributeWeights != null) {
+            this.viewAttributeWeights.dispose();
+            this.viewAttributeWeights = null;
+            folder2.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
+        }
+    }
     /**
      * Converts the double value to a slider selection
      */
@@ -444,9 +451,19 @@ public class ViewCriterionDefinition implements IView {
             controller.update(new ModelEvent(this, ModelPart.METRIC, metric));
             
             if (metric instanceof MetricNDS) {
-                this.showNDSSettings();
+                this.showSettingsCodingModel();
             } else {
-                this.hideNDSSettings();
+                this.hideSettingsCodingModel();
+            }
+
+            if ((metric instanceof MetricWeighted) && 
+                 model != null &&
+                 model.getInputDefinition() != null &&
+                 model.getInputDefinition().getQuasiIdentifyingAttributes() != null &&
+                 !model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty()){
+                this.showSettingsAttributeWeights();
+            } else {
+                this.hideSettingsAttributeWeights();
             }
         }
     }
@@ -556,10 +573,16 @@ public class ViewCriterionDefinition implements IView {
         if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
             model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
             model.getInputConfig().getMetric() == null ||
-           !(model.getInputConfig().getMetric() instanceof MetricNDS)) {
-            hideNDSSettings();
+           !(model.getInputConfig().getMetric() instanceof MetricWeighted)) {
+            hideSettingsAttributeWeights();
+            hideSettingsCodingModel();
         } else {
-            showNDSSettings();
+            showSettingsAttributeWeights();
+            if (model.getInputConfig().getMetric() instanceof MetricNDS) {
+                showSettingsCodingModel();
+            } else {
+                hideSettingsCodingModel();
+            }
         }
         
         root.setRedraw(true);
