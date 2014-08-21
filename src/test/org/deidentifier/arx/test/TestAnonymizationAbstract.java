@@ -281,13 +281,17 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
-            assertTrue(testCase.dataset + "-should: " + Arrays.toString(testCase.optimalTransformation) + " is: " +
-                       Arrays.toString(result.getGlobalOptimum().getTransformation()),
-                       Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation));
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
-                         result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
-                         testCase.optimalInformationLoss,
-                         result.getGlobalOptimum().getMinimumInformationLoss().toString());
+                    result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
+                    testCase.optimalInformationLoss,
+                    result.getGlobalOptimum().getMinimumInformationLoss().toString());
+            
+            if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)){
+                System.err.println("Note: Information loss equals, but the optimum differs:");
+                System.err.println("Should: " + Arrays.toString(testCase.optimalTransformation) + " is: " +
+                                                Arrays.toString(result.getGlobalOptimum().getTransformation()));
+                System.err.println("Test case: "+testCase.toString());
+            }
         }
 
         if (testCase.statistics != null) {
