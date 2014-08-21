@@ -150,6 +150,36 @@ public class MainWindow implements IView {
         controller.reset();
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    /**
+     * Returns the controller
+     * @return
+     */
+    public Controller getController() {
+        return this.controller;
+    }
+
+    /**
+     * Returns the shell
+     * 
+     * @return
+     */
+    public Shell getShell() {
+        return shell;
+    }
+
+    /**
+     * Is this shell disposed
+     * @return
+     */
+    public boolean isDisposed() {
+        return this.shell.isDisposed();
+    }
+
     /**
      * Executes the given runnable on show
      * @param runnable
@@ -164,20 +194,6 @@ public class MainWindow implements IView {
                 display.timerExec(200, runnable);
             }
         });
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    /**
-     * Returns the shell
-     * 
-     * @return
-     */
-    public Shell getShell() {
-        return shell;
     }
 
     /**
@@ -196,15 +212,6 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a debug dialog
-     */
-    public void showDebugDialog() {
-        final DialogDebug dialog = new DialogDebug(shell, controller);
-        dialog.create();
-        dialog.open();
-    }
-
-    /**
      * Shows an about dialog
      */
     public void showAboutDialog() {
@@ -214,51 +221,59 @@ public class MainWindow implements IView {
     }
     
     /**
-     * Shows an error dialog
-     * 
-     * @param header
-     * @param message
-     * @param t
+     * Shows a debug dialog
      */
-    public void showErrorDialog(final String message, final Throwable t) {
-        showErrorDialog(this.shell, message, t);
+    public void showDebugDialog() {
+        final DialogDebug dialog = new DialogDebug(shell, controller);
+        dialog.create();
+        dialog.open();
     }
     
     /**
      * Shows an error dialog
      * 
-     * @param header
+     * @param shell
      * @param message
-     * @param t
+     * @param text
      */
-    public void showErrorDialog(final Shell shell, final String message, final Throwable t) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        if (t != null) t.printStackTrace(pw);
-        final String trace = sw.toString();
-        final DialogError dialog = new DialogError(shell, controller, message, trace);
+    public void showErrorDialog(final Shell shell, final String message, final String text) {
+        DialogError dialog = new DialogError(shell, controller, message, text);
         dialog.create();
         dialog.open();
     }
 
     /**
-     * Shows an input dialog for ordering data items
+     * Shows an error dialog
      * 
-     * @param header
-     * @param text
-     * @param type
-     * @param values
-     * @return
+     * @param shell
+     * @param message
+     * @param throwable
      */
-    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final String[] values) {
+    public void showErrorDialog(final Shell shell, final String message, final Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        if (throwable != null) throwable.printStackTrace(pw);
+        final String trace = sw.toString();
+        showErrorDialog(shell, message, trace);
+    }
+    /**
+     * Shows an error dialog
+     * 
+     * @param message
+     * @param text
+     */
+    public void showErrorDialog(final String message, final String text) {
+        showErrorDialog(this.shell, message, text);
+    }
 
-        // Open dialog
-        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
-        if (dlg.open() == Window.OK) {
-            return dlg.getResult();
-        } else {
-            return null;
-        }
+    /**
+     * Shows an error dialog
+     * 
+     * @param message
+     * @param throwable
+     */
+    public void showErrorDialog(final String message, final Throwable throwable) {
+        showErrorDialog(this.shell, message, throwable);
     }
 
     /**
@@ -342,9 +357,18 @@ public class MainWindow implements IView {
      * @param id
      */
     public void showHelpDialog(String id) {
-        final DialogHelp dialog = new DialogHelp(shell, controller, id);
-        dialog.create();
-        dialog.open();
+    	try {
+    		final DialogHelp dialog = new DialogHelp(shell, controller, id);
+            dialog.create();
+            dialog.open();	
+    	} catch (Exception e) {
+    		if (e.getMessage().contains("Mozilla")) {
+    			this.showErrorDialog("Your installation of Mozilla Firefox cannot be launched", 
+    					"See http://www.eclipse.org/swt/faq.php#browserlinuxrcp for information on how to fix this issue.");
+    		} else {
+    		    this.showErrorDialog("Your browser cannot be launched", e);
+    		}
+    	}
     }
 
     /**
@@ -386,6 +410,26 @@ public class MainWindow implements IView {
         dialog.setFilterExtensions(new String[] { filter });
         dialog.setFilterIndex(0);
         return dialog.open();
+    }
+
+    /**
+     * Shows an input dialog for ordering data items
+     * 
+     * @param header
+     * @param text
+     * @param type
+     * @param values
+     * @return
+     */
+    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final String[] values) {
+
+        // Open dialog
+        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
+        if (dlg.open() == Window.OK) {
+            return dlg.getResult();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -473,21 +517,5 @@ public class MainWindow implements IView {
             root.setEnabled(true);
             menu.update(event);
         }
-    }
-
-    /**
-     * Returns the controller
-     * @return
-     */
-    public Controller getController() {
-        return this.controller;
-    }
-
-    /**
-     * Is this shell disposed
-     * @return
-     */
-    public boolean isDisposed() {
-        return this.shell.isDisposed();
     }
 }
