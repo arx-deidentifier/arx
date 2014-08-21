@@ -83,6 +83,15 @@ class InformationLossRCE extends InformationLoss<double[]> {
     InformationLossRCE(final double[] value) {
         this (value, null);
     } 
+
+    /**
+     * Creates a new instance
+     * @param value
+     */
+    InformationLossRCE(final double[] value, final double[] lowerBound, final double[] weights) {
+        this(value, weights); // TODO
+    }
+    
     /**
      * Creates a new instance
      * @param value

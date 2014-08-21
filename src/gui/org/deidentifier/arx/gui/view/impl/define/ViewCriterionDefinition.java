@@ -57,6 +57,7 @@ public class ViewCriterionDefinition implements IView {
     private static final Metric<?> ITEMS_METRIC[]  = { 
             Metric.createHeightMetric(),
             Metric.createPrecisionMetric(),
+            Metric.createPrecisionRCEMetric(),
             Metric.createDMStarMetric(),
             Metric.createEntropyMetric(),
             Metric.createDMMetric(),

@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Arrays;
+
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
@@ -26,59 +28,71 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
- * This class provides an implementation of a weighted precision metric.
+ * This class provides an implementation of a weighted variant of the precision metric. Individual
+ * losses for each column will be compared with recursive conservative estimation.
  * This metric will respect attribute weights defined in the configuration.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
+public class MetricPrecisionRCE extends MetricWeighted<InformationLossRCE> {
 
-    /** SVUID */
-    private static final long serialVersionUID = -7612335677779934529L;
+    /** SVUID*/
+    private static final long serialVersionUID = 8669348894042436213L;
 
     /** Height */
     private int[]             height;
 
+    /** Min */
+    private double[]          min;
+
+    /** Max */
+    private double[]          max;
+
     /**
      * Creates a new instance
      */
-    protected MetricPrecision() {
+    protected MetricPrecisionRCE() {
         super(true, true);
     }
 
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
-        return new InformationLossDefault(Double.MAX_VALUE);
+        if (max == null) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossRCE(max);
+        }
     }
-
+    
     @Override
     public InformationLoss<?> createMinInformationLoss() {
-        return new InformationLossDefault(Double.MIN_VALUE);
+        if (min == null) {
+            throw new IllegalStateException("Metric must be intialized first");
+        } else {
+            return new InformationLossRCE(min);
+        }
     }
 
     @Override
     public String toString() {
-        return "Precision";
+        return "Precision with conservative estimation";
     }
 
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
+    public InformationLossRCE getLowerBound(Node node) {
         return this.evaluateInternal(node, null);
     }
-
+    
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossRCE evaluateInternal(final Node node, final IHashGroupify g) {
 
-        double result = 0;
         final int[] transformation = node.getTransformation();
+        final double[] result = new double[transformation.length];
         for (int i = 0; i < transformation.length; i++) {
-            double weight = weights != null ? weights[i] : 1d;
-            double level = (double) transformation[i];
-            result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
+            result[i] = height[i] != 0 ? ((double) transformation[i] / (double) height[i]) : 0;
         }
-        result /= (double) transformation.length;
-        return new InformationLossDefault(result, result);
+        return new InformationLossRCE(result, result, weights);
     }
 
     @Override
@@ -93,5 +107,11 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         for (int j = 0; j < height.length; j++) {
             height[j] = hierarchies[j].getArray()[0].length - 1;
         }
+
+        // Min and max
+        this.min = new double[this.height.length];
+        Arrays.fill(min, 0d);
+        this.max = new double[this.height.length];
+        Arrays.fill(max, 1d);
     }
 }

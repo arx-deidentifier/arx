@@ -130,6 +130,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Creates a precision metric with conservative estimation 
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @return
+     */
+    public static Metric<InformationLossRCE> createPrecisionRCEMetric() {
+        return new MetricPrecisionRCE();
+    }
+    
+    /**
      * Creates a static metric. It requires a map, which maps the generalization levels
      * (starting at index of the given list) onto an information loss defined as a
      * decimal number.
