@@ -45,6 +45,9 @@ public class LayerViewport extends ViewportLayer{
     @Override
     public boolean doCommand(ILayerCommand command) {
         
+        context.getTable().getHorizontalBar().getParent().setRedraw(false);
+        context.getTable().getVerticalBar().getParent().setRedraw(false);
+        
         boolean result = super.doCommand(command);
         
         if (command instanceof ClientAreaResizeCommand) {
@@ -54,6 +57,9 @@ public class LayerViewport extends ViewportLayer{
         } else if (command instanceof StructuralRefreshCommand) {
             checkScrollBars();
         }
+        
+        context.getTable().getHorizontalBar().getParent().setRedraw(true);
+        context.getTable().getVerticalBar().getParent().setRedraw(true);
         
         return result;
     }
@@ -92,11 +98,15 @@ public class LayerViewport extends ViewportLayer{
         }
         
         if (context.isColumnExpanded()) {
-            context.getTable().getHorizontalBar().setVisible(false);
+            context.getTable().getHorizontalBar().setVisible(true);
+            context.getTable().getHorizontalBar().setValues(0, 0, 1, 1, 1, 1);
+            context.getTable().getHorizontalBar().setEnabled(false);
         }
 
         if (context.isRowExpanded()) {
-            context.getTable().getVerticalBar().setVisible(false);
+            context.getTable().getVerticalBar().setVisible(true);
+            context.getTable().getVerticalBar().setValues(0, 0, 1, 1, 1, 1);
+            context.getTable().getVerticalBar().setEnabled(false);
         }
         
         for (Listener listener : listeners) {
