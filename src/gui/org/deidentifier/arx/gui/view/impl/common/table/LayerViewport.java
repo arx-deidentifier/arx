@@ -45,8 +45,10 @@ public class LayerViewport extends ViewportLayer{
     @Override
     public boolean doCommand(ILayerCommand command) {
         
-        context.getTable().getHorizontalBar().getParent().setRedraw(false);
-        context.getTable().getVerticalBar().getParent().setRedraw(false);
+        if (context.getTable() != null && !context.getTable().isDisposed()) {
+            context.getTable().getHorizontalBar().getParent().setRedraw(false);
+            context.getTable().getVerticalBar().getParent().setRedraw(false);
+        }
         
         boolean result = super.doCommand(command);
         
@@ -58,8 +60,10 @@ public class LayerViewport extends ViewportLayer{
             checkScrollBars();
         }
         
-        context.getTable().getHorizontalBar().getParent().setRedraw(true);
-        context.getTable().getVerticalBar().getParent().setRedraw(true);
+        if (context.getTable() != null && !context.getTable().isDisposed()) {
+            context.getTable().getHorizontalBar().getParent().setRedraw(true);
+            context.getTable().getVerticalBar().getParent().setRedraw(true);
+        }
         
         return result;
     }
@@ -92,9 +96,12 @@ public class LayerViewport extends ViewportLayer{
             return;
         }
 
-        Listener[] listeners = context.getTable().getListeners(SWT.Resize);
-        for (Listener listener : listeners) {
-            context.getTable().removeListener(SWT.Resize, listener);
+        Listener[] listeners = null;
+        if (context.getTable() != null && !context.getTable().isDisposed()) {
+            listeners = context.getTable().getListeners(SWT.Resize);
+            for (Listener listener : listeners) {
+                context.getTable().removeListener(SWT.Resize, listener);
+            }
         }
         
         if (context.isColumnExpanded()) {
@@ -109,8 +116,10 @@ public class LayerViewport extends ViewportLayer{
             context.getTable().getVerticalBar().setEnabled(false);
         }
         
-        for (Listener listener : listeners) {
-            context.getTable().addListener(SWT.Resize, listener);
+        if (context.getTable() != null && !context.getTable().isDisposed()) {
+            for (Listener listener : listeners) {
+                context.getTable().addListener(SWT.Resize, listener);
+            }
         }
     }
 
