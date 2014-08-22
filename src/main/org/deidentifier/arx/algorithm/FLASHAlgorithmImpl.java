@@ -406,10 +406,17 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
                 return true;
             }
+            
+            // Check whether a lower bound exists
+            InformationLoss<?> lowerBound = node.getLowerBound();
+            if (lowerBound == null) {
+                lowerBound = checker.getMetric().getLowerBound(node);
+                if (lowerBound != null) {
+                    lattice.setLowerBound(node, lowerBound);
+                }
+            }
 
-            // Check whether this node has insufficient utility based on a lower bound
-            InformationLoss<?> lowerBound = checker.getMetric().getLowerBound(node);
-            lattice.setLowerBound(node, lowerBound);
+            // Check whether this node has insufficient utility, if a lower bound exists
             if (lowerBound != null) {
                 if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
                     lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
