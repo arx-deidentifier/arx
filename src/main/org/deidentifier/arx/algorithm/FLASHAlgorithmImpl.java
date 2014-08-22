@@ -20,6 +20,8 @@ package org.deidentifier.arx.algorithm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -41,10 +43,13 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     protected final FLASHConfiguration config;
 
     /** Are the pointers for a node with id 'index' already sorted?. */
-    private final boolean[]          sorted;
+    private final boolean[]            sorted;
 
     /** The strategy. */
-    private final FLASHStrategy      strategy;
+    private final FLASHStrategy        strategy;
+
+    /** List of weak lower bounds */
+    private final LinkedList<Node>     weakLowerBounds = new LinkedList<Node>();
 
     /**
      * Creates a new instance
@@ -55,11 +60,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param firstPhase
      * @param secondPhase
      */
-    public FLASHAlgorithmImpl(Lattice lattice, 
-                              INodeChecker checker, 
+    public FLASHAlgorithmImpl(Lattice lattice,
+                              INodeChecker checker,
                               FLASHStrategy strategy,
                               FLASHConfiguration config) {
-        
+
         super(lattice, checker);
         this.strategy = strategy;
         this.sorted = new boolean[lattice.getSize()];
@@ -68,10 +73,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     @Override
     public void traverse() {
-        
+
         // Determine configuration for the outer loop
         FLASHPhaseConfiguration outerLoopConfiguration;
-        if (config.isBinaryPhaseRequired()){
+        if (config.isBinaryPhaseRequired()) {
             outerLoopConfiguration = config.getBinaryPhaseConfiguration();
         } else {
             outerLoopConfiguration = config.getLinearPhaseConfiguration();
@@ -83,37 +88,41 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Initialize
         PriorityQueue<Node> queue = new PriorityQueue<Node>(lattice.getLevels().length, strategy);
-        
+
         // Check bottom for speed and remember the result to prevent repeated checks
         Node bottom = lattice.getBottom();
         INodeChecker.Result result = checker.check(bottom);
         lattice.setProperty(bottom, Node.PROPERTY_FORCE_SNAPSHOT);
         bottom.setData(result);
-        
+
         // For each node in the lattice
         int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
             for (Node node : this.getUnsetNodesAndSort(i, outerLoopConfiguration.getTriggerSkip())) {
-                
+
                 // Run the correct phase
-                if (config.isBinaryPhaseRequired()){
+                if (config.isBinaryPhaseRequired()) {
                     binarySearch(node, queue);
                 } else {
                     linearSearch(node);
                 }
             }
         }
-        
+
         // Potentially allows to better estimate utility in the lattice
         computeUtilityForMonotonicMetrics(lattice.getBottom());
         computeUtilityForMonotonicMetrics(lattice.getTop());
-        
+
         // Remove the associated result information to leave the lattice in a consistent state
         lattice.getBottom().setData(null);
+
+        // clear lower bounds
+        weakLowerBounds.clear();
     }
-    
+
     /**
      * Implements the FLASH algorithm (without outer loop)
+     * 
      * @param start
      * @param queue
      */
@@ -121,7 +130,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Obtain node action
         NodeAction triggerSkip = config.getBinaryPhaseConfiguration().getTriggerSkip();
-        
+
         // Add to queue
         queue.add(start);
 
@@ -138,7 +147,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
                 // Second phase
                 if (config.isLinearPhaseRequired() && head != null) {
-                    
+
                     // Run linear search on head
                     linearSearch(head);
                 }
@@ -148,6 +157,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     /**
      * Checks and tags the given transformation
+     * 
      * @param node
      */
     private void checkAndTag(Node node, FLASHPhaseConfiguration configuration) {
@@ -157,13 +167,17 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             lattice.setInformationLoss(node, checker.getMetric().evaluate(node, null));
         } else if (configuration.getTriggerCheck().appliesTo(node)) {
             lattice.setChecked(node, checker.check(node));
-        }  
-        
+        }
+
         // Store optimum
         trackOptimum(node);
-        
+
         // Tag
         configuration.getTriggerTag().apply(node);
+
+        // prune according to monotnonic submetric
+        pruneWeakLowerBound(node);
+
     }
 
     /**
@@ -171,13 +185,13 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * 
      * @param path
      *            The path
-     * @param queue 
+     * @param queue
      */
     private Node checkPath(List<Node> path, NodeAction triggerSkip, PriorityQueue<Node> queue) {
 
         // Obtain anonymity property
         int anonymityProperty = config.getBinaryPhaseConfiguration().getAnonymityProperty();
-        
+
         // Init
         int low = 0;
         int high = path.size() - 1;
@@ -245,7 +259,6 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         return path;
     }
 
-
     /**
      * Returns all nodes that do not have the given property and sorts the resulting array
      * according to the strategy
@@ -256,7 +269,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
 
     private Node[] getUnsetNodesAndSort(int level, NodeAction triggerSkip) {
-        
+
         // Create
         List<Node> result = new ArrayList<Node>();
         Node[] nlevel = lattice.getLevels()[level];
@@ -265,7 +278,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 result.add(n);
             }
         }
-        
+
         // Sort
         Node[] resultArray = result.toArray(new Node[result.size()]);
         this.sort(resultArray);
@@ -274,22 +287,23 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     /**
      * Implements a depth-first search with predictive tagging
+     * 
      * @param start
      */
     private void linearSearch(Node start) {
-        
+
         // Obtain node action
         NodeAction triggerSkip = config.getLinearPhaseConfiguration().getTriggerSkip();
 
         // Skip this node
         if (!skip(triggerSkip, start)) {
-            
+
             // Sort successors
             this.sortSuccessors(start);
-            
+
             // Check and tag
             this.checkAndTag(start, config.getLinearPhaseConfiguration());
-            
+
             // DFS
             for (final Node child : start.getSuccessors()) {
                 if (!skip(triggerSkip, child)) {
@@ -297,9 +311,66 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 }
             }
         }
-        
+
         // Mark as successors pruned
         lattice.setProperty(start, Node.PROPERTY_SUCCESSORS_PRUNED);
+    }
+
+    private void pruneWeakLowerBound(Node node) {
+        if (node.getInformationLoss() != null) {
+            InformationLoss<?> newLowerBound = node.getInformationLoss().getLowerBound();
+            if (newLowerBound != null) {
+                Iterator<Node> iterator = weakLowerBounds.iterator();
+                while (iterator.hasNext()) {
+                    Node curNode = iterator.next();
+                    if (getGlobalOptimum().getInformationLoss().compareTo(newLowerBound) <= 0) {
+                        lattice.setPropertyUpwards(curNode, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
+                    }
+                    // clean node from list
+                    if (curNode.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                        iterator.remove();
+                    }
+                }
+                // add current node to list
+                weakLowerBounds.add(node);
+            }
+        }
+    }
+
+    /**
+     * Returns whether a node should be skipped
+     * 
+     * @param trigger
+     * @param node
+     * @return
+     */
+    private boolean skip(NodeAction trigger, Node node) {
+
+        // If the trigger applies, skip
+        if (trigger.appliesTo(node)) {
+            return true;
+        }
+
+        // Check, if we can prune based on a monotonic sub-metric
+        if (!checker.getConfiguration().isPracticalMonotonicity() && getGlobalOptimum() != null) {
+
+            // We skip, if we already know that this node has insufficient utility
+            if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
+                return true;
+            }
+
+            // Check whether this node has insufficient utility based on a lower bound
+            InformationLoss<?> lowerBound = checker.getMetric().getLowerBound(node);
+            if (lowerBound != null) {
+                if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
+                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
+                    return true;
+                }
+            }
+        }
+
+        // We need to process this node
+        return false;
     }
 
     /**
@@ -321,40 +392,5 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             this.sort(node.getSuccessors());
             sorted[node.id] = true;
         }
-    }
-    
-    /**
-     * Returns whether a node should be skipped
-     * @param trigger
-     * @param node
-     * @return
-     */
-    private boolean skip(NodeAction trigger, Node node){
-        
-        // If the trigger applies, skip
-        if (trigger.appliesTo(node)) {
-            return true;
-        }
-        
-        // Check, if we can prune based on a monotonic sub-metric
-        if (!checker.getConfiguration().isPracticalMonotonicity() && getGlobalOptimum() != null) {
-            
-            // We skip, if we already know that this node has insufficient utility
-            if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
-                return true;
-            }
-            
-            // Check whether this node has insufficient utility based on a lower bound
-            InformationLoss<?> lowerBound = checker.getMetric().getLowerBound(node);
-            if (lowerBound != null) {
-                if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
-                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
-                    return true;
-                }
-            }
-        }
-        
-        // We need to process this node
-        return false;
     }
 }
