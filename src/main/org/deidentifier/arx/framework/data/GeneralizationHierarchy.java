@@ -18,8 +18,8 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntOpenHashSet;
 
 /**
  * The class GeneralizationHierarchy.
@@ -94,7 +94,7 @@ public class GeneralizationHierarchy {
 
         // Count distinct values on each level
         distinctValues = new int[height];
-        final HashSet<Integer> vals = new HashSet<Integer>();
+        final IntOpenHashSet vals = new IntOpenHashSet();
 
         // for each column
         for (int i = 0; i < map[0].length; i++) {
@@ -166,14 +166,19 @@ public class GeneralizationHierarchy {
      */
     public int[] getDistinctValues(final int level) {
 
-        final HashSet<Integer> vals = new HashSet<Integer>();
+        final IntOpenHashSet vals = new IntOpenHashSet();
         for (int k = 0; k < map.length; k++) {
             vals.add(map[k][level]);
         }
+
         final int[] result = new int[vals.size()];
+        final int[] keys = vals.keys;
+        final boolean[] allocated = vals.allocated;
         int index = 0;
-        for (final int j : vals) {
-            result[index++] = j;
+        for (int i = 0; i < allocated.length; i++) {
+            if (allocated[i]) {
+                result[index++] = keys[i];
+            }
         }
         return result;
     }
@@ -218,25 +223,24 @@ public class GeneralizationHierarchy {
         }
         
         // Level value -> level+1 value
-        final HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
+        final IntIntOpenHashMap hMap = new IntIntOpenHashMap();
         
         // Input->level->output.
         for (int level = 0; level < (map[0].length - 1); level++) {
-            hashMap.clear();
+            hMap.clear();
             for (int i = 0; i < map.length; i++) {
                 final int outputCurrentLevel = map[i][level];
                 final int outputNextLevel = map[i][level + 1];
-                if (hashMap.containsKey(outputCurrentLevel)) {
-                    final int compare = hashMap.get(outputCurrentLevel);
+                if (hMap.containsKey(outputCurrentLevel)) {
+                    final int compare = hMap.get(outputCurrentLevel);
                     if (compare != outputNextLevel) { 
-                        
                         String in = dictionary[outputCurrentLevel];
                         String out1 = dictionary[compare];
                         String out2 = dictionary[outputNextLevel];
                         throw new IllegalArgumentException("The transformation rule for the attribute '" + attribute + "' is not a hierarchy. ("+in+") can either be transformed to ("+out1+") or to ("+out2+")");
                     }
                 } else {
-                    hashMap.put(outputCurrentLevel, outputNextLevel);
+                    hMap.put(outputCurrentLevel, outputNextLevel);
                 }
             }
         }

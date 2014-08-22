@@ -31,6 +31,9 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 /**
  * Holds all data needed for the anonymization process.
  * 
@@ -396,13 +399,13 @@ public class DataManager {
 
         // Temporary class for nodes
         class TNode {
-            HashSet<Integer> children = new HashSet<Integer>();
-            int              offset   = 0;
-            int              level    = 0;
+            IntOpenHashSet children = new IntOpenHashSet();
+            int            offset   = 0;
+            int            level    = 0;
         }
 
         final int offsetsExtras = offsetLeafs + numLeafs;
-        final HashMap<Integer, TNode> nodes = new HashMap<Integer, TNode>();
+        final IntObjectOpenHashMap<TNode> nodes = new IntObjectOpenHashMap<TNode>();
         final ArrayList<ArrayList<TNode>> levels = new ArrayList<ArrayList<TNode>>();
         
         // Init levels
@@ -442,14 +445,14 @@ public class DataManager {
                     treeList.add(node.children.size());
                     treeList.add(node.level);
 
-                    for (final int child : node.children) {
-                        if (node.level == 1) { // level 1
-                            treeList.add(child + offsetsExtras);
-                        } else {
-                            treeList.add(nodes.get(child).offset);
+                    final int [] keys = node.children.keys;
+                    final boolean [] allocated = node.children.allocated;
+                    for (int i=0; i<allocated.length; i++){
+                        if (allocated[i]) {
+                            treeList.add(node.level==1 ? keys[i] + offsetsExtras : nodes.get(keys[i]).offset);
                         }
                     }
-
+                    
                     treeList.add(0); // pos_e
                     treeList.add(0); // neg_e
                 }

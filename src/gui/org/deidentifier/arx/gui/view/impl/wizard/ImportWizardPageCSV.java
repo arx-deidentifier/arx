@@ -24,9 +24,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.io.CSVDataInput;
@@ -52,6 +51,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import com.carrotsearch.hppc.CharIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 
 /**
@@ -354,28 +356,22 @@ public class ImportWizardPageCSV extends WizardPage {
     private void detectSeparator() throws IOException {
 
         final BufferedReader r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+        final IntIntOpenHashMap map = new IntIntOpenHashMap();
+        final CharIntOpenHashMap separators = new CharIntOpenHashMap();
+        for (int i=0; i<this.separators.length; i++) {
+            separators.put(this.separators[i], i);
+        }
         int count = 0;
-        final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-
-        String line = r.readLine();
 
         /* Iterate over data */
+        String line = r.readLine();
         while ((count < ImportWizardModel.previewDataMaxLines) && (line != null)) {
 
-            final char[] a = line.toCharArray();
-
             /* Iterate over line character by character */
+            final char[] a = line.toCharArray();
             for (final char c : a) {
-
-                /* Iterate over separators and put matches into hash map */
-                for (int i = 0; i < separators.length; i++) {
-
-                    if (c == separators[i]) {
-                        if (!map.containsKey(i)) {
-                            map.put(i, 0);
-                        }
-                        map.put(i, map.get(i) + 1);
-                    }
+                if (separators.containsKey(c)) {
+                    map.putOrAdd(separators.get(c), 0, 1);
                 }
             }
             line = r.readLine();
@@ -384,17 +380,19 @@ public class ImportWizardPageCSV extends WizardPage {
         r.close();
 
         if (map.isEmpty()) {
+            selection = 0;
             return;
         }
 
-        int max = Integer.MIN_VALUE;
-
         /* Check which separator was used the most */
-        for (final int key : map.keySet()) {
-
-            if (map.get(key) > max) {
-                max = map.get(key);
-                selection = key;
+        int max = Integer.MIN_VALUE;
+        final int [] keys = map.keys;
+        final int [] values = map.values;
+        final boolean [] allocated = map.allocated;
+        for (int i = 0; i < allocated.length; i++) {
+            if (allocated[i] && values[i] > max) {
+                max = values[i];
+                selection = keys[i];
             }
         }
     }
