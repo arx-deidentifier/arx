@@ -31,8 +31,6 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
-import com.carrotsearch.hppc.IntDoubleOpenHashMap;
-
 /**
  * This class provides an efficient implementation of the non-uniform entropy
  * metric. It avoids a cell-by-cell process by utilizing a three-dimensional
@@ -72,9 +70,6 @@ public class MetricEntropy extends MetricDefault {
 
     /** Column -> Id -> Level -> Output */
     private int[][][]  hierarchies;
-    
-    /** A cache*/
-    private transient IntDoubleOpenHashMap cachedInformationLoss = new IntDoubleOpenHashMap();
 
     protected MetricEntropy() {
         super(true, true);
@@ -132,7 +127,6 @@ public class MetricEntropy extends MetricDefault {
             }
             result += value;
         }
-        cachedInformationLoss.put(node.id, -result);
         return new BoundInformationLossDefault(-result, -result);
     }
 
@@ -141,13 +135,6 @@ public class MetricEntropy extends MetricDefault {
                                       final Data input, 
                                       final GeneralizationHierarchy[] ahierarchies, 
                                       final ARXConfiguration config) {
-        
-        // Prepare cache
-        if (cachedInformationLoss != null) {
-            cachedInformationLoss.clear();
-        } else {
-            cachedInformationLoss = new IntDoubleOpenHashMap();
-        }
         
         // Obtain dictionary
         final Dictionary dictionary = input.getDictionary();
