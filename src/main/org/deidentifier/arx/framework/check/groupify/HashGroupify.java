@@ -529,6 +529,9 @@ public class HashGroupify implements IHashGroupify {
      * Analyze
      */
     private void analyzeAll(){
+
+        // We have only checked k-anonymity so far
+        kAnonymous = (currentOutliers <= absoluteMaxOutliers);
         
         // Iterate over all classes
         boolean dpresent = true;
