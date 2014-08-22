@@ -86,21 +86,25 @@ public class MetricEntropy extends MetricDefault {
     
     @Override
     public InformationLossDefault getLowerBound(Node node) {
-        return evaluateInternal(node, null);
+        return evaluateInternal(node, null).getLowerBound();
     }
 
+    @Override
+    public InformationLossDefault getLowerBound(Node node, final IHashGroupify g) {
+        return evaluateInternal(node, null).getLowerBound();
+    }
+    
     @Override
     public String toString() {
         return "Monotonic Non-Uniform Entropy";
     }
 
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
 
-        // Check cache
-        if (cachedInformationLoss.containsKey(node.id)) {
-            double result = cachedInformationLoss.get(node.id);
-            return new InformationLossDefault(result, result);
+        if (node.getLowerBound() != null) { 
+            return new BoundInformationLoss<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
+                                                                    (InformationLossDefault) node.getLowerBound()); 
         }
         
         // Init
@@ -129,7 +133,7 @@ public class MetricEntropy extends MetricDefault {
             result += value;
         }
         cachedInformationLoss.put(node.id, -result);
-        return new InformationLossDefault(-result, -result);
+        return new BoundInformationLossDefault(-result, -result);
     }
 
     @Override

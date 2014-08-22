@@ -149,6 +149,7 @@ public class Lattice {
 
         // Infoloss
         node.setInformationLoss(result.informationLoss);
+        node.setLowerBound(result.lowerBound);
     }
 
     /**
@@ -158,6 +159,15 @@ public class Lattice {
      */
     public void setInformationLoss(Node node, InformationLoss<?> informationLoss) {
         node.setInformationLoss(informationLoss);
+    }
+
+    /**
+     * Sets the lower bound
+     * @param node
+     * @param lowerBound
+     */
+    public void setLowerBound(Node node, InformationLoss<?> lowerBound) {
+        node.setLowerBound(lowerBound);
     }
 
     /**

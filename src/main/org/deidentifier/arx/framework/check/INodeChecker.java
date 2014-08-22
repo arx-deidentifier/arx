@@ -37,6 +37,7 @@ public interface INodeChecker {
     /** The result of a check*/
     public static class Result {
         
+        public final InformationLoss<?> lowerBound;
         /** Overall anonymity*/
         public final boolean anonymous;
         /** k-Anonymity sub-criterion*/
@@ -49,11 +50,13 @@ public interface INodeChecker {
          * @param anonymous
          * @param kAnonymous
          * @param infoLoss
+         * @param lowerBound
          */
-        Result(boolean anonymous, boolean kAnonymous, InformationLoss<?> infoLoss) {
+        Result(boolean anonymous, boolean kAnonymous, InformationLoss<?> infoLoss, InformationLoss<?> lowerBound) {
             this.anonymous = anonymous;
             this.kAnonymous = kAnonymous;
             this.informationLoss = infoLoss;
+            this.lowerBound = lowerBound;
         }
     }
 

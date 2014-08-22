@@ -29,88 +29,92 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Florian Kohlmayer
  */
 public class Node {
-    
-    /** 
+
+    /**
      * All privacy criteria are fulfilled
      */
-    public static final int PROPERTY_ANONYMOUS = 1 << 0;
-    
-    /** 
+    public static final int    PROPERTY_ANONYMOUS            = 1 << 0;
+
+    /**
      * Not all privacy criteria are fulfilled
      */
-    public static final int PROPERTY_NOT_ANONYMOUS = 1 << 1;
-    
-    /** 
+    public static final int    PROPERTY_NOT_ANONYMOUS        = 1 << 1;
+
+    /**
      * A k-anonymity sub-criterion is fulfilled
      */
-    public static final int PROPERTY_K_ANONYMOUS = 1 << 2;
-    
-    /** 
+    public static final int    PROPERTY_K_ANONYMOUS          = 1 << 2;
+
+    /**
      * A k-anonymity sub-criterion is not fulfilled
      */
-    public static final int PROPERTY_NOT_K_ANONYMOUS = 1 << 3;
-    
-    /** 
+    public static final int    PROPERTY_NOT_K_ANONYMOUS      = 1 << 3;
+
+    /**
      * The transformation results in insufficient utility
      */
-    public static final int PROPERTY_INSUFFICIENT_UTILITY = 1 << 4;
-    
-    /** 
+    public static final int    PROPERTY_INSUFFICIENT_UTILITY = 1 << 4;
+
+    /**
      * The transformation has been checked explicitly
      */
-    public static final int PROPERTY_CHECKED = 1 << 5;
-   
-    /** 
-     * A snapshot for this transformation must be created if it fits the size limits,
-     * regardless of whether it triggers the storage condition
+    public static final int    PROPERTY_CHECKED              = 1 << 5;
+
+    /**
+     * A snapshot for this transformation must be created if it fits the size
+     * limits, regardless of whether it triggers the storage condition
      */
-    public static final int PROPERTY_FORCE_SNAPSHOT = 1 << 6;
-    
-    /** 
+    public static final int    PROPERTY_FORCE_SNAPSHOT       = 1 << 6;
+
+    /**
      * This node has already been visited during the second phase
      */
-    public static final int PROPERTY_VISITED = 1 << 7;
-    
-    /** 
-     * Marks nodes for which the search algorithm guarantees to never check any of its successors
-     */
-    public static final int PROPERTY_SUCCESSORS_PRUNED = 1 << 8;
+    public static final int    PROPERTY_VISITED              = 1 << 7;
 
-    /** 
+    /**
+     * Marks nodes for which the search algorithm guarantees to never check any
+     * of its successors
+     */
+    public static final int    PROPERTY_SUCCESSORS_PRUNED    = 1 << 8;
+
+    /**
      * We have already fired an event for this node
      */
-    public static final int PROPERTY_EVENT_FIRED = 1 << 9;
-    
+    public static final int    PROPERTY_EVENT_FIRED          = 1 << 9;
+
     /** The id. */
-    public final int        id;
+    public final int           id;
 
     /** Set of properties */
-    private int             properties;
+    private int                properties;
 
     /** The predecessors. */
-    private Node[]          predecessors;
+    private Node[]             predecessors;
 
     /** The level. */
-    private int             level;
+    private int                level;
 
     /** The information loss. */
     private InformationLoss<?> informationLoss;
 
+    /** The lower bound. */
+    private InformationLoss<?> lowerBound;
+
     /** The transformation. */
-    private int[]           transformation;
+    private int[]              transformation;
 
     /** The upwards. */
-    private Node[]          successors;
+    private Node[]             successors;
 
     /** The down index. */
-    private int             preIndex;
+    private int                preIndex;
 
     /** The up index. */
-    private int             sucIndex;
-    
-    /** Associated data*/
-    private Object data;
-    
+    private int                sucIndex;
+
+    /** Associated data */
+    private Object             data;
+
     /**
      * Instantiates a new node.
      */
@@ -176,6 +180,13 @@ public class Node {
      */
     public int getLevel() {
         return level;
+    }
+
+    /**
+     * @return the lowerBound
+     */
+    public InformationLoss<?> getLowerBound() {
+        return lowerBound;
     }
 
     /**
@@ -251,6 +262,17 @@ public class Node {
     protected void setInformationLoss(final InformationLoss<?> informationLoss) {
         if (this.informationLoss == null) {
             this.informationLoss = informationLoss;
+        }
+    }
+
+    /**
+     * Sets the information loss
+     * 
+     * @param informationLoss
+     */
+    protected void setLowerBound(final InformationLoss<?> lowerBound) {
+        if (this.lowerBound == null) {
+            this.lowerBound = lowerBound;
         }
     }
   

@@ -64,11 +64,24 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
 
     @Override
     public InformationLossDefault getLowerBound(Node node) {
-        return this.evaluateInternal(node, null);
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        } else {
+            return this.evaluateInternal(node, null).getLowerBound();
+        }
     }
 
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    public InformationLossDefault getLowerBound(Node node, final IHashGroupify g) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        } else {
+            return this.evaluateInternal(node, null).getLowerBound();
+        }
+    }
+
+    @Override
+    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
 
         double result = 0;
         final int[] transformation = node.getTransformation();
@@ -78,7 +91,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
             result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
         }
         result /= (double) transformation.length;
-        return new InformationLossDefault(result, result);
+        return new BoundInformationLossDefault(result, result);
     }
 
     @Override

@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -50,9 +51,14 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
     
     @Override
     public InformationLossDefault getLowerBound(final Node node) {
-        return null;
+        return (InformationLossDefault)node.getLowerBound();
     }
 
+    @Override
+    public InformationLossDefault getLowerBound(final Node node, final IHashGroupify groupify) {
+        return (InformationLossDefault)node.getLowerBound();
+    }
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

@@ -68,10 +68,39 @@ public class MetricAECS extends MetricDefault {
     }
     
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    public InformationLossDefault getLowerBound(Node node) {
+        return (InformationLossDefault)node.getLowerBound();
+    }
+
+    @Override
+    public InformationLossDefault getLowerBound(Node node,
+                                                IHashGroupify groupify) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        }
+
+        // The total number of tuples
+        int tuples = 0;
+        int groups = 0;
+        HashGroupifyEntry m = groupify.getFirstEntry();
+        while (m != null) {
+            if (m.count > 0) {
+                tuples += m.count;
+                groups++;
+            }
+            m = m.nextOrdered;
+        }
+        // Compute AECS
+        return new InformationLossDefault((double)tuples / (double)groups);
+    }
+
+    @Override
+    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
 
         // The total number of groups with suppression
-        int groups = 0;
+        int groupsWithSuppression = 0;
+        // The total number of groups without suppression
+        int groupsWithoutSuppression = 0;
         // The total number of tuples
         int tuples = 0;
         // Are there suppressed tuples
@@ -81,23 +110,23 @@ public class MetricAECS extends MetricDefault {
         while (m != null) {
             if (m.count > 0) {
                 tuples += m.count;
-                groups += m.isNotOutlier ? 1 : 0;
+                groupsWithSuppression += m.isNotOutlier ? 1 : 0;
+                groupsWithoutSuppression++;
                 suppressed |= !m.isNotOutlier;
             }
             m = m.nextOrdered;
         }
         
         // If there are suppressed tuples, they form one additional group
-        groups += suppressed ? 1 : 0;
+        groupsWithSuppression += suppressed ? 1 : 0;
         
         // Compute AECS
-        return new InformationLossDefault((double)tuples / (double)groups,
-                                          (double)tuples / (double)g.size());
+        return new BoundInformationLossDefault((double)tuples / (double)groupsWithSuppression,
+                                               (double)tuples / (double)groupsWithoutSuppression);
     }
 
     @Override
-    protected void
-            initializeInternal(DataDefinition definition, Data input, GeneralizationHierarchy[] hierarchies, ARXConfiguration config) {
+    protected void initializeInternal(DataDefinition definition, Data input, GeneralizationHierarchy[] hierarchies, ARXConfiguration config) {
         super.initializeInternal(definition, input, hierarchies, config);
         if (config.containsCriterion(DPresence.class)) {
             Set<DPresence> crits = config.getCriteria(DPresence.class);

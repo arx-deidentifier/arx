@@ -68,7 +68,6 @@ class InformationLossRCE extends InformationLoss<double[]> {
      * @param perc
      */
     private InformationLossRCE(final double[] value, final BigInteger ints, final String string, final double perc, final double[] weights) {
-        super(null); // TODO
         this.value = value;
         this.ints = ints;
         this.string = string;
@@ -83,21 +82,11 @@ class InformationLossRCE extends InformationLoss<double[]> {
     InformationLossRCE(final double[] value) {
         this (value, null);
     } 
-
     /**
      * Creates a new instance
      * @param value
      */
-    InformationLossRCE(final double[] value, final double[] lowerBound, final double[] weights) {
-        this(value, weights); // TODO
-    }
-    
-    /**
-     * Creates a new instance
-     * @param value
-     */
-    InformationLossRCE(final double[] value, final double[] weights) {
-        super(null); // TODO        
+    InformationLossRCE(final double[] value, final double[] weights) {    
         // Create weighted representation
         double[] weightedValue = null;
         this.weights = weights;
@@ -146,7 +135,6 @@ class InformationLossRCE extends InformationLoss<double[]> {
 
     @Override
     public InformationLoss<double[]> clone() {
-        // TODO: Clone correctly with lower bound and without
         return new InformationLossRCE(value, ints, string, perc, weights);
     }
 

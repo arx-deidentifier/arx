@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
@@ -48,10 +49,17 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
     public MetricWeighted(final boolean monotonic, final boolean independent) {
         super(monotonic, independent);
     }
-    
+
     @Override
+    @SuppressWarnings("unchecked")
     public T getLowerBound(final Node node) {
-        return null;
+        return (T)node.getLowerBound();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T getLowerBound(final Node node, final IHashGroupify groupify) {
+        return (T)node.getLowerBound();
     }
 
     @Override

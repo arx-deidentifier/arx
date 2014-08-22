@@ -38,27 +38,12 @@ class InformationLossDefault extends InformationLoss<Double> {
      * @param value
      */
     InformationLossDefault(final double value){
-        super(null);
         this.value = value;
     }
     
-    /**
-     * Creates a new instance
-     * @param value
-     * @param lowerBound
-     */
-    InformationLossDefault(final double value, final double lowerBound) {
-        super(new InformationLossDefault(lowerBound));
-        this.value = value;
-    }
-
     @Override
     public InformationLoss<Double> clone() {
-        if (this.getLowerBound() != null) {
-            return new InformationLossDefault(value, this.getLowerBound().getValue());
-        } else {
-            return new InformationLossDefault(value);
-        }
+        return new InformationLossDefault(value);
     }
 
     @Override
@@ -70,18 +55,12 @@ class InformationLossDefault extends InformationLoss<Double> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        long temp;
-        temp = Double.doubleToLongBits(value);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Double.valueOf(value).hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!super.equals(obj)) return false;
         if (getClass() != obj.getClass()) return false;
         InformationLossDefault other = (InformationLossDefault) obj;
         if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;

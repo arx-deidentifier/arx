@@ -202,8 +202,8 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     }
 
     @Override
-    protected InformationLossRCE evaluateInternal(Node node, 
-                                                  IHashGroupify g) {
+    protected BoundInformationLoss<InformationLossRCE>
+            evaluateInternal(Node node, IHashGroupify g) {
         
         // Prepare
         int[] transformation = node.getTransformation();
@@ -244,7 +244,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         }
         
         // Return infoloss
-        return new InformationLossRCE(scores, weights);
+        return new BoundInformationLoss<InformationLossRCE>(new InformationLossRCE(scores, weights));
     }
     
     @Override

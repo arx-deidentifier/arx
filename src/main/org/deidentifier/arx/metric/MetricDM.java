@@ -61,25 +61,50 @@ public class MetricDM extends MetricDefault {
             return new InformationLossDefault(rowCount);
         }
     }
+
+    @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        return (InformationLossDefault)node.getLowerBound();
+    }
+
+    @Override
+    public InformationLossDefault getLowerBound(Node node,
+                                                IHashGroupify groupify) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        }
+
+        double lowerBound = 0; // DM*
+        HashGroupifyEntry m = groupify.getFirstEntry();
+        while (m != null) {
+            if (m.count>0){
+                lowerBound += ((double) m.count * (double) m.count);
+            }
+            m = m.nextOrdered;
+        }
+        return new InformationLossDefault(lowerBound);
+    }
     
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
         
         double value = 0;
         double lowerBound = 0; // DM*
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (m.isNotOutlier) {
-                double current = ((double) m.count * (double) m.count);
-                value += current;
-                lowerBound += current;
-            } else {
-                value += ((double) rowCount * (double) m.count);
-                lowerBound += ((double) m.count * (double) m.count);
+            if (m.count>0){
+                if (m.isNotOutlier) {
+                    double current = ((double) m.count * (double) m.count);
+                    value += current;
+                    lowerBound += current;
+                } else {
+                    value += ((double) rowCount * (double) m.count);
+                    lowerBound += ((double) m.count * (double) m.count);
+                }
             }
             m = m.nextOrdered;
         }
-        return new InformationLossDefault(value, lowerBound);
+        return new BoundInformationLossDefault(value, lowerBound);
     }
 
     @Override

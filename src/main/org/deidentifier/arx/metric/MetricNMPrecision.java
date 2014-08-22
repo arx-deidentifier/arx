@@ -67,9 +67,39 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     public String toString() {
         return "Non-Monotonic Precision";
     }
+
+    @Override
+    public InformationLossDefault getLowerBound(Node node) {
+        return (InformationLossDefault)node.getLowerBound();
+    }
+
+    @Override
+    public InformationLossDefault getLowerBound(Node node,
+                                                IHashGroupify groupify) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        }
+        
+        double lowerBound = 0d;
+        
+        HashGroupifyEntry m = groupify.getFirstEntry();
+        while (m != null) {
+            if (m.count > 0) {
+                for (int i = 0; i < height.length; i++) {
+                    lowerBound += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
+                }
+            }
+            m = m.nextOrdered;
+        }
+        
+        lowerBound /= cells;
+        
+        // Return
+        return new InformationLossDefault(lowerBound);
+    }
     
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
         
         double total = 0d;
         double lowerBound = 0d;
@@ -86,9 +116,10 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         }
         
         total /= cells;
+        lowerBound /= cells;
         
         // Return
-        return new InformationLossDefault(total, lowerBound);
+        return new BoundInformationLossDefault(total, lowerBound);
     }
 
     @Override

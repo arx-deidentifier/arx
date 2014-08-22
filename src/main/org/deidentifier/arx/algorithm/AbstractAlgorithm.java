@@ -24,6 +24,7 @@ import java.util.List;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.BoundInformationLoss;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -103,7 +104,9 @@ public abstract class AbstractAlgorithm {
                
                // Independent evaluation or check
                if (checker.getMetric().isIndependent()) {
-                   lattice.setInformationLoss(node, checker.getMetric().evaluate(node, null));
+                   BoundInformationLoss<?> loss = checker.getMetric().getInformationLoss(node, null);
+                   lattice.setInformationLoss(node, loss.getInformationLoss());
+                   lattice.setLowerBound(node, loss.getLowerBound());
                } else {
                    lattice.setChecked(node, checker.check(node, true));
                }

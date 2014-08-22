@@ -79,20 +79,35 @@ public class MetricPrecisionRCE extends MetricWeighted<InformationLossRCE> {
         return "Monotonic Precision with Conservative Estimation";
     }
 
+
     @Override
     public InformationLossRCE getLowerBound(Node node) {
-        return this.evaluateInternal(node, null);
+        if (node.getLowerBound() != null) {
+            return (InformationLossRCE)node.getLowerBound();
+        } else {
+            return this.evaluateInternal(node, null).getLowerBound();
+        }
+    }
+
+    @Override
+    public InformationLossRCE getLowerBound(Node node, final IHashGroupify g) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossRCE)node.getLowerBound();
+        } else {
+            return this.evaluateInternal(node, null).getLowerBound();
+        }
     }
     
     @Override
-    protected InformationLossRCE evaluateInternal(final Node node, final IHashGroupify g) {
+    protected BoundInformationLoss<InformationLossRCE> evaluateInternal(final Node node, final IHashGroupify g) {
 
         final int[] transformation = node.getTransformation();
         final double[] result = new double[transformation.length];
         for (int i = 0; i < transformation.length; i++) {
             result[i] = height[i] != 0 ? ((double) transformation[i] / (double) height[i]) : 0;
         }
-        return new InformationLossRCE(result, result, weights);
+        return new BoundInformationLoss<InformationLossRCE>(new InformationLossRCE(result, weights),
+                                                            new InformationLossRCE(result, weights));
     }
 
     @Override

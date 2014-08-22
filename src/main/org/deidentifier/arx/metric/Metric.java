@@ -51,6 +51,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         RANK
     }
     
+    private static final long serialVersionUID = -2657745103125430229L;
+
     /**
      * Creates an average equivalence class size
      * 
@@ -106,6 +108,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<?> createNDSMetric() {
         return new MetricNDS();
     }
+    
 
     /**
      * Creates an NDS metric with factors for weighting generalization and suppression.
@@ -122,7 +125,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return new MetricNDS(gsFactor);
     }
     
-
     /**
      * Creates an non-monotonic entropy metric
      * 
@@ -130,16 +132,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static Metric<InformationLossDefault> createNMEntropyMetric() {
         return new MetricNMEntropy();
-    }
-    
-    /**
-     * Creates a precision metric. 
-     * This metric will respect attribute weights defined in the configuration.
-     * 
-     * @return
-     */
-    public static Metric<InformationLossDefault> createPrecisionMetric() {
-        return new MetricPrecision();
     }
 
     /**
@@ -152,6 +144,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return new MetricNMPrecision();
     }
     /**
+     * Creates a precision metric. 
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @return
+     */
+    public static Metric<InformationLossDefault> createPrecisionMetric() {
+        return new MetricPrecision();
+    }
+    
+    /**
      * Creates a precision metric with conservative estimation 
      * This metric will respect attribute weights defined in the configuration.
      * 
@@ -160,7 +162,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<InformationLossRCE> createPrecisionRCEMetric() {
         return new MetricPrecisionRCE();
     }
-    
+
     /**
      * Creates a static metric. It requires a map, which maps the generalization levels
      * (starting at index of the given list) onto an information loss defined as a
@@ -172,8 +174,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<InformationLossDefault> createStaticMetric(Map<String, List<Double>> informationLoss) {
         return new MetricStatic(informationLoss);
     }
-
-    private static final long serialVersionUID = -2657745103125430229L;
 
     /** Is the metric independent? */
     private boolean           independent      = false;
@@ -193,30 +193,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Evaluates the metric for the given node
-     * 
-     * @param node
-     *            The node for which to compute the information loss
-     * @param groupify
-     *            The groupify operator of the previous check
-     * @return the information loss
-     */
-    public final T evaluate(final Node node, final IHashGroupify groupify) {
-        return this.evaluateInternal(node, groupify);
-    }
-
-    /**
-     * Returns a lower bound for the information loss for the given node. 
-     * This can be used to expose the results of monotonic sub-metrics,
-     * which can significantly speed-up the anonymization process. If no
-     * such criterion exists, simply return <code>null</code>.
-     * 
-     * @param node
-     * @return
-     */
-    public abstract T getLowerBound(final Node node);
-    
-    /**
      * Returns an instance of the maximal value
      * 
      * @return
@@ -229,6 +205,45 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public abstract InformationLoss<?> createMinInformationLoss();
+    
+
+    /**
+     * Evaluates the metric for the given node
+     * 
+     * @param node The node for which to compute the information loss
+     * @param groupify The groupify operator of the previous check
+     * @return the information loss
+     */
+    public final BoundInformationLoss<T> getInformationLoss(final Node node, final IHashGroupify groupify) {
+        return this.evaluateInternal(node, groupify);
+    }
+    
+    /**
+     * Returns a lower bound for the information loss for the given node. 
+     * This can be used to expose the results of monotonic shares of a metric,
+     * which can significantly speed-up the anonymization process. If no
+     * such metric exists, simply return <code>null</code>.
+     * 
+     * @param node
+     * @return
+     */
+    public abstract T getLowerBound(final Node node);
+
+    /**
+     * Returns a lower bound for the information loss for the given node. 
+     * This can be used to expose the results of monotonic shares of a metric,
+     * which can significantly speed-up the anonymization process. If no
+     * such metric exists, simply return <code>null</code>. <br>
+     * <br>
+     * This variant of the method allows computing a monotonic share based on
+     * a groupified data representation. IMPORTANT NOTE: The groups may not have
+     * been classified correctly when the method is called, i.e., 
+     * HashGroupifyEntry.isNotOutlier may not be set correctly!
+     * 
+     * @param node
+     * @return
+     */
+    public abstract T getLowerBound(final Node node, final IHashGroupify groupify);
     
     /**
      * Returns the name of metric
@@ -285,7 +300,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *            The groupify operator of the previous check
      * @return the double
      */
-    protected abstract T evaluateInternal(final Node node, final IHashGroupify groupify);
+    protected abstract BoundInformationLoss<T> evaluateInternal(final Node node, final IHashGroupify groupify);
 
     /**
      * Implement this to initialize the metric.

@@ -28,6 +28,7 @@ import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.BoundInformationLoss;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
@@ -159,14 +160,17 @@ public class NodeChecker implements INodeChecker {
         // We are done with transforming and adding
         currentGroupify.analyze(forceMeasureInfoLoss);
 
-        // Compute information loss
-        InformationLoss<?> infoLoss = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
-                                    metric.evaluate(node, currentGroupify) : null;
+        // Compute information loss and lower bound
+        BoundInformationLoss<?> result = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
+                                          metric.getInformationLoss(node, currentGroupify) : null;
+        InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
+        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
         
         // Return result;
         return new INodeChecker.Result(currentGroupify.isAnonymous(), 
                                        currentGroupify.isKAnonymous(),
-                                       infoLoss);
+                                       loss,
+                                       bound);
     }
 
     @Override
@@ -224,7 +228,7 @@ public class NodeChecker implements INodeChecker {
         // TODO: This may already be known
         InformationLoss<?> loss = transformation.getInformationLoss();
         if (loss == null) {
-            loss = metric.evaluate(transformation, currentGroupify);
+            loss = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss();
         }
         
         // Find outliers
@@ -236,7 +240,8 @@ public class NodeChecker implements INodeChecker {
         Lattice lattice = new Lattice(new Node[][]{{transformation}}, null, 0);
         lattice.setChecked(transformation, new Result(currentGroupify.isAnonymous(), 
                                                       currentGroupify.isKAnonymous(),
-                                                      loss));
+                                                      loss,
+                                                      null));
         
         // Return the buffer
         return new TransformedData(getBuffer(), currentGroupify.getGroupStatistics());

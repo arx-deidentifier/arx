@@ -54,20 +54,32 @@ public class MetricNMEntropy extends MetricEntropy {
     }
     
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        return super.evaluateInternal(node, null);
-    }
-    
-    @Override
     public String toString() {
         return "Non-Monotonic Non-Uniform Entropy";
     }
 
     @Override
-    protected InformationLossDefault evaluateInternal(final Node node, final IHashGroupify g) {
+    public InformationLossDefault getLowerBound(Node node) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        }
+        return super.evaluateInternal(node, null).getInformationLoss();
+    }
+
+    @Override
+    public InformationLossDefault getLowerBound(Node node, final IHashGroupify g) {
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        }
+        return super.evaluateInternal(node, null).getInformationLoss();
+    }
+    
+    @Override
+    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
-        final InformationLossDefault originalInfoLossDefault = super.evaluateInternal(node, g);
+        final InformationLossDefault originalInfoLossDefault = node.getLowerBound() != null ? (InformationLossDefault)node.getLowerBound() :
+                                                               super.evaluateInternal(node, g).getInformationLoss();
         
         // Compute loss induced by suppression
         double originalInfoLoss = originalInfoLossDefault.getValue();
@@ -105,7 +117,7 @@ public class MetricNMEntropy extends MetricEntropy {
         }
         
         // Return sum of both values
-        return new InformationLossDefault(originalInfoLoss - additionalInfoLoss, originalInfoLossDefault.getValue());
+        return new BoundInformationLossDefault(originalInfoLoss - additionalInfoLoss, originalInfoLossDefault.getValue());
     }
 
     @Override

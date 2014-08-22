@@ -30,10 +30,8 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
 
     private static final long serialVersionUID = -5347658129539223333L;
     
-    private final InformationLoss<T> lowerBound;
-    
-    protected InformationLoss(InformationLoss<T> lowerBound) {
-        this.lowerBound = lowerBound;
+    protected InformationLoss(){
+        // Protected
     }
     
     public abstract T getValue();
@@ -79,31 +77,9 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
     @Override
     public abstract InformationLoss<T> clone();
     
-    /**
-     * Returns a monotonic lower bound
-     * @return
-     */
-    public InformationLoss<T> getLowerBound(){
-        return this.lowerBound;
-    }
+    @Override
+    public abstract int hashCode();
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((lowerBound == null) ? 0 : lowerBound.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        InformationLoss<?> other = (InformationLoss<?>) obj;
-        if (lowerBound == null) {
-            if (other.lowerBound != null) return false;
-        } else if (!lowerBound.equals(other.lowerBound)) return false;
-        return true;
-    }
+    public abstract boolean equals(Object obj);
 }
