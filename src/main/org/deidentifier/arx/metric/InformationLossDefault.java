@@ -69,9 +69,19 @@ class InformationLossDefault extends InformationLoss<Double> {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        long temp;
+        temp = Double.doubleToLongBits(value);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null) return false;
+        if (!super.equals(obj)) return false;
         if (getClass() != obj.getClass()) return false;
         InformationLossDefault other = (InformationLossDefault) obj;
         if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value)) return false;
@@ -81,16 +91,6 @@ class InformationLossDefault extends InformationLoss<Double> {
     @Override
     public Double getValue() {
         return value;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(value);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
     }
 
     @Override

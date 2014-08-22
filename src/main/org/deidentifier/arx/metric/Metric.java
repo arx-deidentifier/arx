@@ -39,6 +39,19 @@ import org.deidentifier.arx.framework.lattice.Node;
 public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
 
     /**
+     * Plugable aggregate functions
+     * @author Fabian Prasser
+     *
+     */
+    public static enum AggregateFunction {
+        SUM,
+        MAX,
+        ARITHMETIC_MEAN,
+        GEOMETRIC_MEAN,
+        RANK
+    }
+    
+    /**
      * Creates an average equivalence class size
      * 
      * @return
