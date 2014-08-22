@@ -88,9 +88,11 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         HashGroupifyEntry m = groupify.getFirstEntry();
         while (m != null) {
             if (m.count > 0) {
+                double factor = 0;
                 for (int i = 0; i < height.length; i++) {
-                    lowerBound += m.count * (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]);
+                    factor += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
                 }
+                lowerBound += m.count * factor;
             }
             m = m.nextOrdered;
         }
@@ -110,10 +112,14 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
             if (m.count > 0) {
+                double factor = 0d;
+                double factorLowerBound = 0d;
                 for (int i = 0; i < height.length; i++) {
-                    total += m.count * (m.isNotOutlier ? (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]) : 1d);
-                    lowerBound += m.count * (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]);
+                    factor += m.isNotOutlier ? (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]) : 1d;
+                    factorLowerBound += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
                 }
+                lowerBound += m.count * factorLowerBound;
+                total += m.count * factor;
             }
             m = m.nextOrdered;
         }
