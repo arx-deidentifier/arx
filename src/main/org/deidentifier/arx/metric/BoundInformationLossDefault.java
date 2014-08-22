@@ -35,11 +35,11 @@ public class BoundInformationLossDefault extends BoundInformationLoss<Informatio
 
     /**
      * Creates a new instance
-     * @param lowerBound
      * @param informationLoss
+     * @param lowerBound
      */
-    public BoundInformationLossDefault(double lowerBound,
-                                       double informationLoss) {
+    public BoundInformationLossDefault(double informationLoss,
+                                       double lowerBound) {
         super(new InformationLossDefault(lowerBound), new InformationLossDefault(informationLoss));
     }
 }
