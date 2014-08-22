@@ -40,6 +40,6 @@ public class BoundInformationLossDefault extends BoundInformationLoss<Informatio
      */
     public BoundInformationLossDefault(double informationLoss,
                                        double lowerBound) {
-        super(new InformationLossDefault(lowerBound), new InformationLossDefault(informationLoss));
+        super(new InformationLossDefault(informationLoss), new InformationLossDefault(lowerBound));
     }
 }

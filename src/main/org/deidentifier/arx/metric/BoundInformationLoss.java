@@ -32,10 +32,10 @@ public class BoundInformationLoss<T extends InformationLoss<?>> {
     
     /**
      * Creates a new instance
-     * @param lowerBound
      * @param informationLoss
+     * @param lowerBound
      */
-    public BoundInformationLoss(T lowerBound, T informationLoss) {
+    public BoundInformationLoss(T informationLoss, T lowerBound) {
         this.lowerBound = lowerBound;
         this.informationLoss = informationLoss;
     }
