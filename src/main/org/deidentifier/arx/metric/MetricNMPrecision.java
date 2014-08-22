@@ -111,20 +111,17 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         }
         
         double precision = 0;
-        double lowerBound = 0;
         for (int i = 0; i<height.length; i++) {
             double weight = weights != null ? weights[i] : 1d;
             double value = height[i] == 0 ? 0 : (double) node.getTransformation()[i] / (double) height[i];
             precision += (double)unsuppressedTuples * value * weight;
             precision += (double)suppressedTuples * 1d * weight;
-            lowerBound += (double)unsuppressedTuples * value * weight;
         }
         
         precision /= cells;
-        lowerBound /= cells;
         
         // Return
-        return new BoundInformationLossDefault(precision, lowerBound);
+        return new BoundInformationLossDefault(precision, getLowerBound(node).getValue());
     }
 
     @Override
