@@ -332,7 +332,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             return;
         }
         
-        // There is no need to do anything, if we haven't yet found an optimum
+        // If we haven't yet found an optimum, we simply add the node to the list of pruning candidates
         if (super.getGlobalOptimum()==null) {
             pruningCandidates.add(node);
             return;
@@ -349,7 +349,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             if (optimalInfoLoss.compareTo(node.getInformationLoss().getLowerBound()) <= 0) {
                 lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
                                                        Node.PROPERTY_SUCCESSORS_PRUNED);
-            // Store as a future pruning candidate
+            // Else, we store it as a future pruning candidate
             } else {
                 pruningCandidates.add(node);
             }
@@ -363,7 +363,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 Node current = iterator.next();
                 
                 // Remove the candidate, if it was already pruned in the meantime
-                 if (current.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                if (current.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
                     iterator.remove();
                     
                 // Else, check if we can prune it
