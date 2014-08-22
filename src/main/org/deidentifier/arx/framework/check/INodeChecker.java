@@ -37,13 +37,14 @@ public interface INodeChecker {
     /** The result of a check*/
     public static class Result {
         
-        public final InformationLoss<?> lowerBound;
         /** Overall anonymity*/
         public final boolean anonymous;
         /** k-Anonymity sub-criterion*/
         public final boolean kAnonymous;
         /** Information loss*/
         public final InformationLoss<?> informationLoss;
+        /** Lower bound*/
+        public final InformationLoss<?> lowerBound;
         
         /**
          * Creates a new instance
