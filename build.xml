@@ -138,13 +138,13 @@
     </target>
 
     <target name="compile" depends="prepare" description="compile the source ">
-        <javac srcdir="src/main/" destdir="build/lib" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib" source="1.7">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
             </classpath>
         </javac>
-        <javac srcdir="src/main:src/gui/" destdir="build/gui" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.7">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
