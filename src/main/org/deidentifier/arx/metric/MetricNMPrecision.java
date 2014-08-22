@@ -73,62 +73,58 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
 
     @Override
     public InformationLossDefault getLowerBound(Node node) {
-        return (InformationLossDefault)node.getLowerBound();
+        if (node.getLowerBound() != null) {
+            return (InformationLossDefault)node.getLowerBound();
+        }
+
+        double result = 0;
+        final int[] transformation = node.getTransformation();
+        for (int i = 0; i < transformation.length; i++) {
+            double weight = weights != null ? weights[i] : 1d;
+            double level = (double) transformation[i];
+            result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
+        }
+        result /= (double) transformation.length;
+        
+        // Return
+        return new InformationLossDefault(result);
     }
 
     @Override
     public InformationLossDefault getLowerBound(Node node,
                                                 IHashGroupify groupify) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        }
-        
-        double lowerBound = 0d;
-        
-        HashGroupifyEntry m = groupify.getFirstEntry();
-        while (m != null) {
-            if (m.count > 0) {
-                double factor = 0;
-                for (int i = 0; i < height.length; i++) {
-                    factor += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
-                }
-                lowerBound += m.count * factor;
-            }
-            m = m.nextOrdered;
-        }
-        
-        lowerBound /= cells;
-        
-        // Return
-        return new InformationLossDefault(lowerBound);
+       return getLowerBound(node);
     }
     
     @Override
     protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
         
-        double total = 0d;
-        double lowerBound = 0d;
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
         
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (m.count > 0) {
-                double factor = 0d;
-                double factorLowerBound = 0d;
-                for (int i = 0; i < height.length; i++) {
-                    factor += m.isNotOutlier ? (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]) : 1d;
-                    factorLowerBound += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
-                }
-                lowerBound += m.count * factorLowerBound;
-                total += m.count * factor;
-            }
+            // if (m.count > 0) is given implicitly
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
             m = m.nextOrdered;
         }
         
-        total /= cells;
+        double precision = 0;
+        double lowerBound = 0;
+        for (int i = 0; i<height.length; i++) {
+            double weight = weights != null ? weights[i] : 1d;
+            double value = height[i] == 0 ? 0 : (double) node.getTransformation()[i] / (double) height[i];
+            precision += (double)unsuppressedTuples * value * weight;
+            precision += (double)suppressedTuples * 1d * weight;
+            lowerBound += (double)unsuppressedTuples * value * weight;
+        }
+        
+        precision /= cells;
         lowerBound /= cells;
         
         // Return
-        return new BoundInformationLossDefault(total, lowerBound);
+        return new BoundInformationLossDefault(precision, lowerBound);
     }
 
     @Override
