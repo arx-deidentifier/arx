@@ -322,17 +322,19 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void prune(Node node) {
         
+        // There is no need to do anything, if we do not have a lower bound
+        if (node.getInformationLoss().getLowerBound()==null) {
+            return;
+        }
+        
         // There is no need to do anything, if the transformation that was just checked was already pruned
         if (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
             return;
         }
         
-        // Add the current transformation to the list of pruning candidates
-        // Even if it is the current optimum, it might be pruned in the future
-        pruningCandidates.add(node);
-        
         // There is no need to do anything, if we haven't yet found an optimum
         if (super.getGlobalOptimum()==null) {
+            pruningCandidates.add(node);
             return;
         }
         
@@ -340,25 +342,40 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         Node optimalTransformation = getGlobalOptimum();
         InformationLoss<?> optimalInfoLoss = optimalTransformation.getInformationLoss();
         
-        // For each candidate
-        Iterator<Node> iterator = pruningCandidates.iterator();
-        while (iterator.hasNext()) {
-            Node current = iterator.next();
+        // If the current node is not the new optimum, we simply check it
+        if (node != optimalTransformation) {
             
-            // Ignore the candidate, if it is our current optimum
-            if (current == optimalTransformation) {
-                continue;
-            
-            // Else, remove the candidate, if it was already pruned in the meantime
-            } else if (current.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
-                iterator.remove();
-                
-            // Else, check if we can prune it and its successors
-            } else if (optimalInfoLoss.compareTo(current.getInformationLoss()) <= 0) {
-                lattice.setPropertyUpwards(current, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
-                                                          Node.PROPERTY_SUCCESSORS_PRUNED);
-                iterator.remove();
+            // Prune it
+            if (optimalInfoLoss.compareTo(node.getInformationLoss().getLowerBound()) <= 0) {
+                lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
+                                                       Node.PROPERTY_SUCCESSORS_PRUNED);
+            // Store as a future pruning candidate
+            } else {
+                pruningCandidates.add(node);
             }
+            
+        // If the current node is our new optimum, we check all candidates
+        } else {
+
+            // For each candidate
+            Iterator<Node> iterator = pruningCandidates.iterator();
+            while (iterator.hasNext()) {
+                Node current = iterator.next();
+                
+                // Remove the candidate, if it was already pruned in the meantime
+                 if (current.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                    iterator.remove();
+                    
+                // Else, check if we can prune it
+                } else if (optimalInfoLoss.compareTo(current.getInformationLoss().getLowerBound()) <= 0) {
+                    lattice.setPropertyUpwards(current, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
+                                                              Node.PROPERTY_SUCCESSORS_PRUNED);
+                    iterator.remove();
+                }
+            }
+            
+            // The current optimum is a future pruning candidate
+            pruningCandidates.add(node);
         }
     }
 
