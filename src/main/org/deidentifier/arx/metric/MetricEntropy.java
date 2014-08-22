@@ -99,7 +99,7 @@ public class MetricEntropy extends MetricDefault {
 
         if (node.getLowerBound() != null) { 
             return new BoundInformationLoss<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
-                                                                    (InformationLossDefault) node.getLowerBound()); 
+                                                                    (InformationLossDefault)node.getLowerBound()); 
         }
         
         // Init
