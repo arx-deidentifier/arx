@@ -316,7 +316,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
 
     /**
-     * We may be able to prune some transformations based on weak lower bound on
+     * We may be able to prune some transformations based on weak lower bounds on
      * the monotonic share of a node's information loss
      * @param node
      */
