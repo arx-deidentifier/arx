@@ -89,7 +89,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         while (m != null) {
             if (m.count > 0) {
                 for (int i = 0; i < height.length; i++) {
-                    lowerBound += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
+                    lowerBound += m.count * (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]);
                 }
             }
             m = m.nextOrdered;
@@ -111,8 +111,8 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         while (m != null) {
             if (m.count > 0) {
                 for (int i = 0; i < height.length; i++) {
-                    total += m.isNotOutlier ? (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]) : 1d;
-                    lowerBound += height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i];
+                    total += m.count * (m.isNotOutlier ? (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]) : 1d);
+                    lowerBound += m.count * (height[i] == 0 ? 0 : (double) m.key[i] / (double) height[i]);
                 }
             }
             m = m.nextOrdered;
