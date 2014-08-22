@@ -720,6 +720,10 @@ public class ARXLattice implements Serializable {
                 }
             }
         }
+        
+        // If not loss found, assume min for everything
+        if (min == null) min = metric.createMinInformationLoss();
+        if (max == null) max = metric.createMaxInformationLoss();
 
         // Propagate
         for (int i = 0; i < levels.length; i++) {
