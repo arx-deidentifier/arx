@@ -329,7 +329,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private void prune(Node node) {
         
         // There is no need to do anything, if we do not have a lower bound
-        if (node.getInformationLoss() == null || node.getLowerBound()==null) {
+        if (node.getLowerBound()==null) {
             return;
         }
         
