@@ -48,8 +48,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     /** The strategy. */
     private final FLASHStrategy        strategy;
 
-    /** List of weak lower bounds */
-    private final LinkedList<Node>     weakLowerBounds = new LinkedList<Node>();
+    /** List of nodes that may be used for pruning */
+    private final List<Node>           pruningCandidates = new LinkedList<Node>();
 
     /**
      * Creates a new instance
@@ -116,8 +116,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // Remove the associated result information to leave the lattice in a consistent state
         lattice.getBottom().setData(null);
 
-        // clear lower bounds
-        weakLowerBounds.clear();
+        // Clear list of pruning candidates
+        pruningCandidates.clear();
     }
 
     /**
@@ -175,9 +175,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // Tag
         configuration.getTriggerTag().apply(node);
 
-        // prune according to monotnonic submetric
-        pruneWeakLowerBound(node);
-
+        // Potentially prune some parts of the search space
+        prune(node);
     }
 
     /**
@@ -316,23 +315,49 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         lattice.setProperty(start, Node.PROPERTY_SUCCESSORS_PRUNED);
     }
 
-    private void pruneWeakLowerBound(Node node) {
-        if (node.getInformationLoss() != null) {
-            InformationLoss<?> newLowerBound = node.getInformationLoss().getLowerBound();
-            if (newLowerBound != null) {
-                Iterator<Node> iterator = weakLowerBounds.iterator();
-                while (iterator.hasNext()) {
-                    Node curNode = iterator.next();
-                    if (getGlobalOptimum().getInformationLoss().compareTo(newLowerBound) <= 0) {
-                        lattice.setPropertyUpwards(curNode, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
-                    }
-                    // clean node from list
-                    if (curNode.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
-                        iterator.remove();
-                    }
-                }
-                // add current node to list
-                weakLowerBounds.add(node);
+    /**
+     * We may be able to prune some transformations based on weak lower bound on
+     * the monotonic share of a node's information loss
+     * @param node
+     */
+    private void prune(Node node) {
+        
+        // There is no need to do anything, if the transformation that was just checked was already pruned
+        if (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+            return;
+        }
+        
+        // Add the current transformation to the list of pruning candidates
+        // Even if it is the current optimum, it might be pruned in the future
+        pruningCandidates.add(node);
+        
+        // There is no need to do anything, if we haven't yet found an optimum
+        if (super.getGlobalOptimum()==null) {
+            return;
+        }
+        
+        // Extract some data
+        Node optimalTransformation = getGlobalOptimum();
+        InformationLoss<?> optimalInfoLoss = optimalTransformation.getInformationLoss();
+        
+        // For each candidate
+        Iterator<Node> iterator = pruningCandidates.iterator();
+        while (iterator.hasNext()) {
+            Node current = iterator.next();
+            
+            // Ignore the candidate, if it is our current optimum
+            if (current == optimalTransformation) {
+                continue;
+            
+            // Else, remove the candidate, if it was already pruned in the meantime
+            } else if (current.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                iterator.remove();
+                
+            // Else, check if we can prune it and its successors
+            } else if (optimalInfoLoss.compareTo(current.getInformationLoss()) <= 0) {
+                lattice.setPropertyUpwards(current, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
+                                                          Node.PROPERTY_SUCCESSORS_PRUNED);
+                iterator.remove();
             }
         }
     }
