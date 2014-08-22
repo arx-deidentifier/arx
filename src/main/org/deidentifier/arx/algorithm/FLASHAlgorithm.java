@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
 import org.deidentifier.arx.framework.lattice.NodeAction.NodeActionConstant;
 import org.deidentifier.arx.framework.lattice.NodeAction.NodeActionInverse;
+import org.deidentifier.arx.framework.lattice.NodeAction.NodeActionOR;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -160,6 +161,11 @@ public class FLASHAlgorithm {
         NodeAction triggerEvaluate = new NodeActionConstant(false);
         NodeAction triggerCheck = new NodeActionInverse(triggerSkip);
         NodeAction triggerTag = new NodeActionConstant(false);
+        NodeAction triggerFireEvent = new NodeActionOR(triggerSkip) {
+            protected boolean additionalConditionAppliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED);
+            }
+        };
 
         // Only one linear phase
         FLASHConfiguration config = FLASHConfiguration.createLinearPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
@@ -168,7 +174,7 @@ public class FLASHAlgorithm {
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
                                                                                       History.STORAGE_TRIGGER_ALL,
-                                                                                      triggerSkip);
+                                                                                      triggerFireEvent);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
@@ -199,6 +205,11 @@ public class FLASHAlgorithm {
         // No evaluation
         NodeAction triggerEvaluate = new NodeActionConstant(false);
         NodeAction triggerCheck = new NodeActionInverse(triggerSkip);
+        NodeAction triggerFireEvent = new NodeActionOR(triggerSkip) {
+            protected boolean additionalConditionAppliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED);
+            }
+        };
         
         // We predictively tag nodes with insufficient utility because of the monotonic metric 
         NodeAction triggerTag = new NodeAction() {
@@ -218,7 +229,7 @@ public class FLASHAlgorithm {
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
                                                                                       History.STORAGE_TRIGGER_ALL,
-                                                                                      triggerSkip);
+                                                                                      triggerFireEvent);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
@@ -302,6 +313,13 @@ public class FLASHAlgorithm {
                 lattice.setProperty(node, Node.PROPERTY_VISITED);
             }
         };
+        
+        // Fire event
+        NodeAction triggerFireEvent = new NodeActionOR(linearTriggerSkip) {
+            protected boolean additionalConditionAppliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED);
+            }
+        };
 
         // Two interwoven phases
         FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
@@ -315,7 +333,7 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
                                                                                    History.STORAGE_TRIGGER_ALL,
-                                                                                   linearTriggerSkip);
+                                                                                   triggerFireEvent);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
@@ -411,9 +429,15 @@ public class FLASHAlgorithm {
             public void action(Node node) {
                 lattice.setProperty(node, Node.PROPERTY_VISITED);
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)){
-                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
-                    lattice.setProperty(node, Node.PROPERTY_SUCCESSORS_PRUNED);
+                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
                 }
+            }
+        };
+        
+        // Fire event
+        NodeAction triggerFireEvent = new NodeActionOR(linearTriggerSkip) {
+            protected boolean additionalConditionAppliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED);
             }
         };
         
@@ -429,7 +453,7 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
                                                                                    History.STORAGE_TRIGGER_ALL,
-                                                                                   linearTriggerSkip);
+                                                                                   triggerFireEvent);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
@@ -521,6 +545,13 @@ public class FLASHAlgorithm {
                 lattice.setProperty(node, Node.PROPERTY_VISITED);
             }
         };
+        
+        // Fire event
+        NodeAction triggerFireEvent = new NodeActionOR(linearTriggerSkip) {
+            protected boolean additionalConditionAppliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED);
+            }
+        };
 
         // Two interwoven phases
         FLASHConfiguration config = FLASHConfiguration.createTwoPhaseConfiguration(new FLASHPhaseConfiguration(binaryAnonymityProperty,
@@ -534,7 +565,7 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
                                                                                    History.STORAGE_TRIGGER_ALL,
-                                                                                   linearTriggerSkip);
+                                                                                   triggerFireEvent);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
@@ -580,7 +611,12 @@ public class FLASHAlgorithm {
         // No evaluation
         NodeAction triggerEvaluate = new NodeActionConstant(false);
         NodeAction triggerCheck = new NodeActionInverse(triggerSkip);
-        
+        NodeAction triggerFireEvent = new NodeActionOR(triggerSkip) {
+            protected boolean additionalConditionAppliesTo(Node node) {
+                return node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED);
+            }
+        };
+
         // Only one binary phase
         FLASHConfiguration config = FLASHConfiguration.createBinaryPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
                                                                                                                   triggerTag,
@@ -588,7 +624,7 @@ public class FLASHAlgorithm {
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
                                                                                       History.STORAGE_TRIGGER_NON_ANONYMOUS,
-                                                                                      triggerSkip);
+                                                                                      triggerFireEvent);
         
         return new FLASHAlgorithmImpl(lattice, checker,strategy, config);
     }
