@@ -67,6 +67,52 @@ public abstract class NodeAction {
     }
 
     /**
+     * A trigger for nodes
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
+    public static abstract class NodeActionOR extends NodeAction {
+
+        private final NodeAction trigger;
+
+        public NodeActionOR(NodeAction trigger) {
+            this.trigger = trigger;
+        }
+
+        @Override
+        public boolean appliesTo(Node node) {
+            return trigger.appliesTo(node) || additionalConditionAppliesTo(node);
+        }
+        
+        /** The additional condition to implement*/
+        protected abstract boolean additionalConditionAppliesTo(Node node);
+    }
+
+    /**
+     * A trigger for nodes
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     */
+    public static abstract class NodeActionAND extends NodeAction {
+
+        private final NodeAction trigger;
+
+        public NodeActionAND(NodeAction trigger) {
+            this.trigger = trigger;
+        }
+
+        @Override
+        public boolean appliesTo(Node node) {
+            return trigger.appliesTo(node) && additionalConditionAppliesTo(node);
+        }
+        
+        /** The additional condition to implement*/
+        protected abstract boolean additionalConditionAppliesTo(Node node);
+    }
+    
+    /**
      * Determines whether the trigger action should be performed
      * @param node
      * @return
