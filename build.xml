@@ -26,6 +26,7 @@
             <filename name="**/poi-ooxml-schemas-3.10-FINAL-20140208.jar" />
             <filename name="**/postgresql-9.3-1101.jdbc41.jar" />
             <filename name="**/sqlite-jdbc-3.7.2.jar" />
+            <filename name="**/hppc-0.6.0.jar" />
         </or>
     </fileset>
 
@@ -51,12 +52,15 @@
     <target name="release" depends="jars">
     </target>
 
-    <target name="clean">
+    <target name="clean" depends="end-clean">
+        <delete dir="jars" failonerror="true" />
+    </target>
+
+    <target name="end-clean">
         <delete dir="build/lib" failonerror="true" />
         <delete dir="build/gui" failonerror="true" />
         <delete dir="build/extLibs" failonerror="true" />
         <delete dir="build" failonerror="true" />
-        <delete dir="jars" failonerror="true" />
     </target>
 
     <target name="prepare" depends="clean">
@@ -168,64 +172,7 @@
         </jar>
     </target>
 
-    <target name="jars" depends="compile, javadoc, buildExternalLibs">
-        <jar destfile="jars/libarx-${arx.version}-doc.jar">
-            <fileset dir="doc/api" defaultexcludes="no" />
-        </jar>
-        <jar destfile="jars/libarx-${arx.version}-dev-doc.jar">
-            <fileset dir="doc/dev" defaultexcludes="no" />
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-doc.jar">
-            <fileset dir="doc/gui" defaultexcludes="no" />
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-src.jar">
-            <fileset dir="src/gui" defaultexcludes="no" />
-        </jar>
-        <jar destfile="jars/libarx-${arx.version}-src.jar">
-            <fileset dir="src/main" defaultexcludes="no" />
-            <fileset dir="src/test" defaultexcludes="no" />
-            <fileset dir="src/example" defaultexcludes="no" />
-        </jar>
-        <jar destfile="jars/libarx-${arx.version}.jar">
-            <fileset dir="build/lib" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-osx.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-osx-64.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-gtk.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-gtk-64.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
+    <target name="jar-win" depends="compile, buildExternalLibs">
         <jar destfile="jars/arx-${arx.version}-win.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
@@ -244,10 +191,79 @@
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
         </jar>
+    </target>
 
-        <delete dir="build/lib" failonerror="true" />
-        <delete dir="build/gui" failonerror="true" />
-        <delete dir="build/extLibs" failonerror="true" />
-        <delete dir="build" failonerror="true" />
+    <target name="jar-linux" depends="compile, buildExternalLibs">
+        <jar destfile="jars/arx-${arx.version}-gtk.jar">
+            <fileset dir="build/gui" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <manifest>
+                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
+            </manifest>
+        </jar>
+        <jar destfile="jars/arx-${arx.version}-gtk-64.jar">
+            <fileset dir="build/gui" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <manifest>
+                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar-osx" depends="compile, buildExternalLibs">
+        <jar destfile="jars/arx-${arx.version}-osx.jar">
+            <fileset dir="build/gui" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <manifest>
+                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
+            </manifest>
+        </jar>
+        <jar destfile="jars/arx-${arx.version}-osx-64.jar">
+            <fileset dir="build/gui" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <manifest>
+                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar-libs" depends="compile, buildExternalLibs">
+        <jar destfile="jars/arx-${arx.version}-src.jar">
+            <fileset dir="src/gui" defaultexcludes="no" />
+        </jar>
+        <jar destfile="jars/libarx-${arx.version}-src.jar">
+            <fileset dir="src/main" defaultexcludes="no" />
+            <fileset dir="src/test" defaultexcludes="no" />
+            <fileset dir="src/example" defaultexcludes="no" />
+        </jar>
+        <jar destfile="jars/libarx-${arx.version}.jar">
+            <fileset dir="build/lib" defaultexcludes="no" />
+            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+        </jar>
+    </target>
+
+    <target name="jar-docs" depends="compile, javadoc">
+        <jar destfile="jars/libarx-${arx.version}-doc.jar">
+            <fileset dir="doc/api" defaultexcludes="no" />
+        </jar>
+        <jar destfile="jars/libarx-${arx.version}-dev-doc.jar">
+            <fileset dir="doc/dev" defaultexcludes="no" />
+        </jar>
+        <jar destfile="jars/arx-${arx.version}-doc.jar">
+            <fileset dir="doc/gui" defaultexcludes="no" />
+        </jar>
+    </target>
+
+
+    <target name="jars" depends="jar-win, jar-linux, jar-osx, jar-libs, jar-docs">
+        <antcall target="end-clean" />
     </target>
 </project>
