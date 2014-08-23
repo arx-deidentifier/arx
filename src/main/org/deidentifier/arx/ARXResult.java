@@ -294,7 +294,7 @@ public class ARXResult {
         TransformedData information = checker.applyAndSetProperties(transformation);
 
         // Store
-        if (!node.isChecked()) {
+        if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
             
             node.access().setChecked(true);
             if (transformation.hasProperty(Node.PROPERTY_ANONYMOUS)) {
