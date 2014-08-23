@@ -554,19 +554,19 @@ public class MainToolBar implements IView {
         infoComposite.setSize(remaining, bounds.height);
         infoItem.setWidth(remaining);
         int locationY = (infoComposite.getBounds().height - labelSelected.getBounds().height)/2;
-        
+
         // Layout label
-        int locationX = remaining - labelSelected.getSize().x;
+        int locationX = remaining - labelApplied.getSize().x;
+        labelApplied.setLocation(locationX, locationY);
+        if (locationX < 0) labelApplied.setVisible(false);
+        else labelApplied.setVisible(true);
+                
+        // Layout label
+        locationX -= labelSelected.getSize().x + OFFSET;
         labelSelected.setLocation(locationX, locationY);
         if (locationX < 0) labelSelected.setVisible(false);
         else labelSelected.setVisible(true);
 
-        // Layout label
-        locationX -= labelApplied.getSize().x + OFFSET;
-        labelApplied.setLocation(locationX, locationY);
-        if (locationX < 0) labelApplied.setVisible(false);
-        else labelApplied.setVisible(true);
-        
         // Layout label
         locationX -= labelTransformations.getSize().x + OFFSET;
         labelTransformations.setLocation(locationX, locationY);
