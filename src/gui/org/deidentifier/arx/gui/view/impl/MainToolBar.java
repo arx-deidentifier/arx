@@ -261,22 +261,78 @@ public class MainToolBar implements IView {
     }
 
     /**
-     * Returns the number of anonymous nodes in the lattice
-     * 
+     * Helper class including some statistics
+     *
+     */
+    class Statistics {
+        int checks;
+        int anonymous;
+        int not_anonymous;
+        int unknown;
+        int probably_anonymous;
+        int probably_not_anonymous;
+        int infoloss_known;
+    }
+    
+    
+    /**
+     * Computes some statsitcs for the given lattice
      * @param lattice
      * @return
      */
-    private int getAnonymousCount(final ARXLattice lattice) {
-        int count = 0;
+    private Statistics getStatistics(final ARXLattice lattice) {
+        Statistics stats = new Statistics();
         for (final ARXNode[] level : lattice.getLevels()) {
             for (final ARXNode node : level) {
+                if (node.isChecked()) {
+                    stats.checks++;
+                }
                 if (node.isAnonymous() == Anonymity.ANONYMOUS) {
-                    count++;
+                    stats.anonymous++;
+                } else if (node.isAnonymous() == Anonymity.NOT_ANONYMOUS) {
+                    stats.not_anonymous++;
+                } else if (node.isAnonymous() == Anonymity.PROBABLY_ANONYMOUS) {
+                    stats.probably_anonymous++;
+                } else if (node.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+                    stats.probably_anonymous++;
+                } else if (node.isAnonymous() == Anonymity.UNKNOWN) {
+                    stats.unknown++;
+                }
+                if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) == 0) {
+                    stats.infoloss_known++;
                 }
             }
         }
-        return count;
+        return stats;
     }
+
+    /**
+     * Updates the tooltip with new statistics
+     * @param statistics
+     */
+     
+    private void updateTooltip(final Statistics stat) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Checks: " + stat.checks + "\n");
+        sb.append("Anonymous: " + stat.anonymous + "\n");
+        sb.append("Not-Anonymous: " + stat.not_anonymous + "\n");
+        sb.append("Probably Anonymous: " + stat.probably_anonymous + "\n");
+        sb.append("Probably Not-Anonymous: " + stat.probably_not_anonymous + "\n");
+        sb.append("Unknown: " + stat.unknown + "\n");
+        sb.append("Infoloss determined: " + stat.infoloss_known + "\n");
+        setToolTip(sb.toString());
+    }
+
+    /**
+     * Sets the tooltip
+     * @param text
+     */
+    private void setToolTip(String text) {
+        selectedLabel.setToolTipText(text);
+        appliedLabel.setToolTipText(text);
+        latticeLabel.setToolTipText(text);
+    }
+    
 
     /**
      * Performs layouting
@@ -321,6 +377,7 @@ public class MainToolBar implements IView {
 
     @Override
     public void update(final ModelEvent event) {
+        
         if (event.part == ModelPart.SELECTED_NODE) {
             if (model.getSelectedNode() != null) {
                 toolBar.setRedraw(false);
@@ -332,15 +389,24 @@ public class MainToolBar implements IView {
         } else if (event.part == ModelPart.OUTPUT) {
             if (model.getOutputNode() != null) {
                 toolBar.setRedraw(false);
+                Statistics stats = getStatistics(model.getResult().getLattice());
+                
+                latticeLabel.setText(Resources.getMessage("MainToolBar.5") + String.valueOf(stats.anonymous) + Resources.getMessage("MainToolBar.6") + String.valueOf(model.getResult().getLattice().getSize())); //$NON-NLS-1$ //$NON-NLS-2$
+                latticeLabel.pack();
+                
                 appliedLabel.setText(Resources.getMessage("MainToolBar.4") + Arrays.toString(model.getOutputNode().getTransformation())); //$NON-NLS-1$
                 appliedLabel.pack();
                 labelLayout();
+                updateTooltip(stats);
+
                 toolBar.setRedraw(true);
             }
         } else if (event.part == ModelPart.RESULT) {
             if (model.getResult() != null) {
                 toolBar.setRedraw(false);
-                latticeLabel.setText(Resources.getMessage("MainToolBar.5") + String.valueOf(getAnonymousCount(model.getResult().getLattice())) + Resources.getMessage("MainToolBar.6") + String.valueOf(model.getResult().getLattice().getSize())); //$NON-NLS-1$ //$NON-NLS-2$
+                Statistics stats = getStatistics(model.getResult().getLattice());
+
+                latticeLabel.setText(Resources.getMessage("MainToolBar.5") + String.valueOf(stats.anonymous) + Resources.getMessage("MainToolBar.6") + String.valueOf(model.getResult().getLattice().getSize())); //$NON-NLS-1$ //$NON-NLS-2$
                 latticeLabel.pack();
 
                 selectedLabel.setText(Resources.getMessage("MainToolBar.7")); //$NON-NLS-1$
@@ -349,6 +415,9 @@ public class MainToolBar implements IView {
                 appliedLabel.setText(Resources.getMessage("MainToolBar.8")); //$NON-NLS-1$
                 appliedLabel.pack();
                 labelLayout();
+                
+                updateTooltip(stats);
+                
                 toolBar.setRedraw(true);
             }
         } else if (event.part == ModelPart.MODEL) {
