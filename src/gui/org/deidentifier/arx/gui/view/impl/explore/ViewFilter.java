@@ -65,6 +65,9 @@ public class ViewFilter implements IView {
     /** Image */
     private final Image          IMG_RESET;
 
+    /** Image */
+    private final Image          IMG_OPTIMUM;
+
     /** Widget */
     private Composite            root;
     /** Widget */
@@ -105,9 +108,15 @@ public class ViewFilter implements IView {
 
         // Images
         IMG_RESET = controller.getResources().getImage("arrow_refresh.png"); //$NON-NLS-1$
+        IMG_OPTIMUM = controller.getResources().getImage("bullet_yellow.png"); //$NON-NLS-1$
 
         // Bar
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-21"); //$NON-NLS-1$
+        bar.add("Show optimum", IMG_OPTIMUM, new Runnable(){
+            public void run() {
+                actionShowOptimum();
+            }
+        });
         bar.add("Reset", IMG_RESET, new Runnable(){
             public void run() {
                 actionReset();
@@ -137,6 +146,7 @@ public class ViewFilter implements IView {
     public void dispose() {
         controller.removeListener(this);
         IMG_RESET.dispose();
+        IMG_OPTIMUM.dispose();
     }
     
     @Override
@@ -271,7 +281,20 @@ public class ViewFilter implements IView {
             fireModelEvent();
         }
     }
-    
+
+    /**
+     * Action
+     */
+    private void actionShowOptimum() {
+        if (filter != null) {
+            filter.initialize(model.getResult());
+            update();
+            fireModelEvent();
+        }
+    }
+    /**
+     * Action
+     */
     private void actionUnknownChanged() {
         if (filter != null) {
             if (!unknown.getSelection()) filter.disallowUnknown();
