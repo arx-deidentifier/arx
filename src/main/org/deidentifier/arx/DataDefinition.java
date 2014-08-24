@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
@@ -40,16 +41,19 @@ public class DataDefinition implements Cloneable{
     private boolean locked = false;
 
     /** The mapped attribute types */
-    private final Map<String, AttributeType> attributeTypes    = new HashMap<String, AttributeType>();
+    private final Map<String, AttributeType>       attributeTypes    = new HashMap<String, AttributeType>();
+
+    /** The mapped attribute types */
+    private final Map<String, HierarchyBuilder<?>> builders          = new HashMap<String, HierarchyBuilder<?>>();
 
     /** The mapped data types */
-    private final Map<String, DataType<?>>   dataTypes         = new HashMap<String, DataType<?>>();
+    private final Map<String, DataType<?>>         dataTypes         = new HashMap<String, DataType<?>>();
 
     /** The mapped minimum generalization */
-    private final Map<String, Integer>       minGeneralization = new HashMap<String, Integer>();
+    private final Map<String, Integer>             minGeneralization = new HashMap<String, Integer>();
 
     /** The mapped maximum generalization */
-    private final Map<String, Integer>       maxGeneralization = new HashMap<String, Integer>();
+    private final Map<String, Integer>             maxGeneralization = new HashMap<String, Integer>();
 
     @Override
     public DataDefinition clone() {
@@ -83,6 +87,15 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Returns the according builder, if any
+     * 
+     * @return
+     */
+    public HierarchyBuilder<?> getBuilder(final String attribute) {
+        return builders.get(attribute);
+    }
+
+    /**
      * Returns the Datatype for the column name
      * 
      * @param columnName
@@ -105,7 +118,6 @@ public class DataDefinition implements Cloneable{
     public String[][] getHierarchy(final String attribute) {
         return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy();
     }
-
     /**
      * Returns the height of the according hierarchy
      * 
@@ -208,6 +220,14 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Returns whether this definition can be altered
+     * @return
+     */
+    public boolean isLocked(){
+        return locked;
+    }
+
+    /**
      * Define the type of a given attribute
      * 
      * @param attribute
@@ -219,6 +239,21 @@ public class DataDefinition implements Cloneable{
         if (locked) {throw new IllegalStateException("This definition is currently locked");}
         if (type == null) { throw new NullPointerException("Type must not be null"); }
         attributeTypes.put(attribute, type);
+    }
+
+    /**
+     * Defines the given attribute as a quasi-identifier and stores the functional
+     * representation of the generalization hierarchy
+     * 
+     * @param attribute
+     * @param builder
+     */
+    public void setAttributeType(final String attribute,
+                                 final HierarchyBuilder<?> builder) {
+        
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
+        if (builder == null) { throw new NullPointerException("Builder must not be null"); }
+        attributeTypes.put(attribute, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
     }
 
     /**
@@ -265,7 +300,17 @@ public class DataDefinition implements Cloneable{
     	}
         minGeneralization.put(attribute, minimum);
     }
-
+    
+    /**
+     * Returns all associated hierarchy builders
+     * @return
+     */
+    protected Map<String, HierarchyBuilder<?>> getBuilders() {
+        final Map<String, HierarchyBuilder<?>> result = new HashMap<String, HierarchyBuilder<?>>();
+        result.putAll(this.builders);
+        return result;
+    }
+    
     /**
      * Returns all generalization hierarchies
      * 
@@ -274,29 +319,13 @@ public class DataDefinition implements Cloneable{
     protected Map<String, String[][]> getHierarchies() {
         final Map<String, String[][]> result = new HashMap<String, String[][]>();
         for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == AttributeType.ATTR_TYPE_QI) {
-                result.put(entry.getKey(),
-                           ((Hierarchy) entry.getValue()).getHierarchy());
+            if (entry.getValue() instanceof Hierarchy) {
+                result.put(entry.getKey(), ((Hierarchy) entry.getValue()).getHierarchy());
             }
         }
         return result;
     }
     
-    /**
-     * Lock/unlock the definition
-     */
-    protected void setLocked(boolean locked){
-        this.locked = locked;
-    }
-    
-    /**
-     * Returns whether this definition can be altered
-     * @return
-     */
-    public boolean isLocked(){
-        return locked;
-    }
-
     /**
      * Parses the configuration of the import adapter
      * @param adapter
@@ -307,5 +336,12 @@ public class DataDefinition implements Cloneable{
         for (int i=0; i<config.getColumns().size(); i++){
             this.setDataType(header[i], config.getColumns().get(i).getDataType());
         }
+    }
+
+    /**
+     * Lock/unlock the definition
+     */
+    protected void setLocked(boolean locked){
+        this.locked = locked;
     }
 }

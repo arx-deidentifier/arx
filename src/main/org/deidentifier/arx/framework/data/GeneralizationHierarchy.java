@@ -136,8 +136,7 @@ public class GeneralizationHierarchy {
         }
         
         // Count distinct values on each level
-        distinctValues = new int[1];
-        distinctValues[0] = uniqueIn;
+        distinctValues = new int[]{uniqueIn};
     }
 
     /**

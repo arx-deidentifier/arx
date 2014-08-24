@@ -280,7 +280,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final Data data = provider.getData();
-            data.getDefinition().setAttributeType("age", null);
+            data.getDefinition().setAttributeType("age", (AttributeType)null);
             final ARXConfiguration config = ARXConfiguration.create();
             config.addCriterion(new KAnonymity(2));
             config.setMaxOutliers(1.2d);

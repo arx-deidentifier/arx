@@ -24,9 +24,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -172,6 +174,10 @@ public class DataManager {
                     boolean isEmpty = false;
                     if (definition.getAttributeType(name) instanceof Hierarchy) {
                         hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
+                    } else if (definition.getBuilder(name) != null){
+                        HierarchyBuilder<?> builder = definition.getBuilder(name);
+                        AttributeType.Hierarchy hierarchy = builder.build(dictionary.getMapping()[i]);
+                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, hierarchy.getHierarchy(), dictionaryIndex, dictionaryQI);
                     } else {
                         isEmpty = true;
                         hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
