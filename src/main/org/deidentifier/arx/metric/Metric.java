@@ -214,37 +214,46 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param groupify The groupify operator of the previous check
      * @return the information loss
      */
-    public final BoundInformationLoss<T> getInformationLoss(final Node node, final IHashGroupify groupify) {
-        return this.evaluateInternal(node, groupify);
+    public final InformationLossWithBound<T> getInformationLoss(final Node node, final IHashGroupify groupify) {
+        return this.getInformationLossInternal(node, groupify);
     }
     
     /**
      * Returns a lower bound for the information loss for the given node. 
      * This can be used to expose the results of monotonic shares of a metric,
      * which can significantly speed-up the anonymization process. If no
-     * such metric exists, simply return <code>null</code>.
+     * such metric exists, the method returns <code>null</code>.
      * 
      * @param node
      * @return
      */
-    public abstract T getLowerBound(final Node node);
+    @SuppressWarnings("unchecked")
+    public T getLowerBound(final Node node) {
+        if (node.getLowerBound() != null) {
+            return (T)node.getLowerBound();
+        } else {
+            return getLowerBoundInternal(node);
+        }
+    }
 
     /**
      * Returns a lower bound for the information loss for the given node. 
      * This can be used to expose the results of monotonic shares of a metric,
      * which can significantly speed-up the anonymization process. If no
-     * such metric exists, simply return <code>null</code>. <br>
-     * <br>
-     * This variant of the method allows computing a monotonic share based on
-     * a groupified data representation. IMPORTANT NOTE: The groups may not have
-     * been classified correctly when the method is called, i.e., 
-     * HashGroupifyEntry.isNotOutlier may not be set correctly!
+     * such metric exists the method returns <code>null</code>.
      * 
      * @param node
      * @return
      */
-    public abstract T getLowerBound(final Node node, final IHashGroupify groupify);
-    
+    @SuppressWarnings("unchecked")
+    public T getLowerBound(final Node node, final IHashGroupify groupify) {
+        if (node.getLowerBound() != null) {
+            return (T)node.getLowerBound();
+        } else {
+            return getLowerBoundInternal(node, groupify);
+        }
+    }
+
     /**
      * Returns the name of metric
      * @return
@@ -263,7 +272,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final void initialize(final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         initializeInternal(definition, input, hierarchies, config);
     }
-
+    
     /**
      * Returns whether this metric requires the transformed data or groups to
      * determine information loss
@@ -273,7 +282,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isIndependent() {
         return independent;
     }
-
+    
     /**
      * Returns false if the metric is non-monotone using suppression
      * 
@@ -290,7 +299,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String toString() {
         return this.getClass().getSimpleName();
     }
-    
+
     /**
      * Evaluates the metric for the given node
      * 
@@ -300,7 +309,34 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *            The groupify operator of the previous check
      * @return the double
      */
-    protected abstract BoundInformationLoss<T> evaluateInternal(final Node node, final IHashGroupify groupify);
+    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Node node, final IHashGroupify groupify);
+
+    /**
+     * Returns a lower bound for the information loss for the given node. 
+     * This can be used to expose the results of monotonic shares of a metric,
+     * which can significantly speed-up the anonymization process. If no
+     * such metric exists, simply return <code>null</code>.
+     * 
+     * @param node
+     * @return
+     */
+    protected abstract T getLowerBoundInternal(Node node);
+    
+    /**
+     * Returns a lower bound for the information loss for the given node. 
+     * This can be used to expose the results of monotonic shares of a metric,
+     * which can significantly speed-up the anonymization process. If no
+     * such metric exists, simply return <code>null</code>. <br>
+     * <br>
+     * This variant of the method allows computing a monotonic share based on
+     * a groupified data representation. IMPORTANT NOTE: The groups may not have
+     * been classified correctly when the method is called, i.e., 
+     * HashGroupifyEntry.isNotOutlier may not be set correctly!
+     * 
+     * @param node
+     * @return
+     */
+    protected abstract T getLowerBoundInternal(final Node node, final IHashGroupify groupify);
 
     /**
      * Implement this to initialize the metric.

@@ -95,12 +95,6 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         }
     }
 
-    @Override
-    public InformationLossRCE getLowerBound(final Node node) {
-        // TODO: Implement
-        return null;
-    }
-
     /**
      * Returns the factor weighting generalization and suppression
      * 
@@ -122,12 +116,12 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     public double getGeneralizationWeight() {
         return gWeight;
     }
-    
+
     @Override
     public String getName() {
         return "Normalized Domain Share";
     }
-
+    
     /**
      * Returns the factor used to weight suppressed values
      * @return
@@ -135,7 +129,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     public double getSuppressionWeight() {
         return sWeight;
     }
-
+    
     @Override
     public String toString() {
         return "Normalized Domain Share ("+gsWeight+"/"+gWeight+"/"+sWeight+")";
@@ -202,8 +196,8 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
     }
 
     @Override
-    protected BoundInformationLoss<InformationLossRCE>
-            evaluateInternal(Node node, IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossRCE>
+            getInformationLossInternal(Node node, IHashGroupify g) {
         
         // Prepare
         int[] transformation = node.getTransformation();
@@ -244,7 +238,20 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
         }
         
         // Return infoloss
-        return new BoundInformationLoss<InformationLossRCE>(new InformationLossRCE(scores, weights));
+        return new InformationLossWithBound<InformationLossRCE>(new InformationLossRCE(scores, weights));
+    }
+
+    @Override
+    protected InformationLossRCE getLowerBoundInternal(Node node) {
+        // TODO: Implement
+        return null;
+    }
+
+    @Override
+    protected InformationLossRCE getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        // TODO: Implement
+        return null;
     }
     
     @Override

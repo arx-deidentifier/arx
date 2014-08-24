@@ -23,14 +23,20 @@ package org.deidentifier.arx.metric;
  * @author Fabian Prasser
  *
  */
-public class BoundInformationLossDefault extends BoundInformationLoss<InformationLossDefault> {
+public class InformationLossWithBound<T extends InformationLoss<?>> {
 
+    /** Lower bound, if any*/
+    private final T lowerBound;
+    /** Actual information loss*/
+    private final T informationLoss;
+    
     /**
      * Creates a new instance without a lower bound
      * @param informationLoss
      */
-    public BoundInformationLossDefault(double informationLoss) {
-        super(new InformationLossDefault(informationLoss));
+    public InformationLossWithBound(T informationLoss) {
+        this.lowerBound = null;
+        this.informationLoss = informationLoss;
     }
 
     /**
@@ -38,8 +44,30 @@ public class BoundInformationLossDefault extends BoundInformationLoss<Informatio
      * @param informationLoss
      * @param lowerBound
      */
-    public BoundInformationLossDefault(double informationLoss,
-                                       double lowerBound) {
-        super(new InformationLossDefault(informationLoss), new InformationLossDefault(lowerBound));
+    public InformationLossWithBound(T informationLoss, T lowerBound) {
+        this.lowerBound = lowerBound;
+        this.informationLoss = informationLoss;
+    }
+    
+    /**
+     * @return the informationLoss
+     */
+    public T getInformationLoss() {
+        return informationLoss;
+    }
+
+    /**
+     * @return the lowerBound
+     */
+    public T getLowerBound() {
+        return lowerBound;
+    }
+
+    /**
+     * Is a lower bound provided
+     * @return
+     */
+    public boolean hasLowerBound(){
+        return this.lowerBound != null;
     }
 }

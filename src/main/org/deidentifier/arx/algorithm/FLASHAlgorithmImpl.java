@@ -29,7 +29,7 @@ import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
-import org.deidentifier.arx.metric.BoundInformationLoss;
+import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -165,7 +165,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Check or evaluate
         if (configuration.getTriggerEvaluate().appliesTo(node)) {
-            BoundInformationLoss<?> loss = checker.getMetric().getInformationLoss(node, null);
+            InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, null);
             lattice.setInformationLoss(node, loss.getInformationLoss());
             lattice.setLowerBound(node, loss.getLowerBound());
             if (loss.getLowerBound() == null) {

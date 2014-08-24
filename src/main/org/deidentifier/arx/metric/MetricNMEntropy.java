@@ -59,27 +59,11 @@ public class MetricNMEntropy extends MetricEntropy {
     }
 
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        }
-        return super.evaluateInternal(node, null).getInformationLoss();
-    }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node, final IHashGroupify g) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        }
-        return super.evaluateInternal(node, null).getInformationLoss();
-    }
-    
-    @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         // Obtain "standard" value
         final InformationLossDefault originalInfoLossDefault = node.getLowerBound() != null ? (InformationLossDefault)node.getLowerBound() :
-                                                               super.evaluateInternal(node, g).getInformationLoss();
+                                                               super.getInformationLossInternal(node, g).getInformationLoss();
         
         // Compute loss induced by suppression
         double originalInfoLoss = originalInfoLossDefault.getValue();
@@ -117,7 +101,18 @@ public class MetricNMEntropy extends MetricEntropy {
         }
         
         // Return sum of both values
-        return new BoundInformationLossDefault(originalInfoLoss - additionalInfoLoss, originalInfoLossDefault.getValue());
+        return new InformationLossDefaultWithBound(originalInfoLoss - additionalInfoLoss, originalInfoLossDefault.getValue());
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return super.getInformationLossInternal(node, null).getInformationLoss();
+    }
+    
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        return getLowerBoundInternal(node);
     }
 
     @Override

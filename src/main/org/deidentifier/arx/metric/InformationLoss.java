@@ -34,14 +34,11 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
         // Protected
     }
     
-    public abstract T getValue();
-    
     /**
-     * Returns the value relative to the other instance
-     * @param other
-     * @return
+     * Returns a clone of this object
      */
-    public abstract double relativeTo(InformationLoss<?> min, InformationLoss<?> max);
+    @Override
+    public abstract InformationLoss<T> clone();
     
     /**
      * Compares the loss to the other
@@ -49,13 +46,14 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      * @return
      */
     public abstract int compareTo(InformationLoss<?> other);
+    
+    @Override
+    public abstract boolean equals(Object obj);
 
-    /**
-     * Returns a string representation
-     * 
-     * @return
-     */
-    public abstract String toString();
+    public abstract T getValue();
+
+    @Override
+    public abstract int hashCode();
 
     /**
      * Retains the maximum of this and other
@@ -70,16 +68,18 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      * @param other
      */
     public abstract void min(InformationLoss<?> other);
+    
+    /**
+     * Returns the value relative to the other instance
+     * @param other
+     * @return
+     */
+    public abstract double relativeTo(InformationLoss<?> min, InformationLoss<?> max);
 
     /**
-     * Returns a clone of this object
+     * Returns a string representation
+     * 
+     * @return
      */
-    @Override
-    public abstract InformationLoss<T> clone();
-    
-    @Override
-    public abstract int hashCode();
-
-    @Override
-    public abstract boolean equals(Object obj);
+    public abstract String toString();
 }

@@ -49,11 +49,6 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
-    public String toString() {
-        return "Non-Monotonic Discernability";
-    }
-    
-    @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (rowCount == 0) {
             throw new IllegalStateException("Metric must be initialized first");
@@ -61,32 +56,14 @@ public class MetricDM extends MetricDefault {
             return new InformationLossDefault(rowCount);
         }
     }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        return (InformationLossDefault)node.getLowerBound();
-    }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node,
-                                                IHashGroupify groupify) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        }
-
-        double lowerBound = 0; // DM*
-        HashGroupifyEntry m = groupify.getFirstEntry();
-        while (m != null) {
-            if (m.count>0){
-                lowerBound += ((double) m.count * (double) m.count);
-            }
-            m = m.nextOrdered;
-        }
-        return new InformationLossDefault(lowerBound);
-    }
     
     @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    public String toString() {
+        return "Non-Monotonic Discernability";
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         double value = 0;
         double lowerBound = 0; // DM*
@@ -104,7 +81,26 @@ public class MetricDM extends MetricDefault {
             }
             m = m.nextOrdered;
         }
-        return new BoundInformationLossDefault(value, lowerBound);
+        return new InformationLossDefaultWithBound(value, lowerBound);
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return null;
+    }
+    
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        double lowerBound = 0; // DM*
+        HashGroupifyEntry m = groupify.getFirstEntry();
+        while (m != null) {
+            if (m.count>0){
+                lowerBound += ((double) m.count * (double) m.count);
+            }
+            m = m.nextOrdered;
+        }
+        return new InformationLossDefault(lowerBound);
     }
 
     @Override

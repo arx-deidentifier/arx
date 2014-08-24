@@ -71,32 +71,25 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
     
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        } else {
-            return this.evaluateInternal(node, null).getLowerBound();
-        }
-    }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node, final IHashGroupify g) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        } else {
-            return this.evaluateInternal(node, null).getLowerBound();
-        }
-    }
-
-    @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         double value = 0;
         final int[] transformation = node.getTransformation();
         for (int i = 0; i < transformation.length; i++) {
             value += infoloss[i][transformation[i]];
         }
-        return new BoundInformationLossDefault(value, value);
+        return new InformationLossDefaultWithBound(value, value);
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return this.getInformationLossInternal(node, null).getLowerBound();
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+         return this.getLowerBoundInternal(node);
     }
 
     @Override

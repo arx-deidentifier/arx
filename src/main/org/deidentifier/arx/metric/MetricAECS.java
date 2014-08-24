@@ -49,11 +49,6 @@ public class MetricAECS extends MetricDefault {
     }
     
     @Override
-    public String toString() {
-        return "Average Equivalence Class Size";
-    }
-    
-    @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (rowCount == 0) {
             throw new IllegalStateException("Metric must be initialized first");
@@ -68,34 +63,12 @@ public class MetricAECS extends MetricDefault {
     }
     
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        return (InformationLossDefault)node.getLowerBound();
+    public String toString() {
+        return "Average Equivalence Class Size";
     }
-
+    
     @Override
-    public InformationLossDefault getLowerBound(Node node,
-                                                IHashGroupify groupify) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        }
-
-        // The total number of tuples
-        int tuples = 0;
-        int groups = 0;
-        HashGroupifyEntry m = groupify.getFirstEntry();
-        while (m != null) {
-            if (m.count > 0) {
-                tuples += m.count;
-                groups++;
-            }
-            m = m.nextOrdered;
-        }
-        // Compute AECS
-        return new InformationLossDefault((double)tuples / (double)groups);
-    }
-
-    @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         // The total number of groups with suppression
         int groupsWithSuppression = 0;
@@ -121,8 +94,31 @@ public class MetricAECS extends MetricDefault {
         groupsWithSuppression += suppressed ? 1 : 0;
         
         // Compute AECS
-        return new BoundInformationLossDefault((double)tuples / (double)groupsWithSuppression,
+        return new InformationLossDefaultWithBound((double)tuples / (double)groupsWithSuppression,
                                                (double)tuples / (double)groupsWithoutSuppression);
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return null;
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        // The total number of tuples
+        int tuples = 0;
+        int groups = 0;
+        HashGroupifyEntry m = groupify.getFirstEntry();
+        while (m != null) {
+            if (m.count > 0) {
+                tuples += m.count;
+                groups++;
+            }
+            m = m.nextOrdered;
+        }
+        // Compute AECS
+        return new InformationLossDefault((double)tuples / (double)groups);
     }
 
     @Override

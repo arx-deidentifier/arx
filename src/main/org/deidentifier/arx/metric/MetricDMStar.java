@@ -61,26 +61,15 @@ public class MetricDMStar extends MetricDefault {
     
 
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        return (InformationLossDefault)node.getLowerBound();
-    }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node,
-                                                IHashGroupify groupify) {
-        return evaluateInternal(node, groupify).getInformationLoss();
-    }
-    
-    @Override
     public String toString() {
         return "Monotonic Discernability";
     }
-    
+
     @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         if (node.getLowerBound() != null) { 
-            return new BoundInformationLoss<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
+            return new InformationLossWithBound<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
                                                                     (InformationLossDefault) node.getLowerBound()); 
         }
         
@@ -92,7 +81,18 @@ public class MetricDMStar extends MetricDefault {
             }
             m = m.nextOrdered;
         }
-        return new BoundInformationLossDefault(value, value);
+        return new InformationLossDefaultWithBound(value, value);
+    }
+    
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return null;
+    }
+    
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        return getInformationLossInternal(node, groupify).getInformationLoss();
     }
 
     @Override

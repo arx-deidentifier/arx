@@ -28,7 +28,7 @@ import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.metric.BoundInformationLoss;
+import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
@@ -161,7 +161,7 @@ public class NodeChecker implements INodeChecker {
         currentGroupify.analyze(forceMeasureInfoLoss);
 
         // Compute information loss and lower bound
-        BoundInformationLoss<?> result = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
+        InformationLossWithBound<?> result = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
                                           metric.getInformationLoss(node, currentGroupify) : null;
         InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
         InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);

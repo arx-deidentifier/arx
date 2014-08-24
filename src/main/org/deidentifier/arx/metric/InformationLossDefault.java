@@ -54,11 +54,6 @@ class InformationLossDefault extends InformationLoss<Double> {
     }
 
     @Override
-    public int hashCode() {
-        return Double.valueOf(value).hashCode();
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (getClass() != obj.getClass()) return false;
@@ -70,6 +65,11 @@ class InformationLossDefault extends InformationLoss<Double> {
     @Override
     public Double getValue() {
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Double.valueOf(value).hashCode();
     }
 
     @Override

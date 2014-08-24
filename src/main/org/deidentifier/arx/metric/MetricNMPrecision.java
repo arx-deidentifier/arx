@@ -72,32 +72,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        if (node.getLowerBound() != null) {
-            return (InformationLossDefault)node.getLowerBound();
-        }
-
-        double result = 0;
-        final int[] transformation = node.getTransformation();
-        for (int i = 0; i < transformation.length; i++) {
-            double weight = weights != null ? weights[i] : 1d;
-            double level = (double) transformation[i];
-            result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
-        }
-        result /= (double) transformation.length;
-        
-        // Return
-        return new InformationLossDefault(result);
-    }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node,
-                                                IHashGroupify groupify) {
-       return getLowerBound(node);
-    }
-    
-    @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
@@ -121,7 +96,28 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         precision /= cells;
         
         // Return
-        return new BoundInformationLossDefault(precision, getLowerBound(node).getValue());
+        return new InformationLossDefaultWithBound(precision, getLowerBound(node).getValue());
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        double result = 0;
+        final int[] transformation = node.getTransformation();
+        for (int i = 0; i < transformation.length; i++) {
+            double weight = weights != null ? weights[i] : 1d;
+            double level = (double) transformation[i];
+            result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
+        }
+        result /= (double) transformation.length;
+        
+        // Return
+        return new InformationLossDefault(result);
+    }
+    
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+       return getLowerBoundInternal(node);
     }
 
     @Override

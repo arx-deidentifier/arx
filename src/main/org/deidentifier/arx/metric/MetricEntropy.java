@@ -43,6 +43,15 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricEntropy extends MetricDefault {
 
+    /** Value unknown */
+    private static final double NA               = Double.POSITIVE_INFINITY;
+    
+    /** SVUID */
+    private static final long   serialVersionUID = -8618697919821588987L;
+    
+    /** Log 2 */
+    static final double         log2             = Math.log(2);
+    
     /**
      * Computes log 2
      * 
@@ -52,15 +61,6 @@ public class MetricEntropy extends MetricDefault {
     static final double log2(final double num) {
         return Math.log(num) / log2;
     }
-    
-    /** Value unknown */
-    private static final double NA               = Double.POSITIVE_INFINITY;
-    
-    /** SVUID */
-    private static final long   serialVersionUID = -8618697919821588987L;
-    
-    /** Log 2 */
-    static final double         log2             = Math.log(2);
 
     /** Column -> Level -> Value */
     private double[][] cache;
@@ -80,25 +80,15 @@ public class MetricEntropy extends MetricDefault {
     }
     
     @Override
-    public InformationLossDefault getLowerBound(Node node) {
-        return evaluateInternal(node, null).getLowerBound();
-    }
-
-    @Override
-    public InformationLossDefault getLowerBound(Node node, final IHashGroupify g) {
-        return evaluateInternal(node, null).getLowerBound();
-    }
-    
-    @Override
     public String toString() {
         return "Monotonic Non-Uniform Entropy";
     }
 
     @Override
-    protected BoundInformationLoss<InformationLossDefault> evaluateInternal(final Node node, final IHashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
         if (node.getLowerBound() != null) { 
-            return new BoundInformationLoss<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
+            return new InformationLossWithBound<InformationLossDefault>((InformationLossDefault)node.getLowerBound(),
                                                                     (InformationLossDefault)node.getLowerBound()); 
         }
         
@@ -127,7 +117,18 @@ public class MetricEntropy extends MetricDefault {
             }
             result += value;
         }
-        return new BoundInformationLossDefault(-result, -result);
+        return new InformationLossDefaultWithBound(-result, -result);
+    }
+    
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node) {
+        return getInformationLossInternal(node, null).getLowerBound();
+    }
+
+    @Override
+    protected InformationLossDefault getLowerBoundInternal(Node node,
+                                                           IHashGroupify groupify) {
+        return getLowerBoundInternal(node);
     }
 
     @Override
