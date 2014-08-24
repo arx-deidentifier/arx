@@ -27,6 +27,7 @@ import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -79,6 +80,7 @@ public class ViewCriteriaList implements IView {
         table.setHeaderVisible(true);
         final GridData d = SWTUtil.createFillGridData();
         table.setLayoutData(d);
+        table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
         column1 = new TableColumn(table, SWT.NONE);
         column1.setText("");

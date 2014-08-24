@@ -39,14 +39,13 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -511,9 +510,12 @@ public class MainToolBar implements IView {
         labelApplied.setText(Resources.getMessage("MainToolBar.32")); //$NON-NLS-1$
         labelApplied.pack();
         
-        // Copy info to clipboard on double-click
-        MouseListener listener = new MouseAdapter(){
-            public void mouseDoubleClick(MouseEvent arg0) {
+        // Copy info to clipboard on right-click
+        Menu menu = new Menu(toolbar);
+        MenuItem itemCopy = new MenuItem(menu, SWT.NONE);
+        itemCopy.setText("Copy");
+        itemCopy.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent arg0) {
                 if (tooltip != null) {
                     Clipboard clipboard = new Clipboard(toolbar.getDisplay());
                     TextTransfer textTransfer = TextTransfer.getInstance();
@@ -522,11 +524,11 @@ public class MainToolBar implements IView {
                     clipboard.dispose();
                 }
             }
-        };
-        labelSelected.addMouseListener(listener);
-        labelApplied.addMouseListener(listener);
-        labelTransformations.addMouseListener(listener);
-
+        });
+        labelSelected.setMenu(menu);
+        labelApplied.setMenu(menu);
+        labelTransformations.setMenu(menu);
+        
         // Add listener for layout
         toolbar.addControlListener(new ControlAdapter() {
             @Override
@@ -583,9 +585,8 @@ public class MainToolBar implements IView {
      */
     private void setToolTip(SearchSpaceStatistics stats) {
         this.tooltip = stats.toString();
-        String text = this.tooltip + "\n(Double-click to copy to clipboard)";
-        this.labelSelected.setToolTipText(text);
-        this.labelApplied.setToolTipText(text);
-        this.labelTransformations.setToolTipText(text);
+        this.labelSelected.setToolTipText(tooltip);
+        this.labelApplied.setToolTipText(tooltip);
+        this.labelTransformations.setToolTipText(tooltip);
     }
 }

@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
@@ -257,6 +258,14 @@ public class ViewClipboard implements IView {
             controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
         }
     }
+    /**
+     * Action
+     */
+    private void actionCopy() {
+        if (table != null) {
+            new ClipboardHandlerTable(this.table).copy();
+        }
+    }
 
     /**
      * Action
@@ -402,6 +411,16 @@ public class ViewClipboard implements IView {
     private Menu createMenu(Composite parent) {
         
         final Menu menu = new Menu(parent.getShell());
+
+        MenuItem item0 = new MenuItem(menu, SWT.NONE);
+        item0.setText(Resources.getMessage("NodeClipboardView.11")); //$NON-NLS-1$
+        item0.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionCopy();
+            }
+        });
+        
+        new MenuItem(menu, SWT.SEPARATOR);
         
         MenuItem item1 = new MenuItem(menu, SWT.NONE);
         item1.setText(Resources.getMessage("NodeClipboardView.1")); //$NON-NLS-1$

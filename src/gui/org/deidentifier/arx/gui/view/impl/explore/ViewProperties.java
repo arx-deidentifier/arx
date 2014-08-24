@@ -32,6 +32,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
@@ -77,7 +78,7 @@ public class ViewProperties implements IView {
         groupNodeGridLayout.numColumns = 1;
         root.setLayout(groupNodeGridLayout);
 
-        createNodeGroup(root);
+        create(root);
         reset();
     }
 
@@ -159,15 +160,16 @@ public class ViewProperties implements IView {
 
     /**
      * Creates the required controls
-     * @param groupNode
+     * @param parent
      */
-    private void createNodeGroup(final Composite groupNode) {
+    private void create(final Composite parent) {
 
-        table = new Table(groupNode, SWT.BORDER);
+        table = new Table(parent, SWT.BORDER);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         final GridData gdata = SWTUtil.createFillGridData();
         table.setLayoutData(gdata);
+        table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
         TableColumn c = new TableColumn(table, SWT.NONE);
         c.setText(Resources.getMessage("NodePropertiesView.16")); //$NON-NLS-1$

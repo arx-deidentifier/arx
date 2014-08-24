@@ -36,6 +36,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext.Context;
+import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -163,7 +164,9 @@ public class ViewPropertiesOutput extends ViewProperties {
 
         final Tree tree = new Tree(group, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         tree.setHeaderVisible(true);
+        
         treeViewer = new TreeViewer(tree);
+        tree.setMenu(new ClipboardHandlerTree(treeViewer).getMenu());
         
         final TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
         tree.setLinesVisible(true);
