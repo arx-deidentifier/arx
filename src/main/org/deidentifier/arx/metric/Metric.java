@@ -28,6 +28,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
 
 /**
  * Abstract base class for metrics
@@ -39,7 +40,7 @@ import org.deidentifier.arx.framework.lattice.Node;
 public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
 
     /**
-     * Plugable aggregate functions
+     * Pluggable aggregate functions
      * @author Fabian Prasser
      *
      */
@@ -279,7 +280,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * 
      * @return
      */
-    public final boolean isIndependent() {
+    public boolean isIndependent() {
         return independent;
     }
     
@@ -290,6 +291,30 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public final boolean isMonotonic() {
         return monotonic;
+    }
+    
+    /**
+     * Returns true if the metric is weighted
+     * @return
+     */
+    public final boolean isWeighted() {
+        return (this instanceof MetricWeighted) || this.isMultiDimensional();
+    }
+    
+    /**
+     * Returns true if the metric is multi-dimensional
+     * @return
+     */
+    public final boolean isMultiDimensional(){
+        return (this instanceof AbstractMetricMultiDimensional);
+    }
+    
+    /**
+     * Returns the aggregate function of a multi-dimensional metric, null otherwise
+     * @return
+     */
+    public AggregateFunction getAggregateFunction(){
+        return null;
     }
 
     /**
