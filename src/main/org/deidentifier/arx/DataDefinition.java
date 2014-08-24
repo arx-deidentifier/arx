@@ -124,6 +124,9 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public int getHierarchyHeight(final String attribute) {
+        if (attributeTypes.get(attribute).getType() != AttributeType.ATTR_TYPE_QI) {
+            throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
+        }
         if (((Hierarchy) attributeTypes.get(attribute)).getHierarchy().length == 0) { return 0; }
         return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy()[0].length;
     }
