@@ -87,7 +87,7 @@ public class DomainShare implements Serializable {
                 if (allocated[index]) {
                     int key = keys[index];
                     double share = (double)values[index] / size;
-                    if (shares[key] != -1) {
+                    if (shares[key] != -1 && shares[key] != share) {
                         long dkey = (((long)key) << 32) | (level & 0xffffffffL);
                         duplicates.put(dkey, share);
                         vector.add(key);

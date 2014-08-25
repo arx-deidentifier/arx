@@ -50,6 +50,7 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
 
     @Override
     public boolean isIndependent() {
+        // TODO: Remove
         return false;
     }
 
