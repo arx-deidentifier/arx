@@ -305,31 +305,6 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns all associated hierarchy builders
-     * @return
-     */
-    protected Map<String, HierarchyBuilder<?>> getBuilders() {
-        final Map<String, HierarchyBuilder<?>> result = new HashMap<String, HierarchyBuilder<?>>();
-        result.putAll(this.builders);
-        return result;
-    }
-    
-    /**
-     * Returns all generalization hierarchies
-     * 
-     * @return
-     */
-    protected Map<String, String[][]> getHierarchies() {
-        final Map<String, String[][]> result = new HashMap<String, String[][]>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue() instanceof Hierarchy) {
-                result.put(entry.getKey(), ((Hierarchy) entry.getValue()).getHierarchy());
-            }
-        }
-        return result;
-    }
-    
-    /**
      * Parses the configuration of the import adapter
      * @param adapter
      */
