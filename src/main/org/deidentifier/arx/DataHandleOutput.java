@@ -250,28 +250,6 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
-    /**
-     * Gets the distinct values.
-     * 
-     * @param col the column
-     * @return the distinct values
-     */
-    @Override
-    protected String[] getDistinctValues(final int col, InterruptHandler handler) {
-
-        // Check
-        checkRegistry();
-        checkColumn(col);
-
-        final Set<String> vals = new HashSet<String>();
-        for (int i = 0; i < getNumRows(); i++) {
-            handler.checkInterrupt();
-            vals.add(getValue(i, col));
-        }
-        handler.checkInterrupt();
-        return vals.toArray(new String[vals.size()]);
-    }
-
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
@@ -299,7 +277,6 @@ public class DataHandleOutput extends DataHandle {
         checkRegistry();
         return dataQI.getDataLength();
     }
-
 
     /**
      * Gets the value.
@@ -332,6 +309,31 @@ public class DataHandleOutput extends DataHandle {
     public Iterator<String[]> iterator() {
         checkRegistry();
         return new ResultIterator();
+    }
+
+
+    /**
+     * Releases all resources
+     */
+    protected void doRelease() {
+        result.releaseBuffer(this);
+        node = null;
+        dataIS = null;
+        dataQI = null;
+        dataSE = null;
+        inverseData = null;
+        inverseDictionaries = null;
+        inverseMap = null;
+        map = null;
+        quasiIdentifiers = null;
+        suppressionString = null;
+        registry = null;
+        subset = null;
+        dataTypes = null;
+        definition = null;
+        header = null;
+        statistics = null;
+        node = null;
     }
 
     /**
@@ -373,6 +375,28 @@ public class DataHandleOutput extends DataHandle {
         return dataTypes;
     }
  
+    /**
+     * Gets the distinct values.
+     * 
+     * @param col the column
+     * @return the distinct values
+     */
+    @Override
+    protected String[] getDistinctValues(final int col, InterruptHandler handler) {
+
+        // Check
+        checkRegistry();
+        checkColumn(col);
+
+        final Set<String> vals = new HashSet<String>();
+        for (int i = 0; i < getNumRows(); i++) {
+            handler.checkInterrupt();
+            vals.add(getValue(i, col));
+        }
+        handler.checkInterrupt();
+        return vals.toArray(new String[vals.size()]);
+    }
+
     /**
      * Returns the suppression string
      * @return
@@ -457,7 +481,7 @@ public class DataHandleOutput extends DataHandle {
             return dictionary[index][value];
         }
     }
-
+    
     /**
      * Returns whether the given row is an outlier
      * @param row
@@ -466,7 +490,7 @@ public class DataHandleOutput extends DataHandle {
     protected boolean internalIsOutlier(final int row) {
         return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
     }
-    
+
     /**
      * Swap internal.
      * 
@@ -479,29 +503,5 @@ public class DataHandleOutput extends DataHandle {
         int[] temp = dataQI.getArray()[row1];
         dataQI.getArray()[row1] = dataQI.getArray()[row2];
         dataQI.getArray()[row2] = temp;
-    }
-
-    /**
-     * Releases all resources
-     */
-    protected void doRelease() {
-        result.releaseBuffer(this);
-        node = null;
-        dataIS = null;
-        dataQI = null;
-        dataSE = null;
-        inverseData = null;
-        inverseDictionaries = null;
-        inverseMap = null;
-        map = null;
-        quasiIdentifiers = null;
-        suppressionString = null;
-        registry = null;
-        subset = null;
-        dataTypes = null;
-        definition = null;
-        header = null;
-        statistics = null;
-        node = null;
     }
 }

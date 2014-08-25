@@ -205,6 +205,19 @@ class DataRegistry {
     }
 
     /**
+     * Creates the views on the subset
+     * @param peqStatistics 
+     */
+    protected void createOutputSubset(ARXNode node, ARXConfiguration config, StatisticsEquivalenceClasses peqStatistics){
+        if (config.containsCriterion(DPresence.class)) {
+            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset(), peqStatistics));
+        } else {
+            this.outputSubset.remove(node);
+        }
+        this.output.get(node).setView(this.outputSubset.get(node));
+    }
+
+    /**
      * Returns the base data type without generalization
      * @param attribute
      * @return
@@ -213,6 +226,15 @@ class DataRegistry {
         return this.input.getBaseDataType(attribute);
     }
 
+    /**
+     * Returns a registered handle, if any
+     * @param node
+     * @return
+     */
+    protected DataHandle getOutputHandle(ARXNode node) {
+        return this.output.get(node);
+    }
+    
     /**
      * Implementation of {@link DataHandle#isOutlier(row)}
      * @param handle
@@ -229,6 +251,36 @@ class DataRegistry {
             return isOutlier(((DataHandleSubset)handle).getSource(), row);
         } else {
             throw new RuntimeException("Illegal state");
+        }
+    }
+
+    /**
+     * Releases the given handle
+     * @param dataHandle
+     */
+    protected void release(DataHandle handle) {
+        
+        // Handle subsets
+        if (handle instanceof DataHandleSubset) {
+           return;
+        }
+        
+        // Handle output
+        Iterator<Entry<ARXNode, DataHandleOutput>> iter = output.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<ARXNode, DataHandleOutput> entry = iter.next();
+            if (entry.getValue().equals(handle)) {
+                outputSubset.remove(entry.getKey());
+                iter.remove();
+                handle.doRelease();
+                return;
+            }
+        }
+        
+        // Handle input
+        if (handle.equals(input)) {
+            this.reset();
+            input.doRelease();
         }
     }
 
@@ -288,7 +340,7 @@ class DataRegistry {
     protected void sort(final DataHandle handle, final Swapper swapper, final boolean ascending, final int... columns) {
         sort(handle, swapper, 0, handle.getNumRows(), ascending, columns);
     }
-    
+
     /**
      * Implementation of {@link DataHandle#sort(Swapper, int, int, boolean, int...)}
      * @param handle
@@ -359,57 +411,5 @@ class DataRegistry {
      */
     protected void updateOutputSubset(ARXNode node, DataHandleSubset outputSubset){
         this.outputSubset.put(node, outputSubset);
-    }
-
-    /**
-     * Returns a registered handle, if any
-     * @param node
-     * @return
-     */
-    protected DataHandle getOutputHandle(ARXNode node) {
-        return this.output.get(node);
-    }
-
-    /**
-     * Creates the views on the subset
-     * @param peqStatistics 
-     */
-    protected void createOutputSubset(ARXNode node, ARXConfiguration config, StatisticsEquivalenceClasses peqStatistics){
-        if (config.containsCriterion(DPresence.class)) {
-            this.outputSubset.put(node, createSubset(this.output.get(node), config.getCriterion(DPresence.class).getSubset(), peqStatistics));
-        } else {
-            this.outputSubset.remove(node);
-        }
-        this.output.get(node).setView(this.outputSubset.get(node));
-    }
-
-    /**
-     * Releases the given handle
-     * @param dataHandle
-     */
-    protected void release(DataHandle handle) {
-        
-        // Handle subsets
-        if (handle instanceof DataHandleSubset) {
-           return;
-        }
-        
-        // Handle output
-        Iterator<Entry<ARXNode, DataHandleOutput>> iter = output.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<ARXNode, DataHandleOutput> entry = iter.next();
-            if (entry.getValue().equals(handle)) {
-                outputSubset.remove(entry.getKey());
-                iter.remove();
-                handle.doRelease();
-                return;
-            }
-        }
-        
-        // Handle input
-        if (handle.equals(input)) {
-            this.reset();
-            input.doRelease();
-        }
     }
 }

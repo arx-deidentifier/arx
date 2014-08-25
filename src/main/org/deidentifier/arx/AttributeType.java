@@ -38,8 +38,6 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
  */
 public class AttributeType implements Serializable, Cloneable {
     
-    private static final long serialVersionUID = -7358540408016873823L;
-
     /**
      * This class implements a generalization hierarchy
      * 
@@ -48,36 +46,7 @@ public class AttributeType implements Serializable, Cloneable {
      */
     public static abstract class Hierarchy extends AttributeType implements Serializable {
 
-		private static final long serialVersionUID = -4721439386792383385L;
-		
 		/**
-         * The implementation for arrays
-         * 
-         * @author Fabian Prasser
- * @author Florian Kohlmayer
-         */
-        static class ArrayHierarchy extends Hierarchy {
-
-			private static final long serialVersionUID = 8966189950800782892L;
-			
-			private final String[][] hierarchy;
-			
-            private ArrayHierarchy(final String[][] hierarchy) {
-                this.hierarchy = hierarchy;
-            }
-
-            @Override
-            public Hierarchy clone() {
-                return new DefaultHierarchy(getHierarchy());
-            }
-
-            @Override
-            public String[][] getHierarchy() {
-                return hierarchy;
-            }
-        }
-
-        /**
          * The default implementation of a generalization hierarchy. It allows
          * the user to programmatically define its content.
          * 
@@ -133,6 +102,33 @@ public class AttributeType implements Serializable, Cloneable {
                 return array;
             }
         }
+		
+		/**
+         * The implementation for arrays
+         * 
+         * @author Fabian Prasser
+ * @author Florian Kohlmayer
+         */
+        static class ArrayHierarchy extends Hierarchy {
+
+			private static final long serialVersionUID = 8966189950800782892L;
+			
+			private final String[][] hierarchy;
+			
+            private ArrayHierarchy(final String[][] hierarchy) {
+                this.hierarchy = hierarchy;
+            }
+
+            @Override
+            public Hierarchy clone() {
+                return new DefaultHierarchy(getHierarchy());
+            }
+
+            @Override
+            public String[][] getHierarchy() {
+                return hierarchy;
+            }
+        }
 
         /**
          * The implementation for iterators
@@ -178,6 +174,8 @@ public class AttributeType implements Serializable, Cloneable {
                 return array;
             }
         }
+
+        private static final long serialVersionUID = -4721439386792383385L;
 
         /**
          * Creates a new default hierarchy
@@ -333,6 +331,8 @@ public class AttributeType implements Serializable, Cloneable {
         }
     }
 
+    private static final long serialVersionUID = -7358540408016873823L;
+
     /** The shift */
     protected static final int  SHIFT                 = 30;
 
@@ -376,11 +376,6 @@ public class AttributeType implements Serializable, Cloneable {
         return this;
     }
 
-    /** Returns the type identifier */
-    protected int getType() {
-        return type;
-    }
-
     /** Returns a string representation */
     @Override
     public String toString() {
@@ -396,5 +391,10 @@ public class AttributeType implements Serializable, Cloneable {
         default:
             return "UNKNOWN_ATTRIBUTE_TYPE";
         }
+    }
+
+    /** Returns the type identifier */
+    protected int getType() {
+        return type;
     }
 }

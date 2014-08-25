@@ -594,6 +594,28 @@ public class ARXLattice implements Serializable {
     }
 
     /**
+     * Returns the maximal information loss
+     * @return
+     */
+    public InformationLoss<?> getMaximumInformationLoss(){
+        if (this.maximumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.maximumInformationLoss;
+    }
+
+    /**
+     * Returns the minimal information loss
+     * @return
+     */
+    public InformationLoss<?> getMinimumInformationLoss(){
+        if (this.minimumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.minimumInformationLoss;
+    }
+    
+    /**
      * Returns the number of nodes
      * 
      * @return
@@ -609,28 +631,6 @@ public class ARXLattice implements Serializable {
      */
     public ARXNode getTop() {
         return top;
-    }
-    
-    /**
-     * Returns the minimal information loss
-     * @return
-     */
-    public InformationLoss<?> getMinimumInformationLoss(){
-        if (this.minimumInformationLoss == null) {
-            this.estimateInformationLoss();
-        }
-        return this.minimumInformationLoss;
-    }
-
-    /**
-     * Returns the maximal information loss
-     * @return
-     */
-    public InformationLoss<?> getMaximumInformationLoss(){
-        if (this.maximumInformationLoss == null) {
-            this.estimateInformationLoss();
-        }
-        return this.maximumInformationLoss;
     }
     
     /**

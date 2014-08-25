@@ -742,6 +742,24 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return description;
         }
 
+        /**
+         * Returns all elements backing this datatype
+         * @return
+         */
+        public List<String> getElements() {
+            List<String> result = new ArrayList<String>();
+            if (order == null) {
+                return result;
+            }
+            result.addAll(order.keySet());
+            Collections.sort(result, new Comparator<String>(){
+                @Override public int compare(String arg0, String arg1) {
+                    return order.get(arg0).compareTo(order.get(arg1));
+                }
+            });
+            return result;
+        }
+        
         @Override
         public String getFormat() {
             if (order == null) return "";
@@ -762,7 +780,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
             return b.toString();
         }
-        
+
         @Override
         public int hashCode() {
             return ARXOrderedString.class.hashCode();
@@ -788,24 +806,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         @Override
         public String toString() {
             return "OrderedString";
-        }
-
-        /**
-         * Returns all elements backing this datatype
-         * @return
-         */
-        public List<String> getElements() {
-            List<String> result = new ArrayList<String>();
-            if (order == null) {
-                return result;
-            }
-            result.addAll(order.keySet());
-            Collections.sort(result, new Comparator<String>(){
-                @Override public int compare(String arg0, String arg1) {
-                    return order.get(arg0).compareTo(order.get(arg1));
-                }
-            });
-            return result;
         }
     }
     
@@ -1167,12 +1167,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     @Override
     public abstract DataType<T> clone();
     
-    @Override
-    public abstract int hashCode();
-    
-    @Override
-    public abstract boolean equals(Object other);
-    
     /**
      * Compares two values. The result is 0 if both values are equal, 
      * less than 0 if the first value is less than the second argument, 
@@ -1186,12 +1180,23 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public abstract int compare(String s1, String s2) throws NumberFormatException, ParseException;
     
     /**
+     * Compare
+     * @param t1
+     * @param t2
+     * @return
+     */
+    public abstract int compare(T t1, T t2);
+    
+    /**
      * Returns a new function builder
      * @return
      */
     public AggregateFunctionBuilder<T> createAggregate(){
         return AggregateFunction.forType(this);
     }
+    
+    @Override
+    public abstract boolean equals(Object other);
 
     /**
      * Converts a value into a string
@@ -1206,13 +1211,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public abstract DataTypeDescription<T> getDescription();
 
-    /**
-     * Compare
-     * @param t1
-     * @param t2
-     * @return
-     */
-    public abstract int compare(T t1, T t2);
+    @Override
+    public abstract int hashCode();
 
     /**
      * Checks whether the given string conforms to the data type's format

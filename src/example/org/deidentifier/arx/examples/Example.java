@@ -68,7 +68,9 @@ public abstract class Example {
             identifiers[i] = new StringBuffer();
             generalizations[i] = new StringBuffer();
             identifiers[i].append(qis.get(i));
-            generalizations[i].append(optimum.getGeneralization(qis.get(i))).append("/").append(data.getDefinition().getHierarchyHeight(qis.get(i)) - 1);
+            generalizations[i].append(optimum.getGeneralization(qis.get(i)));
+            if (data.getDefinition().isHierarchyAvailable(qis.get(i)))
+                generalizations[i].append("/").append(data.getDefinition().getHierarchy(qis.get(i))[0].length - 1);
             lengthI = Math.max(lengthI, identifiers[i].length());
             lengthG = Math.max(lengthG, generalizations[i].length());
         }

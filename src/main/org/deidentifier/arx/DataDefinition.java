@@ -72,6 +72,9 @@ public class DataDefinition implements Cloneable{
         for (final String attr : maxGeneralization.keySet()) {
             d.maxGeneralization.put(attr, maxGeneralization.get(attr));
         }
+        for (final String attr : builders.keySet()) {
+            d.builders.put(attr, builders.get(attr));
+        }
         d.setLocked(this.isLocked());
         return d;
     }
@@ -87,16 +90,7 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the according builder, if any
-     * 
-     * @return
-     */
-    public HierarchyBuilder<?> getBuilder(final String attribute) {
-        return builders.get(attribute);
-    }
-
-    /**
-     * Returns the Datatype for the column name
+     * Returns the data type for the given column
      * 
      * @param columnName
      * @return
@@ -116,21 +110,24 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public String[][] getHierarchy(final String attribute) {
-        return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy();
+        checkQuasiIdentifier(attribute);
+        if (!(attributeTypes.get(attribute) instanceof Hierarchy)) {
+            return null;
+        } else {
+            return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy();
+        }
     }
+    
     /**
-     * Returns the height of the according hierarchy
+     * Returns the associated builder, if any
      * 
      * @return
      */
-    public int getHierarchyHeight(final String attribute) {
-        if (attributeTypes.get(attribute).getType() != AttributeType.ATTR_TYPE_QI) {
-            throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
-        }
-        if (((Hierarchy) attributeTypes.get(attribute)).getHierarchy().length == 0) { return 0; }
-        return ((Hierarchy) attributeTypes.get(attribute)).getHierarchy()[0].length;
+    public HierarchyBuilder<?> getHierarchyBuilder(final String attribute) {
+        checkQuasiIdentifier(attribute);
+        return builders.get(attribute);
     }
-
+    
     /**
      * Returns the direct identifiers
      * 
@@ -145,7 +142,7 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-
+    
     /**
      * Returns the insensitive attributes
      * 
@@ -160,36 +157,37 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-
+    
     /**
      * Returns the maximum generalization for the attribute
      * 
      * @return
      */
     public int getMaximumGeneralization(final String attribute) {
-        if (!maxGeneralization.containsKey(attribute)) {
-            final int max = getHierarchyHeight(attribute) - 1;
-            if (max < 0) {
+        checkQuasiIdentifier(attribute);
+        Integer result = maxGeneralization.get(attribute);
+        if (result != null) return result;
+        if (this.attributeTypes.get(attribute) instanceof Hierarchy) {
+            String[][] hierarchy = getHierarchy(attribute);
+            if (hierarchy.length == 0 || hierarchy[0] == null) {
                 return 0;
             } else {
-                return max;
+                return hierarchy[0].length - 1;
             }
         } else {
-            return maxGeneralization.get(attribute);
+            throw new IllegalStateException("No materialized hierarchy specified for attribute ("+attribute+")");
         }
     }
-
+    
     /**
      * Returns the minimum generalization for the attribute
      * 
      * @return
      */
     public int getMinimumGeneralization(final String attribute) {
-        if (!minGeneralization.containsKey(attribute)) {
-            return 0;
-        } else {
-            return minGeneralization.get(attribute);
-        }
+        checkQuasiIdentifier(attribute);
+        Integer result = minGeneralization.get(attribute);
+        return result != null ? result : 0;
     }
 
     /**
@@ -223,11 +221,52 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Returns whether a hierarchy is available
+     * @param attribute
+     * @return
+     */
+    public boolean isHierarchyAvailable(String attribute) {
+        checkQuasiIdentifier(attribute);
+        return attributeTypes.get(attribute) instanceof Hierarchy;
+    }
+
+    /**
+     * Returns whether a hierarchy builder is available
+     * @param attribute
+     * @return
+     */
+    public boolean isHierarchyBuilderAvailable(String attribute) {
+        checkQuasiIdentifier(attribute);
+        return builders.containsKey(attribute);
+    }
+
+    /**
      * Returns whether this definition can be altered
      * @return
      */
     public boolean isLocked(){
         return locked;
+    }
+
+    /**
+     * Returns whether a maximum generalization level is available
+     * @param attribute
+     * @return
+     */
+    public boolean isMaximumGeneralizationAvailable(String attribute) {
+        checkQuasiIdentifier(attribute);
+        return maxGeneralization.containsKey(attribute) || (this.attributeTypes.get(attribute) instanceof Hierarchy);
+        
+    }
+
+    /**
+     * Returns whether a minimum generalization level is available
+     * @param attribute
+     * @return
+     */
+    public boolean isMinimumGeneralizationAvailable(String attribute) {
+        checkQuasiIdentifier(attribute);
+        return true;
     }
 
     /**
@@ -239,8 +278,8 @@ public class DataDefinition implements Cloneable{
     public void setAttributeType(final String attribute,
                                  final AttributeType type) {
     	
-        if (locked) {throw new IllegalStateException("This definition is currently locked");}
-        if (type == null) { throw new NullPointerException("Type must not be null"); }
+        checkLocked();
+        checkNullArgument(type, "Type");
         attributeTypes.put(attribute, type);
     }
 
@@ -254,9 +293,10 @@ public class DataDefinition implements Cloneable{
     public void setAttributeType(final String attribute,
                                  final HierarchyBuilder<?> builder) {
         
-        if (locked) {throw new IllegalStateException("This definition is currently locked");}
-        if (builder == null) { throw new NullPointerException("Builder must not be null"); }
+        checkLocked();
+        checkNullArgument(builder, "Builder");
         attributeTypes.put(attribute, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        builders.put(attribute, builder);
     }
 
     /**
@@ -267,8 +307,8 @@ public class DataDefinition implements Cloneable{
      */
     public void setDataType(final String attribute, final DataType<?> type) {
         
-        if (locked) {throw new IllegalStateException("This definition is currently locked");}
-        if (type == null) { throw new NullPointerException("Type must not be null"); }
+        checkLocked();
+        checkNullArgument(type, "Type");
         dataTypes.put(attribute, type);
     }
 
@@ -281,10 +321,7 @@ public class DataDefinition implements Cloneable{
     public void setMaximumGeneralization(final String attribute,
                                          final int maximum) {
         
-        if (locked) {throw new IllegalStateException("This definition is currently locked");}
-    	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
-    		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
-    	}
+        checkLocked();
         maxGeneralization.put(attribute, maximum);
     }
 
@@ -297,13 +334,74 @@ public class DataDefinition implements Cloneable{
     public void setMinimumGeneralization(final String attribute,
                                          final int minimum) {
         
-        if (locked) {throw new IllegalStateException("This definition is currently locked");}
-    	if (!(this.getAttributeType(attribute) instanceof Hierarchy)){
-    		throw new IllegalArgumentException("Restrictions can only be applied to QIs with generalization hierarchies");
-    	}
+        checkLocked();
         minGeneralization.put(attribute, minimum);
     }
+
+    /**
+     * Checks whether this handle is locked
+     * @throws IllegalStateException
+     */
+    private void checkLocked() throws IllegalStateException{
+        if (locked) {throw new IllegalStateException("This definition is currently locked");}
+    }
     
+    /**
+     * Checks whether the argument is null
+     * @param argument
+     * @throws IllegalArgumentException
+     */
+    private void checkNullArgument(Object argument, String name) throws IllegalArgumentException {
+        if (argument == null) { throw new NullPointerException(name + " must not be null"); }
+    }
+    
+    /**
+     * Checks whether the attribute is a quasi-identifier
+     * @param attribute
+     * @throws IllegalArgumentException
+     */
+    private void checkQuasiIdentifier(String attribute) throws IllegalArgumentException {
+        if (attributeTypes.get(attribute) == null ||
+            attributeTypes.get(attribute).getType() != AttributeType.ATTR_TYPE_QI) {
+            throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
+        }
+    }
+
+    /**
+     * Materializes all functional hierarchies
+     * @param handle
+     */
+    protected void materialize(DataHandle handle) {
+        
+        // For each qi
+        for (String qi : this.getQuasiIdentifyingAttributes()) {
+            
+            // If no hierarchy is available
+            if (!isHierarchyAvailable(qi)) {
+                
+                // Obtain data
+                String[] data = handle.getDistinctValues(handle.getColumnIndexOf(qi));
+                
+                // If builder is available
+                if (isHierarchyBuilderAvailable(qi)) {
+                    // Compute and store hierarchy
+                    try {
+                        this.attributeTypes.put(qi, this.getHierarchyBuilder(qi).build(data));
+                    } catch (Exception e) {
+                        throw new IllegalStateException("Error building hierarchy for attribute ("+qi+")", e);
+                    }
+                } else {
+                    // Create empty hierarchy
+                    String[][] hierarchy = new String[data.length][];
+                    for (int i=0; i<data.length; i++) {
+                        hierarchy[i] = new String[]{data[i]};
+                    }
+                    this.attributeTypes.put(qi, Hierarchy.create(hierarchy));
+                }
+            }
+        }
+    }
+
     /**
      * Parses the configuration of the import adapter
      * @param adapter
@@ -315,7 +413,7 @@ public class DataDefinition implements Cloneable{
             this.setDataType(header[i], config.getColumns().get(i).getDataType());
         }
     }
-
+    
     /**
      * Lock/unlock the definition
      */
