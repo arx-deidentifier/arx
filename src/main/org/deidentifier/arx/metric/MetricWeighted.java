@@ -52,13 +52,13 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
 
     @Override
     @SuppressWarnings("unchecked")
-    public T getLowerBound(final Node node) {
+    protected T getLowerBoundInternal(final Node node) {
         return (T)node.getLowerBound();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T getLowerBound(final Node node, final IHashGroupify groupify) {
+    protected T getLowerBoundInternal(final Node node, final IHashGroupify groupify) {
         return (T)node.getLowerBound();
     }
 
