@@ -29,8 +29,8 @@ import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.framework.lattice.NodeAction;
-import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.InformationLossWithBound;
 
 /**
  * This class implements the FLASH algorithm
@@ -328,60 +328,64 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void prune(Node node) {
         
-        // There is no need to do anything, if we do not have a lower bound
-        if (node.getLowerBound()==null) {
+     // There is no need to do anything, if we do not have a lower bound
+        if (node.getLowerBound() == null) {
             return;
         }
-        
+
+        // Extract some data
+        Node optimalTransformation = getGlobalOptimum();
+
         // There is no need to do anything, if the transformation that was just checked was already pruned
-        if (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+        if (node != optimalTransformation && node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
             return;
         }
-        
+
         // If we haven't yet found an optimum, we simply add the node to the list of pruning candidates
-        if (super.getGlobalOptimum()==null) {
+        if (optimalTransformation == null) {
             pruningCandidates.add(node);
             return;
         }
-        
+
         // Extract some data
-        Node optimalTransformation = getGlobalOptimum();
         InformationLoss<?> optimalInfoLoss = optimalTransformation.getInformationLoss();
-        
+
         // If the current node is not the new optimum, we simply check it
         if (node != optimalTransformation) {
-            
+
             // Prune it
             if (optimalInfoLoss.compareTo(node.getLowerBound()) <= 0) {
-                lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
+                lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY |
                                                        Node.PROPERTY_SUCCESSORS_PRUNED);
-            // Else, we store it as a future pruning candidate
+                // Else, we store it as a future pruning candidate
             } else {
                 pruningCandidates.add(node);
             }
-            
-        // If the current node is our new optimum, we check all candidates
+
+            // If the current node is our new optimum, we check all candidates
         } else {
 
             // For each candidate
             Iterator<Node> iterator = pruningCandidates.iterator();
             while (iterator.hasNext()) {
                 Node current = iterator.next();
-                
+
                 // Remove the candidate, if it was already pruned in the meantime
                 if (current.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
                     iterator.remove();
-                    
-                // Else, check if we can prune it
+
+                    // Else, check if we can prune it
                 } else if (optimalInfoLoss.compareTo(current.getLowerBound()) <= 0) {
-                    lattice.setPropertyUpwards(current, true, Node.PROPERTY_INSUFFICIENT_UTILITY | 
+                    lattice.setPropertyUpwards(current, true, Node.PROPERTY_INSUFFICIENT_UTILITY |
                                                               Node.PROPERTY_SUCCESSORS_PRUNED);
                     iterator.remove();
                 }
             }
-            
+
             // The current optimum is a future pruning candidate
-            pruningCandidates.add(node);
+            if (!node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+                pruningCandidates.add(node);
+            }
         }
     }
 
@@ -400,13 +404,13 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         }
 
         // Check, if we can prune based on a monotonic sub-metric
-        if (!checker.getConfiguration().isPracticalMonotonicity() && getGlobalOptimum() != null) {
+        if (!checker.getConfiguration().isPracticalMonotonicity() && (getGlobalOptimum() != null)) {
 
             // We skip, if we already know that this node has insufficient utility
             if (node.hasProperty(Node.PROPERTY_INSUFFICIENT_UTILITY)) {
                 return true;
             }
-            
+
             // Check whether a lower bound exists
             InformationLoss<?> lowerBound = node.getLowerBound();
             if (lowerBound == null) {
@@ -415,11 +419,12 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                     lattice.setLowerBound(node, lowerBound);
                 }
             }
-
+            
             // Check whether this node has insufficient utility, if a lower bound exists
             if (lowerBound != null) {
                 if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
-                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
+                    lattice.setPropertyUpwards(node, true, Node.PROPERTY_INSUFFICIENT_UTILITY |
+                                                           Node.PROPERTY_SUCCESSORS_PRUNED);
                     return true;
                 }
             }
