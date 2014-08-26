@@ -458,7 +458,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Initializes the configuration
      * @param manager
      */
-    protected void initialize(DataManager manager) {
+    public void initialize(DataManager manager) {
 
         // Check
         if (criteria.isEmpty()) { throw new RuntimeException("At least one privacy criterion must be specified!"); }
