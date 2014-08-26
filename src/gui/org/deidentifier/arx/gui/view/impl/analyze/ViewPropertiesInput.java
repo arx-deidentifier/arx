@@ -270,7 +270,14 @@ public class ViewPropertiesInput extends ViewProperties {
                         ((DataTypeWithFormat)type).getFormat() != null){
                         values[2] = ((DataTypeWithFormat)type).getFormat();
                     }
-                    values[3] = String.valueOf(definition.getHierarchyHeight(s));
+                    
+                    // Determine height of hierarchy
+                    int height = 0;
+                    String[][] hierarchy = definition.getHierarchy(s);
+                    if (hierarchy != null && hierarchy.length != 0 && hierarchy[0] != null) {
+                        height = hierarchy[0].length;
+                    }
+                    values[3] = String.valueOf(height);
                     values[4] = String.valueOf(definition.getMinimumGeneralization(s));
                     values[5] = String.valueOf(definition.getMaximumGeneralization(s));
                 }

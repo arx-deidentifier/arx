@@ -223,7 +223,7 @@ public class ARXAnonymizer {
         }
         
         DataHandle handle = data.getHandle();
-        
+        handle.getDefinition().materialize(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
         handle.getRegistry().createInputSubset(config);

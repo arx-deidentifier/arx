@@ -35,63 +35,28 @@ import org.deidentifier.arx.io.ImportConfigurationJDBC;
  */
 public class DataSource {
     
-    /** The config*/
-    private final ImportConfiguration config;
-    
     /**
-     * Creates a CSV source
+     * Creates a CSV data source
      * @param file
      * @param separator
      * @param containsHeader
+     * @return
      */
-    private DataSource(File file, char separator, boolean containsHeader) {
-        config = new ImportConfigurationCSV(file.getAbsolutePath(), separator, containsHeader);
+    public static DataSource createCSVSource(File file, char separator, boolean containsHeader) {
+        return new DataSource(file, separator, containsHeader);
     }
-
+    
     /**
-     * Creates an Excel source
+     * Creates a CSV data source
      * @param file
-     * @param sheetIndex
-     * @param containsHeader
-     */
-    private DataSource(File file, int sheetIndex, boolean containsHeader) {
-        config = new ImportConfigurationExcel(file.getAbsolutePath(), sheetIndex, containsHeader);
-    }
-
-    /**
-     * Creates a JDBC data source
-     * @param url
-     * @param user
-     * @param password
-     * @param table
-     * @throws SQLException 
-     */
-    private DataSource(String url, String user, String password, String table) throws SQLException {
-        config = new ImportConfigurationJDBC(url, user, password, table);
-    }
-
-
-    /**
-     * Creates a JDBC data source
-     * @param url
-     * @param table
-     * @throws SQLException 
-     */
-    private DataSource(String url, String table) throws SQLException {
-        config = new ImportConfigurationJDBC(url, table);
-    }
-
-    /**
-     * Creates an Excel data source
-     * @param file
-     * @param sheetIndex
+     * @param separator
      * @param containsHeader
      * @return
      */
-    public static DataSource createExcelSource(String file, int sheetIndex, boolean containsHeader) {
-        return createExcelSource(new File(file), sheetIndex, containsHeader);
+    public static DataSource createCSVSource(String file, char separator, boolean containsHeader) {
+        return createCSVSource(new File(file), separator, containsHeader);
     }
-    
+
     /**
      * Creates an Excel data source
      * @param file
@@ -104,6 +69,18 @@ public class DataSource {
     }
 
     /**
+     * Creates an Excel data source
+     * @param file
+     * @param sheetIndex
+     * @param containsHeader
+     * @return
+     */
+    public static DataSource createExcelSource(String file, int sheetIndex, boolean containsHeader) {
+        return createExcelSource(new File(file), sheetIndex, containsHeader);
+    }
+
+
+    /**
      * Creates a JDBC data source
      * @param url
      * @param table
@@ -113,7 +90,7 @@ public class DataSource {
     public static DataSource createJDBCSource(String url, String table) throws SQLException {
         return new DataSource(url, table);
     }
-    
+
     /**
      * Creates a JDBC data source
      * @param url
@@ -127,26 +104,49 @@ public class DataSource {
         return new DataSource(url, user, password, table);
     }
     
+    /** The config*/
+    private final ImportConfiguration config;
+
     /**
-     * Creates a CSV data source
+     * Creates a CSV source
      * @param file
      * @param separator
      * @param containsHeader
-     * @return
      */
-    public static DataSource createCSVSource(String file, char separator, boolean containsHeader) {
-        return createCSVSource(new File(file), separator, containsHeader);
+    private DataSource(File file, char separator, boolean containsHeader) {
+        config = new ImportConfigurationCSV(file.getAbsolutePath(), separator, containsHeader);
     }
     
     /**
-     * Creates a CSV data source
+     * Creates an Excel source
      * @param file
-     * @param separator
+     * @param sheetIndex
      * @param containsHeader
-     * @return
      */
-    public static DataSource createCSVSource(File file, char separator, boolean containsHeader) {
-        return new DataSource(file, separator, containsHeader);
+    private DataSource(File file, int sheetIndex, boolean containsHeader) {
+        config = new ImportConfigurationExcel(file.getAbsolutePath(), sheetIndex, containsHeader);
+    }
+    
+    /**
+     * Creates a JDBC data source
+     * @param url
+     * @param table
+     * @throws SQLException 
+     */
+    private DataSource(String url, String table) throws SQLException {
+        config = new ImportConfigurationJDBC(url, table);
+    }
+    
+    /**
+     * Creates a JDBC data source
+     * @param url
+     * @param user
+     * @param password
+     * @param table
+     * @throws SQLException 
+     */
+    private DataSource(String url, String user, String password, String table) throws SQLException {
+        config = new ImportConfigurationJDBC(url, user, password, table);
     }
     
     /**
@@ -155,15 +155,6 @@ public class DataSource {
      */
     public void addColumn(int index) {
         addColumn(index, DataType.STRING);
-    }
-    
-    /**
-     * Adds a new column
-     * @param index
-     * @param alias
-     */
-    public void addColumn(int index, String alias) {
-        addColumn(index, alias, DataType.STRING);
     }
     
     /**
@@ -179,6 +170,15 @@ public class DataSource {
         } else if (config instanceof ImportConfigurationJDBC){
             config.addColumn(new ImportColumnJDBC(index, datatype));
         }
+    }
+    
+    /**
+     * Adds a new column
+     * @param index
+     * @param alias
+     */
+    public void addColumn(int index, String alias) {
+        addColumn(index, alias, DataType.STRING);
     }
     
     /**
@@ -208,15 +208,6 @@ public class DataSource {
     /**
      * Adds a new column
      * @param name
-     * @param alias
-     */
-    public void addColumn(String name, String alias) {
-        addColumn(name, alias, DataType.STRING);
-    }
-    
-    /**
-     * Adds a new column
-     * @param name
      * @param datatype
      */
     public void addColumn(String name, DataType<?> datatype) {
@@ -227,6 +218,15 @@ public class DataSource {
         } else if (config instanceof ImportConfigurationJDBC){
             config.addColumn(new ImportColumnJDBC(name, datatype));
         }
+    }
+    
+    /**
+     * Adds a new column
+     * @param name
+     * @param alias
+     */
+    public void addColumn(String name, String alias) {
+        addColumn(name, alias, DataType.STRING);
     }
     
     /**

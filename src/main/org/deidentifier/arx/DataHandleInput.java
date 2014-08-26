@@ -112,20 +112,6 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected String[] getDistinctValues(final int column, InterruptHandler handler) {
-        checkRegistry();
-        handler.checkInterrupt();
-        checkColumn(column);
-        handler.checkInterrupt();
-        final String[] dict = dictionary.getMapping()[column];
-        handler.checkInterrupt();
-        final String[] vals = new String[dict.length];
-        handler.checkInterrupt();
-        System.arraycopy(dict, 0, vals, 0, vals.length);
-        return vals;
-    }
-
-    @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return 0;
@@ -149,6 +135,11 @@ public class DataHandleInput extends DataHandle {
         checkColumn(column);
         checkRow(row, data.length);
         return internalGetValue(row, column);
+    }
+
+    @Override
+    public boolean isOutlier(int row){
+        return false;
     }
 
     @Override
@@ -185,6 +176,33 @@ public class DataHandleInput extends DataHandle {
         };
     }
 
+    /**
+     * Swaps two rows
+     * @param row1
+     * @param row2
+     * @param data
+     */
+    private void swap(int row1, int row2, int[][] data){
+        final int[] temp = data[row1];
+        data[row1] = data[row2];
+        data[row2] = temp;
+    }
+    
+    /**
+     * Releases all resources
+     */
+    protected void doRelease() {
+        this.setLocked(false);
+        dataQI = null;
+        dataSE = null;
+        dataIS = null;
+    }
+    
+    @Override
+    protected DataType<?> getBaseDataType(final String attribute) {
+        return this.getDataType(attribute);
+    }
+
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
@@ -200,36 +218,20 @@ public class DataHandleInput extends DataHandle {
         return dataTypes;
     }
     
-    /**
-     * Update the definition
-     * @param data
-     */
-    protected void update(Data data){
-
-        if (!this.isLocked()) {
-            this.definition = data.getDefinition().clone();
-            this.dataTypes = getDataTypeArray();
-            this.definition.setLocked(true);
-        }
-    }
-    
-    /**
-     * Updates the definition with further data to swap
-     * @param dataQI
-     * @param dataSE
-     * @param dataIS
-     */
-    protected void update(int[][] dataQI, int[][] dataSE, int[][] dataIS) {
-        this.dataQI = dataQI;
-        this.dataSE = dataSE;
-        this.dataIS = dataIS;
-    }
-
     @Override
-    public boolean isOutlier(int row){
-        return false;
+    protected String[] getDistinctValues(final int column, InterruptHandler handler) {
+        checkRegistry();
+        handler.checkInterrupt();
+        checkColumn(column);
+        handler.checkInterrupt();
+        final String[] dict = dictionary.getMapping()[column];
+        handler.checkInterrupt();
+        final String[] vals = new String[dict.length];
+        handler.checkInterrupt();
+        System.arraycopy(dict, 0, vals, 0, vals.length);
+        return vals;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -239,7 +241,7 @@ public class DataHandleInput extends DataHandle {
     protected String internalGetValue(final int row, final int column) {
         return dictionary.getMapping()[column][data[row][column]];
     }
-
+    
     /**
      * Swaps the rows
      * @param row1
@@ -257,22 +259,21 @@ public class DataHandleInput extends DataHandle {
         if (dataSE != null) swap(row1, row2, dataSE);
         if (dataIS != null) swap(row1, row2, dataIS);
     }
+
+    /**
+     * Is this handle locked?
+     * @return
+     */
+    protected boolean isLocked(){
+        return this.locked;
+    }
     
     /**
-     * Swaps two rows
-     * @param row1
-     * @param row2
-     * @param data
+     * Overrides the handles data definition
+     * @param definition
      */
-    private void swap(int row1, int row2, int[][] data){
-        final int[] temp = data[row1];
-        data[row1] = data[row2];
-        data[row2] = temp;
-    }
-
-    @Override
-    protected DataType<?> getBaseDataType(final String attribute) {
-        return this.getDataType(attribute);
+    protected void setDefinition(DataDefinition definition) {
+        this.definition = definition;
     }
     
     /**
@@ -282,30 +283,29 @@ public class DataHandleInput extends DataHandle {
     protected void setLocked(boolean locked){
         this.locked = locked;
     }
-    
+
     /**
-     * Is this handle locked?
-     * @return
+     * Update the definition
+     * @param data
      */
-    protected boolean isLocked(){
-        return this.locked;
+    protected void update(Data data){
+
+        if (!this.isLocked()) {
+            this.definition = data.getDefinition().clone();
+            this.dataTypes = getDataTypeArray();
+            this.definition.setLocked(true);
+        }
     }
 
     /**
-     * Releases all resources
+     * Updates the definition with further data to swap
+     * @param dataQI
+     * @param dataSE
+     * @param dataIS
      */
-    protected void doRelease() {
-        this.setLocked(false);
-        dataQI = null;
-        dataSE = null;
-        dataIS = null;
-    }
-
-    /**
-     * Overrides the handles data definition
-     * @param definition
-     */
-    protected void setDefinition(DataDefinition definition) {
-        this.definition = definition;
+    protected void update(int[][] dataQI, int[][] dataSE, int[][] dataIS) {
+        this.dataQI = dataQI;
+        this.dataSE = dataSE;
+        this.dataIS = dataIS;
     }
 }

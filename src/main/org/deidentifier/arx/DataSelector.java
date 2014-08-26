@@ -65,44 +65,6 @@ public class DataSelector {
             this.indices = getIndices();
         }
         
-        /**
-         * Returns the data types
-         * @return
-         */
-        private Map<String, DataType<?>> getTypes() {
-            Map<String, DataType<?>> result = new HashMap<String, DataType<?>>();
-            for (int i=0; i<handle.getNumColumns(); i++){
-                String attribute = handle.getAttributeName(i);
-                org.deidentifier.arx.DataType<?> type = definition.getDataType(attribute);
-                if (type instanceof org.deidentifier.arx.DataType.ARXDecimal){
-                    String format = ((ARXDecimal)type).getFormat();
-                    result.put(attribute, DataType.NUMERIC(format));
-                } else if (type instanceof org.deidentifier.arx.DataType.ARXInteger) {
-                    result.put(attribute, DataType.NUMERIC);
-                } else if (type instanceof org.deidentifier.arx.DataType.ARXString) {
-                    result.put(attribute, DataType.STRING);                    
-                } else if (type instanceof org.deidentifier.arx.DataType.ARXDate){
-                    String format = ((ARXDate)type).getFormat();
-                    result.put(attribute, DataType.DATE(format));
-                } else {
-                    result.put(attribute, DataType.STRING);
-                }
-            }
-            return result;
-        }
-
-        /**
-         * Returns the indices
-         * @return
-         */
-        private Map<String, Integer> getIndices() {
-            Map<String, Integer> result = new HashMap<String, Integer>();
-            for (int i=0; i<handle.getNumColumns(); i++){
-                result.put(handle.getAttributeName(i), i);
-            }
-            return result;
-        }
-
         @Override
         public boolean exists(String arg0) {
             return indices.containsKey(arg0);
@@ -130,14 +92,60 @@ public class DataSelector {
         @Override
         public boolean isExistanceSupported() {
             return true;
+        }
+
+        /**
+         * Returns the indices
+         * @return
+         */
+        private Map<String, Integer> getIndices() {
+            Map<String, Integer> result = new HashMap<String, Integer>();
+            for (int i=0; i<handle.getNumColumns(); i++){
+                result.put(handle.getAttributeName(i), i);
+            }
+            return result;
+        }
+
+        /**
+         * Returns the data types
+         * @return
+         */
+        private Map<String, DataType<?>> getTypes() {
+            Map<String, DataType<?>> result = new HashMap<String, DataType<?>>();
+            for (int i=0; i<handle.getNumColumns(); i++){
+                String attribute = handle.getAttributeName(i);
+                org.deidentifier.arx.DataType<?> type = definition.getDataType(attribute);
+                if (type instanceof org.deidentifier.arx.DataType.ARXDecimal){
+                    String format = ((ARXDecimal)type).getFormat();
+                    result.put(attribute, DataType.NUMERIC(format));
+                } else if (type instanceof org.deidentifier.arx.DataType.ARXInteger) {
+                    result.put(attribute, DataType.NUMERIC);
+                } else if (type instanceof org.deidentifier.arx.DataType.ARXString) {
+                    result.put(attribute, DataType.STRING);                    
+                } else if (type instanceof org.deidentifier.arx.DataType.ARXDate){
+                    String format = ((ARXDate)type).getFormat();
+                    result.put(attribute, DataType.DATE(format));
+                } else {
+                    result.put(attribute, DataType.STRING);
+                }
+            }
+            return result;
         }        
     }
     
+    public static DataSelector create(Data data){
+        return new DataSelector(data);
+    }
+    public static DataSelector create(Data data, String query) throws ParseException{
+        return new DataSelector(data, query);
+    }
+   
     /** The builder*/
     private final SelectorBuilder<Integer> builder;
+
     /** The selector*/
     private Selector<Integer> selector = null;
-   
+
     private DataSelector(Data data){
         this.builder = new SelectorBuilder<Integer>(new DataAccessor(data)); 
     }
@@ -145,27 +153,9 @@ public class DataSelector {
     private DataSelector(Data data, String query) throws ParseException {
         this.builder = new SelectorBuilder<Integer>(new DataAccessor(data), query);
     }
-
-    public static DataSelector create(Data data){
-        return new DataSelector(data);
-    }
-
-    public static DataSelector create(Data data, String query) throws ParseException{
-        return new DataSelector(data, query);
-    }
-    
-    public DataSelector field(String name){
-        this.builder.field(name);
-        return this;
-    }
     
     public DataSelector and(){
         this.builder.and();
-        return this;
-    }
-    
-    public DataSelector or(){
-        this.builder.or();
         return this;
     }
     
@@ -174,87 +164,12 @@ public class DataSelector {
         return this;
     }
     
+    public void build() throws ParseException{
+        this.selector = this.builder.build();
+    }
+    
     public DataSelector end(){
         this.builder.end();
-        return this;
-    }
-    
-    /*
-     * NUMERIC
-     */
-    public DataSelector leq(final double val){
-        this.builder.leq(val);
-        return this;
-    }
-    
-    public DataSelector geq(final double val){
-        this.builder.geq(val);
-        return this;
-    }
-    
-    public DataSelector less(final double val){
-        this.builder.less(val);
-        return this;
-    }
-    
-    public DataSelector greater(final double val){
-        this.builder.greater(val);
-        return this;
-    }
-    
-    public DataSelector equals(final double val){
-        this.builder.equals(val);
-        return this;
-    }
-    
-    /* **************************************
-     * STRING
-     * **************************************/
-    public DataSelector leq(final String val){
-        this.builder.leq(val);
-        return this;
-    }
-    
-    public DataSelector geq(final String val){
-        this.builder.geq(val);
-        return this;
-    }
-    
-    public DataSelector less(final String val){
-        this.builder.less(val);
-        return this;
-    }
-    
-    public DataSelector greater(final String val){
-        this.builder.greater(val);
-        return this;
-    }
-    
-    public DataSelector equals(final String val){
-        this.builder.equals(val);
-        return this;
-    }
-
-    /* **************************************
-     * Datetime
-     * **************************************/
-    public DataSelector leq(final Date val){
-        this.builder.leq(val);
-        return this;
-    }
-    
-    public DataSelector geq(final Date val){
-        this.builder.geq(val);
-        return this;
-    }
-    
-    public DataSelector less(final Date val){
-        this.builder.less(val);
-        return this;
-    }
-    
-    public DataSelector greater(final Date val){
-        this.builder.greater(val);
         return this;
     }
     
@@ -263,10 +178,51 @@ public class DataSelector {
         return this;
     }
     
-    public void build() throws ParseException{
-        this.selector = this.builder.build();
+    public DataSelector equals(final double val){
+        this.builder.equals(val);
+        return this;
     }
-
+    
+    public DataSelector equals(final String val){
+        this.builder.equals(val);
+        return this;
+    }
+    
+    public DataSelector field(String name){
+        this.builder.field(name);
+        return this;
+    }
+    
+    public DataSelector geq(final Date val){
+        this.builder.geq(val);
+        return this;
+    }
+    
+    public DataSelector geq(final double val){
+        this.builder.geq(val);
+        return this;
+    }
+    
+    public DataSelector geq(final String val){
+        this.builder.geq(val);
+        return this;
+    }
+    
+    public DataSelector greater(final Date val){
+        this.builder.greater(val);
+        return this;
+    }
+    
+    public DataSelector greater(final double val){
+        this.builder.greater(val);
+        return this;
+    }
+    
+    public DataSelector greater(final String val){
+        this.builder.greater(val);
+        return this;
+    }
+    
     /**
      * Determines whether the given row is selected by the expression
      * @param row
@@ -281,5 +237,49 @@ public class DataSelector {
             }
         }
         return selector.isSelected(row);
+    }
+
+    /* **************************************
+     * Datetime
+     * **************************************/
+    public DataSelector leq(final Date val){
+        this.builder.leq(val);
+        return this;
+    }
+    
+    /*
+     * NUMERIC
+     */
+    public DataSelector leq(final double val){
+        this.builder.leq(val);
+        return this;
+    }
+    
+    /* **************************************
+     * STRING
+     * **************************************/
+    public DataSelector leq(final String val){
+        this.builder.leq(val);
+        return this;
+    }
+    
+    public DataSelector less(final Date val){
+        this.builder.less(val);
+        return this;
+    }
+    
+    public DataSelector less(final double val){
+        this.builder.less(val);
+        return this;
+    }
+    
+    public DataSelector less(final String val){
+        this.builder.less(val);
+        return this;
+    }
+
+    public DataSelector or(){
+        this.builder.or();
+        return this;
     }
 }

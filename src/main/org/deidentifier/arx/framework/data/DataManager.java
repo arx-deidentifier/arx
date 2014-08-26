@@ -24,11 +24,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -171,22 +169,16 @@ public class DataManager {
                 if ((dictionaryIndex >= 0) && (dictionaryIndex < 999)) {
                     final String name = header[i];
 
-                    boolean isEmpty = false;
                     if (definition.getAttributeType(name) instanceof Hierarchy) {
                         hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, definition.getHierarchy(name), dictionaryIndex, dictionaryQI);
-                    } else if (definition.getBuilder(name) != null){
-                        HierarchyBuilder<?> builder = definition.getBuilder(name);
-                        AttributeType.Hierarchy hierarchy = builder.build(dictionary.getMapping()[i]);
-                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, hierarchy.getHierarchy(), dictionaryIndex, dictionaryQI);
                     } else {
-                        isEmpty = true;
-                        hierarchiesQI[dictionaryIndex] = new GeneralizationHierarchy(name, dictionaryIndex, dictionaryQI);
+                        throw new IllegalStateException("No hierarchy available for attribute ("+header[i]+")");
                     }
                     // Initialize hierarchy height and minimum / maximum generalization
                     hierarchyHeights[dictionaryIndex] = hierarchiesQI[dictionaryIndex].getArray()[0].length;
-                    final Integer minGenLevel = isEmpty ? 0 : definition.getMinimumGeneralization(name);
+                    final Integer minGenLevel = definition.getMinimumGeneralization(name);
                     minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
-                    final Integer maxGenLevel = isEmpty ? 0 : definition.getMaximumGeneralization(name);
+                    final Integer maxGenLevel = definition.getMaximumGeneralization(name);
                     maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchyHeights[dictionaryIndex] - 1 : maxGenLevel;
                 }
             }

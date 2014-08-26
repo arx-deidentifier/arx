@@ -111,34 +111,6 @@ public class GeneralizationHierarchy {
                                                                                "'!"); }
     }
     
-
-    /**
-     * Creates a new empty generalization hierarchy from the given dictionary
-     * 
-     * @param name
-     * @param dimension
-     * @param dictionary
-     */
-    public GeneralizationHierarchy(final String name,
-                                   final int dimension,
-                                   final Dictionary dictionary) {
-
-        // Init
-        this.attribute = name;
-
-        // Determine number of unique input values
-        final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
-
-        // Build hierarchy
-        map = new int[uniqueIn][1];
-        for (int i=0; i<map.length; i++) {
-        	map[i][0] = i;
-        }
-        
-        // Count distinct values on each level
-        distinctValues = new int[]{uniqueIn};
-    }
-
     /**
      * Returns the array
      * 

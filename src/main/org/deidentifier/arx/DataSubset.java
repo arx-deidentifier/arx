@@ -16,8 +16,6 @@ import java.util.Set;
  */
 public class DataSubset implements Serializable {
     
-    private static final long serialVersionUID = 3945730896172205344L;
-
     /**
      * Wrapper around a string array
      * @author Fabian Prasser
@@ -36,34 +34,20 @@ public class DataSubset implements Serializable {
         }
 
         @Override
-        public int hashCode() {
-            return hashcode;
-        }
-
-        @Override
         public boolean equals(Object obj) {
             if (obj == null) return false;
             Entry other = (Entry) obj;
             return Arrays.equals(data, other.data);
         }
-    }
-    
-    /** The subset as a bitset*/
-    protected RowSet set;
-    
-    /** The subset as a sorted array of indices*/
-    protected int[] array;
 
-    /**
-     * Creates a new instance
-     * @param bitSet
-     * @param sortedIndices
-     */
-    private DataSubset(RowSet bitSet, int[] sortedIndices) {
-        this.set = bitSet;
-        this.array = sortedIndices;
+        @Override
+        public int hashCode() {
+            return hashcode;
+        }
     }
 
+    private static final long serialVersionUID = 3945730896172205344L;
+    
     /**
      * Create a subset by matching two data instances. 
      * @param data
@@ -150,29 +134,6 @@ public class DataSubset implements Serializable {
         // Return
         return new DataSubset(bitset, array);
     }
-    
-    /**
-     * Creates a new subset from the given set of tuple indices
-     * @param data
-     * @param subset
-     * @return
-     */
-    public static DataSubset create(Data data, Set<Integer> subset){
-        int rows = data.getHandle().getNumRows();
-        RowSet bitset = RowSet.create(data);
-        int[] array = new int[subset.size()];
-        int idx = 0;
-        for (Integer line : subset) {
-            if (line < 0 || line >= rows) {
-                throw new IllegalArgumentException("Subset index out of range!");
-            }
-            bitset.add(line);
-            array[idx++] = line;
-        }
-        Arrays.sort(array);
-        return new DataSubset(bitset, array);
-    }
-
 
     /**
      * Creates a new subset from the given row set, from which a copy is created
@@ -194,11 +155,50 @@ public class DataSubset implements Serializable {
         return new DataSubset(bitset, array);
     }
 
-    public RowSet getSet() {
-        return set;
+    /**
+     * Creates a new subset from the given set of tuple indices
+     * @param data
+     * @param subset
+     * @return
+     */
+    public static DataSubset create(Data data, Set<Integer> subset){
+        int rows = data.getHandle().getNumRows();
+        RowSet bitset = RowSet.create(data);
+        int[] array = new int[subset.size()];
+        int idx = 0;
+        for (Integer line : subset) {
+            if (line < 0 || line >= rows) {
+                throw new IllegalArgumentException("Subset index out of range!");
+            }
+            bitset.add(line);
+            array[idx++] = line;
+        }
+        Arrays.sort(array);
+        return new DataSubset(bitset, array);
+    }
+    
+    /** The subset as a bitset*/
+    protected RowSet set;
+    
+    /** The subset as a sorted array of indices*/
+    protected int[] array;
+
+
+    /**
+     * Creates a new instance
+     * @param bitSet
+     * @param sortedIndices
+     */
+    private DataSubset(RowSet bitSet, int[] sortedIndices) {
+        this.set = bitSet;
+        this.array = sortedIndices;
     }
 
     public int[] getArray() {
         return array;
+    }
+
+    public RowSet getSet() {
+        return set;
     }
 }

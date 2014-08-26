@@ -35,39 +35,39 @@ public class DataHandleStatistics {
         this.handle = handle;
     }
 
-    public String[] getDistinctValues(int column, InterruptHandler stop) {
-        return handle.getDistinctValues(column, stop);
-    }
-
     public String getAttributeName(int column) {
         return handle.getAttributeName(column);
-    }
-
-    public DataType<?> getDataType(String attribute) {
-        return handle.getDataType(attribute);
-    }
-
-    public int getGeneralization(String attribute) {
-        return handle.getGeneralization(attribute);
-    }
-
-    public String getSuppressionString() {
-        return handle.getSuppressionString();
     }
 
     public DataType<?> getBaseDataType(String attribute) {
         return handle.getBaseDataType(attribute);
     }
 
-    public int getNumRows() {   
-        return handle.getNumRows();
-    }
-
-    public String getValue(int row, int column) {
-        return handle.getValue(row, column);
+    public DataType<?> getDataType(String attribute) {
+        return handle.getDataType(attribute);
     }
 
     public DataDefinition getDefinition() {
         return handle.getDefinition();
+    }
+
+    public String[] getDistinctValues(int column, InterruptHandler stop) {
+        return handle.getDistinctValues(column, stop);
+    }
+
+    public int getGeneralization(String attribute) {
+        return handle.getGeneralization(attribute);
+    }
+
+    public int getNumRows() {   
+        return handle.getNumRows();
+    }
+
+    public String getSuppressionString() {
+        return handle.getSuppressionString();
+    }
+
+    public String getValue(int row, int column) {
+        return handle.getValue(row, column);
     }
 }

@@ -26,15 +26,6 @@ public class DataHandleSubset extends DataHandle {
      * Creates a new handle that represents the research subset
      * @param source
      * @param subset
-     */
-    protected DataHandleSubset(DataHandle source, DataSubset subset){
-        this(source, subset, null);
-    }
-
-    /**
-     * Creates a new handle that represents the research subset
-     * @param source
-     * @param subset
      * @param eqStatistics
      */
     public DataHandleSubset(DataHandle source, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
@@ -46,6 +37,15 @@ public class DataHandleSubset extends DataHandle {
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), eqStatistics);
     }
 
+    /**
+     * Creates a new handle that represents the research subset
+     * @param source
+     * @param subset
+     */
+    protected DataHandleSubset(DataHandle source, DataSubset subset){
+        this(source, subset, null);
+    }
+
     @Override
     public String getAttributeName(int col) {
         checkRegistry();
@@ -55,22 +55,6 @@ public class DataHandleSubset extends DataHandle {
     @Override
     public DataType<?> getDataType(String attribute) {
         return source.getDataType(attribute);
-    }
-
-    @Override
-    protected String[] getDistinctValues(int column, InterruptHandler handler) {
-
-        // Check
-        checkRegistry();
-        checkColumn(column);
-
-        final Set<String> vals = new HashSet<String>();
-        for (int i = 0; i < getNumRows(); i++) {
-            handler.checkInterrupt();
-            vals.add(getValue(i, column));
-        }
-        handler.checkInterrupt();
-        return vals.toArray(new String[vals.size()]);
     }
 
     @Override
@@ -147,8 +131,37 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    protected void doRelease() {
+        // Nothing to do
+    }
+
+    @Override
     protected DataType<?>[][] getDataTypeArray() {
         return source.dataTypes;
+    }
+
+    @Override
+    protected String[] getDistinctValues(int column, InterruptHandler handler) {
+
+        // Check
+        checkRegistry();
+        checkColumn(column);
+
+        final Set<String> vals = new HashSet<String>();
+        for (int i = 0; i < getNumRows(); i++) {
+            handler.checkInterrupt();
+            vals.add(getValue(i, column));
+        }
+        handler.checkInterrupt();
+        return vals.toArray(new String[vals.size()]);
+    }
+
+    /**
+     * Returns the underlying source data handle
+     * @return
+     */
+    protected DataHandle getSource(){
+        return source;
     }
 
     @Override
@@ -165,7 +178,7 @@ public class DataHandleSubset extends DataHandle {
     protected String internalGetValue(int row, int col) {
         return source.internalGetValue(this.subset.getArray()[row], col);
     }
-
+    
     /**
      * Rebuild array representation of subset
      */
@@ -177,7 +190,7 @@ public class DataHandleSubset extends DataHandle {
             }
         }
     }
-
+    
     /**
      * Swaps the bits in the set representation
      * @param row1
@@ -186,7 +199,7 @@ public class DataHandleSubset extends DataHandle {
     protected void internalSwap(int row1, int row2) {
         this.subset.getSet().swap(row1, row2);
     }
-    
+
     /**
      * Translates the row number
      * @param row
@@ -194,18 +207,5 @@ public class DataHandleSubset extends DataHandle {
      */
     protected int internalTranslate(int row) {
         return this.subset.getArray()[row];
-    }
-    
-    /**
-     * Returns the underlying source data handle
-     * @return
-     */
-    protected DataHandle getSource(){
-        return source;
-    }
-
-    @Override
-    protected void doRelease() {
-        // Nothing to do
     }
 }

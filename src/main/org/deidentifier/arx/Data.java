@@ -40,6 +40,34 @@ import org.deidentifier.arx.io.ImportConfiguration;
 public abstract class Data {
 
     /**
+     * The default implementation of a data object. It allows the user to
+     * programmatically define its content.
+     * 
+     * @author Fabian Prasser
+ * @author Florian Kohlmayer
+     */
+    public static class DefaultData extends Data {
+
+        /** List of tuples */
+        private final List<String[]> data = new ArrayList<String[]>();
+
+        /**
+         * Adds a row to this data object
+         * 
+         * @param row
+         */
+        public void add(final String... row) {
+            data.add(row);
+        }
+
+        @Override
+        protected Iterator<String[]> iterator() {
+            return data.iterator();
+        }
+
+    }
+
+    /**
      * A data object for arrays
      * 
      * @author Fabian Prasser
@@ -85,34 +113,6 @@ public abstract class Data {
     }
 
     /**
-     * The default implementation of a data object. It allows the user to
-     * programmatically define its content.
-     * 
-     * @author Fabian Prasser
- * @author Florian Kohlmayer
-     */
-    public static class DefaultData extends Data {
-
-        /** List of tuples */
-        private final List<String[]> data = new ArrayList<String[]>();
-
-        /**
-         * Adds a row to this data object
-         * 
-         * @param row
-         */
-        public void add(final String... row) {
-            data.add(row);
-        }
-
-        @Override
-        protected Iterator<String[]> iterator() {
-            return data.iterator();
-        }
-
-    }
-
-    /**
      * A data object for iterators
      * 
      * @author Fabian Prasser
@@ -141,6 +141,22 @@ public abstract class Data {
      */
     public static DefaultData create() {
         return new DefaultData();
+    }
+
+    /**
+     * Creates a new data object from the given data source specification
+     *
+     * @param source The source that should be used to import data
+     *
+     * @return Data object as described by the data source
+     *
+     * @throws IOException
+     */
+    public static Data create(final DataSource source) throws IOException {
+
+        ImportConfiguration config = source.getConfiguration();
+        ImportAdapter adapter = ImportAdapter.create(config);
+        return create(adapter);
     }
 
     /**
@@ -217,22 +233,6 @@ public abstract class Data {
     public static Data
             create(final String path, final char separator) throws IOException {
         return new IterableData(new CSVDataInput(path, separator).iterator());
-    }
-
-    /**
-     * Creates a new data object from the given data source specification
-     *
-     * @param source The source that should be used to import data
-     *
-     * @return Data object as described by the data source
-     *
-     * @throws IOException
-     */
-    public static Data create(final DataSource source) throws IOException {
-
-        ImportConfiguration config = source.getConfiguration();
-        ImportAdapter adapter = ImportAdapter.create(config);
-        return create(adapter);
     }
 
     /**

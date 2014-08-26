@@ -676,7 +676,10 @@ public class ViewLattice implements IView {
         b.append(format.format(asRelativeValue(node.getMaximumInformationLoss())));
         b.append(" [%]\n"); //$NON-NLS-1$
         for (final String qi : node.getQuasiIdentifyingAttributes()) {
-            int height = model.getOutputDefinition().getHierarchyHeight(qi);
+
+            // Determine height of hierarchy
+            int height = model.getOutputDefinition().isHierarchyAvailable(qi) ? 
+                         model.getOutputDefinition().getHierarchy(qi)[0].length : 0;
             b.append(" * "); //$NON-NLS-1$
             b.append(qi);
             b.append(": "); //$NON-NLS-1$
