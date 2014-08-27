@@ -49,11 +49,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     /** The strategy. */
     private final FLASHStrategy        strategy;
 
-    /** List of nodes that may be used for pruning */
-    private final List<Node>           pruningCandidates;
-
-    /** Prune according to monotonic sub-metric */
-    private final boolean              pruneDueToLowerBound;
+    /** 
+     * List of nodes that may be used for pruning transformations
+     * with insufficient utility
+     */
+    private final List<Node>           potentiallyInsufficientUtility;
 
     /**
      * Creates a new instance
@@ -71,10 +71,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         super(lattice, checker);
         this.strategy = strategy;
-        sorted = new boolean[lattice.getSize()];
+        this.sorted = new boolean[lattice.getSize()];
         this.config = config;
-        pruningCandidates = new LinkedList<Node>();
-        pruneDueToLowerBound = config.isPruneDueToLowerBound();
+        this.potentiallyInsufficientUtility = this.config.isPruneInsufficientUtility() ? 
+                                              new LinkedList<Node>() : null;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         lattice.getBottom().setData(null);
 
         // Clear list of pruning candidates
-        pruningCandidates.clear();
+        potentiallyInsufficientUtility.clear();
     }
 
     /**
@@ -333,8 +333,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void prune(Node node) {
 
-        // Check if pruning based on a monotonic sub-metric is disabled
-        if (!pruneDueToLowerBound) {
+        // Check if pruning is enabled
+        if (potentiallyInsufficientUtility == null) {
             return;
         }
 
@@ -353,7 +353,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // If we haven't yet found an optimum, we simply add the node to the list of pruning candidates
         if (optimalTransformation == null) {
-            pruningCandidates.add(node);
+            potentiallyInsufficientUtility.add(node);
             return;
         }
 
@@ -369,14 +369,14 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                                                        Node.PROPERTY_SUCCESSORS_PRUNED);
                 // Else, we store it as a future pruning candidate
             } else {
-                pruningCandidates.add(node);
+                potentiallyInsufficientUtility.add(node);
             }
 
             // If the current node is our new optimum, we check all candidates
         } else {
 
             // For each candidate
-            Iterator<Node> iterator = pruningCandidates.iterator();
+            Iterator<Node> iterator = potentiallyInsufficientUtility.iterator();
             while (iterator.hasNext()) {
                 Node current = iterator.next();
 
@@ -394,7 +394,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
             // The current optimum is a future pruning candidate
             if (!node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
-                pruningCandidates.add(node);
+                potentiallyInsufficientUtility.add(node);
             }
         }
     }
@@ -413,8 +413,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             return true;
         }
 
-        // Check if pruning based on a monotonic sub-metric is disabled
-        if (!pruneDueToLowerBound) {
+        // Check if pruning is enabled
+        if (potentiallyInsufficientUtility == null) {
             return false;
         }
 

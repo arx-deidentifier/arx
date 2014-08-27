@@ -82,8 +82,8 @@ public class FLASHConfiguration {
     /** A configuration for the linear phase */
     private final FLASHPhaseConfiguration linearPhaseConfiguration;
 
-    /** Prune according to metric lower bound */
-    private final boolean                 pruneDueToLowerBound;
+    /** Prune based on lower bounds from monotonic shares of metrics for information loss */
+    private final boolean                 pruneInsufficientUtility;
 
     /** A trigger controlling which transformations are snapshotted */
     private final NodeAction              triggerSnapshotStore;
@@ -107,7 +107,7 @@ public class FLASHConfiguration {
         this.linearPhaseConfiguration = linearPhaseConfiguration;
         this.triggerSnapshotStore = triggerSnapshotStore;
         this.triggerTagEvent = triggerTagEvent;
-        this.pruneDueToLowerBound = pruneDueToLowerBound;
+        this.pruneInsufficientUtility = pruneDueToLowerBound;
     }
 
     /**
@@ -159,10 +159,10 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Is pruning according to lower bound enabled?
+     *  Prune based on lower bounds from monotonic shares of metrics for information loss?
      * @return
      */
-    public boolean isPruneDueToLowerBound() {
-        return pruneDueToLowerBound;
+    public boolean isPruneInsufficientUtility() {
+        return pruneInsufficientUtility;
     }
 }
