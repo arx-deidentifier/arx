@@ -50,7 +50,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     private final FLASHStrategy        strategy;
 
     /** List of nodes that may be used for pruning */
-    private final List<Node>           pruningCandidates = new LinkedList<Node>();
+    private final List<Node>           pruningCandidates;
+
+    /** Prune according to monotonic sub-metric */
+    private final boolean              pruneDueToLowerBound;
 
     /**
      * Creates a new instance
@@ -70,6 +73,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         this.strategy = strategy;
         sorted = new boolean[lattice.getSize()];
         this.config = config;
+        pruningCandidates = new LinkedList<Node>();
+        pruneDueToLowerBound = config.isPruneDueToLowerBound();
     }
 
     @Override
@@ -328,6 +333,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void prune(Node node) {
 
+        // Check if pruning based on a monotonic sub-metric is disabled
+        if (!pruneDueToLowerBound) {
+            return;
+        }
+
         // There is no need to do anything, if we do not have a lower bound
         if (node.getLowerBound() == null) {
             return;
@@ -401,6 +411,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // If the trigger applies, skip
         if (trigger.appliesTo(node)) {
             return true;
+        }
+
+        // Check if pruning based on a monotonic sub-metric is disabled
+        if (!pruneDueToLowerBound) {
+            return false;
         }
 
         // Check, if we can prune based on a monotonic sub-metric

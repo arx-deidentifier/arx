@@ -38,8 +38,9 @@ public class FLASHConfiguration {
      */
     public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config,
                                                                     NodeAction triggerSnapshotStore,
-                                                                    NodeAction triggerTagEvent) {
-        return new FLASHConfiguration(config, null, triggerSnapshotStore, triggerTagEvent);
+                                                                    NodeAction triggerTagEvent,
+                                                                    boolean pruneDueToLowerBound) {
+        return new FLASHConfiguration(config, null, triggerSnapshotStore, triggerTagEvent, pruneDueToLowerBound);
     }
 
     /**
@@ -51,8 +52,9 @@ public class FLASHConfiguration {
      */
     public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config,
                                                                     NodeAction triggerSnapshotStore,
-                                                                    NodeAction triggerTagEvent) {
-        return new FLASHConfiguration(null, config, triggerSnapshotStore, triggerTagEvent);
+                                                                    NodeAction triggerTagEvent,
+                                                                    boolean pruneDueToLowerBound) {
+        return new FLASHConfiguration(null, config, triggerSnapshotStore, triggerTagEvent, pruneDueToLowerBound);
     }
 
     /**
@@ -65,8 +67,13 @@ public class FLASHConfiguration {
     public static FLASHConfiguration createTwoPhaseConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                                                  FLASHPhaseConfiguration linearPhaseConfiguration,
                                                                  NodeAction triggerSnapshotStore,
-                                                                 NodeAction triggerTagEvent) {
-        return new FLASHConfiguration(binaryPhaseConfiguration, linearPhaseConfiguration, triggerSnapshotStore, triggerTagEvent);
+                                                                 NodeAction triggerTagEvent,
+                                                                 boolean pruneDueToLowerBound) {
+        return new FLASHConfiguration(binaryPhaseConfiguration,
+                                      linearPhaseConfiguration,
+                                      triggerSnapshotStore,
+                                      triggerTagEvent,
+                                      pruneDueToLowerBound);
     }
 
     /** A configuration for the binary phase */
@@ -74,6 +81,9 @@ public class FLASHConfiguration {
 
     /** A configuration for the linear phase */
     private final FLASHPhaseConfiguration linearPhaseConfiguration;
+
+    /** Prune according to metric lower bound */
+    private final boolean                 pruneDueToLowerBound;
 
     /** A trigger controlling which transformations are snapshotted */
     private final NodeAction              triggerSnapshotStore;
@@ -91,11 +101,13 @@ public class FLASHConfiguration {
     private FLASHConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                FLASHPhaseConfiguration linearPhaseConfiguration,
                                NodeAction triggerSnapshotStore,
-                               NodeAction triggerTagEvent) {
+                               NodeAction triggerTagEvent,
+                               boolean pruneDueToLowerBound) {
         this.binaryPhaseConfiguration = binaryPhaseConfiguration;
         this.linearPhaseConfiguration = linearPhaseConfiguration;
         this.triggerSnapshotStore = triggerSnapshotStore;
         this.triggerTagEvent = triggerTagEvent;
+        this.pruneDueToLowerBound = pruneDueToLowerBound;
     }
 
     /**
@@ -144,5 +156,13 @@ public class FLASHConfiguration {
      */
     public boolean isLinearPhaseRequired() {
         return linearPhaseConfiguration != null;
+    }
+
+    /**
+     * Is pruning according to lower bound enabled?
+     * @return
+     */
+    public boolean isPruneDueToLowerBound() {
+        return pruneDueToLowerBound;
     }
 }

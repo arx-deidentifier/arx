@@ -187,13 +187,15 @@ public class FLASHAlgorithm {
         };
 
         // Only one binary phase
+        // Deactivate pruning due to lower bound as it increases number of checks needed
         FLASHConfiguration config = FLASHConfiguration.createBinaryPhaseConfiguration(new FLASHPhaseConfiguration(anonymityProperty,
                                                                                                                   triggerTag,
                                                                                                                   triggerCheck,
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
                                                                                       History.STORAGE_TRIGGER_NON_ANONYMOUS,
-                                                                                      triggerFireEvent);
+                                                                                      triggerFireEvent,
+                                                                                      false);
 
         return new FLASHAlgorithmImpl(lattice, checker, strategy, config);
     }
@@ -318,7 +320,8 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
                                                                                    History.STORAGE_TRIGGER_ALL,
-                                                                                   triggerFireEvent);
+                                                                                   triggerFireEvent,
+                                                                                   true);
 
         return new FLASHAlgorithmImpl(lattice, checker, strategy, config);
     }
@@ -378,7 +381,8 @@ public class FLASHAlgorithm {
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
                                                                                       History.STORAGE_TRIGGER_ALL,
-                                                                                      triggerFireEvent);
+                                                                                      triggerFireEvent,
+                                                                                      true);
 
         return new FLASHAlgorithmImpl(lattice, checker, strategy, config);
     }
@@ -424,7 +428,8 @@ public class FLASHAlgorithm {
                                                                                                                   triggerEvaluate,
                                                                                                                   triggerSkip),
                                                                                       History.STORAGE_TRIGGER_ALL,
-                                                                                      triggerFireEvent);
+                                                                                      triggerFireEvent,
+                                                                                      true);
 
         return new FLASHAlgorithmImpl(lattice, checker, strategy, config);
     }
@@ -556,7 +561,8 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
                                                                                    History.STORAGE_TRIGGER_ALL,
-                                                                                   triggerFireEvent);
+                                                                                   triggerFireEvent,
+                                                                                   true);
 
         return new FLASHAlgorithmImpl(lattice, checker, strategy, config);
     }
@@ -672,7 +678,8 @@ public class FLASHAlgorithm {
                                                                                                                linearTriggerEvaluate,
                                                                                                                linearTriggerSkip),
                                                                                    History.STORAGE_TRIGGER_ALL,
-                                                                                   triggerFireEvent);
+                                                                                   triggerFireEvent,
+                                                                                   true);
 
         return new FLASHAlgorithmImpl(lattice, checker, strategy, config);
     }
