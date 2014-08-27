@@ -29,20 +29,20 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
  */
 public class FLASHPhaseConfiguration {
 
-    /** A trigger for tagging nodes in this phase*/
+    /** A trigger for tagging nodes in this phase */
     private final NodeAction triggerTag;
 
-    /** A trigger for checking nodes in this phase*/
+    /** A trigger for checking nodes in this phase */
     private final NodeAction triggerCheck;
-    
-    /** A trigger for evaluating nodes in this phase*/
+
+    /** A trigger for evaluating nodes in this phase */
     private final NodeAction triggerEvaluate;
-    
-    /** A trigger for skipping nodes in this phase*/
+
+    /** A trigger for skipping nodes in this phase */
     private final NodeAction triggerSkip;
 
-    /** The main anonymity property*/
-    private final int anonymityProperty;
+    /** The main anonymity property */
+    private final int        anonymityProperty;
 
     /**
      * Creates a configuration for an active phase
@@ -55,10 +55,10 @@ public class FLASHPhaseConfiguration {
      * @param triggerTagEvent
      */
     public FLASHPhaseConfiguration(int anonymityProperty,
-                              NodeAction triggerTag,
-                              NodeAction triggerCheck,
-                              NodeAction triggerEvaluate,
-                              NodeAction triggerSkip) {
+                                   NodeAction triggerTag,
+                                   NodeAction triggerCheck,
+                                   NodeAction triggerEvaluate,
+                                   NodeAction triggerSkip) {
         this.anonymityProperty = anonymityProperty;
         this.triggerTag = triggerTag;
         this.triggerCheck = triggerCheck;

@@ -28,7 +28,7 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
  *
  */
 public class FLASHConfiguration {
-    
+
     /**
      * Creates a binary-phase only configuration
      * @param config
@@ -36,12 +36,12 @@ public class FLASHConfiguration {
      * @param triggerTagEvent
      * @return
      */
-    public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config, 
+    public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config,
                                                                     NodeAction triggerSnapshotStore,
                                                                     NodeAction triggerTagEvent) {
         return new FLASHConfiguration(config, null, triggerSnapshotStore, triggerTagEvent);
     }
-    
+
     /**
      * Creates a linear-phase only configuration
      * @param config
@@ -49,7 +49,7 @@ public class FLASHConfiguration {
      * @param triggerTagEvent
      * @return
      */
-    public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config, 
+    public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config,
                                                                     NodeAction triggerSnapshotStore,
                                                                     NodeAction triggerTagEvent) {
         return new FLASHConfiguration(null, config, triggerSnapshotStore, triggerTagEvent);
@@ -63,23 +63,23 @@ public class FLASHConfiguration {
      * @return
      */
     public static FLASHConfiguration createTwoPhaseConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
-                                                                    FLASHPhaseConfiguration linearPhaseConfiguration,
-                                                                    NodeAction triggerSnapshotStore,
-                                                                    NodeAction triggerTagEvent) {
+                                                                 FLASHPhaseConfiguration linearPhaseConfiguration,
+                                                                 NodeAction triggerSnapshotStore,
+                                                                 NodeAction triggerTagEvent) {
         return new FLASHConfiguration(binaryPhaseConfiguration, linearPhaseConfiguration, triggerSnapshotStore, triggerTagEvent);
     }
 
-    /** A configuration for the binary phase*/
+    /** A configuration for the binary phase */
     private final FLASHPhaseConfiguration binaryPhaseConfiguration;
 
-    /** A configuration for the linear phase*/
+    /** A configuration for the linear phase */
     private final FLASHPhaseConfiguration linearPhaseConfiguration;
 
-    /** A trigger controlling which transformations are snapshotted*/
-    private final NodeAction triggerSnapshotStore;
-    
-    /** A trigger firing when a tag event should be triggered*/
-    private final NodeAction triggerTagEvent;
+    /** A trigger controlling which transformations are snapshotted */
+    private final NodeAction              triggerSnapshotStore;
+
+    /** A trigger firing when a tag event should be triggered */
+    private final NodeAction              triggerTagEvent;
 
     /**
      * Creates a new configuration for the FLASH algorithm
@@ -97,7 +97,7 @@ public class FLASHConfiguration {
         this.triggerSnapshotStore = triggerSnapshotStore;
         this.triggerTagEvent = triggerTagEvent;
     }
-    
+
     /**
      * Getter
      * @return
@@ -123,7 +123,7 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Getter:  A trigger firing when a tag event should be triggered on the lattice
+     * Getter: A trigger firing when a tag event should be triggered on the lattice
      * @return
      */
     public NodeAction getTriggerTagEvent() {
@@ -134,15 +134,15 @@ public class FLASHConfiguration {
      * Is a binary phase required
      * @return
      */
-    public boolean isBinaryPhaseRequired(){
-        return this.binaryPhaseConfiguration != null;
+    public boolean isBinaryPhaseRequired() {
+        return binaryPhaseConfiguration != null;
     }
 
     /**
      * Is a linear phase required
      * @return
      */
-    public boolean isLinearPhaseRequired(){
-        return this.linearPhaseConfiguration != null;
+    public boolean isLinearPhaseRequired() {
+        return linearPhaseConfiguration != null;
     }
 }

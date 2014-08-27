@@ -68,7 +68,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         super(lattice, checker);
         this.strategy = strategy;
-        this.sorted = new boolean[lattice.getSize()];
+        sorted = new boolean[lattice.getSize()];
         this.config = config;
     }
 
@@ -99,7 +99,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // For each node in the lattice
         int length = lattice.getLevels().length;
         for (int i = 0; i < length; i++) {
-            for (Node node : this.getUnsetNodesAndSort(i, outerLoopConfiguration.getTriggerSkip())) {
+            for (Node node : getUnsetNodesAndSort(i, outerLoopConfiguration.getTriggerSkip())) {
 
                 // Run the correct phase
                 if (config.isBinaryPhaseRequired()) {
@@ -147,7 +147,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 head = checkPath(path, triggerSkip, queue);
 
                 // Second phase
-                if (config.isLinearPhaseRequired() && head != null) {
+                if (config.isLinearPhaseRequired() && (head != null)) {
 
                     // Run linear search on head
                     linearSearch(head);
@@ -251,7 +251,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         boolean found = true;
         while (found) {
             found = false;
-            this.sortSuccessors(current);
+            sortSuccessors(current);
             for (final Node candidate : current.getSuccessors()) {
                 if (!skip(triggerSkip, candidate)) {
                     current = candidate;
@@ -286,7 +286,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // Sort
         Node[] resultArray = result.toArray(new Node[result.size()]);
-        this.sort(resultArray);
+        sort(resultArray);
         return resultArray;
     }
 
@@ -304,10 +304,10 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         if (!skip(triggerSkip, start)) {
 
             // Sort successors
-            this.sortSuccessors(start);
+            sortSuccessors(start);
 
             // Check and tag
-            this.checkAndTag(start, config.getLinearPhaseConfiguration());
+            checkAndTag(start, config.getLinearPhaseConfiguration());
 
             // DFS
             for (final Node child : start.getSuccessors()) {
@@ -327,8 +327,8 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param node
      */
     private void prune(Node node) {
-        
-     // There is no need to do anything, if we do not have a lower bound
+
+        // There is no need to do anything, if we do not have a lower bound
         if (node.getLowerBound() == null) {
             return;
         }
@@ -337,7 +337,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         Node optimalTransformation = getGlobalOptimum();
 
         // There is no need to do anything, if the transformation that was just checked was already pruned
-        if (node != optimalTransformation && node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
+        if ((node != optimalTransformation) && node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED)) {
             return;
         }
 
@@ -419,7 +419,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                     lattice.setLowerBound(node, lowerBound);
                 }
             }
-            
+
             // Check whether this node has insufficient utility, if a lower bound exists
             if (lowerBound != null) {
                 if (getGlobalOptimum().getInformationLoss().compareTo(lowerBound) <= 0) {
@@ -450,7 +450,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void sortSuccessors(final Node node) {
         if (!sorted[node.id]) {
-            this.sort(node.getSuccessors());
+            sort(node.getSuccessors());
             sorted[node.id] = true;
         }
     }

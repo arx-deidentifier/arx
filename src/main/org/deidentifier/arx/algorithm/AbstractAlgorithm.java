@@ -24,8 +24,8 @@ import java.util.List;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.InformationLossWithBound;
 
 /**
  * Abstract class for an algorithm, which provides some generic methods.
@@ -35,18 +35,18 @@ import org.deidentifier.arx.metric.InformationLoss;
  */
 public abstract class AbstractAlgorithm {
 
-    /** The optimal transformation*/
-    private Node globalOptimum = null;
+    /** The optimal transformation */
+    private Node               globalOptimum          = null;
 
-    /** The optimal information loss*/
+    /** The optimal information loss */
     private InformationLoss<?> optimalInformationLoss = null;
 
     /** A node checker. */
-    protected INodeChecker  checker  = null;
+    protected INodeChecker     checker                = null;
 
     /** The lattice. */
-    protected Lattice       lattice  = null;
-    
+    protected Lattice          lattice                = null;
+
     /**
      * Walks the lattice.
      * 
@@ -60,7 +60,7 @@ public abstract class AbstractAlgorithm {
         this.checker = checker;
         this.lattice = lattice;
     }
-    
+
     /**
      * Returns a list of all anonymous nodes in the lattice.
      * 
@@ -77,6 +77,7 @@ public abstract class AbstractAlgorithm {
         }
         return results;
     }
+
     /**
      * Returns the global optimum
      * @return
@@ -84,47 +85,45 @@ public abstract class AbstractAlgorithm {
     public Node getGlobalOptimum() {
         return globalOptimum;
     }
-    
+
     /**
      * Implement this method in order to provide a new algorithm.
      */
     public abstract void traverse();
-    
-    
+
     /**
-     * Determine information loss of the given node if it can be 
+     * Determine information loss of the given node if it can be
      * used for estimating minimum and maximum information
      * loss for tagged nodes
      * @param node
      */
-    protected void computeUtilityForMonotonicMetrics(Node node){
+    protected void computeUtilityForMonotonicMetrics(Node node) {
         if ((checker.getMetric().isMonotonic() ||
-             checker.getConfiguration().getMaxOutliers() == 0d) &&
-             node.getInformationLoss() == null) {
-               
-               // Independent evaluation or check
-               if (checker.getMetric().isIndependent()) {
-                   InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, null);
-                   lattice.setInformationLoss(node, loss.getInformationLoss());
-                   lattice.setLowerBound(node, loss.getLowerBound());
-               } else {
-                   lattice.setChecked(node, checker.check(node, true));
-               }
-           }
+            (checker.getConfiguration().getMaxOutliers() == 0d)) &&
+            (node.getInformationLoss() == null)) {
+
+            // Independent evaluation or check
+            if (checker.getMetric().isIndependent()) {
+                InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(node, null);
+                lattice.setInformationLoss(node, loss.getInformationLoss());
+                lattice.setLowerBound(node, loss.getLowerBound());
+            } else {
+                lattice.setChecked(node, checker.check(node, true));
+            }
+        }
     }
-    
 
     /**
      * Keeps track of the global optimum
      * @param node
      */
-    protected void trackOptimum(Node node){
-        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) && 
-           ((globalOptimum == null) || 
-            (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) || 
-            (node.getInformationLoss().compareTo(optimalInformationLoss) == 0 && node.getLevel() < globalOptimum.getLevel()))) {
-            this.globalOptimum = node;
-            this.optimalInformationLoss = node.getInformationLoss();
+    protected void trackOptimum(Node node) {
+        if (node.hasProperty(Node.PROPERTY_ANONYMOUS) &&
+            ((globalOptimum == null) ||
+             (node.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||
+            ((node.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (node.getLevel() < globalOptimum.getLevel())))) {
+            globalOptimum = node;
+            optimalInformationLoss = node.getInformationLoss();
         }
     }
 }
