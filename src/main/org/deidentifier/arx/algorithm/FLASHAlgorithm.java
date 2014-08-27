@@ -531,7 +531,8 @@ public class FLASHAlgorithm {
             public void action(Node node) {
                 lattice.setProperty(node, Node.PROPERTY_VISITED);
                 if (node.hasProperty(Node.PROPERTY_ANONYMOUS)) {
-                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY);
+                    lattice.setPropertyUpwards(node, false, Node.PROPERTY_INSUFFICIENT_UTILITY | Node.PROPERTY_SUCCESSORS_PRUNED);
+                    lattice.setProperty(node, Node.PROPERTY_SUCCESSORS_PRUNED);
                 }
             }
 
