@@ -297,7 +297,7 @@ public class StatisticsBuilder {
         // Create entry set
         final Map<Entry, Double> entries = new HashMap<Entry, Double>();
         Iterator<Entry> iter = table.iterator;
-        double max = Double.MIN_VALUE;
+        double max = 0d;
         while (iter.hasNext()) {
             checkInterrupt();
             Entry old = iter.next();

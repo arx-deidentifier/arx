@@ -58,7 +58,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
 
     @Override
     public InformationLoss<?> createMinInformationLoss() {
-        return new ILSingleDimensional(Double.MIN_VALUE);
+        return new ILSingleDimensional(0d);
     }
     
     /**

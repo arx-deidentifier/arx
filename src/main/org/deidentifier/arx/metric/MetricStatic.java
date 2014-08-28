@@ -62,7 +62,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
 
     @Override
     public InformationLoss<?> createMinInformationLoss() {
-        return new InformationLossDefault(Double.MIN_VALUE);
+        return new InformationLossDefault(0d);
     }
 
     @Override
