@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.List;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
+import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -42,6 +43,7 @@ public class DataTableContext {
     private DataHandle           handle        = null;
     private Controller           controller    = null;
     private int                  selectedIndex = -1;
+	private NatTable             table         = null;
 
     /**
      * Creates a new instance
@@ -50,8 +52,24 @@ public class DataTableContext {
     public DataTableContext(Controller controller) {
         this.controller = controller;
     }
-
+    
     /**
+     * Sets the underlying table
+     * @param table
+     */
+    public void setTable(NatTable table) {
+		this.table = table;
+	}
+
+	/**
+     * Returns the underlying table
+     * @return
+     */
+    public NatTable getTable() {
+		return table;
+	}
+
+	/**
      * Returns the controller
      * @return
      */
@@ -180,4 +198,14 @@ public class DataTableContext {
     public void setFont(Font font) {
         this.font = font;
     }
+
+	public boolean isRowExpanded() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isColumnExpanded() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

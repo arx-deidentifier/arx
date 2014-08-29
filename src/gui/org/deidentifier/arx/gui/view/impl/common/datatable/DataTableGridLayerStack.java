@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultRowHeaderDataProvider;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * A grid layer stack for the data view
@@ -42,7 +43,7 @@ public class DataTableGridLayerStack extends DataTableGridLayer {
      * @param table
      * @param context
      */
-    public DataTableGridLayerStack(final IDataProvider bodyDataProvider, NatTable table, DataTableContext context) {
+    public DataTableGridLayerStack(final IDataProvider bodyDataProvider, NatTable table, DataTableContext context, Control parent) {
         super(true, table, context);
         List<String> lcolumns = new ArrayList<String>();
         RowSet rows = context.getRows();
@@ -58,10 +59,10 @@ public class DataTableGridLayerStack extends DataTableGridLayer {
             } 
         }
         String[] columns = lcolumns.toArray(new String[] {});
-        final IDataProvider columnHeaderDataProvider = new DefaultColumnHeaderDataProvider(columns);
-        final IDataProvider rowHeaderDataProvider = new DefaultRowHeaderDataProvider(bodyDataProvider);
-        final IDataProvider cornerDataProvider = new DefaultCornerDataProvider(columnHeaderDataProvider,
-                                                                               rowHeaderDataProvider);
-        init(bodyDataProvider, columnHeaderDataProvider, rowHeaderDataProvider, cornerDataProvider);
+        final IDataProvider columnHeaderDataProvider = new DataTableDataProvider(new DefaultColumnHeaderDataProvider(columns));
+        final IDataProvider rowHeaderDataProvider = new DataTableDataProvider(new DefaultRowHeaderDataProvider(bodyDataProvider));
+        final IDataProvider cornerDataProvider = new DataTableDataProvider(new DefaultCornerDataProvider(columnHeaderDataProvider,
+                                                                               rowHeaderDataProvider));
+        init(bodyDataProvider, columnHeaderDataProvider, rowHeaderDataProvider, cornerDataProvider, parent);
     }
 }

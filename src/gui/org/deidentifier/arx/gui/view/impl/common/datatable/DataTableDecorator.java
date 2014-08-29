@@ -1,4 +1,4 @@
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import java.util.List;
 

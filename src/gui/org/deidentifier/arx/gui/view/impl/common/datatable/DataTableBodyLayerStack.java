@@ -16,15 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.copy.command.CopyDataCommandHandler;
 import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
+import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.util.IClientAreaProvider;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * A BodyLayerStack for the DataView
@@ -32,8 +34,9 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
  */
 public class DataTableBodyLayerStack extends AbstractLayerTransform {
 
-    private final SelectionLayer selectionLayer;
-    private final ViewportLayer  viewportLayer;
+	private final SelectionLayer selectionLayer;
+	private final ViewportLayer viewportLayer;
+	private ILayer rowHeaderLayer;
 
     /**
      * Creates a new instance
@@ -41,9 +44,9 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
      * @param table
      * @param context
      */
-    public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, NatTable table, DataTableContext context) {
+    public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, NatTable table, DataTableContext context, Control parent) {
         this.selectionLayer = new DataTableSelectionLayer(underlyingLayer, context);
-        this.viewportLayer = new ViewportLayer(selectionLayer);
+        this.viewportLayer = new DataTableViewportLayer(new DataTableFillLayout(parent, selectionLayer, context, this), context);
         this.setUnderlyingLayer(viewportLayer);
         this.setConfigLabelAccumulator(new DataTableConfigLabelAccumulator(table, context));
         this.registerCommandHandler(new CopyDataCommandHandler(selectionLayer));
@@ -69,4 +72,19 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
     public void setClientAreaProvider(IClientAreaProvider clientAreaProvider) {
         super.setClientAreaProvider(clientAreaProvider);
     }
+
+    /**
+     * Sets the row header layer
+     * @param rowHeaderLayer
+     */
+	public void setRowHeaderLayer(ILayer rowHeaderLayer) {
+		this.rowHeaderLayer = rowHeaderLayer;
+	}
+
+	/**
+	 * @return the rowHeaderLayer
+	 */
+	public ILayer getRowHeaderLayer() {
+		return rowHeaderLayer;
+	}
 }

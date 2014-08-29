@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class DataTableImagePainter extends BackgroundPainter {
         List<Image> headerImages = context.getImages();
         if ((headerImages != null) && (headerImages.size() > 0)) {
             final int index = cell.getColumnIndex() - (rows != null ? 1 : 0);
-            if (index >= 0) {
+            if (index >= 0 && index<headerImages.size()) {
                 final Image image = headerImages.get(index);
                 if (image != null) {
                     gc.drawImage(image, bounds.x + 3, bounds.y - 8);

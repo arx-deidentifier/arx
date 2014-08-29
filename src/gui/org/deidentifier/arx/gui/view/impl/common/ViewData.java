@@ -238,7 +238,7 @@ public abstract class ViewData implements IView {
      */
     private void actionColumnSelected(int index){
     	DataHandle handle = getHandle();
-        if (handle != null){
+        if (handle != null && index < handle.getNumColumns()){
             final String attr = handle.getAttributeName(index);
             model.setSelectedAttribute(attr);
             table.setSelectedAttribute(attr);

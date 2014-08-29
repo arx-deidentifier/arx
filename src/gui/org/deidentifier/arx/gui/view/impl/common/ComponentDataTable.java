@@ -24,6 +24,14 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.def.IComponent;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableContext;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableDecorator;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayer;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableGridLayerStack;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableHandleDataProvider;
+import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableRowHeaderConfiguration;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
@@ -63,6 +71,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 
 /**
@@ -77,6 +86,7 @@ public class ComponentDataTable implements IComponent {
     private DataTableBodyLayerStack bodyLayer;
     private DataTableGridLayer      gridLayer;
     private Font                    font;
+    private Control                 parent;
 
     /**
      * Creates a new instance
@@ -89,7 +99,9 @@ public class ComponentDataTable implements IComponent {
         this.context.setFont(parent.getFont());
         this.table = createControl(parent); 
         this.table.setVisible(false);
+        this.context.setTable(this.table);
         this.font = parent.getFont();
+        this.parent = parent;
     }
 
     /**
@@ -134,7 +146,7 @@ public class ComponentDataTable implements IComponent {
      */
     private NatTable createTable(final Composite parent) {
         final IDataProvider provider = new DataTableHandleDataProvider(context);
-        gridLayer = new DataTableGridLayerStack(provider, table, context);
+        gridLayer = new DataTableGridLayerStack(provider, table, context, parent);
         final NatTable natTable = new NatTable(parent, gridLayer, false);
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
 
@@ -310,7 +322,7 @@ public class ComponentDataTable implements IComponent {
         this.table.setRedraw(false);
         this.context.getImages().clear();
         this.context.reset();
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context, parent);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();
@@ -344,7 +356,7 @@ public class ComponentDataTable implements IComponent {
     public void setData(final DataHandle handle) {
         this.table.setRedraw(false);
         this.context.setHandle(handle);
-        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context);
+        this.gridLayer = new DataTableGridLayerStack(new DataTableHandleDataProvider(context), table, context, parent);
         this.table.setLayer(gridLayer);
         this.table.refresh();
         this.gridLayer.getBodyLayer().getViewportLayer().recalculateScrollBars();

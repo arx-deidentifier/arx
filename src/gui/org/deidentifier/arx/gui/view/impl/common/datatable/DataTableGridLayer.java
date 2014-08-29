@@ -16,17 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.deidentifier.arx.gui.view.impl.common;
-
-import java.util.List;
-import java.util.Map;
+package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultBodyDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultColumnHeaderDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
-import org.eclipse.nebula.widgets.nattable.grid.data.DefaultRowHeaderDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.DefaultColumnHeaderDataLayer;
@@ -38,6 +31,7 @@ import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * A grid layer for the data view
@@ -120,41 +114,19 @@ public class DataTableGridLayer extends GridLayer {
      * Initialize
      * @param bodyDataProvider
      * @param columnHeaderDataProvider
-     */
-    protected void init(IDataProvider bodyDataProvider, IDataProvider columnHeaderDataProvider) {
-        init(bodyDataProvider, columnHeaderDataProvider, new DefaultRowHeaderDataProvider(bodyDataProvider));
-    }
-
-    /**
-     * Initialize
-     * @param bodyDataProvider
-     * @param columnHeaderDataProvider
-     * @param rowHeaderDataProvider
-     */
-    protected void init(IDataProvider bodyDataProvider,
-                        IDataProvider columnHeaderDataProvider,
-                        IDataProvider rowHeaderDataProvider) {
-        init(bodyDataProvider,
-             columnHeaderDataProvider,
-             rowHeaderDataProvider,
-             new DefaultCornerDataProvider(columnHeaderDataProvider, rowHeaderDataProvider));
-    }
-
-    /**
-     * Initialize
-     * @param bodyDataProvider
-     * @param columnHeaderDataProvider
      * @param rowHeaderDataProvider
      * @param cornerDataProvider
      */
     protected void init(IDataProvider bodyDataProvider,
                         IDataProvider columnHeaderDataProvider,
                         IDataProvider rowHeaderDataProvider,
-                        IDataProvider cornerDataProvider) {
+                        IDataProvider cornerDataProvider,
+                        Control parent) {
         init(new DataLayer(bodyDataProvider),
              new DefaultColumnHeaderDataLayer(columnHeaderDataProvider),
              new DefaultRowHeaderDataLayer(rowHeaderDataProvider),
-             new DataLayer(cornerDataProvider));
+             new DataLayer(cornerDataProvider),
+             parent);
     }
 
     /**
@@ -167,10 +139,11 @@ public class DataTableGridLayer extends GridLayer {
     protected void init(IUniqueIndexLayer bodyDataLayer,
                         IUniqueIndexLayer columnHeaderDataLayer,
                         IUniqueIndexLayer rowHeaderDataLayer,
-                        IUniqueIndexLayer cornerDataLayer) {
+                        IUniqueIndexLayer cornerDataLayer,
+                        Control parent) {
         // Body
         this.bodyDataLayer = bodyDataLayer;
-        DataTableBodyLayerStack bodyLayer = new DataTableBodyLayerStack(bodyDataLayer, table, context);
+        DataTableBodyLayerStack bodyLayer = new DataTableBodyLayerStack(bodyDataLayer, table, context, parent);
 
         SelectionLayer selectionLayer = bodyLayer.getSelectionLayer();
 
@@ -181,7 +154,8 @@ public class DataTableGridLayer extends GridLayer {
         // Row header
         this.rowHeaderDataLayer = rowHeaderDataLayer;
         ILayer rowHeaderLayer = new RowHeaderLayer(rowHeaderDataLayer, bodyLayer, selectionLayer);
-
+        bodyLayer.setRowHeaderLayer(rowHeaderLayer);
+        
         // Corner
         this.cornerDataLayer = cornerDataLayer;
         ILayer cornerLayer = new CornerLayer(cornerDataLayer, rowHeaderLayer, columnHeaderLayer);
@@ -195,16 +169,5 @@ public class DataTableGridLayer extends GridLayer {
         setColumnHeaderLayer(columnHeaderLayer);
         setRowHeaderLayer(rowHeaderLayer);
         setCornerLayer(cornerLayer);
-    }
-
-    /**
-     * Initialize
-     * @param rowData
-     * @param propertyNames
-     * @param propertyToLabelMap
-     */
-    protected <T> void init(List<T> rowData, String[] propertyNames, Map<String, String> propertyToLabelMap) {
-        init(new DefaultBodyDataProvider<T>(rowData, propertyNames),
-             new DefaultColumnHeaderDataProvider(propertyNames, propertyToLabelMap));
     }
 }
