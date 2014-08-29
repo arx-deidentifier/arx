@@ -123,7 +123,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         lattice.getBottom().setData(null);
 
         // Clear list of pruning candidates
-        potentiallyInsufficientUtility.clear();
+        if (potentiallyInsufficientUtility != null) {
+        	potentiallyInsufficientUtility.clear();
+        }
     }
 
     /**
