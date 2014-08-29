@@ -52,7 +52,7 @@ class ILMultiDimensionalMax extends AbstractILMultiDimensionalReduced {
     protected double getAggregate() {
         double[] values = getValues();
         double[] weights = getWeights();
-        double result = Double.MIN_VALUE;
+        double result = 0d;
         for (int i = 0; i < values.length; i++) {
             result = Math.max(result, values[i] * weights[i]);
         }

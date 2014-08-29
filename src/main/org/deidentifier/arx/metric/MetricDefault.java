@@ -46,7 +46,7 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
 
     @Override
     public InformationLoss<?> createMinInformationLoss() {
-        return new InformationLossDefault(Double.MIN_VALUE);
+        return new InformationLossDefault(0d);
     }
     
     @Override

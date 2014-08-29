@@ -354,7 +354,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double getMinimum() {
-            return Double.MIN_VALUE;
+            return -Double.MAX_VALUE;
         }
 
         @Override

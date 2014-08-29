@@ -172,7 +172,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         
         // Min and max
         this.min = new double[hierarchies.length];
-        Arrays.fill(min, Double.MIN_VALUE);
+        Arrays.fill(min, 0d);
         this.max = new double[min.length];
         Arrays.fill(max, Double.MAX_VALUE);
     }
