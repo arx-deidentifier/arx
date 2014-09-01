@@ -53,7 +53,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public static class ARXTestCase {
+    public static class ARXAnonymizationTestCase {
 
         public ARXConfiguration config;
         public String           dataset;
@@ -74,7 +74,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          * @param statistics
          */
-        public ARXTestCase(final ARXConfiguration config,
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String sensitiveAttribute,
                            final String dataset,
                            final String optimalInformationLoss,
@@ -101,7 +101,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          * @param statistics
          */
-        public ARXTestCase(final ARXConfiguration config,
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String sensitiveAttribute,
                            final String dataset,
                            final double optimalInformationLoss,
@@ -127,7 +127,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          * @param statistics
          */
-        public ARXTestCase(final ARXConfiguration config,
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String dataset,
                            final double optimalInformationLoss,
                            final int[] optimalTransformation,
@@ -145,7 +145,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param optimalTransformation
          * @param practical
          */
-        public ARXTestCase(final ARXConfiguration config,
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String dataset,
                            final double optimalInformationLoss,
                            final int[] optimalTransformation,
@@ -163,7 +163,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param optimalTransformation
          * @param practical
          */
-        public ARXTestCase(final ARXConfiguration config,
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String sensitiveAttribute,
                            final String dataset,
                            final String optimalInformationLoss,
@@ -182,7 +182,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param optimalTransformation
          * @param practical
          */
-        public ARXTestCase(final ARXConfiguration config,
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String sensitiveAttribute,
                            final String dataset,
                            final double optimalInformationLoss,
@@ -199,14 +199,14 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     }
 
     /** The test case */
-    protected final ARXTestCase testCase;
+    protected final ARXAnonymizationTestCase testCase;
 
     /**
      * Creates a new instance
      * 
      * @param testCase
      */
-    public TestAnonymizationAbstract(final ARXTestCase testCase) {
+    public TestAnonymizationAbstract(final ARXAnonymizationTestCase testCase) {
         this.testCase = testCase;
     }
 
@@ -217,7 +217,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @return
      * @throws IOException
      */
-    public Data getDataObject(final ARXTestCase testCase) throws IOException {
+    public Data getDataObject(final ARXAnonymizationTestCase testCase) throws IOException {
 
         final Data data = Data.create(testCase.dataset, ';');
 
