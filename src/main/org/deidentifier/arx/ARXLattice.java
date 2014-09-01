@@ -729,13 +729,16 @@ public class ARXLattice implements Serializable {
      */
     protected void estimateInformationLoss() {
 
-        if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
-            estimateMonotonicMinLoss();
-            estimateMonotonicMaxLoss();
-        } else {
-            estimateNonMonotonicLoss();
-        }
+    	// TODO: Currently, monotonicity is only guaranteed for anonymous transformations
+    	estimateNonMonotonicLoss();
+//        if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
+//            estimateMonotonicMinLoss();
+//            estimateMonotonicMaxLoss();
+//        } else {
+//            estimateNonMonotonicLoss();
+//        }
     }
+
 
     /**
      * Returns the optimum, if any
