@@ -134,6 +134,8 @@ public class ViewAttributeWeights implements IView {
                     attributes.addAll(qis);
                 }
 
+                if (root.isDisposed()) return;
+                
                 root.setRedraw(false);
                 
                 // Dispose widgets
