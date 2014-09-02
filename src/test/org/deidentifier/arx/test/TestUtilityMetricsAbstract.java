@@ -57,10 +57,10 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
      */
     public static class ARXUtilityMetricsTestCase {
 
-		public ARXConfiguration config;
-		public String dataset;
-		public String sensitiveAttribute;
-		public Map<String, String> informationLoss;
+        public ARXConfiguration    config;
+        public String              dataset;
+        public String              sensitiveAttribute;
+        public Map<String, String> informationLoss;
 
         /**
          * Creates a new instance
@@ -71,37 +71,37 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
          * @param informationLoss pairs of (Arrays.toString(transformation), informationLoss.toString())
          */
         public ARXUtilityMetricsTestCase(final ARXConfiguration config,
-        								 final String sensitiveAttribute,
-        								 final String dataset,
+                                         final String sensitiveAttribute,
+                                         final String dataset,
                                          final String... informationLoss) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
             this.informationLoss = new HashMap<String, String>();
             if (informationLoss != null) {
-	            for (int i=0; i<informationLoss.length; i+=2) {
-	            	this.informationLoss.put(informationLoss[i], informationLoss[i+1]);
-	            }
+                for (int i = 0; i < informationLoss.length; i += 2) {
+                    this.informationLoss.put(informationLoss[i], informationLoss[i + 1]);
+                }
             }
         }
-        
+
         /**
          * Returns a string description
          * @return
          */
-        public String getDescription(){
-        	StringBuilder builder = new StringBuilder();
-        	builder.append("TestCase{\n");
-        	builder.append(" - Dataset: ").append(dataset).append("\n");
-        	builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
-        	builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
-        	builder.append(" - Metric: ").append(config.getMetric().toString()).append("\n");
-        	builder.append(" - Criteria:\n");
-        	for (PrivacyCriterion c : config.getCriteria()) {
-        		builder.append("   * ").append(c.toString()).append("\n");
-        	}
-        	builder.append("}");
-        	return builder.toString();
+        public String getDescription() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("TestCase{\n");
+            builder.append(" - Dataset: ").append(dataset).append("\n");
+            builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
+            builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
+            builder.append(" - Metric: ").append(config.getMetric().toString()).append("\n");
+            builder.append(" - Criteria:\n");
+            for (PrivacyCriterion c : config.getCriteria()) {
+                builder.append("   * ").append(c.toString()).append("\n");
+            }
+            builder.append("}");
+            return builder.toString();
         }
     }
 
@@ -175,25 +175,25 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
     @Test
     public void test() throws IOException {
 
-    	// Anonymize
+        // Anonymize
         Data data = getDataObject(testcase);
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(data, testcase.config);
 
         // Test information loss for some transformations
         for (ARXNode[] level : result.getLattice().getLevels()) {
-        	for (ARXNode node : level){
-        		
-        		String label = Arrays.toString(node.getTransformation());
-        		String loss = testcase.informationLoss.get(label);
+            for (ARXNode node : level) {
 
-        		if (loss != null) {
-        			if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss())!=0) {
-            			result.getOutput(node);
-            		}
-        			assertEquals(label, loss, node.getMaximumInformationLoss().toString());
-        		}
-        	}
+                String label = Arrays.toString(node.getTransformation());
+                String loss = testcase.informationLoss.get(label);
+
+                if (loss != null) {
+                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+                        result.getOutput(node);
+                    }
+                    assertEquals(label, loss, node.getMaximumInformationLoss().toString());
+                }
+            }
         }
     }
 }
