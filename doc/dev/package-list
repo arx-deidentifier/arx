@@ -12,3 +12,4 @@ org.deidentifier.arx.framework.data
 org.deidentifier.arx.framework.lattice
 org.deidentifier.arx.io
 org.deidentifier.arx.metric
+org.deidentifier.arx.metric.v2

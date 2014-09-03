@@ -699,31 +699,10 @@ public class ARXLattice implements Serializable {
      * Estimates minimal information loss
      */
     private void estimateNonMonotonicLoss() {
-
-        // Determine min and max
-        InformationLoss<?> min = null;
-        InformationLoss<?> max = null;
-        for (int i = 0; i < levels.length; i++) {
-            final ARXNode[] level = levels[i];
-            for (final ARXNode node : level) {
-
-                InformationLoss<?> nodeMin = node.getMinimumInformationLoss();
-                InformationLoss<?> nodeMax = node.getMaximumInformationLoss();
-
-                if (nodeMin != null && nodeMin.equals(nodeMax)) {
-                    if (min == null || min.compareTo(nodeMin) > 0) {
-                        min = nodeMin.clone();
-                    }
-                    if (max == null || max.compareTo(nodeMax) < 0) {
-                        max = nodeMax.clone();
-                    }
-                }
-            }
-        }
         
         // If not loss found, assume min for everything
-        if (min == null) min = metric.createMinInformationLoss();
-        if (max == null) max = metric.createMaxInformationLoss();
+        InformationLoss<?> min = metric.createMinInformationLoss();
+        InformationLoss<?> max = metric.createMaxInformationLoss();
 
         // Propagate
         for (int i = 0; i < levels.length; i++) {
@@ -750,14 +729,21 @@ public class ARXLattice implements Serializable {
      */
     protected void estimateInformationLoss() {
 
-        if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
-            estimateMonotonicMinLoss();
-            estimateMonotonicMaxLoss();
-        } else {
-            estimateNonMonotonicLoss();
-        }
+    	// TODO: Currently, monotonicity is only guaranteed for anonymous transformations
+    	estimateNonMonotonicLoss();
+//        if (metric.isMonotonic() || (maxAbsoluteOutliers == 0)) {
+//            estimateMonotonicMinLoss();
+//            estimateMonotonicMaxLoss();
+//        } else {
+//            estimateNonMonotonicLoss();
+//        }
     }
 
+
+    /**
+     * Returns the optimum, if any
+     * @return
+     */
     protected ARXNode getOptimum() {
         return optimum;
     }
