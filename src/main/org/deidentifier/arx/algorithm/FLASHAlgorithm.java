@@ -37,6 +37,8 @@ import org.deidentifier.arx.metric.Metric;
  * @author Florian Kohlmayer
  */
 public class FLASHAlgorithm {
+	
+	private static AbstractAlgorithmFactory replacement = null;
 
     /**
      * Monotonicity
@@ -46,6 +48,12 @@ public class FLASHAlgorithm {
         PARTIAL,
         NONE
     }
+    
+    public static void setReplacement(AbstractAlgorithmFactory replacement){
+    	FLASHAlgorithm.replacement = replacement;
+    }
+    
+    
 
     /**
      * Creates a new instance of the FLASH algorithm
@@ -57,6 +65,10 @@ public class FLASHAlgorithm {
     public static AbstractAlgorithm create(final Lattice lattice,
                                            final INodeChecker checker,
                                            final FLASHStrategy strategy) {
+    	
+    	if (replacement != null) {
+    		return replacement.create(lattice, checker);
+    	}
 
         // Init
         ARXConfiguration config = checker.getConfiguration();
