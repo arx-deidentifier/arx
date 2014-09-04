@@ -60,6 +60,16 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    public ILSingleDimensional createMaxInformationLoss() {
+        Double rows = getNumTuples();
+        if (rows == null) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new ILSingleDimensional(rows * rows);
+        }
+    }
+    
+    @Override
     public String toString() {
         return "Non-monotonic discernability";
     }
