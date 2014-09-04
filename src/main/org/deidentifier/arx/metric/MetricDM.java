@@ -36,10 +36,10 @@ import org.deidentifier.arx.framework.lattice.Node;
  * @author Florian Kohlmayer
  */
 public class MetricDM extends MetricDefault {
-    /** SVUID*/
+    /** SVUID */
     private static final long serialVersionUID = 4886262855672670521L;
-    /** Number of tuples*/
-    private int               rowCount = 0;
+    /** Number of tuples */
+    private int               rowCount         = 0;
 
     /**
      * Creates a new instance
@@ -56,7 +56,16 @@ public class MetricDM extends MetricDefault {
             return new InformationLossDefault(rowCount);
         }
     }
-    
+
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        if (rowCount == 0) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossDefault(rowCount * rowCount);
+        }
+    }
+
     @Override
     public String toString() {
         return "Non-Monotonic Discernability";
@@ -64,12 +73,12 @@ public class MetricDM extends MetricDefault {
 
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
-        
+
         double value = 0;
         double lowerBound = 0; // DM*
         HashGroupifyEntry m = g.getFirstEntry();
         while (m != null) {
-            if (m.count>0){
+            if (m.count > 0) {
                 if (m.isNotOutlier) {
                     double current = ((double) m.count * (double) m.count);
                     value += current;
@@ -88,14 +97,14 @@ public class MetricDM extends MetricDefault {
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return null;
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         double lowerBound = 0; // DM*
         HashGroupifyEntry m = groupify.getFirstEntry();
         while (m != null) {
-            if (m.count>0){
+            if (m.count > 0) {
                 lowerBound += ((double) m.count * (double) m.count);
             }
             m = m.nextOrdered;
@@ -105,13 +114,15 @@ public class MetricDM extends MetricDefault {
 
     @Override
     protected void initializeInternal(final DataDefinition definition,
-                                      final Data input, 
-                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final Data input,
+                                      final GeneralizationHierarchy[] hierarchies,
                                       final ARXConfiguration config) {
         super.initializeInternal(definition, input, hierarchies, config);
         if (config.containsCriterion(DPresence.class)) {
             Set<DPresence> crits = config.getCriteria(DPresence.class);
-            if (crits.size() > 1) { throw new IllegalArgumentException("Only one d-presence criterion supported!"); }
+            if (crits.size() > 1) {
+                throw new IllegalArgumentException("Only one d-presence criterion supported!");
+            }
             for (DPresence dPresence : crits) {
                 rowCount = dPresence.getSubset().getArray().length;
             }
