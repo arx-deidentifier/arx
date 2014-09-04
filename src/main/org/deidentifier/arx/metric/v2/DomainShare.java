@@ -31,18 +31,18 @@ import com.carrotsearch.hppc.LongDoubleOpenHashMap;
  * @author Fabian Prasser
  */
 public class DomainShare implements Serializable {
-    
-    /** SVUID*/
-    private static final long serialVersionUID = -8981924690395236648L;
 
-    /** The size of the domain*/
-    private final double size;
+    /** SVUID */
+    private static final long           serialVersionUID = -8981924690395236648L;
 
-    /** One share per attribute*/
-    private final double[] shares;
-    
-    /** Bit-vector indicating whether duplicates exist*/
-    private final DomainShareVector vector;
+    /** The value representing a non-existent entry */
+    private static final double         NOT_AVAILABLE    = -Double.MAX_VALUE;
+
+    /** The size of the domain */
+    private final double                size;
+
+    /** One share per attribute */
+    private final double[]              shares;
     
     /** 
      * If an attribute exists with different shares on different generalization
@@ -60,10 +60,9 @@ public class DomainShare implements Serializable {
         // Prepare
         int[][] array = hierarchy.getArray();
         this.size = array.length;
-        this.vector = new DomainShareVector(array.length);
         this.duplicates = new LongDoubleOpenHashMap();
         this.shares = new double[array.length];
-        Arrays.fill(shares, -1d);
+        Arrays.fill(shares, NOT_AVAILABLE);
         IntIntOpenHashMap[] maps = new IntIntOpenHashMap[array[0].length];
         for (int level=0; level<maps.length; level++) {
             maps[level] = new IntIntOpenHashMap(hierarchy.getDistinctValues()[level]);
@@ -85,12 +84,29 @@ public class DomainShare implements Serializable {
             int[] values = map.values;
             for (int index=0; index<allocated.length; index++){
                 if (allocated[index]) {
+                    
                     int key = keys[index];
                     double share = (double)values[index] / size;
-                    if (shares[key] != -1 && shares[key] != share) {
+                    double stored = shares[key];
+                    
+                    // If duplicate
+                    if (stored != NOT_AVAILABLE) {
+                        
+                        // If same share, simply continue
+                        if (stored == share) {
+                            continue;
+                        } 
+                        
+                        // Mark as duplicate, if not already marked
+                        if (stored >= 0d) {
+                            shares[key] = - shares[key];
+                        }
+                        
+                        // Store duplicate value
                         long dkey = (((long)key) << 32) | (level & 0xffffffffL);
                         duplicates.put(dkey, share);
-                        vector.add(key);
+                        
+                    // If its not a duplicate, simply store
                     } else {
                         shares[key] = share;
                     }
@@ -114,11 +130,12 @@ public class DomainShare implements Serializable {
      * @return
      */
     public double getShare(int value, int level){
-        if (!vector.contains(value)){
-            return shares[value];
+        double share = shares[value];
+        if (share >= 0){
+            return share;
         } else {
             long key = (((long)value) << 32) | (level & 0xffffffffL);
-            return duplicates.getOrDefault(key, shares[value]);
+            return duplicates.getOrDefault(key, -share);
         }
     }
 }
