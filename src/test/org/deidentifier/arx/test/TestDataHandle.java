@@ -45,8 +45,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final DataHandle inHandle = provider.getData().getHandle();
 
         // Alter the definition
@@ -79,7 +77,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
 
         // Alter the definition
         provider.getData().getDefinition().setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
@@ -190,9 +187,6 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testGetters() throws IllegalArgumentException, IOException {
 
-        final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final DataHandle inHandle = provider.getData().getHandle();
 
         // Read the encoded data
@@ -208,8 +202,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
@@ -236,8 +228,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final DataHandle inHandle = provider.getData().getHandle();
 
         // Alter the definition
@@ -268,8 +258,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final DataHandle inHandle = provider.getData().getHandle();
 
         final ARXConfiguration config = ARXConfiguration.create();
@@ -309,8 +297,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
@@ -342,8 +328,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
@@ -379,8 +363,6 @@ public class TestDataHandle extends AbstractTest {
 
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
-
         final DataHandle inHandle = provider.getData().getHandle();
 
         final ARXConfiguration config = ARXConfiguration.create();

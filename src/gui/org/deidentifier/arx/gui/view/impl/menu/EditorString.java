@@ -66,6 +66,7 @@ public abstract class EditorString implements IEditor<String> {
         } else {
             text = new Text(parent, SWT.SINGLE | SWT.BORDER);
         }
+        ldata.minimumWidth = 60;
         text.setText(getValue());
         text.setLayoutData(ldata);
         text.addModifyListener(new ModifyListener() {

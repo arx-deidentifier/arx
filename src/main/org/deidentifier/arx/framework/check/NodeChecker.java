@@ -19,6 +19,7 @@
 package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -28,8 +29,8 @@ import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Lattice;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
 
 /**
@@ -41,7 +42,7 @@ import org.deidentifier.arx.metric.Metric;
 public class NodeChecker implements INodeChecker {
 
     /** The config */
-    private final ARXConfiguration config;
+    private final ARXConfigurationInternal config;
 
     /** The data. */
     private final Data             data;
@@ -80,7 +81,7 @@ public class NodeChecker implements INodeChecker {
      * @param snapshotSizeSnapshot
      *            The history threshold replacement
      */
-    public NodeChecker(final DataManager manager, final Metric<?> metric, final ARXConfiguration config, final int historyMaxSize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
+    public NodeChecker(final DataManager manager, final Metric<?> metric, final ARXConfigurationInternal config, final int historyMaxSize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
 
         // Initialize all operators
         this.metric = metric;
@@ -159,7 +160,10 @@ public class NodeChecker implements INodeChecker {
         
         // We are done with transforming and adding
         currentGroupify.analyze(forceMeasureInfoLoss);
-
+        if (forceMeasureInfoLoss && !currentGroupify.isAnonymous() && !config.isSuppressionAlwaysEnabled()) {
+            currentGroupify.resetSuppression();
+        }
+        
         // Compute information loss and lower bound
         InformationLossWithBound<?> result = (currentGroupify.isAnonymous() || forceMeasureInfoLoss) ?
                                           metric.getInformationLoss(node, currentGroupify) : null;
@@ -179,7 +183,7 @@ public class NodeChecker implements INodeChecker {
     }
 
     @Override
-    public ARXConfiguration getConfiguration() {
+    public ARXConfigurationInternal getConfiguration() {
         return config;
     }
 
@@ -223,6 +227,9 @@ public class NodeChecker implements INodeChecker {
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getTransformation(), currentGroupify);
         currentGroupify.analyze(true);
+        if (!currentGroupify.isAnonymous() && !config.isSuppressionAlwaysEnabled()) {
+            currentGroupify.resetSuppression();
+        }
 
         // Determine information loss
         // TODO: This may already be known

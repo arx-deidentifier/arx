@@ -33,6 +33,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
@@ -359,7 +360,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         final String criterion;
         if (config.isCriterionMonotonic() || config.isPracticalMonotonicity()) {
             criterion = "Fully-monotonic";
-        } else if (!config.isCriterionMonotonic() && config.getMinimalGroupSize() != Integer.MAX_VALUE) {
+        } else if (!config.isCriterionMonotonic() && 
+                   (config.containsCriterion(KAnonymity.class) || config.containsCriterion(LDiversity.class))) {
             criterion = "Partially-monotonic";
         } else {
             criterion = "Non-monotonic";

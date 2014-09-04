@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -109,7 +110,7 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
             // TODO: Ugly
             try {
                 final int i = Integer.valueOf(s);
-                return (i > min) && (i < max);
+                return (i >= min) && (i <= max);
             } catch (final Exception e) {
                 return false;
             }
@@ -258,14 +259,37 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public Boolean getValue() {
-                return model.getInputConfig().isRemoveOutliers();
+                return model.getInputConfig().isSuppressionAlwaysEnabled();
             }
 
             @Override
             public void setValue(final Boolean t) {
-                model.getInputConfig().setRemoveOutliers(t);
+                model.getInputConfig().setSuppressionAlwaysEnabled(t);
             }
         });
+        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.31")) { //$NON-NLS-1$ //$NON-NLS-2$
+            @Override
+            public Boolean getValue() {
+                return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE);
+            }
+
+            @Override
+            public void setValue(final Boolean t) {
+                model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, t);
+            }
+        });
+        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.32")) { //$NON-NLS-1$ //$NON-NLS-2$
+            @Override
+            public Boolean getValue() {
+                return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE);
+            }
+
+            @Override
+            public void setValue(final Boolean t) {
+                model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, t);
+            }
+        });
+        
         result.add(new EditorString(Resources.getMessage("PropertyDialog.12"), Resources.getMessage("PropertyDialog.13"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
             @Override
             public boolean accepts(final String s) {
@@ -274,12 +298,12 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
 
             @Override
             public String getValue() {
-                return model.getSuppressionString();
+                return model.getInputConfig().getSuppressionString();
             }
 
             @Override
             public void setValue(final String s) {
-                model.setSuppressionString(s);
+                model.getInputConfig().setSuppressionString(s);
             }
         });
         final IntegerValidator v = new IntegerValidator(0, 1000001);

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.RowSet;
@@ -49,8 +50,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     private transient Data                   input             = null;
     /** Associated ARXConfiguration */
     private ARXConfiguration                 config            = ARXConfiguration.create();
-    /** Should outliers be removed */
-    private boolean                          removeOutliers    = true;
     /** Is this model modified */
     private boolean                          modified          = false;
     /** The associated hierarchies */
@@ -76,7 +75,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public ModelConfiguration clone() {
 
         final ModelConfiguration c = new ModelConfiguration();
-        c.removeOutliers = removeOutliers;
         c.input = input;
         c.min = new HashMap<String, Integer>(min);
         c.max = new HashMap<String, Integer>(max);
@@ -233,6 +231,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
 	}
 
     /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getSuppressionString()
+     */
+    public String getSuppressionString() {
+        return config.getSuppressionString();
+    }
+
+    /**
      * Returns the suppression/generalization weight, that will be respected by
      * the NDS metric
      * @return
@@ -244,6 +250,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
             this.suppressionWeight = 0.5d;
         }
         return suppressionWeight;
+    }
+
+    /**
+     * @param type
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#isAttributeTypeSuppressed(org.deidentifier.arx.AttributeType)
+     */
+    public boolean isAttributeTypeSuppressed(AttributeType type) {
+        return config.isAttributeTypeSuppressed(type);
     }
 
     /**
@@ -261,7 +276,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isModified() {
         return modified;
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration
      * @return
@@ -277,13 +292,13 @@ public class ModelConfiguration implements Serializable, Cloneable {
 	public boolean isProtectSensitiveAssociations() {
 		return config.isProtectSensitiveAssociations();
 	}
-    
+
     /**
-     * Should outliers be removed
      * @return
+     * @see org.deidentifier.arx.ARXConfiguration#isSuppressionAlwaysEnabled()
      */
-    public boolean isRemoveOutliers() {
-        return removeOutliers;
+    public boolean isSuppressionAlwaysEnabled() {
+        return config.isSuppressionAlwaysEnabled();
     }
 
     /**
@@ -292,7 +307,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration
      * @param clazz
@@ -310,10 +325,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public void removeHierarchyBuilder(String attr){
         if (hierarchyBuilders==null) return;
+        setModified();
         hierarchyBuilders.remove(attr);
     }
-
-    /**
+	
+	/**
      * Delegates to an instance of ARXConfiguration
      * @param supp
      */
@@ -321,13 +337,24 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-    
-    /**
+
+	/**
+     * @param type
+     * @param enabled
+     * @see org.deidentifier.arx.ARXConfiguration#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType, boolean)
+     */
+    public void setAttributeTypeSuppressed(AttributeType type, boolean enabled) {
+        setModified();
+        config.setAttributeTypeSuppressed(type, enabled);
+    }
+	
+	/**
      * Sets the according attribute weight
      * @param attribute
      * @param weight
      */
     public void setAttributeWeight(String attribute, Double weight) {
+        setModified();
         config.setAttributeWeight(attribute, weight);
     }
 
@@ -340,8 +367,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.hierarchies.put(attribute, hierarchy);
         this.setModified();
     }
-	
-	/**
+    
+    /**
      * Sets the given hierarchy builder
      * @param attr
      * @param builder
@@ -350,10 +377,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (hierarchyBuilders==null){
             hierarchyBuilders = new HashMap<String, HierarchyBuilder<?>>();
         }
+        setModified();
         hierarchyBuilders.put(attr, builder);
     }
-
-	/**
+    
+    /**
      * @param data
      *            the input to set
      */
@@ -361,8 +389,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         input = data;
         setModified();
     }
-	
-	/**
+
+    /**
      * Maximum generalization
      * @param attribute
      * @param min
@@ -371,9 +399,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.max == null) {
             this.max = new HashMap<String, Integer>();
         }
+        setModified();
         this.max.put(attribute, max);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration
      * @param metric
@@ -392,9 +421,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.min == null) {
             this.min = new HashMap<String, Integer>();
         }
+        setModified();
         this.min.put(attribute, min);
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration
      * @param assumeMonotonicity
@@ -409,25 +439,36 @@ public class ModelConfiguration implements Serializable, Cloneable {
 	 * @param selection
 	 */
 	public void setProtectSensitiveAssociations(boolean selection) {
+	    setModified();
 		config.setProtectSensitiveAssociations(selection);
 	}
-    
-    /**
-     * Sets whether outliers should be removed
-     * @param removeOutliers
-     */
-    public void setRemoveOutliers(final boolean removeOutliers) {
-        this.removeOutliers = removeOutliers;
-        setModified();
-    }
-    
+
     /**
 	 * Sets the current research subset
 	 * @param subset
 	 */
 	public void setResearchSubset(RowSet subset) {
+	    setModified();
 	    this.researchSubset = subset;
 	}
+
+    /**
+     * @param enabled
+     * @see org.deidentifier.arx.ARXConfiguration#setSuppressionAlwaysEnabled(boolean)
+     */
+    public void setSuppressionAlwaysEnabled(boolean enabled) {
+        setModified();
+        config.setSuppressionAlwaysEnabled(enabled);
+    }
+
+    /**
+     * @param suppressionString
+     * @see org.deidentifier.arx.ARXConfiguration#setSuppressionString(java.lang.String)
+     */
+    public void setSuppressionString(String suppressionString) {
+        setModified();
+        config.setSuppressionString(suppressionString);
+    }
 
     /**
      * Sets the suppression/generalization weight, that will be respected by
@@ -435,6 +476,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param suppressionWeight
      */
     public void setSuppressionWeight(double suppressionWeight) {
+        setModified();
         this.suppressionWeight = suppressionWeight;
     }
 

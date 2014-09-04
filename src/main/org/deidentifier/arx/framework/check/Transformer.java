@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -51,29 +51,31 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 public class Transformer {
 
     /** The buffer. */
-    protected int[][]                         buffer;
+    protected int[][]                          buffer;
 
-    protected int[][]                         sensitive;
+    /** Sensitive attribute values */
+    protected int[][]                          sensitive;
 
-    protected final ARXConfiguration          config;
+    /** The config */
+    protected final ARXConfigurationInternal config;
 
     /** The data. */
-    protected final int[][]                   data;
+    protected final int[][]                    data;
 
     /** The dictionary for the snapshot compression **/
-    protected IntArrayDictionary              dictionarySensFreq;
+    protected IntArrayDictionary               dictionarySensFreq;
 
     /** The dictionary for the snapshot compression **/
-    protected IntArrayDictionary              dictionarySensValue;
+    protected IntArrayDictionary               dictionarySensValue;
 
     /** The dimensions. */
-    protected final int                       dimensions;
+    protected final int                        dimensions;
 
     /** The hierarchies. */
-    protected final GeneralizationHierarchy[] hierarchies;
+    protected final GeneralizationHierarchy[]  hierarchies;
 
     /** The instances. */
-    protected final AbstractTransformer[]     instances;
+    protected final AbstractTransformer[]      instances;
 
     /**
      * Instantiates a new transformer.
@@ -88,7 +90,7 @@ public class Transformer {
     public Transformer(final int[][] data,
                        final GeneralizationHierarchy[] hierarchies,
                        final int[][] sensitive,
-                       final ARXConfiguration config,
+                       final ARXConfigurationInternal config,
                        final IntArrayDictionary dictionarySensValue,
                        final IntArrayDictionary dictionarySensFreq) {
 

@@ -133,7 +133,6 @@ public class TestIllegalArguments extends AbstractTest {
         provider.createWrongDataDefinition();
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
 
         try {
             final ARXConfiguration config = ARXConfiguration.create();
@@ -262,7 +261,6 @@ public class TestIllegalArguments extends AbstractTest {
         final Data data = provider.getData();
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setSuppressionString("*");
 
         try {
             final ARXConfiguration config = ARXConfiguration.create();
@@ -322,18 +320,6 @@ public class TestIllegalArguments extends AbstractTest {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setMaximumSnapshotSizeDataset(0);
         } catch (final IllegalArgumentException e) {
-            return;
-        }
-        Assert.fail();
-    }
-
-    @Test
-    public void testSuppressionString() {
-
-        try {
-            final ARXAnonymizer anonymizer = new ARXAnonymizer();
-            anonymizer.setSuppressionString(null);
-        } catch (final NullPointerException e) {
             return;
         }
         Assert.fail();

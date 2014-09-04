@@ -66,20 +66,12 @@ public class ARXResult {
     /** The registry */
     private final DataRegistry     registry;
 
-    /** Flag regarding the suppression of outliers */
-    private final boolean          removeOutliers;
-
-    /** The suppression string */
-    private final String           suppressionString;
-
     /**
      * Internal constructor for deserialization
      */
     public ARXResult(       final DataHandle handle,
                             final DataDefinition definition,
                             final ARXLattice lattice,
-                            final boolean removeOutliers,
-                            final String suppressionString,
                             final int historySize,
                             final double snapshotSizeSnapshot,
                             final double snapshotSizeDataset,
@@ -122,7 +114,7 @@ public class ARXResult {
         // Create a node checker
         final INodeChecker checker = new NodeChecker(manager,
                                                      metric,
-                                                     config,
+                                                     config.getInternalConfiguration(),
                                                      historySize,
                                                      snapshotSizeDataset,
                                                      snapshotSizeSnapshot);
@@ -136,8 +128,6 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalNode = lattice.getOptimum();
         this.duration = time;
-        this.suppressionString = suppressionString;
-        this.removeOutliers = removeOutliers;
     }
     
     
@@ -160,9 +150,7 @@ public class ARXResult {
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,
-                        long duration,
-                        String suppressionString,
-                        boolean removeOutliers) {
+                        long duration) {
 
         this.registry = registry;
         this.manager = manager;
@@ -172,8 +160,6 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
-        this.suppressionString = suppressionString;
-        this.removeOutliers = removeOutliers;
     }
 
     /**
@@ -321,9 +307,7 @@ public class ARXResult {
                                                        information.buffer,
                                                        node,
                                                        new StatisticsEquivalenceClasses(information.statistics),
-                                                       suppressionString,
                                                        definition,
-                                                       removeOutliers,
                                                        config);
         
         // Lock

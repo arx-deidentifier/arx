@@ -103,6 +103,9 @@ public abstract class Vocabulary {
     public abstract String getAttributeWeight();
     public abstract String getWeight();
     
+    public abstract String getSuppressionAlwaysEnabled();
+    public abstract String getSuppressedAttributeTypes();
+    
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
 	public boolean isVersion(String value){return value.equals(getVersion());}
 	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
@@ -148,6 +151,9 @@ public abstract class Vocabulary {
     public boolean isAttributeWeights(String value) {return value.equals(getAttributeWeights());}
     public boolean isWeight(String value) {return value.equals(getWeight());}
 
+    public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
+    public boolean isSuppressedAttributeTypes(String value) {return value.equals(getSuppressedAttributeTypes());}
+    
     public abstract void checkVersion(String version) throws SAXException;
 
     

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -56,39 +57,39 @@ public class History {
             return true;
         }
     };
-    
+
     /** The actual buffer. */
-    private MRUCache<Node>           cache          = null;
+    private MRUCache<Node>                   cache                         = null;
 
     /** Current configuration */
-    private final ARXConfiguration   config;
+    private final ARXConfigurationInternal config;
 
     /** The dictionary for frequencies of the distributions */
-    private final IntArrayDictionary dictionarySensFreq;
+    private final IntArrayDictionary         dictionarySensFreq;
 
     /** The dictionary for values of the distributions */
-    private final IntArrayDictionary dictionarySensValue;
+    private final IntArrayDictionary         dictionarySensValue;
 
     /** Maximal number of entries. */
-    private int                      size;
+    private int                              size;
 
     /** A map from nodes to snapshots. */
-    private HashMap<Node, int[]>     nodeToSnapshot = null;
+    private HashMap<Node, int[]>             nodeToSnapshot                = null;
 
     /** The current storage strategy */
-    private NodeAction              storageTrigger;
+    private NodeAction                       storageTrigger;
 
     /** The current requirements */
-    private final int                requirements;
+    private final int                        requirements;
 
     /** The node backing the last returned snapshot */
-    private Node                     resultNode;
+    private Node                             resultNode;
 
     /** The snapshotSizeDataset for the size of entries. */
-    private final long               snapshotSizeDataset;
+    private final long                       snapshotSizeDataset;
 
     /** The snapshotSizeDataset for the minimum required reduction of a snapshot */
-    private final double             snapshotSizeSnapshot;
+    private final double                     snapshotSizeSnapshot;
 
     /**
      * Creates a new history.
@@ -104,7 +105,7 @@ public class History {
                    final int size,
                    final double snapshotSizeDataset,
                    final double snapshotSizeSnapshot,
-                   final ARXConfiguration config,
+                   final ARXConfigurationInternal config,
                    final IntArrayDictionary dictionarySensValue,
                    final IntArrayDictionary dictionarySensFreq) {
         
@@ -190,7 +191,7 @@ public class History {
      * 
      * @return
      */
-    public Node getNode() {
+    public Node getTransformation() {
         return resultNode;
     }
     
@@ -237,29 +238,28 @@ public class History {
     }
 
     /**
-     * Stores a snapshot.
-     * 
-     * @param node
-     *            the node
-     * @param g
-     *            the g
+     * Stores a snapshot in the buffer
+     * @param transformation The transformation
+     * @param groupify The groupify operator
+     * @param snapshot The snapshot that was previously used, if any
+     * @return
      */
-    public boolean store(final Node node, final IHashGroupify g, final int[] usedSnapshot) {
+    public boolean store(final Node transformation, final IHashGroupify groupify, final int[] snapshot) {
 
-        // Early abort if too large
-        if (g.size() > snapshotSizeDataset) {
+        // Early abort if too large, or no space
+        if (size == 0 || groupify.size() > snapshotSizeDataset) {
             return false;
         }
 
         // Early abort if too large
-        if (usedSnapshot != null) {
-            final double relativeSize = (g.size() / ((double) usedSnapshot.length / config.getSnapshotLength()));
+        if (snapshot != null) {
+            final double relativeSize = (groupify.size() / ((double) snapshot.length / config.getSnapshotLength()));
             if (relativeSize > snapshotSizeSnapshot) { return false; }
         }
         
         // Early abort if conditions are not triggered
-        if (!node.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
-            (node.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED) || !storageTrigger.appliesTo(node))) {
+        if (!transformation.hasProperty(Node.PROPERTY_FORCE_SNAPSHOT) && 
+            (transformation.hasProperty(Node.PROPERTY_SUCCESSORS_PRUNED) || !storageTrigger.appliesTo(transformation))) {
             return false;
         }
         
@@ -272,12 +272,12 @@ public class History {
         }
         
         // Create the snapshot
-        final int[] data = createSnapshot(g);
+        final int[] data = createSnapshot(groupify);
 
 
         // assign snapshot and keep reference for cache
-        nodeToSnapshot.put(node, data);
-        cache.append(node);
+        nodeToSnapshot.put(transformation, data);
+        cache.append(transformation);
 
         return true;
     }

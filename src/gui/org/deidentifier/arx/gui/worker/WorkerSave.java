@@ -142,7 +142,20 @@ public class WorkerSave extends Worker<Model> {
         
     	XMLWriter writer = new XMLWriter(); 
         writer.indent(vocabulary.getConfig());
-        writer.write(vocabulary.getRemoveOutliers(), config.isRemoveOutliers());
+        writer.write(vocabulary.getSuppressionAlwaysEnabled(), config.isSuppressionAlwaysEnabled());
+        writer.write(vocabulary.getSuppressionString(), config.getSuppressionString());
+        
+        // Write suppressed attribute types
+        writer.indent(vocabulary.getSuppressedAttributeTypes());
+        for (AttributeType type : new AttributeType[]{AttributeType.QUASI_IDENTIFYING_ATTRIBUTE,
+                                                      AttributeType.SENSITIVE_ATTRIBUTE,
+                                                      AttributeType.INSENSITIVE_ATTRIBUTE}) {
+            if (config.isAttributeTypeSuppressed(type)) {
+                writer.write(vocabulary.getType(), type.toString());
+            }
+        }
+        writer.unindent();
+        
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
         writer.write(vocabulary.getProtectSensitiveAssociations(), config.isProtectSensitiveAssociations());
         writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
@@ -316,7 +329,6 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getName(), model.getName());
         writer.write(vocabulary.getSeparator(), model.getSeparator());
         writer.write(vocabulary.getDescription(), model.getDescription());
-        writer.write(vocabulary.getSuppressionString(), model.getSuppressionString());
         writer.write(vocabulary.getHistorySize(), model.getHistorySize());
         writer.write(vocabulary.getSnapshotSizeDataset(), model.getSnapshotSizeDataset());
         writer.write(vocabulary.getSnapshotSizeSnapshot(), model.getSnapshotSizeSnapshot());

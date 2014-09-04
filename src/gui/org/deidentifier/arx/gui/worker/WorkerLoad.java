@@ -250,11 +250,9 @@ public class WorkerLoad extends Worker<Model> {
             readDefinition(config, definition, prefix, zip);
             
             // Create Handles
-            final String suppressionString = model.getSuppressionString();
             final int historySize = model.getHistorySize();
             final double snapshotSizeSnapshot = model.getSnapshotSizeSnapshot();
             final double snapshotSizeDataset = model.getSnapshotSizeDataset();
-            final boolean removeOutliers = model.getOutputConfig().isRemoveOutliers();
             final Metric<?> metric = config.getMetric();
             final long time = model.getTime();
             final ARXNode optimalNode;
@@ -276,8 +274,6 @@ public class WorkerLoad extends Worker<Model> {
             model.setResult(new ARXResult(config.getInput().getHandle(),
                                           definition,
                                           lattice,
-                                          removeOutliers,
-                                          suppressionString,
                                           historySize,
                                           snapshotSizeSnapshot,
                                           snapshotSizeDataset,
@@ -289,8 +285,6 @@ public class WorkerLoad extends Worker<Model> {
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();
             model.setAnonymizer(f);
-            f.setRemoveOutliers(removeOutliers);
-            f.setSuppressionString(suppressionString);
             f.setHistorySize(historySize);
             f.setMaximumSnapshotSizeSnapshot(snapshotSizeSnapshot);
             f.setMaximumSnapshotSizeDataset(snapshotSizeDataset);

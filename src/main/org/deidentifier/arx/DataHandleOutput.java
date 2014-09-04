@@ -100,40 +100,40 @@ public class DataHandleOutput extends DataHandle {
     }
 
     /** The current result */
-    private ARXResult      result;
+    private ARXResult     result;
 
     /** The current node */
-    private ARXNode        node;
+    private ARXNode       node;
 
     /** The data. */
-    protected Data         dataIS;
+    protected Data        dataIS;
 
     /** The data. */
-    protected Data         dataQI;
+    protected Data        dataQI;
 
     /** The data. */
-    protected Data         dataSE;
+    protected Data        dataSE;
 
     /** An inverse map to data arrays. */
-    private int[][][]    inverseData;
+    private int[][][]     inverseData;
 
     /** An inverse map to dictionaries. */
-    private Dictionary[] inverseDictionaries;
+    private Dictionary[]  inverseDictionaries;
 
     /** An inverse map for column indices. */
-    private int[]        inverseMap;
+    private int[]         inverseMap;
 
     /** The generalization hierarchies. */
-    private int[][][]    map;
+    private int[][][]     map;
 
     /** The names of the quasiIdentifer. */
-    private String[]     quasiIdentifiers;
+    private String[]      quasiIdentifiers;
 
-    /** Should we remove outliers */
-    private boolean      removeOutliers;
+    /** Suppression handling */
+    private final int     suppressedAttributeTypes;
 
-    /** The string to insert. */
-    private String       suppressionString;
+    /** Suppression handling */
+    private final String  suppressionString;
 
     /**
      * Instantiates a new handle.
@@ -155,17 +155,16 @@ public class DataHandleOutput extends DataHandle {
                                final Data buffer,
                                final ARXNode node,
                                final StatisticsEquivalenceClasses statistics,
-                               final String suppressionString,
                                final DataDefinition definition,
-                               final boolean removeOutliers,
                                final ARXConfiguration config) {
 
         registry.updateOutput(node, this);
         this.setRegistry(registry);
 
+        // Init
+        this.suppressionString = config.getSuppressionString();
+        this.suppressedAttributeTypes = config.getSuppressedAttributeTypes();
         this.result = result;
-        this.removeOutliers = removeOutliers;
-        this.suppressionString = suppressionString;
         this.definition = definition;
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), statistics);
         this.node = node;
@@ -326,7 +325,6 @@ public class DataHandleOutput extends DataHandle {
         inverseMap = null;
         map = null;
         quasiIdentifiers = null;
-        suppressionString = null;
         registry = null;
         subset = null;
         dataTypes = null;
@@ -473,7 +471,7 @@ public class DataHandleOutput extends DataHandle {
             final int index = inverseMap[col] & AttributeType.MASK;
             final int[][] data = inverseData[type];
 
-            if (removeOutliers &&
+            if ((suppressedAttributeTypes & (1 << type)) != 0 &&
                 ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) { return suppressionString; }
 
             final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;

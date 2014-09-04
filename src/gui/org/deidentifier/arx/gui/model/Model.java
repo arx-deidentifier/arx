@@ -94,9 +94,7 @@ public class Model implements Serializable {
     /** The project description */
     private String                                description;
     /** The size of the input file */
-    private long                                  inputBytes                      = 0L;
-    /** Suppression string */
-    private String                                suppressionString               = "*";                                            //$NON-NLS-1$
+    private long                                  inputBytes                      = 0L;                                       //$NON-NLS-1$
     /** Is the project file modified */
     private boolean                               modified                        = false;
     /** The project name */
@@ -186,9 +184,7 @@ public class Model implements Serializable {
 		this.anonymizer = new ARXAnonymizer();
 		this.anonymizer.setHistorySize(getHistorySize());
 		this.anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
-		this.anonymizer.setSuppressionString(getSuppressionString());
 		this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
-		this.anonymizer.setRemoveOutliers(inputConfig.isRemoveOutliers());
 		this.anonymizer.setMaxTransformations(getMaxNodesInLattice());
 		
 		// Add all criteria
@@ -215,7 +211,7 @@ public class Model implements Serializable {
 
 		ModelConfiguration config = getInputConfig();
 		DataDefinition definition = getInputDefinition();
-		
+
 		// Initialize the config
 		config.removeAllCriteria();
 		if (definition == null) return;
@@ -565,13 +561,6 @@ public class Model implements Serializable {
 	public String getSubsetOrigin(){
         return this.subsetOrigin;
     }
-
-	/**
-	 * Returns the current suppression string
-	 */
-	public String getSuppressionString() {
-		return suppressionString;
-	}
 
 	/**
 	 * Returns the t-closeness model
@@ -949,14 +938,6 @@ public class Model implements Serializable {
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
-    
-    /**
-	 * Sets the suppression string
-	 */
-	public void setSuppressionString(final String suppressionString) {
-		this.suppressionString = suppressionString;
-		setModified();
-	}
 
 	/**
 	 * Sets the execution time of the last anonymization process

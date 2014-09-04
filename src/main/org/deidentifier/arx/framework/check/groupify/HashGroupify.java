@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
@@ -214,7 +214,7 @@ public class HashGroupify implements IHashGroupify {
      * @param capacity The capacity
      * @param config The config
      */
-    public HashGroupify(int capacity, final ARXConfiguration config) {
+    public HashGroupify(int capacity, final ARXConfigurationInternal config) {
 
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
@@ -458,6 +458,18 @@ public class HashGroupify implements IHashGroupify {
                 }
             }
         }
+    }
+
+    /**
+     * This method will reset all flags that indicate that equivalence classes are suppressed
+     */
+    public void resetSuppression() {
+        HashGroupifyEntry entry = firstEntry;
+        while (entry != null) {
+            entry.isNotOutlier = true;
+            entry = entry.nextOrdered;
+        }
+        this.currentOutliers = 0;
     }
     
     /*

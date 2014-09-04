@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.algorithm;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.INodeChecker;
 import org.deidentifier.arx.framework.check.history.History;
@@ -59,7 +59,7 @@ public class FLASHAlgorithm {
                                            final FLASHStrategy strategy) {
 
         // Init
-        ARXConfiguration config = checker.getConfiguration();
+        ARXConfigurationInternal config = checker.getConfiguration();
         Metric<?> metric = checker.getMetric();
 
         // NOTE:

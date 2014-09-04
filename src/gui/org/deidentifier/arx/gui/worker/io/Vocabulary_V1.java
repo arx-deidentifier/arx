@@ -285,4 +285,14 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getAttributeWeights() {
         return "attributeWeights";
     }
+    
+    @Override
+    public String getSuppressionAlwaysEnabled() {
+        return "suppressTuplesInNonAnonymousOutput"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getSuppressedAttributeTypes() {
+        return "suppressedAttributeTypes"; //$NON-NLS-1$
+    }
 }

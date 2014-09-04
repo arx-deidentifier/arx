@@ -107,7 +107,7 @@ public class ARXAnonymizer {
 	        final ARXLattice flattice = new ARXLattice(lattice,
 	                                                   algorithm.getGlobalOptimum(),
 	                                                   manager.getDataQI().getHeader(),
-	                                                   config);
+	                                                   config.getInternalConfiguration());
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
@@ -117,9 +117,7 @@ public class ARXAnonymizer {
                                  handle.getDefinition(),
                                  config,
                                  flattice,
-                                 System.currentTimeMillis() - time,
-                                 suppressionString,
-                                 removeOutliers);      
+                                 System.currentTimeMillis() - time);      
 		}
     }
 
@@ -129,17 +127,11 @@ public class ARXAnonymizer {
     /** The listener, if any. */
     private ARXListener listener             = null;
 
-    /** Remove outliers? */
-    private boolean     removeOutliers       = true;
-
     /** Snapshot size. */
     private double      snapshotSizeDataset  = 0.2d;
 
     /** Snapshot size snapshot */
     private double      snapshotSizeSnapshot = 0.8d;
-
-    /** The string to insert for outliers. */
-    private String      suppressionString    = "*";
 
     /** The maximal number of QIs that can be processed */
     private int         maxQuasiIdentifiers  = Integer.MAX_VALUE;
@@ -163,36 +155,6 @@ public class ARXAnonymizer {
      * @param snapshotSizeSnapshot The maximum relative size of a snapshot compared to its predecessor [default=0.8]
      */
     public ARXAnonymizer(final int historySize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
-        if (historySize<0) 
-            throw new RuntimeException("History size must be >=0");
-        this.historySize = historySize;
-        if (snapshotSizeDataset<=0 || snapshotSizeDataset>=1) 
-            throw new RuntimeException("SnapshotSizeDataset must be >0 and <1");
-        this.snapshotSizeDataset = snapshotSizeDataset;
-        if (snapshotSizeSnapshot<=0 || snapshotSizeSnapshot>=1) 
-            throw new RuntimeException("snapshotSizeSnapshot must be >0 and <1");
-        this.snapshotSizeSnapshot = snapshotSizeSnapshot;
-    }
-
-    /**
-     * Creates a new anonymizer with the given configuration.
-     * 
-     * @param suppressionString The string inserted for suppressed values
-     */
-    public ARXAnonymizer(final String suppressionString) {
-        this.suppressionString = suppressionString;
-    }
-
-    /**
-     * Creates a new anonymizer with the given configuration.
-     * 
-     * @param suppressionString The string inserted for suppressed values
-     * @param historySize The maximum number of snapshots stored in the buffer [default=200]
-     * @param snapshotSizeDataset The maximum relative size of a snapshot compared to the dataset [default=0.2]
-     * @param snapshotSizeSnapshot The maximum relative size of a snapshot compared to its predecessor [default=0.8]
-     */
-    public ARXAnonymizer(final String suppressionString, final int historySize, final double snapshotSizeDataset, final double snapshotSizeSnapshot) {
-        this.suppressionString = suppressionString;
         if (historySize<0) 
             throw new RuntimeException("History size must be >=0");
         this.historySize = historySize;
@@ -275,24 +237,6 @@ public class ARXAnonymizer {
     public int getMaxTransformations() {
         return maxTransformations;
     }
-    
-    /**
-     * Returns the string with which outliers are replaced.
-     * 
-     * @return the relativeMaxOutliers string
-     */
-    public String getSuppressionString() {
-        return suppressionString;
-    }
-
-    /**
-     * Does the anonymizer remove outliers from the dataset?
-     * 
-     * @return
-     */
-    public boolean isRemoveOutliers() {
-        return removeOutliers;
-    }
 
     /**
      * Sets the maximum number of snapshots allowed to store in the history.
@@ -301,7 +245,7 @@ public class ARXAnonymizer {
      *            The size
      */
     public void setHistorySize(final int historySize) {
-        if (historySize < 1) { throw new IllegalArgumentException("history size must be positive and not 0"); }
+        if (historySize < 0) { throw new IllegalArgumentException("Max. number of snapshots must be positive or 0"); }
         this.historySize = historySize;
     }
 
@@ -355,26 +299,6 @@ public class ARXAnonymizer {
      */
     public void setMaxTransformations(int maxTransformations) {
         this.maxTransformations = maxTransformations;
-    }
-    
-    /**
-     * Set whether the anonymizer should remove outliers
-     * 
-     * @param value
-     */
-    public void setRemoveOutliers(final boolean value) {
-        removeOutliers = value;
-    }
-
-    /**
-     * Sets the string with which suppressed values are to be replaced.
-     * 
-     * @param suppressionString
-     *            The relativeMaxOutliers string
-     */
-    public void setSuppressionString(final String suppressionString) {
-        if (suppressionString == null) { throw new NullPointerException("suppressionString must not be null"); }
-        this.suppressionString = suppressionString;
     }
 
     /**
@@ -432,7 +356,7 @@ public class ARXAnonymizer {
 
 
         // Lots of checks
-        if (handle == null) { throw new NullPointerException("Data cannot be null!"); }
+        if (handle == null) { throw new NullPointerException("Data must not be null!"); }
         if (config.containsCriterion(LDiversity.class) ||
             config.containsCriterion(TCloseness.class)){
             if (handle.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
@@ -570,7 +494,7 @@ public class ARXAnonymizer {
         lattice.setListener(listener);
 
         // Build a node checker
-        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config, historySize, snapshotSizeDataset, snapshotSizeSnapshot);
+        final INodeChecker checker = new NodeChecker(manager, config.getMetric(), config.getInternalConfiguration(), historySize, snapshotSizeDataset, snapshotSizeSnapshot);
 
         // Initialize the metric
         config.getMetric().initialize(definition, manager.getDataQI(), manager.getHierarchies(), config);

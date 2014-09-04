@@ -39,6 +39,154 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  */
 public class ARXConfiguration implements Serializable, Cloneable {
+    
+    // TODO: While in use, this configuration object should be locked, similar to, e.g., DataDefinition
+
+    /**
+     * Class for internal use that provides access to more details.
+     * TODO: This class is a hack and should be removed in future releases
+     */
+    public static class ARXConfigurationInternal {
+        
+        /** The wrapped object*/
+        private final ARXConfiguration config;
+        
+        /**
+         * Creates a new instance
+         * @param config
+         */
+        protected ARXConfigurationInternal(ARXConfiguration config){
+            this.config = config;
+        }
+        
+        /**
+         * Returns the maximum number of allowed outliers
+         * @return
+         */
+        public final int getAbsoluteMaxOutliers() {
+            return config.getAbsoluteMaxOutliers();
+        }
+        
+        /**
+         * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
+         * group size should be obtained and enforced 
+         * @return
+         */
+        public PrivacyCriterion[] getCriteriaAsArray() {
+            return config.getCriteriaAsArray();
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class induced by the contained criteria.
+         * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
+         * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
+         */
+        public int getMinimalGroupSize() {
+            return config.getMinimalGroupSize();
+        }
+
+        /**
+         * Returns the criteria's requirements
+         * @return
+         */
+        public int getRequirements() {
+            return config.getRequirements();
+        }
+
+        /**
+         * Returns the specific length of each entry in a snapshot
+         * @return
+         */
+        public int getSnapshotLength() {
+            return config.getSnapshotLength();
+        }
+        
+        /**
+         * Returns an integer representing all attribute types that must be suppressed
+         * @return
+         */
+        public int getSuppressedAttributeTypes() {
+            return config.getSuppressedAttributeTypes();
+        }
+
+        /**
+         * Convenience method for checking the requirements
+         * @param requirement
+         * @return
+         */
+        public boolean requires(int requirement) {
+            return config.requires(requirement);
+        }
+
+        /**
+         * Returns the max relative number of outliers
+         * @return
+         */
+        public double getMaxOutliers() {
+            return config.getMaxOutliers();
+        }
+
+        /**
+         * Is practical monotonicity assumed
+         * @return
+         */
+        public boolean isPracticalMonotonicity() {
+            return config.isPracticalMonotonicity();
+        }
+
+        /**
+         * Returns all criteria.
+         * @return
+         */
+        public Set<PrivacyCriterion> getCriteria() {
+            return config.getCriteria();
+        }
+
+        /**
+         * @param clazz
+         * @return
+         * @see org.deidentifier.arx.ARXConfiguration#containsCriterion(java.lang.Class)
+         */
+        public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
+            return config.containsCriterion(clazz);
+        }
+
+        /**
+         * @param clazz
+         * @return
+         * @see org.deidentifier.arx.ARXConfiguration#getCriterion(java.lang.Class)
+         */
+        public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
+            return config.getCriterion(clazz);
+        }
+
+        /**
+         * Returns whether suppression is applied to the output of anonymous as 
+         * well as non-anonymous transformations. If this flag is set to true, 
+         * suppression will be applied to the output of non-anonymous transformations 
+         * to make them anonymous (if possible). Default is true.
+         * @return
+         */
+        public boolean isSuppressionAlwaysEnabled() {
+            return config.isSuppressionAlwaysEnabled();
+        }
+
+        /**
+         * Returns the metric used for measuring information loss
+         * @return
+         */
+        public Metric<?> getMetric() {
+            return config.getMetric();
+        }
+
+        /**
+         * Determines whether the anonymity criterion is montonic
+         * @return
+         */
+        public boolean isCriterionMonotonic() {
+            return config.isCriterionMonotonic();
+        }
+    }
 
     /** Do the criteria require a counter per equivalence class*/
     public static final int       REQUIREMENT_COUNTER           = 0x1;
@@ -48,7 +196,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Do the criteria require a second counter */
     public static final int       REQUIREMENT_SECONDARY_COUNTER = 0x2;
-
+    
     /** For serialization*/
     private static final long     serialVersionUID              = -6713510386735241964L;
 
@@ -86,43 +234,55 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return new ARXConfiguration(metric);
     }
 
-    /** Absolute tuple outliers*/
-    private int                   absMaxOutliers                = 0;
+    /** Absolute tuple outliers */
+    private int                                absMaxOutliers               = 0;
 
-    /** Criteria*/
-    private PrivacyCriterion[]    aCriteria                     = new PrivacyCriterion[0];
+    /** Criteria */
+    private PrivacyCriterion[]                 aCriteria                    = new PrivacyCriterion[0];
 
-    /** A map of weights per attribute*/
-    private Map<String, Double>   attributeWeights             = null;
+    /** A map of weights per attribute */
+    private Map<String, Double>                attributeWeights             = null;
 
-    /** The criteria*/
-    private Set<PrivacyCriterion> criteria                      = new HashSet<PrivacyCriterion>();
+    /** The criteria */
+    private Set<PrivacyCriterion>              criteria                     = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>             metric                        = Metric.createDMStarMetric();
+    private Metric<?>                          metric                       = Metric.createDMStarMetric();
 
     /** Do we assume practical monotonicity */
-    private boolean               practicalMonotonicity         = false;
+    private boolean                            practicalMonotonicity        = false;
 
-    /** Make sure that no information can be derived from associations between sensitive attributes*/
-    private boolean               protectSensitiveAssociations  = false;
+    /** Make sure that no information can be derived from associations between sensitive attributes */
+    private boolean                            protectSensitiveAssociations = false;
 
     /** Relative tuple outliers */
-    private double                relMaxOutliers                = -1;
+    private double                             relMaxOutliers               = -1;
 
-    /** The requirements per equivalence class*/
-    private int                   requirements                  = 0x0;
+    /** The requirements per equivalence class */
+    private int                                requirements                 = 0x0;
 
-    /** The snapshot length*/
-    private int                   snapshotLength;
+    /** The snapshot length */
+    private int                                snapshotLength;
 
+    /** Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples */
+    private Integer                            suppressedAttributeTypes     = 1 << AttributeType.ATTR_TYPE_QI;
+
+    /** The string with which suppressed values are to be replaced */
+    private String                             suppressionString            = "*";
+
+    /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations */
+    private Boolean                            suppressionAlwaysEnabled     = true;
+
+    /** TODO: This is a hack and should be removed in future releases */
+    private transient ARXConfigurationInternal accessibleInstance           = null;
+    
     /**
      * Creates a new config without tuple suppression
      */
     private ARXConfiguration() {
         this.relMaxOutliers = 0d;
     }
-
+    
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression
@@ -132,7 +292,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
-
+  
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
@@ -145,7 +305,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }
-
+    
     /**
      * Creates a new config that allows to define the metric for measuring information loss.
      * @param metric
@@ -154,12 +314,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (metric == null) { throw new NullPointerException("Metric must not be null"); }
         this.metric = metric;
     }
-
+    
     /**
      * Adds a criterion to the configuration
      * @param c
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
+        checkArgument(c);
         if ((c instanceof DPresence) && 
             this.containsCriterion(DPresence.class)) {
             throw new RuntimeException("Must not add more than one d-presence criterion");
@@ -170,7 +331,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         criteria.add(c);
         return this;
     }
-
+    
     /**
      * Clones this config
      */
@@ -185,6 +346,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.metric = this.metric;
         result.snapshotLength = this.snapshotLength;
         result.protectSensitiveAssociations = this.protectSensitiveAssociations;
+        result.suppressionString = this.suppressionString;
+        result.suppressionAlwaysEnabled = this.suppressionAlwaysEnabled;
+        result.suppressedAttributeTypes = this.suppressedAttributeTypes;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -193,27 +357,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return result;
 
     }
-
+    
     /**
      * Returns whether the configuration contains a criterion of the given class
      * @param clazz
      * @return
      */
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
+        checkArgument(clazz);
         for (PrivacyCriterion c : criteria) {
             if (clazz.isInstance(c)) { return true; }
         }
         return false;
     }
-
-    /**
-     * Returns the maximum number of allowed outliers
-     * @return
-     */
-    public final int getAbsoluteMaxOutliers() {
-        return this.absMaxOutliers;
-    }
-
+    
     /**
      * Returns the weight for the given attribute
      * @param attribute
@@ -229,7 +386,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0d;
         else return value;
     }
-
+    
     /**
      * Returns all configured attribute weights
      * @return
@@ -257,6 +414,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     @SuppressWarnings("unchecked")
     public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
+        checkArgument(clazz);
         Set<T> result = new HashSet<T>();
         for (PrivacyCriterion c : criteria) {
             if (clazz.isInstance(c)) {
@@ -267,21 +425,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
-     * group size should be obtained and enforced 
-     * @return
-     */
-    public PrivacyCriterion[] getCriteriaAsArray() {
-        return this.aCriteria;
-    }
-
-    /**
      * Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.
      * @param clazz
      * @return
      */
     @SuppressWarnings("unchecked")
     public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
+        checkArgument(clazz);
         Set<T> result = new HashSet<T>();
         for (PrivacyCriterion c : criteria) {
             if (clazz.isInstance(c)) {
@@ -314,11 +464,226 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
+     * @return
+     */
+    public String getSuppressionString(){
+        // Ensure backwards compatibility
+        if (suppressionString == null) { return "*"; }
+        return this.suppressionString;
+    }
+
+    /**
+     * Returns whether values of the given attribute type will be replaced by the suppression 
+     * string in suppressed tuples.
+     * @param type
+     * @return
+     */
+    public boolean isAttributeTypeSuppressed(final AttributeType type){
+        checkArgument(type);
+        // Ensure backwards compatibility
+        if (suppressedAttributeTypes == null) {
+            suppressedAttributeTypes = 1 << AttributeType.ATTR_TYPE_QI;
+        }
+        return (suppressedAttributeTypes & (1 << type.getType())) != 0;
+    }
+
+    /**
+     * Determines whether the anonymity criterion is montonic
+     * 
+     * @return
+     */
+    public final boolean isCriterionMonotonic() {
+
+        if (relMaxOutliers == 0d) { return true; }
+
+        for (PrivacyCriterion c : criteria) {
+            if (!c.isMonotonic()) return false;
+        }
+        // Yes
+        return true;
+    }
+
+    /**
+     * Is practical monotonicity assumed
+     * @return
+     */
+    public boolean isPracticalMonotonicity() {
+        return practicalMonotonicity;
+    }
+
+    /**
+     * Returns, whether the anonymizer should take associations between sensitive attributes into account
+     */
+    public boolean isProtectSensitiveAssociations() {
+        return this.protectSensitiveAssociations;
+    }
+
+    /**
+     * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
+     * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
+     * transformations to make them anonymous (if possible). Default is <code>true</code>.
+     * @return
+     */
+    public boolean isSuppressionAlwaysEnabled(){
+        // Ensure backwards compatibility
+        if (this.suppressionAlwaysEnabled == null) {
+            this.suppressionAlwaysEnabled = true;
+        }
+        return this.suppressionAlwaysEnabled;
+    }
+
+    /**
+     * Removes the given criterion
+     * @param clazz
+     * @return
+     */
+    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion arg) {
+        checkArgument(arg);
+        return criteria.remove(arg);
+    }
+
+    /**
+     * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.
+     * With default settings, only quasi-identifiers will be suppressed.
+     * 
+     * @param type the attribute type
+     * @param enabled whether suppression should be performed or not
+     */
+    public void setAttributeTypeSuppressed(final AttributeType type, boolean enabled) {
+        checkArgument(type);
+        // Ensure backwards compatibility
+        if (suppressedAttributeTypes == null) {
+            suppressedAttributeTypes = 1 << AttributeType.ATTR_TYPE_QI;
+        }
+        if (enabled) {
+            suppressedAttributeTypes |= 1 << type.getType();
+        } else {
+            suppressedAttributeTypes &= ~(1 << type.getType());
+        }
+    }
+
+    /**
+     * Sets the weight for the given attribute
+     * @param attribute
+     * @param weight
+     */
+    public void setAttributeWeight(String attribute, double weight){
+        checkArgument(attribute);
+        setAttributeWeight(attribute, Double.valueOf(weight));
+    }
+
+    /**
+     * Sets the weight for the given attribute
+     * @param attribute
+     * @param weight
+     */
+    public void setAttributeWeight(String attribute, Double weight){
+        checkArgument(attribute);
+        // For backwards compatibility
+        if (this.attributeWeights==null) {
+            this.attributeWeights = new HashMap<String, Double>();
+        }
+        this.attributeWeights.put(attribute, weight);
+    }
+
+    /**
+     * Allows for a certain percentage of outliers and thus
+     * triggers tuple suppression
+     * @param supp
+     */
+    public void setMaxOutliers(double supp) {
+        this.relMaxOutliers = supp;
+    }
+
+    /**
+     * Sets the utility metric for measuring information loss 
+     * @param metric
+     */
+    public void setMetric(Metric<?> metric) {
+        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
+        this.metric = metric;
+    }
+
+    /**
+     * Set, if practical monotonicity assumed
+     * @return
+     */
+    public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
+        this.practicalMonotonicity = assumeMonotonicity;
+    }
+
+    /**
+     * Set, whether the anonymizer should take associations between sensitive attributes into account
+     * @param protect
+     */
+    public void setProtectSensitiveAssociations(boolean protect) {
+        this.protectSensitiveAssociations = protect;
+    }
+    
+    /**
+     * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
+     * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
+     * transformations to make them anonymous (if possible). Default is <code>true</code>. 
+     * @param enabled
+     */
+    public void setSuppressionAlwaysEnabled(boolean enabled){
+    	this.suppressionAlwaysEnabled = enabled;
+    }
+
+    /**
+     * Sets the string with which suppressed values are to be replaced. Default is <code>*</code>.
+     * @param suppressionString
+     */
+    public void setSuppressionString(String suppressionString){
+    	checkArgument(suppressionString);
+        this.suppressionString = suppressionString;    	
+    }
+
+    /**
+     * Checks an argument
+     * @param argument
+     */
+    private void checkArgument(Object argument){
+        if (argument == null) { 
+            throw new IllegalArgumentException("Argument must not be null"); 
+        }
+    }
+    
+    /**
+     * Returns the maximum number of allowed outliers
+     * @return
+     */
+    protected final int getAbsoluteMaxOutliers() {
+        return this.absMaxOutliers;
+    }
+    
+    /**
+     * TODO: This is a hack and should be removed in future releases
+     * @return
+     */
+    protected ARXConfigurationInternal getInternalConfiguration(){
+        if (this.accessibleInstance == null) {
+            this.accessibleInstance = new ARXConfigurationInternal(this);
+        }
+        return this.accessibleInstance;
+    }
+    
+    /**
+     * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
+     * group size should be obtained and enforced 
+     * @return
+     */
+    protected PrivacyCriterion[] getCriteriaAsArray() {
+        return this.aCriteria;
+    }
+
+    /**
      * Returns the minimal size of an equivalence class induced by the contained criteria.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
      * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
      */
-    public int getMinimalGroupSize() {
+    protected int getMinimalGroupSize() {
         int k = -1;
         int l = -1;
 
@@ -338,10 +703,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the criterias requirements
+     * Returns the criteria's requirements
      * @return
      */
-    public int getRequirements() {
+    protected int getRequirements() {
         return this.requirements;
     }
 
@@ -349,109 +714,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * Returns the specific length of each entry in a snapshot
      * @return
      */
-    public int getSnapshotLength() {
+    protected int getSnapshotLength() {
         return this.snapshotLength;
     }
-
-    /**
-     * Determines whether the anonymity criterion is montonic
-     * 
-     * @return
-     */
-    public final boolean isCriterionMonotonic() {
-
-        if (relMaxOutliers == 0d) { return true; }
-
-        for (PrivacyCriterion c : criteria) {
-            if (!c.isMonotonic()) return false;
-        }
-        // Yes
-        return true;
-    }
     
     /**
-     * Is practical monotonicity assumed
+     * Returns an integer representing all attribute types that must be suppressed
      * @return
      */
-    public boolean isPracticalMonotonicity() {
-        return practicalMonotonicity;
-    }
-
-    /**
-     * Returns, whether the anonymizer should take associations between sensitive attributes into account
-     */
-    public boolean isProtectSensitiveAssociations() {
-        return this.protectSensitiveAssociations;
-    }
-
-    /**
-     * Removes the given criterion
-     * @param clazz
-     * @return
-     */
-    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion arg) {
-        return criteria.remove(arg);
-    }
-    
-    /**
-     * Convenience method for checking the requirements
-     * @param requirement
-     * @return
-     */
-    public boolean requires(int requirement) {
-        return (this.requirements & requirement) != 0;
-    }
-    /**
-     * Sets the weight for the given attribute
-     * @param attribute
-     * @param weight
-     */
-    public void setAttributeWeight(String attribute, double weight){
-        setAttributeWeight(attribute, Double.valueOf(weight));
-    }
-    
-    /**
-     * Sets the weight for the given attribute
-     * @param attribute
-     * @param weight
-     */
-    public void setAttributeWeight(String attribute, Double weight){
-    
-        // For backwards compatibility
-        if (this.attributeWeights==null) {
-            this.attributeWeights = new HashMap<String, Double>();
-        }
-        this.attributeWeights.put(attribute, weight);
-    }
-
-    /**
-     * Allows for a certain percentage of outliers and thus
-     * triggers tuple suppression
-     * @param supp
-     */
-    public void setMaxOutliers(double supp) {
-        this.relMaxOutliers = supp;
-    }
-
-    public void setMetric(Metric<?> metric) {
-        if (metric == null) { throw new NullPointerException("Metric must not be null"); }
-        this.metric = metric;
-    }
-
-    /**
-     * Set, if practical monotonicity assumed
-     * @return
-     */
-    public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
-        this.practicalMonotonicity = assumeMonotonicity;
-    }
-    
-    /**
-     * Set, whether the anonymizer should take associations between sensitive attributes into account
-     * @param protect
-     */
-    public void setProtectSensitiveAssociations(boolean protect) {
-        this.protectSensitiveAssociations = protect;
+    protected int getSuppressedAttributeTypes() {
+        // Ensure backwards compatibility
+        if (suppressedAttributeTypes == null) { return 1 << AttributeType.ATTR_TYPE_QI; }
+        return this.suppressedAttributeTypes;
     }
     
     /**
@@ -513,5 +787,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
             this.snapshotLength += 1;
         }
+    }
+
+    /**
+     * Convenience method for checking the requirements
+     * @param requirement
+     * @return
+     */
+    protected boolean requires(int requirement) {
+        return (this.requirements & requirement) != 0;
     }
 }

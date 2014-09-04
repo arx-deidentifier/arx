@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.check;
 
-import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
@@ -90,7 +90,7 @@ public interface INodeChecker {
      * 
      * @return
      */
-    public abstract ARXConfiguration getConfiguration();
+    public abstract ARXConfigurationInternal getConfiguration();
 
     /**
      * Returns the data

@@ -24,53 +24,6 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistic
 public interface IHashGroupify {
 
     /**
-     * Clear.
-     */
-    public abstract void clear();
-
-    /**
-     * Gets the first entry.
-     * 
-     * @return the first entry
-     */
-    public abstract HashGroupifyEntry getFirstEntry();
-
-
-    /**
-     * Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples
-     * 
-     * @return true, if successful
-     */
-    public abstract boolean isAnonymous();
-    
-    /**
-     * Computes the anonymity properties and suppressed tuples etc. Must be called
-     * when all tuples have been passed to the operator.
-     */
-    public abstract void analyze(boolean force);
-
-    /**
-     * Is the current transformation k-anonymous. Always returns true, if no k-anonymity (sub-)criterion was specified
-     * 
-     * @return
-     */
-    public abstract boolean isKAnonymous();
-
-    /**
-     * Marks all outliers
-     * 
-     * @param data
-     */
-    public abstract void markOutliers(int[][] buffer);
-
-    /**
-     * Size.
-     * 
-     * @return the int
-     */
-    public abstract int size();
-
-    /**
      * Generic adder for all combinations of criteria in mode transform ALL
      * @param outtuple
      * @param representant
@@ -79,7 +32,7 @@ public interface IHashGroupify {
      * @param pcount
      */
     public abstract void addAll(int[] outtuple, int representant, int count, int[] sensitive, int pcount);
-    
+
     /**
      * Generic adder for all combinations of criteria in mode transform GROUPIFY
      * @param outtuple
@@ -89,7 +42,7 @@ public interface IHashGroupify {
      * @param pcount
      */
     public abstract void addGroupify(int[] outtuple, int representant, int count, Distribution[] distribution, int pcount);
-    
+
 
     /**
      * Generic adder for all combinations of criteria in mode transform SNAPSHOT
@@ -101,10 +54,68 @@ public interface IHashGroupify {
      * @param pcount
      */
     public abstract void addSnapshot(int[] outtuple, int representant, int count, int[][] elements, int[][] frequencies, int pcount);
+    
+    /**
+     * Computes the anonymity properties and suppressed tuples etc. Must be called
+     * when all tuples have been passed to the operator. When the flag is set to true
+     * the method will make sure that all equivalence classes that do not fulfill all
+     * privacy criteria are marked as being suppressed. If the flag is set to false,
+     * the operator may perform an early abort, which may lead to inconsistent classification
+     * of equivalence classes.
+     * 
+     * @param force
+     */
+    public abstract void analyze(boolean force);
+
+    /**
+     * Clear.
+     */
+    public abstract void clear();
+
+    /**
+     * Gets the first entry.
+     * 
+     * @return the first entry
+     */
+    public abstract HashGroupifyEntry getFirstEntry();
 
     /**
      * Returns statistics about the groups
      * @return
      */
     public abstract GroupStatistics getGroupStatistics();
+
+    /**
+     * Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples
+     * 
+     * @return true, if successful
+     */
+    public abstract boolean isAnonymous();
+    
+    /**
+     * Is the current transformation k-anonymous. Always returns true, if no k-anonymity (sub-)criterion was specified
+     * 
+     * @return
+     */
+    public abstract boolean isKAnonymous();
+    
+
+    /**
+     * Marks all outliers
+     * 
+     * @param data
+     */
+    public abstract void markOutliers(int[][] buffer);
+
+    /**
+     * Resets all flags that indicate that equivalence classes are suppressed
+     */
+    public abstract void resetSuppression();
+    
+    /**
+     * Size.
+     * 
+     * @return the int
+     */
+    public abstract int size();
 }
