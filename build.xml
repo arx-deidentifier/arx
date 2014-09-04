@@ -238,6 +238,7 @@
     <target name="jar-libs" depends="compile, buildExternalLibs">
         <jar destfile="jars/arx-${arx.version}-src.jar">
             <fileset dir="src/gui" defaultexcludes="no" />
+        	<fileset dir="src/main" defaultexcludes="no" />
         </jar>
         <jar destfile="jars/libarx-${arx.version}-src.jar">
             <fileset dir="src/main" defaultexcludes="no" />
@@ -247,6 +248,10 @@
         <jar destfile="jars/libarx-${arx.version}.jar">
             <fileset dir="build/lib" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+        </jar>
+        <jar destfile="jars/libarx-${arx.version}-min.jar">
+            <fileset dir="build/lib" defaultexcludes="no" />
+        	<zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
         </jar>
     </target>
 
