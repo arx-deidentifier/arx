@@ -179,7 +179,7 @@ public class ViewList implements IView {
         final String transformation = Arrays.toString(node.getTransformation());
         item.setText(0, transformation);
 
-        final String anonymity = node.isAnonymous().toString();
+        final String anonymity = node.getAnonymity().toString();
         item.setText(1, anonymity);
 
         String min = null;

@@ -195,7 +195,7 @@ public class ViewProperties implements IView {
         items.clear();
         TableItem c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.18")); //$NON-NLS-1$
-        c.setText(1, String.valueOf(node.isAnonymous()));
+        c.setText(1, String.valueOf(node.getAnonymity()));
         items.add(c);
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$

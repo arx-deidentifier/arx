@@ -275,7 +275,7 @@ public class WorkerSave extends Worker<Model> {
                 
                 writer.indent(vocabulary.getNode2(), vocabulary.getId(), currentId);
                 writer.write(vocabulary.getTransformation(), n.getTransformation());
-                writer.write(vocabulary.getAnonymity(), n.isAnonymous());
+                writer.write(vocabulary.getAnonymity(), n.getAnonymity());
                 writer.write(vocabulary.getChecked(), n.isChecked());
                 if (n.getPredecessors().length > 0) {
                 	writer.write(vocabulary.getPredecessors(), n.getPredecessors(), map);

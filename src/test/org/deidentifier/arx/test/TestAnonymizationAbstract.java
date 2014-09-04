@@ -305,16 +305,16 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
                     if (arxNode.isChecked()) {
                         statistics[1]++;
                     }
-                    if (arxNode.isAnonymous() == Anonymity.ANONYMOUS) {
+                    if (arxNode.getAnonymity() == Anonymity.ANONYMOUS) {
                         statistics[2]++;
                     }
-                    if (arxNode.isAnonymous() == Anonymity.NOT_ANONYMOUS) {
+                    if (arxNode.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
                         statistics[3]++;
                     }
-                    if (arxNode.isAnonymous() == Anonymity.PROBABLY_ANONYMOUS) {
+                    if (arxNode.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
                         statistics[4]++;
                     }
-                    if (arxNode.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+                    if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                         statistics[5]++;
                     }
                     if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {

@@ -594,13 +594,13 @@ public class ViewLattice implements IView {
      * @return
      */
     private Color getInnerColor(final ARXNode node) {
-        if (node.isAnonymous() == Anonymity.ANONYMOUS) {
+        if (node.getAnonymity() == Anonymity.ANONYMOUS) {
             return node.equals(optimum) ? COLOR_YELLOW : COLOR_GREEN;
-        } else if (node.isAnonymous() == Anonymity.PROBABLY_ANONYMOUS) {
+        } else if (node.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
             return COLOR_LIGHT_GREEN;
-        } else if (node.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+        } else if (node.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
             return COLOR_LIGHT_RED;
-        } else if (node.isAnonymous() == Anonymity.UNKNOWN) {
+        } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
             return COLOR_DARK_GRAY;
         } else {
             return COLOR_RED;

@@ -503,7 +503,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().isAnonymous() != Anonymity.ANONYMOUS) {
+        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.35"))) //$NON-NLS-1$

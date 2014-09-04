@@ -214,7 +214,7 @@ public class ModelNodeFilter implements Serializable {
             visible.add(result.getGlobalOptimum());
             for (final ARXNode[] level : result.getLattice().getLevels()) {
                 for (final ARXNode node : level) {
-                    if (node.isAnonymous() == Anonymity.ANONYMOUS) {
+                    if (node.getAnonymity() == Anonymity.ANONYMOUS) {
                         if (!node.equals(result.getGlobalOptimum())) {
                             hidden.add(node);
                         }
@@ -282,7 +282,7 @@ public class ModelNodeFilter implements Serializable {
             visible.add(result.getLattice().getBottom());
             for (final ARXNode[] level : result.getLattice().getLevels()) {
                 for (final ARXNode node : level) {
-                    if (node.isAnonymous() == Anonymity.NOT_ANONYMOUS) {
+                    if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
                         if (!node.equals(result.getLattice().getBottom())) {
                             hidden.add(node);
                         }
@@ -335,7 +335,7 @@ public class ModelNodeFilter implements Serializable {
             return false;
         } else if (min > maxInformationLoss) {
             return false;
-        } else if (!anonymity.contains(node.isAnonymous())) { return false; }
+        } else if (!anonymity.contains(node.getAnonymity())) { return false; }
         final int[] transformation = node.getTransformation();
         for (int i = 0; i < transformation.length; i++) {
             if (!generalizations[i].contains(transformation[i])) { return false; }

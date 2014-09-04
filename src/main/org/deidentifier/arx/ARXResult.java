@@ -290,8 +290,7 @@ public class ARXResult {
             }
             node.access().setMaximumInformationLoss(transformation.getInformationLoss());
             node.access().setMinimumInformationLoss(transformation.getInformationLoss());
-            
-            // TODO: This call is obsolete with the current implementation
+            node.access().setLowerBound(transformation.getInformationLoss());
             lattice.estimateInformationLoss();
         }
         

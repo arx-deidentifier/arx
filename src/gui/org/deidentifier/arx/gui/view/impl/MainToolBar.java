@@ -107,15 +107,15 @@ public class MainToolBar implements IView {
                     if (!node.isChecked()) {
                         pruned++;
                     }
-                    if (node.isAnonymous() == Anonymity.ANONYMOUS) {
+                    if (node.getAnonymity() == Anonymity.ANONYMOUS) {
                         anonymous++;
-                    } else if (node.isAnonymous() == Anonymity.NOT_ANONYMOUS) {
+                    } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
                         notAnonymous++;
-                    } else if (node.isAnonymous() == Anonymity.PROBABLY_ANONYMOUS) {
+                    } else if (node.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
                         probablyAnonymous++;
-                    } else if (node.isAnonymous() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+                    } else if (node.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                         probablyNotAnonymous++;
-                    } else if (node.isAnonymous() == Anonymity.UNKNOWN) {
+                    } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
                         anonymityUnknown++;
                     }
                     if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) == 0) {

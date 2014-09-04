@@ -237,7 +237,7 @@ public class ViewPropertiesOutput extends ViewProperties {
         new Property(Resources.getMessage("PropertiesView.50"), new String[] { Arrays.toString(node.getTransformation()) }); //$NON-NLS-1$
 
         // If the node is anonymous
-        if (node.isAnonymous() == Anonymity.ANONYMOUS) {
+        if (node.getAnonymity() == Anonymity.ANONYMOUS) {
 
             // Print info about d-presence
             if (context.config.containsCriterion(DPresence.class)) {

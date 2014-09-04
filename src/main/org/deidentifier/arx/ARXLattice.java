@@ -183,6 +183,15 @@ public class ARXLattice implements Serializable {
             }
 
             /**
+             * Sets the lower bound
+             * 
+             * @return
+             */
+            public void setLowerBound(final InformationLoss<?> a) {
+                node.lowerBound = a;
+            }
+
+            /**
              * Set not anonymous
              */
             public void setNotAnonymous() {
@@ -232,6 +241,9 @@ public class ARXLattice implements Serializable {
         /** The header map */
         private Map<String, Integer> headermap;
 
+        /** The lower bound */
+        private InformationLoss<?>   lowerBound;
+        
         /** The max information loss */
         private InformationLoss<?>   maxInformationLoss;
 
@@ -267,6 +279,7 @@ public class ARXLattice implements Serializable {
             this.transformation = node.getTransformation();
             this.minInformationLoss = node.getInformationLoss();
             this.maxInformationLoss = node.getInformationLoss();
+            this.lowerBound = node.getLowerBound();
             this.checked = node.hasProperty(Node.PROPERTY_CHECKED);
             
             // Transfer anonymity property without uncertainty
@@ -393,10 +406,20 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Is it anonymous?
+         * Returns the anonymity property
          * 
          * @return
          */
+        public Anonymity getAnonymity() {
+            return anonymity;
+        }
+        
+        /**
+         * Returns the anonymity property
+         * 
+         * @return
+         */
+        @Deprecated
         public Anonymity isAnonymous() {
             return anonymity;
         }
