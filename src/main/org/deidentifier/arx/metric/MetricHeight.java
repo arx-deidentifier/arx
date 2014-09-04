@@ -18,7 +18,13 @@
 
 package org.deidentifier.arx.metric;
 
+import java.util.Set;
+
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
 
 /**
@@ -32,6 +38,12 @@ public class MetricHeight extends MetricDefault {
     /** SVUID */
     private static final long serialVersionUID = 5911337622032778562L;
 
+    /** The minimum height */
+    private int               minHeight        = -1;
+
+    /** The maximum height */
+    private int               maxHeight        = -1;
+
     /**
      * Creates a new instance
      */
@@ -43,7 +55,25 @@ public class MetricHeight extends MetricDefault {
     public String toString() {
         return "Height";
     }
-    
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (minHeight == -1) {
+            throw new IllegalStateException("Metric must be intialized first");
+        } else {
+            return new InformationLossDefault(minHeight);
+        }
+    }
+
+    @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        if (maxHeight == -1) {
+            throw new IllegalStateException("Metric must be intialized first");
+        } else {
+            return new InformationLossDefault(maxHeight);
+        }
+    }
+
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         int level = node.getLevel();
@@ -54,10 +84,25 @@ public class MetricHeight extends MetricDefault {
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return new InformationLossDefault(node.getLevel());
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         return new InformationLossDefault(node.getLevel());
+    }
+
+    @Override
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input,
+                                      final GeneralizationHierarchy[] hierarchies,
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, hierarchies, config);
+
+        Set<String> qis = definition.getQuasiIdentifyingAttributes();
+        for (String qi : qis) {
+            minHeight += definition.getMinimumGeneralization(qi);
+            maxHeight += definition.getMaximumGeneralization(qi);
+        }
+
     }
 }
