@@ -106,7 +106,7 @@ public class ARXLattice implements Serializable {
      * @author Florian Kohlmayer
      */
     public class ARXNode {
-
+        
         /**
          * Internal access class
          * 
@@ -165,6 +165,15 @@ public class ARXLattice implements Serializable {
             }
 
             /**
+             * Sets the lower bound
+             * 
+             * @return
+             */
+            public void setLowerBound(final InformationLoss<?> a) {
+                node.lowerBound = a;
+            }
+
+            /**
              * Sets the maximal information loss
              * 
              * @return
@@ -180,15 +189,6 @@ public class ARXLattice implements Serializable {
              */
             public void setMinimumInformationLoss(final InformationLoss<?> a) {
                 node.minInformationLoss = a;
-            }
-
-            /**
-             * Sets the lower bound
-             * 
-             * @return
-             */
-            public void setLowerBound(final InformationLoss<?> a) {
-                node.lowerBound = a;
             }
 
             /**
@@ -225,6 +225,9 @@ public class ARXLattice implements Serializable {
                 node.transformation = transformation;
             }
         }
+
+        /** Id*/
+        private Integer id = null;
 
         /** The access */
         private final Access         access     = new Access(this);
@@ -317,6 +320,15 @@ public class ARXLattice implements Serializable {
         }
 
         /**
+         * Returns the anonymity property
+         * 
+         * @return
+         */
+        public Anonymity getAnonymity() {
+            return anonymity;
+        }
+        
+        /**
          * Returns the attributes
          * 
          * @return
@@ -324,7 +336,7 @@ public class ARXLattice implements Serializable {
         public Map<Integer, Object> getAttributes() {
             return attributes;
         }
-
+        
         /**
          * Returns the index of an attribute
          * 
@@ -410,15 +422,6 @@ public class ARXLattice implements Serializable {
          * 
          * @return
          */
-        public Anonymity getAnonymity() {
-            return anonymity;
-        }
-        
-        /**
-         * Returns the anonymity property
-         * 
-         * @return
-         */
         @Deprecated
         public Anonymity isAnonymous() {
             return anonymity;
@@ -431,6 +434,22 @@ public class ARXLattice implements Serializable {
          */
         public boolean isChecked() {
             return checked;
+        }
+        
+        /**
+         * Returns a node's internal id
+         * @return
+         */
+        protected Integer getId(){
+            return this.id;
+        }
+
+        /**
+         * Returns a node's lower bound, if any
+         * @return
+         */
+        protected InformationLoss<?> getLowerBound(){
+            return this.lowerBound;
         }
     }
 
@@ -725,28 +744,6 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * Estimates minimal information loss
-     */
-    private void estimateNonMonotonicMinLoss() {
-        
-        // Init
-        InformationLoss<?> min = metric.createMinInformationLoss();
-
-        // Propagate
-        for (int i = 0; i < levels.length; i++) {
-            final ARXNode[] level = levels[i];
-            for (final ARXNode node : level) {
-                if (node.minInformationLoss == null) {
-                    node.minInformationLoss = min.clone();
-                }
-            }
-        }
-        
-        // Store min
-        this.minimumInformationLoss = min.clone();
-    }
-
-    /**
      * Estimates maximal information loss
      */
     private void estimateNonMonotonicMaxLoss() {
@@ -766,6 +763,28 @@ public class ARXLattice implements Serializable {
         
         // Store max
         this.maximumInformationLoss = max.clone();
+    }
+
+    /**
+     * Estimates minimal information loss
+     */
+    private void estimateNonMonotonicMinLoss() {
+        
+        // Init
+        InformationLoss<?> min = metric.createMinInformationLoss();
+
+        // Propagate
+        for (int i = 0; i < levels.length; i++) {
+            final ARXNode[] level = levels[i];
+            for (final ARXNode node : level) {
+                if (node.minInformationLoss == null) {
+                    node.minInformationLoss = min.clone();
+                }
+            }
+        }
+        
+        // Store min
+        this.minimumInformationLoss = min.clone();
     }
 
     /**
