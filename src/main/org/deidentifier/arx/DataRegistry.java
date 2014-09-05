@@ -288,8 +288,10 @@ class DataRegistry {
      * Removes the association to all handles, but the input handle
      */
     protected void reset() {
-        for (DataHandle handle : this.output.values()) {
-            release(handle);
+        while (!this.output.entrySet().isEmpty()) {
+            Entry<ARXNode, DataHandleOutput> entry = this.output.entrySet().iterator().next();
+            release(entry.getValue());
+            this.output.remove(entry.getKey());
         }
         this.output.clear();
         
