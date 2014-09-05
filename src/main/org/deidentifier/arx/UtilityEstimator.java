@@ -27,7 +27,7 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-class ARXLatticeEstimator {
+class UtilityEstimator {
 
     /** The lattice */
     private ARXLattice           lattice;
@@ -63,7 +63,7 @@ class ARXLatticeEstimator {
      * @param monotonicAnonymous
      * @param monotonicNonAnonymous
      */
-    ARXLatticeEstimator(ARXLattice lattice, Metric<?> metric, boolean monotonicAnonymous, boolean monotonicNonAnonymous) {
+    UtilityEstimator(ARXLattice lattice, Metric<?> metric, boolean monotonicAnonymous, boolean monotonicNonAnonymous) {
         
         // Init
         this.lattice = lattice;

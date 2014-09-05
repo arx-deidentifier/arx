@@ -690,7 +690,7 @@ public class ARXLattice implements Serializable {
      * or not
      */
     protected void estimateInformationLoss() {
-        ARXLatticeEstimator estimator = new ARXLatticeEstimator(this, metric, monotonicAnonymous, monotonicNonAnonymous);
+        UtilityEstimator estimator = new UtilityEstimator(this, metric, monotonicAnonymous, monotonicNonAnonymous);
         estimator.estimate();
         this.minimumInformationLoss = estimator.getGlobalMinimum();
         this.maximumInformationLoss = estimator.getGlobalMaximum();
