@@ -66,10 +66,6 @@ public class ARXLattice implements Serializable {
             lattice.levels = levels;
         }
 
-        public void setMaxAbsoluteOutliers(final int maxAbsoluteOutliers) {
-            lattice.maxAbsoluteOutliers = maxAbsoluteOutliers;
-        }
-
         public void setMetric(final Metric<?> metric) {
             lattice.metric = metric;
         }
@@ -451,6 +447,14 @@ public class ARXLattice implements Serializable {
         protected InformationLoss<?> getLowerBound(){
             return this.lowerBound;
         }
+
+        /**
+         * Internal method that sets the id
+         * @param id
+         */
+        protected void setId(int id) {
+            this.id = id;
+        }
     }
 
     class IntArrayWrapper {
@@ -497,9 +501,6 @@ public class ARXLattice implements Serializable {
     /** The levels in the lattice */
     private transient ARXNode[][] levels;
 
-    /** The current max absolute outliers */
-    private int                   maxAbsoluteOutliers;
-
     /** Metric */
     private Metric<?>             metric;
 
@@ -515,8 +516,10 @@ public class ARXLattice implements Serializable {
     /** Is practical monotonicity being assumed */
     private boolean               uncertainty;
 
-    /** Is the information loss for non-anonymous transformations monotonic */
-    private boolean               monotonicInformationLoss = false;
+    /** Monotonicity of information loss*/
+    private boolean               monotonicAnonymous;
+    /** Monotonicity of information loss*/
+    private boolean               monotonicNonAnonymous;
 
     /** Minimum loss in the lattice */
     private InformationLoss<?>    minimumInformationLoss   = null;
@@ -538,10 +541,10 @@ public class ARXLattice implements Serializable {
                final Node globalOptimum,
                final String[] header,
                final ARXConfigurationInternal config) {
-        
-        this.maxAbsoluteOutliers = config.getAbsoluteMaxOutliers();
+
         this.metric = config.getMetric();
-        this.monotonicInformationLoss = !config.isSuppressionAlwaysEnabled();
+        this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
+        this.monotonicAnonymous = metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
  
         // Set this flag to true, if practical monotonicity is being assumed
         this.uncertainty = config.isPracticalMonotonicity() && config.getMaxOutliers()!=0d &&
@@ -682,129 +685,15 @@ public class ARXLattice implements Serializable {
     }
     
     /**
-     * Estimates maximal information loss
-     */
-    private void estimateMonotonicMaxLoss() {
-
-        // Estimate if not known
-        if (top.getMaximumInformationLoss() == null) {
-            top.access().setMaximumInformationLoss(metric.createMaxInformationLoss());
-        }
-
-        // Push
-        for (int i = levels.length - 1; i >= 0; i--) {
-            final ARXNode[] level = levels[i];
-            for (final ARXNode node : level) {
-                final InformationLoss<?> a = node.getMaximumInformationLoss();
-                for (final ARXNode n : node.getPredecessors()) {
-                    if (n.getMaximumInformationLoss() == null) {
-                        n.access().setMaximumInformationLoss(metric.createMaxInformationLoss());
-                    }
-                    // If we don't know the value for sure
-                    if (n.getMinimumInformationLoss() != n.getMaximumInformationLoss()) {
-                        n.getMaximumInformationLoss().min(a);
-                    }
-                }
-            }
-        }
-        
-        // Store max
-        this.maximumInformationLoss = this.getTop().getMaximumInformationLoss().clone();
-    }
-
-    /**
-     * Estimates minimal information loss
-     */
-    private void estimateMonotonicMinLoss() {
-
-        // Estimate if not known
-        if (bottom.getMinimumInformationLoss() == null) {
-            bottom.access().setMinimumInformationLoss(metric.createMinInformationLoss());
-        }
-
-        // Push
-        for (int i = 0; i < levels.length; i++) {
-            final ARXNode[] level = levels[i];
-            for (final ARXNode node : level) {
-                final InformationLoss<?> a = node.getMinimumInformationLoss();
-                for (final ARXNode n : node.getSuccessors()) {
-                    if (n.getMinimumInformationLoss() == null) {
-                        n.access().setMinimumInformationLoss(metric.createMinInformationLoss());
-                    }
-                    // If we dont know the value for sure
-                    if (n.getMinimumInformationLoss() != n.getMaximumInformationLoss()) {
-                        n.getMinimumInformationLoss().max(a);
-                    }
-                }
-            }
-        }
-
-        // Store min
-        this.minimumInformationLoss = this.getBottom().getMinimumInformationLoss().clone();
-    }
-
-    /**
-     * Estimates maximal information loss
-     */
-    private void estimateNonMonotonicMaxLoss() {
-        
-        // Init
-        InformationLoss<?> max = metric.createMaxInformationLoss();
-
-        // Propagate
-        for (int i = 0; i < levels.length; i++) {
-            final ARXNode[] level = levels[i];
-            for (final ARXNode node : level) {
-                if (node.maxInformationLoss == null) {
-                    node.maxInformationLoss = max.clone();
-                }
-            }
-        }
-        
-        // Store max
-        this.maximumInformationLoss = max.clone();
-    }
-
-    /**
-     * Estimates minimal information loss
-     */
-    private void estimateNonMonotonicMinLoss() {
-        
-        // Init
-        InformationLoss<?> min = metric.createMinInformationLoss();
-
-        // Propagate
-        for (int i = 0; i < levels.length; i++) {
-            final ARXNode[] level = levels[i];
-            for (final ARXNode node : level) {
-                if (node.minInformationLoss == null) {
-                    node.minInformationLoss = min.clone();
-                }
-            }
-        }
-        
-        // Store min
-        this.minimumInformationLoss = min.clone();
-    }
-
-    /**
      * This method triggers the estimation of the information loss of all nodes
      * in the lattice regardless of whether they have been checked for anonymity
      * or not
      */
     protected void estimateInformationLoss() {
-        
-        if (metric.isMonotonic() || maxAbsoluteOutliers == 0) {
-            estimateMonotonicMaxLoss();
-            if (this.monotonicInformationLoss) {
-                estimateMonotonicMinLoss();
-            } else {
-                estimateNonMonotonicMinLoss();
-            }
-        } else {
-            estimateNonMonotonicMinLoss();
-            estimateNonMonotonicMaxLoss();
-        }
+        ARXLatticeEstimator estimator = new ARXLatticeEstimator(this, metric, monotonicAnonymous, monotonicNonAnonymous);
+        estimator.estimate();
+        this.minimumInformationLoss = estimator.getGlobalMinimum();
+        this.maximumInformationLoss = estimator.getGlobalMaximum();
     }
 
 
