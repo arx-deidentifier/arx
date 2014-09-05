@@ -189,7 +189,7 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
 
                 if (loss != null) {
                     if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
-                        result.getOutput(node);
+                        result.getOutput(node, false);
                     }
                     assertEquals(label, loss, node.getMaximumInformationLoss().toString());
                 }
