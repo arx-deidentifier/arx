@@ -80,7 +80,7 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
 
                 String label = Arrays.toString(node.getTransformation());
                 if (testcase.informationLoss.containsKey(label)) {
-                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+                    if (compareWithTolerance(node.getMaximumInformationLoss(), node.getMinimumInformationLoss()) != 0) {
                         
                         // Check transformation and test bounds
                         checkTransformation(testcase, result, node);
@@ -103,14 +103,14 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
         InformationLoss<?> min = node.getMinimumInformationLoss();
         InformationLoss<?> max = node.getMaximumInformationLoss();
         result.getOutput(node, false);
-        assertTrue("Min != max", node.getMinimumInformationLoss().compareTo(node.getMaximumInformationLoss())==0);
+        assertTrue("Min != max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())==0);
         if (min.compareTo(node.getMaximumInformationLoss())>0) {
             System.out.println(min+"/"+node.getMaximumInformationLoss()+"/"+max);
             System.out.println("Anonymity:"+node.getAnonymity()+"/Supp:"+testcase.config.isSuppressionAlwaysEnabled());
             System.out.println(testcase.getDescription());
         }
-        assertTrue("Actual < min", min.compareTo(node.getMaximumInformationLoss())<=0);
-        assertTrue("Actual > max", max.compareTo(node.getMaximumInformationLoss())>=0);
+        assertTrue("Actual < min", compareWithTolerance(min, node.getMaximumInformationLoss())<=0);
+        assertTrue("Actual > max", compareWithTolerance(max, node.getMaximumInformationLoss())>=0);
     }
 
     /**
@@ -120,9 +120,58 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     private void checkLattice(ARXLattice lattice) {
         for (ARXNode[] level : lattice.getLevels()) {
             for (ARXNode node : level) {
-                assertTrue("Min > max", node.getMinimumInformationLoss().compareTo(node.getMaximumInformationLoss())<=0);
+                assertTrue("Min > max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())<=0);
             }
         }
-        
+    }
+    
+
+    /**
+     * Compares two losses with tolerance
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private int compareWithTolerance(InformationLoss<?> loss1, InformationLoss<?> loss2) {
+        String s1 = loss1.toString();
+        String s2 = loss2.toString();
+        if (isNumeric(s1)) {
+            Double d1 = Double.valueOf(s1);
+            Double d2 = Double.valueOf(s2);
+            return compareWithTolerance(d1, d2);
+        } else {
+            return loss1.compareTo(loss2);
+        }
+    }
+    
+    /**
+     * Returns whether the given string is numeric
+     * @param str
+     * @return
+     */
+    private boolean isNumeric(String str) {
+      return str.matches("-?\\d+(\\.\\d+)?");
+    }
+    
+    /**
+     * Compares two doubles with tolerance
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private int compareWithTolerance(double d1, double d2) {
+        if (closeEnough(d1, d2)) return 0;
+        else return Double.compare(d1, d2);
+    }
+    
+    /**
+     * Compares double for "equality" with a tolerance of 1xulp
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private boolean closeEnough(double d1, double d2) {
+        if (d1 == d2) return true;
+        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
     }
 }

@@ -146,7 +146,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             }
             result[column] = value;
         }
-        
+
+        // Switch sign bit
+        for (int column = 0; column < hierarchies.length; column++) {
+            result[column] = result[column] == 0.0d ? result[column] : -result[column];
+        }
+
         // Return
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
                                                super.createInformationLoss(result));

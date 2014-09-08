@@ -44,14 +44,14 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     }
 
     /**
-     * Creates a new instance. The precomputed variant will be used if 
+     * Creates a new instance. The pre-computed variant will be used if 
      * #distinctValues / #rows <= threshold for all quasi-identifiers.
      * 
      * @param threshold
      * @param function
      */
     protected MetricMDNUNMEntropyPotentiallyPrecomputed(double threshold,
-                                                                            AggregateFunction function) {
+                                                        AggregateFunction function) {
         super(new MetricMDNUNMEntropy(function),
               new MetricMDNUNMEntropyPrecomputed(function),
               threshold);

@@ -51,7 +51,7 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
      * @param function
      */
     protected MetricMDNUEntropyPotentiallyPrecomputed(double threshold,
-                                                                            AggregateFunction function) {
+                                                      AggregateFunction function) {
         super(new MetricMDNUEntropy(function),
               new MetricMDNUEntropyPrecomputed(function),
               threshold);
