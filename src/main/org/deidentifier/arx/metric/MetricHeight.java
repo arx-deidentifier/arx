@@ -98,11 +98,12 @@ public class MetricHeight extends MetricDefault {
                                       final ARXConfiguration config) {
         super.initializeInternal(definition, input, hierarchies, config);
 
+        minHeight = 0;
+        maxHeight = 0;
         Set<String> qis = definition.getQuasiIdentifyingAttributes();
         for (String qi : qis) {
             minHeight += definition.getMinimumGeneralization(qi);
             maxHeight += definition.getMaximumGeneralization(qi);
         }
-
     }
 }
