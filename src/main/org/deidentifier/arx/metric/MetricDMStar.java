@@ -41,7 +41,7 @@ public class MetricDMStar extends MetricDefault {
     /** SVUID */
     private static final long serialVersionUID = -3324788439890959974L;
     /** Number of tuples */
-    private int               rowCount         = 0;
+    private double            rowCount         = 0;
 
     /**
      * Creates a new instance

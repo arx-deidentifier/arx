@@ -42,7 +42,7 @@ public class MetricAECS extends MetricDefault {
     private static final long serialVersionUID = -532478849890959974L;
 
     /** Number of tuples*/
-    private int rowCount = 0;
+    private double rowCount = 0;
     
     protected MetricAECS() {
         super(false, false);

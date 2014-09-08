@@ -39,7 +39,7 @@ public class MetricDM extends MetricDefault {
     /** SVUID */
     private static final long serialVersionUID = 4886262855672670521L;
     /** Number of tuples */
-    private int               rowCount         = 0;
+    private double            rowCount         = 0;
 
     /**
      * Creates a new instance
