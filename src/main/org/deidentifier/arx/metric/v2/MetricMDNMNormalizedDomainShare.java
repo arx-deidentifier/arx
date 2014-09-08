@@ -219,7 +219,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
         // Compute domain shares
         this.shares = new DomainShare[hierarchies.length];
         for (int i=0; i<shares.length; i++) {
-            shares[i] = new DomainShare(hierarchies[i]);
+            shares[i] = new DomainShare(hierarchies[i], input.getDictionary().getMapping()[i]);
         }
    
         // Determine total number of tuples

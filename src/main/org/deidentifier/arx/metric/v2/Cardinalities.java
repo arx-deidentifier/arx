@@ -53,7 +53,7 @@ public class Cardinalities implements Serializable {
         Dictionary dictionary = data.getDictionary();
         
         // Store size
-        this.size = subset.size();
+        this.size = subset == null ? data.getDataLength() : subset.size();
         
         // Initialize counts
         cardinalities = new int[array[0].length][][];

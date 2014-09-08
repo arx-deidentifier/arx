@@ -159,13 +159,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
-        return getInformationLossInternal(node, null).getLowerBound();
+        return this.getInformationLossInternal(node, null).getLowerBound();
     }
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify groupify) {
-        return getLowerBoundInternal(node);
+        return this.getLowerBoundInternal(node);
     }
 
     @Override

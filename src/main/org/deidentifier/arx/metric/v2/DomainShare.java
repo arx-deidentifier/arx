@@ -55,13 +55,13 @@ public class DomainShare implements Serializable {
      * Creates a new set of domain shares derived from the given attribute
      * @param hierarchy
      */
-    public DomainShare(GeneralizationHierarchy hierarchy){
+    public DomainShare(GeneralizationHierarchy hierarchy, String[] dictvalues){
         
         // Prepare
         int[][] array = hierarchy.getArray();
-        this.size = array.length;
+        this.size = dictvalues.length;
         this.duplicates = new LongDoubleOpenHashMap();
-        this.shares = new double[array.length];
+        this.shares = new double[dictvalues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
         IntIntOpenHashMap[] maps = new IntIntOpenHashMap[array[0].length];
         for (int level=0; level<maps.length; level++) {
