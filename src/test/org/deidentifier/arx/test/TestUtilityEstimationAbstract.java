@@ -104,11 +104,6 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
         InformationLoss<?> max = node.getMaximumInformationLoss();
         result.getOutput(node, false);
         assertTrue("Min != max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss())==0);
-        if (min.compareTo(node.getMaximumInformationLoss())>0) {
-            System.out.println(min+"/"+node.getMaximumInformationLoss()+"/"+max);
-            System.out.println("Anonymity:"+node.getAnonymity()+"/Supp:"+testcase.config.isSuppressionAlwaysEnabled());
-            System.out.println(testcase.getDescription());
-        }
         assertTrue("Actual < min", compareWithTolerance(min, node.getMaximumInformationLoss())<=0);
         assertTrue("Actual > max", compareWithTolerance(max, node.getMaximumInformationLoss())>=0);
     }
@@ -124,7 +119,6 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
             }
         }
     }
-    
 
     /**
      * Compares two losses with tolerance
@@ -165,13 +159,12 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
     
     /**
-     * Compares double for "equality" with a tolerance of 1xulp
+     * Compares double for "equality" with a tolerance of 1 ulp
      * @param d1
      * @param d2
      * @return
      */
     private boolean closeEnough(double d1, double d2) {
-        if (d1 == d2) return true;
         return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
     }
 }
