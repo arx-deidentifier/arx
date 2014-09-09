@@ -29,7 +29,6 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * This class provides an efficient implementation of the non-uniform entropy
@@ -99,18 +98,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super(true, true, function);
     }
 
-    @Override
-    public InformationLoss<?> createMaxInformationLoss() {
-        // TODO: Implement
-        return super.createMaxInformationLoss();
-    }
-
-    @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        // TODO: Implement
-        return super.createMinInformationLoss();
-    }
-    
     @Override
     public String toString() {
         return "Non-uniform entropy";
@@ -200,5 +187,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         for (int i = 0; i < hierarchies.length; i++) {
             this.hierarchies[i] = hierarchies[i].getArray();
         }
+
+        // TODO: Compute a reasonable maximum
+        double[] min = new double[hierarchies.length];
+        Arrays.fill(min, 0d);
+        double[] max = new double[hierarchies.length];
+        Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
+        super.setMax(max);
+        super.setMin(min);
     }
 }
