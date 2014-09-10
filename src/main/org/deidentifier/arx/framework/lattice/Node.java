@@ -126,24 +126,6 @@ public class Node {
         this.properties = 0;
     }
 
-    /**
-     * Adds a predecessor
-     * 
-     * @param predecessor
-     */
-    public void addPredecessor(Node predecessor) {
-        predecessors[preIndex++] = predecessor;
-    }
-
-    /**
-     * Adds a successor
-     * 
-     * @param successor
-     */
-    public void addSuccessor(Node successor) {
-        successors[sucIndex++] = successor;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -223,10 +205,7 @@ public class Node {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + Arrays.hashCode(transformation);
-        return result;
+        return Arrays.hashCode(transformation);
     }
 
     /**
@@ -253,7 +232,6 @@ public class Node {
         this.level = level;
     }
 
-    
     /**
      * Sets the information loss
      * 
@@ -275,7 +253,8 @@ public class Node {
             this.lowerBound = lowerBound;
         }
     }
-  
+
+    
     /**
      * Sets the predecessors
      * 
@@ -293,7 +272,7 @@ public class Node {
     protected void setProperty(int property){
         properties |= property;
     }
-
+  
     /**
      * Sets the successors
      * 
@@ -301,5 +280,23 @@ public class Node {
      */
     protected void setSuccessors(Node[] nodes) {
         successors = nodes;
+    }
+
+    /**
+     * Adds a predecessor
+     * 
+     * @param predecessor
+     */
+    void addPredecessor(Node predecessor) {
+        predecessors[preIndex++] = predecessor;
+    }
+
+    /**
+     * Adds a successor
+     * 
+     * @param successor
+     */
+    void addSuccessor(Node successor) {
+        successors[sucIndex++] = successor;
     }
 }
