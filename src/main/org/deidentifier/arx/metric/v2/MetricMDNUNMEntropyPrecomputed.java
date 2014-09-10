@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.util.Arrays;
+
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -25,7 +27,6 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
-import org.deidentifier.arx.metric.InformationLoss;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
@@ -56,18 +57,6 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         super(false, false, function);
     }
     
-    @Override
-    public InformationLoss<?> createMaxInformationLoss() {
-        // TODO: Implement
-        return super.createMaxInformationLoss();
-    }
-    
-    @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        // TODO: Implement
-        return super.createMinInformationLoss();
-    }
-
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
@@ -137,5 +126,13 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
                                       ARXConfiguration config) {
         
         super.initializeInternal(definition, input, hierarchies, config);
+
+        // TODO: Compute a reasonable maximum
+        double[] min = new double[hierarchies.length];
+        Arrays.fill(min, 0d);
+        double[] max = new double[hierarchies.length];
+        Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
+        super.setMax(max);
+        super.setMin(min);
     }
 }
