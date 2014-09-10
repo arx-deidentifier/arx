@@ -23,7 +23,20 @@ import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * A class that estimates information loss within a generalization lattice
+ * A class that estimates information loss within a generalization lattice. Method:<br>
+ * <br>
+ * Minimum:<br>
+ *    -   Anonymous &  monotonic: max(push(min), optimum)<br>
+ *    -   Anonymous & !monotonic: push(lower)<br>
+ *    -  !Anonymous &  monotonic: max(push(min), optimum)<br>
+ *    -  !Anonymous & !monotonic: push(lower)<br>
+ * <br>
+ * Maximum:<br>
+ *    -   Anonymous &  monotonic: push(max)<br>
+ *    -   Anonymous & !monotonic: metric.max<br>
+ *    -  !Anonymous &  monotonic: push(max)<br>
+ *    -  !Anonymous & !monotonic: metric.max<br>
+ * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
