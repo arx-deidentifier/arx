@@ -118,13 +118,13 @@ class ILMultiDimensionalRank extends AbstractILMultiDimensional {
     }
 
     /**
-     * Compares double for "equality" with a tolerance of 1 ulp
+     * Compares double for "equality" with a tolerance of 5 ulps
      * @param d1
      * @param d2
      * @return
      */
     private boolean closeEnough(double d1, double d2) {
-        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
+        return Math.abs(d2 - d1) <= 5 * Math.max(Math.ulp(d1), Math.ulp(d2));
     }
 
     /**
