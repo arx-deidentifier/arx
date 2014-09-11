@@ -68,6 +68,28 @@ class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         this.aggregate = getAggregate();
         this.mean = getMean();
     }
+    
+
+    /**
+     * Compares two doubles with tolerance
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private int compareWithTolerance(double d1, double d2) {
+        if (closeEnough(d1, d2)) return 0;
+        else return Double.compare(d1, d2);
+    }
+    
+    /**
+     * Compares double for "equality" with a tolerance of 1 ulp
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private boolean closeEnough(double d1, double d2) {
+        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
+    }
 
     @Override
     public InformationLoss<double[]> clone() {
@@ -85,8 +107,9 @@ class ILMultiDimensionalRank extends AbstractILMultiDimensional {
             double[] otherValue = convert(other).aggregate;
             double[] thisValue = aggregate;
             for (int i = 0; i < otherValue.length; i++) {
-                if (thisValue[i] < otherValue[i]) return -1;
-                else if (thisValue[i] > otherValue[i]) return +1;
+                int cmp = compareWithTolerance(thisValue[i], otherValue[i]);
+                if (cmp != 0) return cmp;
+                
             }
             return 0;
         }
