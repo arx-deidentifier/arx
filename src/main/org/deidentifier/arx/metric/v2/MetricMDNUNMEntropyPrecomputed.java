@@ -105,7 +105,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         // Return
         return new ILMultiDimensionalWithBound(createInformationLoss(result),
-                                               createInformationLoss(result));
+                                               loss.getLowerBound());
     }
 
     @Override
