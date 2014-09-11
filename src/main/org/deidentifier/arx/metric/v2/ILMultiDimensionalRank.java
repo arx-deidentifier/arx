@@ -70,27 +70,6 @@ class ILMultiDimensionalRank extends AbstractILMultiDimensional {
     }
     
 
-    /**
-     * Compares two doubles with tolerance
-     * @param d1
-     * @param d2
-     * @return
-     */
-    private int compareWithTolerance(double d1, double d2) {
-        if (closeEnough(d1, d2)) return 0;
-        else return Double.compare(d1, d2);
-    }
-    
-    /**
-     * Compares double for "equality" with a tolerance of 1 ulp
-     * @param d1
-     * @param d2
-     * @return
-     */
-    private boolean closeEnough(double d1, double d2) {
-        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
-    }
-
     @Override
     public InformationLoss<double[]> clone() {
         return new ILMultiDimensionalRank(mean,
@@ -98,7 +77,7 @@ class ILMultiDimensionalRank extends AbstractILMultiDimensional {
                                           getValues(),
                                           getWeights());
     }
-
+    
     @Override
     public int compareTo(InformationLoss<?> other) {
         if (other == null) {
@@ -136,6 +115,27 @@ class ILMultiDimensionalRank extends AbstractILMultiDimensional {
     @Override
     public String toString() {
         return Arrays.toString(this.aggregate);
+    }
+
+    /**
+     * Compares double for "equality" with a tolerance of 1 ulp
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private boolean closeEnough(double d1, double d2) {
+        return Math.abs(d2 - d1) <= Math.max(Math.ulp(d1), Math.ulp(d2));
+    }
+
+    /**
+     * Compares two doubles with tolerance
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private int compareWithTolerance(double d1, double d2) {
+        if (closeEnough(d1, d2)) return 0;
+        else return Double.compare(d1, d2);
     }
 
     /**
