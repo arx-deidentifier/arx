@@ -59,7 +59,7 @@ public class DomainShare implements Serializable {
         
         // Prepare
         int[][] array = hierarchy.getArray();
-        this.size = dictvalues.length;
+        this.size = array.length;
         this.duplicates = new LongDoubleOpenHashMap();
         this.shares = new double[dictvalues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
@@ -68,7 +68,7 @@ public class DomainShare implements Serializable {
             maps[level] = new IntIntOpenHashMap(hierarchy.getDistinctValues()[level]);
         }
         
-        // First, compute the share for each generalization level
+        // First, compute the share for each generalization strategy
         for (int value=0; value<array.length; value++) {
             int[] transformation = array[value];
             for (int level=0; level<transformation.length; level++) {
