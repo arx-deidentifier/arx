@@ -282,8 +282,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
+            
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
-                    result.getGlobalOptimum().getMinimumInformationLoss().getValue(),
+                    result.getGlobalOptimum().getMinimumInformationLoss().toString(),
                     testCase.optimalInformationLoss,
                     result.getGlobalOptimum().getMinimumInformationLoss().toString());
             
