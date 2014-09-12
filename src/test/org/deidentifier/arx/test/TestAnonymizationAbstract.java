@@ -37,6 +37,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.v2.ILMultiDimensionalRank;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -283,10 +285,12 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
             
+            String loss = getInformationLoss(result.getGlobalOptimum());
+            
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
-                    result.getGlobalOptimum().getMinimumInformationLoss().toString(),
+                    loss+"("+result.getGlobalOptimum().getMinimumInformationLoss().toString()+")",
                     testCase.optimalInformationLoss,
-                    result.getGlobalOptimum().getMinimumInformationLoss().toString());
+                    loss);
             
             if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)){
                 System.err.println("Note: Information loss equals, but the optimum differs:");
@@ -341,6 +345,27 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available",
                          testCase.statistics[6],
                          statistics[6]);
+        }
+    }
+
+    /**
+     * Utility method that helps with the conversion from metrics v1 to metrics v2
+     * @param node
+     * @return
+     */
+    private String getInformationLoss(ARXNode node) {
+        InformationLoss<?> loss = node.getMaximumInformationLoss();
+        if (loss instanceof ILMultiDimensionalRank){
+            
+            @SuppressWarnings("unchecked")
+            double[] value = ((InformationLoss<double[]>)loss).getValue().clone();
+            for (int i=0; i<value.length; i++) {
+                value[i] = Math.round(value[i]*100d);
+            }
+            return Arrays.toString(value);
+            
+        } else {
+            return loss.toString();
         }
     }
 
