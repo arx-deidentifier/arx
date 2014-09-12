@@ -27,7 +27,7 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-class ILMultiDimensionalSum extends AbstractILMultiDimensionalReduced {
+public class ILMultiDimensionalSum extends AbstractILMultiDimensionalReduced {
 
     /** SVUID */
     private static final long serialVersionUID = 6456243227046629659L;

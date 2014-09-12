@@ -27,7 +27,7 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalReduced {
+public class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalReduced {
 
     /** SVUID */
     private static final long serialVersionUID = 621501985571033348L;

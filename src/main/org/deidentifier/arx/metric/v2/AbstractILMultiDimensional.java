@@ -27,7 +27,7 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-abstract class AbstractILMultiDimensional extends InformationLoss<double[]> {
+public abstract class AbstractILMultiDimensional extends InformationLoss<double[]> {
 
     /** SVUID */
     private static final long serialVersionUID = 4600789773980813693L;
