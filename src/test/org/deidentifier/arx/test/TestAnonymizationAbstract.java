@@ -70,7 +70,23 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * Creates a new instance
          * 
          * @param config
-         * @param sensitiveAttribute
+         * @param dataset
+         * @param optimalInformationLoss
+         * @param optimalTransformation
+         * @param practical
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                           final String dataset,
+                           final double optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical) {
+            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null);
+        }
+
+        /**
+         * Creates a new instance
+         * 
+         * @param config
          * @param dataset
          * @param optimalInformationLoss
          * @param optimalTransformation
@@ -78,19 +94,31 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param statistics
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String sensitiveAttribute,
                            final String dataset,
-                           final String optimalInformationLoss,
+                           final double optimalInformationLoss,
                            final int[] optimalTransformation,
                            final boolean practical,
                            int[] statistics) {
-            this.config = config;
-            this.sensitiveAttribute = sensitiveAttribute;
-            this.dataset = dataset;
-            this.optimalInformationLoss = optimalInformationLoss;
-            this.optimalTransformation = optimalTransformation;
-            this.practical = practical;
-            this.statistics = statistics;
+            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics);
+        }
+
+        /**
+         * Creates a new instance
+         * 
+         * @param config
+         * @param sensitiveAttribute
+         * @param dataset
+         * @param optimalInformationLoss
+         * @param optimalTransformation
+         * @param practical
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                           final String sensitiveAttribute,
+                           final String dataset,
+                           final double optimalInformationLoss,
+                           final int[] optimalTransformation,
+                           final boolean practical) {
+            this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
 
         /**
@@ -124,42 +152,6 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * Creates a new instance
          * 
          * @param config
-         * @param dataset
-         * @param optimalInformationLoss
-         * @param optimalTransformation
-         * @param practical
-         * @param statistics
-         */
-        public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String dataset,
-                           final double optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical,
-                           int[] statistics) {
-            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics);
-        }
-
-        /**
-         * Creates a new instance
-         * 
-         * @param config
-         * @param dataset
-         * @param optimalInformationLoss
-         * @param optimalTransformation
-         * @param practical
-         */
-        public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String dataset,
-                           final double optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical) {
-            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null);
-        }
-
-        /**
-         * Creates a new instance
-         * 
-         * @param config
          * @param sensitiveAttribute
          * @param dataset
          * @param optimalInformationLoss
@@ -184,14 +176,22 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param optimalInformationLoss
          * @param optimalTransformation
          * @param practical
+         * @param statistics
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
                            final String sensitiveAttribute,
                            final String dataset,
-                           final double optimalInformationLoss,
+                           final String optimalInformationLoss,
                            final int[] optimalTransformation,
-                           final boolean practical) {
-            this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
+                           final boolean practical,
+                           int[] statistics) {
+            this.config = config;
+            this.sensitiveAttribute = sensitiveAttribute;
+            this.dataset = dataset;
+            this.optimalInformationLoss = optimalInformationLoss;
+            this.optimalTransformation = optimalTransformation;
+            this.practical = practical;
+            this.statistics = statistics;
         }
 
         @Override
@@ -349,27 +349,6 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     }
 
     /**
-     * Utility method that helps with the conversion from metrics v1 to metrics v2
-     * @param node
-     * @return
-     */
-    private String getInformationLoss(ARXNode node) {
-        InformationLoss<?> loss = node.getMaximumInformationLoss();
-        if (loss instanceof ILMultiDimensionalRank){
-            
-            @SuppressWarnings("unchecked")
-            double[] value = ((InformationLoss<double[]>)loss).getValue().clone();
-            for (int i=0; i<value.length; i++) {
-                value[i] = Math.round(value[i]*100d);
-            }
-            return Arrays.toString(value);
-            
-        } else {
-            return loss.toString();
-        }
-    }
-
-    /**
      * Returns the configuration of FLASH
      * 
      * @param config
@@ -414,5 +393,43 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         builder.append(" Utility available: ").append(classification[6]).append("\n");
         builder.append("}");
         return builder.toString();
+    }
+    
+    /**
+     * Utility method that helps with the conversion from metrics v1 to metrics v2
+     * @param node
+     * @return
+     */
+    private String getInformationLoss(ARXNode node) {
+        InformationLoss<?> loss = node.getMaximumInformationLoss();
+        if (loss instanceof ILMultiDimensionalRank){
+            
+            @SuppressWarnings("unchecked")
+            double[] value = ((InformationLoss<double[]>)loss).getValue().clone();
+            sortDescending(value);
+            int[] result = new int[value.length];
+            for (int i=0; i<value.length; i++) {
+                result[i] = (int)Math.round(value[i]*100d);
+            }
+            return Arrays.toString(result);
+            
+        } else {
+            return loss.toString();
+        }
+    }
+
+    /**
+     * Sorts the array in descending order
+     * 
+     * @param value
+     */
+    private void sortDescending(double[] value) {
+        Arrays.sort(value);
+        for (int i = 0; i < value.length / 2; i++) {
+            int other = value.length - (i + 1);
+            double temp = value[i];
+            value[i] = value[other];
+            value[other] = temp;
+        }
     }
 }
