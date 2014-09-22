@@ -108,7 +108,7 @@ class UtilityEstimator {
         // Prepare
         initializeTopDown(lattice.getTop());
         setMaximum(lattice.getTop());
-        this.globalMaximum = null;
+        this.globalMaximum = lattice.getTop().getMaximumInformationLoss();
         
         // Pull
         ARXNode[][] levels = lattice.getLevels();
@@ -130,7 +130,7 @@ class UtilityEstimator {
         // Prepare
         initializeBottomUp(lattice.getBottom());
         setMinimum(lattice.getBottom());
-        this.globalMinimum = null;
+        this.globalMinimum = lattice.getBottom().getMinimumInformationLoss();
         
         // Pull
         ARXNode[][] levels = lattice.getLevels();
