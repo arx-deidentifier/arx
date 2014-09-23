@@ -90,7 +90,7 @@
     </target>
 
     <target name="javadoc-api" depends="clean-javadoc">
-        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.7" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX API Documentation" private="false" failonerror="true">
+        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.7" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX API Documentation" private="false" failonerror="true" additionalparam="-notimestamp">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
@@ -105,7 +105,7 @@
     </target>
 
     <target name="javadoc-dev" depends="clean-javadoc">
-        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX Developer Documentation" private="false" failonerror="true">
+        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX Developer Documentation" private="false" failonerror="true" additionalparam="-notimestamp">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
@@ -119,7 +119,7 @@
 
 
     <target name="javadoc-gui" depends="clean-javadoc">
-        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true">
+        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true" additionalparam="-notimestamp">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
