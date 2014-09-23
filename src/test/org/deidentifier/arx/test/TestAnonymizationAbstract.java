@@ -411,7 +411,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             for (int i=0; i<value.length; i++) {
                 result[i] = (int)Math.round(value[i]*100d);
             }
-            return Arrays.toString(result);
+            return Arrays.toString(result).replace(" ", "");
             
         } else {
             return loss.toString();
