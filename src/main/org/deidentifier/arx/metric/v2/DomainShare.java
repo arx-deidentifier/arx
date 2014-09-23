@@ -20,10 +20,10 @@ package org.deidentifier.arx.metric.v2;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
-
-import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
 
 /**
@@ -43,98 +43,112 @@ public class DomainShare implements Serializable {
 
     /** One share per attribute */
     private final double[]              shares;
-    
-    /** 
+
+    /**
      * If an attribute exists with different shares on different generalization
-     * levels, store the share in this map: 
-     * <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>
+     * levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>
      */
     private final LongDoubleOpenHashMap duplicates;
-    
+
     /**
      * Creates a new set of domain shares derived from the given attribute
      * @param hierarchy
      */
-    public DomainShare(GeneralizationHierarchy hierarchy, String[] dictvalues){
-        
+    public DomainShare(String[][] hierarchy, String[] distinctvalues) {
+
         // Prepare
-        int[][] array = hierarchy.getArray();
+        String[][] array = hierarchy;
+        // TODO: Ugly!
+        Map<String, Integer> internaldict = new HashMap<String, Integer>();
+        for (int i = 0; i < distinctvalues.length; i++) {
+            internaldict.put(distinctvalues[i], i);
+        }
+
         this.size = array.length;
         this.duplicates = new LongDoubleOpenHashMap();
-        this.shares = new double[dictvalues.length];
+        this.shares = new double[distinctvalues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
-        IntIntOpenHashMap[] maps = new IntIntOpenHashMap[array[0].length];
-        for (int level=0; level<maps.length; level++) {
-            maps[level] = new IntIntOpenHashMap(hierarchy.getDistinctValues()[level]);
+        @SuppressWarnings("unchecked")
+        Map<String, Integer>[] maps = new HashMap[array[0].length];
+        for (int level = 0; level < maps.length; level++) {
+            maps[level] = new HashMap<String, Integer>();
         }
-        
+
         // First, compute the share for each generalization strategy
-        for (int value=0; value<array.length; value++) {
-            int[] transformation = array[value];
-            for (int level=0; level<transformation.length; level++) {
-                maps[level].putOrAdd(transformation[level], 1, 1);
+        for (int value = 0; value < array.length; value++) {
+            String[] transformation = array[value];
+            for (int level = 0; level < transformation.length; level++) {
+                Map<String, Integer> map = maps[level];
+                String key = transformation[level];
+                if (!map.containsKey(key)) {
+                    map.put(key, 0);
+                }
+                map.put(key, map.get(key) + 1);
             }
         }
-        
+
         // Now transform into an array representation and handle duplicates
-        for (int level=0; level<maps.length; level++) {
-            IntIntOpenHashMap map = maps[level];
-            boolean[] allocated = map.allocated;
-            int[] keys = map.keys;
-            int[] values = map.values;
-            for (int index=0; index<allocated.length; index++){
-                if (allocated[index]) {
-                    
-                    int key = keys[index];
-                    double share = (double)values[index] / size;
-                    double stored = shares[key];
-                    
-                    // If duplicate
-                    if (stored != NOT_AVAILABLE) {
-                        
-                        // If same share, simply continue
-                        if (stored == share) {
-                            continue;
-                        } 
-                        
-                        // Mark as duplicate, if not already marked
-                        if (stored >= 0d) {
-                            shares[key] = - shares[key];
-                        }
-                        
-                        // Store duplicate value
-                        long dkey = (((long)key) << 32) | (level & 0xffffffffL);
-                        duplicates.put(dkey, share);
-                        
-                    // If its not a duplicate, simply store
-                    } else {
-                        shares[key] = share;
+        for (int level = 0; level < maps.length; level++) {
+            Map<String, Integer> map = maps[level];
+            for (Entry<String, Integer> entry : map.entrySet()) {
+
+                String keyString = entry.getKey();
+                double share = (double) entry.getValue() / size;
+
+                Integer key = internaldict.get(keyString);
+
+                if (key == null) {
+                    // value will not be needed, as it is not in the dataset
+                    continue;
+                }
+
+                double stored = shares[key];
+
+                // If duplicate
+                if (stored != NOT_AVAILABLE) {
+
+                    // If same share, simply continue
+                    if (stored == share) {
+                        continue;
                     }
+
+                    // Mark as duplicate, if not already marked
+                    if (stored >= 0d) {
+                        shares[key] = -shares[key];
+                    }
+
+                    // Store duplicate value
+                    long dkey = (((long) key) << 32) | (level & 0xffffffffL);
+                    duplicates.put(dkey, share);
+
+                    // If its not a duplicate, simply store
+                } else {
+                    shares[key] = share;
                 }
             }
         }
     }
-    
+
     /**
      * Returns the size of the domain
      * @return
      */
-    public double getDomainSize(){
+    public double getDomainSize() {
         return size;
     }
-    
+
     /**
      * Returns the share of the given value
      * @param value
      * @param level
      * @return
      */
-    public double getShare(int value, int level){
+    public double getShare(int value, int level) {
         double share = shares[value];
-        if (share >= 0){
+        if (share >= 0) {
             return share;
         } else {
-            long key = (((long)value) << 32) | (level & 0xffffffffL);
+            long key = (((long) value) << 32) | (level & 0xffffffffL);
             return duplicates.getOrDefault(key, -share);
         }
     }
