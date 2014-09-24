@@ -49,7 +49,7 @@ public class DataTableDataProvider implements IDataProvider {
 		try {
 			return provider.getDataValue(col, row);
 		} catch (Exception e){
-			System.out.println("Caught: "+e.getClass().getSimpleName());
+		    // TODO: We silently ignore all errors at this point
 			return "";
 		}
 	}
