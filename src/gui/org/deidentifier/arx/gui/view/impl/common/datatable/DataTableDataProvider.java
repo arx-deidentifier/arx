@@ -45,6 +45,7 @@ public class DataTableDataProvider implements IDataProvider {
 
 	@Override
 	public Object getDataValue(int col, int row) {
+        if (col == -1 || row == -1) return "";
 		try {
 			return provider.getDataValue(col, row);
 		} catch (Exception e){
