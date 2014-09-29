@@ -118,21 +118,13 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
     }
 
     /**
-     * Compares double for "equality" with a tolerance of 15000 ulps
+     * Compares double for "equality" with a tolerance of 5 ulps
      * @param d1
      * @param d2
      * @return
      */
     private boolean closeEnough(double d1, double d2) {
-        
-        // TODO: The tolerance has been included and initialized to such a high values (15000 ulps)
-        // during the switching from metrics v1 to metrics v2, to make the new implementations
-        // pass the old unit tests. It should be checked whether such a high tolerance is really
-        // needed (e.g. the problem can be fixed by rebuilding the unit tests with the new implementation),
-        // and it should be made sure that this fix does not actually mask a bug. It is not yet clear,
-        // what exactly has changed in the underlying implementation to lead to such large differences.
-        
-        double tolerance = 15000 * Math.max(Math.ulp(d1), Math.ulp(d2));
+        double tolerance = 5 * Math.max(Math.ulp(d1), Math.ulp(d2));
         return Math.abs(d2 - d1) <= tolerance;
     }
 
