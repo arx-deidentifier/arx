@@ -20,11 +20,9 @@ package org.deidentifier.arx.metric.v2;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * This class represents a set of domain shares for an attribute
@@ -52,33 +50,29 @@ public class DomainShare implements Serializable {
 
     /**
      * Creates a new set of domain shares derived from the given attribute
-     * @param hierarchy
+     * @param rawHierarchy
+     * @param encodedValues 
+     * @param encodedHierarchy 
      */
-    public DomainShare(String[][] hierarchy, String[] distinctvalues) {
+    public DomainShare(String[][] rawHierarchy, 
+                       String[] encodedValues, 
+                       int[][] encodedHierarchy) {
 
-        // Prepare
-        String[][] array = hierarchy;
-        // TODO: Ugly!
-        Map<String, Integer> internaldict = new HashMap<String, Integer>();
-        for (int i = 0; i < distinctvalues.length; i++) {
-            internaldict.put(distinctvalues[i], i);
-        }
-
-        this.size = array.length;
+        this.size = rawHierarchy.length;
         this.duplicates = new LongDoubleOpenHashMap();
-        this.shares = new double[distinctvalues.length];
+        this.shares = new double[encodedValues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
         @SuppressWarnings("unchecked")
-        Map<String, Integer>[] maps = new HashMap[array[0].length];
+        ObjectIntOpenHashMap<String>[] maps = new ObjectIntOpenHashMap[rawHierarchy[0].length];
         for (int level = 0; level < maps.length; level++) {
-            maps[level] = new HashMap<String, Integer>();
+            maps[level] = new ObjectIntOpenHashMap<String>();
         }
 
         // First, compute the share for each generalization strategy
-        for (int value = 0; value < array.length; value++) {
-            String[] transformation = array[value];
+        for (int value = 0; value < rawHierarchy.length; value++) {
+            String[] transformation = rawHierarchy[value];
             for (int level = 0; level < transformation.length; level++) {
-                Map<String, Integer> map = maps[level];
+                ObjectIntOpenHashMap<String> map = maps[level];
                 String key = transformation[level];
                 if (!map.containsKey(key)) {
                     map.put(key, 0);
@@ -88,21 +82,17 @@ public class DomainShare implements Serializable {
         }
 
         // Now transform into an array representation and handle duplicates
-        for (int level = 0; level < maps.length; level++) {
-            Map<String, Integer> map = maps[level];
-            for (Entry<String, Integer> entry : map.entrySet()) {
-
-                String keyString = entry.getKey();
-                double share = (double) entry.getValue() / size;
-
-                Integer key = internaldict.get(keyString);
-
-                if (key == null) {
-                    // value will not be needed, as it is not in the dataset
-                    continue;
-                }
-
-                double stored = shares[key];
+        for (int row = 0; row < encodedHierarchy.length; row++) {
+            
+            int[] strategy = encodedHierarchy[row];
+            
+            for (int level = 0; level < strategy.length; level++){
+                
+                ObjectIntOpenHashMap<String> map = maps[level];
+                int value = strategy[level];
+                String keyString = encodedValues[value];
+                double share = (double) map.get(keyString) / size;
+                double stored = shares[value];
 
                 // If duplicate
                 if (stored != NOT_AVAILABLE) {
@@ -114,16 +104,16 @@ public class DomainShare implements Serializable {
 
                     // Mark as duplicate, if not already marked
                     if (stored >= 0d) {
-                        shares[key] = -shares[key];
+                        shares[value] = -shares[value];
                     }
 
                     // Store duplicate value
-                    long dkey = (((long) key) << 32) | (level & 0xffffffffL);
+                    long dkey = (((long) value) << 32) | (level & 0xffffffffL);
                     duplicates.put(dkey, share);
 
                     // If its not a duplicate, simply store
                 } else {
-                    shares[key] = share;
+                    shares[value] = share;
                 }
             }
         }
