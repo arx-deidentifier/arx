@@ -161,7 +161,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
      */
     private double normalize(double aggregate, int dimension) {
 
-        double min = datasetSize / domainSizes[dimension];
+        double min = gWeight * datasetSize / domainSizes[dimension];
         double max = datasetSize;
         double result = (aggregate - min) / (max - min);
         return result >= 0d ? result : 0d;

@@ -251,7 +251,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
      */
     protected double normalize(double aggregate, int dimension) {
 
-        double min = tuples / shares[dimension].getDomainSize();
+        double min = gFactor * tuples / shares[dimension].getDomainSize();
         double max = tuples;
         double result = (aggregate - min) / (max - min);
         return result >= 0d ? result : 0d;
