@@ -51,7 +51,7 @@ public class MetricMDNMNormalizedDomainSharePotentiallyPrecomputed extends Abstr
      * @param function
      */
     protected MetricMDNMNormalizedDomainSharePotentiallyPrecomputed(double threshold,
-                                                                            AggregateFunction function) {
+                                                                    AggregateFunction function) {
         super(new MetricMDNMNormalizedDomainShare(function),
               new MetricMDNMNormalizedDomainSharePrecomputed(function),
               threshold);
