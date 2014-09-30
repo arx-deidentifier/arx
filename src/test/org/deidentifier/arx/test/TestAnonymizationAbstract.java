@@ -37,8 +37,6 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.metric.InformationLoss;
-import org.deidentifier.arx.metric.v2.ILMultiDimensionalRank;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -285,7 +283,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
             
-            String loss = getInformationLoss(result.getGlobalOptimum());
+            String loss = result.getGlobalOptimum().getMaximumInformationLoss().toString();
             
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
                     loss+"("+result.getGlobalOptimum().getMinimumInformationLoss().toString()+")",
@@ -393,43 +391,5 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         builder.append(" Utility available: ").append(classification[6]).append("\n");
         builder.append("}");
         return builder.toString();
-    }
-    
-    /**
-     * Utility method that helps with the conversion from metrics v1 to metrics v2
-     * @param node
-     * @return
-     */
-    private String getInformationLoss(ARXNode node) {
-        InformationLoss<?> loss = node.getMaximumInformationLoss();
-        if (loss instanceof ILMultiDimensionalRank){
-            
-            @SuppressWarnings("unchecked")
-            double[] value = ((InformationLoss<double[]>)loss).getValue().clone();
-            sortDescending(value);
-            int[] result = new int[value.length];
-            for (int i=0; i<value.length; i++) {
-                result[i] = (int)Math.round(value[i]*100d);
-            }
-            return Arrays.toString(result).replace(" ", "");
-            
-        } else {
-            return loss.toString();
-        }
-    }
-
-    /**
-     * Sorts the array in descending order
-     * 
-     * @param value
-     */
-    private void sortDescending(double[] value) {
-        Arrays.sort(value);
-        for (int i = 0; i < value.length / 2; i++) {
-            int other = value.length - (i + 1);
-            double temp = value[i];
-            value[i] = value[other];
-            value[other] = temp;
-        }
     }
 }
