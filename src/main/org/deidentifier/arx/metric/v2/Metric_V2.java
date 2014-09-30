@@ -69,8 +69,8 @@ public class Metric_V2 {
      * @param gsFactor A factor [0,1] weighting generalization and suppression. 
      *                 The default value is 0.5, which means that generalization
      *                 and suppression will be treated equally. A factor of 0
-     *                 will favor generalization, and a factor of 1 will favor
-     *                 suppression. The values in between can be used for
+     *                 will favor suppression, and a factor of 1 will favor
+     *                 generalization. The values in between can be used for
      *                 balancing both methods. 
      */
     public static Metric<?> createNDSMetric(double gsFactor) {
