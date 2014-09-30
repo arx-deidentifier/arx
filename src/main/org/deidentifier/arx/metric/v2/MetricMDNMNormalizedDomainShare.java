@@ -143,7 +143,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     result[dimension] += m.isNotOutlier ? share * gFactor :
-                                         (sFactor == 1d ? m.count : share + sFactor * (1d - share));
+                                         (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
                     bound[dimension] += share * gFactor;
                 }
             }
@@ -170,7 +170,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify g) {
-
+        
         // Prepare
         int[] transformation = node.getTransformation();
         int dimensions = transformation.length;

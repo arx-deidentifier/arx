@@ -224,7 +224,7 @@ public class MetricNDS extends MetricWeighted<InformationLossRCE> {
                         } else {
                             int value = m.key[dimension];
                             double share = (double)m.count * frequencies[dimension][transformation[dimension]][value];
-                            scores[dimension] += share + sWeight * (1d - share);
+                            scores[dimension] += share + sWeight * ((double)m.count - share);
                         }
                     }
                 }
