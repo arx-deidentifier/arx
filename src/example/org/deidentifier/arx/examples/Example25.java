@@ -70,8 +70,8 @@ public class Example25 extends Example {
                                                                                            ' ',
                                                                                            '*');
         
-//        builder1.setDomainProperties(100, 10, 2);
-//        builder1.setDomainSize(100, 2);
+        // builder1.setDomainProperties(100, 10, 2);
+        // builder1.setDomainSize(100, 2);
         builder1.setAlphabetSize(10, 2);
         
         HierarchyBuilderRedactionBased<?> builder2 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
@@ -79,9 +79,9 @@ public class Example25 extends Example {
                                                                                            ' ',
                                                                                            '*');
         
-//        builder2.setDomainProperties(100000, 10, 5);
-//        builder2.setDomainAndAlphabetSize(30000, 10, 5);
-//        builder2.setDomainSize(30000, 5);
+        // builder2.setDomainProperties(100000, 10, 5);
+        // builder2.setDomainAndAlphabetSize(30000, 10, 5);
+        // builder2.setDomainSize(30000, 5);
         builder2.setAlphabetSize(10, 5);
 
         data.getDefinition().setAttributeType("age", builder1);

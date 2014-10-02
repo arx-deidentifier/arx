@@ -83,7 +83,6 @@ public class DomainShareRedaction implements DomainShare {
      */
     @Override
     public double getDomainSize() {
-//        return Math.pow(alphabetSize, maxValueLength);
         return domainSize;
     }
 
@@ -95,8 +94,8 @@ public class DomainShareRedaction implements DomainShare {
      */
     @Override
     public double getShare(int value, int level) {
-//        return Math.pow(alphabetSize, (double)level - maxValueLength);
         
+        // Compute and interpolate
         double input = Math.pow(alphabetSize, (double)level - maxValueLength);
         return (input - minInput) / (maxInput - minInput) * (maxOutput - minOutput) + minOutput;
         
