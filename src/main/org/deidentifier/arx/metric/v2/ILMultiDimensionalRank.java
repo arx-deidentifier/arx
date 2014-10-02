@@ -32,13 +32,13 @@ import org.deidentifier.arx.metric.InformationLoss;
 public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
 
     /** SVUID */
-    private static final long serialVersionUID = 591145071792293317L;
+    private static final long   serialVersionUID = 591145071792293317L;
 
     /** Aggregate */
-    private double[]          aggregate        = null;
+    private double[]            aggregate        = null;
 
     /** Geometric mean */
-    private double            mean             = 0d;
+    private double              mean             = 0d;
 
     /**
      * Clone constructor
@@ -86,7 +86,7 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
             double[] otherValue = convert(other).aggregate;
             double[] thisValue = aggregate;
             for (int i = 0; i < otherValue.length; i++) {
-                int cmp = compareWithTolerance(thisValue[i], otherValue[i]);
+                int cmp = Double.compare(thisValue[i], otherValue[i]);
                 if (cmp != 0) return cmp;
                 
             }
@@ -101,7 +101,7 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(aggregate);
+        return Arrays.hashCode(this.aggregate);
     }
 
     @Override
@@ -115,28 +115,6 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
     @Override
     public String toString() {
         return Arrays.toString(this.aggregate);
-    }
-
-    /**
-     * Compares double for "equality" with a tolerance of 15000 ulps
-     * @param d1
-     * @param d2
-     * @return
-     */
-    private boolean closeEnough(double d1, double d2) {
-        double tolerance = 15000 * Math.max(Math.ulp(d1), Math.ulp(d2));
-        return Math.abs(d2 - d1) <= tolerance;
-    }
-
-    /**
-     * Compares two doubles with tolerance
-     * @param d1
-     * @param d2
-     * @return
-     */
-    private int compareWithTolerance(double d1, double d2) {
-        if (closeEnough(d1, d2)) return 0;
-        else return Double.compare(d1, d2);
     }
 
     /**

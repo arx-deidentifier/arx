@@ -37,6 +37,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.v2.ILMultiDimensionalRank;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -287,7 +289,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
                     loss+"("+result.getGlobalOptimum().getMinimumInformationLoss().toString()+")",
-                    testCase.optimalInformationLoss,
+                    convertExpectedInfoLoss(result.getGlobalOptimum().getMinimumInformationLoss(), testCase.optimalInformationLoss),
                     loss);
             
             if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)){
@@ -343,6 +345,30 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available",
                          testCase.statistics[6],
                          statistics[6]);
+        }
+    }
+
+    /**
+     * Converts info loss
+     * @param minimumInformationLoss
+     * @param optimalInformationLoss
+     * @return
+     */
+    private String convertExpectedInfoLoss(InformationLoss<?> result, String expected) {
+        if (result instanceof ILMultiDimensionalRank) {
+            
+            String[] values = expected.split(",");
+            values[0] = values[0].replace('[', ' ').trim();
+            values[values.length-1] = values[values.length-1].replace(']', ' ').trim();
+            
+            double[] valuesDouble = new double[values.length];
+            for (int i=0; i<values.length; i++) {
+                valuesDouble[i] = Math.floor(Double.parseDouble(values[i]) * 10000000000d) / 10000000000d;
+            }
+            
+            return Arrays.toString(valuesDouble); 
+        } else {
+            return expected;
         }
     }
 
