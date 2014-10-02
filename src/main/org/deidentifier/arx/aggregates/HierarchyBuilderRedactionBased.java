@@ -127,19 +127,19 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     private transient String[][] result;
 
     /**
-     * Meta-data about the nature of the domain of the attribute. Modeled as Integer
+     * Meta-data about the nature of the domain of the attribute. Modeled as Double
      * for backwards compatibility
      */
     private Double              maxValueLength;
     
     /**
-     * Meta-data about the nature of the domain of the attribute. Modeled as Integer
+     * Meta-data about the nature of the domain of the attribute. Modeled as Double
      * for backwards compatibility
      */
     private Double              domainSize;
     
     /**
-     * Meta-data about the nature of the domain of the attribute. Modeled as Integer
+     * Meta-data about the nature of the domain of the attribute. Modeled as Double
      * for backwards compatibility
      */
     private Double              alphabetSize;
