@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
@@ -219,9 +221,23 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
         // Compute domain shares
         this.shares = new DomainShare[hierarchies.length];
         for (int i=0; i<shares.length; i++) {
-            shares[i] = new DomainShare(definition.getHierarchy(input.getHeader()[i]), 
-                                        input.getDictionary().getMapping()[i],
-                                        hierarchies[i].getArray());
+            
+            // Extract info
+            String attribute = input.getHeader()[i];
+            String[][] hierarchy = definition.getHierarchy(attribute);
+            HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
+            
+            // Create shares for redaction-based hierarchies
+            if ((builder instanceof HierarchyBuilderRedactionBased) &&
+                ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                
+            // Create fallback-shares for materialized hierarchies
+            } else {
+                shares[i] = new DomainShareMaterialized(hierarchy, 
+                                                        input.getDictionary().getMapping()[i],
+                                                        hierarchies[i].getArray());
+            }
         }
    
         // Determine total number of tuples

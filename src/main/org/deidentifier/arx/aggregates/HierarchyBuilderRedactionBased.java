@@ -111,11 +111,38 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         return create(new File(file));
     }
     
+    /** Alignment order*/
     private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
+    
+    /** Padding character*/
     private char                 paddingCharacter   = '*';
+    
+    /** Redaction character*/
     private char                 redactionCharacter = '*';
+    
+    /** Redaction order*/
     private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
+
+    /** Result */
     private transient String[][] result;
+
+    /**
+     * Meta-data about the nature of the domain of the attribute. Modeled as Integer
+     * for backwards compatibility
+     */
+    private Double              maxValueLength;
+    
+    /**
+     * Meta-data about the nature of the domain of the attribute. Modeled as Integer
+     * for backwards compatibility
+     */
+    private Double              domainSize;
+    
+    /**
+     * Meta-data about the nature of the domain of the attribute. Modeled as Integer
+     * for backwards compatibility
+     */
+    private Double              alphabetSize;
     
     /**
      * Values are aligned left-to-right and redacted right-to-left. Redacted characters
@@ -163,16 +190,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.aligmentOrder = alignmentOrder;
         this.redactionOrder = redactionOrder;
     }
-    /**
-     * Creates a new hierarchy, based on the predefined specification
-     * @param data
-     * @return
-     */
-    public Hierarchy build(String[] data){
-        prepare(data);
-        return build();
-    }
-    
+
+
     /**
      * Creates a new hierarchy, based on the predefined specification
      * @return
@@ -189,7 +208,17 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         this.result = null;
         return h;
     }
-
+    
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @param data
+     * @return
+     */
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
+    }
+    
     /**
      * Returns the alignment order
      * @return
@@ -199,13 +228,43 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
+     * <p>Returns properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies. May return <code>null</code>.</p>
+     * @return Size of the alphabet: the possible number of elements per character of any value from the domain
+     */
+    public Double getAlphabetSize() {
+        return alphabetSize;
+    }
+    
+    /**
+     * <p>Returns properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies. May return <code>null</code>.</p>
+     * @return Size of the domain: the number of elements in the domain of the attribute
+     */
+    public Double getDomainSize() {
+        return domainSize;
+    }
+
+    /**
+     * <p>Returns properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies. May return <code>null</code>.</p>
+     * 
+     * @return Max. length of an element: the number of characters of the largest element in the domain
+     */
+    public Double getMaxValueLength() {
+        return maxValueLength;
+    }
+    /**
      * Returns the padding character
      * @return
      */
     public char getPaddingCharacter() {
         return paddingCharacter;
     }
-
+    
     /**
      * Returns the redaction character
      * @return
@@ -220,6 +279,16 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
      */
     public Order getRedactionOrder() {
         return redactionOrder;
+    }
+    
+    /**
+     * Returns whether domain-properties are available for this builder. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies.
+     * @return
+     */
+    public boolean isDomainPropertiesAvailable() {
+        return maxValueLength != null && domainSize != null && alphabetSize != null;
     }
 
     /**
@@ -247,6 +316,76 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         return sizes;
     }
 
+    /**
+     * <p>Sets properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies. These properties are:</p>
+     * <ul>
+     * <li>Size of the domain: the number of elements in the domain of the attribute</li>
+     * <li>Size of the alphabet: the possible number of elements per character of any value from the domain</li>
+     * <li>Max. length of an element: the number of characters of the largest element in the domain</li>
+     * </ul>
+     * <p>As a simplifying assumption, it is assumed that the domain values are distributed equally regarding 
+     * their length and their characters from the alphabet.</p>
+     * <p>This method will estimate the size of the domain as 
+     * domainSize = alphabetSize^{maxValueLength}</p>
+     * 
+     * 
+     * @param alphabetSize
+     * @param maxValueLength
+     */
+    public void setAlphabetSize(int alphabetSize, int maxValueLength){
+
+        this.domainSize = Math.pow((double)alphabetSize, (double)maxValueLength);
+        this.maxValueLength = Double.valueOf(maxValueLength);
+        this.alphabetSize = Double.valueOf(alphabetSize);
+    }
+
+    /**
+     * <p>Sets properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies. These properties are:</p>
+     * <ul>
+     * <li>Size of the domain: the number of elements in the domain of the attribute</li>
+     * <li>Size of the alphabet: the possible number of elements per character of any value from the domain</li>
+     * <li>Max. length of an element: the number of characters of the largest element in the domain</li>
+     * </ul>
+     * 
+     * @param domainSize
+     * @param alphabetSize
+     * @param maxValueLength
+     */
+    public void setDomainAndAlphabetSize(int domainSize, int alphabetSize, int maxValueLength){
+
+        this.domainSize = Double.valueOf(domainSize);
+        this.maxValueLength = Double.valueOf(maxValueLength);
+        this.alphabetSize = Double.valueOf(alphabetSize);
+    }
+
+    /**
+     * <p>Sets properties about the attribute's domain. Currently, this information is only used for
+     * evaluating information loss with the generalized loss metric for attributes with functional
+     * redaction-based hierarchies. These properties are:</p>
+     * <ul>
+     * <li>Size of the domain: the number of elements in the domain of the attribute</li>
+     * <li>Size of the alphabet: the possible number of elements per character of any value from the domain</li>
+     * <li>Max. length of an element: the number of characters of the largest element in the domain</li>
+     * </ul>
+     * <p>As a simplifying assumption, it is assumed that the domain values are distributed equally regarding 
+     * their length and their characters from the alphabet.</p>
+     * <p>This method will estimate the size of the alphabet as 
+     * alphabetSize = pow(domainSize, 1.0d / maxValueLength)</p>
+     * 
+     * @param domainSize
+     * @param maxValueLength
+     */
+    public void setDomainSize(int domainSize, int maxValueLength){
+        
+        this.domainSize = Double.valueOf(domainSize);
+        this.maxValueLength = Double.valueOf(maxValueLength);
+        this.alphabetSize = Math.pow(domainSize, 1.0d / (double)maxValueLength);
+    }
+    
     /**
      * Computes the hierarchy
      */
