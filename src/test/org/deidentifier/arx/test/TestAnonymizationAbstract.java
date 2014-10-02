@@ -289,8 +289,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             
             assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
                     loss+"("+result.getGlobalOptimum().getMinimumInformationLoss().toString()+")",
-                    convertExpectedInfoLoss(result.getGlobalOptimum().getMinimumInformationLoss(), testCase.optimalInformationLoss),
-                    loss);
+                    convertInformationLoss(result.getGlobalOptimum().getMinimumInformationLoss(), testCase.optimalInformationLoss),
+                    convertInformationLoss(result.getGlobalOptimum().getMinimumInformationLoss(), loss));
             
             if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)){
                 System.err.println("Note: Information loss equals, but the optimum differs:");
@@ -354,7 +354,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @param optimalInformationLoss
      * @return
      */
-    private String convertExpectedInfoLoss(InformationLoss<?> result, String expected) {
+    private String convertInformationLoss(InformationLoss<?> result, String expected) {
         if (result instanceof ILMultiDimensionalRank) {
             
             String[] values = expected.split(",");
@@ -363,7 +363,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             
             double[] valuesDouble = new double[values.length];
             for (int i=0; i<values.length; i++) {
-                valuesDouble[i] = Math.floor(Double.parseDouble(values[i]) * 10000000000d) / 10000000000d;
+                valuesDouble[i] = Math.floor(Double.parseDouble(values[i]) * 1000000000d) / 1000000000d;
             }
             
             return Arrays.toString(valuesDouble); 
