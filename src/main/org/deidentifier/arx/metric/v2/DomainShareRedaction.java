@@ -31,19 +31,13 @@ public class DomainShareRedaction implements DomainShare {
     /** SVUID */
     private static final long serialVersionUID = 2015677962393713964L;
 
-    /**
-     * Meta-data about the nature of the domain of the attribute
-     */
+    /** Meta-data about the nature of the domain of the attribute */
     private double            maxValueLength;
 
-    /**
-     * Meta-data about the nature of the domain of the attribute
-     */
+    /** Meta-data about the nature of the domain of the attribute */
     private double            domainSize;
 
-    /**
-     * Meta-data about the nature of the domain of the attribute
-     */
+    /** Meta-data about the nature of the domain of the attribute */
     private double            alphabetSize;
 
     /** For interpolating linearly from input to output range */
@@ -61,7 +55,7 @@ public class DomainShareRedaction implements DomainShare {
     /**
      * Creates a new set of domain shares derived from the given functional redaction-based hierarchy
      * 
-     * @param hierarchy
+     * @param builder
      */
     public DomainShareRedaction(HierarchyBuilderRedactionBased<?> builder) {
 
