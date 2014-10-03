@@ -369,15 +369,15 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public static <T> HierarchyBuilderIntervalBased<T> create(String file) throws IOException{
         return create(new File(file));
     }
-    
-    /** Adjustment */
-    private Range<T>     lowerRange;
 
     /** Adjustment */
-    private Range<T>     upperRange;
+    private Range<T>          lowerRange;
+
+    /** Adjustment */
+    private Range<T>          upperRange;
 
     /** Defined intervals */
-    private List<Interval<T>> intervals        = new ArrayList<Interval<T>>();
+    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
 
     /**
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
