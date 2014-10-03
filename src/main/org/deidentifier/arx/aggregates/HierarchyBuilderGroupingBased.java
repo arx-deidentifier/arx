@@ -232,16 +232,6 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     
     /**
      * Creates a new hierarchy, based on the predefined specification
-     * @param data
-     * @return
-     */
-    public Hierarchy build(String[] data){
-        prepare(data);
-        return build();
-    }
-    
-    /**
-     * Creates a new hierarchy, based on the predefined specification
      * @return
      */
     public Hierarchy build(){
@@ -272,6 +262,16 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         this.data = null;
         this.abstractGroups = null;
         return h;
+    }
+    
+    /**
+     * Creates a new hierarchy, based on the predefined specification
+     * @param data
+     * @return
+     */
+    public Hierarchy build(String[] data){
+        prepare(data);
+        return build();
     }
     
     /**
@@ -420,10 +420,35 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
     }
     
     /**
+     * Returns the prepared groups for recursion
+     * @return 
+     */
+    protected AbstractGroup[][] getPreparedGroups(){
+        return this.abstractGroups;
+    }
+    
+    /**
      * Tells the implementing class to prepare the generalization process
      */
     protected abstract AbstractGroup[][] prepareGroups();
     
+    /**
+     * Sets the data array
+     */
+    protected void setData(String[] data){
+        this.data = data;
+    }
+    
+    /**
+     * Sets the groups on higher levels of the hierarchy
+     * @param levels
+     */
+    protected void setLevels(List<Level<T>> levels) {
+        for (Level<T> level : levels) {
+            this.groups.put(level.getLevel(), level);
+        }
+    }
+
     /**
      * Is this builder prepared allready
      * @param prepared
@@ -433,13 +458,5 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         if (prepared == false) {
             this.abstractGroups = null;
         }
-    }
-
-    /**
-     * Returns the prepared groups for recursion
-     * @return 
-     */
-    protected AbstractGroup[][] getPreparedGroups(){
-        return this.abstractGroups;
     }
 }

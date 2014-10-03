@@ -289,6 +289,12 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return snapBound;
         }
 
+        @Override
+        public String toString() {
+            return "Range [repeat=" + repeatBound + ", snap=" +
+                   snapBound + ", label=" + labelBound + "]";
+        }
+
         /**
          * @param labelBound the labelBound to set
          */
@@ -308,12 +314,6 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
          */
         private void setSnapBound(U snapBound) {
             this.snapBound = snapBound;
-        }
-
-        @Override
-        public String toString() {
-            return "Range [repeat=" + repeatBound + ", snap=" +
-                   snapBound + ", label=" + labelBound + "]";
         }
     }
 
@@ -383,7 +383,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
      * @param type
      */
-    private HierarchyBuilderIntervalBased(DataType<T> type) {
+    protected HierarchyBuilderIntervalBased(DataType<T> type) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
@@ -399,7 +399,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param lowerRange
      * @param upperRange
      */
-    private HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
+    protected HierarchyBuilderIntervalBased(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
         super(Type.INTERVAL_BASED, type);
         if (!(type instanceof DataTypeWithRatioScale)) {
             throw new IllegalArgumentException("Data type must have a ratio scale");
@@ -460,7 +460,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         this.setPrepared(false);
         return this;
     }
-
+    
     /**
      * Adds an interval. Min is inclusive, max is exclusive. Uses the predefined default aggregate function
      * @param min
@@ -489,7 +489,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public Range<T> getLowerRange() {
         return this.lowerRange;
     }
-    
+
     /**
      * Returns the upper range
      * @return
@@ -497,7 +497,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public Range<T> getUpperRange() {
         return this.upperRange;
     }
-
+    
     @Override
     @SuppressWarnings("unchecked")
     public String isValid() {
@@ -589,7 +589,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             return interval;
         }
     }
-    
+
     /**
      * Returns the matching interval
      * @param index
@@ -613,7 +613,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         T upper = type.add(interval.max, offset);
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
     }
-
+    
     /**
      * Performs the index lookup
      * @param value
@@ -696,16 +696,21 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         return new Interval<T>(this, (DataType<T>)type, lower, upper, interval.function);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected AbstractGroup[][] prepareGroups() {
+    /**
+     * Adds an interval
+     * @param interval
+     */
+    protected void addInterval(Interval<T> interval) {
+        this.intervals.add(interval);
+    }
 
-        // Check
-        String valid = isValid();
-        if (valid != null) {
-            throw new IllegalArgumentException(valid);
-        }
-        
+    /**
+     * Returns adjusted ranges
+     * 
+     * @return Array containing {lower, upper}
+     */
+    @SuppressWarnings("unchecked")
+    protected Range<T>[] getAdjustedRanges() {
         // Create adjustments
         Range<T> tempLower = new Range<T>(null, null, null);
         Range<T> tempUpper = new Range<T>(null, null, null);
@@ -739,6 +744,23 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         } else {
             tempUpper.setLabelBound(tempUpper.getSnapBound());
         }
+        return new Range[]{tempLower, tempUpper};
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    protected AbstractGroup[][] prepareGroups() {
+
+        // Check
+        String valid = isValid();
+        if (valid != null) {
+            throw new IllegalArgumentException(valid);
+        }
+        
+        // Create adjustments
+        Range<T>[] ranges = getAdjustedRanges();
+        Range<T> tempLower = ranges[0];
+        Range<T> tempUpper = ranges[1];
         
         // Build leaf level index
         ArrayList<IndexNode> nodes = new ArrayList<IndexNode>();
@@ -902,5 +924,20 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         
         // Return
         return result.toArray(new AbstractGroup[0][0]);
+    }
+
+    /**
+     * Sets the data array
+     */
+    protected void setData(String[] data){
+        super.setData(data);
+    }
+    
+    /**
+     * Sets the groups on higher levels of the hierarchy
+     * @param levels
+     */
+    protected void setLevels(List<Level<T>> levels) {
+        super.setLevels(levels);
     }
 }
