@@ -57,8 +57,8 @@ public class DomainShareMaterialized implements DomainShare {
      * @param encodedHierarchy 
      */
     public DomainShareMaterialized(String[][] rawHierarchy, 
-                       String[] encodedValues, 
-                       int[][] encodedHierarchy) {
+                                   String[] encodedValues, 
+                                   int[][] encodedHierarchy) {
 
         this.size = rawHierarchy.length;
         this.duplicates = new LongDoubleOpenHashMap();
