@@ -142,8 +142,8 @@ public class Example18 extends Example {
         // Create the builder
         HierarchyBuilderIntervalBased<Long> builder = HierarchyBuilderIntervalBased.create(
                                                           DataType.INTEGER,
-                                                          new Range<Long>(0l,0l,Long.MIN_VALUE),
-                                                          new Range<Long>(100l,100l,Long.MAX_VALUE));
+                                                          new Range<Long>(0l,0l,Long.MIN_VALUE / 4),
+                                                          new Range<Long>(100l,100l,Long.MAX_VALUE / 4));
         
         // Define base intervals
         builder.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
