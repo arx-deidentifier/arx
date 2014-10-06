@@ -27,8 +27,11 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.v2.Metric_V2;
@@ -65,14 +68,19 @@ public class Example25 extends Example {
         data.add("45", "male", "81931");
 
         // Define hierarchies
-        HierarchyBuilderRedactionBased<?> builder1 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
-                                                                                           Order.RIGHT_TO_LEFT,
-                                                                                           ' ',
-                                                                                           '*');
+        HierarchyBuilderIntervalBased<Long> builder1 = HierarchyBuilderIntervalBased.create(
+                                                          DataType.INTEGER,
+                                                          new Range<Long>(0l,0l,0l),
+                                                          new Range<Long>(99l,99l,99l));
         
-        // builder1.setDomainProperties(100, 10, 2);
-        // builder1.setDomainSize(100, 2);
-        builder1.setAlphabetSize(10, 2);
+        // Define base intervals
+        builder1.setAggregateFunction(DataType.INTEGER.createAggregate().createIntervalFunction(true, false));
+        builder1.addInterval(0l, 20l);
+        builder1.addInterval(20l, 33l);
+        
+        // Define grouping fanouts
+        builder1.getLevel(0).addGroup(2);
+        builder1.getLevel(1).addGroup(3);
         
         HierarchyBuilderRedactionBased<?> builder2 = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
                                                                                            Order.RIGHT_TO_LEFT,

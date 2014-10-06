@@ -21,9 +21,11 @@ package org.deidentifier.arx.metric.v2;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -215,6 +217,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
         return this.shares;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -237,6 +240,12 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
             if ((builder instanceof HierarchyBuilderRedactionBased) &&
                 ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
                 shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                
+             // Create shares for interval-based hierarchies
+            } else if (builder instanceof HierarchyBuilderIntervalBased){
+                shares[i] = new DomainShareInterval<T>((HierarchyBuilderIntervalBased<T>)builder,
+                                                        hierarchies[i].getArray(),
+                                                        input.getDictionary().getMapping()[i]);
                 
             // Create fallback-shares for materialized hierarchies
             } else {
