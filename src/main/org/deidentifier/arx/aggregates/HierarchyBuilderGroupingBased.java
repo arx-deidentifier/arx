@@ -361,7 +361,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
         this.abstractGroups = prepareGroups();
         this.prepared = true;
         
-       // TODO: This assumes that input data does not contain duplicates
+        // TODO: This assumes that input data does not contain duplicates
         int[] result = new int[this.abstractGroups.length + 1];
         result[0] = data.length; 
         for (int i=0; i<result.length - 1; i++){
