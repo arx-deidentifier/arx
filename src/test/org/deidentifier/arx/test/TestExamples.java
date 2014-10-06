@@ -34,6 +34,8 @@ import org.deidentifier.arx.examples.Example20;
 import org.deidentifier.arx.examples.Example21;
 import org.deidentifier.arx.examples.Example22;
 import org.deidentifier.arx.examples.Example23;
+import org.deidentifier.arx.examples.Example24;
+import org.deidentifier.arx.examples.Example25;
 import org.deidentifier.arx.examples.Example3;
 import org.deidentifier.arx.examples.Example4;
 import org.deidentifier.arx.examples.Example5;
@@ -249,6 +251,24 @@ public class TestExamples {
     public void testExample23() {
         try {
             Example23.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    @Test
+    public void testExample24() {
+        try {
+            Example24.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+    @Test
+    public void testExample25() {
+        try {
+            Example25.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
