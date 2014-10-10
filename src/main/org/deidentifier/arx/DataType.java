@@ -81,7 +81,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
          */
         private ARXDate(final String formatString) {
-            if (format == null || format.equals("Default")) {
+            if (formatString == null || formatString.equals("Default")) {
                 string = "dd.MM.yyyy";
                 format = new SimpleDateFormat(string);
             } else {
