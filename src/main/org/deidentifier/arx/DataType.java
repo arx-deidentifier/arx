@@ -82,8 +82,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          */
         private ARXDate(final String formatString) {
             if (formatString == null || formatString.equals("Default")) {
-                string = "dd.MM.yyyy";
-                format = new SimpleDateFormat(string);
+                this.string = "dd.MM.yyyy";
+                this.format = new SimpleDateFormat(string);
             } else {
                 this.format = new SimpleDateFormat(formatString);
                 this.string = formatString;
