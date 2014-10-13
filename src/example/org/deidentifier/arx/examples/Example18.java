@@ -19,6 +19,11 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -53,6 +58,7 @@ public class Example18 extends Example {
         intervalBased();
         orderBased();
         ldlCholesterol();
+        dates();
         loadStore();
     }
 
@@ -259,6 +265,49 @@ public class Example18 extends Example {
     }
 
     /**
+     * Exemplifies the use of the order-based builder
+     */
+    private static void dates() {
+
+    	String stringDateFormat = "yyyy-MM-dd HH:mm";
+    	
+    	DataType<Date> dateType = DataType.createDate(stringDateFormat);
+    	
+        // Create the builder
+        HierarchyBuilderOrderBased<Date> builder = HierarchyBuilderOrderBased.create(dateType, false);
+
+        // Define grouping fanouts
+        builder.getLevel(0).addGroup(10, dateType.createAggregate().createIntervalFunction());
+        builder.getLevel(1).addGroup(2, dateType.createAggregate().createIntervalFunction());
+
+        // Alternatively
+        // builder.setAggregateFunction(AggregateFunction.INTERVAL(DataType.INTEGER));
+        // builder.getLevel(0).addFanout(10);
+        // builder.getLevel(1).addFanout(2);
+        
+        System.out.println("---------------------");
+        System.out.println("ORDER-BASED DATE HIERARCHY");
+        System.out.println("---------------------");
+        System.out.println("");
+        System.out.println("SPECIFICATION");
+        
+        // Print specification
+        for (Level<Date> level : builder.getLevels()) {
+            System.out.println(level);
+        }
+        
+        // Print info about resulting groups
+        System.out.println("Resulting levels: "+Arrays.toString(builder.prepare(getExampleDateData(stringDateFormat))));
+        
+        System.out.println("");
+        System.out.println("RESULT");
+        
+        // Print resulting hierarchy
+        printArray(builder.build().getHierarchy());
+        System.out.println("");
+    }
+    
+    /**
      * Returns example data
      * @return
      */
@@ -267,6 +316,25 @@ public class Example18 extends Example {
         String[] result = new String[100];
         for (int i=0; i< result.length; i++){
             result[i] = String.valueOf(i);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns example date data
+     * @return
+     */
+    private static String[] getExampleDateData(String stringFormat){
+
+    	SimpleDateFormat format = new SimpleDateFormat(stringFormat);
+    	
+        String[] result = new String[100];
+        for (int i=0; i< result.length; i++){
+        	
+        	Calendar date = GregorianCalendar.getInstance();
+        	date.add(Calendar.HOUR, i);
+        	
+            result[i] = format.format(date.getTime());
         }
         return result;
     }
