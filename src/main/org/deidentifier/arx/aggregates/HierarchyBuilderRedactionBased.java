@@ -319,7 +319,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     /**
      * <p>Sets properties about the attribute's domain. Currently, this information is only used for
      * evaluating information loss with the generalized loss metric for attributes with functional
-     * redaction-based hierarchies. These properties are:</p>
+     * redaction-based hierarchies. Required properties are:</p>
      * <ul>
      * <li>Size of the domain: the number of elements in the domain of the attribute</li>
      * <li>Size of the alphabet: the possible number of elements per character of any value from the domain</li>
@@ -344,7 +344,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     /**
      * <p>Sets properties about the attribute's domain. Currently, this information is only used for
      * evaluating information loss with the generalized loss metric for attributes with functional
-     * redaction-based hierarchies. These properties are:</p>
+     * redaction-based hierarchies. Required properties are:</p>
      * <ul>
      * <li>Size of the domain: the number of elements in the domain of the attribute</li>
      * <li>Size of the alphabet: the possible number of elements per character of any value from the domain</li>
@@ -365,7 +365,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     /**
      * <p>Sets properties about the attribute's domain. Currently, this information is only used for
      * evaluating information loss with the generalized loss metric for attributes with functional
-     * redaction-based hierarchies. These properties are:</p>
+     * redaction-based hierarchies. Required properties are:</p>
      * <ul>
      * <li>Size of the domain: the number of elements in the domain of the attribute</li>
      * <li>Size of the alphabet: the possible number of elements per character of any value from the domain</li>

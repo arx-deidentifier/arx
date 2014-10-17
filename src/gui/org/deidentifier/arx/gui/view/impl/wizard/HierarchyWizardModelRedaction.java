@@ -32,14 +32,19 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstract<T> {
 
     /** Var */
-    private Order redactionOrder = Order.RIGHT_TO_LEFT;
+    private Order  redactionOrder     = Order.RIGHT_TO_LEFT;
     /** Var */
-    private Order alignmentOrder = Order.LEFT_TO_RIGHT;
+    private Order  alignmentOrder     = Order.LEFT_TO_RIGHT;
     /** Var */
-    private char  paddingCharacter = ' ';
+    private char   paddingCharacter   = ' ';
     /** Var */
-    private char  redactionCharacter = '*';
-    /** Var */
+    private char   redactionCharacter = '*';
+    /** Meta-data about the nature of the domain of the attribute */
+    private Integer maxValueLength;
+    /** Meta-data about the nature of the domain of the attribute */
+    private Integer domainSize;
+    /** Meta-data about the nature of the domain of the attribute */
+    private Integer alphabetSize;
     
     /**
      * Creates a new instance
@@ -59,12 +64,47 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         return alignmentOrder;
     }
 
+    /**
+     * @return the alphabetSize
+     */
+    public Integer getAlphabetSize() {
+        return alphabetSize;
+    }
+
     @Override
     public HierarchyBuilderRedactionBased<T> getBuilder(boolean serializable) {
-        return HierarchyBuilderRedactionBased.create(  alignmentOrder, 
-                                                       redactionOrder, 
-                                                       paddingCharacter, 
-                                                       redactionCharacter);
+        
+        // Create
+        HierarchyBuilderRedactionBased<T> builder = HierarchyBuilderRedactionBased.create(alignmentOrder,
+                                                                                          redactionOrder,
+                                                                                          paddingCharacter,
+                                                                                          redactionCharacter);
+        
+        // Set domain properties
+        if (domainSize != null && alphabetSize != null && maxValueLength != null) {
+            builder.setDomainAndAlphabetSize(domainSize, alphabetSize, maxValueLength);
+        } else if (domainSize != null && maxValueLength != null) {
+            builder.setDomainSize(domainSize, maxValueLength);
+        } else if (alphabetSize != null && maxValueLength != null) {
+            builder.setAlphabetSize(alphabetSize, maxValueLength);
+        }
+        
+        // Return
+        return builder;
+    }
+
+    /**
+     * @return the domainSize
+     */
+    public Integer getDomainSize() {
+        return domainSize;
+    }
+
+    /**
+     * @return the maxValueLength
+     */
+    public Integer getMaxValueLength() {
+        return maxValueLength;
     }
 
     /**
@@ -102,6 +142,9 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         this.alignmentOrder = builder.getAligmentOrder();
         this.redactionCharacter = builder.getRedactionCharacter();
         this.paddingCharacter = builder.getPaddingCharacter();
+        this.domainSize = builder.getDomainSize().intValue();
+        this.alphabetSize = builder.getAlphabetSize().intValue();
+        this.maxValueLength = builder.getMaxValueLength().intValue();
         this.update();
     }
 
@@ -114,6 +157,27 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
             this.alignmentOrder = alignmentOrder;
             this.update();
         }
+    }
+
+    /**
+     * @param alphabetSize the alphabetSize to set
+     */
+    public void setAlphabetSize(Integer alphabetSize) {
+        this.alphabetSize = alphabetSize;
+    }
+
+    /**
+     * @param domainSize the domainSize to set
+     */
+    public void setDomainSize(Integer domainSize) {
+        this.domainSize = domainSize;
+    }
+
+    /**
+     * @param maxValueLength the maxValueLength to set
+     */
+    public void setMaxValueLength(Integer maxValueLength) {
+        this.maxValueLength = maxValueLength;
     }
 
     /**
