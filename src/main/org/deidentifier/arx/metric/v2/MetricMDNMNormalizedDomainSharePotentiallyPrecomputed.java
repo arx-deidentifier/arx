@@ -56,6 +56,22 @@ public class MetricMDNMNormalizedDomainSharePotentiallyPrecomputed extends Abstr
               new MetricMDNMNormalizedDomainSharePrecomputed(function),
               threshold);
     }
+
+    /**
+     * Creates a new instance. The precomputed variant will be used if 
+     * #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * 
+     * @param threshold
+     * @param gsFactor
+     * @param function
+     */
+    protected MetricMDNMNormalizedDomainSharePotentiallyPrecomputed(double threshold,
+                                                                    double gsFactor,
+                                                                    AggregateFunction function) {
+        super(new MetricMDNMNormalizedDomainShare(gsFactor, function),
+              new MetricMDNMNormalizedDomainSharePrecomputed(gsFactor, function),
+              threshold);
+    }
     
     @Override
     public String toString() {
