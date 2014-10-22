@@ -94,7 +94,7 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
 
 		sliderK = new Scale(group, SWT.HORIZONTAL);
 		sliderK.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		sliderK.setMaximum(SLIDER_MAX);
+		sliderK.setMaximum(SWTUtil.SLIDER_MAX);
 		sliderK.setMinimum(0);
 		sliderK.setSelection(0);
 		final Object outer = this;
@@ -102,7 +102,7 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
 			@Override
 			public void widgetSelected(final SelectionEvent arg0) {
 				model.getKAnonymityModel().setK(
-						sliderToInt(2, 100, sliderK.getSelection()));
+						SWTUtil.sliderToInt(2, 100, sliderK.getSelection()));
 				labelK.setText(String
 						.valueOf(model.getKAnonymityModel().getK()));
 				controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getKAnonymityModel()));
@@ -121,7 +121,7 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
 		}
 		root.setRedraw(false);
 		labelK.setText(String.valueOf(m.getK()));
-		sliderK.setSelection(intToSlider(2, 100, m.getK()));
+		sliderK.setSelection(SWTUtil.intToSlider(2, 100, m.getK()));
 		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {

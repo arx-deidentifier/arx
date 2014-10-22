@@ -55,7 +55,7 @@ public class TestMetrics extends AbstractTest {
         config.addCriterion(new KAnonymity(5));
         config.addCriterion(new Inclusion(subset));
         config.setMaxOutliers(0.02d);
-        config.setMetric(Metric.createNMEntropyMetric());
+        config.setMetric(Metric.createEntropyMetric(false));
 
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(data, config);

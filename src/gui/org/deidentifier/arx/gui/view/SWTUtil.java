@@ -42,6 +42,9 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class SWTUtil {
 
+    /** Static settings */
+    public static final int SLIDER_MAX = 1000;
+
     /**
      * Centers the shell on the given monitor
      * @param shell
@@ -237,6 +240,23 @@ public class SWTUtil {
     }
 
     /**
+     * Converts the double value to a slider selection
+     */
+    public static int doubleToSlider(final double min,
+                               final double max,
+                               final double value) {
+        double val = ((value - min) / max) * SLIDER_MAX;
+        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > SLIDER_MAX) {
+            val = SLIDER_MAX;
+        }
+        return (int) val;
+    }
+
+    /**
      * Enables the composite and its children
      * @param elem
      */
@@ -250,6 +270,65 @@ public class SWTUtil {
      */
     public static void enable(final Control elem) {
         elem.setEnabled(true);
+    }
+
+    /**
+     *  Converts the integer value to a slider selection
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
+    public static int intToSlider(final int min, final int max, final int value) {
+
+        int val = (int) Math.round(((double) (value - min) / (double) max) * SLIDER_MAX);
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > SLIDER_MAX) {
+            val = SLIDER_MAX;
+        }
+        return val;
+    }
+
+    /**
+     * Converts the slider value to a double
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
+    public static double sliderToDouble(final double min,
+                                  final double max,
+                                  final int value) {
+        double val = ((double) value / (double) SLIDER_MAX) * max;
+        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
+        if (val < min) {
+            val = min;
+        }
+        if (val > max) {
+            val = max;
+        }
+        return val;
+    }
+
+    /**
+     * Converts the slider value to an integer
+     * @param min
+     * @param max
+     * @param value
+     * @return
+     */
+    public static int sliderToInt(final int min, final int max, final int value) {
+        int val = (int) Math
+                .round(((double) value / (double) SLIDER_MAX) * max);
+        if (val < min) {
+            val = min;
+        }
+        if (val > max) {
+            val = max;
+        }
+        return val;
     }
 
     /**
@@ -267,4 +346,5 @@ public class SWTUtil {
             }
         }
     }
+
 }

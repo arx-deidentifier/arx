@@ -28,72 +28,62 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
-import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.MetricNDS;
-import org.deidentifier.arx.metric.MetricWeighted;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This view displays most settings regarding privacy criteria
+ * This view displays general settings regarding data transformation
  * @author Fabian Prasser
  */
-public class ViewCriterionDefinition implements IView {
+public class ViewGeneralSettings implements IView {
 
-    private static final int       SLIDER_MAX      = 1000;
-    private static final int       LABEL_WIDTH     = 50;
-    private static final int       LABEL_HEIGHT    = 20;
-    
-    private static final Metric<?> ITEMS_METRIC[]  = { 
-            Metric.createHeightMetric(),
-            Metric.createNMPrecisionMetric(),
-            Metric.createPrecisionMetric(),
-            Metric.createPrecisionRCEMetric(),
-            Metric.createDMStarMetric(),
-            Metric.createEntropyMetric(),
-            Metric.createDMMetric(),
-            Metric.createNMEntropyMetric(),
-            Metric.createAECSMetric(),
-            Metric.createNDSMetric()};
+    /** Static settings*/
+    private static final int                     LABEL_WIDTH  = 50;
+    /** Static settings*/
+    private static final int                     LABEL_HEIGHT = 20;
 
-    private static final String    LABELS_METRIC[] = getLabels(ITEMS_METRIC);
+    /** Controller */
+    private final Controller                     controller;
+    /** Model */
+    private Model                                model;
 
-    private final Controller       controller;
-    private Model                  model           = null;
-
-    private Scale                  sliderOutliers;
-    private Label                  labelOutliers;
-    private Button                 buttonPracticalMonotonicity;
-    private Button                 buttonProtectSensitiveAssociations;
-    private Combo                  comboMetric;
-    private Composite              root;
-
-    private ComponentTitledFolder  folder;
-    private ComponentTitledFolder  folder2;
-    private ToolItem               enable;
-    private ToolItem               push;
-    private ToolItem               pull;
-
-    private ViewCriteriaList       clv;
-    private IView                  viewCodingModel;
-    private IView                  viewAttributeWeights;
+    /** View */
+    private Scale                                sliderOutliers;
+    /** View */
+    private Label                                labelOutliers;
+    /** View */
+    private Button                               buttonPracticalMonotonicity;
+    /** View */
+    private Button                               buttonProtectSensitiveAssociations;
+    /** View */
+    private Composite                            root;
+    /** View */
+    private ComponentTitledFolder                folder;
+    /** View */
+    private ComponentTitledFolder                folder2;
+    /** View */
+    private ToolItem                             enable;
+    /** View */
+    private ToolItem                             push;
+    /** View */
+    private ToolItem                             pull;
+    /** View */
+    private ViewCriteriaList                     clv;
 
     /**
      * Creates a new instance
      * @param parent
      * @param controller
      */
-    public ViewCriterionDefinition(final Composite parent,
+    public ViewGeneralSettings(final Composite parent,
                                    final Controller controller) {
 
         this.controller = controller;
@@ -104,19 +94,6 @@ public class ViewCriterionDefinition implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.root = build(parent);
-    }
-
-    /**
-     * Returns an array of labels
-     * @param metrics
-     * @return
-     */
-    private static String[] getLabels(Metric<?>[] metrics) {
-        String[] labels = new String[metrics.length];
-        for (int i=0; i<metrics.length; i++) {
-            labels[i] = metrics[i].getName();
-        }
-        return labels;
     }
 
     @Override
@@ -131,7 +108,6 @@ public class ViewCriterionDefinition implements IView {
         sliderOutliers.setSelection(0);
         labelOutliers.setText("0"); //$NON-NLS-1
         buttonPracticalMonotonicity.setSelection(false);
-        comboMetric.select(0);
         SWTUtil.disable(root);
     }
 
@@ -140,17 +116,11 @@ public class ViewCriterionDefinition implements IView {
         if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             root.setRedraw(false);
-            sliderOutliers.setSelection(doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
+            sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
             labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
             buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
             buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
             
-            for (int i = 0; i < ITEMS_METRIC.length; i++) {
-                if (ITEMS_METRIC[i].getClass().equals(model.getInputConfig().getMetric().getClass())) {
-                    comboMetric.select(i);
-                    break;
-                }
-            }
             updateControlls();
             root.setRedraw(true);
         } else if (event.part == ModelPart.INPUT) {
@@ -246,7 +216,6 @@ public class ViewCriterionDefinition implements IView {
         group.setLayoutData(SWTUtil.createFillGridData());
         group.setLayout(SWTUtil.createGridLayout(3, false));
 
-        // TODO: Move general tabs content out into a separate view
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.11")); //$NON-NLS-1$
@@ -261,14 +230,14 @@ public class ViewCriterionDefinition implements IView {
 
         sliderOutliers = new Scale(group, SWT.HORIZONTAL);
         sliderOutliers.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        sliderOutliers.setMaximum(SLIDER_MAX);
+        sliderOutliers.setMaximum(SWTUtil.SLIDER_MAX);
         sliderOutliers.setMinimum(0);
         sliderOutliers.setSelection(0);
         sliderOutliers.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getInputConfig()
-                     .setAllowedOutliers(sliderToDouble(0d,
+                     .setAllowedOutliers(SWTUtil.sliderToDouble(0d,
                                                             1d,
                                                             sliderOutliers.getSelection()));
                 labelOutliers.setText(String.valueOf(model.getInputConfig()
@@ -282,44 +251,6 @@ public class ViewCriterionDefinition implements IView {
                 }
             }
         });
-
-        // Create metric combo
-        final Label mLabel = new Label(group, SWT.PUSH);
-        mLabel.setText(Resources.getMessage("CriterionDefinitionView.32")); //$NON-NLS-1$
-        d2 = new GridData();
-        d2.heightHint = LABEL_HEIGHT;
-        d2.minimumHeight = LABEL_HEIGHT;
-        mLabel.setLayoutData(d2);
-        
-        final Composite mBase = new Composite(group, SWT.NONE);
-        final GridData d8 = SWTUtil.createFillHorizontallyGridData();
-        d8.horizontalSpan = 2;
-        mBase.setLayoutData(d8);
-        final GridLayout l = new GridLayout();
-        l.numColumns = 7;
-        l.marginLeft = 0;
-        l.marginRight = 0;
-        l.marginBottom = 0;
-        l.marginTop = 0;
-        l.marginWidth = 0;
-        l.marginHeight = 0;
-        mBase.setLayout(l);
-
-        comboMetric = new Combo(mBase, SWT.READ_ONLY);
-        GridData d30 = SWTUtil.createFillHorizontallyGridData();
-        d30.verticalAlignment = SWT.CENTER;
-        comboMetric.setLayoutData(d30);
-        comboMetric.setItems(LABELS_METRIC);
-        comboMetric.select(0);
-        comboMetric.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                if (comboMetric.getSelectionIndex() != -1) {
-                    selectMetricAction(ITEMS_METRIC[comboMetric.getSelectionIndex()]);
-                }
-            }
-        });
-
 
         // Build approximate button
         final Label m2Label = new Label(group, SWT.PUSH);
@@ -367,6 +298,11 @@ public class ViewCriterionDefinition implements IView {
             }
         });
         
+        // Create metrics tab
+        Composite composite1 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.66"), null);  //$NON-NLS-1$
+        composite1.setLayout(new FillLayout());
+        new ViewMetric(composite1, controller, folder2);
+        
         // Create overview tab
         Composite c = folder2.createItem(Resources.getMessage("CriterionDefinitionView.62"), null);  //$NON-NLS-1$
         c.setLayout(new FillLayout());
@@ -375,120 +311,6 @@ public class ViewCriterionDefinition implements IView {
         // Select first and finish
         folder2.setSelection(0);
         return group;
-    }
-
-    /**
-     * Shows the settings for the coding model
-     */
-    private void showSettingsCodingModel(){
-        if (this.viewCodingModel != null) return;
-        Composite composite2 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
-        composite2.setLayout(new FillLayout());
-        this.viewCodingModel = new ViewCodingModel(composite2, controller);
-        this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
-    
-    /**
-     * Hides the settings for the coding model
-     */
-    private void hideSettingsCodingModel(){
-        if (this.viewCodingModel != null) {
-            this.viewCodingModel.dispose();
-            this.viewCodingModel = null;
-            folder2.disposeItem(Resources.getMessage("CriterionDefinitionView.65"));  //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Shows the settings for the attribute weights
-     */
-    private void showSettingsAttributeWeights(){
-        if (this.viewAttributeWeights != null) return;
-        Composite composite1 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
-        composite1.setLayout(new FillLayout());
-        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
-        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
-    
-    /**
-     * Hides the settings for the attribute weights
-     */
-    private void hideSettingsAttributeWeights(){
-
-        if (this.viewAttributeWeights != null) {
-            this.viewAttributeWeights.dispose();
-            this.viewAttributeWeights = null;
-            folder2.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
-        }
-    }
-    /**
-     * Converts the double value to a slider selection
-     */
-    private int doubleToSlider(final double min,
-                               final double max,
-                               final double value) {
-        double val = ((value - min) / max) * SLIDER_MAX;
-        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-        if (val < 0) {
-            val = 0;
-        }
-        if (val > SLIDER_MAX) {
-            val = SLIDER_MAX;
-        }
-        return (int) val;
-    }
-
-    /**
-     * Select metric action
-     * @param metric
-     */
-    private void selectMetricAction(final Metric<?> metric) {
-        if (model == null) { return; }
-        if (metric != null) {
-            if (metric instanceof MetricNDS) {
-                model.getInputConfig().setMetric(Metric.createNDSMetric(model.getInputConfig().getSuppressionWeight()));
-            } else {
-                model.getInputConfig().setMetric(metric);
-            }
-            controller.update(new ModelEvent(this, ModelPart.METRIC, metric));
-            
-            if (metric instanceof MetricNDS) {
-                this.showSettingsCodingModel();
-            } else {
-                this.hideSettingsCodingModel();
-            }
-
-            if ((metric instanceof MetricWeighted) && 
-                 model != null &&
-                 model.getInputDefinition() != null &&
-                 model.getInputDefinition().getQuasiIdentifyingAttributes() != null &&
-                 !model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty()){
-                this.showSettingsAttributeWeights();
-            } else {
-                this.hideSettingsAttributeWeights();
-            }
-        }
-    }
-
-    /**
-     * Converts the slider value to a double
-     * @param min
-     * @param max
-     * @param value
-     * @return
-     */
-    private double sliderToDouble(final double min,
-                                  final double max,
-                                  final int value) {
-        double val = ((double) value / (double) SLIDER_MAX) * max;
-        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-        if (val < min) {
-            val = min;
-        }
-        if (val > max) {
-            val = max;
-        }
-        return val;
     }
 
     /**
@@ -570,21 +392,6 @@ public class ViewCriterionDefinition implements IView {
         } else {
             enable.setEnabled(false);
             enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
-        }
-        
-        if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
-            model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
-            model.getInputConfig().getMetric() == null ||
-           !(model.getInputConfig().getMetric() instanceof MetricWeighted)) {
-            hideSettingsAttributeWeights();
-            hideSettingsCodingModel();
-        } else {
-            showSettingsAttributeWeights();
-            if (model.getInputConfig().getMetric() instanceof MetricNDS) {
-                showSettingsCodingModel();
-            } else {
-                hideSettingsCodingModel();
-            }
         }
         
         root.setRedraw(true);

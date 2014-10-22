@@ -21,6 +21,7 @@ package org.deidentifier.arx.metric.v2;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of the non-monotonic DM metric.
@@ -109,4 +110,17 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
         return new ILSingleDimensional(lowerBound);
     }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       AggregateFunction.SUM       // aggregate function
+                                       );
+    }
 }
+

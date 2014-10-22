@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class ViewCriterion implements IView {
 
-	protected static final int SLIDER_MAX = 1000;
 	protected static final int LABEL_WIDTH = 50;
 
 	protected Controller controller;
@@ -86,77 +85,8 @@ public abstract class ViewCriterion implements IView {
 	protected abstract Composite build(Composite parent);
 
 	/**
-	 * TODO: OK?
-	 */
-	protected int doubleToSlider(final double min, final double max,
-			final double value) {
-		double val = ((value - min) / max) * SLIDER_MAX;
-		val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-		if (val < 0) {
-			val = 0;
-		}
-		if (val > SLIDER_MAX) {
-			val = SLIDER_MAX;
-		}
-		return (int) val;
-	}
-
-	/**
-	 * TODO: OK?
-	 */
-	protected int intToSlider(final int min, final int max, final int value) {
-
-		int val = (int) Math.round(((double) (value - min) / (double) max) * SLIDER_MAX);
-		if (val < 0) {
-			val = 0;
-		}
-		if (val > SLIDER_MAX) {
-			val = SLIDER_MAX;
-		}
-		return val;
-	}
-
-	/**
 	 * Implement this to parse the settings into a privacy criterion
 	 */
 	protected abstract void parse();
 
-	/**
-	 * TODO: Ok?
-	 * @param min
-	 * @param max
-	 * @param value
-	 * @return
-	 */
-	protected double sliderToDouble(final double min, final double max,
-			final int value) {
-		double val = ((double) value / (double) SLIDER_MAX) * max;
-		val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
-		if (val < min) {
-			val = min;
-		}
-		if (val > max) {
-			val = max;
-		}
-		return val;
-	}
-
-	/**
-	 * TODO: Ok?
-	 * @param min
-	 * @param max
-	 * @param value
-	 * @return
-	 */
-	protected int sliderToInt(final int min, final int max, final int value) {
-		int val = (int) Math
-				.round(((double) value / (double) SLIDER_MAX) * max);
-		if (val < min) {
-			val = min;
-		}
-		if (val > max) {
-			val = max;
-		}
-		return val;
-	}
 }

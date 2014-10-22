@@ -247,7 +247,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Set<PrivacyCriterion>              criteria                     = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>                          metric                       = Metric.createDMStarMetric();
+    private Metric<?>                          metric                       = Metric.createDiscernabilityMetric(true);
 
     /** Do we assume practical monotonicity */
     private boolean                            practicalMonotonicity        = false;

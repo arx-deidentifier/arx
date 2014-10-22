@@ -33,13 +33,14 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * Normalized Domain Share
  * 
  * @author Fabian Prasser
  */
-public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensional {
+public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     /** SUID */
     private static final long serialVersionUID = -573670902335136600L;
@@ -66,14 +67,14 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
     /**
      * Default constructor which treats all transformation methods equally
      */
-    public MetricMDNMNormalizedDomainShare(){
+    public MetricMDNMLoss(){
         this(0.5d, AggregateFunction.RANK);
     }
 
     /**
      * Default constructor which treats all transformation methods equally
      */
-    public MetricMDNMNormalizedDomainShare(AggregateFunction function){
+    public MetricMDNMLoss(AggregateFunction function){
         this(0.5d, function);
     }
     
@@ -88,7 +89,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
      *                 balancing both methods.
      * @param function 
      */
-    public MetricMDNMNormalizedDomainShare(double gsFactor, AggregateFunction function){
+    public MetricMDNMLoss(double gsFactor, AggregateFunction function){
         super(false, false, function);
         this.gsFactor = gsFactor;
         this.sFactor = gsFactor <  0.5d ? 2d * gsFactor : 1d;
@@ -119,7 +120,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
 
     @Override
     public String getName() {
-        return "Normalized domain share";
+        return "Loss";
     }
     
     /**
@@ -132,7 +133,7 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
     
     @Override
     public String toString() {
-        return "Normalized domain share ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
+        return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
     }
 
     @Override
@@ -288,5 +289,17 @@ public class MetricMDNMNormalizedDomainShare extends AbstractMetricMultiDimensio
         result = result >= 0d ? result : 0d;
         // Ignore anything but the first DIGITS digits
         return Math.floor(result * FACTOR) / FACTOR;
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                        // monotonic
+                                       gsFactor,                     // gs-factor
+                                       false,                        // precomputed
+                                       0.0d,                         // precomputation threshold
+                                       this.getAggregateFunction()   // aggregate function
+                                       );
     }
 }

@@ -132,7 +132,7 @@ public class ViewCriterionTCloseness extends ViewCriterion {
 		final GridData d6 = SWTUtil.createFillHorizontallyGridData();
 		d6.horizontalSpan = 1;
 		sliderT.setLayoutData(d6);
-		sliderT.setMaximum(SLIDER_MAX);
+		sliderT.setMaximum(SWTUtil.SLIDER_MAX);
 		sliderT.setMinimum(0);
 		sliderT.setSelection(0);
 		sliderT.addSelectionListener(new SelectionAdapter() {
@@ -140,7 +140,7 @@ public class ViewCriterionTCloseness extends ViewCriterion {
 			public void widgetSelected(final SelectionEvent arg0) {
 				ModelTClosenessCriterion m = model.getTClosenessModel().get(
 						attribute);
-				m.setT(sliderToDouble(0.001d, 1d, sliderT.getSelection()));
+				m.setT(SWTUtil.sliderToDouble(0.001d, 1d, sliderT.getSelection()));
 				labelT.setText(String.valueOf(m.getT()));
 				controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
 			}
@@ -157,7 +157,7 @@ public class ViewCriterionTCloseness extends ViewCriterion {
 			return;
 		}
 		root.setRedraw(false);
-		sliderT.setSelection(doubleToSlider(0.001d, 1d, m.getT()));
+		sliderT.setSelection(SWTUtil.doubleToSlider(0.001d, 1d, m.getT()));
 		labelT.setText(String.valueOf(m.getT()));
 		comboVariant.select(m.getVariant());
 		if (m.isActive() && m.isEnabled()) {

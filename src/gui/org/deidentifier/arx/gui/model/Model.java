@@ -37,6 +37,8 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.metric.MetricConfiguration;
+import org.deidentifier.arx.metric.MetricDescription;
 
 /**
  * This class implements a large portion of the model used by the GUI
@@ -163,6 +165,14 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion */
     private Map<String, ModelTClosenessCriterion> tClosenessModel                 = new HashMap<String, ModelTClosenessCriterion>();
 
+    /* *****************************************
+     * UTILITY METRICS
+     ******************************************/
+    /** Configuration */
+    private MetricConfiguration                   metricConfig                    = ARXConfiguration.create().getMetric().getConfiguration();
+    /** Description */
+    private MetricDescription                     metricDescription               = ARXConfiguration.create().getMetric().getDescription();
+    
     /**
      * Creates a new instance
      * @param name
@@ -215,6 +225,9 @@ public class Model implements Serializable {
 		// Initialize the config
 		config.removeAllCriteria();
 		if (definition == null) return;
+		
+		// Initialie the metric
+		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
 		// Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
@@ -319,6 +332,16 @@ public class Model implements Serializable {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
 	}
+
+	/**
+     * Returns the clipboard
+     */
+    public ModelClipboard getClipboard(){
+        if (clipboard==null){
+            clipboard = new ModelClipboard();
+        }
+        return clipboard;
+    }
 
 	/**
 	 * Returns the project description
@@ -429,6 +452,37 @@ public class Model implements Serializable {
 	}
 
 	/**
+	 * Returns the configuration of the metric
+	 * @return
+	 */
+	public MetricConfiguration getMetricConfiguration() {
+	    
+	    if (this.metricConfig == null) {
+	        if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
+	            this.metricConfig = ARXConfiguration.create().getMetric().getConfiguration();
+	        } else {
+	            this.metricConfig = this.inputConfig.getMetric().getConfiguration();
+	        }
+	    }
+	    return this.metricConfig;
+	}
+
+	/**
+	 * Returns a description of the metric
+	 * @return
+	 */
+	public MetricDescription getMetricDescription() {
+	    if (this.metricDescription == null) {
+            if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
+                this.metricDescription = ARXConfiguration.create().getMetric().getDescription();
+            } else {
+                this.metricDescription = this.inputConfig.getMetric().getDescription();
+            }
+        }
+	    return this.metricDescription;
+	}
+
+	/**
 	 * Returns the name of this project
 	 * @return
 	 */
@@ -507,7 +561,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-
+	
 	/**
 	 * Returns the current result
 	 * @return the result
@@ -515,7 +569,7 @@ public class Model implements Serializable {
 	public ARXResult getResult() {
 		return result;
 	}
-
+	
 	/**
 	 * Returns the currently selected attribute
 	 * 
@@ -533,22 +587,22 @@ public class Model implements Serializable {
 		return selectedNode;
 	}
 
-	/**
+    /**
 	 * Returns the separator
 	 * @return
 	 */
 	public char getSeparator() {
 		return separator;
 	}
-	
+    
 	/**
 	 * Returns the according parameter
 	 */
 	public double getSnapshotSizeDataset() {
 		return snapshotSizeDataset;
 	}
-
-    /**
+	
+	/**
      * Returns the according parameter
      */
 	public double getSnapshotSizeSnapshot() {
@@ -562,7 +616,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-	/**
+    /**
 	 * Returns the t-closeness model
 	 * @return
 	 */
@@ -611,17 +665,7 @@ public class Model implements Serializable {
 		return modified;
 	}
 
-    /**
-     * Returns the clipboard
-     */
-    public ModelClipboard getClipboard(){
-        if (clipboard==null){
-            clipboard = new ModelClipboard();
-        }
-        return clipboard;
-    }
-    
-    /**
+	/**
      * Returns whether a quasi-identifier is selected
      * @return
      */
@@ -629,15 +673,15 @@ public class Model implements Serializable {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
 
-	/**
+    /**
 	 * Returns whether a sensitive attribute is selected
 	 * @return
 	 */
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-	
-	/**
+    
+    /**
 	 * Returns whether visualization is enabled
 	 * @return
 	 */
@@ -660,7 +704,7 @@ public class Model implements Serializable {
 		output = null;
 		result = null;
 	}
-
+	
 	/**
 	 * Returns the last two selected attributes
 	 */
@@ -670,8 +714,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-    
-    /**
+
+	/**
      * Resets the configuration of the privacy criteria
      */
 	public void resetCriteria() {
@@ -700,8 +744,8 @@ public class Model implements Serializable {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
-
-	/**
+    
+    /**
 	 * Enables debugging
 	 * @param value
 	 */
@@ -758,7 +802,9 @@ public class Model implements Serializable {
 	 * @param config
 	 */
 	public void setInputConfig(final ModelConfiguration config) {
-		inputConfig = config;
+		this.inputConfig = config;
+		this.metricConfig = config.getMetric().getConfiguration();
+		this.metricDescription = config.getMetric().getDescription();
 	}
 
 	/**
@@ -787,6 +833,22 @@ public class Model implements Serializable {
 		this.maxNodesInViewer = maxNodesInViewer;
 		setModified();
 	}
+
+	/**
+	 * Sets the metric configuration
+	 * @param config
+	 */
+    public void setMetricConfiguration(MetricConfiguration config) {
+        this.metricConfig = config;
+    }
+
+	/**
+     * Sets the description of the metric
+     * @return
+     */
+    public void setMetricDescription(MetricDescription description) {
+        this.metricDescription = description;
+    }
 
 	/**
 	 * Sets the project name

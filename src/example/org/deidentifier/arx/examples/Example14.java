@@ -91,7 +91,7 @@ public class Example14 extends Example {
         config.setAttributeWeight("age", 0.5d); // attribute weight
         config.setAttributeWeight("gender", 0.3d); // attribute weight
         config.setAttributeWeight("zipcode", 0.5d); // attribute weight
-        config.setMetric(Metric.createNDSMetric(0.5d)); // suppression/generalization-factor
+        config.setMetric(Metric.createLossMetric(0.5d)); // suppression/generalization-factor
         
         try {
             final ARXResult result = anonymizer.anonymize(data, config);

@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.metric.MetricConfiguration;
+
 
 /**
  * This class provides an implementation of NDS
@@ -26,7 +28,7 @@ package org.deidentifier.arx.metric.v2;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricMDNMNormalizedDomainSharePotentiallyPrecomputed extends AbstractMetricMultiDimensionalPotentiallyPrecomputed {
+public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDimensionalPotentiallyPrecomputed {
 
     /** SVUID*/
     private static final long serialVersionUID = -409964525491865637L;
@@ -37,9 +39,9 @@ public class MetricMDNMNormalizedDomainSharePotentiallyPrecomputed extends Abstr
      * 
      * @param threshold
      */
-    protected MetricMDNMNormalizedDomainSharePotentiallyPrecomputed(double threshold) {
-        super(new MetricMDNMNormalizedDomainShare(),
-              new MetricMDNMNormalizedDomainSharePrecomputed(),
+    protected MetricMDNMLossPotentiallyPrecomputed(double threshold) {
+        super(new MetricMDNMLoss(),
+              new MetricMDNMLossPrecomputed(),
               threshold);
     }
 
@@ -50,10 +52,10 @@ public class MetricMDNMNormalizedDomainSharePotentiallyPrecomputed extends Abstr
      * @param threshold
      * @param function
      */
-    protected MetricMDNMNormalizedDomainSharePotentiallyPrecomputed(double threshold,
+    protected MetricMDNMLossPotentiallyPrecomputed(double threshold,
                                                                     AggregateFunction function) {
-        super(new MetricMDNMNormalizedDomainShare(function),
-              new MetricMDNMNormalizedDomainSharePrecomputed(function),
+        super(new MetricMDNMLoss(function),
+              new MetricMDNMLossPrecomputed(function),
               threshold);
     }
 
@@ -65,16 +67,28 @@ public class MetricMDNMNormalizedDomainSharePotentiallyPrecomputed extends Abstr
      * @param gsFactor
      * @param function
      */
-    protected MetricMDNMNormalizedDomainSharePotentiallyPrecomputed(double threshold,
+    protected MetricMDNMLossPotentiallyPrecomputed(double threshold,
                                                                     double gsFactor,
                                                                     AggregateFunction function) {
-        super(new MetricMDNMNormalizedDomainShare(gsFactor, function),
-              new MetricMDNMNormalizedDomainSharePrecomputed(gsFactor, function),
+        super(new MetricMDNMLoss(gsFactor, function),
+              new MetricMDNMLossPrecomputed(gsFactor, function),
               threshold);
     }
     
     @Override
     public String toString() {
-        return "Normalized domain share";
+        return "Loss";
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       ((MetricMDNMLoss)super.getDefaultMetric()).getGeneralizationSuppressionFactor(), // gs-factor
+                                       super.isPrecomputed(),      // precomputed
+                                       super.getThreshold(),       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.metric.MetricConfiguration;
+
 
 /**
  * This class provides an implementation of the non-uniform entropy
@@ -60,5 +62,17 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       super.isPrecomputed(),      // precomputed
+                                       super.getThreshold(),       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

@@ -94,7 +94,120 @@ public class ComponentTitledFolder implements IComponent {
     public void addSelectionListener(SelectionListener listener) {
         folder.addSelectionListener(listener);
     }
+
+    /**
+     * Creates a new entry in the folder
+     * @param title
+     * @param image
+     * @param index
+     * @return
+     */
+    public Composite createItem(String title, Image image, int index){
+
+        Composite composite = new Composite(folder, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        
+        CTabItem item = new CTabItem(folder, SWT.NULL, index);
+        item.setText(title);
+        if (image!=null) item.setImage(image);
+        item.setShowClose(false);
+        item.setControl(composite);
+        
+        return composite;
+    }
+
+    /**
+     * Creates a new entry in the folder
+     * @param title
+     * @param image
+     * @return
+     */
+    public Composite createItem(String title, Image image){
+        return createItem(title, image, getItemCount());
+    }
+
+    /**
+     * Disposes the given item
+     * @param string
+     */
+    public void disposeItem(String text) {
+        for (CTabItem item : folder.getItems()) {
+            if (item.getText().equals(text)) {
+                item.dispose();
+            }
+        }
+    }
     
+    /**
+     * Returns the button item for the given text
+     * @param text
+     * @return
+     */
+    public ToolItem getButtonItem(String text) {
+        Control c = folder.getTopRight();
+        if (c == null) return null;
+        if (!(c instanceof ToolBar)) return null;
+        ToolBar t = (ToolBar)c;
+        for (ToolItem i : t.getItems()){
+            if (i.getToolTipText().equals(text)) return i;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the number of items in the folder
+     * @return
+     */
+    public int getItemCount() {
+        return folder.getItemCount();
+    }
+
+    /**
+     * Returns the currently selected index
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    /**
+     * Returns the tab item for the given text
+     * @param text
+     * @return
+     */
+    public CTabItem getTabItem(String text) {
+        for (CTabItem item : folder.getItems()){
+            if (item.getText().equals(text)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Enables/disables the component
+     * @param b
+     */
+    public void setEnabled(boolean b) {
+        folder.setEnabled(b);
+    }
+
+    /**
+     * Sets layout data
+     * @param data
+     */
+    public void setLayoutData(Object data){
+        folder.setLayoutData(data);
+    }
+
+    /**
+     * Sets the current selection
+     * @param index
+     */
+    public void setSelection(int index) {
+        folder.setSelection(index);
+    }
+
     /**
      * Creates the bar 
      * @param controller
@@ -133,99 +246,5 @@ public class ComponentTitledFolder implements IComponent {
         
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
-    }
-
-    /**
-     * Creates a new entry in the folder
-     * @param title
-     * @param image
-     * @return
-     */
-    public Composite createItem(String title, Image image){
-
-        Composite composite = new Composite(folder, SWT.NONE);
-        composite.setLayout(new GridLayout());
-        
-        CTabItem item = new CTabItem(folder, SWT.NULL);
-        item.setText(title);
-        if (image!=null) item.setImage(image);
-        item.setShowClose(false);
-        item.setControl(composite);
-        
-        return composite;
-    }
-    
-    /**
-     * Returns the tab item for the given text
-     * @param text
-     * @return
-     */
-    public CTabItem getTabItem(String text) {
-        for (CTabItem item : folder.getItems()){
-            if (item.getText().equals(text)) {
-                return item;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the button item for the given text
-     * @param text
-     * @return
-     */
-    public ToolItem getButtonItem(String text) {
-        Control c = folder.getTopRight();
-        if (c == null) return null;
-        if (!(c instanceof ToolBar)) return null;
-        ToolBar t = (ToolBar)c;
-        for (ToolItem i : t.getItems()){
-            if (i.getToolTipText().equals(text)) return i;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the currently selected index
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    /**
-     * Enables/disables the component
-     * @param b
-     */
-    public void setEnabled(boolean b) {
-        folder.setEnabled(b);
-    }
-
-    /**
-     * Sets layout data
-     * @param data
-     */
-    public void setLayoutData(Object data){
-        folder.setLayoutData(data);
-    }
-
-    /**
-     * Sets the current selection
-     * @param index
-     */
-    public void setSelection(int index) {
-        folder.setSelection(index);
-    }
-
-    /**
-     * Disposes the given item
-     * @param string
-     */
-    public void disposeItem(String text) {
-        for (CTabItem item : folder.getItems()) {
-            if (item.getText().equals(text)) {
-                item.dispose();
-            }
-        }
     }
 }

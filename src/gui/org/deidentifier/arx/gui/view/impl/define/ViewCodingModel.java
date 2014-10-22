@@ -23,8 +23,6 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.MetricNDS;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -160,9 +158,7 @@ public class ViewCodingModel implements IView {
                     canvas.redraw();
                     double weight = getSuppressionWeight();
                     model.getInputConfig().setSuppressionWeight(weight);
-                    if (model.getInputConfig().getMetric() instanceof MetricNDS) {
-                        model.getInputConfig().setMetric(Metric.createNDSMetric(weight));
-                    }
+                    model.getMetricConfiguration().setGsFactor(weight);
                 }
             }
         });
@@ -177,9 +173,7 @@ public class ViewCodingModel implements IView {
                 canvas.redraw();
                 if (model != null && model.getInputConfig() != null) {
                     model.getInputConfig().setSuppressionWeight(0.5d);
-                    if (model.getInputConfig().getMetric() instanceof MetricNDS) {
-                        model.getInputConfig().setMetric(Metric.createNDSMetric(0.5d));
-                    }
+                    model.getMetricConfiguration().setGsFactor(0.5d);
                 }
             }
         });

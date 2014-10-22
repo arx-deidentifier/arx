@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
@@ -134,5 +135,17 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
         super.setMax(max);
         super.setMin(min);
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       true,                       // precomputed
+                                       1.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

@@ -19,6 +19,7 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 
 /**
@@ -62,5 +63,17 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(true,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

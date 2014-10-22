@@ -29,6 +29,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of a weighted precision metric as 
@@ -154,5 +155,17 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
         }
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

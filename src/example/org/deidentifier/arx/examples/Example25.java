@@ -34,7 +34,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.metric.v2.Metric_V2;
+import org.deidentifier.arx.metric.v2.__MetricV2;
 
 import cern.colt.Arrays;
 
@@ -101,7 +101,7 @@ public class Example25 extends Example {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
-        config.setMetric(Metric_V2.createNDSMetric());
+        config.setMetric(__MetricV2.createLossMetric());
         config.setSuppressionAlwaysEnabled(false);
         final ARXResult result = anonymizer.anonymize(data, config);
 

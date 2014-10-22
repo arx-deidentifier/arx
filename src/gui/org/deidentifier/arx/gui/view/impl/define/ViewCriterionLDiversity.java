@@ -115,7 +115,7 @@ public class ViewCriterionLDiversity extends ViewCriterion{
         final GridData d4 = SWTUtil.createFillHorizontallyGridData();
         d4.horizontalSpan = 1;
         sliderL.setLayoutData(d4);
-        sliderL.setMaximum(SLIDER_MAX);
+        sliderL.setMaximum(SWTUtil.SLIDER_MAX);
         sliderL.setMinimum(0);
         sliderL.setSelection(0);
         final Object outer = this;
@@ -123,7 +123,7 @@ public class ViewCriterionLDiversity extends ViewCriterion{
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
             	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
-            	m.setL(sliderToInt(2, 100, sliderL.getSelection()));
+            	m.setL(SWTUtil.sliderToInt(2, 100, sliderL.getSelection()));
                 labelL.setText(String.valueOf(m.getL()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
@@ -156,7 +156,7 @@ public class ViewCriterionLDiversity extends ViewCriterion{
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
         d6.horizontalSpan = 1;
         sliderC.setLayoutData(d6);
-        sliderC.setMaximum(SLIDER_MAX);
+        sliderC.setMaximum(SWTUtil.SLIDER_MAX);
         sliderC.setMinimum(0);
         sliderC.setSelection(0);
         sliderC.setEnabled(false);
@@ -164,7 +164,7 @@ public class ViewCriterionLDiversity extends ViewCriterion{
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
             	ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
-				m.setC(sliderToDouble(0.001d, 100d, sliderC.getSelection()));
+				m.setC(SWTUtil.sliderToDouble(0.001d, 100d, sliderC.getSelection()));
                 labelC.setText(String.valueOf(m.getC()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, m));
             }
@@ -197,8 +197,8 @@ public class ViewCriterionLDiversity extends ViewCriterion{
 		root.setRedraw(false);
         labelC.setText(String.valueOf(m.getC()));
         labelL.setText(String.valueOf(m.getL()));
-		sliderL.setSelection(intToSlider(2, 100, m.getL()));
-		sliderC.setSelection(doubleToSlider(0.001d, 100d, m.getC()));
+		sliderL.setSelection(SWTUtil.intToSlider(2, 100, m.getL()));
+		sliderC.setSelection(SWTUtil.doubleToSlider(0.001d, 100d, m.getC()));
 		
         comboVariant.select(m.getVariant());
         if (m.isActive() && m.isEnabled()) {

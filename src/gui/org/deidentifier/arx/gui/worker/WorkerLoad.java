@@ -231,6 +231,11 @@ public class WorkerLoad extends Worker<Model> {
         // Read config
         final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
         final ModelConfiguration config = (ModelConfiguration) oos.readObject();
+        
+        // Convert metric from v1 to v2
+        config.setMetric(Metric.createMetric(config.getMetric()));
+        config.getConfig().setMetric(Metric.createMetric(config.getConfig().getMetric()));
+        
         oos.close();
 
         // Attach data

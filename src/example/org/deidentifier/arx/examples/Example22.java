@@ -59,7 +59,7 @@ public class Example22 extends Example {
         config.addCriterion(new EntropyLDiversity("occupation", 5));
         config.setMaxOutliers(0.04d);
         config.setProtectSensitiveAssociations(false);
-        config.setMetric(Metric.createNMEntropyMetric());
+        config.setMetric(Metric.createEntropyMetric());
         
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);

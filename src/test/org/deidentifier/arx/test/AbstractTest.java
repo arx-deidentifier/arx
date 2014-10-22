@@ -51,10 +51,10 @@ public abstract class AbstractTest extends TestCase {
             metric = Metric.createHeightMetric();
             break;
         case DMSTAR:
-            metric = Metric.createDMStarMetric();
+            metric = Metric.createDiscernabilityMetric(true);
             break;
         case DM:
-            metric = Metric.createDMMetric();
+            metric = Metric.createDiscernabilityMetric(false);
             break;
         case ENTROPY:
             metric = Metric.createEntropyMetric();

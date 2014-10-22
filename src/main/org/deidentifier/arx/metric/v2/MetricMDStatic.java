@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of a static metric in
@@ -140,5 +141,17 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(true,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

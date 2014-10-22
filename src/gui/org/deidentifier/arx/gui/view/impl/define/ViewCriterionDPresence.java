@@ -102,14 +102,14 @@ public class ViewCriterionDPresence extends ViewCriterion{
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
         d6.horizontalSpan = 1;
         sliderDMin.setLayoutData(d6);
-        sliderDMin.setMaximum(SLIDER_MAX);
+        sliderDMin.setMaximum(SWTUtil.SLIDER_MAX);
         sliderDMin.setMinimum(0);
         sliderDMin.setSelection(0);
         final Object outer = this;
         sliderDMin.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmin(sliderToDouble(0, 1, sliderDMin.getSelection()));
+                model.getDPresenceModel().setDmin(SWTUtil.sliderToDouble(0, 1, sliderDMin.getSelection()));
                 labelDMin.setText(String.valueOf(model.getDPresenceModel().getDmin()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
@@ -131,13 +131,13 @@ public class ViewCriterionDPresence extends ViewCriterion{
         final GridData d62 = SWTUtil.createFillHorizontallyGridData();
         d62.horizontalSpan = 1;
         sliderDMax.setLayoutData(d62);
-        sliderDMax.setMaximum(SLIDER_MAX);
+        sliderDMax.setMaximum(SWTUtil.SLIDER_MAX);
         sliderDMax.setMinimum(0);
         sliderDMax.setSelection(0);
         sliderDMax.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getDPresenceModel().setDmax(sliderToDouble(0, 1, sliderDMax.getSelection()));
+                model.getDPresenceModel().setDmax(SWTUtil.sliderToDouble(0, 1, sliderDMax.getSelection()));
                 labelDMax.setText(String.valueOf(model.getDPresenceModel().getDmax()));
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
@@ -155,9 +155,9 @@ public class ViewCriterionDPresence extends ViewCriterion{
 		}
 		root.setRedraw(false);
 		labelDMin.setText(String.valueOf(m.getDmin()));
-		sliderDMin.setSelection(doubleToSlider(0, 1d, m.getDmin()));
+		sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmin()));
 		labelDMax.setText(String.valueOf(m.getDmax()));
-		sliderDMax.setSelection(doubleToSlider(0, 1d, m.getDmax()));
+		sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmax()));
 		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
 		} else {

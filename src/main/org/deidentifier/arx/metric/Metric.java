@@ -19,6 +19,7 @@
 package org.deidentifier.arx.metric;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,25 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
+import org.deidentifier.arx.metric.v2.ILSingleDimensional;
+import org.deidentifier.arx.metric.v2.MetricMDHeight;
+import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
+import org.deidentifier.arx.metric.v2.MetricMDNMLossPotentiallyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNMLossPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropy;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPotentiallyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropy;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPotentiallyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDPrecision;
+import org.deidentifier.arx.metric.v2.MetricSDAECS;
+import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
+import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
+import org.deidentifier.arx.metric.v2.__MetricV2;
 
 /**
  * Abstract base class for metrics
@@ -38,13 +57,13 @@ import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
  * @param <T>
  */
 public abstract class Metric<T extends InformationLoss<?>> implements Serializable {
-
+    
     /**
      * Pluggable aggregate functions
      * @author Fabian Prasser
      *
      */
-    public static enum AggregateFunction {
+    public static enum AggregateFunction implements Serializable{
         SUM,
         MAX,
         ARITHMETIC_MEAN,
@@ -55,64 +74,121 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     private static final long serialVersionUID = -2657745103125430229L;
 
     /**
-     * Creates an average equivalence class size
+     * Creates a new instance of the AECS metric.
      * 
      * @return
      */
-    public static Metric<InformationLossDefault> createAECSMetric() {
-        return new MetricAECS();
+    public static Metric<ILSingleDimensional> createAECSMetric() {
+        return __MetricV2.createAECSMetric();
     }
 
     /**
-     * Creates a DM* metric
+     * Creates an instance of the discernability metric
      * 
-     * @param k
+     * @param monotonic If set to true, the monotonic variant (DM*) will be created
      * @return
      */
-    public static Metric<InformationLossDefault> createDMMetric() {
-        return new MetricDM();
+    public static Metric<ILSingleDimensional> createDiscernabilityMetric() {
+        return __MetricV2.createDiscernabilityMetric();
     }
-
+    
     /**
-     * Creates a DM* metric
+     * Creates an instance of the discernability metric. The monotonic variant is DM*.
      * 
+     * @param monotonic If set to true, the monotonic variant (DM*) will be created
      * @return
      */
-    public static Metric<InformationLossDefault> createDMStarMetric() {
-        return new MetricDMStar();
-    }
-
-    /**
-     * Creates an entropy metric
-     * 
-     * @return
-     */
-    public static Metric<InformationLossDefault> createEntropyMetric() {
-        return new MetricEntropy();
-    }
-
-    /**
-     * Creates a height metric
-     * 
-     * @return
-     */
-    public static Metric<InformationLossDefault> createHeightMetric() {
-        return new MetricHeight();
-    }
-
-    /**
-     * Creates an instance of the NDS metric that treats suppression, generalization and
-     * all attributes equally.
-     * This metric will respect attribute weights defined in the configuration.
-     * @return
-     */
-    public static Metric<?> createNDSMetric() {
-        return new MetricNDS();
+    public static Metric<ILSingleDimensional> createDiscernabilityMetric(boolean monotonic) {
+        return __MetricV2.createDiscernabilityMetric(monotonic);
     }
     
 
     /**
-     * Creates an NDS metric with factors for weighting generalization and suppression.
+     * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric() {
+        return __MetricV2.createEntropyMetric();
+    }
+
+
+    /**
+     * Creates an instance of the non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic) {
+        return __MetricV2.createEntropyMetric(monotonic);
+    }
+    
+
+    /**
+     * Creates an instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, AggregateFunction function) {
+        return __MetricV2.createEntropyMetric(monotonic, function);
+    }
+    
+    /**
+     * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
+     * will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createHeightMetric() {
+        return __MetricV2.createHeightMetric();
+    }
+    
+
+    /**
+     * Creates an instance of the height metric.
+     * This metric will respect attribute weights defined in the configuration. 
+     * 
+     * @param function The aggregate function to use for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createHeightMetric(AggregateFunction function) {
+        return __MetricV2.createHeightMetric(function);
+    }
+
+
+    /**
+     * Creates an instance of the loss metric which treats generalization and suppression equally.
+     * The default aggregate function, which is the rank function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     */
+    public static Metric<AbstractILMultiDimensional> createLossMetric() {
+        return __MetricV2.createLossMetric();
+    }
+
+    /**
+     * Creates an instance of the loss metric which treats generalization and suppression equally.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to use for comparing results
+     */
+    public static Metric<AbstractILMultiDimensional> createLossMetric(AggregateFunction function) {
+        return __MetricV2.createLossMetric(function);
+    }
+
+    /**
+     * Creates an instance of the loss metric with factors for weighting generalization and suppression.
+     * The default aggregate function, which is the rank function, will be used.
      * This metric will respect attribute weights defined in the configuration.
      * 
      * @param gsFactor A factor [0,1] weighting generalization and suppression. 
@@ -122,58 +198,404 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *                 generalization. The values in between can be used for
      *                 balancing both methods. 
      */
-    public static MetricNDS createNDSMetric(double gsFactor) {
-        return new MetricNDS(gsFactor);
+    public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor) {
+        return __MetricV2.createLossMetric(gsFactor);
     }
-    
     /**
-     * Creates an non-monotonic entropy metric
+     * Creates an instance of the loss metric with factors for weighting generalization and suppression.
+     * This metric will respect attribute weights defined in the configuration.
      * 
-     * @return
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor suppression, and a factor of 1 will favor
+     *                 generalization. The values in between can be used for
+     *                 balancing both methods. 
+     *                 
+     * @param function The aggregate function to use for comparing results
      */
-    public static Metric<InformationLossDefault> createNMEntropyMetric() {
-        return new MetricNMEntropy();
+    public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor, AggregateFunction function) {
+        return __MetricV2.createLossMetric(gsFactor, function);
     }
 
     /**
-     * Creates a non-monotonic precision metric. 
-     * This metric will respect attribute weights defined in the configuration.
-     * 
+     * This method supports backwards compatibility. It will transform implementations from version 1 to 
+     * implementations from version 2, if necessary.
+     * @param metric
      * @return
      */
-    public static Metric<InformationLossDefault> createNMPrecisionMetric() {
-        return new MetricNMPrecision();
+    public static Metric<?> createMetric(Metric<?> metric) {
+        
+        if (metric instanceof MetricAECS) {
+            return __MetricV2.createAECSMetric();
+        } else if (metric instanceof MetricDM) {
+            return __MetricV2.createDiscernabilityMetric(false);
+        } else if (metric instanceof MetricDMStar) {
+            return __MetricV2.createDiscernabilityMetric(true);
+        } else if (metric instanceof MetricEntropy) {
+            return __MetricV2.createEntropyMetric(true);
+        } else if (metric instanceof MetricHeight) {
+            return __MetricV2.createHeightMetric();
+        } else if (metric instanceof MetricNMEntropy) {
+            return __MetricV2.createEntropyMetric(false);
+        } else if (metric instanceof MetricNMPrecision) {
+            return __MetricV2.createPrecisionMetric(false);
+        } else if (metric instanceof MetricPrecision) {
+            return __MetricV2.createPrecisionMetric(true);
+        } else if (metric instanceof MetricStatic) {
+            return __MetricV2.createStaticMetric(((MetricStatic)metric)._infoloss);
+        } else {
+            return metric;
+        }
     }
+
+
     /**
-     * Creates a precision metric. 
+     * Creates an instance of the non-monotonic precision metric.
+     * The default aggregate function, which is the arithmetic mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
      * 
      * @return
      */
-    public static Metric<InformationLossDefault> createPrecisionMetric() {
-        return new MetricPrecision();
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric() {
+        return __MetricV2.createPrecisionMetric();
     }
     
     /**
-     * Creates a precision metric with conservative estimation 
+     * Creates an instance of the non-monotonic precision metric.
      * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to use for comparing results
      * 
      * @return
      */
-    public static Metric<InformationLossRCE> createPrecisionRCEMetric() {
-        return new MetricPrecisionRCE();
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(AggregateFunction function) {
+        return __MetricV2.createPrecisionMetric(function);
     }
 
     /**
-     * Creates a static metric. It requires a map, which maps the generalization levels
-     * (starting at index of the given list) onto an information loss defined as a
-     * decimal number.
+     * Creates an instance of the precision metric.
+     * The default aggregate function, which is the arithmetic mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
      * 
      * @return
      */
-    public static Metric<InformationLossDefault> createStaticMetric(Map<String, List<Double>> informationLoss) {
-        return new MetricStatic(informationLoss);
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic) {
+        return __MetricV2.createPrecisionMetric(monotonic);
+    }
+    /**
+     * Creates an instance of the precision metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, AggregateFunction function) {
+        return __MetricV2.createPrecisionMetric(monotonic, function);
+    }
+
+    
+    /**
+     * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     *                  
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold) {
+        return __MetricV2.createPrecomputedEntropyMetric(threshold);
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic) {
+        return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic);
+    }
+
+
+    /**
+     * Creates a potentially precomputed instance of the non-uniform entropy metric.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * @param function The aggregate function to be used for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic, AggregateFunction function) {
+        return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, function);
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the loss metric which treats generalization 
+     * and suppression equally. 
+     * The default aggregate function, which is the rank function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold) {
+        return __MetricV2.createPrecomputedLossMetric(threshold);
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param function The aggregate function to use for comparing results
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, AggregateFunction function) {
+        return __MetricV2.createPrecomputedLossMetric(threshold, function);
+    }
+
+    /**
+     * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
+     * The default aggregate function, which is the rank function, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor suppression, and a factor of 1 will favor
+     *                 generalization. The values in between can be used for
+     *                 balancing both methods. 
+     *                 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor) {
+        return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor);
+    }
+    
+    /**
+     * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor suppression, and a factor of 1 will favor
+     *                 generalization. The values in between can be used for
+     *                 balancing both methods. 
+     *                 
+     * @param function The aggregate function to use for comparing results
+     * 
+     * @param threshold The precomputed variant of the metric will be used if 
+     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor, AggregateFunction function) {
+        return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor, function);
+    }
+    
+
+    /**
+     * Creates an instance of a metric with statically defined information loss. 
+     * The default aggregate function, which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param loss User defined information loss per attribute
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createStaticMetric(Map<String, List<Double>> loss) {
+        return __MetricV2.createStaticMetric(loss);
+    }
+
+
+    /**
+     * Creates an instance of a metric with statically defined information loss. 
+     * This metric will respect attribute weights defined in the configuration. 
+     * 
+     * @param loss User defined information loss per attribute
+     * @param function The aggregate function to use for comparing results
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createStaticMetric(Map<String, List<Double>> loss, AggregateFunction function) {
+        return __MetricV2.createStaticMetric(loss, function);
+    }
+    
+    /**
+     * Returns a list of all available metrics for information loss
+     * @return
+     */
+    public static List<MetricDescription> list(){
+        return Arrays.asList(new MetricDescription[]{
+               new MetricDescription("Average equivalence class size",
+                                     false,  // monotonic variant supported
+                                     false,  // attribute weights supported
+                                     false,  // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     false){ // aggregate function supported
+
+                                     private static final long serialVersionUID = 5194477380451716051L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createAECSMetric();
+                                     }
+
+                                    @Override
+                                    public boolean isInstance(Metric<?> metric) {
+                                        return (metric instanceof MetricSDAECS);
+                                    } 
+               },
+               new MetricDescription("Discernability",
+                                     true,   // monotonic variant supported
+                                     false,  // attribute weights supported
+                                     false,  // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     false){ // aggregate function supported
+
+                                     private static final long serialVersionUID = 183842500322023095L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createDiscernabilityMetric(config.isMonotonic());
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDDiscernability) ||
+                                                (metric instanceof MetricSDNMDiscernability);
+                                     } 
+               },
+               new MetricDescription("Height",
+                                     false,  // monotonic variant supported
+                                     true,   // attribute weights supported
+                                     false,  // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     true){  // aggregate function supported
+
+                                     private static final long serialVersionUID = 9125639204133496116L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createHeightMetric(config.getAggregateFunction());
+                                     }  
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricMDHeight);
+                                     } 
+               },
+               new MetricDescription("Loss",
+                                     false, // monotonic variant supported
+                                     true,  // attribute weights supported
+                                     true,  // configurable coding model supported
+                                     true,  // pre-computation supported
+                                     true){ // aggregate function supported
+
+                                     private static final long serialVersionUID = 4274885123814166707L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         if (config.isPrecomputed()) {
+                                             return createPrecomputedLossMetric(config.getPrecomputationThreshold(), 
+                                                                                config.getGsFactor(),
+                                                                                config.getAggregateFunction());
+                                         } else {
+                                             return createLossMetric(config.getGsFactor(), 
+                                                                     config.getAggregateFunction());
+                                         }
+                                     }        
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricMDNMLoss) ||
+                                                (metric instanceof MetricMDNMLossPrecomputed) ||
+                                                (metric instanceof MetricMDNMLossPotentiallyPrecomputed);
+                                     } 
+               },
+               new MetricDescription("Non-uniform entropy",
+                                     true,  // monotonic variant supported
+                                     true,  // attribute weights supported
+                                     false, // configurable coding model supported
+                                     true,  // pre-computation supported
+                                     true){ // aggregate function supported
+
+                                     private static final long serialVersionUID = 2578476174209277258L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         if (config.isPrecomputed()) {
+                                             return createPrecomputedEntropyMetric(config.getPrecomputationThreshold(), 
+                                                                                   config.isMonotonic(),
+                                                                                   config.getAggregateFunction());                                             
+                                         } else {
+                                             return createEntropyMetric(config.isMonotonic(), 
+                                                                        config.getAggregateFunction());
+                                         }
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricMDNUEntropy) ||
+                                                (metric instanceof MetricMDNUEntropyPrecomputed) ||
+                                                (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
+                                                (metric instanceof MetricMDNUNMEntropy) ||
+                                                (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
+                                                (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed);
+                                     } 
+               },
+               new MetricDescription("Precision",
+                                     true,  // monotonic variant supported
+                                     true,  // attribute weights supported
+                                     false, // configurable coding model supported
+                                     false, // pre-computation supported
+                                     true){ // aggregate function supported
+
+                                     private static final long serialVersionUID = 2992096817427174514L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createPrecisionMetric(config.isMonotonic(), 
+                                                                      config.getAggregateFunction());
+                                     }        
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricMDPrecision) ||
+                                                (metric instanceof MetricMDNMPrecision);
+                                     } 
+               }
+        });
+    }
+
+
+    /**
+     * Returns a description for the given metric, if there is any, null otherwise
+     * @param metric
+     * @return
+     */
+    protected static MetricDescription getDescription(Metric<?> metric) {
+        for (MetricDescription description : Metric.list()){
+            if (description.isInstance(metric)) {
+                return description;
+            }
+        }
+        return null;
     }
 
     /** Is the metric independent? */
@@ -199,6 +621,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public abstract InformationLoss<?> createMaxInformationLoss();
+    
 
     /**
      * Returns an instance of the minimal value
@@ -207,7 +630,30 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public abstract InformationLoss<?> createMinInformationLoss();
     
+    /**
+     * Returns the aggregate function of a multi-dimensional metric, null otherwise
+     * @return
+     */
+    public AggregateFunction getAggregateFunction(){
+        return null;
+    }
 
+    /**
+     * Returns the configuration of this metric
+     * @return
+     */
+    public MetricConfiguration getConfiguration() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns a description of this metric
+     * @return
+     */
+    public MetricDescription getDescription() {
+        return Metric.getDescription(this);
+    }
+    
     /**
      * Evaluates the metric for the given node
      * 
@@ -236,7 +682,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return getLowerBoundInternal(node);
         }
     }
-
+    
     /**
      * Returns a lower bound for the information loss for the given node. 
      * This can be used to expose the results of monotonic shares of a metric,
@@ -254,7 +700,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return getLowerBoundInternal(node, groupify);
         }
     }
-
+    
     /**
      * Returns the name of metric
      * @return
@@ -283,7 +729,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public boolean isIndependent() {
         return independent;
     }
-    
+
     /**
      * Returns false if the metric is non-monotone using suppression
      * 
@@ -292,7 +738,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isMonotonic() {
         return monotonic;
     }
-    
+
+    /**
+     * Returns true if the metric is multi-dimensional
+     * @return
+     */
+    public final boolean isMultiDimensional(){
+        return (this instanceof AbstractMetricMultiDimensional);
+    }
+
     /**
      * Returns true if the metric is weighted
      * @return
@@ -301,22 +755,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return (this instanceof MetricWeighted) || this.isMultiDimensional();
     }
     
-    /**
-     * Returns true if the metric is multi-dimensional
-     * @return
-     */
-    public final boolean isMultiDimensional(){
-        return (this instanceof AbstractMetricMultiDimensional);
-    }
-    
-    /**
-     * Returns the aggregate function of a multi-dimensional metric, null otherwise
-     * @return
-     */
-    public AggregateFunction getAggregateFunction(){
-        return null;
-    }
-
     /**
      * Returns the name of metric
      * @return
@@ -346,7 +784,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected abstract T getLowerBoundInternal(Node node);
-    
+
     /**
      * Returns a lower bound for the information loss for the given node. 
      * This can be used to expose the results of monotonic shares of a metric,

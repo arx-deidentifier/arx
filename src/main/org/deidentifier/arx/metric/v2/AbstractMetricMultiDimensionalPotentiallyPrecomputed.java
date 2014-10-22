@@ -78,6 +78,14 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return precomputed ? precomputedMetric.isIndependent() : defaultMetric.isIndependent();
     }
 
+    /**
+     * Returns the default variant
+     * @return
+     */
+    protected AbstractMetricMultiDimensional getDefaultMetric(){
+        return this.defaultMetric;
+    }
+
     @Override
     protected InformationLossWithBound<AbstractILMultiDimensional>
             getInformationLossInternal(Node node, IHashGroupify groupify) {
@@ -96,7 +104,15 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
                              defaultMetric.getLowerBound(node, groupify);
     }
-
+    
+    /**
+     * Returns the precomputed variant
+     * @return
+     */
+    protected AbstractMetricMultiDimensional getPrecomputedMetric(){
+        return this.precomputedMetric;
+    }
+    
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -118,5 +134,21 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         } else {
             defaultMetric.initializeInternal(definition, input, ahierarchies, config);
         }
+    }
+
+    /**
+     * Returns whether the metric is precomputed
+     * @return
+     */
+    protected boolean isPrecomputed() {
+        return this.precomputed;
+    }
+    
+    /**
+     * Returns the threshold
+     * @return
+     */
+    protected double getThreshold() {
+        return this.threshold;
     }
 }

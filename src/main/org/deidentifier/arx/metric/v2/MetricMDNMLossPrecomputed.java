@@ -28,13 +28,14 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * Normalized Domain Share
  * 
  * @author Fabian Prasser
  */
-public class MetricMDNMNormalizedDomainSharePrecomputed extends MetricMDNMNormalizedDomainShare {
+public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
 
     /** SUID */
     private static final long serialVersionUID = -7505441444551612996L;
@@ -47,7 +48,7 @@ public class MetricMDNMNormalizedDomainSharePrecomputed extends MetricMDNMNormal
     /**
      * Creates a new instance
      */
-    protected MetricMDNMNormalizedDomainSharePrecomputed() {
+    protected MetricMDNMLossPrecomputed() {
         super();
     }
 
@@ -55,7 +56,7 @@ public class MetricMDNMNormalizedDomainSharePrecomputed extends MetricMDNMNormal
      * Creates a new instance
      * @param function
      */
-    protected MetricMDNMNormalizedDomainSharePrecomputed(AggregateFunction function) {
+    protected MetricMDNMLossPrecomputed(AggregateFunction function) {
         super(function);
     }
 
@@ -64,7 +65,7 @@ public class MetricMDNMNormalizedDomainSharePrecomputed extends MetricMDNMNormal
      * @param gsFactor
      * @param function
      */
-    protected MetricMDNMNormalizedDomainSharePrecomputed(double gsFactor,
+    protected MetricMDNMLossPrecomputed(double gsFactor,
                                                        AggregateFunction function) {
         super(gsFactor, function);
     }
@@ -139,5 +140,17 @@ public class MetricMDNMNormalizedDomainSharePrecomputed extends MetricMDNMNormal
                 values[i][j] = hierarchies[i].getDistinctValues(j);
             }
         }
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       super.getGeneralizationSuppressionFactor(), // gs-factor
+                                       true,      // precomputed
+                                       1.0d,      // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }

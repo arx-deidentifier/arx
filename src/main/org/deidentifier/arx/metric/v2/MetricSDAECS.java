@@ -21,6 +21,7 @@ package org.deidentifier.arx.metric.v2;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of the (normalized) average equivalence class size metric.
@@ -105,5 +106,17 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         
         // Compute AECS
         return new ILSingleDimensional(getNumTuples() / (double)groups);
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       AggregateFunction.SUM       // aggregate function
+                                       );
     }
 }

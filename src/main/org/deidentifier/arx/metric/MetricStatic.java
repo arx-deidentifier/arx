@@ -41,7 +41,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     private static final long               serialVersionUID = 3778891174824606177L;
 
     /** The user defined information loss per level, indexed by column name */
-    private final Map<String, List<Double>> _infoloss;
+    protected final Map<String, List<Double>> _infoloss;
 
     /** The pre-calculated information loss */
     private double[][]                      infoloss;

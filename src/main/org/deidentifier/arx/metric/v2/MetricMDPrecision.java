@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of a weighted precision metric as 
@@ -61,5 +62,17 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, loss);
+    }
+
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(true,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
     }
 }
