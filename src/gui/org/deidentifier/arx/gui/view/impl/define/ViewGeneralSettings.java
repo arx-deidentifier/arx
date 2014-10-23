@@ -56,13 +56,15 @@ public class ViewGeneralSettings implements IView {
     private Model                                model;
 
     /** View */
+    // TODO: Deactivated in ARX 2.3 due to buggy implementation
+    // private Button                             buttonProtectSensitiveAssociations;
+    
+    /** View */
     private Scale                                sliderOutliers;
     /** View */
     private Label                                labelOutliers;
     /** View */
     private Button                               buttonPracticalMonotonicity;
-    /** View */
-    private Button                               buttonProtectSensitiveAssociations;
     /** View */
     private Composite                            root;
     /** View */
@@ -119,7 +121,9 @@ public class ViewGeneralSettings implements IView {
             sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
             labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
             buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
-            buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
+            
+            // TODO: Deactivated in ARX 2.3 due to buggy implementation
+            // buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
             
             updateControlls();
             root.setRedraw(true);
@@ -276,6 +280,8 @@ public class ViewGeneralSettings implements IView {
         });
 
         // Build protect sensitive associations button
+        // TODO: Deactivated in ARX 2.3 due to buggy implementation
+        /*
         final Label m3Label = new Label(group, SWT.PUSH);
         m3Label.setText(Resources.getMessage("CriterionDefinitionView.54")); //$NON-NLS-1$
         d2 = new GridData();
@@ -297,6 +303,7 @@ public class ViewGeneralSettings implements IView {
                      setProtectSensitiveAssociations(buttonProtectSensitiveAssociations.getSelection());
             }
         });
+        */
         
         // Create metrics tab
         Composite composite1 = folder2.createItem(Resources.getMessage("CriterionDefinitionView.66"), null);  //$NON-NLS-1$
