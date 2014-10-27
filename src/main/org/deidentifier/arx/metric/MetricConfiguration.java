@@ -102,7 +102,6 @@ public class MetricConfiguration implements Serializable {
      */
     public void setPrecomputed(boolean precomputed) {
         this.precomputed = precomputed;
-        System.out.println("SETTING PRECOMPUTED TO: "+precomputed);
     }
     
     /**
