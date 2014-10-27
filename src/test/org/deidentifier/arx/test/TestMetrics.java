@@ -31,13 +31,11 @@ import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Test;
 
 public class TestMetrics extends AbstractTest {
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testNMEntropy() throws IllegalArgumentException, IOException {
 
@@ -66,8 +64,8 @@ public class TestMetrics extends AbstractTest {
         
         for (ARXNode[] level : lattice.getLevels()){
         	for (ARXNode node : level) {
-        		if (Double.compare(((InformationLoss<Double>)node.getMinimumInformationLoss()).getValue(), Double.NaN)==0 ||
-        			Double.compare(((InformationLoss<Double>)node.getMaximumInformationLoss()).getValue(), Double.NaN)==0){
+        		if (Double.compare((Double.valueOf(node.getMinimumInformationLoss().toString())), Double.NaN)==0 ||
+        			Double.compare((Double.valueOf(node.getMaximumInformationLoss().toString())), Double.NaN)==0){
         			fail();
         		}
         	}
