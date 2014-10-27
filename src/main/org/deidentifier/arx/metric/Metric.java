@@ -65,7 +65,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static enum AggregateFunction implements Serializable{
         SUM,
-        MAX,
+        MAXIMUM,
         ARITHMETIC_MEAN,
         GEOMETRIC_MEAN,
         RANK

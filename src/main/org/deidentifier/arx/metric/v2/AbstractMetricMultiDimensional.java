@@ -100,7 +100,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             return new ILMultiDimensionalArithmeticMean(values, weights);
         case GEOMETRIC_MEAN:
             return new ILMultiDimensionalGeometricMean(values, weights);
-        case MAX:
+        case MAXIMUM:
             return new ILMultiDimensionalMax(values, weights);
         case RANK:
             return new ILMultiDimensionalRank(values, weights);

@@ -84,12 +84,16 @@ public abstract class MetricDescription implements Serializable {
         return name;
     }
 
+    /**
+     * Returns a list of all supported aggregate functions
+     * @return
+     */
     public List<Metric.AggregateFunction> getSupportedAggregateFunctions() {
         if (!aggregateFunctionSupported) {
             return new ArrayList<Metric.AggregateFunction>(0);
         } else {
             return Arrays.asList(new Metric.AggregateFunction[] {  AggregateFunction.SUM,
-                                                            AggregateFunction.MAX,
+                                                            AggregateFunction.MAXIMUM,
                                                             AggregateFunction.ARITHMETIC_MEAN,
                                                             AggregateFunction.GEOMETRIC_MEAN,
                                                             AggregateFunction.RANK });
@@ -108,6 +112,14 @@ public abstract class MetricDescription implements Serializable {
      */
     public boolean isConfigurableCodingModelSupported() {
         return configurableCodingModelSupported;
+    }
+    
+    /**
+     * Returns whether an aggregate function is supported by the metric
+     * @return
+     */
+    public boolean isAggregateFunctionSupported() {
+        return aggregateFunctionSupported;
     }
     
     /**

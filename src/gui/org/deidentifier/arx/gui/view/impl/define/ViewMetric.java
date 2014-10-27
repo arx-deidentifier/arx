@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
 
 /**
  * This view displays settings regarding the utility metrics
@@ -49,24 +48,23 @@ import org.eclipse.swt.widgets.Scale;
  */
 public class ViewMetric implements IView {
 
-    /** Static settings*/
-    private static final int                     LABEL_WIDTH  = 50;
-    /** Static settings*/
+    /** Static settings */
     private static final int                     LABEL_HEIGHT = 20;
 
-    /** Static settings*/
+    /** Static settings */
     private static final List<MetricDescription> METRICS      = Metric.list();
     /** Static settings */
     private static final String[]                LABELS       = getLabels(METRICS);
 
     /**
      * Returns a list of names of all available metrics
+     * 
      * @param metrics
      * @return
      */
     private static String[] getLabels(List<MetricDescription> metrics) {
         String[] labels = new String[metrics.size()];
-        for (int i=0; i<metrics.size(); i++) {
+        for (int i = 0; i < metrics.size(); i++) {
             labels[i] = metrics.get(i).getName();
         }
         return labels;
@@ -89,11 +87,7 @@ public class ViewMetric implements IView {
     /** View */
     private Button                monotonicVariant;
     /** View */
-    private Button                precomputedVariant;
-    /** View */
-    private Scale                 precomputationThreshold;
-    /** View */
-    private Label                 labelThreshold;
+    private Combo                 comboAggregate;
 
     /**
      * Creates a new instance
@@ -125,9 +119,6 @@ public class ViewMetric implements IView {
 
         comboMetric.select(0);
         monotonicVariant.setSelection(false);
-        precomputedVariant.setSelection(false);
-        precomputationThreshold.setSelection(0);
-        labelThreshold.setText("0");
         SWTUtil.disable(root);
     }
 
@@ -213,64 +204,29 @@ public class ViewMetric implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getMetricConfiguration().setMonotonic(monotonicVariant.getSelection());
-                
-                if (monotonicVariant.getSelection()) {
-                    precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getGsFactor()));
-                    precomputationThreshold.setEnabled(true);
-                    labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getGsFactor()));
-                }
             }
         });
 
-        // Create slider for precomputation threshold
-        final Label sLabel = new Label(mBase, SWT.PUSH);
-        sLabel.setText(Resources.getMessage("CriterionDefinitionView.71")); //$NON-NLS-1$
+        // Create monotonicity button
+        final Label mLabel3 = new Label(mBase, SWT.PUSH);
+        mLabel3.setText(Resources.getMessage("CriterionDefinitionView.72")); //$NON-NLS-1$
+        GridData d23 = new GridData();
+        d23.heightHint = LABEL_HEIGHT;
+        d23.minimumHeight = LABEL_HEIGHT;
+        mLabel3.setLayoutData(d23);
 
-        precomputedVariant = new Button(mBase, SWT.CHECK);
-        precomputedVariant.setText(Resources.getMessage("CriterionDefinitionView.70")); //$NON-NLS-1$
-        precomputedVariant.setSelection(false);
-        precomputedVariant.setEnabled(false);
-        precomputedVariant.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
-        precomputedVariant.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.getMetricConfiguration().setPrecomputed(precomputedVariant.getSelection());
-                if (precomputedVariant.getSelection()) {
-                    precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
-                    precomputationThreshold.setEnabled(true);
-                    labelThreshold.setText(String.valueOf((model.getMetricConfiguration().getPrecomputationThreshold())));
-                } else {
-                    precomputationThreshold.setSelection(0);
-                    precomputationThreshold.setEnabled(false);
-                    labelThreshold.setText(String.valueOf(0));
-                }
-            }
-        });
-        
-        labelThreshold = new Label(mBase, SWT.BORDER | SWT.CENTER);
-        GridData d24 = new GridData();
-        d24.minimumWidth = LABEL_WIDTH;
-        d24.widthHint = LABEL_WIDTH;
-        d24.heightHint = LABEL_HEIGHT;
-        labelThreshold.setLayoutData(d24);
-        labelThreshold.setText("0"); //$NON-NLS-1$
+        comboAggregate = new Combo(mBase, SWT.NULL);
+        comboAggregate.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
+//        comboAggregate.setText(Resources.getMessage("CriterionDefinitionView.68")); //$NON-NLS-1$
+//        comboAggregate.setSelection(false);
+//        comboAggregate.setEnabled(false);
+//        comboAggregate.addSelectionListener(new SelectionAdapter() {
+//            @Override
+//            public void widgetSelected(final SelectionEvent arg0) {
+//                model.getMetricConfiguration().setMonotonic(monotonicVariant.getSelection());
+//            }
+//        });
 
-        precomputationThreshold = new Scale(mBase, SWT.HORIZONTAL);
-        precomputationThreshold.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        precomputationThreshold.setMaximum(SWTUtil.SLIDER_MAX);
-        precomputationThreshold.setMinimum(0);
-        precomputationThreshold.setSelection(0);
-        precomputationThreshold.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.getMetricConfiguration().setPrecomputationThreshold(SWTUtil.sliderToDouble(0d,
-                                                            1d,
-                                                            precomputationThreshold.getSelection()));
-                labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
-                                                             .getPrecomputationThreshold()));
-            }
-        });
-        
         return mBase;
     }
 
@@ -367,27 +323,6 @@ public class ViewMetric implements IView {
             } else {
                 this.monotonicVariant.setEnabled(true);
                 this.monotonicVariant.setSelection(model.getMetricConfiguration().isMonotonic());
-            }
-            
-            // Precomputation
-            if (!model.getMetricDescription().isPrecomputationSupported()) {
-                this.precomputedVariant.setSelection(false);
-                this.precomputedVariant.setEnabled(false);
-                this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, 0.5d));
-                this.precomputationThreshold.setEnabled(false);
-                this.labelThreshold.setText(String.valueOf(0.5d));
-            } else {
-                this.precomputedVariant.setEnabled(true);
-                this.precomputedVariant.setSelection(model.getMetricConfiguration().isPrecomputed());
-                if (model.getMetricConfiguration().isPrecomputed()) {
-                    this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
-                    this.precomputationThreshold.setEnabled(true);
-                    this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
-                } else {
-                    this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, 0.5d));
-                    this.precomputationThreshold.setEnabled(false);
-                    this.labelThreshold.setText(String.valueOf(0.5d));
-                }
             }
             
             // Weights

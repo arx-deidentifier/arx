@@ -28,6 +28,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,41 +46,47 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class ViewGeneralSettings implements IView {
 
-    /** Static settings*/
-    private static final int                     LABEL_WIDTH  = 50;
-    /** Static settings*/
-    private static final int                     LABEL_HEIGHT = 20;
+    /** Static settings */
+    private static final int      LABEL_WIDTH  = 50;
+    /** Static settings */
+    private static final int      LABEL_HEIGHT = 20;
 
     /** Controller */
-    private final Controller                     controller;
+    private final Controller      controller;
     /** Model */
-    private Model                                model;
+    private Model                 model;
 
     /** View */
     // TODO: Deactivated in ARX 2.3 due to buggy implementation
-    // private Button                             buttonProtectSensitiveAssociations;
-    
-    /** View */
-    private Scale                                sliderOutliers;
-    /** View */
-    private Label                                labelOutliers;
-    /** View */
-    private Button                               buttonPracticalMonotonicity;
-    /** View */
-    private Composite                            root;
-    /** View */
-    private ComponentTitledFolder                folder;
-    /** View */
-    private ComponentTitledFolder                folder2;
-    /** View */
-    private ToolItem                             enable;
-    /** View */
-    private ToolItem                             push;
-    /** View */
-    private ToolItem                             pull;
-    /** View */
-    private ViewCriteriaList                     clv;
+    // private Button buttonProtectSensitiveAssociations;
 
+    /** View */
+    private Scale                 sliderOutliers;
+    /** View */
+    private Label                 labelOutliers;
+    /** View */
+    private Button                buttonPracticalMonotonicity;
+    /** View */
+    private Composite             root;
+    /** View */
+    private ComponentTitledFolder folder;
+    /** View */
+    private ComponentTitledFolder folder2;
+    /** View */
+    private ToolItem              enable;
+    /** View */
+    private ToolItem              push;
+    /** View */
+    private ToolItem              pull;
+    /** View */
+    private ViewCriteriaList      clv;
+    /** View */
+    private Button                precomputedVariant;
+    /** View */
+    private Scale                 precomputationThreshold;
+    /** View */
+    private Label                 labelThreshold;
+    
     /**
      * Creates a new instance
      * @param parent
@@ -106,7 +113,8 @@ public class ViewGeneralSettings implements IView {
     
     @Override
     public void reset() {
-
+        precomputedVariant.setSelection(false);
+        precomputationThreshold.setSelection(0);
         sliderOutliers.setSelection(0);
         labelOutliers.setText("0"); //$NON-NLS-1
         buttonPracticalMonotonicity.setSelection(false);
@@ -218,7 +226,7 @@ public class ViewGeneralSettings implements IView {
         // Create general tab
         group = folder2.createItem(Resources.getMessage("CriterionDefinitionView.61"), null);  //$NON-NLS-1$
         group.setLayoutData(SWTUtil.createFillGridData());
-        group.setLayout(SWTUtil.createGridLayout(3, false));
+        group.setLayout(SWTUtil.createGridLayout(4, false));
 
         // Create outliers slider
         final Label sLabel = new Label(group, SWT.PUSH);
@@ -233,7 +241,9 @@ public class ViewGeneralSettings implements IView {
         labelOutliers.setText("0"); //$NON-NLS-1$
 
         sliderOutliers = new Scale(group, SWT.HORIZONTAL);
-        sliderOutliers.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        GridData d3 = SWTUtil.createFillHorizontallyGridData();
+        d3.horizontalSpan = 2;
+        sliderOutliers.setLayoutData(d3);
         sliderOutliers.setMaximum(SWTUtil.SLIDER_MAX);
         sliderOutliers.setMinimum(0);
         sliderOutliers.setSelection(0);
@@ -265,7 +275,7 @@ public class ViewGeneralSettings implements IView {
         m2Label.setLayoutData(d2);
 
         final GridData d82 = SWTUtil.createFillHorizontallyGridData();
-        d82.horizontalSpan = 2;
+        d82.horizontalSpan = 3;
         buttonPracticalMonotonicity = new Button(group, SWT.CHECK);
         buttonPracticalMonotonicity.setText(Resources.getMessage("CriterionDefinitionView.53")); //$NON-NLS-1$
         buttonPracticalMonotonicity.setSelection(false);
@@ -278,6 +288,56 @@ public class ViewGeneralSettings implements IView {
                      .setPracticalMonotonicity(buttonPracticalMonotonicity.getSelection());
             }
         });
+        
+
+        // Create slider for precomputation threshold
+        final Label sLabel2 = new Label(group, SWT.PUSH);
+        sLabel2.setText(Resources.getMessage("CriterionDefinitionView.71")); //$NON-NLS-1$
+
+        precomputedVariant = new Button(group, SWT.CHECK);
+        precomputedVariant.setText(Resources.getMessage("CriterionDefinitionView.70")); //$NON-NLS-1$
+        precomputedVariant.setSelection(false);
+        precomputedVariant.setEnabled(false);
+        precomputedVariant.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
+        precomputedVariant.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.getMetricConfiguration().setPrecomputed(precomputedVariant.getSelection());
+                if (precomputedVariant.getSelection()) {
+                    precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
+                    precomputationThreshold.setEnabled(true);
+                    labelThreshold.setText(String.valueOf((model.getMetricConfiguration().getPrecomputationThreshold())));
+                } else {
+                    precomputationThreshold.setEnabled(false);
+                }
+            }
+        });
+        
+        labelThreshold = new Label(group, SWT.BORDER | SWT.CENTER);
+        GridData d24 = new GridData();
+        d24.minimumWidth = LABEL_WIDTH;
+        d24.widthHint = LABEL_WIDTH;
+        d24.heightHint = LABEL_HEIGHT;
+        labelThreshold.setLayoutData(d24);
+        labelThreshold.setText("0"); //$NON-NLS-1$
+
+        precomputationThreshold = new Scale(group, SWT.HORIZONTAL);
+        precomputationThreshold.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        precomputationThreshold.setMaximum(SWTUtil.SLIDER_MAX);
+        precomputationThreshold.setMinimum(0);
+        precomputationThreshold.setSelection(0);
+        precomputationThreshold.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.getMetricConfiguration().setPrecomputationThreshold(SWTUtil.sliderToDouble(0d,
+                                                            1d,
+                                                            precomputationThreshold.getSelection()));
+                labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
+                                                             .getPrecomputationThreshold()));
+            }
+        });
+        
+        
 
         // Build protect sensitive associations button
         // TODO: Deactivated in ARX 2.3 due to buggy implementation
@@ -400,6 +460,28 @@ public class ViewGeneralSettings implements IView {
             enable.setEnabled(false);
             enable.setImage(controller.getResources().getImage("cross.png")); //$NON-NLS-1
         }
+
+        // Precomputation
+        if (!model.getMetricDescription().isPrecomputationSupported()) {
+            this.precomputedVariant.setSelection(false);
+            this.precomputedVariant.setEnabled(false);
+            this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
+            this.precomputationThreshold.setEnabled(false);
+            this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
+        } else {
+            this.precomputedVariant.setEnabled(true);
+            this.precomputedVariant.setSelection(model.getMetricConfiguration().isPrecomputed());
+            if (model.getMetricConfiguration().isPrecomputed()) {
+                this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
+                this.precomputationThreshold.setEnabled(true);
+                this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
+            } else {
+                this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
+                this.precomputationThreshold.setEnabled(false);
+                this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
+            }
+        }
+        
         
         root.setRedraw(true);
     }
