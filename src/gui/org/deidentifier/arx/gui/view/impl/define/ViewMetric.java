@@ -373,20 +373,20 @@ public class ViewMetric implements IView {
             if (!model.getMetricDescription().isPrecomputationSupported()) {
                 this.precomputedVariant.setSelection(false);
                 this.precomputedVariant.setEnabled(false);
-                this.precomputationThreshold.setSelection(0);
+                this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, 0.5d));
                 this.precomputationThreshold.setEnabled(false);
-                this.labelThreshold.setText(String.valueOf(0d));
+                this.labelThreshold.setText(String.valueOf(0.5d));
             } else {
                 this.precomputedVariant.setEnabled(true);
                 this.precomputedVariant.setSelection(model.getMetricConfiguration().isPrecomputed());
                 if (model.getMetricConfiguration().isPrecomputed()) {
-                    this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getGsFactor()));
+                    this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
                     this.precomputationThreshold.setEnabled(true);
-                    this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getGsFactor()));
+                    this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
                 } else {
-                    this.precomputationThreshold.setSelection(0);
+                    this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, 0.5d));
                     this.precomputationThreshold.setEnabled(false);
-                    this.labelThreshold.setText(String.valueOf(0d));
+                    this.labelThreshold.setText(String.valueOf(0.5d));
                 }
             }
             
