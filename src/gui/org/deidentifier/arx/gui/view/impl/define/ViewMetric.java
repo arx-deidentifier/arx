@@ -29,6 +29,8 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.Metric.AggregateFunction;
+import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -216,16 +218,21 @@ public class ViewMetric implements IView {
         mLabel3.setLayoutData(d23);
 
         comboAggregate = new Combo(mBase, SWT.NULL);
-        comboAggregate.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
-//        comboAggregate.setText(Resources.getMessage("CriterionDefinitionView.68")); //$NON-NLS-1$
-//        comboAggregate.setSelection(false);
-//        comboAggregate.setEnabled(false);
-//        comboAggregate.addSelectionListener(new SelectionAdapter() {
-//            @Override
-//            public void widgetSelected(final SelectionEvent arg0) {
-//                model.getMetricConfiguration().setMonotonic(monotonicVariant.getSelection());
-//            }
-//        });
+        GridData d31 = SWTUtil.createFillHorizontallyGridData();
+        d31.verticalAlignment = SWT.CENTER;
+        d31.horizontalSpan = 3;
+        comboAggregate.setLayoutData(d31);
+        comboAggregate.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                String selected = comboAggregate.getItem(comboAggregate.getSelectionIndex());
+                for (AggregateFunction function : model.getMetricDescription().getSupportedAggregateFunctions()) {
+                    if (function.toString().equals(selected)) {
+                        model.getMetricConfiguration().setAggregateFunction(function);
+                    }
+                }
+            }
+        });
 
         return mBase;
     }
@@ -313,38 +320,55 @@ public class ViewMetric implements IView {
 
         root.setRedraw(false);
         
-        if (model.getMetricConfiguration() != null && 
-            model.getMetricDescription() != null) {
+        MetricConfiguration config = model.getMetricConfiguration();
+        MetricDescription description = model.getMetricDescription();
+        
+        if (config != null && 
+            description != null) {
             
             // Monotonicity
-            if (!model.getMetricDescription().isMonotonicVariantSupported()) {
+            if (!description.isMonotonicVariantSupported()) {
                 this.monotonicVariant.setSelection(false);
                 this.monotonicVariant.setEnabled(false);
             } else {
                 this.monotonicVariant.setEnabled(true);
-                this.monotonicVariant.setSelection(model.getMetricConfiguration().isMonotonic());
+                this.monotonicVariant.setSelection(config.isMonotonic());
             }
             
             // Weights
             if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
                 model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
-                model.getMetricDescription() == null ||
-               !(model.getMetricDescription().isAttributeWeightsSupported())) {
+               !description.isAttributeWeightsSupported()) {
                 hideSettingsAttributeWeights();
                 hideSettingsCodingModel();
             } else {
                 showSettingsAttributeWeights();
-                if (model.getMetricDescription().isConfigurableCodingModelSupported()) {
+                if (description.isConfigurableCodingModelSupported()) {
                     showSettingsCodingModel();
                 } else {
                     hideSettingsCodingModel();
                 }
             }
             
+            // Aggregate function
+            comboAggregate.removeAll();
+            int index = 0;
+            int selected = -1;
+            for (AggregateFunction function : description.getSupportedAggregateFunctions()) {
+                comboAggregate.add(function.toString());
+                if (function.toString().equals(config.getAggregateFunction().toString())) {
+                    selected = index;
+                }
+                index++;
+            }
+            if (selected != -1) {
+                comboAggregate.select(selected);
+            }
+            comboAggregate.setEnabled(!description.getSupportedAggregateFunctions().isEmpty());
+            
         } else {
             reset();
         }
-        
         
         root.setRedraw(true);
     }

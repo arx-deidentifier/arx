@@ -64,11 +64,21 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *
      */
     public static enum AggregateFunction implements Serializable{
-        SUM,
-        MAXIMUM,
-        ARITHMETIC_MEAN,
-        GEOMETRIC_MEAN,
-        RANK
+        SUM("Sum"),
+        MAXIMUM("Maximum"),
+        ARITHMETIC_MEAN("Arithmetric Mean"),
+        GEOMETRIC_MEAN("Geometric Mean"),
+        RANK("Rank");
+        
+        private String name;
+        
+        private AggregateFunction(String name){
+            this.name = name;
+        }
+        
+        public String toString() {
+            return name;
+        }
     }
     
     private static final long serialVersionUID = -2657745103125430229L;
