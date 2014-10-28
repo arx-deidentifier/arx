@@ -24,6 +24,7 @@ import org.deidentifier.arx.framework.check.groupify.IHashGroupify;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Node;
+import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 
 /**
@@ -74,10 +75,39 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
 
     @Override
+    public InformationLoss<?> createMaxInformationLoss() {
+        if (precomputed) {
+            return precomputedMetric.createMaxInformationLoss();
+        } else {
+            return defaultMetric.createMaxInformationLoss();
+        }
+    }
+
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (precomputed) {
+            return precomputedMetric.createMinInformationLoss();
+        } else {
+            return defaultMetric.createMinInformationLoss();
+        }
+    }
+    
+    @Override
+    public AggregateFunction getAggregateFunction() {
+        if (precomputed) {
+            return precomputedMetric.getAggregateFunction();
+        } else {
+            return defaultMetric.getAggregateFunction();
+        }
+    }
+    
+    @Override
     public boolean isIndependent() {
         return precomputed ? precomputedMetric.isIndependent() : defaultMetric.isIndependent();
     }
-
+  
+    
     /**
      * Returns the default variant
      * @return
@@ -113,6 +143,14 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return this.precomputedMetric;
     }
     
+    /**
+     * Returns the threshold
+     * @return
+     */
+    protected double getThreshold() {
+        return this.threshold;
+    }
+
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -135,20 +173,12 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
             defaultMetric.initializeInternal(definition, input, ahierarchies, config);
         }
     }
-
+    
     /**
      * Returns whether the metric is precomputed
      * @return
      */
     protected boolean isPrecomputed() {
         return this.precomputed;
-    }
-    
-    /**
-     * Returns the threshold
-     * @return
-     */
-    protected double getThreshold() {
-        return this.threshold;
     }
 }
