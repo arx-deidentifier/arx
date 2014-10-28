@@ -106,8 +106,8 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset3() throws IllegalArgumentException, IOException {
 
-        Data data = Data.create("data/dis.csv", ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("data/dis_hierarchy_age.csv", ';'));
+        Data data = Data.create("../arx-data/data-junit/dis.csv", ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_age.csv", ';'));
         data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
 
@@ -133,8 +133,8 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset4() throws IllegalArgumentException, IOException {
 
-        Data data = Data.create("data/dis.csv", ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("data/dis_hierarchy_age.csv", ';'));
+        Data data = Data.create("../arx-data/data-junit/dis.csv", ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_age.csv", ';'));
         data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
 
@@ -156,9 +156,9 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset5() throws IllegalArgumentException, IOException {
 
-        Data data = Data.create("data/dis.csv", ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("data/dis_hierarchy_age.csv", ';'));
-        data.getDefinition().setAttributeType("gender", Hierarchy.create("data/dis_hierarchy_gender.csv", ';'));
+        Data data = Data.create("../arx-data/data-junit/dis.csv", ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_age.csv", ';'));
+        data.getDefinition().setAttributeType("gender", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_gender.csv", ';'));
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
 
         DataSelector selector = DataSelector.create(data).field("gender").equals("male");
@@ -263,6 +263,7 @@ public class TestDataHandle extends AbstractTest {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
+        config.setSuppressionAlwaysEnabled(false);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
 
@@ -368,6 +369,7 @@ public class TestDataHandle extends AbstractTest {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
+        config.setSuppressionAlwaysEnabled(false);
 
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
 
