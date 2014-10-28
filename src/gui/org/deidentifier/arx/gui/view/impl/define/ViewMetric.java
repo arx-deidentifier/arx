@@ -217,7 +217,7 @@ public class ViewMetric implements IView {
         d23.minimumHeight = LABEL_HEIGHT;
         mLabel3.setLayoutData(d23);
 
-        comboAggregate = new Combo(mBase, SWT.NULL);
+        comboAggregate = new Combo(mBase, SWT.READ_ONLY);
         GridData d31 = SWTUtil.createFillHorizontallyGridData();
         d31.verticalAlignment = SWT.CENTER;
         d31.horizontalSpan = 3;
