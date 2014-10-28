@@ -101,7 +101,7 @@ public class MetricNMEntropy extends MetricEntropy {
         }
         
         // Return sum of both values
-        return new InformationLossDefaultWithBound(originalInfoLoss - additionalInfoLoss, originalInfoLossDefault.getValue());
+        return new InformationLossDefaultWithBound(round(originalInfoLoss - additionalInfoLoss), originalInfoLossDefault.getValue());
     }
 
     @Override

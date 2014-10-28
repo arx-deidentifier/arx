@@ -45,12 +45,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     /** SUID */
     private static final long serialVersionUID = -573670902335136600L;
 
-    /** For comparisons */
-    private static final double DIGITS           = 10d;
-
-    /** For comparisons */
-    private static final double FACTOR           = Math.pow(10d, DIGITS);
-
     /** Total number of tuples, depends on existence of research subset */
     private double            tuples;
 
@@ -287,8 +281,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double max = tuples;
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
-        // Ignore anything but the first DIGITS digits
-        return Math.floor(result * FACTOR) / FACTOR;
+        return round(result);
     }
 
     /**

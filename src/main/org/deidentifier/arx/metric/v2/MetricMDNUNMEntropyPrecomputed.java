@@ -68,10 +68,9 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
         // Compute non-uniform entropy
-        ILMultiDimensionalWithBound loss = super.getInformationLossInternal(node, g);
+        double[] result = super.getInformationLossInternalRaw(node, g);
         
         // Compute loss induced by suppression
-        double[] result = loss.getInformationLoss().getValue();
         double suppressed = 0;
         final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getTransformation().length];
         for (int i = 0; i < original.length; i++) {
@@ -98,15 +97,22 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
                 for (int j = 0; j < map.allocated.length; j++) {
                     if (map.allocated[j]) {
                         double count = map.values[j];
-                        result[i] -= count * log2(count / suppressed);
+                        result[i] += count * log2(count / suppressed);
                     }
                 }
             }
         }
         
+        // Switch sign bit and round
+        for (int column = 0; column < result.length; column++) {
+            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
+        }
+
+        
+        
         // Return
         return new ILMultiDimensionalWithBound(createInformationLoss(result),
-                                               loss.getLowerBound());
+                                               createInformationLoss(result));
     }
 
     @Override

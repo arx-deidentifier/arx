@@ -104,9 +104,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         return "Non-uniform entropy";
     }
 
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
-        
+    protected double[] getInformationLossInternalRaw(final Node node, final IHashGroupify g) {
 
         // Prepare
         int[][][] cardinalities = this.cardinalities.getCardinalities();
@@ -135,9 +133,17 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             result[column] = value;
         }
 
-        // Switch sign bit
+        return result;
+    }
+    
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+        
+        double[] result = getInformationLossInternalRaw(node, g);
+        
+        // Switch sign bit and round
         for (int column = 0; column < hierarchies.length; column++) {
-            result[column] = result[column] == 0.0d ? result[column] : -result[column];
+            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
         }
 
         // Return

@@ -117,7 +117,7 @@ public class MetricEntropy extends MetricDefault {
             }
             result += value;
         }
-        result = result == 0.0d ? result : -result;
+        result = round(result == 0.0d ? result : -result);
         return new InformationLossDefaultWithBound(result, result);
     }
     

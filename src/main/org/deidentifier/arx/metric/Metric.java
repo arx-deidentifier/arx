@@ -762,6 +762,23 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String toString() {
         return this.getClass().getSimpleName();
     }
+    
+    /** For comparisons */
+    private static final double DIGITS           = 10d;
+
+    /** For comparisons */
+    private static final double FACTOR           = Math.pow(10d, DIGITS);
+    
+ 
+    /**
+     * Ignore anything but the first DIGITS digits. 
+     * 
+     * @param value
+     * @return
+     */
+    protected double round(double value) {
+       return Math.floor(value * FACTOR) / FACTOR;
+    }
 
     /**
      * Evaluates the metric for the given node
