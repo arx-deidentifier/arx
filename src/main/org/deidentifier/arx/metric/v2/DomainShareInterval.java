@@ -18,6 +18,9 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -56,7 +59,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
      * If an attribute exists with different shares on different generalization
      * levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>
      */
-    private final LongDoubleOpenHashMap duplicates;
+    private transient LongDoubleOpenHashMap duplicates;
 
     /**
      * Creates a new set of domain shares derived from the given functional interval-based hierarchy
@@ -175,6 +178,18 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
     }
 
     /**
+     * De-serialization
+     */
+    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+
+        // Default de-serialization
+        aInputStream.defaultReadObject();
+
+        // Read map
+        duplicates = IO.readLongDoubleOpenHashMap(aInputStream);
+    }
+
+    /**
      * Converts the given value of the attribute's data type to a double
      * @param value
      * @return
@@ -189,5 +204,17 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
         } else {
             throw new IllegalStateException("Unknown data type");
         }
+    }
+
+    /**
+     * Serialization
+     */
+    private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
+
+        // Default serialization
+        aOutputStream.defaultWriteObject();
+        
+        // Write map
+        IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
     }
 }

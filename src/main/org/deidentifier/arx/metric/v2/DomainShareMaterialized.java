@@ -18,6 +18,9 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
@@ -48,7 +51,7 @@ public class DomainShareMaterialized implements DomainShare {
      * If an attribute exists with different shares on different generalization
      * levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>
      */
-    private final LongDoubleOpenHashMap duplicates;
+    private transient LongDoubleOpenHashMap duplicates;
 
     /**
      * Creates a new set of domain shares derived from the given attribute
@@ -146,4 +149,29 @@ public class DomainShareMaterialized implements DomainShare {
             return duplicates.getOrDefault(key, -share);
         }
     }
+
+    /**
+     * De-serialization
+     */
+    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+
+        // Default de-serialization
+        aInputStream.defaultReadObject();
+
+        // Read map
+        duplicates = IO.readLongDoubleOpenHashMap(aInputStream);
+    }
+
+    /**
+     * Serialization
+     */
+    private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
+
+        // Default serialization
+        aOutputStream.defaultWriteObject();
+        
+        // Write map
+        IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
+    }
+
 }
