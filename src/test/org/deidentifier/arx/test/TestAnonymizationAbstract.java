@@ -37,8 +37,6 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.metric.InformationLoss;
-import org.deidentifier.arx.metric.v2.ILMultiDimensionalRank;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -76,10 +74,10 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String dataset,
-                           final double optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical) {
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical) {
             this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
 
@@ -94,11 +92,11 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param statistics
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String dataset,
-                           final double optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical,
-                           int[] statistics) {
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        int[] statistics) {
             this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics);
         }
 
@@ -113,11 +111,11 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String sensitiveAttribute,
-                           final String dataset,
-                           final double optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical) {
+                                        final String sensitiveAttribute,
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical) {
             this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
 
@@ -133,12 +131,12 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param statistics
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String sensitiveAttribute,
-                           final String dataset,
-                           final double optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical,
-                           int[] statistics) {
+                                        final String sensitiveAttribute,
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        int[] statistics) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
@@ -159,11 +157,11 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param practical
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String sensitiveAttribute,
-                           final String dataset,
-                           final String optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical) {
+                                        final String sensitiveAttribute,
+                                        final String dataset,
+                                        final String optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical) {
             this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
         }
 
@@ -179,12 +177,12 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
          * @param statistics
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
-                           final String sensitiveAttribute,
-                           final String dataset,
-                           final String optimalInformationLoss,
-                           final int[] optimalTransformation,
-                           final boolean practical,
-                           int[] statistics) {
+                                        final String sensitiveAttribute,
+                                        final String dataset,
+                                        final String optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        int[] statistics) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
@@ -220,7 +218,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
      * @return
      * @throws IOException
      */
-    public Data getDataObject(final ARXAnonymizationTestCase testCase) throws IOException {
+    public static Data getDataObject(final ARXAnonymizationTestCase testCase) throws IOException {
 
         final Data data = Data.create(testCase.dataset, ';');
 
@@ -284,19 +282,20 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
-            
-            String loss = result.getGlobalOptimum().getMaximumInformationLoss().toString();
-            
-            assertEquals(testCase.dataset + "-should: " + testCase.optimalInformationLoss + " is: " +
-                    loss+"("+result.getGlobalOptimum().getMinimumInformationLoss().toString()+")",
-                    convertInformationLoss(result.getGlobalOptimum().getMinimumInformationLoss(), testCase.optimalInformationLoss),
-                    convertInformationLoss(result.getGlobalOptimum().getMinimumInformationLoss(), loss));
-            
-            if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)){
+
+            String lossActual = result.getGlobalOptimum().getMaximumInformationLoss().toString();
+            String lossExpected = testCase.optimalInformationLoss;
+
+            assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
+                         lossActual + "(" + result.getGlobalOptimum().getMinimumInformationLoss().toString() + ")",
+                         lossExpected,
+                         lossActual);
+
+            if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)) {
                 System.err.println("Note: Information loss equals, but the optimum differs:");
                 System.err.println("Should: " + Arrays.toString(testCase.optimalTransformation) + " is: " +
-                                                Arrays.toString(result.getGlobalOptimum().getTransformation()));
-                System.err.println("Test case: "+testCase.toString());
+                                   Arrays.toString(result.getGlobalOptimum().getTransformation()));
+                System.err.println("Test case: " + testCase.toString());
             }
         }
 
@@ -333,42 +332,10 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations", testCase.statistics[0], statistics[0]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of checks", testCase.statistics[1], statistics[1]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of anonymous transformations", testCase.statistics[2], statistics[2]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of non-anonymous transformations",
-                         testCase.statistics[3],
-                         statistics[3]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations",
-                         testCase.statistics[4],
-                         statistics[4]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations",
-                         testCase.statistics[5],
-                         statistics[5]);
-            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available",
-                         testCase.statistics[6],
-                         statistics[6]);
-        }
-    }
-
-    /**
-     * Converts info loss
-     * @param minimumInformationLoss
-     * @param optimalInformationLoss
-     * @return
-     */
-    private String convertInformationLoss(InformationLoss<?> result, String expected) {
-        if (result instanceof ILMultiDimensionalRank) {
-            
-            String[] values = expected.split(",");
-            values[0] = values[0].replace('[', ' ').trim();
-            values[values.length-1] = values[values.length-1].replace(']', ' ').trim();
-            
-            double[] valuesDouble = new double[values.length];
-            for (int i=0; i<values.length; i++) {
-                valuesDouble[i] = Math.floor(Double.parseDouble(values[i]) * 1000000000d) / 1000000000d;
-            }
-            
-            return Arrays.toString(valuesDouble); 
-        } else {
-            return expected;
+            assertEquals(algorithmConfiguration + ". Mismatch: number of non-anonymous transformations", testCase.statistics[3], statistics[3]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations", testCase.statistics[4], statistics[4]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations", testCase.statistics[5], statistics[5]);
+            assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
         }
     }
 
@@ -389,7 +356,7 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         final String criterion;
         if (config.isCriterionMonotonic() || config.isPracticalMonotonicity()) {
             criterion = "Fully-monotonic";
-        } else if (!config.isCriterionMonotonic() && 
+        } else if (!config.isCriterionMonotonic() &&
                    (config.containsCriterion(KAnonymity.class) || config.containsCriterion(LDiversity.class))) {
             criterion = "Partially-monotonic";
         } else {

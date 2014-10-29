@@ -103,6 +103,12 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
             builder.append("}");
             return builder.toString();
         }
+
+        @Override
+        public String toString() {
+            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+                   config.isPracticalMonotonicity();
+        }
     }
 
     /** The test case */
@@ -124,7 +130,7 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
      * @return
      * @throws IOException
      */
-    public Data getDataObject(final ARXUtilityMetricsTestCase testCase) throws IOException {
+    public static Data getDataObject(final ARXUtilityMetricsTestCase testCase) throws IOException {
 
         final Data data = Data.create(testCase.dataset, ';');
 
@@ -191,7 +197,11 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
                     if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
                         result.getOutput(node, false);
                     }
-                    assertEquals(label, loss, node.getMaximumInformationLoss().toString());
+
+                    String actualLoss = node.getMaximumInformationLoss().toString();
+                    String expectedLoss = testcase.informationLoss.get(label);
+
+                    assertEquals(label, expectedLoss, actualLoss);
                 }
             }
         }
