@@ -69,6 +69,8 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         // Compute non-uniform entropy
         double[] result = super.getInformationLossInternalRaw(node, g);
+        double[] bound = new double[result.length];
+        System.arraycopy(result, 0, bound, 0, result.length);
         
         // Compute loss induced by suppression
         double suppressed = 0;
@@ -112,7 +114,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         // Return
         return new ILMultiDimensionalWithBound(createInformationLoss(result),
-                                               createInformationLoss(result));
+                                               createInformationLoss(bound));
     }
 
     @Override
