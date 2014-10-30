@@ -260,6 +260,11 @@ public class ViewList implements IView {
                 table.addListener(SWT.SetData, listener);
                 table.setItemCount(list.size());
 
+                TableColumn[] colums = table.getColumns();
+                for (TableColumn tableColumn : colums) {
+                    tableColumn.setWidth(120);
+                }
+                
                 table.setRedraw(true);
             }
         });
