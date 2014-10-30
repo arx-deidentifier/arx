@@ -31,9 +31,9 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
     /** SVUID*/
 	private static final long serialVersionUID = -1765428286262869856L;
 	/** Dmin*/
-	private double dmin = 0.001d;
+	private double dmin = 0.0d;
 	/** Dmax*/
-	private double dmax = 0.001d;
+	private double dmax = 0.0d;
 	
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
