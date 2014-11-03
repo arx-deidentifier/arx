@@ -462,26 +462,26 @@ public class ViewGeneralSettings implements IView {
         }
 
         // Precomputation
-        if (!model.getMetricDescription().isPrecomputationSupported()) {
-            this.precomputedVariant.setSelection(false);
-            this.precomputedVariant.setEnabled(false);
-            this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
-            this.precomputationThreshold.setEnabled(false);
-            this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
+        this.precomputedVariant.setEnabled(true);
+        this.precomputedVariant.setSelection(model.getMetricConfiguration()
+                                                  .isPrecomputed());
+        if (model.getMetricConfiguration().isPrecomputed()) {
+            this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d,
+                                                                             1d,
+                                                                             model.getMetricConfiguration()
+                                                                                  .getPrecomputationThreshold()));
+            this.precomputationThreshold.setEnabled(true);
+            this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
+                                                            .getPrecomputationThreshold()));
         } else {
-            this.precomputedVariant.setEnabled(true);
-            this.precomputedVariant.setSelection(model.getMetricConfiguration().isPrecomputed());
-            if (model.getMetricConfiguration().isPrecomputed()) {
-                this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
-                this.precomputationThreshold.setEnabled(true);
-                this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
-            } else {
-                this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, model.getMetricConfiguration().getPrecomputationThreshold()));
-                this.precomputationThreshold.setEnabled(false);
-                this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration().getPrecomputationThreshold()));
-            }
+            this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d,
+                                                                             1d,
+                                                                             model.getMetricConfiguration()
+                                                                                  .getPrecomputationThreshold()));
+            this.precomputationThreshold.setEnabled(false);
+            this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
+                                                            .getPrecomputationThreshold()));
         }
-        
         
         root.setRedraw(true);
     }
