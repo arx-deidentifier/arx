@@ -132,6 +132,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
                 view.setHierarchy(hierarchy);
             }
             
+            this.composite.layout(true);
             this.composite.setRedraw(true);
 
             // Deactivate buttons
