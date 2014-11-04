@@ -196,6 +196,7 @@ public class ViewAttributeWeights implements IView {
                             
                             double value = knob.getValue();
                             label.setText(format.format(value));
+                            label.setToolTipText(String.valueOf(value));
                             
                             // Correctly indicate weights slightly > 0
                             if (Double.parseDouble(format.format(value)) == 0d && value > 0d) {
