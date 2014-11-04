@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.define;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -198,14 +199,21 @@ public class ViewAttributeWeights implements IView {
                             label.setText(format.format(value));
                             label.setToolTipText(String.valueOf(value));
                             
-                            // Correctly indicate weights slightly > 0
-                            if (Double.parseDouble(format.format(value)) == 0d && value > 0d) {
-                                label.setText(">0");
-                            }
-                            
-                            // Correctly indicate weights slightly < 1
-                            if (Double.parseDouble(format.format(value)) == 1d && value < 1d) {
-                                label.setText("<1");
+                            try {
+                                
+                                // Correctly indicate weights slightly > 0
+                                double parsedValue = format.parse(format.format(value)).doubleValue();
+                                if (parsedValue == 0d && value > 0d) {
+                                    label.setText(">0");
+                                }
+                                
+                                // Correctly indicate weights slightly < 1
+                                if (parsedValue == 1d && value < 1d) {
+                                    label.setText("<1");
+                                }
+                                
+                            } catch (ParseException e) {
+                                // Drop silently
                             }
                             
                             if (model != null && model.getInputConfig() != null) {
