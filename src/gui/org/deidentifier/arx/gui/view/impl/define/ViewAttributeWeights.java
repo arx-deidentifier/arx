@@ -50,12 +50,20 @@ import de.linearbits.swt.widgets.KnobRange;
  */
 public class ViewAttributeWeights implements IView {
 
+    /** Controller*/
     private Controller          controller = null;
+    
+    /** Model*/
     private Model               model      = null;
-    private Composite           panel      = null;
-
-    private final Composite     root;
+    /** Model*/
     private final Set<String>   attributes = new HashSet<String>();
+    
+    /** View*/
+    private Composite           panel      = null;
+    /** View*/
+    private final Composite     root;
+    
+    /** Misc*/
     private final DecimalFormat format     = new DecimalFormat("0.000");
 
     /**
