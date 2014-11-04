@@ -55,9 +55,8 @@ public class ILMultiDimensionalArithmeticMean extends AbstractILMultiDimensional
         double[] weights = getWeights();
         double result = 0d;
         for (int i = 0; i < values.length; i++) {
-            result += values[i] * weights[i];
+            result += (values[i] / (double) values.length) * weights[i];
         }
-        result /= (double) values.length;
         return result;
     }
 }
