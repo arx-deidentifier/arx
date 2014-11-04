@@ -52,7 +52,7 @@ public class MainSplash {
         
         this.version = Resources.getVersion();
         this.splash = Resources.getSplash(display);
-        this.shell = new Shell(SWT.ON_TOP | SWT.NO_TRIM);
+        this.shell = new Shell(SWT.ON_TOP | (isMac() ? 0 : SWT.NO_TRIM));
         this.shell.setImages(Resources.getIconSet(display));
         this.shell.setSize(splash.getBounds().width, splash.getBounds().height);
         
@@ -118,5 +118,13 @@ public class MainSplash {
         if (shell != null && !shell.isDisposed()) {
             shell.dispose();
         }
+    }
+
+    /**
+     * Detect os x
+     * @return
+     */
+    private boolean isMac() {
+        return (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0);
     }
 }
