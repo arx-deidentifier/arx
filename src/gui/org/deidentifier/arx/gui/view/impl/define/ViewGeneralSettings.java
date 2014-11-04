@@ -29,6 +29,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -232,7 +233,13 @@ public class ViewGeneralSettings implements IView {
         final Label sLabel = new Label(group, SWT.PUSH);
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.11")); //$NON-NLS-1$
 
-        labelOutliers = new Label(group, SWT.BORDER | SWT.CENTER);
+        Composite outliersBase = new Composite(group, SWT.NONE);
+        GridData baseData = SWTUtil.createFillHorizontallyGridData();
+        baseData.horizontalSpan = 3;
+        outliersBase.setLayoutData(baseData);
+        outliersBase.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        
+        labelOutliers = new Label(outliersBase, SWT.BORDER | SWT.CENTER);
         GridData d2 = new GridData();
         d2.minimumWidth = LABEL_WIDTH;
         d2.widthHint = LABEL_WIDTH;
@@ -240,10 +247,8 @@ public class ViewGeneralSettings implements IView {
         labelOutliers.setLayoutData(d2);
         labelOutliers.setText("0"); //$NON-NLS-1$
 
-        sliderOutliers = new Scale(group, SWT.HORIZONTAL);
-        GridData d3 = SWTUtil.createFillHorizontallyGridData();
-        d3.horizontalSpan = 2;
-        sliderOutliers.setLayoutData(d3);
+        sliderOutliers = new Scale(outliersBase, SWT.HORIZONTAL);
+        sliderOutliers.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         sliderOutliers.setMaximum(SWTUtil.SLIDER_MAX);
         sliderOutliers.setMinimum(0);
         sliderOutliers.setSelection(0);
