@@ -1,0 +1,592 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="de">
+<head>
+<title>MetricMDNMLoss (ARX Developer Documentation)</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="MetricMDNMLoss (ARX Developer Documentation)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/MetricMDNMLoss.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../../index-all.html">Index</a></li>
+<li><a href="../../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLossPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../../index.html?org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" target="_top">Frames</a></li>
+<li><a href="MetricMDNMLoss.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_classes_inherited_from_class_org.deidentifier.arx.metric.Metric">Nested</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">org.deidentifier.arx.metric.v2</div>
+<h2 title="Class MetricMDNMLoss" class="title">Class MetricMDNMLoss</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">org.deidentifier.arx.metric.Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</li>
+<li>
+<ul class="inheritance">
+<li><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional</a></li>
+<li>
+<ul class="inheritance">
+<li>org.deidentifier.arx.metric.v2.MetricMDNMLoss</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.io.Serializable</dd>
+</dl>
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLossPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNMLossPrecomputed</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public class <span class="strong">MetricMDNMLoss</span>
+extends <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensional</a></pre>
+<div class="block">Normalized Domain Share</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../serialized-form.html#org.deidentifier.arx.metric.v2.MetricMDNMLoss">Serialized Form</a></dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested_classes_inherited_from_class_org.deidentifier.arx.metric.Metric">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;org.deidentifier.arx.metric.<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></h3>
+<code><a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#MetricMDNMLoss()">MetricMDNMLoss</a></strong>()</code>
+<div class="block">Default constructor which treats all transformation methods equally</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#MetricMDNMLoss(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNMLoss</a></strong>(double&nbsp;gsFactor,
+              <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
+<div class="block">A constructor that allows to define a factor weighting generalization and suppression</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#MetricMDNMLoss(org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNMLoss</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
+<div class="block">Default constructor which treats all transformation methods equally</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getConfiguration()">getConfiguration</a></strong>()</code>
+<div class="block">Returns the configuration of this metric</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getGeneralizationFactor()">getGeneralizationFactor</a></strong>()</code>
+<div class="block">Returns the factor used weight generalized values</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getGeneralizationSuppressionFactor()">getGeneralizationSuppressionFactor</a></strong>()</code>
+<div class="block">Returns the factor weighting generalization and suppression</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">getInformationLossInternal</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
+                          <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;g)</code>
+<div class="block">Evaluates the metric for the given node</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</code>
+<div class="block">Returns a lower bound for the information loss for the given node.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">getLowerBoundInternal</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
+                     <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;g)</code>
+<div class="block">Returns a lower bound for the information loss for the given node.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getName()">getName</a></strong>()</code>
+<div class="block">Returns the name of metric</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getShares()">getShares</a></strong>()</code>
+<div class="block">For subclasses</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#getSuppressionFactor()">getSuppressionFactor</a></strong>()</code>
+<div class="block">Returns the factor used to weight suppressed values</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initializeInternal</a></strong>(<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+                  <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;input,
+                  <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies,
+                  <a href="../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
+<div class="block">Implement this to initialize the metric.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#normalize(double, int)">normalize</a></strong>(double&nbsp;aggregate,
+         int&nbsp;dimension)</code>
+<div class="block">Normalizes the aggregate</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLoss.html#toString()">toString</a></strong>()</code>
+<div class="block">Returns the name of metric</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;org.deidentifier.arx.metric.v2.<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensional</a></h3>
+<code><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#createInformationLoss(double[])">createInformationLoss</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#createInformationLossWithBound(double[], double[])">createInformationLossWithBound</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#createInformationLossWithoutBound(double[])">createInformationLossWithoutBound</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#createMaxInformationLoss()">createMaxInformationLoss</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#createMinInformationLoss()">createMinInformationLoss</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#getAggregateFunction()">getAggregateFunction</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#getDimensions()">getDimensions</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#setMax(double[])">setMax</a>, <a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#setMin(double[])">setMin</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.metric.Metric">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;org.deidentifier.arx.metric.<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a></h3>
+<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#createAECSMetric()">createAECSMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createDiscernabilityMetric()">createDiscernabilityMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createDiscernabilityMetric(boolean)">createDiscernabilityMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric()">createEntropyMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean)">createEntropyMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createHeightMetric()">createHeightMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createHeightMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">createHeightMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createLossMetric()">createLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createLossMetric(double)">createLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createLossMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">createLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createMetric(org.deidentifier.arx.metric.Metric)">createMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric()">createPrecisionMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean)">createPrecisionMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double)">createPrecomputedEntropyMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, boolean)">createPrecomputedEntropyMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedEntropyMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double)">createPrecomputedLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double, double)">createPrecomputedLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createStaticMetric(java.util.Map)">createStaticMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#createStaticMetric(java.util.Map, org.deidentifier.arx.metric.Metric.AggregateFunction)">createStaticMetric</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#getDescription()">getDescription</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#getDescription(org.deidentifier.arx.metric.Metric)">getDescription</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">getInformationLoss</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node)">getLowerBound</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">getLowerBound</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initialize</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#isIndependent()">isIndependent</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#isMonotonic()">isMonotonic</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#isMultiDimensional()">isMultiDimensional</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#isWeighted()">isWeighted</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#list()">list</a>, <a href="../../../../../org/deidentifier/arx/metric/Metric.html#round(double)">round</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="MetricMDNMLoss()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MetricMDNMLoss</h4>
+<pre>public&nbsp;MetricMDNMLoss()</pre>
+<div class="block">Default constructor which treats all transformation methods equally</div>
+</li>
+</ul>
+<a name="MetricMDNMLoss(org.deidentifier.arx.metric.Metric.AggregateFunction)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MetricMDNMLoss</h4>
+<pre>public&nbsp;MetricMDNMLoss(<a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
+<div class="block">Default constructor which treats all transformation methods equally</div>
+</li>
+</ul>
+<a name="MetricMDNMLoss(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>MetricMDNMLoss</h4>
+<pre>public&nbsp;MetricMDNMLoss(double&nbsp;gsFactor,
+              <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
+<div class="block">A constructor that allows to define a factor weighting generalization and suppression</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression. 
+                 The default value is 0.5, which means that generalization
+                 and suppression will be treated equally. A factor of 0
+                 will favor suppression, and a factor of 1 will favor
+                 generalization. The values in between can be used for
+                 balancing both methods.</dd><dd><code>function</code> - </dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="getGeneralizationFactor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGeneralizationFactor</h4>
+<pre>public&nbsp;double&nbsp;getGeneralizationFactor()</pre>
+<div class="block">Returns the factor used weight generalized values</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getGeneralizationSuppressionFactor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGeneralizationSuppressionFactor</h4>
+<pre>public&nbsp;double&nbsp;getGeneralizationSuppressionFactor()</pre>
+<div class="block">Returns the factor weighting generalization and suppression</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>A factor [0,1] weighting generalization and suppression. 
+         The default value is 0.5, which means that generalization
+         and suppression will be treated equally. A factor of 0
+         will favor suppression, and a factor of 1 will favor
+         generalization. The values in between can be used for
+         balancing both methods.</dd></dl>
+</li>
+</ul>
+<a name="getName()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getName()">Metric</a></code></strong></div>
+<div class="block">Returns the name of metric</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getName()">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSuppressionFactor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSuppressionFactor</h4>
+<pre>public&nbsp;double&nbsp;getSuppressionFactor()</pre>
+<div class="block">Returns the factor used to weight suppressed values</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#toString()">Metric</a></code></strong></div>
+<div class="block">Returns the name of metric</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInformationLossInternal</h4>
+<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/metric/v2/ILMultiDimensionalWithBound.html" title="class in org.deidentifier.arx.metric.v2">ILMultiDimensionalWithBound</a>&nbsp;getInformationLossInternal(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
+                                                     <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;g)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">Metric</a></code></strong></div>
+<div class="block">Evaluates the metric for the given node</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">getInformationLossInternal</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - The node for which to compute the information loss</dd><dd><code>g</code> - The groupify operator of the previous check</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the double</dd></dl>
+</li>
+</ul>
+<a name="getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLowerBoundInternal</h4>
+<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&nbsp;getLowerBoundInternal(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">Metric</a></code></strong></div>
+<div class="block">Returns a lower bound for the information loss for the given node. 
+ This can be used to expose the results of monotonic shares of a metric,
+ which can significantly speed-up the anonymization process. If no
+ such metric exists, simply return <code>null</code>.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)">getLowerBoundInternal</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLowerBoundInternal</h4>
+<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&nbsp;getLowerBoundInternal(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
+                                               <a href="../../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;g)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">Metric</a></code></strong></div>
+<div class="block">Returns a lower bound for the information loss for the given node. 
+ This can be used to expose the results of monotonic shares of a metric,
+ which can significantly speed-up the anonymization process. If no
+ such metric exists, simply return <code>null</code>. <br>
+ <br>
+ This variant of the method allows computing a monotonic share based on
+ a groupified data representation. IMPORTANT NOTE: The groups may not have
+ been classified correctly when the method is called, i.e., 
+ HashGroupifyEntry.isNotOutlier may not be set correctly!</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">getLowerBoundInternal</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getShares()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getShares</h4>
+<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[]&nbsp;getShares()</pre>
+<div class="block">For subclasses</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>initializeInternal</h4>
+<pre>protected&nbsp;void&nbsp;initializeInternal(<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+                      <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;input,
+                      <a href="../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies,
+                      <a href="../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">Metric</a></code></strong></div>
+<div class="block">Implement this to initialize the metric.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initializeInternal</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricMultiDimensional</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="normalize(double, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>normalize</h4>
+<pre>protected&nbsp;double&nbsp;normalize(double&nbsp;aggregate,
+               int&nbsp;dimension)</pre>
+<div class="block">Normalizes the aggregate</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>aggregate</code> - </dd><dd><code>dimension</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getConfiguration()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getConfiguration</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a>&nbsp;getConfiguration()</pre>
+<div class="block">Returns the configuration of this metric</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/Metric.html#getConfiguration()">getConfiguration</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/MetricMDNMLoss.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../../index-all.html">Index</a></li>
+<li><a href="../../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDHeight.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMLossPotentiallyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../../index.html?org/deidentifier/arx/metric/v2/MetricMDNMLoss.html" target="_top">Frames</a></li>
+<li><a href="MetricMDNMLoss.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_classes_inherited_from_class_org.deidentifier.arx.metric.Metric">Nested</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>
