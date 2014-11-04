@@ -95,6 +95,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      * @return
      */
     protected AbstractILMultiDimensional createInformationLoss(double[] values){
+
         switch (function){
         case ARITHMETIC_MEAN:
             return new ILMultiDimensionalArithmeticMean(values, weights);
@@ -149,21 +150,21 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         
         // Initialize weights
         weights = new double[hierarchies.length];
-        double total = 0d;
+        double maximum = 0d;
         for (int i = 0; i < hierarchies.length; i++) {
             String attribute = hierarchies[i].getName();
             double weight = config.getAttributeWeight(attribute);
             weights[i] = weight;
-            total += weight;
+            maximum = Math.max(maximum, weight);
         }
         
         // Normalize: default case
-        if (total == 0d) {
+        if (maximum == 0d) {
             Arrays.fill(weights, 1d);
         // Weighted case
         } else {
             for (int i=0; i<weights.length; i++){
-                weights[i] /= total;
+                weights[i] /= maximum;
             }
         }
         
