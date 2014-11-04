@@ -50,12 +50,19 @@ public class ILMultiDimensionalSum extends AbstractILMultiDimensionalReduced {
 
     @Override
     protected double getAggregate() {
+        
         double[] values = getValues();
         double[] weights = getWeights();
         double result = 0d;
+        
         for (int i = 0; i < values.length; i++) {
             result += values[i] * weights[i];
         }
+        
+        if (Double.isInfinite(result) || Double.isNaN(result)) {
+            result = Double.MAX_VALUE;
+        }
+        
         return result;
     }
 }
