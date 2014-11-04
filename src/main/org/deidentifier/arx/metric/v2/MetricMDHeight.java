@@ -52,17 +52,29 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         super(true, true, function);
     }
 
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(true,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0d,                         // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
+    }
+    
     @Override
     public String toString() {
         return "Height";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -72,13 +84,13 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         }
         return super.createInformationLoss(result);
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                        IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
-
+    
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,
@@ -98,17 +110,5 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
-    }
-    
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0d,                         // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
-                                       );
     }
 }

@@ -58,11 +58,23 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         return new ILSingleDimensional(1d);
     }
     
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       AggregateFunction.SUM       // aggregate function
+                                       );
+    }
+    
     @Override
     public String toString() {
         return "Average equivalence class size";
     }
-    
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -106,17 +118,5 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         
         // Compute AECS
         return new ILSingleDimensional(getNumTuples() / (double)groups);
-    }
-
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0.0d,                       // precomputation threshold
-                                       AggregateFunction.SUM       // aggregate function
-                                       );
     }
 }

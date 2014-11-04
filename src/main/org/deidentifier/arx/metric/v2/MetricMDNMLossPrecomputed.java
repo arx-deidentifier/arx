@@ -70,6 +70,18 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
         super(gsFactor, function);
     }
 
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       super.getGeneralizationSuppressionFactor(), // gs-factor
+                                       true,      // precomputed
+                                       1.0d,      // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
+    }
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
 
@@ -140,17 +152,5 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                 values[i][j] = hierarchies[i].getDistinctValues(j);
             }
         }
-    }
-
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       super.getGeneralizationSuppressionFactor(), // gs-factor
-                                       true,      // precomputed
-                                       1.0d,      // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
-                                       );
     }
 }

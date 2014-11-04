@@ -99,9 +99,36 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super(true, true, function);
     }
 
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(true,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       true,                       // precomputed
+                                       1.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
+    }
+
     @Override
     public String toString() {
         return "Non-uniform entropy";
+    }
+    
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+        
+        double[] result = getInformationLossInternalRaw(node, g);
+        
+        // Switch sign bit and round
+        for (int column = 0; column < hierarchies.length; column++) {
+            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
+        }
+
+        // Return
+        return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
+                                               super.createInformationLoss(result));
     }
 
     protected double[] getInformationLossInternalRaw(final Node node, final IHashGroupify g) {
@@ -134,21 +161,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
 
         return result;
-    }
-    
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
-        
-        double[] result = getInformationLossInternalRaw(node, g);
-        
-        // Switch sign bit and round
-        for (int column = 0; column < hierarchies.length; column++) {
-            result[column] = round(result[column] == 0.0d ? result[column] : -result[column]);
-        }
-
-        // Return
-        return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
-                                               super.createInformationLoss(result));
     }
 
     @Override
@@ -202,17 +214,5 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
         super.setMax(max);
         super.setMin(min);
-    }
-
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       true,                       // precomputed
-                                       1.0d,                       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
-                                       );
     }
 }

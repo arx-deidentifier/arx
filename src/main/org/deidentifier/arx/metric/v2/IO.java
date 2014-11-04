@@ -34,48 +34,6 @@ public class IO {
      * @throws IOException 
      * @throws ClassNotFoundException 
      */
-    public static LongDoubleOpenHashMap readLongDoubleOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
-        
-        // Read
-        boolean[] allocated = (boolean[]) stream.readObject();
-        long[] keys = (long[]) stream.readObject();
-        double[] values = (double[]) stream.readObject();
-        
-        // Set
-        LongDoubleOpenHashMap result = new LongDoubleOpenHashMap();
-        for (int i=0; i<allocated.length; i++) {
-            if (allocated[i]) {
-                result.put(keys[i], values[i]);
-            }
-        }
-        
-        // Return
-        return result;
-    }
-    
-
-    /**
-     * Reads a hash map from the stream
-     * @param stream
-     * @param hashmap
-     * @return
-     * @throws IOException 
-     */
-    public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
-        
-        // Write
-        stream.writeObject(hashmap.allocated);
-        stream.writeObject(hashmap.keys);
-        stream.writeObject(hashmap.values);
-    }
-
-    /**
-     * Reads a hash map from the stream
-     * @param stream
-     * @return
-     * @throws IOException 
-     * @throws ClassNotFoundException 
-     */
     public static IntIntOpenHashMap readIntIntOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
         
         // Read
@@ -99,11 +57,53 @@ public class IO {
     /**
      * Reads a hash map from the stream
      * @param stream
+     * @return
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public static LongDoubleOpenHashMap readLongDoubleOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+        
+        // Read
+        boolean[] allocated = (boolean[]) stream.readObject();
+        long[] keys = (long[]) stream.readObject();
+        double[] values = (double[]) stream.readObject();
+        
+        // Set
+        LongDoubleOpenHashMap result = new LongDoubleOpenHashMap();
+        for (int i=0; i<allocated.length; i++) {
+            if (allocated[i]) {
+                result.put(keys[i], values[i]);
+            }
+        }
+        
+        // Return
+        return result;
+    }
+
+    /**
+     * Reads a hash map from the stream
+     * @param stream
      * @param hashmap
      * @return
      * @throws IOException 
      */
     public static void writeIntIntOpenHashMap(ObjectOutputStream stream, IntIntOpenHashMap hashmap) throws IOException {
+        
+        // Write
+        stream.writeObject(hashmap.allocated);
+        stream.writeObject(hashmap.keys);
+        stream.writeObject(hashmap.values);
+    }
+    
+
+    /**
+     * Reads a hash map from the stream
+     * @param stream
+     * @param hashmap
+     * @return
+     * @throws IOException 
+     */
+    public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
         
         // Write
         stream.writeObject(hashmap.allocated);

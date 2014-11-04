@@ -91,13 +91,25 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                        // monotonic
+                                       gsFactor,                     // gs-factor
+                                       false,                        // precomputed
+                                       0.0d,                         // precomputation threshold
+                                       this.getAggregateFunction()   // aggregate function
+                                       );
+    }
+    
+    /**
      * Returns the factor used weight generalized values
      * @return
      */
     public double getGeneralizationFactor() {
         return gFactor;
     }
-    
+
     /**
      * Returns the factor weighting generalization and suppression
      * 
@@ -111,7 +123,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
-
+    
     @Override
     public String getName() {
         return "Loss";
@@ -124,7 +136,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public double getSuppressionFactor() {
         return sFactor;
     }
-    
+
     @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
@@ -203,7 +215,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Return
         return super.createInformationLoss(bound);
     }
-
+    
     /**
      * For subclasses
      * @return
@@ -268,7 +280,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         super.setMin(min);
         super.setMax(max);
     }
-    
+
     /**
      * Normalizes the aggregate
      * @param aggregate
@@ -282,17 +294,5 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
-    }
-
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                        // monotonic
-                                       gsFactor,                     // gs-factor
-                                       false,                        // precomputed
-                                       0.0d,                         // precomputation threshold
-                                       this.getAggregateFunction()   // aggregate function
-                                       );
     }
 }

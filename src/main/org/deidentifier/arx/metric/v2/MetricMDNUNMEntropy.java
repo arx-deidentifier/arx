@@ -49,16 +49,6 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
         super(function);
     }
 
-    @Override
-    public String toString() {
-        return "Non-monotonic non-uniform entropy";
-    }
-
-    @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
-        return null;
-    }
-
     /**
      * Returns the configuration of this metric
      */
@@ -69,5 +59,15 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
                                        0.0d,                       // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
                                        );
+    }
+
+    @Override
+    public String toString() {
+        return "Non-monotonic non-uniform entropy";
+    }
+
+    @Override
+    protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
+        return null;
     }
 }

@@ -41,17 +41,6 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
         super(true);
     }
 
-    @Override
-    public String toString() {
-        return "Monotonic discernability (DM*)";
-    }
-    
-    @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
-        ILSingleDimensional result = super.getLowerBoundInternal(node, g);
-        return new ILSingleDimensionalWithBound(result.getValue(), result.getValue());
-    }
-
     /**
      * Returns the configuration of this metric
      */
@@ -62,5 +51,16 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
                                        0.0d,                       // precomputation threshold
                                        AggregateFunction.SUM       // aggregate function
                                        );
+    }
+    
+    @Override
+    public String toString() {
+        return "Monotonic discernability (DM*)";
+    }
+
+    @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+        ILSingleDimensional result = super.getLowerBoundInternal(node, g);
+        return new ILSingleDimensionalWithBound(result.getValue(), result.getValue());
     }
 }

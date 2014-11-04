@@ -68,11 +68,23 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         _infoloss = infoloss;
     }
     
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(true,                       // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
+                                       );
+    }
+    
     @Override
     public String toString() {
         return "Static";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
@@ -141,17 +153,5 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
-    }
-
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0.0d,                       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
-                                       );
     }
 }

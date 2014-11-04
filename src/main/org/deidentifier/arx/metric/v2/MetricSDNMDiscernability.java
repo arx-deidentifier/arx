@@ -51,16 +51,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    public ILSingleDimensional createMinInformationLoss() {
-        Double rows = getNumTuples();
-        if (rows == null) {
-            throw new IllegalStateException("Metric must be initialized first");
-        } else {
-            return new ILSingleDimensional(rows);
-        }
-    }
-    
-    @Override
     public ILSingleDimensional createMaxInformationLoss() {
         Double rows = getNumTuples();
         if (rows == null) {
@@ -70,6 +60,28 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
     }
     
+    @Override
+    public ILSingleDimensional createMinInformationLoss() {
+        Double rows = getNumTuples();
+        if (rows == null) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new ILSingleDimensional(rows);
+        }
+    }
+    
+    /**
+     * Returns the configuration of this metric
+     */
+    public MetricConfiguration getConfiguration() {
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       false,                      // precomputed
+                                       0.0d,                       // precomputation threshold
+                                       AggregateFunction.SUM       // aggregate function
+                                       );
+    }
+
     @Override
     public String toString() {
         return "Non-monotonic discernability";
@@ -93,12 +105,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
         return new ILSingleDimensionalWithBound(dm, dmStar);
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node) {
         return null;
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Node node,
                                                         IHashGroupify groupify) {
@@ -109,18 +121,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
-    }
-
-    /**
-     * Returns the configuration of this metric
-     */
-    public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0.0d,                       // precomputation threshold
-                                       AggregateFunction.SUM       // aggregate function
-                                       );
     }
 }
 

@@ -53,17 +53,6 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
         super(true, true, function);
     }
 
-    @Override
-    public String toString() {
-        return "Monotonic precision";
-    }
-
-    @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
-        AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
-        return new ILMultiDimensionalWithBound(loss, loss);
-    }
-
     /**
      * Returns the configuration of this metric
      */
@@ -74,5 +63,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
                                        0.0d,                       // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
                                        );
+    }
+
+    @Override
+    public String toString() {
+        return "Monotonic precision";
+    }
+
+    @Override
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
+        AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
+        return new ILMultiDimensionalWithBound(loss, loss);
     }
 }

@@ -59,11 +59,6 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
               threshold);
     }
     
-    @Override
-    public String toString() {
-        return "Non-monotonic non-uniform entropy";
-    }
-
     /**
      * Returns the configuration of this metric
      */
@@ -74,5 +69,10 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
                                        super.getThreshold(),       // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
                                        );
+    }
+
+    @Override
+    public String toString() {
+        return "Non-monotonic non-uniform entropy";
     }
 }

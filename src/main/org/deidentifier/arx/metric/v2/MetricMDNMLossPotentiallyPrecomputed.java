@@ -75,11 +75,6 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
               threshold);
     }
     
-    @Override
-    public String toString() {
-        return "Loss";
-    }
-
     /**
      * Returns the configuration of this metric
      */
@@ -90,5 +85,10 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
                                        super.getThreshold(),       // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
                                        );
+    }
+
+    @Override
+    public String toString() {
+        return "Loss";
     }
 }
