@@ -193,8 +193,20 @@ public class ViewAttributeWeights implements IView {
                     final Knob<Double> knob = knobs.get(i);
                     knob.addSelectionListener(new SelectionAdapter(){
                         public void widgetSelected(SelectionEvent arg0) {
+                            
                             double value = knob.getValue();
                             label.setText(format.format(value));
+                            
+                            // Correctly indicate weights slightly > 0
+                            if (Double.parseDouble(format.format(value)) == 0d && value > 0d) {
+                                label.setText(">0");
+                            }
+                            
+                            // Correctly indicate weights slightly < 1
+                            if (Double.parseDouble(format.format(value)) == 1d && value < 1d) {
+                                label.setText("<1");
+                            }
+                            
                             if (model != null && model.getInputConfig() != null) {
                                 model.getInputConfig().setAttributeWeight(attribute, value);
                             }
