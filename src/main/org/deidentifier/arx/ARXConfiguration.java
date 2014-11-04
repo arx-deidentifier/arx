@@ -383,12 +383,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.attributeWeights = new HashMap<String, Double>();
         }
         Double value = this.attributeWeights.get(attribute);
-        if (value == null) return 0d;
+        if (value == null) return 0.5d;
         else return value;
     }
     
     /**
-     * Returns all configured attribute weights
+     * Returns all configured attribute weights. For attributes which are not a key in this
+     * set the default attribute weight will be assumed by ARX. This default value is 
+     * currently set to 0.5.
+     * 
      * @return
      */
     public Map<String, Double> getAttributeWeights() {
