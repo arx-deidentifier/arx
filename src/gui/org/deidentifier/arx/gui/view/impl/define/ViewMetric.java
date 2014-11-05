@@ -171,12 +171,15 @@ public class ViewMetric implements IView {
         GridData d2 = new GridData();
         d2.heightHint = LABEL_HEIGHT;
         d2.minimumHeight = LABEL_HEIGHT;
+        d2.grabExcessVerticalSpace = true;
+        d2.verticalAlignment = GridData.CENTER;
         mLabel.setLayoutData(d2);
 
         comboMetric = new Combo(mBase, SWT.READ_ONLY);
         GridData d30 = SWTUtil.createFillHorizontallyGridData();
-        d30.verticalAlignment = SWT.CENTER;
         d30.horizontalSpan = 3;
+        d30.verticalAlignment = GridData.CENTER;
+        d30.grabExcessVerticalSpace = true;
         comboMetric.setLayoutData(d30);
         comboMetric.setItems(LABELS);
         comboMetric.select(0);
@@ -195,13 +198,15 @@ public class ViewMetric implements IView {
         GridData d22 = new GridData();
         d22.heightHint = LABEL_HEIGHT;
         d22.minimumHeight = LABEL_HEIGHT;
+        d22.grabExcessVerticalSpace = true;
+        d22.verticalAlignment = GridData.CENTER;
         mLabel2.setLayoutData(d22);
 
         monotonicVariant = new Button(mBase, SWT.CHECK);
         monotonicVariant.setText(Resources.getMessage("CriterionDefinitionView.68")); //$NON-NLS-1$
         monotonicVariant.setSelection(false);
         monotonicVariant.setEnabled(false);
-        monotonicVariant.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
+        monotonicVariant.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).grab(false, true).align(GridData.BEGINNING, GridData.CENTER).create());
         monotonicVariant.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -215,12 +220,15 @@ public class ViewMetric implements IView {
         GridData d23 = new GridData();
         d23.heightHint = LABEL_HEIGHT;
         d23.minimumHeight = LABEL_HEIGHT;
+        d23.grabExcessVerticalSpace = true;
+        d23.verticalAlignment = GridData.CENTER;
         mLabel3.setLayoutData(d23);
 
         comboAggregate = new Combo(mBase, SWT.READ_ONLY);
         GridData d31 = SWTUtil.createFillHorizontallyGridData();
-        d31.verticalAlignment = SWT.CENTER;
         d31.horizontalSpan = 3;
+        d31.grabExcessVerticalSpace = true;
+        d31.verticalAlignment = GridData.CENTER;
         comboAggregate.setLayoutData(d31);
         comboAggregate.addSelectionListener(new SelectionAdapter() {
             @Override
