@@ -134,8 +134,9 @@ public class ViewGeneralSettings implements IView {
             // TODO: Deactivated in ARX 2.3 due to buggy implementation
             // buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
             
-            updateControlls();
             root.setRedraw(true);
+            updateControlls();
+            
         } else if (event.part == ModelPart.INPUT) {
             SWTUtil.enable(root);
             updateControlls();
@@ -409,7 +410,6 @@ public class ViewGeneralSettings implements IView {
      */
     private void updateControlls(){
 
-        root.setRedraw(false);
         ModelCriterion mc = null;
         
         // K-Anonymity
@@ -450,7 +450,6 @@ public class ViewGeneralSettings implements IView {
         }
         
         if (mc == null){
-            root.setRedraw(true);
             return;
         }
         
@@ -487,7 +486,5 @@ public class ViewGeneralSettings implements IView {
             this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
                                                             .getPrecomputationThreshold()));
         }
-        
-        root.setRedraw(true);
     }
 }
