@@ -125,17 +125,18 @@ public class ViewGeneralSettings implements IView {
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
+            
             model = (Model) event.data;
-            root.setRedraw(false);
+
             sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
             labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
             buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
             
             // TODO: Deactivated in ARX 2.3 due to buggy implementation
             // buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
-            
+
             updateControlls();
-            root.setRedraw(true);
+            
         } else if (event.part == ModelPart.INPUT) {
             SWTUtil.enable(root);
             updateControlls();
@@ -409,7 +410,6 @@ public class ViewGeneralSettings implements IView {
      */
     private void updateControlls(){
 
-        root.setRedraw(false);
         ModelCriterion mc = null;
         
         // K-Anonymity
@@ -450,7 +450,6 @@ public class ViewGeneralSettings implements IView {
         }
         
         if (mc == null){
-            root.setRedraw(true);
             return;
         }
         
@@ -487,7 +486,5 @@ public class ViewGeneralSettings implements IView {
             this.labelThreshold.setText(String.valueOf(model.getMetricConfiguration()
                                                             .getPrecomputationThreshold()));
         }
-        
-        root.setRedraw(true);
     }
 }
