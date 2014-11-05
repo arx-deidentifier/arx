@@ -125,16 +125,16 @@ public class ViewGeneralSettings implements IView {
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
-            
             model = (Model) event.data;
-
+            root.setRedraw(false);
             sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
             labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
             buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
             
             // TODO: Deactivated in ARX 2.3 due to buggy implementation
             // buttonProtectSensitiveAssociations.setSelection(model.getInputConfig().isProtectSensitiveAssociations());
-
+            
+            root.setRedraw(true);
             updateControlls();
             
         } else if (event.part == ModelPart.INPUT) {
