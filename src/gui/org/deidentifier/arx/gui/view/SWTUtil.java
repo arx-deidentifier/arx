@@ -243,17 +243,16 @@ public class SWTUtil {
      * Converts the double value to a slider selection
      */
     public static int doubleToSlider(final double min,
-                               final double max,
-                               final double value) {
-        double val = ((value - min) / max) * SLIDER_MAX;
-        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
+                                     final double max,
+                                     final double value) {
+        int val = (int)Math.round((value - min) / (max - min) * SLIDER_MAX);
         if (val < 0) {
             val = 0;
         }
         if (val > SLIDER_MAX) {
             val = SLIDER_MAX;
         }
-        return (int) val;
+        return val;
     }
 
     /**
@@ -280,15 +279,7 @@ public class SWTUtil {
      * @return
      */
     public static int intToSlider(final int min, final int max, final int value) {
-
-        int val = (int) Math.round(((double) (value - min) / (double) max) * SLIDER_MAX);
-        if (val < 0) {
-            val = 0;
-        }
-        if (val > SLIDER_MAX) {
-            val = SLIDER_MAX;
-        }
-        return val;
+        return doubleToSlider(min, max, value);
     }
 
     /**
@@ -299,10 +290,9 @@ public class SWTUtil {
      * @return
      */
     public static double sliderToDouble(final double min,
-                                  final double max,
-                                  final int value) {
-        double val = ((double) value / (double) SLIDER_MAX) * max;
-        val = Math.round(val * SLIDER_MAX) / (double) SLIDER_MAX;
+                                        final double max,
+                                        final int value) {
+        double val = ((double) value / (double) SLIDER_MAX) * (max - min) + min;
         if (val < min) {
             val = min;
         }
@@ -320,15 +310,7 @@ public class SWTUtil {
      * @return
      */
     public static int sliderToInt(final int min, final int max, final int value) {
-        int val = (int) Math
-                .round(((double) value / (double) SLIDER_MAX) * max);
-        if (val < min) {
-            val = min;
-        }
-        if (val > max) {
-            val = max;
-        }
-        return val;
+        return (int)Math.round(sliderToDouble(min, max, value));
     }
 
     /**
