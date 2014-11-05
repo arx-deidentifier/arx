@@ -230,6 +230,7 @@ public class ViewMetric implements IView {
         d31.grabExcessVerticalSpace = true;
         d31.verticalAlignment = GridData.CENTER;
         comboAggregate.setLayoutData(d31);
+        comboAggregate.setEnabled(false);
         comboAggregate.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -372,7 +373,11 @@ public class ViewMetric implements IView {
             if (selected != -1) {
                 comboAggregate.select(selected);
             }
-            comboAggregate.setEnabled(!description.getSupportedAggregateFunctions().isEmpty());
+
+            if (comboAggregate.getItemCount()==0) {
+                comboAggregate.add("None available");
+                comboAggregate.select(0);
+            }
             
         } else {
             reset();

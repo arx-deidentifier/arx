@@ -331,6 +331,7 @@ public class ViewGeneralSettings implements IView {
         precomputationThreshold.setMaximum(SWTUtil.SLIDER_MAX);
         precomputationThreshold.setMinimum(0);
         precomputationThreshold.setSelection(0);
+        precomputationThreshold.setEnabled(false);
         precomputationThreshold.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -465,7 +466,6 @@ public class ViewGeneralSettings implements IView {
         }
 
         // Precomputation
-        this.precomputedVariant.setEnabled(true);
         this.precomputedVariant.setSelection(model.getMetricConfiguration()
                                                   .isPrecomputed());
         if (model.getMetricConfiguration().isPrecomputed()) {
