@@ -106,10 +106,13 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
 
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
+        
+        // TODO: Fix this crap
         double _min = convert(min).mean;
         double _max = convert(max).mean;
         if (_max - _min == 0d) return 0d;
-        else return (this.mean - _min) / (_max - _min);
+        double result = (this.mean - _min) / (_max - _min);
+        return result < 0d ? 0d : (result > 1d ? 1d : result);
     }
 
     @Override
