@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -703,5 +705,21 @@ public class ARXLattice implements Serializable {
      */
     protected ARXNode getOptimum() {
         return optimum;
+    }
+    
+
+    /**
+     * De-serialization
+     * @param aInputStream
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+
+        // Default de-serialization
+        aInputStream.defaultReadObject();
+        
+        // Translate metric, if necessary
+        this.metric = Metric.createMetric(this.metric);
     }
 }
