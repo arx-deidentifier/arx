@@ -20,6 +20,13 @@ package org.deidentifier.arx.metric;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
+import org.deidentifier.arx.metric.v2.AbstractMetricSingleDimensional;
+import org.deidentifier.arx.metric.v2.MetricMDHeight;
+import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
+import org.deidentifier.arx.metric.v2.__MetricV2;
+
 /**
  * This class implements an abstract base class for information loss
  * 
@@ -82,4 +89,34 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      * @return
      */
     public abstract String toString();
+
+    /**
+     * Converter method, converting information loss from version 1 to information loss from version 2,
+     * if necessary
+     * 
+     * @param loss
+     * @param metric
+     * @return
+     */
+    public static InformationLoss<?> createInformationLoss(InformationLoss<?> loss, Metric<?> metric) {
+        
+        Metric<?> _metric = Metric.createMetric(metric);
+
+        if (loss instanceof InformationLossDefault){
+            if (_metric instanceof AbstractMetricSingleDimensional) {
+                return __MetricV2.createILSingleDimensional(((InformationLossDefault)loss).getValue());
+            } else if (_metric instanceof AbstractMetricMultiDimensional) {
+                if (_metric instanceof MetricMDNUEntropyPrecomputed) {
+                    return __MetricV2.createILMultiDimensionalSum(((InformationLossDefault)loss).getValue()); 
+                } else if (_metric instanceof MetricMDHeight) {
+                    return __MetricV2.createILMultiDimensionalSum(((InformationLossDefault)loss).getValue()); 
+                } else if (_metric instanceof MetricMDNMPrecision) {
+                    return __MetricV2.createILMultiDimensionalArithmeticMean(((InformationLossDefault)loss).getValue()); 
+                } 
+            } 
+        }
+        
+        // Default
+        return loss;
+    }
 }

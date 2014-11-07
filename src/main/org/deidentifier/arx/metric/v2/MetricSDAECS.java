@@ -42,6 +42,14 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     protected MetricSDAECS() {
         super(false, false);
     }
+
+    /**
+     * Creates a new instance. Preinitialized
+     */
+    protected MetricSDAECS(double rowCount) {
+        super(false, false);
+        super.setNumTuples(rowCount);
+    }
     
     @Override
     public ILSingleDimensional createMaxInformationLoss() {

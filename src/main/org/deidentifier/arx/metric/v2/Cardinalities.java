@@ -37,9 +37,6 @@ public class Cardinalities implements Serializable {
     /** SVUID*/
     private static final long serialVersionUID = 6164578830669365810L;
     
-    /** The size of the data set*/
-    private final int size;
-    
     /** Cardinalities: Column -> Id -> Level -> Count */
     private final int[][][] cardinalities;
     
@@ -51,9 +48,6 @@ public class Cardinalities implements Serializable {
 
         int[][] array = data.getArray();
         Dictionary dictionary = data.getDictionary();
-        
-        // Store size
-        this.size = subset == null ? data.getDataLength() : subset.size();
         
         // Initialize counts
         cardinalities = new int[array[0].length][][];
@@ -85,6 +79,14 @@ public class Cardinalities implements Serializable {
     }
     
     /**
+     * For backwards compatibility, derives the cardinalities from the given array
+     * @param cardinalities
+     */
+    public Cardinalities(int[][][] cardinalities) {
+        this.cardinalities = cardinalities;
+    }
+
+    /**
      * Returns the cardinalities of the given value
      * @param value
      * @param level
@@ -92,13 +94,5 @@ public class Cardinalities implements Serializable {
      */
     public int[][][] getCardinalities(){
         return cardinalities;
-    }
-    
-    /**
-     * Returns the size of the data subset
-     * @return
-     */
-    public double getSize(){
-        return size;
     }
 }

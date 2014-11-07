@@ -33,6 +33,15 @@ public class ILMultiDimensionalSum extends AbstractILMultiDimensionalReduced {
     private static final long serialVersionUID = 6456243227046629659L;
 
     /**
+     * Creates a new instance. For backwards compatibility
+     * 
+     * @param value
+     */
+    ILMultiDimensionalSum(double value) {
+        super(new double[]{value}, new double[]{1.0d});
+    }
+
+    /**
      * Creates a new instance
      * 
      * @param values

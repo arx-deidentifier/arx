@@ -121,6 +121,14 @@ public class MetricAECS extends MetricDefault {
         return new InformationLossDefault((double)tuples / (double)groups);
     }
 
+    /**
+     * Returns the row count
+     * @return
+     */
+    protected double getRowCount() {
+        return rowCount;
+    }
+    
     @Override
     protected void initializeInternal(DataDefinition definition, Data input, GeneralizationHierarchy[] hierarchies, ARXConfiguration config) {
         super.initializeInternal(definition, input, hierarchies, config);

@@ -49,20 +49,20 @@ public class MetricDM extends MetricDefault {
     }
 
     @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        if (rowCount == 0) {
-            throw new IllegalStateException("Metric must be initialized first");
-        } else {
-            return new InformationLossDefault(rowCount);
-        }
-    }
-
-    @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (rowCount == 0) {
             throw new IllegalStateException("Metric must be initialized first");
         } else {
             return new InformationLossDefault(rowCount * rowCount);
+        }
+    }
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (rowCount == 0) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossDefault(rowCount);
         }
     }
 
@@ -110,6 +110,14 @@ public class MetricDM extends MetricDefault {
             m = m.nextOrdered;
         }
         return new InformationLossDefault(lowerBound);
+    }
+
+    /**
+     * Returns the current row count
+     * @return
+     */
+    protected double getRowCount() {
+        return this.rowCount;
     }
 
     @Override

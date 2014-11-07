@@ -20,6 +20,7 @@ package org.deidentifier.arx.metric.v2;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 
@@ -31,6 +32,15 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
  */
 public class __MetricV2 {
 
+    /**
+     * Creates a new instance of the AECS metric.
+     * 
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createAECSMetric(double rowCount) {
+        return new MetricSDAECS(rowCount);
+    }
+    
     /**
      * Creates a new instance of the AECS metric.
      * 
@@ -58,13 +68,28 @@ public class __MetricV2 {
      * @return
      */
     public static Metric<ILSingleDimensional> createDiscernabilityMetric(boolean monotonic) {
-        if (monotonic) {
-            return new MetricSDDiscernability();
-        } else {
-            return new MetricSDNMDiscernability();
-        }
+        return createDiscernabilityMetric(monotonic, 0);
     }
 
+
+    /**
+     * Creates an instance of the discernability metric. The monotonic variant is DM*.
+     * 
+     * @param monotonic If set to true, the monotonic variant (DM*) will be created
+     * @param numTuples Pre-initialization
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createDiscernabilityMetric(boolean monotonic, double numTuples) {
+        if (monotonic) {
+            MetricSDDiscernability result = new MetricSDDiscernability();
+            result.setNumTuples(numTuples);
+            return result;
+        } else {
+            MetricSDNMDiscernability result = new MetricSDNMDiscernability();
+            result.setNumTuples(numTuples);
+            return result;
+        }
+    }
 
     /**
      * Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
@@ -109,6 +134,21 @@ public class __MetricV2 {
     }
 
     /**
+     * Creates an instance of the non-uniform entropy metric. The default aggregate function,
+     * which is the sum-function, will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
+        MetricMDNUEntropyPrecomputed result = (MetricMDNUEntropyPrecomputed)createEntropyMetric(monotonic, AggregateFunction.SUM);
+        result.initialize(cache,  cardinalities, hierarchies);
+        return result;
+    }
+
+    /**
      * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
      * will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
@@ -117,6 +157,20 @@ public class __MetricV2 {
      */
     public static Metric<AbstractILMultiDimensional> createHeightMetric() {
         return new MetricMDHeight();
+    }
+    /**
+     * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
+     * will be used for comparing results.
+     * This metric will respect attribute weights defined in the configuration.
+     * @param maxHeight 
+     * @param minHeight 
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createHeightMetric(int minHeight, int maxHeight) {
+        MetricMDHeight result = new MetricMDHeight();
+        result.initialize(minHeight, maxHeight);
+        return result;
     }
 
 
@@ -130,6 +184,32 @@ public class __MetricV2 {
      */
     public static Metric<AbstractILMultiDimensional> createHeightMetric(AggregateFunction function) {
         return new MetricMDHeight(function);
+    }
+
+    /**
+     * Helper method. Normally, there should be no need to call this
+     * @param value
+     * @return
+     */
+    public static InformationLoss<?> createILMultiDimensionalArithmeticMean(double value) {
+        return new ILMultiDimensionalArithmeticMean(value);
+    }
+
+    /**
+     * Helper method. Normally, there should be no need to call this
+     * @param value
+     * @return
+     */
+    public static InformationLoss<?> createILMultiDimensionalSum(double value) {
+        return new ILMultiDimensionalSum(value);
+    }
+    /**
+     * Helper method. Normally, there should be no need to call this
+     * @param value
+     * @return
+     */
+    public static InformationLoss<?> createILSingleDimensional(double value) {
+        return new ILSingleDimensional(value);
     }
 
     /**
@@ -150,6 +230,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createLossMetric(AggregateFunction function) {
         return new MetricMDNMLoss(function);
     }
+    
     /**
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
      * The default aggregate function, which is the rank function, will be used.
@@ -182,7 +263,6 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor, AggregateFunction function) {
         return new MetricMDNMLoss(gsFactor, function);
     }
-
     /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -193,7 +273,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric() {
         return createPrecisionMetric(false, AggregateFunction.ARITHMETIC_MEAN);
     }
-    
+
     /**
      * Creates an instance of the non-monotonic precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -218,6 +298,23 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic) {
         return createPrecisionMetric(monotonic, AggregateFunction.ARITHMETIC_MEAN);
     }
+
+    /**
+     * Creates an instance of the precision metric.
+     * The default aggregate function, which is the arithmetic mean, will be used.
+     * This metric will respect attribute weights defined in the configuration.
+     * 
+     * @param monotonic If set to true, the monotonic variant of the metric will be created
+     * 
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, int[] heights, double cells) {
+        MetricMDNMPrecision result = (MetricMDNMPrecision)createPrecisionMetric(monotonic, AggregateFunction.ARITHMETIC_MEAN);
+        result.initialize(heights, cells);
+        return result;
+    }
+
+
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -263,7 +360,6 @@ public class __MetricV2 {
         return createPrecomputedEntropyMetric(threshold, monotonic, AggregateFunction.SUM);
     }
 
-
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -282,7 +378,7 @@ public class __MetricV2 {
             return new MetricMDNUNMEntropyPotentiallyPrecomputed(threshold, function);
         }
     }
-
+    
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization 
      * and suppression equally. 
@@ -308,6 +404,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, AggregateFunction function) {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, function);
     }
+
 
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
@@ -361,7 +458,6 @@ public class __MetricV2 {
         return new MetricMDStatic(loss);
     }
 
-
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * This metric will respect attribute weights defined in the configuration. 
@@ -374,5 +470,4 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createStaticMetric(Map<String, List<Double>> loss, AggregateFunction function) {
         return new MetricMDStatic(function, loss);
     }
-
 }

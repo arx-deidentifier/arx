@@ -52,8 +52,12 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    public String toString() {
-        return "Height";
+    public InformationLoss<?> createMaxInformationLoss() {
+        if (maxHeight == -1) {
+            throw new IllegalStateException("Metric must be intialized first");
+        } else {
+            return new InformationLossDefault(maxHeight);
+        }
     }
 
     @Override
@@ -66,12 +70,8 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    public InformationLoss<?> createMaxInformationLoss() {
-        if (maxHeight == -1) {
-            throw new IllegalStateException("Metric must be intialized first");
-        } else {
-            return new InformationLossDefault(maxHeight);
-        }
+    public String toString() {
+        return "Height";
     }
 
     @Override
@@ -89,6 +89,20 @@ public class MetricHeight extends MetricDefault {
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         return new InformationLossDefault(node.getLevel());
+    }
+
+    /**
+     * @return the maxHeight
+     */
+    protected int getMaxHeight() {
+        return maxHeight;
+    }
+
+    /**
+     * @return the minHeight
+     */
+    protected int getMinHeight() {
+        return minHeight;
     }
 
     @Override

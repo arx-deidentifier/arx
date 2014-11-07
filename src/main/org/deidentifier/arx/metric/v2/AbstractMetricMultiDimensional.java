@@ -59,8 +59,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      * @param independent
      */
     AbstractMetricMultiDimensional(final boolean monotonic,
-                                     final boolean independent,
-                                     final AggregateFunction function) {
+                                   final boolean independent,
+                                   final AggregateFunction function) {
         super(monotonic, independent);
         this.function = function;
     }
@@ -78,7 +78,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (min == null) {
-            throw new IllegalStateException("Metric must be intialized first");
+            throw new IllegalStateException("Metric must be intialized first. "+this.getClass().getSimpleName());
         } else {
             return createInformationLoss(min);
         }
@@ -140,6 +140,15 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      */
     protected int getDimensions() {
         return dimensions;
+    }
+    
+    /**
+     * For backwards compatibility only
+     * @param dimensions
+     */
+    protected void initialize(int dimensions){
+        this.weights = new double[dimensions];
+        Arrays.fill(weights, 1d);
     }
 
     @Override

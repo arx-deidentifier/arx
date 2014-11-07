@@ -120,7 +120,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         return new ILMultiDimensionalWithBound(createInformationLoss(result), 
                                                (AbstractILMultiDimensional)getLowerBoundInternal(node).clone());
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -131,11 +131,31 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
         return createInformationLoss(result);
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
        return getLowerBoundInternal(node);
+    }
+
+    /**
+     * For backwards compatibility only
+     * @param cells 
+     * @param dimensions
+     */
+    protected void initialize(int[] heights, double cells){
+
+        super.initialize(heights.length);
+        this.heights = heights;
+        this.rowCount = cells / heights.length;
+
+        // Min and max
+        double[] min = new double[heights.length];
+        Arrays.fill(min, 0d);
+        double[] max = new double[min.length];
+        Arrays.fill(max, 1d);
+        setMin(min);
+        setMax(max);
     }
 
     @Override

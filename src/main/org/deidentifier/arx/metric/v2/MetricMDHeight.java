@@ -64,17 +64,28 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
                                        );
     }
     
+    /**
+     * For backwards compatibility only
+     * @param minHeight
+     * @param maxHeight
+     */
+    public void initialize(int minHeight, int maxHeight) {
+        super.initialize(1);
+        setMin(new double[]{minHeight});
+        setMax(new double[]{maxHeight});
+    }
+
     @Override
     public String toString() {
         return "Height";
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -84,13 +95,13 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         }
         return super.createInformationLoss(result);
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                        IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
-    
+
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,

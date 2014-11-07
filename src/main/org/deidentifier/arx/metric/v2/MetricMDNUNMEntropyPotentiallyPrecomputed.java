@@ -70,9 +70,21 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
+    
 
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
+    }
+
+    /**
+     * For backwards compatibility
+     * @param cache
+     * @param cardinalities
+     * @param hierarchies
+     */
+    protected void initialize(double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
+        ((MetricMDNUNMEntropy)this.getDefaultMetric()).initialize(cache, cardinalities, hierarchies);
+        ((MetricMDNUNMEntropyPrecomputed)this.getPrecomputedMetric()).initialize(cache, cardinalities, hierarchies);
     }
 }

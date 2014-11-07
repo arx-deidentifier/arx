@@ -62,6 +62,21 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         return "Monotonic Precision";
     }
 
+    /**
+     * @return the heights
+     */
+    protected int[] getHeights() {
+        return height;
+    }
+
+    /**
+     * Returns the number of cells
+     * @return
+     */
+    protected double getCells() {
+        return 0d;
+    }
+
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 

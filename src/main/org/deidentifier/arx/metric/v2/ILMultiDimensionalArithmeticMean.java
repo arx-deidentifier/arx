@@ -31,6 +31,15 @@ public class ILMultiDimensionalArithmeticMean extends AbstractILMultiDimensional
 
     /** SVUID */
     private static final long serialVersionUID = 5142553922311764185L;
+   
+    /**
+     * Creates a new instance. For backwards compatibility
+     * 
+     * @param value
+     */
+    ILMultiDimensionalArithmeticMean(double value) {
+        super(new double[]{value}, new double[]{1.0d});
+    }
 
     /**
      * Creates a new instance

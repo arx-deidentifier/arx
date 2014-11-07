@@ -84,6 +84,27 @@ public class MetricEntropy extends MetricDefault {
         return "Monotonic Non-Uniform Entropy";
     }
 
+    /**
+     * @return the cache
+     */
+    protected double[][] getCache() {
+        return cache;
+    }
+    
+    /**
+     * @return the cardinalities
+     */
+    protected int[][][] getCardinalities() {
+        return cardinalities;
+    }
+
+    /**
+     * @return the hierarchies
+     */
+    protected int[][][] getHierarchies() {
+        return hierarchies;
+    }
+
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -120,7 +141,7 @@ public class MetricEntropy extends MetricDefault {
         result = round(result == 0.0d ? result : -result);
         return new InformationLossDefaultWithBound(result, result);
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return getInformationLossInternal(node, null).getLowerBound();

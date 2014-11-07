@@ -71,6 +71,21 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         return "Non-Monotonic Precision";
     }
 
+    /**
+     * @return the heights
+     */
+    protected int[] getHeights() {
+        return height;
+    }
+    
+    /**
+     * Returns the number of cells
+     * @return
+     */
+    protected double getCells() {
+        return cells;
+    }
+
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -98,7 +113,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         // Return
         return new InformationLossDefaultWithBound(precision, getLowerBound(node).getValue());
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         double result = 0;
@@ -113,7 +128,7 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         // Return
         return new InformationLossDefault(result);
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {

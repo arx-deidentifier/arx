@@ -116,7 +116,10 @@ class InformationLossDefault extends InformationLoss<Double> {
     private InformationLossDefault convert(InformationLoss<?> other){
         if (other == null) return null;
         if (!(other instanceof InformationLossDefault)) {
-            throw new IllegalStateException("Information loss must be of the same type");
+            throw new IllegalStateException("Information loss must be of the same type. This: " +
+                                            this.getClass().getSimpleName() +
+                                            ". Other: " +
+                                            other.getClass().getSimpleName());
         } else {
             return (InformationLossDefault)other;
         }

@@ -84,4 +84,12 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
             tuples = (double)input.getDataLength();
         }
     }
+
+    /**
+     * Returns the number of rows in the dataset or subset
+     * @return
+     */
+    protected void setNumTuples(Double tuples) {
+        this.tuples = tuples;
+    }
 }

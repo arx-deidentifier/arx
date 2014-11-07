@@ -168,7 +168,7 @@ public class ARXLattice implements Serializable {
              * @return
              */
             public void setLowerBound(final InformationLoss<?> a) {
-                node.lowerBound = a;
+                node.lowerBound = InformationLoss.createInformationLoss(a, metric);
             }
 
             /**
@@ -177,7 +177,7 @@ public class ARXLattice implements Serializable {
              * @return
              */
             public void setMaximumInformationLoss(final InformationLoss<?> a) {
-                node.maxInformationLoss = a;
+                node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric);
             }
 
             /**
@@ -186,7 +186,7 @@ public class ARXLattice implements Serializable {
              * @return
              */
             public void setMinimumInformationLoss(final InformationLoss<?> a) {
-                node.minInformationLoss = a;
+                node.minInformationLoss = InformationLoss.createInformationLoss(a, metric);
             }
 
             /**
@@ -456,6 +456,23 @@ public class ARXLattice implements Serializable {
          */
         protected void setId(int id) {
             this.id = id;
+        }
+
+        /**
+         * De-serialization
+         * @param aInputStream
+         * @throws ClassNotFoundException
+         * @throws IOException
+         */
+        private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+
+            // Default de-serialization
+            aInputStream.defaultReadObject();
+            
+            // Translate information loss, if necessary
+            this.lowerBound = InformationLoss.createInformationLoss(this.lowerBound, metric);
+            this.maxInformationLoss = InformationLoss.createInformationLoss(this.maxInformationLoss, metric);
+            this.minInformationLoss = InformationLoss.createInformationLoss(this.minInformationLoss, metric);
         }
     }
 

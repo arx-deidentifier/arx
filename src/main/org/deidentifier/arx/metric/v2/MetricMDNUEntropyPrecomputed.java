@@ -62,15 +62,15 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     static final double log2(final double num) {
         return Math.log(num) / LOG2;
     }
-    
-    /** Cardinalities*/
+
+    /** Cardinalities */
     private Cardinalities cardinalities;
 
     /** Column -> Level -> Value */
-    private double[][]            cache;
+    private double[][]    cache;
 
     /** Column -> Id -> Level -> Output */
-    private int[][][]             hierarchies;
+    private int[][][]     hierarchies;
 
     /**
      * Precomputed
@@ -98,7 +98,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected MetricMDNUEntropyPrecomputed(AggregateFunction function){
         super(true, true, function);
     }
-
+    
     /**
      * Returns the configuration of this metric
      */
@@ -115,7 +115,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     public String toString() {
         return "Non-uniform entropy";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -130,7 +130,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
                                                super.createInformationLoss(result));
     }
-
+    
     protected double[] getInformationLossInternalRaw(final Node node, final IHashGroupify g) {
 
         // Prepare
@@ -172,6 +172,28 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify groupify) {
         return this.getLowerBoundInternal(node);
+    }
+
+    /**
+     * For backwards compatibility
+     */
+    protected void initialize(double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
+        
+        // Initialize data structures
+        this.cache = cache;
+        this.hierarchies = hierarchies;
+        this.cardinalities = new Cardinalities(cardinalities);
+
+        // Initialize weights
+        super.initialize(hierarchies.length);
+
+        // TODO: Compute a reasonable maximum
+        double[] min = new double[hierarchies.length];
+        Arrays.fill(min, 0d);
+        double[] max = new double[hierarchies.length];
+        Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
+        super.setMax(max);
+        super.setMin(min);
     }
 
     @Override

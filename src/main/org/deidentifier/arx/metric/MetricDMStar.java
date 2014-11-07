@@ -51,20 +51,20 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
-    public InformationLoss<?> createMinInformationLoss() {
-        if (rowCount == 0) {
-            throw new IllegalStateException("Metric must be initialized first");
-        } else {
-            return new InformationLossDefault(rowCount);
-        }
-    }
-
-    @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (rowCount == 0) {
             throw new IllegalStateException("Metric must be initialized first");
         } else {
             return new InformationLossDefault(rowCount * rowCount);
+        }
+    }
+
+    @Override
+    public InformationLoss<?> createMinInformationLoss() {
+        if (rowCount == 0) {
+            throw new IllegalStateException("Metric must be initialized first");
+        } else {
+            return new InformationLossDefault(rowCount);
         }
     }
 
@@ -96,11 +96,19 @@ public class MetricDMStar extends MetricDefault {
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return null;
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         return getInformationLossInternal(node, groupify).getInformationLoss();
+    }
+
+    /**
+     * Returns the current row count
+     * @return
+     */
+    protected double getRowCount() {
+        return this.rowCount;
     }
 
     @Override
