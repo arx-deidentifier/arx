@@ -234,14 +234,31 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor, AggregateFunction function) {
         return __MetricV2.createLossMetric(gsFactor, function);
     }
-    
+
     /**
      * This method supports backwards compatibility. It will transform implementations from version 1 to 
      * implementations from version 2, if necessary.
      * @param metric
+     * @param minLevel
+     * @param maxLevel
      * @return
      */
-    public static Metric<?> createMetric(Metric<?> metric) {
+    public static Metric<?> createMetric(Metric<?> metric, int minLevel, int maxLevel) {
+        
+        if (metric instanceof MetricHeight) {
+            return __MetricV2.createHeightMetric(minLevel, maxLevel);
+        } else {
+            return createMetric(metric);
+        }
+    }
+    
+    /**
+     * This method supports backwards compatibility. It will transform implementations from version 1 to 
+     * implementations from version 2, if necessary. 
+     * @param metric
+     * @return
+     */
+    private static Metric<?> createMetric(Metric<?> metric) {
         
         if (metric instanceof MetricAECS) {
             return __MetricV2.createAECSMetric(((MetricAECS)metric).getRowCount());
@@ -254,9 +271,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                                   ((MetricEntropy)metric).getCache(), 
                                                   ((MetricEntropy)metric).getCardinalities(), 
                                                   ((MetricEntropy)metric).getHierarchies());
-        } else if (metric instanceof MetricHeight) {
-            return __MetricV2.createHeightMetric(((MetricHeight)metric).getMinHeight(),
-                                                 ((MetricHeight)metric).getMaxHeight());
         } else if (metric instanceof MetricNMEntropy) {
             return __MetricV2.createEntropyMetric(false, 
                                                   ((MetricEntropy)metric).getCache(), 

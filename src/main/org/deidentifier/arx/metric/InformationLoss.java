@@ -96,11 +96,13 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      * 
      * @param loss
      * @param metric
+     * @param minLevel
+     * @param maxLevel
      * @return
      */
-    public static InformationLoss<?> createInformationLoss(InformationLoss<?> loss, Metric<?> metric) {
+    public static InformationLoss<?> createInformationLoss(InformationLoss<?> loss, Metric<?> metric, int minLevel, int maxLevel) {
         
-        Metric<?> _metric = Metric.createMetric(metric);
+        Metric<?> _metric = Metric.createMetric(metric, minLevel, maxLevel);
 
         if (loss instanceof InformationLossDefault){
             if (_metric instanceof AbstractMetricSingleDimensional) {

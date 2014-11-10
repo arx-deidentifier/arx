@@ -233,8 +233,13 @@ public class WorkerLoad extends Worker<Model> {
         final ModelConfiguration config = (ModelConfiguration) oos.readObject();
         
         // Convert metric from v1 to v2
-        config.setMetric(Metric.createMetric(config.getMetric()));
-        config.getConfig().setMetric(Metric.createMetric(config.getConfig().getMetric()));
+        config.setMetric(Metric.createMetric(config.getMetric(), 
+                                             ARXLattice.DESERIALIZATION_CONTEXT_MIN_LEVEL, 
+                                             ARXLattice.DESERIALIZATION_CONTEXT_MAX_LEVEL));
+        
+        config.getConfig().setMetric(Metric.createMetric(config.getConfig().getMetric(), 
+                                                         ARXLattice.DESERIALIZATION_CONTEXT_MIN_LEVEL, 
+                                                         ARXLattice.DESERIALIZATION_CONTEXT_MAX_LEVEL));
         
         oos.close();
 
@@ -295,7 +300,7 @@ public class WorkerLoad extends Worker<Model> {
             f.setMaximumSnapshotSizeDataset(snapshotSizeDataset);
         }
     }
-
+    
     /**
      * Reads the data definition from the file
      * 
@@ -592,7 +597,13 @@ public class WorkerLoad extends Worker<Model> {
         min = (Map<Integer, InformationLoss<?>>) oos.readObject();
         max = (Map<Integer, InformationLoss<?>>) oos.readObject();
         oos.close();
+        
+        // Create deserialization context
+        final int[] minMax = readMinMax(zip);
+        ARXLattice.DESERIALIZATION_CONTEXT_MIN_LEVEL = minMax[0];
+        ARXLattice.DESERIALIZATION_CONTEXT_MAX_LEVEL = minMax[1];
 
+        // Read attributes
         entry = zip.getEntry("attributes.dat"); //$NON-NLS-1$
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.6")); } //$NON-NLS-1$
 
@@ -907,5 +918,57 @@ public class WorkerLoad extends Worker<Model> {
             r[i - 1] = Integer.valueOf(a[i].trim());
         }
         return r;
+    }
+    
+    /**
+     * Reads min & max generalization levels, if any
+     * @param zip
+     * @return
+     * @throws SAXException 
+     * @throws IOException 
+     */
+    private int[] readMinMax(final ZipFile zip) throws SAXException, IOException  {
+
+        // Read the lattice
+        ZipEntry entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
+        if (entry == null) {
+            return new int[]{0,0};
+        }
+
+        // The result
+        final int[] result = new int[]{Integer.MAX_VALUE, 0};
+        
+        // Read
+        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+        InputSource inputSource = new InputSource(zip.getInputStream(entry));
+        xmlReader.setContentHandler(new XMLHandler() {
+            
+            @Override
+            protected boolean end(final String uri,
+                                  final String localName,
+                                  final String qName) throws SAXException {
+                return true;
+            }
+
+            @Override
+            protected boolean start(final String uri,
+                                    final String localName,
+                                    final String qName,
+                                    final Attributes attributes) throws SAXException {
+
+                if (vocabulary.isLevel(localName)) {
+                    int level = Integer.valueOf(attributes.getValue(vocabulary.getDepth()));
+                    result[0] = Math.min(result[0], level);
+                    result[1] = Math.max(result[1], level);
+                }
+                return true;
+            }
+        });
+        
+        // Parse
+        xmlReader.parse(inputSource);
+        
+        // Result
+        return result;
     }
 }
