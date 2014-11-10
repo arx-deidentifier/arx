@@ -187,11 +187,14 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         // Initialize weights
         super.initialize(hierarchies.length);
 
-        // TODO: Compute a reasonable maximum
+        // Compute a reasonable maximum
         double[] min = new double[hierarchies.length];
         Arrays.fill(min, 0d);
+        
+        // Its difficult to compute a reasonale maximum in this case
         double[] max = new double[hierarchies.length];
         Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
+        
         super.setMax(max);
         super.setMin(min);
     }
@@ -229,11 +232,15 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             this.hierarchies[i] = hierarchies[i].getArray();
         }
 
-        // TODO: Compute a reasonable maximum
+        // Compute a reasonable min & max
         double[] min = new double[hierarchies.length];
         Arrays.fill(min, 0d);
+        
         double[] max = new double[hierarchies.length];
-        Arrays.fill(max, Double.MAX_VALUE / hierarchies.length);
+        for (int i=0; i<max.length; i++) {
+            max[i] = input.getDataLength() * log2(hierarchies[i].getArray().length);
+        }
+        
         super.setMax(max);
         super.setMin(min);
     }
