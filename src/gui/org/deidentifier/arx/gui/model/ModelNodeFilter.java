@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx.gui.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -438,5 +439,25 @@ public class ModelNodeFilter implements Serializable {
             }
         }
         return visible.size();
+    }
+    
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        
+        stream.defaultReadObject();
+        
+        if (this.minInformationLoss < 0d) {
+            this.minInformationLoss = 0d;
+        }
+        if (this.minInformationLoss > 1d) {
+            this.minInformationLoss = 1d;
+        }
+        if (this.maxInformationLoss < 0d) {
+            this.maxInformationLoss = 0d;
+        }
+        if (this.maxInformationLoss > 1d) {
+            this.maxInformationLoss = 1d;
+        }
+        
     }
 }
