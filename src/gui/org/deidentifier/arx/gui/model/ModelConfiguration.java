@@ -191,20 +191,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns the total maximum generalization level
-     * @return
-     */
-    public int getMaximumGeneralization() {
-        int max = 0;
-        if (this.max != null) {
-            for (Integer i : this.max.values()) {
-                max += i != null ? i : 0;
-            }
-        }
-        return max;
-    }
-    
-    /**
      * Maximum generalization
      * @param attribute
      * @param min
@@ -222,20 +208,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public Metric<?> getMetric() {
         return config.getMetric();
-    }
-    
-    /**
-     * Returns the total minimum generalization level
-     * @return
-     */
-    public int getMinimumGeneralization() {
-        int min = 0;
-        if (this.min != null) {
-            for (Integer i : this.min.values()) {
-                min += i != null ? i : 0;
-            }
-        }
-        return min;
     }
     
     /**
