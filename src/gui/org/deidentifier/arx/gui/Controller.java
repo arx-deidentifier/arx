@@ -800,10 +800,16 @@ public class Controller implements IView {
 
         main.showProgressDialog(Resources.getMessage("Controller.83"), worker); //$NON-NLS-1$
         if (worker.getError() != null) {
+            
+            String message = worker.getError().getMessage();
+            if (message == null || message.equals("")) {
+                message = "Error loading project: "+worker.getError().getClass().getSimpleName();
+            }
+            
             getResources().getLogger().info(worker.getError());
             main.showInfoDialog(main.getShell(),
                                 Resources.getMessage("Controller.85"), //$NON-NLS-1$
-                                worker.getError().getMessage());
+                                message);
             return;
         }
 
