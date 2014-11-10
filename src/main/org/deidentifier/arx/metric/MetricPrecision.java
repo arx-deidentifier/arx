@@ -38,7 +38,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     private static final long serialVersionUID = -7612335677779934529L;
 
     /** Height */
-    private int[]             height;
+    private int[]             maxLevels;
 
     /**
      * Creates a new instance
@@ -66,7 +66,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
      * @return the heights
      */
     protected int[] getHeights() {
-        return height;
+        return maxLevels;
     }
 
     /**
@@ -85,7 +85,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         for (int i = 0; i < transformation.length; i++) {
             double weight = weights != null ? weights[i] : 1d;
             double level = (double) transformation[i];
-            result += height[i] == 0 ? 0 : (level / (double) height[i]) * weight;
+            result += maxLevels[i] == 0 ? 0 : (level / (double) maxLevels[i]) * weight;
         }
         result /= (double) transformation.length;
         return new InformationLossDefaultWithBound(result, result);
@@ -110,9 +110,9 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
         super.initializeInternal(definition, input, hierarchies, config);
 
         // Initialize maximum levels
-        height = new int[hierarchies.length];
-        for (int j = 0; j < height.length; j++) {
-            height[j] = hierarchies[j].getArray()[0].length - 1;
+        maxLevels = new int[hierarchies.length];
+        for (int j = 0; j < maxLevels.length; j++) {
+            maxLevels[j] = hierarchies[j].getArray()[0].length - 1;
         }
     }
 }
