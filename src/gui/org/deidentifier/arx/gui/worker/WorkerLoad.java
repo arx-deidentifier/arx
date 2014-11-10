@@ -119,6 +119,7 @@ public class WorkerLoad extends Worker<Model> {
             arg0.worked(1);
             readConfiguration(map, zip);
             arg0.worked(1);
+            setMonotonicity();
             zip.close();
             arg0.worked(1);
         } catch (final Exception e) {
@@ -234,12 +235,12 @@ public class WorkerLoad extends Worker<Model> {
         
         // Convert metric from v1 to v2
         config.setMetric(Metric.createMetric(config.getMetric(), 
-                                             ARXLattice.DESERIALIZATION_CONTEXT_MIN_LEVEL, 
-                                             ARXLattice.DESERIALIZATION_CONTEXT_MAX_LEVEL));
+                                             ARXLattice.getDeserializationContext().minLevel, 
+                                             ARXLattice.getDeserializationContext().maxLevel));
         
         config.getConfig().setMetric(Metric.createMetric(config.getConfig().getMetric(), 
-                                                         ARXLattice.DESERIALIZATION_CONTEXT_MIN_LEVEL, 
-                                                         ARXLattice.DESERIALIZATION_CONTEXT_MAX_LEVEL));
+                                                         ARXLattice.getDeserializationContext().minLevel, 
+                                                         ARXLattice.getDeserializationContext().maxLevel));
         
         oos.close();
 
@@ -300,7 +301,7 @@ public class WorkerLoad extends Worker<Model> {
             f.setMaximumSnapshotSizeDataset(snapshotSizeDataset);
         }
     }
-    
+
     /**
      * Reads the data definition from the file
      * 
@@ -510,7 +511,7 @@ public class WorkerLoad extends Worker<Model> {
         });
         xmlReader.parse(inputSource);
     }
-
+    
     /**
      * Reads the filter from the file
      * 
@@ -600,8 +601,8 @@ public class WorkerLoad extends Worker<Model> {
         
         // Create deserialization context
         final int[] minMax = readMinMax(zip);
-        ARXLattice.DESERIALIZATION_CONTEXT_MIN_LEVEL = minMax[0];
-        ARXLattice.DESERIALIZATION_CONTEXT_MAX_LEVEL = minMax[1];
+        ARXLattice.getDeserializationContext().minLevel = minMax[0];
+        ARXLattice.getDeserializationContext().maxLevel = minMax[1];
 
         // Read attributes
         entry = zip.getEntry("attributes.dat"); //$NON-NLS-1$
@@ -886,41 +887,6 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the project from the file
-     * 
-     * @param zip
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void readModel(final ZipFile zip) throws IOException,
-                                             ClassNotFoundException {
-    	
-        final ZipEntry entry = zip.getEntry("project.dat"); //$NON-NLS-1$
-        if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
-
-        // Read model
-        final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
-        model = (Model) oos.readObject();
-        oos.close();
-    }
-
-    /**
-     * Reads a transformation from the serialized array representation
-     * 
-     * @param payload
-     * @return
-     */
-    private int[] readTransformation(final String payload) {
-    	
-        final String[] a = payload.split("\\[|,|\\]"); //$NON-NLS-1$
-        final int[] r = new int[a.length - 1];
-        for (int i = 1; i < a.length; i++) {
-            r[i - 1] = Integer.valueOf(a[i].trim());
-        }
-        return r;
-    }
-    
-    /**
      * Reads min & max generalization levels, if any
      * @param zip
      * @return
@@ -970,5 +936,49 @@ public class WorkerLoad extends Worker<Model> {
         
         // Result
         return result;
+    }
+
+    /**
+     * Reads the project from the file
+     * 
+     * @param zip
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readModel(final ZipFile zip) throws IOException,
+                                             ClassNotFoundException {
+    	
+        final ZipEntry entry = zip.getEntry("project.dat"); //$NON-NLS-1$
+        if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
+
+        // Read model
+        final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
+        model = (Model) oos.readObject();
+        oos.close();
+    }
+
+    /**
+     * Reads a transformation from the serialized array representation
+     * 
+     * @param payload
+     * @return
+     */
+    private int[] readTransformation(final String payload) {
+    	
+        final String[] a = payload.split("\\[|,|\\]"); //$NON-NLS-1$
+        final int[] r = new int[a.length - 1];
+        for (int i = 1; i < a.length; i++) {
+            r[i - 1] = Integer.valueOf(a[i].trim());
+        }
+        return r;
+    }
+    
+    /**
+     * Fix monotonicity for backwards compatibility
+     */
+    private void setMonotonicity() {
+        if (lattice != null && model != null && model.getOutputConfig() != null && model.getOutputConfig().getConfig() != null) {
+            lattice.access().setMonotonicity(model.getOutputConfig().getConfig());
+        }
     }
 }

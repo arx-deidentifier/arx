@@ -87,6 +87,11 @@ public class ARXLattice implements Serializable {
         public void setUncertainty(final boolean uncertainty) {
             lattice.uncertainty = uncertainty;
         }
+        
+        public void setMonotonicity(ARXConfiguration config) {
+            lattice.monotonicNonAnonymous = lattice.metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
+            lattice.monotonicAnonymous = lattice.metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+        }
     }
 
     public static enum Anonymity {
@@ -168,7 +173,7 @@ public class ARXLattice implements Serializable {
              * @return
              */
             public void setLowerBound(final InformationLoss<?> a) {
-                node.lowerBound = InformationLoss.createInformationLoss(a, metric, DESERIALIZATION_CONTEXT_MIN_LEVEL, DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                node.lowerBound = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
             /**
@@ -177,7 +182,7 @@ public class ARXLattice implements Serializable {
              * @return
              */
             public void setMaximumInformationLoss(final InformationLoss<?> a) {
-                node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, DESERIALIZATION_CONTEXT_MIN_LEVEL, DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
             /**
@@ -186,7 +191,7 @@ public class ARXLattice implements Serializable {
              * @return
              */
             public void setMinimumInformationLoss(final InformationLoss<?> a) {
-                node.minInformationLoss = InformationLoss.createInformationLoss(a, metric, DESERIALIZATION_CONTEXT_MIN_LEVEL, DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                node.minInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
             /**
@@ -460,18 +465,18 @@ public class ARXLattice implements Serializable {
             // Translate information loss, if necessary
             this.lowerBound = InformationLoss.createInformationLoss(this.lowerBound, 
                                                                     metric, 
-                                                                    DESERIALIZATION_CONTEXT_MIN_LEVEL, 
-                                                                    DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                                                                    getDeserializationContext().minLevel, 
+                                                                    getDeserializationContext().maxLevel);
             
             this.maxInformationLoss = InformationLoss.createInformationLoss(this.maxInformationLoss, 
                                                                             metric, 
-                                                                            DESERIALIZATION_CONTEXT_MIN_LEVEL, 
-                                                                            DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                                                                            getDeserializationContext().minLevel, 
+                                                                            getDeserializationContext().maxLevel);
             
             this.minInformationLoss = InformationLoss.createInformationLoss(this.minInformationLoss,
                                                                             metric, 
-                                                                            DESERIALIZATION_CONTEXT_MIN_LEVEL, 
-                                                                            DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                                                                            getDeserializationContext().minLevel, 
+                                                                            getDeserializationContext().maxLevel);
         }
 
         /**
@@ -531,13 +536,29 @@ public class ARXLattice implements Serializable {
         }
 
     }
+    
+    /**
+     * Context for deserialization
+     * @author kohlmayer
+     *
+     */
+    public static class LatticeDeserializationContext {
+        public int minLevel = 0;
+        public int maxLevel = 0;
+    }
+    
+    /** Deserialization context*/
+    private static LatticeDeserializationContext deserializationContext = new LatticeDeserializationContext();
+
+    /**
+     * Returns the deserialization context
+     * @return
+     */
+    public static LatticeDeserializationContext getDeserializationContext() {
+        return deserializationContext;
+    }
 
     private static final long     serialVersionUID                  = -8790104959905019184L;
-
-    /** Metadata for deserialization */
-    public static int             DESERIALIZATION_CONTEXT_MIN_LEVEL = 0;
-    /** Metadata for deserialization */
-    public static int             DESERIALIZATION_CONTEXT_MAX_LEVEL = 0;
 
     /** The accessor */
     private final Access          access                            = new Access(this);
@@ -744,8 +765,8 @@ public class ARXLattice implements Serializable {
         
         // Translate metric, if necessary
         this.metric = Metric.createMetric(this.metric, 
-                                          DESERIALIZATION_CONTEXT_MIN_LEVEL, 
-                                          DESERIALIZATION_CONTEXT_MAX_LEVEL);
+                                          getDeserializationContext().minLevel, 
+                                          getDeserializationContext().maxLevel);
     }
 
 
