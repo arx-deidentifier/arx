@@ -93,7 +93,7 @@ public class ModelNodeFilter implements Serializable {
      */
     public void allowInformationLoss(final double min, final double max) {
         if (min<0d || min>1d || max <0d || max>1d) {
-            throw new IllegalArgumentException("Threshold must be relative [0,1]");
+            throw new IllegalArgumentException("Threshold must be in range [0,1]");
         }
         minInformationLoss = min;
         maxInformationLoss = max;
