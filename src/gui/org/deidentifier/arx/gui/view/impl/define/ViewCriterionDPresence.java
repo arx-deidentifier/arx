@@ -38,12 +38,12 @@ import org.eclipse.swt.widgets.Scale;
  * A view on a d-presence criterion
  * @author Fabian Prasser
  */
-public class ViewCriterionDPresence extends ViewCriterion{
+public class ViewCriterionDPresence extends ViewCriterion {
 
-    private Scale                  sliderDMin;
-    private Scale                  sliderDMax;
-    private Label                  labelDMin;
-    private Label                  labelDMax;
+    private Scale sliderDMin;
+    private Scale sliderDMax;
+    private Label labelDMin;
+    private Label labelDMax;
 
     /**
      * Creates a new instance
@@ -52,11 +52,11 @@ public class ViewCriterionDPresence extends ViewCriterion{
      * @param model
      */
     public ViewCriterionDPresence(final Composite parent,
-                         final Controller controller,
-                         final Model model) {
+                                  final Controller controller,
+                                  final Model model) {
 
-    	super(parent, controller, model);
-    	this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        super(parent, controller, model);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
     @Override
@@ -66,21 +66,19 @@ public class ViewCriterionDPresence extends ViewCriterion{
         }
         super.update(event);
     }
-    
+
     @Override
-	public void reset() {
+    public void reset() {
 
         sliderDMin.setSelection(0);
         sliderDMax.setSelection(0);
-        labelDMin.setText("0"); //$NON-NLS-1$
-        labelDMax.setText("0"); //$NON-NLS-1$
-        labelDMin.setToolTipText("0");
-        labelDMax.setToolTipText("0");
+        updateDMinLabel("0"); //$NON-NLS-1$
+        updateDMaxLabel("0"); //$NON-NLS-1$
         super.reset();
-	}
+    }
 
-	@Override
-	protected Composite build(Composite parent) {
+    @Override
+    protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
@@ -98,7 +96,7 @@ public class ViewCriterionDPresence extends ViewCriterion{
         d9.minimumWidth = LABEL_WIDTH;
         d9.widthHint = LABEL_WIDTH;
         labelDMin.setLayoutData(d9);
-        labelDMin.setText("0"); //$NON-NLS-1$
+        updateDMinLabel("0"); //$NON-NLS-1$
 
         sliderDMin = new Scale(group, SWT.HORIZONTAL);
         final GridData d6 = SWTUtil.createFillHorizontallyGridData();
@@ -113,12 +111,10 @@ public class ViewCriterionDPresence extends ViewCriterion{
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getDPresenceModel().setDmin(SWTUtil.sliderToDouble(0, 1, sliderDMin.getSelection()));
                 String dmin = String.valueOf(model.getDPresenceModel().getDmin());
-                labelDMin.setText(dmin);
-                labelDMin.setToolTipText(dmin);
+                updateDMinLabel(dmin);
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
-
 
         // Create dax slider
         final Label z2Label = new Label(group, SWT.NONE);
@@ -129,7 +125,7 @@ public class ViewCriterionDPresence extends ViewCriterion{
         d91.minimumWidth = LABEL_WIDTH;
         d91.widthHint = LABEL_WIDTH;
         labelDMax.setLayoutData(d91);
-        labelDMax.setText("0"); //$NON-NLS-1$
+        updateDMaxLabel("0"); //$NON-NLS-1$
 
         sliderDMax = new Scale(group, SWT.HORIZONTAL);
         final GridData d62 = SWTUtil.createFillHorizontallyGridData();
@@ -143,34 +139,49 @@ public class ViewCriterionDPresence extends ViewCriterion{
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getDPresenceModel().setDmax(SWTUtil.sliderToDouble(0, 1, sliderDMax.getSelection()));
                 String dmax = String.valueOf(model.getDPresenceModel().getDmax());
-                labelDMax.setText(dmax);
-                labelDMax.setToolTipText(dmax);
+                updateDMaxLabel(dmax);
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
 
         return group;
-	}
+    }
 
-	@Override
-	protected void parse() {
-		ModelDPresenceCriterion m = model.getDPresenceModel();
-		if (m==null){
-			reset();
-			return;
-		}
-		root.setRedraw(false);
-		labelDMin.setText(String.valueOf(m.getDmin()));
-		labelDMin.setToolTipText(String.valueOf(m.getDmin()));
-		sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmin()));
-		labelDMax.setText(String.valueOf(m.getDmax()));
-		labelDMax.setToolTipText(String.valueOf(m.getDmax()));
-		sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmax()));
-		if (m.isActive() && m.isEnabled()) {
-			SWTUtil.enable(root);
-		} else {
-			SWTUtil.disable(root);
-		}
-		root.setRedraw(true);
-	}
+    @Override
+    protected void parse() {
+        ModelDPresenceCriterion m = model.getDPresenceModel();
+        if (m == null) {
+            reset();
+            return;
+        }
+        root.setRedraw(false);
+        updateDMinLabel(String.valueOf(m.getDmin()));
+        sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmin()));
+        updateDMaxLabel(String.valueOf(m.getDmax()));
+        sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmax()));
+        if (m.isActive() && m.isEnabled()) {
+            SWTUtil.enable(root);
+        } else {
+            SWTUtil.disable(root);
+        }
+        root.setRedraw(true);
+    }
+
+    /**
+     * Updates the "dMin" label and tooltip text
+     * @param text
+     */
+    private void updateDMinLabel(String text) {
+        labelDMin.setText(text);
+        labelDMin.setToolTipText(text);
+    }
+
+    /**
+     * Updates the "dMax" label and tooltip text
+     * @param text
+     */
+    private void updateDMaxLabel(String text) {
+        labelDMax.setText(text);
+        labelDMax.setToolTipText(text);
+    }
 }
