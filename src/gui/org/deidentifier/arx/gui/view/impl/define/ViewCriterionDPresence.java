@@ -74,6 +74,8 @@ public class ViewCriterionDPresence extends ViewCriterion{
         sliderDMax.setSelection(0);
         labelDMin.setText("0"); //$NON-NLS-1$
         labelDMax.setText("0"); //$NON-NLS-1$
+        labelDMin.setToolTipText("0");
+        labelDMax.setToolTipText("0");
         super.reset();
 	}
 
@@ -110,7 +112,9 @@ public class ViewCriterionDPresence extends ViewCriterion{
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getDPresenceModel().setDmin(SWTUtil.sliderToDouble(0, 1, sliderDMin.getSelection()));
-                labelDMin.setText(String.valueOf(model.getDPresenceModel().getDmin()));
+                String dmin = String.valueOf(model.getDPresenceModel().getDmin());
+                labelDMin.setText(dmin);
+                labelDMin.setToolTipText(dmin);
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
@@ -138,7 +142,9 @@ public class ViewCriterionDPresence extends ViewCriterion{
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getDPresenceModel().setDmax(SWTUtil.sliderToDouble(0, 1, sliderDMax.getSelection()));
-                labelDMax.setText(String.valueOf(model.getDPresenceModel().getDmax()));
+                String dmax = String.valueOf(model.getDPresenceModel().getDmax());
+                labelDMax.setText(dmax);
+                labelDMax.setToolTipText(dmax);
                 controller.update(new ModelEvent(outer, ModelPart.CRITERION_DEFINITION, model.getDPresenceModel()));
             }
         });
@@ -155,8 +161,10 @@ public class ViewCriterionDPresence extends ViewCriterion{
 		}
 		root.setRedraw(false);
 		labelDMin.setText(String.valueOf(m.getDmin()));
+		labelDMin.setToolTipText(String.valueOf(m.getDmin()));
 		sliderDMin.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmin()));
 		labelDMax.setText(String.valueOf(m.getDmax()));
+		labelDMax.setToolTipText(String.valueOf(m.getDmax()));
 		sliderDMax.setSelection(SWTUtil.doubleToSlider(0, 1d, m.getDmax()));
 		if (m.isActive() && m.isEnabled()) {
 			SWTUtil.enable(root);
