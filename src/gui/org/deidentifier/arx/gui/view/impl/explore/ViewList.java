@@ -89,7 +89,7 @@ public class ViewList implements IView {
 
         this.controller = controller;
 
-        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL);
+        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         
