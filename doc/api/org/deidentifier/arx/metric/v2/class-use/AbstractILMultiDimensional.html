@@ -322,14 +322,30 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createEntropyMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
-                   <a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
+<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createEntropyMetric(boolean, double[][], int[][][], int[][][])">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
+                   double[][]&nbsp;cache,
+                   int[][][]&nbsp;cardinalities,
+                   int[][][]&nbsp;hierarchies)</code>
 <div class="block">Creates an instance of the non-uniform entropy metric.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
+<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createEntropyMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
+                   <a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
+<div class="block">Creates an instance of the non-uniform entropy metric.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createHeightMetric()">createHeightMetric</a></strong>()</code>
+<div class="block">Creates an instance of the height metric.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
+<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createHeightMetric(int, int)">createHeightMetric</a></strong>(int&nbsp;minHeight,
+                  int&nbsp;maxHeight)</code>
 <div class="block">Creates an instance of the height metric.</div>
 </td>
 </tr>
@@ -378,31 +394,39 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecisionMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
-                     <a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
+<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecisionMetric(boolean, int[], double)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
+                     int[]&nbsp;heights,
+                     double&nbsp;cells)</code>
 <div class="block">Creates an instance of the precision metric.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
+<td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecisionMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
+                     <a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
+<div class="block">Creates an instance of the precision metric.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecisionMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(<a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the non-monotonic precision metric.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedEntropyMetric(double)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold)</code>
 <div class="block">Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedEntropyMetric(double, boolean)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               boolean&nbsp;monotonic)</code>
 <div class="block">Creates a potentially precomputed instance of the non-uniform entropy metric.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedEntropyMetric(double, boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               boolean&nbsp;monotonic,
@@ -410,21 +434,21 @@
 <div class="block">Creates a potentially precomputed instance of the non-uniform entropy metric.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedLossMetric(double)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold)</code>
 <div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization 
  and suppression equally.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedLossMetric(double, double)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
                            double&nbsp;gsFactor)</code>
 <div class="block">Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedLossMetric(double, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
                            double&nbsp;gsFactor,
@@ -432,20 +456,20 @@
 <div class="block">Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
                            <a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createStaticMetric(java.util.Map)">createStaticMetric</a></strong>(java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.Double&gt;&gt;&nbsp;loss)</code>
 <div class="block">Creates an instance of a metric with statically defined information loss.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><span class="strong">__MetricV2.</span><code><strong><a href="../../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createStaticMetric(java.util.Map, org.deidentifier.arx.metric.Metric.AggregateFunction)">createStaticMetric</a></strong>(java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.Double&gt;&gt;&nbsp;loss,
                   <a href="../../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
