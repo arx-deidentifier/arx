@@ -154,7 +154,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         double[] max = new double[hierarchies.length];
         for (int i=0; i<max.length; i++) {
-            max[i] = 2d * input.getDataLength() * log2(hierarchies[i].getArray().length);
+            max[i] = 2d * input.getDataLength() * log2(input.getDataLength());
         }
         
         super.setMax(max);
