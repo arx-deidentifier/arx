@@ -149,7 +149,14 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                 save();
             }
         });
-        this.setButtons(this.buttonLoad, this.buttonSave);
+        
+        ARXWizardButton help = new ARXWizardButton("Help...", new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                help();
+            }
+        });
+        
+        this.setButtons(help, this.buttonLoad, this.buttonSave);
         
         // Initialize pages
         pageFinal = new HierarchyWizardPageFinal<T>(this);
@@ -190,6 +197,13 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         } catch (Exception e){
             return null;
         }
+    }
+    
+    /**
+     * Shows the help dialog
+     */
+    private void help() {
+        controller.actionShowHelpDialog("id-51");
     }
     
     /**
@@ -263,7 +277,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             break;
         }
     }
-    
+
     /**
      * Saves the current specification
      */
@@ -296,7 +310,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             return;
         }
     }
-    
     /**
      * Returns the load button
      * @return
