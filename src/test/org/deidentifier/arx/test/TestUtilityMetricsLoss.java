@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestMetricNDS extends TestAnonymizationAbstract {
+public class TestUtilityMetricsLoss extends TestAnonymizationAbstract {
 
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
@@ -175,7 +175,7 @@ public class TestMetricNDS extends TestAnonymizationAbstract {
      * Creates a new instance
      * @param testCase
      */
-    public TestMetricNDS(final ARXAnonymizationTestCase testCase) {
+    public TestUtilityMetricsLoss(final ARXAnonymizationTestCase testCase) {
         super(testCase);
     }
 }

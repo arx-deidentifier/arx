@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
-public class TestMetricsV2 extends TestUtilityEstimationAbstract {
+public class TestUtilityMetrics2 extends TestUtilityEstimationAbstract {
 
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
@@ -221,7 +221,7 @@ public class TestMetricsV2 extends TestUtilityEstimationAbstract {
         });
     }
 
-    public TestMetricsV2(final ARXUtilityMetricsTestCase testCase) {
+    public TestUtilityMetrics2(final ARXUtilityMetricsTestCase testCase) {
         super(testCase);
     }
 }
