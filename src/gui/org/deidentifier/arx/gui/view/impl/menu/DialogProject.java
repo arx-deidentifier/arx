@@ -18,6 +18,10 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -36,6 +40,7 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -48,11 +53,19 @@ import org.eclipse.swt.widgets.Text;
  */
 public class DialogProject extends TitleAreaDialog implements IDialog {
 
+    /** Widget*/
     private Text   name        = null;
+    /** Widget*/
     private Text   description = null;
+    /** Widget*/
     private Button ok          = null;
+    /** Model*/
     private Model  model       = null;
-
+    /** Widget*/
+    private Combo  locale      = null;
+    /** Locale*/
+    private Locale selectedLocale    = Locale.getDefault();
+    
     /**
      * Creates a new instance
      * @param parent
@@ -70,7 +83,7 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         name.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(final ModifyEvent arg0) {
-                model = new Model(name.getText(), description.getText());
+                model = new Model(name.getText(), description.getText(), selectedLocale);
                 if (name.getText().equals("")) { //$NON-NLS-1$
                     ok.setEnabled(false);
                 } else {
@@ -82,7 +95,19 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         description.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(final ModifyEvent arg0) {
-                model = new Model(name.getText(), description.getText());
+                model = new Model(name.getText(), description.getText(), selectedLocale);
+            }
+        });
+        
+        locale.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if (locale.getSelectionIndex() >= 0) {
+                    selectedLocale = new Locale(locale.getItem(locale.getSelectionIndex()).toLowerCase());
+                } else {
+                    selectedLocale = Locale.getDefault();
+                }
+                model = new Model(name.getText(), description.getText(), selectedLocale);
             }
         });
     }
@@ -163,6 +188,22 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
                                        SWT.V_SCROLL);
         description.setLayoutData(SWTUtil.createFillGridData());
         description.setText(""); //$NON-NLS-1$
+        
+        final Label label3 = new Label(parent, SWT.LEFT | SWT.WRAP);
+        label3.setText(Resources.getMessage("ProjectDialog.8")); //$NON-NLS-1$
+        label3.setLayoutData(SWTUtil.createNoFillGridData());
+
+        // Create list of locales
+        List<String> languages = new ArrayList<String>();
+        for (String lang : Locale.getISOLanguages()) {
+            languages.add(lang.toUpperCase());
+        }
+        
+        locale = new Combo(parent, SWT.READ_ONLY);
+        locale.setItems(languages.toArray(new String[]{}));
+        locale.select(languages.indexOf(Locale.getDefault().getLanguage().toUpperCase()));
+        locale.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        
         return parent;
     }
 

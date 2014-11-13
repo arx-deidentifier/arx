@@ -181,10 +181,12 @@ public class Model implements Serializable {
      * Creates a new instance
      * @param name
      * @param description
+     * @param locale 
      */
-    public Model(final String name, final String description) {
+    public Model(final String name, final String description, Locale locale) {
 		this.name = name;
 		this.description = description;
+		this.locale = locale;
 		setModified();
 	}
 
