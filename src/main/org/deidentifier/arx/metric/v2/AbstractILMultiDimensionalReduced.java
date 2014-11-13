@@ -22,22 +22,22 @@ import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * This class implements an information loss which can be represented as a
- * decimal number per quasi-identifier
- * 
+ * decimal number per quasi-identifier.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiDimensional {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 7228258212711188233L;
 
-    /** Aggregate */
+    /** Aggregate. */
     private double            aggregate        = 0d;
 
     /**
-     * Creates a new instance
-     * 
+     * Creates a new instance.
+     *
      * @param values
      * @param weights
      */
@@ -47,10 +47,15 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
     }
 
     /**
-     * Override this to implement a variant
+     * Override this to implement a variant.
+     *
+     * @return
      */
     public abstract InformationLoss<double[]> clone();
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#compareTo(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public int compareTo(InformationLoss<?> other) {
         if (other == null) {
@@ -63,16 +68,25 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#getValue()
+     */
     @Override
     public double[] getValue() {
         return this.getValues();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#hashCode()
+     */
     @Override
     public int hashCode() {
         return Double.valueOf(aggregate).hashCode();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
         double _min = convert(min).aggregate;
@@ -81,14 +95,17 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
         else return (this.aggregate - _min) / (_max - _min);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#toString()
+     */
     @Override
     public String toString() {
         return String.valueOf(this.aggregate);
     }
 
     /**
-     * Converter method
-     * 
+     * Converter method.
+     *
      * @param other
      * @return
      */
@@ -104,12 +121,15 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
     }
 
     /**
-     * Override this to implement a variant
-     * 
+     * Override this to implement a variant.
+     *
      * @return
      */
     protected abstract double getAggregate();
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensional#setValues(double[])
+     */
     @Override
     protected void setValues(double[] values) {
         super.setValues(values);

@@ -26,16 +26,20 @@ import org.eclipse.nebula.widgets.nattable.resize.config.DefaultRowResizeBinding
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The row layer
+ * The row layer.
+ *
  * @author Fabian Prasser
  */
 public class LayerRowHeader extends CTLayer {
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param dataProvider
      * @param bodyLayer
+     * @param config
+     * @param context
      */
     public LayerRowHeader(Composite parent,
                                IDataProvider dataProvider,

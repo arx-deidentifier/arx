@@ -73,6 +73,13 @@ public class DataTableDecorator extends CellPainterWrapper {
         this.defaultBorderStyle = defaultBorderStyle;
     }
 
+    /**
+     * 
+     *
+     * @param cell
+     * @param configRegistry
+     * @return
+     */
     private BorderStyle getBorderStyle(ILayerCell cell, IConfigRegistry configRegistry) {
         IStyle cellStyle = CellStyleUtil.getCellStyle(cell, configRegistry);
         BorderStyle borderStyle = cellStyle.getAttributeValue(CellStyleAttributes.BORDER_STYLE);
@@ -82,6 +89,9 @@ public class DataTableDecorator extends CellPainterWrapper {
         return borderStyle;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.painter.cell.CellPainterWrapper#getPreferredHeight(org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell, org.eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public int getPreferredHeight(ILayerCell cell, GC gc, IConfigRegistry configRegistry) {
         BorderStyle borderStyle = getBorderStyle(cell, configRegistry);
@@ -96,6 +106,9 @@ public class DataTableDecorator extends CellPainterWrapper {
         return super.getPreferredHeight(cell, gc, configRegistry) + (borderThickness * borderLineCount);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.painter.cell.CellPainterWrapper#getPreferredWidth(org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell, org.eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public int getPreferredWidth(ILayerCell cell, GC gc, IConfigRegistry configRegistry) {
         BorderStyle borderStyle = getBorderStyle(cell, configRegistry);
@@ -110,6 +123,9 @@ public class DataTableDecorator extends CellPainterWrapper {
         return super.getPreferredWidth(cell, gc, configRegistry) + (borderThickness * borderLineCount);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.painter.cell.CellPainterWrapper#paintCell(org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell, org.eclipse.swt.graphics.GC, org.eclipse.swt.graphics.Rectangle, org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void paintCell(ILayerCell cell, GC gc, Rectangle rectangle, IConfigRegistry configRegistry) {
         BorderStyle borderStyle = getBorderStyle(cell, configRegistry);

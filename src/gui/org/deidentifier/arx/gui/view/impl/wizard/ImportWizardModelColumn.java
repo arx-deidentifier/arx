@@ -39,18 +39,14 @@ public class ImportWizardModelColumn {
      */
     private boolean enabled = true;
 
-    /**
-     * The actual column this wraps around
-     */
+    /** The actual column this wraps around. */
     private ImportColumn  column;
 
     /**
-     * Creates a new instance for the given column
-     * 
+     * Creates a new instance for the given column.
+     *
+     * @param column Column that should be wrapped around
      * @note This implicitly assumes that the column should be enabled.
-     * 
-     * @param column
-     *            Column that should be wrapped around
      */
     public ImportWizardModelColumn(ImportColumn column) {
 
@@ -58,10 +54,10 @@ public class ImportWizardModelColumn {
     }
 
     /**
-     * Creates a new instance for the given column
-     * 
-     * @param column
-     *            Column that should be wrapped around
+     * Creates a new instance for the given column.
+     *
+     * @param column Column that should be wrapped around
+     * @param enabled
      */
     public ImportWizardModelColumn(ImportColumn column, boolean enabled) {
 
@@ -86,8 +82,9 @@ public class ImportWizardModelColumn {
     }
 
     /**
-     * @param enabled
-     *            {@link #column}
+     * 
+     *
+     * @param column
      */
     public void setColumn(ImportColumn column) {
 

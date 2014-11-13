@@ -44,24 +44,25 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = 7972929684708525849L;
 
-    /** Row count */
+    /** Row count. */
     private double            rowCount;
 
-    /** Hierarchy heights */
+    /** Hierarchy heights. */
     private int[]             heights;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDNMPrecision() {
         super(false, false, AggregateFunction.ARITHMETIC_MEAN);
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param function
      */
     protected MetricMDNMPrecision(AggregateFunction function){
@@ -69,7 +70,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     /**
-     * For subclasses
+     * For subclasses.
+     *
      * @param monotonic
      * @param independent
      * @param function
@@ -79,7 +81,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(false,                      // monotonic
@@ -90,11 +94,17 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Non-monotonic precision";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -121,6 +131,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                                (AbstractILMultiDimensional)getLowerBoundInternal(node).clone());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -132,6 +145,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         return createInformationLoss(result);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
@@ -139,9 +155,10 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     /**
-     * For backwards compatibility only
-     * @param cells 
-     * @param dimensions
+     * For backwards compatibility only.
+     *
+     * @param heights
+     * @param cells
      */
     protected void initialize(int[] heights, double cells){
 
@@ -158,6 +175,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMax(max);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

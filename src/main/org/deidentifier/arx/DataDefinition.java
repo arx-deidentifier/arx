@@ -30,31 +30,34 @@ import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
 /**
- * Encapsulates a definition of the types of attributes contained in a dataset
- * 
+ * Encapsulates a definition of the types of attributes contained in a dataset.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class DataDefinition implements Cloneable{
     
-    /** Is this data definition locked*/
+    /** Is this data definition locked. */
     private boolean locked = false;
 
-    /** The mapped attribute types */
+    /** The mapped attribute types. */
     private final Map<String, AttributeType>       attributeTypes    = new HashMap<String, AttributeType>();
 
-    /** The mapped attribute types */
+    /** The mapped attribute types. */
     private final Map<String, HierarchyBuilder<?>> builders          = new HashMap<String, HierarchyBuilder<?>>();
 
-    /** The mapped data types */
+    /** The mapped data types. */
     private final Map<String, DataType<?>>         dataTypes         = new HashMap<String, DataType<?>>();
 
-    /** The mapped minimum generalization */
+    /** The mapped minimum generalization. */
     private final Map<String, Integer>             minGeneralization = new HashMap<String, Integer>();
 
-    /** The mapped maximum generalization */
+    /** The mapped maximum generalization. */
     private final Map<String, Integer>             maxGeneralization = new HashMap<String, Integer>();
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
     @Override
     public DataDefinition clone() {
 
@@ -80,8 +83,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the type defined for the attribute
-     * 
+     * Returns the type defined for the attribute.
+     *
      * @param attribute
      * @return
      */
@@ -90,8 +93,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the data type for the given column
-     * 
+     * Returns the data type for the given column.
+     *
      * @param columnName
      * @return
      */
@@ -105,8 +108,9 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the according hierarchy
-     * 
+     * Returns the according hierarchy.
+     *
+     * @param attribute
      * @return
      */
     public String[][] getHierarchy(final String attribute) {
@@ -119,8 +123,9 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns the associated builder, if any
-     * 
+     * Returns the associated builder, if any.
+     *
+     * @param attribute
      * @return
      */
     public HierarchyBuilder<?> getHierarchyBuilder(final String attribute) {
@@ -129,8 +134,8 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns the direct identifiers
-     * 
+     * Returns the direct identifiers.
+     *
      * @return
      */
     public Set<String> getIdentifyingAttributes() {
@@ -144,8 +149,8 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns the insensitive attributes
-     * 
+     * Returns the insensitive attributes.
+     *
      * @return
      */
     public Set<String> getInsensitiveAttributes() {
@@ -159,8 +164,9 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns the maximum generalization for the attribute
-     * 
+     * Returns the maximum generalization for the attribute.
+     *
+     * @param attribute
      * @return
      */
     public int getMaximumGeneralization(final String attribute) {
@@ -180,8 +186,9 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Returns the minimum generalization for the attribute
-     * 
+     * Returns the minimum generalization for the attribute.
+     *
+     * @param attribute
      * @return
      */
     public int getMinimumGeneralization(final String attribute) {
@@ -191,8 +198,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the quasi identifying attributes
-     * 
+     * Returns the quasi identifying attributes.
+     *
      * @return
      */
     public Set<String> getQuasiIdentifyingAttributes() {
@@ -206,8 +213,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns the sensitive attributes
-     * 
+     * Returns the sensitive attributes.
+     *
      * @return
      */
     public Set<String> getSensitiveAttributes() {
@@ -221,7 +228,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns whether a hierarchy is available
+     * Returns whether a hierarchy is available.
+     *
      * @param attribute
      * @return
      */
@@ -231,7 +239,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns whether a hierarchy builder is available
+     * Returns whether a hierarchy builder is available.
+     *
      * @param attribute
      * @return
      */
@@ -241,7 +250,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns whether this definition can be altered
+     * Returns whether this definition can be altered.
+     *
      * @return
      */
     public boolean isLocked(){
@@ -249,7 +259,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns whether a maximum generalization level is available
+     * Returns whether a maximum generalization level is available.
+     *
      * @param attribute
      * @return
      */
@@ -260,7 +271,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Returns whether a minimum generalization level is available
+     * Returns whether a minimum generalization level is available.
+     *
      * @param attribute
      * @return
      */
@@ -270,8 +282,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Define the type of a given attribute
-     * 
+     * Define the type of a given attribute.
+     *
      * @param attribute
      * @param type
      */
@@ -285,8 +297,8 @@ public class DataDefinition implements Cloneable{
 
     /**
      * Defines the given attribute as a quasi-identifier and stores the functional
-     * representation of the generalization hierarchy
-     * 
+     * representation of the generalization hierarchy.
+     *
      * @param attribute
      * @param builder
      */
@@ -300,8 +312,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Define the datatype of a given attribute
-     * 
+     * Define the datatype of a given attribute.
+     *
      * @param attribute
      * @param type
      */
@@ -313,10 +325,10 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Define the maximal generalization of a given attribute
-     * 
+     * Define the maximal generalization of a given attribute.
+     *
      * @param attribute
-     * @param type
+     * @param maximum
      */
     public void setMaximumGeneralization(final String attribute,
                                          final int maximum) {
@@ -326,10 +338,10 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Define the minimal generalization of a given attribute
-     * 
+     * Define the minimal generalization of a given attribute.
+     *
      * @param attribute
-     * @param type
+     * @param minimum
      */
     public void setMinimumGeneralization(final String attribute,
                                          final int minimum) {
@@ -339,7 +351,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Checks whether this handle is locked
+     * Checks whether this handle is locked.
+     *
      * @throws IllegalStateException
      */
     private void checkLocked() throws IllegalStateException{
@@ -347,8 +360,10 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Checks whether the argument is null
+     * Checks whether the argument is null.
+     *
      * @param argument
+     * @param name
      * @throws IllegalArgumentException
      */
     private void checkNullArgument(Object argument, String name) throws IllegalArgumentException {
@@ -356,7 +371,8 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Checks whether the attribute is a quasi-identifier
+     * Checks whether the attribute is a quasi-identifier.
+     *
      * @param attribute
      * @throws IllegalArgumentException
      */
@@ -368,7 +384,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Materializes all functional hierarchies
+     * Materializes all functional hierarchies.
+     *
      * @param handle
      */
     protected void materialize(DataHandle handle) {
@@ -403,7 +420,8 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Parses the configuration of the import adapter
+     * Parses the configuration of the import adapter.
+     *
      * @param adapter
      */
     protected void parse(ImportAdapter adapter) {
@@ -415,7 +433,9 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
-     * Lock/unlock the definition
+     * Lock/unlock the definition.
+     *
+     * @param locked
      */
     protected void setLocked(boolean locked){
         this.locked = locked;

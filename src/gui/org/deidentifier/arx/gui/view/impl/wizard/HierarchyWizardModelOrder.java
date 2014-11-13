@@ -28,21 +28,22 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 
 /**
- * A model for order-based builders
- * @author Fabian Prasser
+ * A model for order-based builders.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T> {
     
-    /** Var */
+    /** Var. */
     private final transient String[] data;
 
-    /** Locale */
+    /** Locale. */
     private Locale                   locale;
 
     /**
-     * Constructor to create an initial definition
+     * Constructor to create an initial definition.
+     *
      * @param dataType
      * @param locale
      * @param data
@@ -55,6 +56,9 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         this.update();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#getBuilder(boolean)
+     */
     @Override
     public HierarchyBuilderOrderBased<T> getBuilder(boolean serializable) throws Exception {
         
@@ -78,7 +82,8 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
     
     /**
-     * Returns the current locale
+     * Returns the current locale.
+     *
      * @return
      */
     public Locale getLocale() {
@@ -90,8 +95,10 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
     
     /**
-     * Moves an item down
+     * Moves an item down.
+     *
      * @param index
+     * @return
      */
     public boolean moveDown(int index) {
         if (index>=data.length-1 || index<0) return false;
@@ -103,8 +110,10 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
     
     /**
-     * Moves an item up
+     * Moves an item up.
+     *
      * @param index
+     * @return
      */
     public boolean moveUp(int index) {
         if (index<=0) return false;
@@ -115,6 +124,9 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#parse(org.deidentifier.arx.aggregates.HierarchyBuilder)
+     */
     @Override
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException {
         
@@ -125,8 +137,10 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
 
     /**
-     * Sorts the data
+     * Sorts the data.
+     *
      * @param type
+     * @return
      */
     public boolean sort(DataType<?> type){
         boolean result = internalSort(type);
@@ -136,7 +150,9 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     
 
     /**
-     * Sort
+     * Sort.
+     *
+     * @param <U>
      * @param type
      * @return successful, or not
      */
@@ -155,6 +171,9 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#build()
+     */
     @Override
     protected void build() {
         super.hierarchy = null;

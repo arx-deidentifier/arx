@@ -38,15 +38,18 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This class implements a titled folder
+ * This class implements a titled folder.
+ *
  * @author Fabian Prasser
  */
 public class ComponentTitledFolder implements IComponent {
     
+    /**  TODO */
     private final CTabFolder folder;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param bar
@@ -57,7 +60,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param bar
@@ -88,7 +92,8 @@ public class ComponentTitledFolder implements IComponent {
     }
     
     /**
-     * Adds a selection listener
+     * Adds a selection listener.
+     *
      * @param listener
      */
     public void addSelectionListener(SelectionListener listener) {
@@ -96,7 +101,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Creates a new entry in the folder
+     * Creates a new entry in the folder.
+     *
      * @param title
      * @param image
      * @param index
@@ -117,7 +123,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Creates a new entry in the folder
+     * Creates a new entry in the folder.
+     *
      * @param title
      * @param image
      * @return
@@ -127,8 +134,9 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Disposes the given item
-     * @param string
+     * Disposes the given item.
+     *
+     * @param text
      */
     public void disposeItem(String text) {
         for (CTabItem item : folder.getItems()) {
@@ -139,7 +147,8 @@ public class ComponentTitledFolder implements IComponent {
     }
     
     /**
-     * Returns the button item for the given text
+     * Returns the button item for the given text.
+     *
      * @param text
      * @return
      */
@@ -155,7 +164,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Returns the number of items in the folder
+     * Returns the number of items in the folder.
+     *
      * @return
      */
     public int getItemCount() {
@@ -163,7 +173,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Returns the currently selected index
+     * Returns the currently selected index.
+     *
      * @return
      */
     public int getSelectionIndex() {
@@ -171,7 +182,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Returns the tab item for the given text
+     * Returns the tab item for the given text.
+     *
      * @param text
      * @return
      */
@@ -185,7 +197,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Enables/disables the component
+     * Enables/disables the component.
+     *
      * @param b
      */
     public void setEnabled(boolean b) {
@@ -193,7 +206,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Sets layout data
+     * Sets layout data.
+     *
      * @param data
      */
     public void setLayoutData(Object data){
@@ -201,7 +215,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Sets the current selection
+     * Sets the current selection.
+     *
      * @param index
      */
     public void setSelection(int index) {
@@ -209,7 +224,8 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
-     * Creates the bar 
+     * Creates the bar .
+     *
      * @param controller
      * @param folder
      * @param bar

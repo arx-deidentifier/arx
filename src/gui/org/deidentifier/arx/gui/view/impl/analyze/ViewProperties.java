@@ -35,22 +35,38 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This view displays basic properties about input or output data
- * 
+ * This view displays basic properties about input or output data.
+ *
  * @author Fabian Prasser
  */
 public abstract class ViewProperties implements IView {
 
     /**
-     * A class for properties displayed in the tree view
+     * A class for properties displayed in the tree view.
+     *
      * @author Fabian Prasser
      */
     protected class Property {
+        
+        /**  TODO */
         public Property       parent;
+        
+        /**  TODO */
         public List<Property> children = new ArrayList<Property>();
+        
+        /**  TODO */
         public String         property;
+        
+        /**  TODO */
         public String[]       values;
 
+        /**
+         * 
+         *
+         * @param father
+         * @param property
+         * @param values
+         */
         public Property(final Property father,
                         final String property,
                         final String[] values) {
@@ -59,37 +75,56 @@ public abstract class ViewProperties implements IView {
             this.values = values;
         }
 
+        /**
+         * 
+         *
+         * @param property
+         * @param values
+         */
         public Property(final String property, final String[] values) {
             roots.add(this);
             this.property = property;
             this.values = values;
         }
 
+        /**
+         * 
+         *
+         * @param p
+         */
         public void add(final Property p) {
             children.add(p);
             p.parent = this;
         }
     }
 
-    /** Internal stuff */
+    /** Internal stuff. */
     protected final List<Property> roots  = new ArrayList<Property>();
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     protected final Composite      root;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     protected final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     protected Model                model;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     protected TreeViewer           treeViewer;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final Controller       controller;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final ModelPart        reset;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final AnalysisContext  context = new AnalysisContext();
     
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param parent
      * @param controller
      * @param target
@@ -118,11 +153,17 @@ public abstract class ViewProperties implements IView {
         this.context.setTarget(target);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
 
@@ -133,6 +174,9 @@ public abstract class ViewProperties implements IView {
         root.setRedraw(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -149,15 +193,16 @@ public abstract class ViewProperties implements IView {
     }
 
     /**
-     * Implement this to update the view
+     * Implement this to update the view.
      */
     protected abstract void update();
 
     /**
-     * Converts an information loss into a relative value in percent 
-     * TODO: Code duplicate from NodePropertiesView
-     * 
+     * Converts an information loss into a relative value in percent
+     * TODO: Code duplicate from NodePropertiesView.
+     *
      * @param infoLoss
+     * @param result
      * @return
      */
     protected double asRelativeValue(final InformationLoss<?> infoLoss, final ARXResult result) {
@@ -166,7 +211,8 @@ public abstract class ViewProperties implements IView {
     }
     
     /**
-     * Returns the context
+     * Returns the context.
+     *
      * @return
      */
     protected AnalysisContext getContext(){

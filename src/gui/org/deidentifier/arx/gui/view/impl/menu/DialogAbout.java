@@ -44,29 +44,35 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * An about dialog
+ * An about dialog.
+ *
  * @author Fabian Prasser
  */
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
+    /**  TODO */
     private static final String LICENSE = Resources.getMessage("AboutDialog.0") + Resources.getMessage("AboutDialog.1") +
                                           Resources.getMessage("AboutDialog.2") + Resources.getMessage("AboutDialog.3") + "\n" +
                                           Resources.getMessage("AboutDialog.5") + Resources.getMessage("AboutDialog.6") +
                                           Resources.getMessage("AboutDialog.7") + Resources.getMessage("AboutDialog.8") + "\n" +
                                           Resources.getMessage("AboutDialog.10") + Resources.getMessage("AboutDialog.11");
     
+    /**  TODO */
     private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" +
                                           Resources.getMessage("AboutDialog.18") + "\n\n" +
                                           Resources.getMessage("AboutDialog.21") + Resources.getVersion();
     
+    /**  TODO */
     private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" +
                                                "Ledian Xhani (hierarchy editor)\n" +
                                                "Ljubomir Dshevlekov (hierarchy editor)";
     
+    /**  TODO */
     private Image image;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param parentShell
      * @param controller
      */
@@ -75,6 +81,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#close()
+     */
     @Override
     public boolean close() {
         if (image != null)
@@ -83,7 +92,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Creates a link
+     * Creates a link.
+     *
      * @param parent
      * @param text
      * @param tooltip
@@ -106,12 +116,18 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -129,6 +145,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         });
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -138,6 +157,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         return contents;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         parent.setLayout(new GridLayout());
@@ -189,6 +211,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         return parent;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return false;

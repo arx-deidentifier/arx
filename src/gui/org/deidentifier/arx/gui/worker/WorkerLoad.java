@@ -62,35 +62,39 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * This worker loads a project file from disk
+ * This worker loads a project file from disk.
+ *
  * @author Fabian Prasser
  */
 public class WorkerLoad extends Worker<Model> {
 
-	/** The vocabulary to use*/
+	/** The vocabulary to use. */
 	private Vocabulary vocabulary = null;
-	/** The zip file*/
+	
+	/** The zip file. */
 	private ZipFile    zipfile;
-	/** The lattice*/
+	
+	/** The lattice. */
 	private ARXLattice lattice;
-	/** The model*/
+	
+	/** The model. */
 	private Model      model;
 
 	/**
-	 * Creates a new instance
-	 * 
-	 * @param file
-	 * @param controller
-	 * @throws ZipException
-	 * @throws IOException
-	 */
+     * Creates a new instance.
+     *
+     * @param file
+     * @param controller
+     * @throws ZipException
+     * @throws IOException
+     */
     public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
         this.zipfile = new ZipFile(file);
     }
 
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param path
      * @param controller
      * @throws IOException
@@ -99,6 +103,9 @@ public class WorkerLoad extends Worker<Model> {
         this.zipfile = new ZipFile(path);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
@@ -134,8 +141,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the clipboard from the file
-     * 
+     * Reads the clipboard from the file.
+     *
      * @param map
      * @param zip
      * @throws SAXException
@@ -189,8 +196,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the configuration from the file
-     * 
+     * Reads the configuration from the file.
+     *
      * @param map
      * @param zip
      * @throws IOException
@@ -208,8 +215,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the configuration from the file
-     * 
+     * Reads the configuration from the file.
+     *
      * @param prefix
      * @param output
      * @param map
@@ -303,10 +310,10 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the data definition from the file
-     * 
+     * Reads the data definition from the file.
+     *
      * @param config
-     * @param definition 
+     * @param definition
      * @param prefix
      * @param zip
      * @throws IOException
@@ -513,8 +520,8 @@ public class WorkerLoad extends Worker<Model> {
     }
     
     /**
-     * Reads the filter from the file
-     * 
+     * Reads the filter from the file.
+     *
      * @param zip
      * @throws SAXException
      * @throws IOException
@@ -532,9 +539,10 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the hierarchy from the given location
-     * 
+     * Reads the hierarchy from the given location.
+     *
      * @param zip
+     * @param prefix
      * @param ref
      * @return
      * @throws IOException
@@ -550,8 +558,9 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the input from the file
-     * 
+     * Reads the input from the file.
+     *
+     * @param config
      * @param zip
      * @throws IOException
      */
@@ -575,8 +584,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the lattice from several files
-     * 
+     * Reads the lattice from several files.
+     *
      * @param zip
      * @return
      * @throws IOException
@@ -826,9 +835,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the metadata from the file
-     * 
-     * @param map
+     * Reads the metadata from the file.
+     *
      * @param zip
      * @throws IOException
      * @throws SAXException
@@ -887,11 +895,12 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads min & max generalization levels, if any
+     * Reads min & max generalization levels, if any.
+     *
      * @param zip
      * @return
-     * @throws SAXException 
-     * @throws IOException 
+     * @throws SAXException
+     * @throws IOException
      */
     private int[] readMinMax(final ZipFile zip) throws SAXException, IOException  {
 
@@ -939,8 +948,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads the project from the file
-     * 
+     * Reads the project from the file.
+     *
      * @param zip
      * @throws IOException
      * @throws ClassNotFoundException
@@ -958,8 +967,8 @@ public class WorkerLoad extends Worker<Model> {
     }
 
     /**
-     * Reads a transformation from the serialized array representation
-     * 
+     * Reads a transformation from the serialized array representation.
+     *
      * @param payload
      * @return
      */
@@ -974,7 +983,7 @@ public class WorkerLoad extends Worker<Model> {
     }
     
     /**
-     * Fix monotonicity for backwards compatibility
+     * Fix monotonicity for backwards compatibility.
      */
     private void setMonotonicity() {
         if (lattice != null && model != null && model.getOutputConfig() != null && model.getOutputConfig().getConfig() != null) {

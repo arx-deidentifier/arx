@@ -25,14 +25,18 @@ import java.io.ObjectOutputStream;
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
 
+/**
+ * 
+ */
 public class IO {
 
     /**
-     * Reads a hash map from the stream
+     * Reads a hash map from the stream.
+     *
      * @param stream
      * @return
-     * @throws IOException 
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     public static IntIntOpenHashMap readIntIntOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
         
@@ -55,11 +59,12 @@ public class IO {
     
 
     /**
-     * Reads a hash map from the stream
+     * Reads a hash map from the stream.
+     *
      * @param stream
      * @return
-     * @throws IOException 
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     public static LongDoubleOpenHashMap readLongDoubleOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
         
@@ -81,11 +86,11 @@ public class IO {
     }
 
     /**
-     * Reads a hash map from the stream
+     * Reads a hash map from the stream.
+     *
      * @param stream
      * @param hashmap
-     * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public static void writeIntIntOpenHashMap(ObjectOutputStream stream, IntIntOpenHashMap hashmap) throws IOException {
         
@@ -97,11 +102,11 @@ public class IO {
     
 
     /**
-     * Reads a hash map from the stream
+     * Reads a hash map from the stream.
+     *
      * @param stream
      * @param hashmap
-     * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
         

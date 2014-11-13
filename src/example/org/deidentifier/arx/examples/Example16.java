@@ -35,9 +35,9 @@ import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
- * This class implements an example of how to use the API for access to basic statistics 
- * about the data
- * 
+ * This class implements an example of how to use the API for access to basic statistics
+ * about the data.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

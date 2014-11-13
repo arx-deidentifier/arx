@@ -20,7 +20,7 @@ package org.deidentifier.arx.io;
 
 
 /**
- * Interface to be implemented when columns can be referred to by a name
+ * Interface to be implemented when columns can be referred to by a name.
  *
  * @author Karol Babioch
  * @author Fabian Prasser
@@ -28,12 +28,16 @@ package org.deidentifier.arx.io;
 interface IImportColumnNamed {
 
     /**
-     * Returns the name this column refers to
+     * Returns the name this column refers to.
+     *
+     * @return
      */
     String getName();
 
     /**
-     * Sets the name this columns refers to
+     * Sets the name this columns refers to.
+     *
+     * @param name
      */
     void setName(String name);
 

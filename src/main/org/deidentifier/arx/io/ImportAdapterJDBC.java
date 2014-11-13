@@ -36,21 +36,17 @@ import java.util.List;
  */
 public class ImportAdapterJDBC extends ImportAdapter {
 
-    /**
-     * The configuration describing the CSV file being used
-     */
+    /** The configuration describing the CSV file being used. */
     private ImportConfigurationJDBC config;
 
     /**
-     * ResultSet containing rows to return
-     * 
+     * ResultSet containing rows to return.
+     *
      * @see {@link #next()}
      */
     private ResultSet               resultSet;
 
-    /**
-     * Indicates whether there is another row to return
-     */
+    /** Indicates whether there is another row to return. */
     private boolean                 hasNext;
 
     /**
@@ -63,21 +59,17 @@ public class ImportAdapterJDBC extends ImportAdapter {
     private boolean                 headerReturned;
 
     /**
-     * Number of rows that need to be processed in total
-     * 
+     * Number of rows that need to be processed in total.
+     *
      * @see {@link #getProgress()}
      */
     private int                     totalRows;
 
     /**
-     * Creates a new instance of this object with given configuration
-     * 
-     * @param config
-     *            {@link #config}
-     * 
-     * @throws IOException
-     *             In case of communication errors with JDBC
-     * 
+     * Creates a new instance of this object with given configuration.
+     *
+     * @param config {@link #config}
+     * @throws IOException In case of communication errors with JDBC
      * @todo Fix IOException
      */
     protected ImportAdapterJDBC(ImportConfigurationJDBC config) throws IOException {
@@ -129,6 +121,8 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * This divides the number of rows that have already been returned by the
      * number of total rows and casts the result into a percentage. In case of
      * an {@link SQLException} 0 will be returned.
+     *
+     * @return
      */
     @Override
     public int getProgress() {
@@ -143,14 +137,18 @@ public class ImportAdapterJDBC extends ImportAdapter {
     /**
      * Indicates whether there is another element to return
      * 
-     * This returns true when there is another element in the result set
-     * {@link #resultSet}.
+     * This returns true when there is another element in the result set {@link #resultSet}.
+     *
+     * @return
      */
     @Override
     public boolean hasNext() {
         return hasNext;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.Iterator#next()
+     */
     @Override
     public String[] next() {
 
@@ -193,7 +191,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
     }
 
     /**
-     * Dummy
+     * Dummy.
      */
     @Override
     public void remove() {
@@ -207,6 +205,8 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * returned later on by iterating over this object. Depending upon whether
      * or not names have been assigned explicitly either the appropriate values
      * will be returned, or names from the JDBC metadata will be used.
+     *
+     * @return
      */
     private String[] createHeader() {
 

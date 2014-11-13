@@ -22,34 +22,44 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
- * The t-closeness criterion with equal-distance EMD
+ * The t-closeness criterion with equal-distance EMD.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class EqualDistanceTCloseness extends TCloseness {
 
+    /**  TODO */
     private static final long serialVersionUID = -1383357036299011323L;
 
-    /** The original distribution*/
+    /** The original distribution. */
     private double[]          distribution;
     
     /**
      * Creates a new instance of the t-closeness criterion with equal earth-movers-distance as proposed in:
-     * Li N, Li T, Venkatasubramanian S. 
-     * t-Closeness: Privacy beyond k-anonymity and l-diversity. 
-     * 23rd International Conference on Data Engineering. 2007:106-115. 
+     * Li N, Li T, Venkatasubramanian S.
+     * t-Closeness: Privacy beyond k-anonymity and l-diversity.
+     * 23rd International Conference on Data Engineering. 2007:106-115.
+     *
+     * @param attribute
      * @param t
      */
     public EqualDistanceTCloseness(String attribute, double t) {
         super(attribute, t);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.ExplicitPrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
+     */
     @Override
     public void initialize(DataManager manager) {
         super.initialize(manager);
         distribution = manager.getDistribution(attribute);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
+     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
 
@@ -88,6 +98,9 @@ public class EqualDistanceTCloseness extends TCloseness {
         return val <= t;
     }
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
+	 */
 	@Override
 	public String toString() {
 		return t+"-closeness with equal distance for attribute '"+attribute+"'";

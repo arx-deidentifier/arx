@@ -55,27 +55,27 @@ import cern.colt.Arrays;
  */
 public class ViewList implements IView {
 
-    /** The controller */
+    /** The controller. */
     private final Controller    controller;
 
-    /** The format */
+    /** The format. */
     private final NumberFormat  format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
-    /** The table */
+    /** The table. */
     private final Table         table;
 
-    /** The model */
+    /** The model. */
     private Model               model;
 
-    /** The list */
+    /** The list. */
     private final List<ARXNode> list   = new ArrayList<ARXNode>();
 
-    /** The listener */
+    /** The listener. */
     private Listener            listener;
 
     /**
-     * Init
-     * 
+     * Init.
+     *
      * @param parent
      * @param controller
      */
@@ -110,13 +110,16 @@ public class ViewList implements IView {
         column4.pack();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
     /**
-     * Resets the view
+     * Resets the view.
      */
     @Override
     public void reset() {
@@ -132,6 +135,9 @@ public class ViewList implements IView {
         SWTUtil.disable(table);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -151,8 +157,8 @@ public class ViewList implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent
-     * 
+     * Converts an information loss into a relative value in percent.
+     *
      * @param infoLoss
      * @return
      */
@@ -168,7 +174,8 @@ public class ViewList implements IView {
     }
 
     /**
-     * Creates an item in the list
+     * Creates an item in the list.
+     *
      * @param item
      * @param index
      */
@@ -202,7 +209,8 @@ public class ViewList implements IView {
     }
 
     /**
-     * Updates the list
+     * Updates the list.
+     *
      * @param result
      * @param filter
      */

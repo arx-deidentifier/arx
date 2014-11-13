@@ -27,23 +27,31 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A base class for views on privacy criteria
+ * A base class for views on privacy criteria.
+ *
  * @author Fabian Prasser
  */
 public abstract class ViewCriterion implements IView {
 
+	/**  TODO */
 	protected static final int LABEL_WIDTH = 50;
 
+	/**  TODO */
 	protected Controller controller;
+	
+	/**  TODO */
 	protected Model model;
+	
+	/**  TODO */
 	protected Composite root;
 
 	/**
-	 * Creates a new instance
-	 * @param parent
-	 * @param controller
-	 * @param model
-	 */
+     * Creates a new instance.
+     *
+     * @param parent
+     * @param controller
+     * @param model
+     */
 	public ViewCriterion(final Composite parent, final Controller controller,
 			final Model model) {
 		this.controller = controller;
@@ -55,16 +63,25 @@ public abstract class ViewCriterion implements IView {
 		SWTUtil.disable(root);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+	 */
 	@Override
 	public void dispose() {
 		controller.removeListener(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.view.def.IView#reset()
+	 */
 	@Override
 	public void reset() {
 		SWTUtil.disable(root);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+	 */
 	@Override
 	public void update(ModelEvent event) {
 		if (event.part == ModelPart.MODEL) {
@@ -78,15 +95,16 @@ public abstract class ViewCriterion implements IView {
 	}
 
 	/**
-	 * Implement this to build the view
-	 * @param parent
-	 * @return
-	 */
+     * Implement this to build the view.
+     *
+     * @param parent
+     * @return
+     */
 	protected abstract Composite build(Composite parent);
 
 	/**
-	 * Implement this to parse the settings into a privacy criterion
-	 */
+     * Implement this to parse the settings into a privacy criterion.
+     */
 	protected abstract void parse();
 
 }

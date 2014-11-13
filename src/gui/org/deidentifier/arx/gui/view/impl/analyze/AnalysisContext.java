@@ -27,22 +27,28 @@ import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 
 /**
- * This class implements a base class for views that show statistic properties of the data
+ * This class implements a base class for views that show statistic properties of the data.
+ *
  * @author Fabian Prasser
  */
 public class AnalysisContext {
     
     /**
-     * This class implements a context for drawing statistics
+     * This class implements a context for drawing statistics.
+     *
      * @author Fabian Prasser
      */
     public static class Context{
-        /** The according config*/
+        
+        /** The according config. */
         public final ModelConfiguration config;
-        /** The according handle*/
+        
+        /** The according handle. */
         public final DataHandle handle;
+        
         /**
-         * Initial constructor
+         * Initial constructor.
+         *
          * @param config
          * @param handle
          */
@@ -50,6 +56,10 @@ public class AnalysisContext {
             this.config = config;
             this.handle = handle;
         }
+        
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -60,6 +70,10 @@ public class AnalysisContext {
                      ((handle == null) ? 0 : handle.hashCode());
             return result;
         }
+        
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -76,14 +90,16 @@ public class AnalysisContext {
         }
     }
     
-    /** The target (input or output)*/
+    /** The target (input or output). */
     private ModelPart target;
-    /** The model*/
+    
+    /** The model. */
     private Model model;
 
     /**
      * Returns the current context, consisting of a consistent combination of
-     * a configuration and a data handle
+     * a configuration and a data handle.
+     *
      * @return
      */
     public Context getContext(){
@@ -127,7 +143,8 @@ public class AnalysisContext {
     }
 
     /**
-     * Returns a generalization hierarchy for the attribute, if available
+     * Returns a generalization hierarchy for the attribute, if available.
+     *
      * @param context
      * @param attribute
      * @return
@@ -159,7 +176,8 @@ public class AnalysisContext {
     }
 
     /**
-     * Gets the target
+     * Gets the target.
+     *
      * @return
      */
     public ModelPart getTarget() {
@@ -167,7 +185,8 @@ public class AnalysisContext {
     }
 
     /**
-     * Sets the target
+     * Sets the target.
+     *
      * @param target
      */
     public void setTarget(ModelPart target) {
@@ -175,7 +194,8 @@ public class AnalysisContext {
     }
 
     /**
-     * Returns the model
+     * Returns the model.
+     *
      * @return
      */
     public Model getModel() {
@@ -183,7 +203,8 @@ public class AnalysisContext {
     }
 
     /**
-     * Sets the model
+     * Sets the model.
+     *
      * @param model
      */
     public void setModel(Model model) {

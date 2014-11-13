@@ -69,26 +69,44 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class implements the global application window
- * 
+ * This class implements the global application window.
+ *
  * @author Fabian Prasser
  */
 public class MainWindow implements IView {
 
+    /**  TODO */
     private static final String         TITLE                     = Resources.getMessage("MainWindow.0");                     //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1");                     //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2");                     //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_EXPLORE_SEARCHSPACE   = Resources.getMessage("MainWindow.3");                     //$NON-NLS-1$
 
+    /**  TODO */
     private final Display               display;
+    
+    /**  TODO */
     private final Shell                 shell;
+    
+    /**  TODO */
     private final Controller            controller;
+    
+    /**  TODO */
     private final MainMenu              menu;
 
+    /**  TODO */
     private final ComponentTitledFolder root;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
+     * @param display
+     * @param monitor
      */
     public MainWindow(Display display, Monitor monitor) {
 
@@ -151,13 +169,17 @@ public class MainWindow implements IView {
         controller.reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
     /**
-     * Returns the controller
+     * Returns the controller.
+     *
      * @return
      */
     public Controller getController() {
@@ -165,8 +187,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Returns the shell
-     * 
+     * Returns the shell.
+     *
      * @return
      */
     public Shell getShell() {
@@ -174,7 +196,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Is this shell disposed
+     * Is this shell disposed.
+     *
      * @return
      */
     public boolean isDisposed() {
@@ -182,7 +205,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Executes the given runnable on show
+     * Executes the given runnable on show.
+     *
      * @param runnable
      */
     public void onShow(final Runnable runnable){
@@ -198,7 +222,7 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Resets the GUI
+     * Resets the GUI.
      */
     public void reset() {
         root.setSelection(0);
@@ -206,14 +230,14 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Main SWT event loop
+     * Main SWT event loop.
      */
     public void show() {
         shell.open();
     }
 
     /**
-     * Shows an about dialog
+     * Shows an about dialog.
      */
     public void showAboutDialog() {
         final DialogAbout dialog = new DialogAbout(shell, controller);
@@ -222,7 +246,7 @@ public class MainWindow implements IView {
     }
     
     /**
-     * Shows a debug dialog
+     * Shows a debug dialog.
      */
     public void showDebugDialog() {
         final DialogDebug dialog = new DialogDebug(shell, controller);
@@ -231,8 +255,8 @@ public class MainWindow implements IView {
     }
     
     /**
-     * Shows an error dialog
-     * 
+     * Shows an error dialog.
+     *
      * @param shell
      * @param message
      * @param text
@@ -244,8 +268,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an error dialog
-     * 
+     * Shows an error dialog.
+     *
      * @param shell
      * @param message
      * @param throwable
@@ -257,9 +281,10 @@ public class MainWindow implements IView {
         final String trace = sw.toString();
         showErrorDialog(shell, message, trace);
     }
+    
     /**
-     * Shows an error dialog
-     * 
+     * Shows an error dialog.
+     *
      * @param message
      * @param text
      */
@@ -268,8 +293,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an error dialog
-     * 
+     * Shows an error dialog.
+     *
      * @param message
      * @param throwable
      */
@@ -278,8 +303,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an input dialog for selecting formats string for data types
-     * 
+     * Shows an input dialog for selecting formats string for data types.
+     *
      * @param shell
      * @param header
      * @param text
@@ -354,8 +379,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a help dialog
-     * 
+     * Shows a help dialog.
+     *
      * @param id
      */
     public void showHelpDialog(String id) {
@@ -374,8 +399,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an info dialog
-     * 
+     * Shows an info dialog.
+     *
+     * @param shell
      * @param header
      * @param text
      */
@@ -384,8 +410,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an input dialog
-     * 
+     * Shows an input dialog.
+     *
+     * @param shell
      * @param header
      * @param text
      * @param initial
@@ -402,8 +429,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a file open dialog
-     * 
+     * Shows a file open dialog.
+     *
+     * @param shell
      * @param filter
      * @return
      */
@@ -415,8 +443,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows an input dialog for ordering data items
-     * 
+     * Shows an input dialog for ordering data items.
+     *
+     * @param shell
      * @param header
      * @param text
      * @param type
@@ -436,8 +465,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a progress dialog
-     * 
+     * Shows a progress dialog.
+     *
      * @param text
      * @param worker
      */
@@ -450,8 +479,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a query dialog for selecting a research subset
-     * 
+     * Shows a query dialog for selecting a research subset.
+     *
      * @param query
      * @param data
      * @return
@@ -469,8 +498,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a question dialog
-     * 
+     * Shows a question dialog.
+     *
+     * @param shell
      * @param header
      * @param text
      * @return
@@ -480,8 +510,9 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a file save dialog
-     * 
+     * Shows a file save dialog.
+     *
+     * @param shell
      * @param filter
      * @return
      */
@@ -493,8 +524,8 @@ public class MainWindow implements IView {
     }
 
     /**
-     * Shows a dialog for selecting privacy criteria
-     * 
+     * Shows a dialog for selecting privacy criteria.
+     *
      * @param others
      * @return
      */
@@ -510,6 +541,9 @@ public class MainWindow implements IView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 

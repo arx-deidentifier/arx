@@ -28,22 +28,27 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This worker performs the anonymization process
+ * This worker performs the anonymization process.
+ *
  * @author Fabian Prasser
  */
 public class WorkerAnonymize extends Worker<ARXResult> {
 
-	/** The model*/
+	/** The model. */
     private final Model      model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param model
      */
     public WorkerAnonymize(final Model model) {
         this.model = model;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {

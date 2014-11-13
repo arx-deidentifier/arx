@@ -66,36 +66,68 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ImportWizardPageJDBC extends WizardPage {
 
-    /**
-     * Reference to the wizard containing this page
-     */
+    /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
 
     /* SWT Widgets */
+    /**  TODO */
     private Label lblType;
+    
+    /**  TODO */
     private Combo comboType;
+    
+    /**  TODO */
     private Composite compositeSwap;
+    
+    /**  TODO */
     private Text txtServer;
+    
+    /**  TODO */
     private StackLayout layout;
+    
+    /**  TODO */
     private Composite compositeRemote;
+    
+    /**  TODO */
     private Composite compositeLocal;
+    
+    /**  TODO */
     private Text txtPort;
+    
+    /**  TODO */
     private Text txtUsername;
+    
+    /**  TODO */
     private Text txtPassword;
+    
+    /**  TODO */
     private Text txtDatabase;
+    
+    /**  TODO */
     private Label lblLocation;
+    
+    /**  TODO */
     private Combo comboLocation;
+    
+    /**  TODO */
     private Button btnChoose;
+    
+    /**  TODO */
     private Composite container;
 
     /* String constants for different database types */
+    /**  TODO */
     private static final String MYSQL = "MySQL";
+    
+    /**  TODO */
     private static final String POSTGRESQL = "PostgreSQL";
+    
+    /**  TODO */
     private static final String SQLITE = "SQLite";
 
 
     /**
-     * Creates a new instance of this page and sets its title and description
+     * Creates a new instance of this page and sets its title and description.
      *
      * @param wizardImport Reference to wizard containing this page
      */
@@ -109,12 +141,12 @@ public class ImportWizardPageJDBC extends WizardPage {
 
     /**
      * Creates the design of this page
-     *
+     * 
      * This adds all the controls to the page along with their listeners.
      *
+     * @param parent
      * @note {@link #compositeSwap} contains the actual text fields. Depending
-     * upon the status of {@link #comboType}, it will either display
-     * {@link #compositeRemote} or {@link #compositeLocal}.
+     *       upon the status of {@link #comboType}, it will either display {@link #compositeRemote} or {@link #compositeLocal}.
      */
     public void createControl(Composite parent) {
 

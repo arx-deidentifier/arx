@@ -34,17 +34,20 @@ import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectRowActi
 import org.eclipse.swt.SWT;
 
 /**
- * A selection layer for table views
- * @author Fabian Prasser
+ * A selection layer for table views.
  *
+ * @author Fabian Prasser
  */
 public class LayerSelection extends SelectionLayer implements CTComponent {
 
+    /**  TODO */
     private final CTConfiguration config;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param underlyingLayer
+     * @param config
      */
     public LayerSelection(IUniqueIndexLayer underlyingLayer,
                             CTConfiguration config) {
@@ -75,31 +78,49 @@ public class LayerSelection extends SelectionLayer implements CTComponent {
         addConfiguration(new DefaultMoveSelectionConfiguration());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.table.CTComponent#getConfig()
+     */
     @Override
     public CTConfiguration getConfig() {
         return config;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isCellPositionSelected(int, int)
+     */
     @Override
     public boolean isCellPositionSelected(int columnPosition, int rowPosition) {
         return getConfig().isCellSelectionEnabled() && super.isCellPositionSelected(columnPosition, rowPosition);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isColumnPositionFullySelected(int)
+     */
     @Override
     public boolean isColumnPositionFullySelected(int columnPosition) {
         return getConfig().isColumnSelectionEnabled() && super.isColumnPositionFullySelected(columnPosition);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isColumnPositionSelected(int)
+     */
     @Override
     public boolean isColumnPositionSelected(int columnPosition) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isRowPositionFullySelected(int)
+     */
     @Override
     public boolean isRowPositionFullySelected(int rowPosition) {
         return getConfig().isRowSelectionEnabled() && super.isRowPositionFullySelected(rowPosition);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.selection.SelectionLayer#isRowPositionSelected(int)
+     */
     @Override
     public boolean isRowPositionSelected(int rowPosition) {
         return false;

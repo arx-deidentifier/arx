@@ -19,19 +19,22 @@
 package org.deidentifier.arx.metric;
 
 /**
- * Information loss with a potential lower bound
- * @author Fabian Prasser
+ * Information loss with a potential lower bound.
  *
+ * @author Fabian Prasser
+ * @param <T>
  */
 public class InformationLossWithBound<T extends InformationLoss<?>> {
 
-    /** Lower bound, if any*/
+    /** Lower bound, if any. */
     private final T lowerBound;
-    /** Actual information loss*/
+    
+    /** Actual information loss. */
     private final T informationLoss;
     
     /**
-     * Creates a new instance without a lower bound
+     * Creates a new instance without a lower bound.
+     *
      * @param informationLoss
      */
     public InformationLossWithBound(T informationLoss) {
@@ -40,7 +43,8 @@ public class InformationLossWithBound<T extends InformationLoss<?>> {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param informationLoss
      * @param lowerBound
      */
@@ -64,7 +68,8 @@ public class InformationLossWithBound<T extends InformationLoss<?>> {
     }
 
     /**
-     * Is a lower bound provided
+     * Is a lower bound provided.
+     *
      * @return
      */
     public boolean hasLowerBound(){

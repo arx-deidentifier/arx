@@ -42,35 +42,42 @@ import org.deidentifier.arx.metric.Metric;
  */
 class UtilityEstimator {
 
-    /** The lattice */
+    /** The lattice. */
     private ARXLattice           lattice;
-    /** The metric */
+    
+    /** The metric. */
     private Metric<?>            metric;
 
-    /** Additional fields */
+    /** Additional fields. */
     private InformationLoss<?>[] minimumAnonymous;
-    /** Additional fields */
+    
+    /** Additional fields. */
     private InformationLoss<?>[] minimumNonAnonymous;
-    /** Additional fields */
+    
+    /** Additional fields. */
     private InformationLoss<?>[] maximumAnonymous;
-    /** Additional fields */
+    
+    /** Additional fields. */
     private InformationLoss<?>[] maximumNonAnonymous;
-    /** Additional fields */
+    
+    /** Additional fields. */
     private InformationLoss<?>[] lowerBound;
 
-    /** Monotonicity */
+    /** Monotonicity. */
     private final boolean        monotonicAnonymous;
-    /** Monotonicity */
+    
+    /** Monotonicity. */
     private final boolean        monotonicNonAnonymous;
 
-    /** Maximum/minimum*/
+    /** Maximum/minimum. */
     private InformationLoss<?>   globalMinimum;
-    /** Maximum/minimum*/
+    
+    /** Maximum/minimum. */
     private InformationLoss<?>   globalMaximum;
     
     /**
-     * Creates a new estimation process for a lattice
-     * 
+     * Creates a new estimation process for a lattice.
+     *
      * @param lattice
      * @param metric
      * @param monotonicAnonymous
@@ -101,7 +108,7 @@ class UtilityEstimator {
     }
     
     /**
-     * Estimate maximum information loss
+     * Estimate maximum information loss.
      */
     private void estimateMax() {
 
@@ -123,7 +130,7 @@ class UtilityEstimator {
     }
 
     /**
-     * Estimate minimum information loss
+     * Estimate minimum information loss.
      */
     private void estimateMin() {
 
@@ -145,7 +152,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Returns the max of both, handles null values
+     * Returns the max of both, handles null values.
+     *
      * @param first
      * @param second
      * @return
@@ -163,7 +171,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Returns the min of both, handles null values
+     * Returns the min of both, handles null values.
+     *
      * @param first
      * @param second
      * @return
@@ -191,7 +200,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Initializes the bottom node
+     * Initializes the bottom node.
+     *
      * @param node
      */
     private void initializeBottomUp(ARXNode node) {
@@ -216,7 +226,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Initializes the top node
+     * Initializes the top node.
+     *
      * @param node
      */
     private void initializeTopDown(ARXNode node) {
@@ -239,7 +250,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Propagate bottom up
+     * Propagate bottom up.
+     *
      * @param node
      */
     private void pullBottomUp(ARXNode node) {
@@ -270,7 +282,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Pulls a specific property and retains the value using a maximum aggregate function
+     * Pulls a specific property and retains the value using a maximum aggregate function.
+     *
      * @param array
      * @param target
      * @param source
@@ -284,7 +297,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Pulls a specific property and retains the value using a minimum aggregate function
+     * Pulls a specific property and retains the value using a minimum aggregate function.
+     *
      * @param array
      * @param target
      * @param source
@@ -299,7 +313,8 @@ class UtilityEstimator {
     
     
     /**
-     * Propagate top down
+     * Propagate top down.
+     *
      * @param node
      */
     private void pullTopDown(ARXNode node) {
@@ -324,7 +339,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Selects a maximum for the given node
+     * Selects a maximum for the given node.
+     *
      * @param node
      */
     private void setMaximum(ARXNode node) {
@@ -351,7 +367,8 @@ class UtilityEstimator {
     }
 
     /**
-     * Selects a minimum for the given node
+     * Selects a minimum for the given node.
+     *
      * @param node
      */
     private void setMinimum(ARXNode node) {
@@ -384,7 +401,7 @@ class UtilityEstimator {
     }
 
     /**
-     * Implements the estimation process
+     * Implements the estimation process.
      */
     void estimate() {
         estimateMin();

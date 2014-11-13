@@ -1,21 +1,24 @@
 package org.deidentifier.arx.aggregates;
 
 /**
- * A frequency distribution
- * @author Fabian Prasser
+ * A frequency distribution.
  *
+ * @author Fabian Prasser
  */
 public class StatisticsFrequencyDistribution {
 
-    /** The data values, sorted*/
+    /** The data values, sorted. */
     public final String[] values;
-    /** The corresponding frequencies*/
+    
+    /** The corresponding frequencies. */
     public final double[] frequency;
-    /** The total number of data values*/
+    
+    /** The total number of data values. */
     public final int      count;
 
     /**
-     * Internal constructor
+     * Internal constructor.
+     *
      * @param items
      * @param frequency
      * @param count

@@ -28,33 +28,33 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
  */
 public class DomainShareRedaction implements DomainShare {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 2015677962393713964L;
 
-    /** Meta-data about the nature of the domain of the attribute */
+    /** Meta-data about the nature of the domain of the attribute. */
     private double            maxValueLength;
 
-    /** Meta-data about the nature of the domain of the attribute */
+    /** Meta-data about the nature of the domain of the attribute. */
     private double            domainSize;
 
-    /** Meta-data about the nature of the domain of the attribute */
+    /** Meta-data about the nature of the domain of the attribute. */
     private double            alphabetSize;
 
-    /** For interpolating linearly from input to output range */
+    /** For interpolating linearly from input to output range. */
     private double            minInput;
 
-    /** For interpolating linearly from input to output range */
+    /** For interpolating linearly from input to output range. */
     private double            maxInput;
 
-    /** For interpolating linearly from input to output range */
+    /** For interpolating linearly from input to output range. */
     private double            minOutput;
 
-    /** For interpolating linearly from input to output range */
+    /** For interpolating linearly from input to output range. */
     private double            maxOutput;
 
     /**
-     * Creates a new set of domain shares derived from the given functional redaction-based hierarchy
-     * 
+     * Creates a new set of domain shares derived from the given functional redaction-based hierarchy.
+     *
      * @param builder
      */
     public DomainShareRedaction(HierarchyBuilderRedactionBased<?> builder) {
@@ -72,7 +72,8 @@ public class DomainShareRedaction implements DomainShare {
     }
 
     /**
-     * Returns the size of the domain
+     * Returns the size of the domain.
+     *
      * @return
      */
     @Override
@@ -81,7 +82,8 @@ public class DomainShareRedaction implements DomainShare {
     }
 
     /**
-     * Returns the share of the given value
+     * Returns the share of the given value.
+     *
      * @param value
      * @param level
      * @return

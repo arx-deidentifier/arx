@@ -79,7 +79,7 @@ public class StateMachine {
     /** The current snapshot, if any. */
     private int[]      snapshot = null;
 
-    /** The node for the current snapshot */
+    /** The node for the current snapshot. */
     private Node       snapshotNode;
 
     /**
@@ -95,14 +95,19 @@ public class StateMachine {
     }
 
     /**
-     * Returns the last node
-     * 
+     * Returns the last node.
+     *
      * @return the last node, which has been checked for k-anonymity
      */
     public Node getLastNode() {
         return lastNode;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public Transition getLastTransition() {
         return lastTransition;
     }
@@ -155,7 +160,11 @@ public class StateMachine {
     }
 
     /**
-     * Is node2 a predecessor of or equal to node1?
+     * Is node2 a predecessor of or equal to node1?.
+     *
+     * @param node1
+     * @param node2
+     * @return
      */
     private boolean isPredecessor(final Node node1, final Node node2) {
         for (int i = 0; i < node2.getTransformation().length; i++) {

@@ -69,158 +69,232 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * This class implements a view of a lattice
- * 
+ * This class implements a view of a lattice.
+ *
  * @author Fabian Prasser
  */
 public class ViewLattice implements IView {
 
-    /** This class is here for backwards compatibility only */
+    /**
+     * This class is here for backwards compatibility only.
+     */
     @SuppressWarnings("unused")
     private static class Bounds implements Serializable {
+        
+        /**  TODO */
         private static final long serialVersionUID = -7472570696920782588L;
     }
     
-    /** This class is here for serializability, only*/
+    /**
+     * This class is here for serializability, only.
+     */
     private static class SerializablePath implements Serializable {
+        
+        /**  TODO */
         private static final long serialVersionUID = -4572722688452678425L;
+        
+        /**  TODO */
         private final transient Path path;
+        
+        /**
+         * 
+         *
+         * @param path
+         */
         public SerializablePath(Path path){
             this.path = path;
         }
+        
+        /**
+         * 
+         */
         public void dispose(){
             if (!this.path.isDisposed()) {
                 this.path.dispose();
             }
         }
+        
+        /**
+         * 
+         *
+         * @return
+         */
         public Path getPath(){
             return this.path;
         }
     }
 
-    /** The current drag type */
+    /**
+     * The current drag type.
+     */
     private static enum DragType {
+        
+        /**  TODO */
         MOVE,
+        
+        /**  TODO */
         ZOOM,
+        
+        /**  TODO */
         NONE
     }
 
-    /** Color */
+    /** Color. */
     public static final Color         COLOR_GREEN             = GUIHelper.getColor(50, 205, 50);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(150, 255, 150);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_ORANGE            = GUIHelper.getColor(255, 145, 0);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_RED               = GUIHelper.getColor(255, 99, 71);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(255, 150, 150);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_BLUE              = GUIHelper.getColor(0, 0, 255);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_YELLOW            = GUIHelper.getColor(255, 215, 0);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_WHITE             = GUIHelper.getColor(255, 255, 255);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_LIGHT_GRAY        = GUIHelper.getColor(211, 211, 211);
-    /** Color */
+    
+    /** Color. */
     public static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
 
-    /** Attribute constant */
+    /** Attribute constant. */
     private static final int          ATTRIBUTE_CENTER        = 4;
-    /** Attribute constant */
+    
+    /** Attribute constant. */
     private static final int          ATTRIBUTE_LABEL         = 5;
-    /** Attribute constant */
+    
+    /** Attribute constant. */
     private static final int          ATTRIBUTE_VISIBLE       = 6;
-    /** Attribute constant */
+    
+    /** Attribute constant. */
     private static final int          ATTRIBUTE_PATH          = 7;
-    /** Attribute constant */
+    
+    /** Attribute constant. */
     private static final int          ATTRIBUTE_EXTENT        = 8;
 
-    /** Time to wait for a tool tip to show */
+    /** Time to wait for a tool tip to show. */
     private static final int          TOOLTIP_WAIT            = 200;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final double       NODE_INITIAL_SIZE       = 200d;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final double       NODE_FRAME_RATIO        = 0.7d;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final double       NODE_SIZE_RATIO         = 0.3d;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final double       ZOOM_SPEED              = 10d;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final int          MSG_WIDTH               = 300;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final int          MSG_HEIGHT              = 100;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final int          MIN_WIDTH               = 2;
-    /** Global settings */
+    
+    /** Global settings. */
     private static final int          MIN_HEIGHT              = 1;
-    /** For the current view */
+    
+    /** For the current view. */
     private static final int          STROKE_WIDTH_NODE       = 1;
-    /** For the current view */
+    
+    /** For the current view. */
     private static final int          STROKE_WIDTH_CONNECTION = 1;
 
-    /** The model */
+    /** The model. */
     private Model                     model                   = null;
-    /** The font */
+    
+    /** The font. */
     private Font                      font                    = null;
 
-    /** For the current view */
+    /** For the current view. */
     private double                    nodeWidth               = 0f;
-    /** For the current view */
+    
+    /** For the current view. */
     private double                    nodeHeight              = 0f;
-    /** The lattice to display */
+    
+    /** The lattice to display. */
     private final List<List<ARXNode>> lattice                 = new ArrayList<List<ARXNode>>();
-    /** The according ARX lattice*/
+    
+    /** The according ARX lattice. */
     private ARXLattice                arxLattice              = null;
-    /** The lattice to display */
+    
+    /** The lattice to display. */
     private int                       latticeWidth            = 0;
-    /** The screen size */
+    
+    /** The screen size. */
     private Point                     screen                  = null;
 
-    /** The number of nodes */
+    /** The number of nodes. */
     private int                       numNodes                = 0;
-    /** Drag parameters */
+    
+    /** Drag parameters. */
     private int                       dragX                   = 0;
-    /** Drag parameters */
+    
+    /** Drag parameters. */
     private int                       dragY                   = 0;
-    /** Drag parameters */
+    
+    /** Drag parameters. */
     private int                       dragStartX              = 0;
-    /** Drag parameters */
+    
+    /** Drag parameters. */
     private int                       dragStartY              = 0;
-    /** Drag parameters */
+    
+    /** Drag parameters. */
     private DragType                  dragType                = DragType.NONE;
 
-    /** The optimum */
+    /** The optimum. */
     private ARXNode                   optimum                 = null;
 
-    /** The selected node */
+    /** The selected node. */
     private ARXNode                   selectedNode            = null;
 
-    /** The tool tip */
+    /** The tool tip. */
     private int                       tooltipX                = -1;
-    /** The tool tip */
+    
+    /** The tool tip. */
     private int                       tooltipY                = -1;
-    /** The tool tip */
+    
+    /** The tool tip. */
     private int                       oldTooltipX             = -1;
-    /** The tool tip */
+    
+    /** The tool tip. */
     private int                       oldTooltipY             = -1;
 
-    /** Context menu */
+    /** Context menu. */
     private Menu                      menu                    = null;
     
-    /** Number format */
+    /** Number format. */
     private final NumberFormat        format;
-    /** The controller */
+    
+    /** The controller. */
     private final Controller          controller;
-    /** The canvas */
+    
+    /** The canvas. */
     private final Canvas              canvas;
 
     /**
-     * Creates a new instance
-     * 
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -264,6 +338,9 @@ public class ViewLattice implements IView {
         this.initializeListeners();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -271,7 +348,7 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Resets the view
+     * Resets the view.
      */
     @Override
     public void reset() {
@@ -285,6 +362,9 @@ public class ViewLattice implements IView {
         this.canvas.redraw();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -304,7 +384,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Called when button 1 is clicked on a node
+     * Called when button 1 is clicked on a node.
+     *
      * @param node
      */
     private void actionButtonClicked1(ARXNode node) {
@@ -316,7 +397,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Called when button 3 is clicked on a node
+     * Called when button 3 is clicked on a node.
+     *
      * @param node
      * @param x
      * @param y
@@ -333,8 +415,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent
-     * 
+     * Converts an information loss into a relative value in percent.
+     *
      * @param infoLoss
      * @return
      */
@@ -344,8 +426,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Converts a generalization to a relative value
-     * 
+     * Converts a generalization to a relative value.
+     *
      * @param generalization
      * @param max
      * @return
@@ -355,7 +437,7 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Clears the lattice
+     * Clears the lattice.
      */
     private void clearLatticeAndDisposePaths() {
         for (List<ARXNode> level : lattice) {
@@ -371,9 +453,9 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Draws the lattice
-     * 
-     * @param gr
+     * Draws the lattice.
+     *
+     * @param g
      */
     private void draw(final GC g) {
 
@@ -411,8 +493,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Draws the connections
-     * 
+     * Draws the connections.
+     *
      * @param g
      */
     private void drawConnections(GC g) {
@@ -466,9 +548,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Draws a node
-     * 
-     * @param node
+     * Draws a node.
+     *
      * @param g
      */
     private void drawNodes(final GC g) {
@@ -568,7 +649,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Utility method which centers a text in a rectangle
+     * Utility method which centers a text in a rectangle.
+     *
      * @param gc
      * @param text
      * @param x
@@ -588,8 +670,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Returns the inner color
-     * 
+     * Returns the inner color.
+     *
      * @param node
      * @return
      */
@@ -608,8 +690,9 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Returns a line color for drawing the connections
-     * @param node
+     * Returns a line color for drawing the connections.
+     *
+     * @param nodeWidth
      * @return
      */
     private Color getLineColor(double nodeWidth) {
@@ -617,8 +700,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Returns the node at the given location
-     * 
+     * Returns the node at the given location.
+     *
      * @param x
      * @param y
      * @return
@@ -641,8 +724,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Returns the outer color
-     * 
+     * Returns the outer color.
+     *
      * @param node
      * @return
      */
@@ -651,8 +734,8 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Returns the outer stroke width
-     * 
+     * Returns the outer stroke width.
+     *
      * @param node
      * @param width
      * @return
@@ -664,9 +747,10 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Creates a tooltip text
-     * 
+     * Creates a tooltip text.
+     *
      * @param node
+     * @return
      */
     private String getTooltipText(final ARXNode node) {
         final StringBuffer b = new StringBuffer();
@@ -694,9 +778,10 @@ public class ViewLattice implements IView {
     
 
     /**
-     * Initializes the data structures for displaying a new lattice
-     * 
-     * @param lattice
+     * Initializes the data structures for displaying a new lattice.
+     *
+     * @param result
+     * @param filter
      */
     private void initialize(final ARXResult result, final ModelNodeFilter filter) {
 
@@ -754,7 +839,7 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Recomputes the initial positions of all nodes
+     * Recomputes the initial positions of all nodes.
      */
     private void initializeCanvas() {
 
@@ -802,7 +887,7 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Creates all required listeners
+     * Creates all required listeners.
      */
     private void initializeListeners() {
 
@@ -947,7 +1032,7 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * Creates the context menu
+     * Creates the context menu.
      */
     private void initializeMenu() {
         menu = new Menu(canvas.getShell());
@@ -978,7 +1063,7 @@ public class ViewLattice implements IView {
     }
 
     /**
-     * For performance reasons, we check for tool tips only at certain times
+     * For performance reasons, we check for tool tips only at certain times.
      */
     private void initializeToolTipTimer() {
         canvas.getDisplay().timerExec(TOOLTIP_WAIT, new Runnable(){
@@ -1003,7 +1088,7 @@ public class ViewLattice implements IView {
 
     /**
      * Liang-Barsky line clipping function. Adapted from Daniel White
-     * @see http://www.skytopia.com/project/articles/compsci/clipping.html
+     *
      * @param edgeLeft
      * @param edgeRight
      * @param edgeTop
@@ -1014,6 +1099,7 @@ public class ViewLattice implements IView {
      * @param y1src
      * @param clip
      * @return
+     * @see http://www.skytopia.com/project/articles/compsci/clipping.html
      */
      private boolean liangBarsky (double edgeLeft, double edgeRight, double edgeTop, double edgeBottom,
                        double x0src, double y0src, double x1src, double y1src, 

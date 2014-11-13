@@ -37,7 +37,7 @@ import org.deidentifier.arx.DataType;
  */
 abstract public class ImportAdapter implements Iterator<String[]> {
     
-    /** The header*/
+    /** The header. */
     protected String[] header;
 
     /**
@@ -66,9 +66,7 @@ abstract public class ImportAdapter implements Iterator<String[]> {
         }
     }
 
-    /**
-     * Array of datatypes describing the columns
-     */
+    /** Array of datatypes describing the columns. */
     protected DataType<?>[]     dataTypes;
 
     /**
@@ -79,16 +77,13 @@ abstract public class ImportAdapter implements Iterator<String[]> {
      */
     protected int[]             indexes;
 
-    /**
-     * Data source configuration used to import actual data
-     */
+    /** Data source configuration used to import actual data. */
     private ImportConfiguration config = null;
 
     /**
-     * Creates a new instance of this object with given configuration
-     * 
-     * @param config
-     *            {@link #config}
+     * Creates a new instance of this object with given configuration.
+     *
+     * @param config {@link #config}
      */
     protected ImportAdapter(ImportConfiguration config) {
 
@@ -99,8 +94,8 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns the configuration used by the import adapter
-     * 
+     * Returns the configuration used by the import adapter.
+     *
      * @return {@link #config}
      */
     public ImportConfiguration getConfig() {
@@ -108,14 +103,15 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns the percentage of data has has already been imported
-     * 
+     * Returns the percentage of data has has already been imported.
+     *
      * @return Percentage of data already imported, 0 - 100
      */
     public abstract int getProgress();
     
     /**
-     * Returns the header
+     * Returns the header.
+     *
      * @return
      */
     public String[] getHeader() {
@@ -123,8 +119,8 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns an array with datatypes of columns that should be imported
-     * 
+     * Returns an array with datatypes of columns that should be imported.
+     *
      * @return Array containing datatypes of columns that should be imported
      */
     protected DataType<?>[] getColumnDatatypes() {

@@ -30,16 +30,21 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * A configuration for row headers in the data view
+ * A configuration for row headers in the data view.
+ *
  * @author Fabian Prasser
  */
 public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfiguration {
 
+    /**  TODO */
     private final Image IMAGE_ROW_BACK; //$NON-NLS-1$
+    
+    /**  TODO */
     private final Image IMAGE_ROW_SELECT; //$NON-NLS-1$
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param context
      */
     public DataTableRowHeaderConfiguration(DataTableContext context) {
@@ -52,7 +57,8 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
     }
 
     /**
-     * Add selected style
+     * Add selected style.
+     *
      * @param configRegistry
      */
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
@@ -68,6 +74,9 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
                                                GridRegion.ROW_HEADER);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderStyleConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(final IConfigRegistry configRegistry) {
         super.configureRegistry(configRegistry);

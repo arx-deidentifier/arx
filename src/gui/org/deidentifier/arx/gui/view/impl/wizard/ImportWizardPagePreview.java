@@ -40,15 +40,13 @@ import org.eclipse.swt.widgets.TableColumn;
  * Preview page
  * 
  * This page gives the user a preview over the data and how it is about to be
- * imported. Only enabled columns will be displayed
- * {@link ImportWizardModelColumn#isEnabled()}. The datatype of each column will
+ * imported. Only enabled columns will be displayed {@link ImportWizardModelColumn#isEnabled()}. The datatype of each column will
  * be shown additionally as a tooltip.
- * 
- * @note Note that only up to {@link ImportWizardModel#previewDataMaxLines}
- *       lines will be shown.
- *       
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
+ * @note Note that only up to {@link ImportWizardModel#previewDataMaxLines} lines will be shown.
+ * 
  */
 public class ImportWizardPagePreview extends WizardPage {
 
@@ -62,16 +60,13 @@ public class ImportWizardPagePreview extends WizardPage {
      */
     private class PreviewColumnLabelProvider extends ColumnLabelProvider {
 
-        /**
-         * Column index this provider is meant to be for, starting with 0
-         */
+        /** Column index this provider is meant to be for, starting with 0. */
         private int index;
 
         /**
-         * Creates new instance of this object for given index
-         * 
-         * @param index
-         *            Index of column this instance is for
+         * Creates new instance of this object for given index.
+         *
+         * @param index Index of column this instance is for
          */
         public PreviewColumnLabelProvider(int index) {
             this.index = index;
@@ -79,6 +74,9 @@ public class ImportWizardPagePreview extends WizardPage {
 
         /**
          * Returns content for this column {@link #index}.
+         *
+         * @param element
+         * @return
          */
         @Override
         public String getText(Object element) {
@@ -90,6 +88,9 @@ public class ImportWizardPagePreview extends WizardPage {
          * 
          * This will return the datatype and potentially the associated format
          * with the datatype for each cell.
+         *
+         * @param element
+         * @return
          */
         @Override
         public String getToolTipText(Object element) {
@@ -110,19 +111,20 @@ public class ImportWizardPagePreview extends WizardPage {
             return result;
         }
     }
-    /**
-     * Reference to the wizard containing this page
-     */
+    
+    /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
+    
+    /**  TODO */
     private Table        table;
 
+    /**  TODO */
     private TableViewer  tableViewer;
 
     /**
-     * Creates a new instance of this page and sets its title and description
-     * 
-     * @param wizardImport
-     *            Reference to wizard containing this page
+     * Creates a new instance of this page and sets its title and description.
+     *
+     * @param wizardImport Reference to wizard containing this page
      */
     public ImportWizardPagePreview(ImportWizard wizardImport) {
 
@@ -138,8 +140,9 @@ public class ImportWizardPagePreview extends WizardPage {
      * Creates the design of this page
      * 
      * The page is set to incomplete at this point and will be marked as
-     * complete, once the appropriate table has been rendered. Refer to
-     * {@link #setVisible(boolean)} for details.
+     * complete, once the appropriate table has been rendered. Refer to {@link #setVisible(boolean)} for details.
+     *
+     * @param parent
      */
     public void createControl(Composite parent) {
 
@@ -163,10 +166,10 @@ public class ImportWizardPagePreview extends WizardPage {
     /**
      * Adds input to table once page gets visible to the user
      * 
-     * This retrieves the preview data
-     * {@link ImportWizardModel#getPreviewData()} and applies it to the given
-     * {@link #tableViewer}. Only columns that have been enabled will be shown.
+     * This retrieves the preview data {@link ImportWizardModel#getPreviewData()} and applies it to the given {@link #tableViewer}. Only columns that have been enabled will be shown.
      * New names and reordering is also considered.
+     *
+     * @param visible
      */
     @Override
     public void setVisible(boolean visible) {

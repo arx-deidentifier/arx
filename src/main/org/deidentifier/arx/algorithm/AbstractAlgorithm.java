@@ -35,10 +35,10 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
  */
 public abstract class AbstractAlgorithm {
 
-    /** The optimal transformation */
+    /** The optimal transformation. */
     private Node               globalOptimum          = null;
 
-    /** The optimal information loss */
+    /** The optimal information loss. */
     private InformationLoss<?> optimalInformationLoss = null;
 
     /** A node checker. */
@@ -79,7 +79,8 @@ public abstract class AbstractAlgorithm {
     }
 
     /**
-     * Returns the global optimum
+     * Returns the global optimum.
+     *
      * @return
      */
     public Node getGlobalOptimum() {
@@ -94,7 +95,8 @@ public abstract class AbstractAlgorithm {
     /**
      * Determine information loss of the given node if it can be
      * used for estimating minimum and maximum information
-     * loss for tagged nodes
+     * loss for tagged nodes.
+     *
      * @param node
      */
     protected void computeUtilityForMonotonicMetrics(Node node) {
@@ -114,7 +116,8 @@ public abstract class AbstractAlgorithm {
     }
 
     /**
-     * Keeps track of the global optimum
+     * Keeps track of the global optimum.
+     *
      * @param node
      */
     protected void trackOptimum(Node node) {

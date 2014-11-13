@@ -21,38 +21,36 @@ package org.deidentifier.arx.algorithm;
 import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
- * This class parameterizes a phase the interwoven two-phase Flash algorithm
- * 
+ * This class parameterizes a phase the interwoven two-phase Flash algorithm.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- *
  */
 public class FLASHPhaseConfiguration {
 
-    /** A trigger for tagging nodes in this phase */
+    /** A trigger for tagging nodes in this phase. */
     private final NodeAction triggerTag;
 
-    /** A trigger for checking nodes in this phase */
+    /** A trigger for checking nodes in this phase. */
     private final NodeAction triggerCheck;
 
-    /** A trigger for evaluating nodes in this phase */
+    /** A trigger for evaluating nodes in this phase. */
     private final NodeAction triggerEvaluate;
 
-    /** A trigger for skipping nodes in this phase */
+    /** A trigger for skipping nodes in this phase. */
     private final NodeAction triggerSkip;
 
-    /** The main anonymity property */
+    /** The main anonymity property. */
     private final int        anonymityProperty;
 
     /**
-     * Creates a configuration for an active phase
+     * Creates a configuration for an active phase.
+     *
      * @param anonymityProperty
      * @param triggerTag
      * @param triggerCheck
      * @param triggerEvaluate
      * @param triggerSkip
-     * @param triggerSnapshotStore
-     * @param triggerTagEvent
      */
     public FLASHPhaseConfiguration(int anonymityProperty,
                                    NodeAction triggerTag,
@@ -67,7 +65,8 @@ public class FLASHPhaseConfiguration {
     }
 
     /**
-     * Getter: The main anonymity property
+     * Getter: The main anonymity property.
+     *
      * @return
      */
     public int getAnonymityProperty() {
@@ -75,7 +74,8 @@ public class FLASHPhaseConfiguration {
     }
 
     /**
-     * Getter: A trigger for checking nodes in this phase
+     * Getter: A trigger for checking nodes in this phase.
+     *
      * @return
      */
     public NodeAction getTriggerCheck() {
@@ -83,7 +83,8 @@ public class FLASHPhaseConfiguration {
     }
 
     /**
-     * Getter: A trigger for evaluating nodes in this phase
+     * Getter: A trigger for evaluating nodes in this phase.
+     *
      * @return
      */
     public NodeAction getTriggerEvaluate() {
@@ -91,7 +92,8 @@ public class FLASHPhaseConfiguration {
     }
 
     /**
-     * Getter: A trigger for skipping nodes in this phase
+     * Getter: A trigger for skipping nodes in this phase.
+     *
      * @return
      */
     public NodeAction getTriggerSkip() {
@@ -99,7 +101,8 @@ public class FLASHPhaseConfiguration {
     }
 
     /**
-     * Getter: A trigger for tagging nodes in this phase
+     * Getter: A trigger for tagging nodes in this phase.
+     *
      * @return
      */
     public NodeAction getTriggerTag() {

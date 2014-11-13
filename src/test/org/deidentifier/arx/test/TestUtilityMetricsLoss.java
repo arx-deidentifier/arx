@@ -35,14 +35,20 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests for the NDS metric
- * 
+ * Tests for the NDS metric.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
 public class TestUtilityMetricsLoss extends TestAnonymizationAbstract {
 
+    /**
+     * 
+     *
+     * @return
+     * @throws IOException
+     */
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
         return Arrays.asList(new Object[][] {
@@ -152,7 +158,9 @@ public class TestUtilityMetricsLoss extends TestAnonymizationAbstract {
     }
 
     /**
-     * Apply weights to the test case
+     * Apply weights to the test case.
+     *
+     * @param testcase
      * @return the test case passed to the method
      * @throws IOException
      */
@@ -172,7 +180,8 @@ public class TestUtilityMetricsLoss extends TestAnonymizationAbstract {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param testCase
      */
     public TestUtilityMetricsLoss(final ARXAnonymizationTestCase testCase) {

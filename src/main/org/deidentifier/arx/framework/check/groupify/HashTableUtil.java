@@ -19,11 +19,10 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 /**
- * This class implements several helper methods for hash tables
- * 
+ * This class implements several helper methods for hash tables.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- * 
  */
 public class HashTableUtil {
 
@@ -54,6 +53,10 @@ public class HashTableUtil {
 
     /**
      * Computes the threshold for rehashing.
+     *
+     * @param buckets
+     * @param loadFactor
+     * @return
      */
     public static final int calculateThreshold(final int buckets,
                                                final float loadFactor) {

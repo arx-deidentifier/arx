@@ -35,29 +35,54 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 
 /**
- * The table style configuration
- * @author Fabian Prasser
+ * The table style configuration.
  *
+ * @author Fabian Prasser
  */
 public class StyleConfigurationTable extends CTStyleConfiguration {
 
+    /**  TODO */
     public Color bgColor = GUIHelper.COLOR_WHITE;
+    
+    /**  TODO */
     public Color fgColor = GUIHelper.COLOR_BLACK;
+    
+    /**  TODO */
     public Color gradientBgColor = GUIHelper.COLOR_WHITE;
+    
+    /**  TODO */
     public Color gradientFgColor = GUIHelper.getColor(136, 212, 215);
+    
+    /**  TODO */
     public Font font = getConfig().getFont();
+    
+    /**  TODO */
     public HorizontalAlignmentEnum hAlign = 
             getConfig().getHorizontalAlignment() == SWT.LEFT ? HorizontalAlignmentEnum.LEFT : 
                 getConfig().getHorizontalAlignment() == SWT.RIGHT ? HorizontalAlignmentEnum.RIGHT : 
             HorizontalAlignmentEnum.CENTER ;
+    
+    /**  TODO */
     public VerticalAlignmentEnum vAlign = VerticalAlignmentEnum.MIDDLE;
+    
+    /**  TODO */
     public BorderStyle borderStyle = null;
+    
+    /**  TODO */
     public ICellPainter cellPainter = new LineBorderDecorator(new TextPainter());
 
+    /**
+     * 
+     *
+     * @param config
+     */
     public StyleConfigurationTable(CTConfiguration config) {
         super(config);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, cellPainter);

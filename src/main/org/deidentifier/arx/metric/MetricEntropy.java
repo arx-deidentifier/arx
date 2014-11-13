@@ -43,18 +43,18 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricEntropy extends MetricDefault {
 
-    /** Value unknown */
+    /** Value unknown. */
     private static final double NA               = Double.POSITIVE_INFINITY;
     
-    /** SVUID */
+    /** SVUID. */
     private static final long   serialVersionUID = -8618697919821588987L;
     
-    /** Log 2 */
+    /** Log 2. */
     static final double         log2             = Math.log(2);
     
     /**
-     * Computes log 2
-     * 
+     * Computes log 2.
+     *
      * @param num
      * @return
      */
@@ -62,23 +62,35 @@ public class MetricEntropy extends MetricDefault {
         return Math.log(num) / log2;
     }
 
-    /** Column -> Level -> Value */
+    /** Column -> Level -> Value. */
     private double[][] cache;
 
-    /** Column -> Id -> Level -> Count */
+    /** Column -> Id -> Level -> Count. */
     private int[][][]  cardinalities;
 
-    /** Column -> Id -> Level -> Output */
+    /** Column -> Id -> Level -> Output. */
     private int[][][]  hierarchies;
 
+    /**
+     * 
+     */
     protected MetricEntropy() {
         super(true, true);
     }
 
+    /**
+     * 
+     *
+     * @param monotonic
+     * @param independent
+     */
     protected MetricEntropy(final boolean monotonic, final boolean independent) {
         super(monotonic, independent);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Monotonic Non-Uniform Entropy";
@@ -105,6 +117,9 @@ public class MetricEntropy extends MetricDefault {
         return hierarchies;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -142,17 +157,26 @@ public class MetricEntropy extends MetricDefault {
         return new InformationLossDefaultWithBound(result, result);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return getInformationLossInternal(node, null).getLowerBound();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

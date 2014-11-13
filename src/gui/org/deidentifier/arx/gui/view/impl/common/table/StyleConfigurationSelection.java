@@ -39,20 +39,41 @@ import org.eclipse.swt.graphics.Font;
 public class StyleConfigurationSelection extends CTStyleConfiguration {
 
     // General style
+    /**  TODO */
     public Font        font                       = getConfig().getFont();
 
+    /**  TODO */
     public Color       selectionBgColor           = GUIHelper.COLOR_TITLE_INACTIVE_BACKGROUND;
+    
+    /**  TODO */
     public Color       selectionFgColor           = GUIHelper.COLOR_BLACK;
+    
+    /**  TODO */
     public Color       selectedHeaderBgColor      = GUIHelper.COLOR_TITLE_INACTIVE_BACKGROUND;
+    
+    /**  TODO */
     public Color       selectedHeaderFgColor      = GUIHelper.COLOR_BLACK;
+    
+    /**  TODO */
     public BorderStyle selectedHeaderBorderStyle  = new BorderStyle(-1,
                                                                     selectedHeaderFgColor,
                                                                     LineStyleEnum.SOLID);
+    
+    /**  TODO */
     public Color       fullySelectedHeaderBgColor = GUIHelper.COLOR_WIDGET_NORMAL_SHADOW;
+    
+    /**
+     * 
+     *
+     * @param config
+     */
     public StyleConfigurationSelection(CTConfiguration config) {
         super(config);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         configureSelectionStyle(configRegistry);
@@ -61,6 +82,11 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
         configureHeaderFullySelectedStyle(configRegistry);
     }
 
+    /**
+     * 
+     *
+     * @param configRegistry
+     */
     protected void configureHeaderFullySelectedStyle(IConfigRegistry configRegistry) {
         // Header fully selected
         Style cellStyle = new Style();  
@@ -78,6 +104,11 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
                 SelectionStyleLabels.ROW_FULLY_SELECTED_STYLE);
     }
 
+    /**
+     * 
+     *
+     * @param configRegistry
+     */
     protected void configureHeaderHasSelectionStyle(IConfigRegistry configRegistry) {
         Style cellStyle = new Style();
 
@@ -116,6 +147,11 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
     }
 
     
+    /**
+     * 
+     *
+     * @param configRegistry
+     */
     protected void configureSelectionAnchorStyle(IConfigRegistry configRegistry) {
         // Selection anchor style for normal display mode
         Style cellStyle = new Style();
@@ -166,6 +202,11 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
                 SelectionStyleLabels.SELECTION_ANCHOR_STYLE);
     }
 
+    /**
+     * 
+     *
+     * @param configRegistry
+     */
     protected void configureSelectionStyle(IConfigRegistry configRegistry) {
         Style cellStyle = new Style();
         cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);

@@ -19,20 +19,24 @@
 package org.deidentifier.arx.io;
 
 /**
- * Interface to be implemented when columns can be referred to by an index
- * 
+ * Interface to be implemented when columns can be referred to by an index.
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
  */
 public interface IImportColumnIndexed {
 
     /**
-     * Returns the index this column refers to
+     * Returns the index this column refers to.
+     *
+     * @return
      */
     public int getIndex();
 
     /**
-     * Sets the index this columns refers to
+     * Sets the index this columns refers to.
+     *
+     * @param index
      */
     public void setIndex(int index);
 

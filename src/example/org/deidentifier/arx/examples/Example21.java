@@ -40,8 +40,9 @@ import org.deidentifier.arx.DataType;
 public class Example21 extends Example {
 
     /**
-     * Main entry point
-     * 
+     * Main entry point.
+     *
+     * @param args
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -60,6 +61,8 @@ public class Example21 extends Example {
      * uses more advanced features than {@link #Example2}. Columns are renamed,
      * and individual columns can be ignored. Furthermore a data type for each
      * column is specified, which describes the format of the appropriate data.
+     *
+     * @throws IOException
      */
     private static void exampleCSV() throws IOException {
 

@@ -53,19 +53,19 @@ public class Transformer {
     /** The buffer. */
     protected int[][]                          buffer;
 
-    /** Sensitive attribute values */
+    /** Sensitive attribute values. */
     protected int[][]                          sensitive;
 
-    /** The config */
+    /** The config. */
     protected final ARXConfigurationInternal config;
 
     /** The data. */
     protected final int[][]                    data;
 
-    /** The dictionary for the snapshot compression **/
+    /** The dictionary for the snapshot compression *. */
     protected IntArrayDictionary               dictionarySensFreq;
 
-    /** The dictionary for the snapshot compression **/
+    /** The dictionary for the snapshot compression *. */
     protected IntArrayDictionary               dictionarySensValue;
 
     /** The dimensions. */
@@ -79,10 +79,10 @@ public class Transformer {
 
     /**
      * Instantiates a new transformer.
-     * 
+     *
      * @param data
      * @param hierarchies
-     * @param sensitiveData
+     * @param sensitive
      * @param config
      * @param dictionarySensValue
      * @param dictionarySensFreq

@@ -32,30 +32,37 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for ranges
- * @author Fabian Prasser
+ * Editor for ranges.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
-    /** Var */
+    /** Var. */
     private final Group                           composite;
-    /** Var */
+    
+    /** Var. */
     private final DataTypeWithRatioScale<T>       type;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T> model;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardGroupingRange<T> range;
-    /** Var */
+    
+    /** Var. */
     private EditorString                          repeat;
-    /** Var */
+    
+    /** Var. */
     private EditorString                          snap;
-    /** Var */
+    
+    /** Var. */
     private EditorString                          label;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      * @param lower
@@ -86,6 +93,9 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
+     */
     @Override
     public void update() {
         repeat.update();
@@ -94,7 +104,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     }
 
     /**
-     * Creates a label
+     * Creates a label.
+     *
      * @param composite
      * @param string
      * @return
@@ -109,7 +120,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     }
 
     /**
-     * Create the label editor
+     * Create the label editor.
+     *
      * @param model
      * @param lower
      * @param adjustment
@@ -165,7 +177,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     }
 
     /**
-     * Create the repeat editor
+     * Create the repeat editor.
+     *
      * @param model
      * @param lower
      * @param adjustment
@@ -222,7 +235,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     }
 
     /**
-     * Create the snap editor
+     * Create the snap editor.
+     *
      * @param model
      * @param lower
      * @param adjustment

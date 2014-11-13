@@ -21,37 +21,67 @@ package org.deidentifier.arx;
 import java.io.Serializable;
 
 /**
- * A set of rows
- * 
+ * A set of rows.
+ *
  * @author Fabian Prasser
  */
 public class RowSet implements Serializable, Cloneable {
 
+    /**  TODO */
     private static final long serialVersionUID = 1492499772279795327L;
     
+    /**  TODO */
     private static final int   ADDRESS_BITS_PER_UNIT = 6;
+    
+    /**  TODO */
     private static final int   BIT_INDEX_MASK        = 63;
     
+    /**
+     * 
+     *
+     * @param data
+     * @return
+     */
     public static RowSet create(Data data){
         return new RowSet(data);
     }
+    
+    /**  TODO */
     private final long[]       array;
+    
+    /**  TODO */
     private final int          length;
 
+    /**  TODO */
     private int                size;
     
+    /**
+     * 
+     *
+     * @param data
+     */
     private RowSet(Data data) {
         this.length = data.getHandle().getNumRows();
         int chunks = (int) (Math.ceil((double) this.length / 64d));
         array = new long[chunks];
     }
     
+    /**
+     * 
+     *
+     * @param length
+     */
     private RowSet(int length) {
         this.length = length;
         int chunks = (int) (Math.ceil((double) this.length / 64d));
         array = new long[chunks];
     }
 
+    /**
+     * 
+     *
+     * @param rowIndex
+     */
     public void add(int rowIndex) {
         int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
@@ -59,6 +89,9 @@ public class RowSet implements Serializable, Cloneable {
         size += array[offset] != temp ? 1 : 0; 
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
     @Override
     public RowSet clone() {
         RowSet set = new RowSet(this.length);
@@ -67,14 +100,30 @@ public class RowSet implements Serializable, Cloneable {
         return set;
     }
 
+    /**
+     * 
+     *
+     * @param rowIndex
+     * @return
+     */
     public boolean contains(int rowIndex) {
         return ((array[rowIndex >> ADDRESS_BITS_PER_UNIT] & (1L << (rowIndex & BIT_INDEX_MASK))) != 0);
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int length() {
         return this.length;
     }
     
+    /**
+     * 
+     *
+     * @param rowIndex
+     */
     public void remove(int rowIndex){
         int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
@@ -82,10 +131,21 @@ public class RowSet implements Serializable, Cloneable {
         size -= array[offset] != temp ? 1 : 0; 
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int size() {
         return this.size;
     }
     
+    /**
+     * 
+     *
+     * @param rowIndex1
+     * @param rowIndex2
+     */
     public void swap(int rowIndex1, int rowIndex2) {
         
         final boolean temp1 = contains(rowIndex1);

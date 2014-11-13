@@ -29,45 +29,56 @@ import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * Encapsulates the results of an execution of the ARX algorithm
- * 
+ * Encapsulates the results of an execution of the ARX algorithm.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class ARXResult {
 
-    /** Lock the buffer */
+    /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
-    /** Lock the buffer */
+    /** Lock the buffer. */
     private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
     private final INodeChecker     checker;
 
-    /** The config */
+    /** The config. */
     private final ARXConfiguration config;
 
-    /** The data definition */
+    /** The data definition. */
     private final DataDefinition   definition;
 
     /** Wall clock. */
     private final long             duration;
 
-    /** The lattice */
+    /** The lattice. */
     private final ARXLattice       lattice;
 
-    /** The data manager */
+    /** The data manager. */
     private final DataManager      manager;
 
     /** The global optimum. */
     private final ARXNode          optimalNode;
 
-    /** The registry */
+    /** The registry. */
     private final DataRegistry     registry;
 
     /**
-     * Internal constructor for deserialization
+     * Internal constructor for deserialization.
+     *
+     * @param handle
+     * @param definition
+     * @param lattice
+     * @param historySize
+     * @param snapshotSizeSnapshot
+     * @param snapshotSizeDataset
+     * @param metric
+     * @param config
+     * @param optimum
+     * @param time
      */
     public ARXResult(       final DataHandle handle,
                             final DataDefinition definition,
@@ -132,17 +143,15 @@ public class ARXResult {
     
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param registry
      * @param manager
      * @param checker
      * @param definition
      * @param config
      * @param lattice
-     * @param optimalNode
      * @param duration
-     * @param suppressionString
-     * @param removeOutliers
      */
     protected ARXResult(DataRegistry registry,
                         DataManager manager,
@@ -163,8 +172,8 @@ public class ARXResult {
     }
 
     /**
-     * Returns the configuration used
-     * 
+     * Returns the configuration used.
+     *
      * @return
      */
     public ARXConfiguration getConfiguration() {
@@ -207,8 +216,8 @@ public class ARXResult {
     }
     
     /**
-     * Returns the lattice
-     * 
+     * Returns the lattice.
+     *
      * @return
      */
     public ARXLattice getLattice() {
@@ -335,8 +344,8 @@ public class ARXResult {
     }
 
     /**
-     * Returns the execution time (wall clock)
-     * 
+     * Returns the execution time (wall clock).
+     *
      * @return
      */
     public long getTime() {
@@ -344,8 +353,8 @@ public class ARXResult {
     }
 
     /**
-     * Indicates if a result is available
-     * 
+     * Indicates if a result is available.
+     *
      * @return
      */
     public boolean isResultAvailable() {
@@ -353,7 +362,8 @@ public class ARXResult {
     }
 
     /**
-     * Releases the buffer
+     * Releases the buffer.
+     *
      * @param handle
      */
     protected void releaseBuffer(DataHandleOutput handle) {

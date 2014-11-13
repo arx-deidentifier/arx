@@ -23,11 +23,10 @@ import java.util.Iterator;
 
 /**
  * The Class MRUCache.
- * 
- * @param <T>
- *            the generic type
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @param <T> the generic type
  */
 public class MRUCache<T> {
 

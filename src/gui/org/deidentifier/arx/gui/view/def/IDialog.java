@@ -19,7 +19,8 @@
 package org.deidentifier.arx.gui.view.def;
 
 /**
- * Interface for dialogs
+ * Interface for dialogs.
+ *
  * @author Fabian Prasser
  */
 public interface IDialog {

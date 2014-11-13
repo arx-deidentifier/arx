@@ -30,16 +30,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This class implements a titled border
+ * This class implements a titled border.
+ *
  * @author Fabian Prasser
  */
 public class ComponentTitledBorder implements IComponent{
     
+    /**  TODO */
     private final CTabFolder folder;
+    
+    /**  TODO */
     private final CTabItem tab; 
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param title
@@ -71,7 +76,8 @@ public class ComponentTitledBorder implements IComponent{
     }
     
     /**
-     * Returns the underlying control
+     * Returns the underlying control.
+     *
      * @return
      */
     public Composite getControl(){
@@ -79,7 +85,8 @@ public class ComponentTitledBorder implements IComponent{
     }
     
     /**
-     * Sets the child control
+     * Sets the child control.
+     *
      * @param child
      */
     public void setChild(Control child){
@@ -87,7 +94,8 @@ public class ComponentTitledBorder implements IComponent{
     }
     
     /**
-     * Sets layout data
+     * Sets layout data.
+     *
      * @param data
      */
     public void setLayoutData(Object data){

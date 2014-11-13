@@ -29,23 +29,49 @@ import org.eclipse.swt.widgets.Control;
  */
 public class CTConfiguration {
 
+    /**  TODO */
     public static final int COLUMN_HEADER_LAYOUT_DEFAULT    = 0;
+    
+    /**  TODO */
     public static final int COLUMN_HEADER_LAYOUT_FILL_EQUAL = 1;
+    
+    /**  TODO */
     public static final int COLUMN_HEADER_LAYOUT_FILL  = 2;
 
+    /**  TODO */
     public static final int ROW_HEADER_LAYOUT_DEFAULT       = 0;
+    
+    /**  TODO */
     public static final int ROW_HEADER_LAYOUT_FILL          = 1;
 
+    /**  TODO */
     public static final int STYLE_TABLE                     = 1;
+    
+    /**  TODO */
     public static final int STYLE_GRID                      = 2;
 
+    /**  TODO */
     private final int       style;
+    
+    /**  TODO */
     private int             horizontalAlignment             = SWT.CENTER;
+    
+    /**  TODO */
     private int             columnHeaderLayout              = CTConfiguration.COLUMN_HEADER_LAYOUT_DEFAULT;
+    
+    /**  TODO */
     private int             rowHeaderLayout                 = CTConfiguration.ROW_HEADER_LAYOUT_DEFAULT;
+    
+    /**  TODO */
     private boolean         rowSelectionEnabled             = false;
+    
+    /**  TODO */
     private boolean         columnSelectionEnabled          = true;
+    
+    /**  TODO */
     private boolean         cellSelectionEnabled            = true;
+    
+    /**  TODO */
     private Font            font;
 
     /**
@@ -67,62 +93,137 @@ public class CTConfiguration {
         this.style = style;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getColumnHeaderLayout() {
         return columnHeaderLayout;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public Font getFont() {
         return font;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getRowHeaderLayout() {
         return rowHeaderLayout;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getStyle() {
         return style;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public boolean isCellSelectionEnabled() {
         return cellSelectionEnabled;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public boolean isColumnSelectionEnabled() {
         return columnSelectionEnabled;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public boolean isRowSelectionEnabled() {
         return rowSelectionEnabled;
     }
 
+    /**
+     * 
+     *
+     * @param cellSelectionEnabled
+     */
     public void setCellSelectionEnabled(boolean cellSelectionEnabled) {
         this.cellSelectionEnabled = cellSelectionEnabled;
     }
 
+    /**
+     * 
+     *
+     * @param columnHeaderLayout
+     */
     public void setColumnHeaderLayout(int columnHeaderLayout) {
         this.columnHeaderLayout = columnHeaderLayout;
     }
 
+    /**
+     * 
+     *
+     * @param columnSelectionEnabled
+     */
     public void setColumnSelectionEnabled(boolean columnSelectionEnabled) {
         this.columnSelectionEnabled = columnSelectionEnabled;
     }
 
+    /**
+     * 
+     *
+     * @param font
+     */
     public void setFont(Font font) {
         this.font = font;
     }
 
+    /**
+     * 
+     *
+     * @param horizontalAlignment
+     */
     public void setHorizontalAlignment(int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
     }
 
+    /**
+     * 
+     *
+     * @param rowHeaderLayout
+     */
     public void setRowHeaderLayout(int rowHeaderLayout) {
         this.rowHeaderLayout = rowHeaderLayout;
     }
 
+    /**
+     * 
+     *
+     * @param rowSelectionEnabled
+     */
     public void setRowSelectionEnabled(boolean rowSelectionEnabled) {
         this.rowSelectionEnabled = rowSelectionEnabled;
     }

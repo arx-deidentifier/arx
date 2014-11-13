@@ -33,48 +33,60 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * Renders the content
- * @author Fabian Prasser
+ * Renders the content.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorRenderer<T> {
 
     /**
-     * Base class for rendering contexts
-     * @author Fabian Prasser
+     * Base class for rendering contexts.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public abstract static class RenderedComponent<T> {
-        /** Var */
+        
+        /** Var. */
         public Rectangle rectangle1;
-        /** Var */
+        
+        /** Var. */
         public Rectangle rectangle2;
-        /** Var */
+        
+        /** Var. */
         public int       depth;
-        /** Var */
+        
+        /** Var. */
         public boolean   enabled;
-        /** Var */
+        
+        /** Var. */
         public String    label;
-        /** Var */
+        
+        /** Var. */
         public String    bounds;
-        /** Var */
+        
+        /** Var. */
         public T         min;
-        /** Var */
+        
+        /** Var. */
         public T         max;
     }
+    
     /**
-     * A rendering context for a group
-     * @author Fabian Prasser
+     * A rendering context for a group.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static class RenderedGroup<T> extends RenderedComponent<T> {
         
-        /** Var */
+        /** Var. */
         public HierarchyWizardGroupingGroup<T> group;
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -88,6 +100,9 @@ public class HierarchyWizardEditorRenderer<T> {
             return true;
         }
  
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -96,19 +111,24 @@ public class HierarchyWizardEditorRenderer<T> {
             return result;
         }
     }
+    
     /**
-     * A rendering context for an interval
-     * @author Fabian Prasser
+     * A rendering context for an interval.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static class RenderedInterval<T> extends RenderedComponent<T> {
         
-        /** Var */
+        /** Var. */
         public HierarchyWizardGroupingInterval<T> interval;
-        /** Var */
+        
+        /** Var. */
         public T                                  offset;
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -122,6 +142,9 @@ public class HierarchyWizardEditorRenderer<T> {
             return true;
         }
  
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -131,29 +154,39 @@ public class HierarchyWizardEditorRenderer<T> {
         }
     }
 
-    /** Constants */
+    /** Constants. */
     public static final Font  FONT                   = getFont();
-    /** Constants */
+    
+    /** Constants. */
     public static final int   OFFSET                 = 10;
-    /** Constants */
+    
+    /** Constants. */
     public static final int   INTERVAL_HEIGHT        = 20;
-    /** Constants */
+    
+    /** Constants. */
     public static final Color WIDGET_BACKGROUND      = GUIHelper.COLOR_WHITE;
-    /** Constants */
+    
+    /** Constants. */
     public static final Color DISABLED_FOREGROUND    = GUIHelper.COLOR_GRAY;
-    /** Constants */
+    
+    /** Constants. */
     public static final Color DISABLED_BACKGROUND    = GUIHelper.getColor(230, 230, 230);
-    /** Constants */
+    
+    /** Constants. */
     public static final Color NORMAL_FOREGROUND      = GUIHelper.COLOR_BLACK;
-    /** Constants */
+    
+    /** Constants. */
     public static final Color ALTERNATIVE_FOREGROUND = GUIHelper.COLOR_WHITE;
-    /** Constants */
+    
+    /** Constants. */
     public static final Color NORMAL_BACKGROUND      = GUIHelper.getColor(230, 230, 230);
-    /** Constants */
+    
+    /** Constants. */
     public static final Color SELECTED_BACKGROUND    = GUIHelper.COLOR_YELLOW;
 
     /**
-     * Returns the font
+     * Returns the font.
+     *
      * @return
      */
     private static Font getFont(){
@@ -163,21 +196,27 @@ public class HierarchyWizardEditorRenderer<T> {
         return GUIHelper.getFont(fontdata);
     }
 
-    /** Var */
+    /** Var. */
     private final List<RenderedInterval<T>>        intervals         = new ArrayList<RenderedInterval<T>>();
-    /** Var */
+    
+    /** Var. */
     private final List<List<RenderedGroup<T>>>     groups            = new ArrayList<List<RenderedGroup<T>>>();
-    /** Var */
+    
+    /** Var. */
     private final List<RenderedInterval<T>>        renderedIntervals = new ArrayList<RenderedInterval<T>>();
-    /** Var */
+    
+    /** Var. */
     private final List<List<RenderedGroup<T>>>     renderedGroups    = new ArrayList<List<RenderedGroup<T>>>();
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardEditorLayout<T> layout;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T>  model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param model
      */
     public HierarchyWizardEditorRenderer(HierarchyWizardModelGrouping<T> model) {
@@ -186,7 +225,8 @@ public class HierarchyWizardEditorRenderer<T> {
     }
 
     /**
-     * Returns all components
+     * Returns all components.
+     *
      * @return
      */
     public List<RenderedComponent<T>> getComponents(){
@@ -200,7 +240,8 @@ public class HierarchyWizardEditorRenderer<T> {
     
 
     /**
-     * Returns the required minimal size
+     * Returns the required minimal size.
+     *
      * @return
      */
     public Point getMinSize() {
@@ -214,9 +255,11 @@ public class HierarchyWizardEditorRenderer<T> {
     }
 
     /**
-     * Mouse click
+     * Mouse click.
+     *
      * @param x
      * @param y
+     * @return
      */
     public boolean select(int x, int y) {
         Object result = null;
@@ -243,7 +286,7 @@ public class HierarchyWizardEditorRenderer<T> {
     }
     
     /**
-     * Updates the drawing context
+     * Updates the drawing context.
      */
     public void update(){
         
@@ -253,6 +296,12 @@ public class HierarchyWizardEditorRenderer<T> {
         updateGroups(factors, modelIntervals);
     }
 
+    /**
+     * 
+     *
+     * @param factors
+     * @param modelIntervals
+     */
     @SuppressWarnings("unchecked")
     private void updateGroups(int[] factors, List<HierarchyWizardGroupingInterval<T>> modelIntervals) {
         
@@ -340,6 +389,12 @@ public class HierarchyWizardEditorRenderer<T> {
         }
     }
 
+    /**
+     * 
+     *
+     * @param factors
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private List<HierarchyWizardGroupingInterval<T>> updateIntervals(int[] factors) {
 
@@ -385,7 +440,8 @@ public class HierarchyWizardEditorRenderer<T> {
     }
 
     /**
-     * Update graphics layout
+     * Update graphics layout.
+     *
      * @param gc
      */
     public void update(GC gc){
@@ -449,6 +505,13 @@ public class HierarchyWizardEditorRenderer<T> {
         renderedGroups.addAll(groups);
     }
     
+    /**
+     * 
+     *
+     * @param gc
+     * @param list
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private int getRequiredBoundWidth(GC gc, List<?> list){
         gc.setFont(FONT);
@@ -460,6 +523,13 @@ public class HierarchyWizardEditorRenderer<T> {
         return width;
     }
 
+    /**
+     * 
+     *
+     * @param gc
+     * @param list
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private int getRequiredLabelWidth(GC gc, List<?> list){
         gc.setFont(FONT);

@@ -42,54 +42,70 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This view displays general settings regarding data transformation
+ * This view displays general settings regarding data transformation.
+ *
  * @author Fabian Prasser
  */
 public class ViewGeneralSettings implements IView {
 
-    /** Static settings */
+    /** Static settings. */
     private static final int      LABEL_WIDTH  = 50;
-    /** Static settings */
+    
+    /** Static settings. */
     private static final int      LABEL_HEIGHT = 20;
 
-    /** Controller */
+    /** Controller. */
     private final Controller      controller;
-    /** Model */
+    
+    /** Model. */
     private Model                 model;
 
-    /** View */
+    /** View. */
     // TODO: Deactivated in ARX 2.3 due to buggy implementation
     // private Button buttonProtectSensitiveAssociations;
 
     /** View */
     private Scale                 sliderOutliers;
-    /** View */
+    
+    /** View. */
     private Label                 labelOutliers;
-    /** View */
+    
+    /** View. */
     private Button                buttonPracticalMonotonicity;
-    /** View */
+    
+    /** View. */
     private Composite             root;
-    /** View */
+    
+    /** View. */
     private ComponentTitledFolder folder;
-    /** View */
+    
+    /** View. */
     private ComponentTitledFolder folder2;
-    /** View */
+    
+    /** View. */
     private ToolItem              enable;
-    /** View */
+    
+    /** View. */
     private ToolItem              push;
-    /** View */
+    
+    /** View. */
     private ToolItem              pull;
-    /** View */
+    
+    /** View. */
     private ViewCriteriaList      clv;
-    /** View */
+    
+    /** View. */
     private Button                precomputedVariant;
-    /** View */
+    
+    /** View. */
     private Scale                 precomputationThreshold;
-    /** View */
+    
+    /** View. */
     private Label                 labelThreshold;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -106,12 +122,18 @@ public class ViewGeneralSettings implements IView {
         this.root = build(parent);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
         clv.dispose();
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         precomputedVariant.setSelection(false);
@@ -122,6 +144,9 @@ public class ViewGeneralSettings implements IView {
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -150,6 +175,12 @@ public class ViewGeneralSettings implements IView {
         }
     }
 
+    /**
+     * 
+     *
+     * @param parent
+     * @return
+     */
     private Composite build(final Composite parent) {
 
         // Create input group
@@ -387,7 +418,8 @@ public class ViewGeneralSettings implements IView {
     }
 
     /**
-     * Returns the currently selected criterion
+     * Returns the currently selected criterion.
+     *
      * @return
      */
     private ModelCriterion getSelectedCriterion() {
@@ -406,7 +438,7 @@ public class ViewGeneralSettings implements IView {
     
     /**
      * This method adjusts the toolbar attached to the folder with criteria
-     * according to the current state of the model
+     * according to the current state of the model.
      */
     private void updateControlls(){
 

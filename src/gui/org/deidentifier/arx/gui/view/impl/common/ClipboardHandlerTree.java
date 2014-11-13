@@ -35,25 +35,26 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * Supports interaction with the system clipboard
- * 
+ * Supports interaction with the system clipboard.
+ *
  * @author Fabian Prasser
  */
 public class ClipboardHandlerTree {
     
-    /** The viewer*/
+    /** The viewer. */
     private final TreeViewer tree;
 
     /**
-     * Creates a new instance
-     * @param table
+     * Creates a new instance.
+     *
+     * @param tree
      */
     public ClipboardHandlerTree(TreeViewer tree){
         this.tree = tree;
     }
     
     /**
-     * Copies the table's contents to the clipboard
+     * Copies the table's contents to the clipboard.
      */
     public void copy(){
         if (tree != null && getItemCount(tree)>0) {
@@ -66,8 +67,8 @@ public class ClipboardHandlerTree {
     }
     
     /**
-     * Creates a pop up menu for this handler
-     * @param parent
+     * Creates a pop up menu for this handler.
+     *
      * @return
      */
     public Menu getMenu() {
@@ -83,7 +84,8 @@ public class ClipboardHandlerTree {
     }
     
     /**
-     * Access to tree viewer
+     * Access to tree viewer.
+     *
      * @param tree
      * @param item
      * @return
@@ -93,7 +95,8 @@ public class ClipboardHandlerTree {
     }
     
     /**
-     * Access to tree viewer
+     * Access to tree viewer.
+     *
      * @param tree
      * @return
      */
@@ -102,7 +105,8 @@ public class ClipboardHandlerTree {
     }
     
     /**
-     * Returns the number of items
+     * Returns the number of items.
+     *
      * @param tree
      * @return
      */
@@ -112,7 +116,8 @@ public class ClipboardHandlerTree {
     }
     
     /**
-     * Access to tree viewer
+     * Access to tree viewer.
+     *
      * @param tree
      * @return
      */
@@ -121,7 +126,8 @@ public class ClipboardHandlerTree {
     }
 
     /**
-     * Access to tree viewer
+     * Access to tree viewer.
+     *
      * @param tree
      * @param item
      * @param index
@@ -132,8 +138,10 @@ public class ClipboardHandlerTree {
     }
 
     /**
-     * Renders the tree into a string
+     * Renders the tree into a string.
+     *
      * @param tree
+     * @return
      */
     private String getText(TreeViewer tree){
         
@@ -152,7 +160,8 @@ public class ClipboardHandlerTree {
     }
     
     /**
-     * Renders an item and its children
+     * Renders an item and its children.
+     *
      * @param tree
      * @param item
      * @param properties

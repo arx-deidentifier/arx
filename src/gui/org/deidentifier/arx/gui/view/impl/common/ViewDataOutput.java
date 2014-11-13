@@ -29,14 +29,16 @@ import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A view on a <code>Data</code> object
+ * A view on a <code>Data</code> object.
+ *
  * @author Fabian Prasser
  */
 public class ViewDataOutput extends ViewData {
 
-    /** 
-     * Creates a new data view
+    /**
      * 
+     * Creates a new data view.
+     *
      * @param parent
      * @param controller
      */
@@ -46,22 +48,34 @@ public class ViewDataOutput extends ViewData {
         super(parent, controller, Resources.getMessage("AnalyzeView.0")); //$NON-NLS-1
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionCellSelected(org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent)
+     */
     @Override
     protected void actionCellSelected(CellSelectionEvent arg1) {
     	super.actionCellSelected(arg1);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionSort()
+     */
     @Override
     protected void actionSort(){
         controller.actionDataSort(false);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getDefinition()
+     */
     @Override
     protected DataDefinition getDefinition() {
         if (model == null) return null;
         else return model.getOutputDefinition();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getHandle()
+     */
     @Override
     protected DataHandle getHandle() {
         if (model != null){
@@ -78,7 +92,9 @@ public class ViewDataOutput extends ViewData {
     }
     
     /**
-     * Returns the research subset
+     * Returns the research subset.
+     *
+     * @return
      */
     private RowSet getSubset(){
         if (model != null && model.getOutputConfig() != null){
@@ -88,6 +104,9 @@ public class ViewDataOutput extends ViewData {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         

@@ -34,26 +34,48 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * Layouts the visualization and allows enabling/disabling them
+ * Layouts the visualization and allows enabling/disabling them.
+ *
  * @author Fabian Prasser
  */
 public class LayoutStatistics implements ILayout, IView {
 
+    /**  TODO */
     private static final String         TAB_DISTRIBUTION       = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_DISTRIBUTION_TABLE = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_CONTINGENCY        = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_CONTINGENCY_TABLE  = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
+    /**  TODO */
     private final ComponentTitledFolder folder;
+    
+    /**  TODO */
     private final ToolItem              enable;
+    
+    /**  TODO */
     private final Image                 enabled;
+    
+    /**  TODO */
     private final Image                 disabled;
+    
+    /**  TODO */
     private final Controller            controller;
+    
+    /**  TODO */
     private Model model = null;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param target
@@ -108,7 +130,8 @@ public class LayoutStatistics implements ILayout, IView {
     }
 
     /**
-     * Adds a selection listener
+     * Adds a selection listener.
+     *
      * @param listener
      */
     public void addSelectionListener(final SelectionListener listener) {
@@ -116,7 +139,8 @@ public class LayoutStatistics implements ILayout, IView {
     }
 
     /**
-     * Returns the selection index
+     * Returns the selection index.
+     *
      * @return
      */
     public int getSelectionIndex() {
@@ -124,7 +148,8 @@ public class LayoutStatistics implements ILayout, IView {
     }
 
     /**
-     * Sets the selection index
+     * Sets the selection index.
+     *
      * @param index
      */
     public void setSelectionIdex(final int index) {
@@ -132,7 +157,7 @@ public class LayoutStatistics implements ILayout, IView {
     }
     
     /**
-     * Toggle visualization enabled
+     * Toggle visualization enabled.
      */
     private void toggleEnabled() {
         this.model.setVisualizationEnabled(this.enable.getSelection());
@@ -140,7 +165,7 @@ public class LayoutStatistics implements ILayout, IView {
     }
     
     /**
-     * Toggle image
+     * Toggle image.
      */
     private void toggleImage(){
         if (enable.getSelection()) {
@@ -150,12 +175,18 @@ public class LayoutStatistics implements ILayout, IView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         this.enabled.dispose();
         this.disabled.dispose();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         model = null;
@@ -164,6 +195,9 @@ public class LayoutStatistics implements ILayout, IView {
         enable.setEnabled(false);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
 

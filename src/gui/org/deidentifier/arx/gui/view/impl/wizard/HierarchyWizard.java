@@ -38,23 +38,33 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 
 /**
- * This class implements a wizard for generalization hierarchies
- * @author Fabian Prasser
+ * This class implements a wizard for generalization hierarchies.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     
     /**
-     * Result of the wizard
-     * @author Fabian Prasser
+     * Result of the wizard.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static class HierarchyWizardResult<T> {
 
+        /**  TODO */
         public final Hierarchy hierarchy;
+        
+        /**  TODO */
         public final HierarchyBuilder<T> builder;
+        
+        /**
+         * 
+         *
+         * @param hierarchy
+         * @param builder
+         */
         public HierarchyWizardResult(Hierarchy hierarchy,
                                      HierarchyBuilder<T> builder) {
             this.hierarchy = hierarchy;
@@ -63,35 +73,48 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Updateable part of the wizard
+     * Updateable part of the wizard.
+     *
      * @author Fabian Prasser
      */
     public static interface HierarchyWizardView {
-        /** Update*/
+        
+        /**
+         * Update.
+         */
         public void update();
     }
     
-    /** Var */
+    /** Var. */
     private HierarchyWizardModel<T>   model;
-    /** Var */
+    
+    /** Var. */
     private final Controller                controller;
-    /** Var */
+    
+    /** Var. */
     private final ARXWizardButton           buttonLoad;
-    /** Var */
+    
+    /** Var. */
     private final ARXWizardButton           buttonSave;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageIntervals<T> pageIntervals;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageOrder<T>     pageOrder;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageRedaction<T> pageRedaction;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageFinal<T>     pageFinal;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardPageType<T>      pageType;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param attribute
      * @param datatype
@@ -107,7 +130,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param attribute
      * @param builder
@@ -176,6 +200,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.Wizard#addPages()
+     */
     @Override
     public void addPages() {
         
@@ -188,13 +215,17 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.Wizard#canFinish()
+     */
     @Override
     public boolean canFinish() {
         return getDialog().getCurrentPage() instanceof HierarchyWizardPageFinal;
     }
 
     /**
-     * Returns the created builder
+     * Returns the created builder.
+     *
      * @return
      */
     public HierarchyWizardResult<T> getResult(){
@@ -206,14 +237,14 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
     
     /**
-     * Shows the help dialog
+     * Shows the help dialog.
      */
     private void help() {
         controller.actionShowHelpDialog("id-51");
     }
     
     /**
-     * Loads a specification
+     * Loads a specification.
      */
     private void load(){
 
@@ -285,7 +316,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
 
     /**
-     * Saves the current specification
+     * Saves the current specification.
      */
     private void save(){
         
@@ -316,8 +347,10 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             return;
         }
     }
+    
     /**
-     * Returns the load button
+     * Returns the load button.
+     *
      * @return
      */
     protected Button getLoadButton(){
@@ -325,7 +358,8 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     }
 
     /**
-     * Returns the load button
+     * Returns the load button.
+     *
      * @return
      */
     protected Button getSaveButton(){

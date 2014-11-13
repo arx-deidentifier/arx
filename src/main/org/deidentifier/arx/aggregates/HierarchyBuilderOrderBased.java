@@ -33,39 +33,66 @@ import org.deidentifier.arx.DataType;
 
 /**
  * This class enables building hierarchies for categorical and non-categorical values
- * by ordering the data items and merging into groups with predefined sizes
- * 
- * @author Fabian Prasser
+ * by ordering the data items and merging into groups with predefined sizes.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
 
     /**
-     * A serializable comparator
-     * @author Fabian Prasser
+     * A serializable comparator.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static abstract class SerializableComparator<T> implements Comparator<T>, Serializable {
+        
+        /**  TODO */
         private static final long serialVersionUID = 3851134667082727602L;
     }
     
+    /**
+     * 
+     *
+     * @param <T>
+     */
     @SuppressWarnings("hiding")
     protected class CloseElements<T> extends AbstractGroup {
         
+        /**  TODO */
         private static final long serialVersionUID = 7224062023293601561L;
+        
+        /**  TODO */
         private String[] values;
 
+        /**
+         * 
+         *
+         * @param values
+         * @param function
+         */
         protected CloseElements(String[] values, AggregateFunction<T> function) {
             super(function.aggregate(values));
             this.values = values;
         }
 
+        /**
+         * 
+         *
+         * @return
+         */
         protected String[] getValues(){
             return values;
         }
 
+        /**
+         * 
+         *
+         * @param list
+         * @param function
+         * @return
+         */
         @SuppressWarnings("rawtypes")
         protected CloseElements merge(List<CloseElements<T>> list, AggregateFunction<T> function) {
             List<String> values = new ArrayList<String>();
@@ -78,13 +105,17 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
     }
     
+    /**  TODO */
     private static final long serialVersionUID = -2749758635401073668L;
     
     /**
-     * Creates a new instance. Either preserves the given order, or 
+     * Creates a new instance. Either preserves the given order, or
      * sorts the items according to the order induced by the given data type
+     *
+     * @param <T>
      * @param type The data type is also used for ordering data items
      * @param order Should the items be sorted according to the order induced by the data type
+     * @return
      */
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, boolean order) {
         return new HierarchyBuilderOrderBased<T>(type, order);
@@ -92,8 +123,11 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
 
     /**
      * Creates a new instance. Uses the comparator for ordering data items
+     *
+     * @param <T>
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
+     * @return
      */
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final Comparator<T> comparator) {
         return new HierarchyBuilderOrderBased<T>(type, comparator);
@@ -101,15 +135,20 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
 
     /**
      * Creates a new instance. Uses the defined order for data items
+     *
+     * @param <T>
      * @param type The data type
      * @param order Use this for ordering data items
+     * @return
      */
     public static <T> HierarchyBuilderOrderBased<T> create(final DataType<T> type, final String[] order) {
         return new HierarchyBuilderOrderBased<T>(type, order);
     }
     
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -129,7 +168,9 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -138,12 +179,14 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         return create(new File(file));
     }
 
+    /**  TODO */
     private final Comparator<String> comparator;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type The data type is also used for ordering data items
-     * @param order Should the items be sorted according to the order induced by the data type 
+     * @param order Should the items be sorted according to the order induced by the data type
      */
     private HierarchyBuilderOrderBased(final DataType<T> type, boolean order) {
         super(Type.ORDER_BASED, type);
@@ -166,7 +209,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type The data type
      * @param order Use this for ordering data items
      */
@@ -192,7 +236,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type The data type
      * @param comparator Use this comparator for ordering data items
      */
@@ -216,13 +261,17 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
     }
     
     /**
-     * Returns the comparator
+     * Returns the comparator.
+     *
      * @return
      */
     public Comparator<String> getComparator(){
         return comparator;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased#prepareGroups()
+     */
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractGroup[][] prepareGroups() {

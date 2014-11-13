@@ -11,18 +11,28 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 
 /**
  * This class implements examples of how to use an interval-based hierarchy builder
- * with high precision 
- * 
+ * with high precision .
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  * @author Igor Vujosevic
  */
 public class Example26 extends Example {
     
+    /**
+     * 
+     *
+     * @param args
+     */
     public static void main(final String[] args) {
         intervalBased(0.001d);
     }
 
+    /**
+     * 
+     *
+     * @param interval
+     */
     private static void intervalBased(double interval) {
 
         DataType<Double> dataType = DataType.createDecimal("#.####", Locale.ENGLISH);
@@ -72,6 +82,11 @@ public class Example26 extends Example {
         System.out.println("");
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     private static String[] getExampleData() {
 
         String[] data = new String[]{

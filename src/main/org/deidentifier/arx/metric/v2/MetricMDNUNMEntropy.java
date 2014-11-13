@@ -31,18 +31,19 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -7428794463838685004L;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDNUNMEntropy() {
         super();
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param function
      */
     protected MetricMDNUNMEntropy(AggregateFunction function){
@@ -50,7 +51,9 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(false,                      // monotonic
@@ -61,11 +64,17 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed#toString()
+     */
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;

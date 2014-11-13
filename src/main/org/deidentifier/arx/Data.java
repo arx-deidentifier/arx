@@ -32,8 +32,8 @@ import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
 /**
- * Represents input data for the ARX framework
- * 
+ * Represents input data for the ARX framework.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
@@ -48,18 +48,21 @@ public abstract class Data {
      */
     public static class DefaultData extends Data {
 
-        /** List of tuples */
+        /** List of tuples. */
         private final List<String[]> data = new ArrayList<String[]>();
 
         /**
-         * Adds a row to this data object
-         * 
+         * Adds a row to this data object.
+         *
          * @param row
          */
         public void add(final String... row) {
             data.add(row);
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.Data#iterator()
+         */
         @Override
         protected Iterator<String[]> iterator() {
             return data.iterator();
@@ -68,21 +71,28 @@ public abstract class Data {
     }
 
     /**
-     * A data object for arrays
-     * 
+     * A data object for arrays.
+     *
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     static class ArrayData extends Data {
 
-        /** The array */
+        /** The array. */
         private final String[][] array;
 
-        /** Creates a new instance */
+        /**
+         * Creates a new instance.
+         *
+         * @param array
+         */
         private ArrayData(final String[][] array) {
             this.array = array;
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.Data#iterator()
+         */
         @Override
         protected Iterator<String[]> iterator() {
             return new Iterator<String[]>() {
@@ -113,21 +123,28 @@ public abstract class Data {
     }
 
     /**
-     * A data object for iterators
-     * 
+     * A data object for iterators.
+     *
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     static class IterableData extends Data {
 
-        /** Iterator over tuples */
+        /** Iterator over tuples. */
         private Iterator<String[]> iterator = null;
 
-        /** Creates a new instance */
+        /**
+         * Creates a new instance.
+         *
+         * @param iterator
+         */
         private IterableData(final Iterator<String[]> iterator) {
             this.iterator = iterator;
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.Data#iterator()
+         */
         @Override
         protected Iterator<String[]> iterator() {
             return iterator;
@@ -135,8 +152,8 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new default data object
-     * 
+     * Creates a new default data object.
+     *
      * @return A Data object
      */
     public static DefaultData create() {
@@ -144,12 +161,10 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from the given data source specification
+     * Creates a new data object from the given data source specification.
      *
      * @param source The source that should be used to import data
-     *
      * @return Data object as described by the data source
-     *
      * @throws IOException
      */
     public static Data create(final DataSource source) throws IOException {
@@ -160,12 +175,10 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from a CSV file
-     * 
-     * @param file
-     *            A file
-     * @param separator
-     *            The utilized separator character
+     * Creates a new data object from a CSV file.
+     *
+     * @param file A file
+     * @param separator The utilized separator character
      * @return A Data object
      * @throws IOException
      */
@@ -175,12 +188,10 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from a CSV file
-     * 
-     * @param stream
-     *            An input stream
-     * @param separator
-     *            The utilized separator character
+     * Creates a new data object from a CSV file.
+     *
+     * @param stream An input stream
+     * @param separator The utilized separator character
      * @return A Data object
      * @throws IOException
      */
@@ -189,10 +200,9 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from an iterator over tuples
-     * 
-     * @param iterator
-     *            An iterator
+     * Creates a new data object from an iterator over tuples.
+     *
+     * @param iterator An iterator
      * @return A Data object
      */
     public static Data create(final Iterator<String[]> iterator) {
@@ -210,10 +220,9 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from a list
-     * 
-     * @param list
-     *            The list
+     * Creates a new data object from a list.
+     *
+     * @param list The list
      * @return A Data object
      */
     public static Data create(final List<String[]> list) {
@@ -221,12 +230,10 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from a CSV file
-     * 
-     * @param path
-     *            A path to the file
-     * @param separator
-     *            The utilized separator character
+     * Creates a new data object from a CSV file.
+     *
+     * @param path A path to the file
+     * @param separator The utilized separator character
      * @return A Data object
      * @throws IOException
      */
@@ -236,23 +243,24 @@ public abstract class Data {
     }
 
     /**
-     * Creates a new data object from a two-dimensional string array
-     * 
-     * @param array
-     *            The array
+     * Creates a new data object from a two-dimensional string array.
+     *
+     * @param array The array
      * @return A Data object
      */
     public static Data create(final String[][] array) {
         return new ArrayData(array);
     }
 
+    /**  TODO */
     private DataHandleInput handle;
 
+    /**  TODO */
     private DataDefinition  definition = new DataDefinition();
 
     /**
-     * Returns the data definition
-     * 
+     * Returns the data definition.
+     *
      * @return
      */
     public DataDefinition getDefinition() {
@@ -260,8 +268,8 @@ public abstract class Data {
     }
 
     /**
-     * Returns a data handle
-     * 
+     * Returns a data handle.
+     *
      * @return
      */
     public DataHandle getHandle() {
@@ -273,5 +281,10 @@ public abstract class Data {
         return handle;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     protected abstract Iterator<String[]> iterator();
 }

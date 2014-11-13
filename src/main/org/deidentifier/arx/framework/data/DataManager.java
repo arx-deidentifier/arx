@@ -54,10 +54,10 @@ public class DataManager {
     /** The generalization hierarchiesQI. */
     protected final GeneralizationHierarchy[]            hierarchiesQI;
 
-    /** The sensitive attributes */
+    /** The sensitive attributes. */
     protected final Map<String, GeneralizationHierarchy> hierarchiesSE;
 
-    /** The indexes of sensitive attributes*/
+    /** The indexes of sensitive attributes. */
     protected final Map<String, Integer>                 indexesSE;
 
     /** The hierarchy heights for each QI. */
@@ -69,18 +69,18 @@ public class DataManager {
     /** The minimum level for each QI. */
     protected final int[]                                minLevels;
 
-    /** The original input header */
+    /** The original input header. */
     protected final String[]                             header;
 
-    /** The research subset, if any*/
+    /** The research subset, if any. */
     protected RowSet                           subset     = null;
 
-    /** The size of the research subset*/
+    /** The size of the research subset. */
     protected int                                        subsetSize = 0;
 
     /**
-     * Creates a new data manager from pre-encoded data
-     * 
+     * Creates a new data manager from pre-encoded data.
+     *
      * @param header
      * @param data
      * @param dictionary
@@ -225,6 +225,20 @@ public class DataManager {
 
     }
 
+    /**
+     * 
+     *
+     * @param dataQI
+     * @param dataSE
+     * @param dataIS
+     * @param hierarchiesQI
+     * @param hierarchiesSE
+     * @param indexesSE
+     * @param hierarchyHeights
+     * @param maxLevels
+     * @param minLevels
+     * @param header
+     */
     protected DataManager(final Data dataQI,
                           final Data dataSE,
                           final Data dataIS,
@@ -248,8 +262,8 @@ public class DataManager {
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return the data
      */
     public Data getDataIS() {
@@ -257,8 +271,8 @@ public class DataManager {
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return the data
      */
     public Data getDataQI() {
@@ -266,8 +280,8 @@ public class DataManager {
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return the data
      */
     public Data getDataSE() {
@@ -307,8 +321,8 @@ public class DataManager {
     }
 
     /**
-     * The original data header
-     * 
+     * The original data header.
+     *
      * @return
      */
     public String[] getHeader() {
@@ -467,8 +481,8 @@ public class DataManager {
     }
 
     /**
-     * Encodes the data
-     * 
+     * Encodes the data.
+     *
      * @param data
      * @param map
      * @param mapQI
@@ -528,10 +542,11 @@ public class DataManager {
     }
 
     /**
-     * Performs a sanity check and returns all identifying attributes
-     * 
+     * Performs a sanity check and returns all identifying attributes.
+     *
      * @param columns
      * @param definition
+     * @return
      */
     private Set<String> getIdentifiers(final String[] columns, final DataDefinition definition) {
 

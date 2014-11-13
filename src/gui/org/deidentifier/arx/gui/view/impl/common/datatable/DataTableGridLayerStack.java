@@ -31,17 +31,19 @@ import org.eclipse.nebula.widgets.nattable.grid.data.DefaultRowHeaderDataProvide
 import org.eclipse.swt.widgets.Control;
 
 /**
- * A grid layer stack for the data view
- * @author Fabian Prasser
+ * A grid layer stack for the data view.
  *
+ * @author Fabian Prasser
  */
 public class DataTableGridLayerStack extends DataTableGridLayer {
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param bodyDataProvider
      * @param table
      * @param context
+     * @param parent
      */
     public DataTableGridLayerStack(final IDataProvider bodyDataProvider, NatTable table, DataTableContext context, Control parent) {
         super(true, table, context);

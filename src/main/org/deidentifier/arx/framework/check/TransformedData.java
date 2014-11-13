@@ -21,10 +21,23 @@ package org.deidentifier.arx.framework.check;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 import org.deidentifier.arx.framework.data.Data;
 
+/**
+ * 
+ */
 public class TransformedData {
 
+    /**  TODO */
     public Data buffer;
+    
+    /**  TODO */
     public GroupStatistics statistics;
+    
+    /**
+     * 
+     *
+     * @param data
+     * @param statistics
+     */
     public TransformedData(Data data, GroupStatistics statistics) {
         this.buffer = data;
         this.statistics = statistics;

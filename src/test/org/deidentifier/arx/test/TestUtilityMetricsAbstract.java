@@ -42,32 +42,39 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test for utility metrics
- * 
+ * Test for utility metrics.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class TestUtilityMetricsAbstract extends AbstractTest {
 
     /**
-     * Represents a test case
-     * 
+     * Represents a test case.
+     *
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
     public static class ARXUtilityMetricsTestCase {
 
+        /**  TODO */
         public ARXConfiguration    config;
+        
+        /**  TODO */
         public String              dataset;
+        
+        /**  TODO */
         public String              sensitiveAttribute;
+        
+        /**  TODO */
         public Map<String, String> informationLoss;
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
-         * @param dataset
          * @param sensitiveAttribute
+         * @param dataset
          * @param informationLoss pairs of (Arrays.toString(transformation), informationLoss.toString())
          */
         public ARXUtilityMetricsTestCase(final ARXConfiguration config,
@@ -86,7 +93,8 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
         }
 
         /**
-         * Returns a string description
+         * Returns a string description.
+         *
          * @return
          */
         public String getDescription() {
@@ -104,6 +112,9 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
             return builder.toString();
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
@@ -111,12 +122,12 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
         }
     }
 
-    /** The test case */
+    /** The test case. */
     protected final ARXUtilityMetricsTestCase testcase;
 
     /**
-     * Creates a new instance
-     * 
+     * Creates a new instance.
+     *
      * @param testCase
      */
     public TestUtilityMetricsAbstract(final ARXUtilityMetricsTestCase testCase) {
@@ -124,8 +135,8 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
     }
 
     /**
-     * Returns the data object for the test case
-     * 
+     * Returns the data object for the test case.
+     *
      * @param testCase
      * @return
      * @throws IOException
@@ -172,12 +183,20 @@ public abstract class TestUtilityMetricsAbstract extends AbstractTest {
         return data;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.test.AbstractTest#setUp()
+     */
     @Override
     @Before
     public void setUp() {
         // Empty by design
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void test() throws IOException {
 

@@ -42,19 +42,23 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
 public class ImportWizardModel {
 
     /**
-     * Possible sources for importing data from
-     * 
+     * Possible sources for importing data from.
+     *
      * @see {@link sourceType}
      */
     public enum SourceType {
+        
+        /**  TODO */
         CSV,
+        
+        /**  TODO */
         JDBC,
+        
+        /**  TODO */
         EXCEL
     };
 
-    /**
-     * Actual source data should be imported from
-     */
+    /** Actual source data should be imported from. */
     private SourceType                    sourceType;
 
     /**
@@ -69,14 +73,10 @@ public class ImportWizardModel {
      */
     private List<ImportWizardModelColumn> wizardColumns;
 
-    /**
-     * Location of file to import from
-     */
+    /** Location of file to import from. */
     private String                        fileLocation;
 
-    /**
-     * Separator for columns (in case of CSV import)
-     */
+    /** Separator for columns (in case of CSV import). */
     private char                          csvSeparator;
 
     /**
@@ -89,8 +89,8 @@ public class ImportWizardModel {
     private boolean                       firstRowContainsHeader = true;
 
     /**
-     * Index of sheet to import from (in case of Excel import)
-     * 
+     * Index of sheet to import from (in case of Excel import).
+     *
      * @see {@link SourceType#EXCEL}
      */
     private int                           excelSheetIndex;
@@ -107,24 +107,16 @@ public class ImportWizardModel {
      */
     private List<String[]>                previewData;
 
-    /**
-     * List of potential JDBC tables
-     */
+    /** List of potential JDBC tables. */
     private List<String>                  jdbcTables;
 
-    /**
-     * Name of table selected by user
-     */
+    /** Name of table selected by user. */
     private String                        selectedJdbcTable;
 
-    /**
-     * Jdbc connection potentially used throughout the wizard
-     */
+    /** Jdbc connection potentially used throughout the wizard. */
     private Connection                    jdbcConnection;
 
-    /**
-     * Maximum number of lines to be loaded for preview purposes
-     */
+    /** Maximum number of lines to be loaded for preview purposes. */
     public static final int               previewDataMaxLines    = 25;
 
     /**
@@ -298,8 +290,9 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param connection
-     *            {@link #jdbcConnection}
+     * 
+     *
+     * @param jdbcConnection
      */
     public void setJdbcConnection(Connection jdbcConnection) {
 
@@ -316,8 +309,9 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param wizardColumns
-     *            {@link #previewData}
+     * 
+     *
+     * @param previewData
      */
     public void setPreviewData(List<String[]> previewData) {
 
@@ -334,8 +328,9 @@ public class ImportWizardModel {
     }
 
     /**
-     * @param source
-     *            {@link #sourceType}
+     * 
+     *
+     * @param sourceType
      */
     public void setSourceType(SourceType sourceType) {
 

@@ -36,22 +36,36 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * A view on an l-diversity criterion
+ * A view on an l-diversity criterion.
+ *
  * @author Fabian Prasser
  */
 public class ViewCriterionLDiversity extends ViewCriterion {
 
+    /**  TODO */
     private static final String VARIANTS[] = { Resources.getMessage("CriterionDefinitionView.6"), Resources.getMessage("CriterionDefinitionView.7"), Resources.getMessage("CriterionDefinitionView.8") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+    /**  TODO */
     private Scale               sliderL;
+    
+    /**  TODO */
     private Scale               sliderC;
+    
+    /**  TODO */
     private Combo               comboVariant;
+    
+    /**  TODO */
     private Label               labelC;
+    
+    /**  TODO */
     private Label               labelL;
+    
+    /**  TODO */
     private String              attribute;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param model
@@ -66,6 +80,9 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
+     */
     @Override
     public void reset() {
         sliderL.setSelection(0);
@@ -77,6 +94,9 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         super.reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
@@ -90,6 +110,9 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         super.update(event);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Composite build(Composite parent) {
 
@@ -187,6 +210,9 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         return group;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
+     */
     @Override
     protected void parse() {
         ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);
@@ -217,7 +243,8 @@ public class ViewCriterionLDiversity extends ViewCriterion {
     }
 
     /**
-     * Updates the "c" label and tooltip text
+     * Updates the "c" label and tooltip text.
+     *
      * @param text
      */
     private void updateCLabel(String text) {
@@ -226,7 +253,8 @@ public class ViewCriterionLDiversity extends ViewCriterion {
     }
 
     /**
-     * Updates the "l" label and tooltip text
+     * Updates the "l" label and tooltip text.
+     *
      * @param text
      */
     private void updateLLabel(String text) {

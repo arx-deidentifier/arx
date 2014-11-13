@@ -28,34 +28,43 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * The editor's menu
- * @author Fabian Prasser
+ * The editor's menu.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorMenu<T> {
 
-    /** Var*/
+    /** Var. */
     private final Composite         composite;
-    /** Var*/
+    
+    /** Var. */
     private final Menu              menu;
-    /** Var*/
+    
+    /** Var. */
     private final MenuItem          addBefore;
-    /** Var*/
+    
+    /** Var. */
     private final MenuItem          addAfter;
-    /** Var*/
+    
+    /** Var. */
     private final MenuItem          mergeUp;
-    /** Var*/
+    
+    /** Var. */
     private final MenuItem          mergeDown;
-    /** Var*/
+    
+    /** Var. */
     private final MenuItem          remove;
-    /** Var*/
+    
+    /** Var. */
     private final MenuItem          addRight;
-    /** Var*/
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T> model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param composite
      * @param model
      */
@@ -122,6 +131,12 @@ public class HierarchyWizardEditorMenu<T> {
         
     }
     
+    /**
+     * 
+     *
+     * @param x
+     * @param y
+     */
     @SuppressWarnings("unchecked")
     public void show(int x, int y){
         

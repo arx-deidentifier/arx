@@ -34,17 +34,18 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Supports interaction with the system clipboard
- * 
+ * Supports interaction with the system clipboard.
+ *
  * @author Fabian Prasser
  */
 public class ClipboardHandlerTable {
     
-    /** The table*/
+    /** The table. */
     private final Table table;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param table
      */
     public ClipboardHandlerTable(Table table){
@@ -52,7 +53,7 @@ public class ClipboardHandlerTable {
     }
     
     /**
-     * Copies the table's contents to the clipboard
+     * Copies the table's contents to the clipboard.
      */
     public void copy(){
         if (table != null && table.getItemCount()>0) {
@@ -65,8 +66,8 @@ public class ClipboardHandlerTable {
     }
     
     /**
-     * Creates a pop up menu for this handler
-     * @param parent
+     * Creates a pop up menu for this handler.
+     *
      * @return
      */
     public Menu getMenu() {
@@ -82,8 +83,10 @@ public class ClipboardHandlerTable {
     }
     
     /**
-     * Renders the table into a string
+     * Renders the table into a string.
+     *
      * @param table
+     * @return
      */
     private String getText(Table table){
         

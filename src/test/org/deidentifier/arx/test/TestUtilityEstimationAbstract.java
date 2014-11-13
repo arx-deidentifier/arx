@@ -30,22 +30,25 @@ import org.deidentifier.arx.metric.InformationLoss;
 import org.junit.Test;
 
 /**
- * Test for utility metrics
- * 
+ * Test for utility metrics.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAbstract {
 
     /**
-     * Creates a new instance
-     * 
-     * @param testCase
+     * Creates a new instance.
+     *
+     * @param testcase
      */
     public TestUtilityEstimationAbstract(final ARXUtilityMetricsTestCase testcase) {
         super(testcase);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.test.TestUtilityMetricsAbstract#test()
+     */
     @Test
     public void test() throws IOException {
 
@@ -65,8 +68,9 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
 
     /**
-     * Tests the result
-     * @param testcase 
+     * Tests the result.
+     *
+     * @param testcase
      * @param result
      */
     private void checkResult(ARXUtilityMetricsTestCase testcase, ARXResult result) {
@@ -94,8 +98,9 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
 
     /**
-     * Applies and checks a transformation
-     * @param testcase 
+     * Applies and checks a transformation.
+     *
+     * @param testcase
      * @param result
      * @param node
      */
@@ -109,7 +114,8 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
 
     /**
-     * Tests all estimates within a lattice
+     * Tests all estimates within a lattice.
+     *
      * @param lattice
      */
     private void checkLattice(ARXLattice lattice) {
@@ -121,9 +127,10 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
 
     /**
-     * Compares two losses with tolerance
-     * @param d1
-     * @param d2
+     * Compares two losses with tolerance.
+     *
+     * @param loss1
+     * @param loss2
      * @return
      */
     private int compareWithTolerance(InformationLoss<?> loss1, InformationLoss<?> loss2) {
@@ -139,7 +146,8 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
     
     /**
-     * Returns whether the given string is numeric
+     * Returns whether the given string is numeric.
+     *
      * @param str
      * @return
      */
@@ -148,7 +156,8 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
     
     /**
-     * Compares two doubles with tolerance
+     * Compares two doubles with tolerance.
+     *
      * @param d1
      * @param d2
      * @return
@@ -159,7 +168,8 @@ public abstract class TestUtilityEstimationAbstract extends TestUtilityMetricsAb
     }
     
     /**
-     * Compares double for "equality" with a tolerance of 1 ulp
+     * Compares double for "equality" with a tolerance of 1 ulp.
+     *
      * @param d1
      * @param d2
      * @return

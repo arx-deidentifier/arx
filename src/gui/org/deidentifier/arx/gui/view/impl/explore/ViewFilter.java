@@ -54,46 +54,57 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * This class displays a filter for the lattice
+ * This class displays a filter for the lattice.
+ *
  * @author Fabian Prasser
  */
 public class ViewFilter implements IView {
 
-    /** Scale size */
+    /** Scale size. */
     private static final int SCALE_MAX_VALUE = 1000;
 
-    /** Image */
+    /** Image. */
     private final Image          IMG_RESET;
 
-    /** Image */
+    /** Image. */
     private final Image          IMG_OPTIMUM;
 
-    /** Widget */
+    /** Widget. */
     private Composite            root;
-    /** Widget */
+    
+    /** Widget. */
     private ComponentFilterTable generalization;
-    /** Widget */
+    
+    /** Widget. */
     private Button               anonymous;
-    /** Widget */
+    
+    /** Widget. */
     private Button               nonanonymous;
-    /** Widget */
+    
+    /** Widget. */
     private Button               unknown;
-    /** Widget */
+    
+    /** Widget. */
     private Scale                max;
-    /** Widget */
+    
+    /** Widget. */
     private Scale                min;
 
-    /** Model */
+    /** Model. */
     private Controller           controller;
-    /** Model */
+    
+    /** Model. */
     private ModelNodeFilter      filter          = null;
-    /** Model */
+    
+    /** Model. */
     private Model                model           = null;
-    /** Model */
+    
+    /** Model. */
     private ARXResult            result          = null;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -142,6 +153,9 @@ public class ViewFilter implements IView {
         reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -149,6 +163,9 @@ public class ViewFilter implements IView {
         IMG_OPTIMUM.dispose();
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         filter = null;
@@ -164,6 +181,9 @@ public class ViewFilter implements IView {
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.INPUT) {
@@ -194,7 +214,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionAnonymousChanged() {
         if (filter != null) {
@@ -205,7 +225,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionMaxInfoLossChanged() {
         if (filter != null) {
@@ -217,7 +237,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionMinInfoLossChanged() {
         if (filter != null) {
@@ -229,7 +249,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionNonAnonymousChanged() {
         if (filter != null) {
@@ -240,7 +260,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionReset() {
         if (filter != null) {
@@ -283,7 +303,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionShowOptimum() {
         if (filter != null) {
@@ -292,8 +312,9 @@ public class ViewFilter implements IView {
             fireModelEvent();
         }
     }
+    
     /**
-     * Action
+     * Action.
      */
     private void actionUnknownChanged() {
         if (filter != null) {
@@ -302,8 +323,10 @@ public class ViewFilter implements IView {
             fireModelEvent();
         }
     }
+    
     /**
-     * Creates the view
+     * Creates the view.
+     *
      * @param parent
      */
     private void create(final Composite parent) {
@@ -434,7 +457,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Fires a model event when the filter changes
+     * Fires a model event when the filter changes.
      */
     private void fireModelEvent(){
         controller.update(new ModelEvent(this,
@@ -443,7 +466,8 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Initializes the view
+     * Initializes the view.
+     *
      * @param result
      * @param nodeFilter
      */
@@ -485,9 +509,7 @@ public class ViewFilter implements IView {
     }
 
     /**
-     * Initializes the everything
-     * 
-     * @param string
+     * Initializes the everything.
      */
     private void update() {
         

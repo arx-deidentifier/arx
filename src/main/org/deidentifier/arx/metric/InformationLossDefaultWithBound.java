@@ -19,14 +19,15 @@
 package org.deidentifier.arx.metric;
 
 /**
- * Information loss with a potential lower bound
- * @author Fabian Prasser
+ * Information loss with a potential lower bound.
  *
+ * @author Fabian Prasser
  */
 public class InformationLossDefaultWithBound extends InformationLossWithBound<InformationLossDefault> {
 
     /**
-     * Creates a new instance without a lower bound
+     * Creates a new instance without a lower bound.
+     *
      * @param informationLoss
      */
     public InformationLossDefaultWithBound(double informationLoss) {
@@ -34,7 +35,8 @@ public class InformationLossDefaultWithBound extends InformationLossWithBound<In
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param informationLoss
      * @param lowerBound
      */

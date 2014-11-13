@@ -28,19 +28,21 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
- * A model for the clipboard
+ * A model for the clipboard.
+ *
  * @author Fabian Prasser
  */
 public class ModelClipboard {
 
-    /** The clipboard, an ordered list of nodes */
+    /** The clipboard, an ordered list of nodes. */
     private transient List<ARXNode> clipboard = new ArrayList<ARXNode>();
     
-    /** Is this modified*/
+    /** Is this modified. */
     private boolean modified = false;
 
     /**
-     * Add a set of elements to the clipboard
+     * Add a set of elements to the clipboard.
+     *
      * @param list
      */
     public void addAllToClipboard(List<ARXNode> list) {
@@ -52,7 +54,8 @@ public class ModelClipboard {
     }
     
     /**
-     * Add a node to the clipboard
+     * Add a node to the clipboard.
+     *
      * @param node
      */
     public void addToClipboard(ARXNode node) {
@@ -65,7 +68,9 @@ public class ModelClipboard {
         }
     }
     
-    /** Clear the clipboard*/
+    /**
+     * Clear the clipboard.
+     */
     public void clearClipboard() {
         if (this.clipboard == null) {
             this.clipboard = new ArrayList<ARXNode>();
@@ -77,7 +82,8 @@ public class ModelClipboard {
     }
 
     /**
-     * Returns a copy of all clipboard entries
+     * Returns a copy of all clipboard entries.
+     *
      * @return
      */
     public List<ARXNode> getClipboardEntries() {
@@ -88,7 +94,8 @@ public class ModelClipboard {
     }
 
     /**
-     * Is the clipboard modified
+     * Is the clipboard modified.
+     *
      * @return
      */
     public boolean isModified() {
@@ -96,7 +103,8 @@ public class ModelClipboard {
     }
     
     /**
-     * Moves the entry down
+     * Moves the entry down.
+     *
      * @param node
      */
     public void moveEntryDown(ARXNode node){
@@ -108,7 +116,8 @@ public class ModelClipboard {
     }
 
     /**
-     * Moves the entry up
+     * Moves the entry up.
+     *
      * @param node
      */
     public void moveEntryUp(ARXNode node){
@@ -120,7 +129,8 @@ public class ModelClipboard {
     }
     
     /**
-     * Removes an entry from the clipboard
+     * Removes an entry from the clipboard.
+     *
      * @param node
      */
     public void removeFromClipboard(ARXNode node) {
@@ -133,14 +143,14 @@ public class ModelClipboard {
     }
     
     /**
-     * Sets as unmodified
+     * Sets as unmodified.
      */
     public void setUnmodified(){
         this.modified = false;
     }
 
     /**
-     * Sorts all nodes according to their minimal information loss
+     * Sorts all nodes according to their minimal information loss.
      */
     public void sort() {
         Collections.sort(clipboard, new Comparator<ARXNode>(){
@@ -157,7 +167,7 @@ public class ModelClipboard {
     }
 
     /**
-     * Sets as modified
+     * Sets as modified.
      */
     private void setModified(){
         this.modified = true;

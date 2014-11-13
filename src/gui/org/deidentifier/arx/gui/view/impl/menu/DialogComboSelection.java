@@ -76,9 +76,7 @@ public class DialogComboSelection extends Dialog {
      */
     private Button          okButton;
 
-    /**
-     * Choices for combo widget
-     */
+    /** Choices for combo widget. */
     private String[]        choices;
 
     /**
@@ -276,6 +274,9 @@ public class DialogComboSelection extends Dialog {
         return okButton;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getShellListener()
+     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

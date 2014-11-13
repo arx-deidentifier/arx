@@ -42,30 +42,41 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = -218192738838711533L;
-    /** Height */
+    
+    /** Height. */
     private int[]             height;
-    /** Number of cells*/
+    
+    /** Number of cells. */
     private double            cells;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricNMPrecision() {
         super(false, false);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         return new InformationLossDefault(1);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#createMinInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(0);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Non-Monotonic Precision";
@@ -79,13 +90,17 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
     }
     
     /**
-     * Returns the number of cells
+     * Returns the number of cells.
+     *
      * @return
      */
     protected double getCells() {
         return cells;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -114,6 +129,9 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         return new InformationLossDefaultWithBound(precision, getLowerBound(node).getValue());
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricWeighted#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         double result = 0;
@@ -129,12 +147,18 @@ public class MetricNMPrecision extends MetricWeighted<InformationLossDefault> {
         return new InformationLossDefault(result);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricWeighted#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
        return getLowerBoundInternal(node);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricWeighted#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

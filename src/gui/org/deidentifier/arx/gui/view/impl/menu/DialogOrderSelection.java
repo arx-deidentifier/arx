@@ -53,28 +53,36 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * An dialog that allows ordering data items
+ * An dialog that allows ordering data items.
+ *
  * @author Fabian Prasser
  */
 public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
-    /** A list control*/
+    /** A list control. */
     private List        list;
-    /** Logo*/
+    
+    /** Logo. */
     private Image       image;
-    /** Controller*/
+    
+    /** Controller. */
     private Controller  controller;
-    /** Elements*/
+    
+    /** Elements. */
     private String[]    elements;
-    /** Type*/
+    
+    /** Type. */
     private DataType<?> type;
-    /** Combo control*/
+    
+    /** Combo control. */
     private Combo       combo;
-    /** Locale*/
+    
+    /** Locale. */
     private Locale      locale;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parentShell
      * @param elements
      * @param type
@@ -94,6 +102,9 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         this.locale = locale;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#close()
+     */
     @Override
     public boolean close() {
         if (image != null)
@@ -102,7 +113,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Returns the result
+     * Returns the result.
+     *
      * @return
      */
     public String[] getResult() {
@@ -110,7 +122,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Move an item down
+     * Move an item down.
      */
     private void down() {
         final int index = list.getSelectionIndex();
@@ -124,7 +136,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Returns a description for the given label
+     * Returns a description for the given label.
+     *
      * @param label
      * @return
      */
@@ -138,7 +151,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
     
     /**
-     * Returns the labels of all available data types
+     * Returns the labels of all available data types.
+     *
      * @return
      */
     private String[] getDataTypes(){
@@ -152,7 +166,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Returns the index of a given data type
+     * Returns the index of a given data type.
+     *
      * @param type
      * @return
      */
@@ -168,7 +183,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Checks whether the data type is valid
+     * Checks whether the data type is valid.
+     *
      * @param type
      * @param values
      * @return
@@ -181,7 +197,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
     
     /**
-     * Loads the array from a file
+     * Loads the array from a file.
+     *
      * @param file
      * @return
      */
@@ -210,7 +227,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Saves the array to file
+     * Saves the array to file.
+     *
      * @param file
      * @param elements
      */
@@ -234,7 +252,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Perform sorting
+     * Perform sorting.
+     *
      * @param type
      */
     private void sort(final DataType<?> type) {
@@ -254,7 +273,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Move an item up
+     * Move an item up.
      */
     private void up() {
         final int index = list.getSelectionIndex();
@@ -267,12 +286,18 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -341,6 +366,9 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -350,6 +378,9 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         return contents;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
 
@@ -450,6 +481,9 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         return parent;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return false;

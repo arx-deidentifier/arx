@@ -43,42 +43,40 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
      * XLS is the "old" Excel file type, XLSX is the "new" Excel file type.
      */
     public enum ExcelFileTypes {
+        
+        /**  TODO */
         XLS,
+        
+        /**  TODO */
         XLSX
     };
 
     /**
      * Used file type
      * 
-     * This is the actual filetype that will be used
-     * 
+     * This is the actual filetype that will be used.
+     *
      * @see {@link #setExcelFileType(ExcelFileTypes excelFileType)}
      */
     private ExcelFileTypes excelFileType;
 
-    /**
-     * Sheet index
-     */
+    /** Sheet index. */
     private int            sheetIndex;
 
     /**
-     * Indicates whether first row contains header (names of columns)
-     * 
+     * Indicates whether first row contains header (names of columns).
+     *
      * @see {@link IImportConfigurationWithHeader}
      */
     private boolean        containsHeader;
 
     /**
-     * Creates a new instance of this object
-     * 
-     * @param fileLocation
-     *            {@link #setFileLocation(String)}
-     * @param excelFileType
-     *            {@link #setExcelFileType(ExcelFileTypes)}
-     * @param sheetIndex
-     *            {@link #setSheetIndex(int)}
-     * @param containsHeader
-     *            {@link #setContainsHeader(boolean)}
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param excelFileType {@link #setExcelFileType(ExcelFileTypes)}
+     * @param sheetIndex {@link #setSheetIndex(int)}
+     * @param containsHeader {@link #setContainsHeader(boolean)}
      */
     public ImportConfigurationExcel(String fileLocation,
                                     ExcelFileTypes excelFileType,
@@ -218,8 +216,8 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
 
 
     /**
-     * Sets the indexes based on the header
-     * 
+     * Sets the indexes based on the header.
+     *
      * @param row
      */
     public void prepare(Row row) {

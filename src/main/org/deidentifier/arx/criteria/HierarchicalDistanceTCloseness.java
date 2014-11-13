@@ -23,28 +23,35 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
- * The t-closeness criterion with hierarchical-distance EMD
+ * The t-closeness criterion with hierarchical-distance EMD.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class HierarchicalDistanceTCloseness extends TCloseness {
 
+    /**  TODO */
     private static final long serialVersionUID = -2142590190479670706L;
     
-    /** The hierarchy used for the EMD*/
+    /** The hierarchy used for the EMD. */
     private final Hierarchy hierarchy;
-    /** Internal tree*/
+    
+    /** Internal tree. */
     private int[] tree;
-    /** Internal offset*/
+    
+    /** Internal offset. */
     private int start;
-    /** Internal empty tree*/
+    
+    /** Internal empty tree. */
     private int[] empty;
 
     /**
      * Creates a new instance of the t-closeness criterion with hierarchical earth-movers-distance as proposed in:
-     * Li N, Li T, Venkatasubramanian S. 
-     * t-Closeness: Privacy beyond k-anonymity and l-diversity. 
-     * 23rd International Conference on Data Engineering. 2007:106-115. 
+     * Li N, Li T, Venkatasubramanian S.
+     * t-Closeness: Privacy beyond k-anonymity and l-diversity.
+     * 23rd International Conference on Data Engineering. 2007:106-115.
+     *
+     * @param attribute
      * @param t
      * @param h
      */
@@ -53,6 +60,9 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         this.hierarchy = h;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.ExplicitPrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
+     */
     @Override
     public void initialize(DataManager manager) {
         super.initialize(manager);
@@ -61,6 +71,9 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
         this.empty = new int[this.tree[1]];
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
+     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         
@@ -149,13 +162,17 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     }
 
     /**
-     * Returns the hierarchy backing the EMD calculations
+     * Returns the hierarchy backing the EMD calculations.
+     *
      * @return
      */
     public Hierarchy getHierarchy() {
         return hierarchy;
     }
     
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
+	 */
 	@Override
 	public String toString() {
 		return t+"-closeness with hierarchical distance for attribute '"+attribute+"'";

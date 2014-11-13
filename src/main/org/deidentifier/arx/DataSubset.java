@@ -9,30 +9,43 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class represents a data subset as required for d-presence
+ * This class represents a data subset as required for d-presence.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- *
  */
 public class DataSubset implements Serializable {
     
     /**
-     * Wrapper around a string array
-     * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * Wrapper around a string array.
      *
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
      */
     private static class Entry implements Serializable {
         
+        /**  TODO */
         private static final long serialVersionUID = 31695068160887476L;
+        
+        /**  TODO */
         private String[] data;
+        
+        /**  TODO */
         private int hashcode;
      
+        /**
+         * 
+         *
+         * @param data
+         */
         public Entry(String[] data){
             this.data = data;
             this.hashcode = Arrays.hashCode(data);
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
         public boolean equals(Object obj) {
             if (obj == null) return false;
@@ -40,19 +53,23 @@ public class DataSubset implements Serializable {
             return Arrays.equals(data, other.data);
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
             return hashcode;
         }
     }
 
+    /**  TODO */
     private static final long serialVersionUID = 3945730896172205344L;
     
     /**
-     * Create a subset by matching two data instances. 
+     * Create a subset by matching two data instances.
+     *
      * @param data
-     * @param file
-     * @param separator
+     * @param subset
      * @return
      */
     public static DataSubset create(Data data, Data subset){
@@ -105,7 +122,8 @@ public class DataSubset implements Serializable {
     }
     
     /**
-     * Creates a subset from the given selector
+     * Creates a subset from the given selector.
+     *
      * @param data
      * @param selector
      * @return
@@ -136,7 +154,8 @@ public class DataSubset implements Serializable {
     }
 
     /**
-     * Creates a new subset from the given row set, from which a copy is created
+     * Creates a new subset from the given row set, from which a copy is created.
+     *
      * @param data
      * @param subset
      * @return
@@ -156,7 +175,8 @@ public class DataSubset implements Serializable {
     }
 
     /**
-     * Creates a new subset from the given set of tuple indices
+     * Creates a new subset from the given set of tuple indices.
+     *
      * @param data
      * @param subset
      * @return
@@ -177,15 +197,16 @@ public class DataSubset implements Serializable {
         return new DataSubset(bitset, array);
     }
     
-    /** The subset as a bitset*/
+    /** The subset as a bitset. */
     protected RowSet set;
     
-    /** The subset as a sorted array of indices*/
+    /** The subset as a sorted array of indices. */
     protected int[] array;
 
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param bitSet
      * @param sortedIndices
      */
@@ -194,10 +215,20 @@ public class DataSubset implements Serializable {
         this.array = sortedIndices;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int[] getArray() {
         return array;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public RowSet getSet() {
         return set;
     }

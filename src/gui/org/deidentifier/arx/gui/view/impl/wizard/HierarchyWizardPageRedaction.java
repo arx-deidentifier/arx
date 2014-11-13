@@ -38,36 +38,46 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A page for configuring the redaction-based builder
- * @author Fabian Prasser
+ * A page for configuring the redaction-based builder.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<T> {
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardModelRedaction<T> model;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonLeftAlign;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonRightAlign;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonLeftRedact;
-    /** Var */
+    
+    /** Var. */
     private Button                                 buttonRightRedact;
-    /** Var */
+    
+    /** Var. */
     private Combo                                  comboPaddingChar;
-    /** Var */
+    
+    /** Var. */
     private Combo                                  comboRedactionChar;
-    /** Var */
+    
+    /** Var. */
     private Text                                   textDomainSize;
-    /** Var */
+    
+    /** Var. */
     private Text                                   textAlphabetSize;
-    /** Var */
+    
+    /** Var. */
     private Text                                   textMaximalLength;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param wizard
      * @param model
@@ -84,6 +94,9 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         setPageComplete(true);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -201,6 +214,9 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         setControl(composite);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+     */
     @Override
     public boolean isPageComplete() {
         
@@ -227,12 +243,18 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
         return false;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#setVisible(boolean)
+     */
     @Override
     public void setVisible(boolean value){
         super.setVisible(value);
         model.setVisible(value);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
+     */
     @Override
     public void updatePage() {
         textMaximalLength.setText(model.getMaxValueLength() == null ? "" : String.valueOf(model.getMaxValueLength()));
@@ -247,7 +269,8 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
     }
     
     /**
-     * Creates combo items
+     * Creates combo items.
+     *
      * @param combo
      * @param padding
      */
@@ -260,7 +283,8 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
     }
 
     /**
-     * Decorates a text field for domain properties
+     * Decorates a text field for domain properties.
+     *
      * @param text
      */
     private void decorate(final Text text) {
@@ -292,7 +316,8 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
     
 
     /**
-     * Returns the index of the item, or adds it to the combo
+     * Returns the index of the item, or adds it to the combo.
+     *
      * @param combo
      * @param value
      * @return
@@ -308,7 +333,9 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
     }
     
     /**
-     * Returns whether a valid number has been entered
+     * Returns whether a valid number has been entered.
+     *
+     * @param text
      * @return
      */
     private boolean isValidNumber(String text) {

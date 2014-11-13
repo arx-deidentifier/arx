@@ -31,18 +31,20 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricSDDiscernability extends MetricSDNMDiscernability {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -9156839234909657895L;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricSDDiscernability() {
         super(true);
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(true,                       // monotonic
@@ -53,11 +55,17 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
                                        );
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricSDNMDiscernability#toString()
+     */
     @Override
     public String toString() {
         return "Monotonic discernability (DM*)";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricSDNMDiscernability#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         ILSingleDimensional result = super.getLowerBoundInternal(node, g);

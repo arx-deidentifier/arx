@@ -25,5 +25,10 @@ package org.deidentifier.arx.gui.view.impl.common.table;
  */
 public interface CTComponent {
 
+    /**
+     * 
+     *
+     * @return
+     */
     public CTConfiguration getConfig();
 }

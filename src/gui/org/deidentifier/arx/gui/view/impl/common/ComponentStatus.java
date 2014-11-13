@@ -26,21 +26,33 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * This class implements a wrapper around a control that displays the current status:
- * (1) nothing to display, (2) working, (3) done (shows the control)
- * 
+ * (1) nothing to display, (2) working, (3) done (shows the control).
+ *
  * @author Fabian Prasser
  */
 public class ComponentStatus {
 
+    /**  TODO */
     private final Controller controller;
+    
+    /**  TODO */
     private final StackLayout layout;
+    
+    /**  TODO */
     private final Composite working;
+    
+    /**  TODO */
     private final Composite empty;
+    
+    /**  TODO */
     private final Composite parent;
+    
+    /**  TODO */
     private final Control child;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param parent
      * @param child
@@ -67,7 +79,11 @@ public class ComponentStatus {
         this.parent.layout(true);
     }
     
-    /** Is the current status visible*/
+    /**
+     * Is the current status visible.
+     *
+     * @return
+     */
     public boolean isVisible(){
         return this.parent.isVisible();
     }
@@ -89,7 +105,7 @@ public class ComponentStatus {
     }
     
     /**
-     * Enables status 'working'
+     * Enables status 'working'.
      */
     public void setWorking(){
         this.layout.topControl = working;
@@ -97,7 +113,8 @@ public class ComponentStatus {
     }
     
     /**
-     * Creates a composite for the empty status
+     * Creates a composite for the empty status.
+     *
      * @param parent
      * @return
      */
@@ -110,7 +127,8 @@ public class ComponentStatus {
     }
     
     /**
-     * Creates a composite for the working status
+     * Creates a composite for the working status.
+     *
      * @param parent
      * @return
      */

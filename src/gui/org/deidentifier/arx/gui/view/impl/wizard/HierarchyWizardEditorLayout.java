@@ -25,24 +25,25 @@ import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelGrouping.Hi
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval;
 
 /**
- * 
- * Layouts the tree shown in the wizard
- * @author Fabian Prasser
+ * Layouts the tree shown in the wizard.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorLayout<T> {
 
-    /** Constant */
+    /** Constant. */
     public static final int                       PRETTY_THRESHOLD = 100;
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardModelGrouping<T> model;
-    /** Var */
+    
+    /** Var. */
     private boolean                               pretty           = true;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param model
      */
     public HierarchyWizardEditorLayout(HierarchyWizardModelGrouping<T> model){
@@ -50,7 +51,8 @@ public class HierarchyWizardEditorLayout<T> {
     }
 
     /**
-     * Is the layout pretty
+     * Is the layout pretty.
+     *
      * @return
      */
     public boolean isPretty(){
@@ -58,7 +60,8 @@ public class HierarchyWizardEditorLayout<T> {
     }
     
     /**
-     * Computes the cardinalities of the optimal number of elements per hierarchy level
+     * Computes the cardinalities of the optimal number of elements per hierarchy level.
+     *
      * @return
      */
     public int[] layout() {
@@ -156,7 +159,8 @@ public class HierarchyWizardEditorLayout<T> {
     }
 
     /**
-     * Sets the pretty mode
+     * Sets the pretty mode.
+     *
      * @param pretty
      */
     public void setPretty(boolean pretty) {

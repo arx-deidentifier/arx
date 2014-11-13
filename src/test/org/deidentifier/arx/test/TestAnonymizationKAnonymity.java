@@ -29,14 +29,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for data transformations
- * 
+ * Test for data transformations.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
 public class TestAnonymizationKAnonymity extends TestAnonymizationAbstract {
 
+    /**
+     * 
+     *
+     * @return
+     */
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
@@ -61,6 +66,11 @@ public class TestAnonymizationKAnonymity extends TestAnonymizationAbstract {
         });
     }
 
+    /**
+     * 
+     *
+     * @param testCase
+     */
     public TestAnonymizationKAnonymity(final ARXAnonymizationTestCase testCase) {
         super(testCase);
     }

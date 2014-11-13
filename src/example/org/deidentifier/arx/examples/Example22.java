@@ -35,9 +35,9 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply l-diversity criteria 
- * without protecting sensitive assocations
- * 
+ * This class implements an example on how to apply l-diversity criteria
+ * without protecting sensitive assocations.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
@@ -45,9 +45,9 @@ public class Example22 extends Example {
 
     /**
      * Entry point.
-     * 
-     * @param args
-     *            the arguments
+     *
+     * @param args the arguments
+     * @throws IOException
      */
     public static void main(final String[] args) throws IOException {
         
@@ -66,6 +66,13 @@ public class Example22 extends Example {
         printResult(result, data);
     }
 
+    /**
+     * 
+     *
+     * @param dataset
+     * @return
+     * @throws IOException
+     */
     public static Data createData(final String dataset) throws IOException {
 
         final Data data = Data.create("data/" + dataset + ".csv", ';');

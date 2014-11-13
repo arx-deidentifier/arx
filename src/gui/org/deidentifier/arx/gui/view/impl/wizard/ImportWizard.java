@@ -46,30 +46,37 @@ import org.eclipse.jface.wizard.IWizardPage;
  */
 public class ImportWizard extends ARXWizard<ImportConfiguration> {
 
-    /**
-     * Reference to container storing all the data gathered by the wizard
-     */
+    /** Reference to container storing all the data gathered by the wizard. */
     private ImportWizardModel       data          = new ImportWizardModel();
 
-    /**
-     * Reference of controller being used by this wizard
-     */
+    /** Reference of controller being used by this wizard. */
     private Controller              controller;
 
-    /**
-     * Reference of model being used by this wizard
-     */
+    /** Reference of model being used by this wizard. */
     private Model                   model;
 
     /*
      * All of the pages provided by this wizard
      */
+    /**  TODO */
     private ImportWizardPageSource  sourcePage;
+    
+    /**  TODO */
     private ImportWizardPageCSV     csvPage;
+    
+    /**  TODO */
     private ImportWizardPageColumns columnPage;
+    
+    /**  TODO */
     private ImportWizardPagePreview previewPage;
+    
+    /**  TODO */
     private ImportWizardPageJDBC    jdbcPage;
+    
+    /**  TODO */
     private ImportWizardPageTable   tablePage;
+    
+    /**  TODO */
     private ImportWizardPageExcel   xlsPage;
 
     /**
@@ -90,12 +97,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     private ImportConfiguration           configuration = null;
 
     /**
-     * Creates a new data import wizard and sets the window title
-     * 
-     * @param controller
-     *            Reference to controller
-     * @param model
-     *            Reference to model
+     * Creates a new data import wizard and sets the window title.
+     *
+     * @param controller Reference to controller
+     * @param model Reference to model
      */
     public ImportWizard(Controller controller, Model model) {
 
@@ -107,11 +112,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
-     * Adds all of the available pages to the wizard
-     * 
+     * Adds all of the available pages to the wizard.
+     *
      * @note Note that for reasons of simplicity all pages are directly added
-     *       here. The page ordering is handled by
-     *       {@link #getNextPage(IWizardPage)}.
+     *       here. The page ordering is handled by {@link #getNextPage(IWizardPage)}.
      */
     @Override
     public void addPages() {
@@ -144,7 +148,8 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * The wizard can only be finished on the {@link #previewPage preview page}.
      * This makes sure that the user is signs off on the settings previously
      * made.
-     * 
+     *
+     * @return
      * @see {@link #performFinish()}
      */
     @Override
@@ -198,11 +203,10 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * The wizard will built an appropriate {@link ImportConfiguration} object once it
      * is about to finish {@link #performFinish()}. This object can then be
      * retrieved using this method.
-     * 
+     *
+     * @return {@link #configuration} The resulting data source configuration
      * @note Note however, that the return value might be null, when the wizard
      *       wasn't completed successfully.
-     * 
-     * @return {@link #configuration} The resulting data source configuration
      */
     public ImportConfiguration getResult() {
         return configuration;
@@ -217,7 +221,8 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      * 
      * {@link #configuration} will hold a reference of the object. This can be
      * retrieved later on by {@link #getResultingConfiguration()}.
-     * 
+     *
+     * @return
      * @see {@link #getResultingConfiguration()}
      */
     @Override
@@ -259,8 +264,11 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
         return true;
     }
     
-    /** 
-     * Cancel pressed
+    /**
+     * 
+     * Cancel pressed.
+     *
+     * @return
      */
     @Override
     public boolean performCancel() {
@@ -273,21 +281,27 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
-     * Returns a reference to the controller being used by this wizard
+     * Returns a reference to the controller being used by this wizard.
+     *
+     * @return
      */
     Controller getController() {
         return controller;
     }
 
     /**
-     * Returns a reference to the object containing the gathered data
+     * Returns a reference to the object containing the gathered data.
+     *
+     * @return
      */
     ImportWizardModel getData() {
         return data;
     }
 
     /**
-     * Returns a reference to the model being used by this wizard
+     * Returns a reference to the model being used by this wizard.
+     *
+     * @return
      */
     Model getModel() {
         return model;

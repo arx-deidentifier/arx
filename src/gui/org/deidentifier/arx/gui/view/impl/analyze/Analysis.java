@@ -19,19 +19,36 @@
 package org.deidentifier.arx.gui.view.impl.analyze;
 
 /**
- * A generic interface for analyses that are performed asynchronously
+ * A generic interface for analyses that are performed asynchronously.
+ *
  * @author Fabian Prasser
  */
 public abstract class Analysis {
 
-    /** Called to stop the analysis*/
+    /**
+     * Called to stop the analysis.
+     */
     public abstract void stop();
-    /** Implement the analysis here*/
+    
+    /**
+     * Implement the analysis here.
+     *
+     * @throws InterruptedException
+     */
     public abstract void run() throws InterruptedException;
-    /** Perform finish*/
+    
+    /**
+     * Perform finish.
+     */
     public abstract void onFinish();
-    /** Perform error handling*/
+    
+    /**
+     * Perform error handling.
+     */
     public abstract void onError();
-    /** Perform interrupt handling*/
+    
+    /**
+     * Perform interrupt handling.
+     */
     public abstract void onInterrupt();
 }

@@ -30,7 +30,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMultiDimensionalPotentiallyPrecomputed {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -3213516677340712914L;
 
     /**
@@ -60,7 +60,9 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     }
     
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(false,                       // monotonic
@@ -72,13 +74,17 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     }
     
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
 
     /**
-     * For backwards compatibility
+     * For backwards compatibility.
+     *
      * @param cache
      * @param cardinalities
      * @param hierarchies

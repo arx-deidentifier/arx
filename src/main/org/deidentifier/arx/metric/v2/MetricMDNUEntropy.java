@@ -31,18 +31,19 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -8114158144622853288L;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDNUEntropy() {
         super();
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param function
      */
     protected MetricMDNUEntropy(AggregateFunction function){
@@ -50,7 +51,9 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(true,                       // monotonic
@@ -61,17 +64,26 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#isIndependent()
+     */
     @Override
     public boolean isIndependent() {
         // TODO: Remove
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#toString()
+     */
     @Override
     public String toString() {
         return "Non-uniform entropy";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return null;

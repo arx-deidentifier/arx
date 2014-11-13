@@ -25,30 +25,39 @@ import org.deidentifier.arx.gui.model.Model;
 
 
 /**
- * The current context
+ * The current context.
+ *
  * @author Fabian Prasser
  */
 public class AnalysisContextVisualizationContingency implements AnalysisContextVisualization {
 
-    /** Context information */
+    /** Context information. */
     public String        attribute1     = null;
-    /** Context information */
+    
+    /** Context information. */
     public String        attribute2     = null;
-    /** Context information */
+    
+    /** Context information. */
     public DataType<?>   dataType1      = null;
-    /** Context information */
+    
+    /** Context information. */
     public DataType<?>   dataType2      = null;
-    /** Context information */
+    
+    /** Context information. */
     public AttributeType attributeType1 = null;
-    /** Context information */
+    
+    /** Context information. */
     public AttributeType attributeType2 = null;
-    /** Context information */
+    
+    /** Context information. */
     public DataHandle    handle         = null;
-    /** Context information */
+    
+    /** Context information. */
     public Model         model          = null;
 
     /**
-     * Creates a new context from the given context
+     * Creates a new context from the given context.
+     *
      * @param context
      */
     public AnalysisContextVisualizationContingency(AnalysisContext context){
@@ -67,7 +76,8 @@ public class AnalysisContextVisualizationContingency implements AnalysisContextV
     }
     
     /**
-     * Is this a valid context
+     * Is this a valid context.
+     *
      * @return
      */
     public boolean isValid(){
@@ -83,7 +93,8 @@ public class AnalysisContextVisualizationContingency implements AnalysisContextV
     }
     
     /**
-     * Is the provided attribute selected according to the config?
+     * Is the provided attribute selected according to the config?.
+     *
      * @param attribute
      * @return
      */

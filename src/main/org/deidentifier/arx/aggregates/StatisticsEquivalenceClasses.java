@@ -3,15 +3,18 @@ package org.deidentifier.arx.aggregates;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
 /**
- * Statistics about the equivalence classes
+ * Statistics about the equivalence classes.
+ *
  * @author Fabian Prasser
  */
 public class StatisticsEquivalenceClasses {
 
+    /**  TODO */
     private GroupStatistics groupStatistics;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param groupStatistics Statistics obtained from hash groupify
      */
     public StatisticsEquivalenceClasses(GroupStatistics groupStatistics) {
@@ -47,7 +50,8 @@ public class StatisticsEquivalenceClasses {
 
 
     /**
-     * Returns the maximal size of an equivalence class
+     * Returns the maximal size of an equivalence class.
+     *
      * @return
      */
     public double getAverageEquivalenceClassSize(){
@@ -55,7 +59,8 @@ public class StatisticsEquivalenceClasses {
     }
 
     /**
-     * Returns the maximal size of an equivalence class
+     * Returns the maximal size of an equivalence class.
+     *
      * @return
      */
     public int getMaximalEquivalenceClassSize(){
@@ -63,7 +68,8 @@ public class StatisticsEquivalenceClasses {
     }
 
     /**
-     * Returns the minimal size of an equivalence class
+     * Returns the minimal size of an equivalence class.
+     *
      * @return
      */
     public int getMinimalEquivalenceClassSize(){
@@ -72,8 +78,8 @@ public class StatisticsEquivalenceClasses {
 
     /**
      * Returns the number of equivalence classes in the currently selected data
-     * representation
-     * 
+     * representation.
+     *
      * @return
      */
     public int getNumberOfGroups() {
@@ -82,8 +88,8 @@ public class StatisticsEquivalenceClasses {
 
     /**
      * Returns the number of outlying equivalence classes in the currently selected data
-     * representation
-     * 
+     * representation.
+     *
      * @return
      */
     public int getNumberOfOutlyingEquivalenceClasses() {
@@ -92,8 +98,8 @@ public class StatisticsEquivalenceClasses {
 
     /**
      * Returns the number of outliers in the currently selected data
-     * representation
-     * 
+     * representation.
+     *
      * @return
      */
     public int getNumberOfOutlyingTuples() {

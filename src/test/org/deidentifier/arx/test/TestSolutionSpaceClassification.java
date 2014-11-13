@@ -34,8 +34,17 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Test;
 
+/**
+ * 
+ */
 public class TestSolutionSpaceClassification extends AbstractTest {
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testNMEntropy() throws IllegalArgumentException, IOException {
 

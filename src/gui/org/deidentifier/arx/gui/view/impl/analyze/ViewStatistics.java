@@ -29,36 +29,45 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This is a base class for displaying contingency tables
+ * This is a base class for displaying contingency tables.
+ *
  * @author Fabian Prasser
+ * @param <T>
  */
 public abstract class ViewStatistics<T extends AnalysisContextVisualization> implements IView {
 
-    /** Our users are patient*/
+    /** Our users are patient. */
     public static final int MINIMAL_WORKING_TIME = 500;
     
-    /** Internal stuff */
+    /** Internal stuff. */
     private AnalysisContext       context  = new AnalysisContext();
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final Controller      controller;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private Model                 model;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final ModelPart       reset;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final ModelPart       target;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private final ComponentStatus status;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private T viewContext;
     
 	/**
-	 * Creates a new density plot
-	 * @param parent
-	 * @param controller
-	 * @param target
-	 * @param reset
-	 */
+     * Creates a new density plot.
+     *
+     * @param parent
+     * @param controller
+     * @param target
+     * @param reset
+     */
     public ViewStatistics(final Composite parent,
                        final Controller controller,
                        final ModelPart target,
@@ -94,17 +103,26 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         this.reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         this.doReset();
         status.setEmpty();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -169,7 +187,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     }
 
     /**
-     * Redraws the plot
+     * Redraws the plot.
      */
     private void update() {
 
@@ -197,42 +215,51 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
     }
     
+    /**
+     * 
+     *
+     * @param context
+     * @return
+     */
     protected abstract T createViewConfig(AnalysisContext context);
     
-    /** 
-     * Implement this to create the widget
+    /**
+     * 
+     * Implement this to create the widget.
+     *
      * @param parent
      * @return
      */
     protected abstract Control createControl(Composite parent);
 
     /**
-     * Implement this to reset
+     * Implement this to reset.
      */
     protected abstract void doReset();
 
     /**
-     * Implement this to update
+     * Implement this to update.
+     *
      * @param context
      */
     protected abstract void doUpdate(T context);
 
     /**
-     * Status update
+     * Status update.
      */
     protected void setStatusDone(){
         this.status.setDone();
     }
 
     /**
-     * Status empty
+     * Status empty.
      */
     protected void setStatusEmpty(){
         this.status.setEmpty();
     }
 
     /**
-     * Status working
+     * Status working.
      */
     protected void setStatusWorking(){
         this.status.setWorking();

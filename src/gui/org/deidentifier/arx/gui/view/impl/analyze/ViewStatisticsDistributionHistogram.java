@@ -49,23 +49,27 @@ import org.swtchart.ITitle;
 import org.swtchart.Range;
 
 /**
- * This view displays a frequency distribution
+ * This view displays a frequency distribution.
+ *
  * @author Fabian Prasser
  */
 public class ViewStatisticsDistributionHistogram extends ViewStatistics<AnalysisContextVisualizationDistribution> {
 
-    /** Minimal width of a category label */
+    /** Minimal width of a category label. */
     private static final int MIN_CATEGORY_WIDTH = 10;
 
-    /** The chart */
+    /** The chart. */
     private Chart            chart;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private Composite        root;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private AnalysisManager  manager;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param target
@@ -81,7 +85,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     }
 
     /**
-     * Makes the chart show category labels or not
+     * Makes the chart show category labels or not.
      */
     private void updateCategories(){
         if (chart != null){
@@ -100,6 +104,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createControl(Composite parent) {
         this.root = new Composite(parent, SWT.NONE);
@@ -107,11 +114,17 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         return this.root;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
+     */
     @Override
     protected AnalysisContextVisualizationDistribution createViewConfig(AnalysisContext context) {
         return new AnalysisContextVisualizationDistribution(context);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
+     */
     @Override
     protected void doReset() {
         
@@ -209,6 +222,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         updateCategories();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
+     */
     @Override
     protected void doUpdate(AnalysisContextVisualizationDistribution context) {
 

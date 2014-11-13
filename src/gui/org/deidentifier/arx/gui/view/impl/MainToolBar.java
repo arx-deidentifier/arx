@@ -53,40 +53,51 @@ import org.eclipse.swt.widgets.ToolItem;
 import cern.colt.Arrays;
 
 /**
- * This class implements the global application tool bar
+ * This class implements the global application tool bar.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class MainToolBar implements IView {
 
     /**
-     * Helper class including some statistics
+     * Helper class including some statistics.
      */
     private static class SearchSpaceStatistics {
         
-        /** Count*/
+        /** Count. */
         private final int numTransformationsInSearchSpace;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsPruned;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsAnonymous;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsNotAnonymous;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsProbablyAnonymous;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsProbablyNotAnonymous;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsAnonymityUnknown;
-        /** Count*/
+        
+        /** Count. */
         private final int numTransformationsInfolossAvailable;
-        /** Time in seconds*/
+        
+        /** Time in seconds. */
         private final double executionTime;
-        /** Optimal transformation*/
+        
+        /** Optimal transformation. */
         private final ARXNode optimum;
         
         /**
-         * Creates the statistics
+         * Creates the statistics.
+         *
          * @param result
          */
         private SearchSpaceStatistics(ARXResult result){
@@ -137,6 +148,9 @@ public class MainToolBar implements IView {
             this.optimum = result.getGlobalOptimum();
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString() {
 
@@ -208,34 +222,42 @@ public class MainToolBar implements IView {
         }
     }
 
-    /** Static offset */
+    /** Static offset. */
     private static final int OFFSET = 10;
 
-    /** Text */
+    /** Text. */
     private String           tooltip;
 
-    /** State */
+    /** State. */
     private Controller       controller;
-    /** State */
+    
+    /** State. */
     private Model            model;
-    /** State */
+    
+    /** State. */
     private List<ToolItem>   toolitems;
 
-    /** Widget */
+    /** Widget. */
     private ToolBar          toolbar;
-    /** Widget */
+    
+    /** Widget. */
     private Label            labelTransformations;
-    /** Widget */
+    
+    /** Widget. */
     private Label            labelApplied;
-    /** Widget */
+    
+    /** Widget. */
     private Label            labelSelected;
-    /** Widget */
+    
+    /** Widget. */
     private Composite        infoComposite;
-    /** Widget */
+    
+    /** Widget. */
     private ToolItem         infoItem;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -251,11 +273,17 @@ public class MainToolBar implements IView {
         toolbar.pack();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         if (labelSelected != null) {
@@ -281,6 +309,9 @@ public class MainToolBar implements IView {
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         
@@ -344,7 +375,7 @@ public class MainToolBar implements IView {
     
 
     /**
-     * Builds the component
+     * Builds the component.
      */
     private void build() {
         toolitems = new ArrayList<ToolItem>();
@@ -539,7 +570,7 @@ public class MainToolBar implements IView {
     }
 
     /**
-     * Performs layouting
+     * Performs layouting.
      */
     private void layout() {
         
@@ -580,8 +611,9 @@ public class MainToolBar implements IView {
     }
 
     /**
-     * Sets the tooltip
-     * @param text
+     * Sets the tooltip.
+     *
+     * @param stats
      */
     private void setToolTip(SearchSpaceStatistics stats) {
         this.tooltip = stats.toString();

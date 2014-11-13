@@ -24,8 +24,8 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
 
 /**
- * This class implements examples of how to use aggregate functions
- * 
+ * This class implements examples of how to use aggregate functions.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
@@ -33,9 +33,8 @@ public class Example20 extends Example {
 
     /**
      * Entry point.
-     * 
+     *
      * @param args The arguments
-     * @throws ParseException 
      */
     public static void main(final String[] args) {
 
@@ -45,6 +44,12 @@ public class Example20 extends Example {
         aggregate(new String[]{"1", "2", "5", "11", "12", "3"}, DataType.INTEGER);
     }
     
+    /**
+     * 
+     *
+     * @param args
+     * @param type
+     */
     private static void aggregate(String[] args, DataType<?> type){
         
         AggregateFunctionBuilder<?> builder = type.createAggregate();

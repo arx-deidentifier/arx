@@ -36,21 +36,31 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * Implements a view on a t-closeness criterion
+ * Implements a view on a t-closeness criterion.
+ *
  * @author Fabian Prasser
  */
 public class ViewCriterionTCloseness extends ViewCriterion {
 
+    /**  TODO */
     private static final String VARIANTS[] = {
                                            Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
 
+    /**  TODO */
     private Scale               sliderT;
+    
+    /**  TODO */
     private Combo               comboVariant;
+    
+    /**  TODO */
     private Label               labelT;
+    
+    /**  TODO */
     private String              attribute;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param model
@@ -64,6 +74,9 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
+     */
     @Override
     public void reset() {
         sliderT.setSelection(0);
@@ -72,6 +85,9 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         super.reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
@@ -85,6 +101,9 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         super.update(event);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Composite build(Composite parent) {
 
@@ -149,6 +168,9 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         return group;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
+     */
     @Override
     protected void parse() {
         ModelTClosenessCriterion m = model.getTClosenessModel().get(attribute);
@@ -169,7 +191,8 @@ public class ViewCriterionTCloseness extends ViewCriterion {
     }
     
     /**
-     * Updates the label and tooltip text
+     * Updates the label and tooltip text.
+     *
      * @param text
      */
     private void updateLabel(String text) {

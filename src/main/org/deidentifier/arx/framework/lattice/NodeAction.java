@@ -19,27 +19,36 @@
 package org.deidentifier.arx.framework.lattice;
 
 /**
- * A trigger for nodes
- * 
+ * A trigger for nodes.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class NodeAction {
 
     /**
-     * A trigger for nodes
-     * 
+     * A trigger for nodes.
+     *
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
     public static class NodeActionConstant extends NodeAction {
 
+        /**  TODO */
         private final boolean result;
 
+        /**
+         * 
+         *
+         * @param result
+         */
         public NodeActionConstant(boolean result) {
             this.result = result;
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
+         */
         @Override
         public boolean appliesTo(Node node) {
             return result;
@@ -47,19 +56,28 @@ public abstract class NodeAction {
     }
 
     /**
-     * A trigger for nodes
-     * 
+     * A trigger for nodes.
+     *
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
     public static class NodeActionInverse extends NodeAction {
 
+        /**  TODO */
         private final NodeAction trigger;
 
+        /**
+         * 
+         *
+         * @param trigger
+         */
         public NodeActionInverse(NodeAction trigger) {
             this.trigger = trigger;
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
+         */
         @Override
         public boolean appliesTo(Node node) {
             return !trigger.appliesTo(node);
@@ -67,67 +85,99 @@ public abstract class NodeAction {
     }
 
     /**
-     * A trigger for nodes
-     * 
+     * A trigger for nodes.
+     *
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
     public static abstract class NodeActionOR extends NodeAction {
 
+        /**  TODO */
         private final NodeAction trigger;
 
+        /**
+         * 
+         *
+         * @param trigger
+         */
         public NodeActionOR(NodeAction trigger) {
             this.trigger = trigger;
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
+         */
         @Override
         public boolean appliesTo(Node node) {
             return trigger.appliesTo(node) || additionalConditionAppliesTo(node);
         }
         
-        /** The additional condition to implement*/
+        /**
+         * The additional condition to implement.
+         *
+         * @param node
+         * @return
+         */
         protected abstract boolean additionalConditionAppliesTo(Node node);
     }
 
     /**
-     * A trigger for nodes
-     * 
+     * A trigger for nodes.
+     *
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
     public static abstract class NodeActionAND extends NodeAction {
 
+        /**  TODO */
         private final NodeAction trigger;
 
+        /**
+         * 
+         *
+         * @param trigger
+         */
         public NodeActionAND(NodeAction trigger) {
             this.trigger = trigger;
         }
 
+        /* (non-Javadoc)
+         * @see org.deidentifier.arx.framework.lattice.NodeAction#appliesTo(org.deidentifier.arx.framework.lattice.Node)
+         */
         @Override
         public boolean appliesTo(Node node) {
             return trigger.appliesTo(node) && additionalConditionAppliesTo(node);
         }
         
-        /** The additional condition to implement*/
+        /**
+         * The additional condition to implement.
+         *
+         * @param node
+         * @return
+         */
         protected abstract boolean additionalConditionAppliesTo(Node node);
     }
     
     /**
-     * Determines whether the trigger action should be performed
+     * Determines whether the trigger action should be performed.
+     *
      * @param node
      * @return
      */
     public abstract boolean appliesTo(Node node);
     
     /**
-     * Implements the action to be performed
+     * Implements the action to be performed.
+     *
+     * @param node
      */
     public void action(Node node) {
         // Empty by design
     }
     
     /**
-     * Applies the trigger to the given node
+     * Applies the trigger to the given node.
+     *
      * @param node
      */
     public final void apply(Node node){

@@ -26,23 +26,27 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This worker applies a transformation
- * @author Fabian Prasser
+ * This worker applies a transformation.
  *
+ * @author Fabian Prasser
  */
 public class WorkerTransform extends Worker<DataHandle> {
 
-	/** The model*/
+	/** The model. */
     private final Model model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param model
      */
     public WorkerTransform(final Model model) {
         this.model = model;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
     @Override
     public void
             run(final IProgressMonitor arg0) throws InvocationTargetException,

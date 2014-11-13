@@ -22,24 +22,25 @@ import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * This class implements an information loss which can be represented as a
- * decimal number per quasi-identifier
- * 
+ * decimal number per quasi-identifier.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class AbstractILMultiDimensional extends InformationLoss<double[]> {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 4600789773980813693L;
 
-    /** Values */
+    /** Values. */
     private double[]          values;
-    /** Weights */
+    
+    /** Weights. */
     private double[]          weights;
 
     /**
-     * Creates a new instance
-     * 
+     * Creates a new instance.
+     *
      * @param values
      * @param weights
      */
@@ -48,12 +49,21 @@ public abstract class AbstractILMultiDimensional extends InformationLoss<double[
         this.weights = weights;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#clone()
+     */
     @Override
     public abstract InformationLoss<double[]> clone();
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#compareTo(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public abstract int compareTo(InformationLoss<?> other);
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object other) {
         if (other == null) {
@@ -65,9 +75,15 @@ public abstract class AbstractILMultiDimensional extends InformationLoss<double[
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#getValue()
+     */
     @Override
     public abstract double[] getValue();
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#max(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public void max(final InformationLoss<?> other) {
         if (this.compareTo(other) < 0) {
@@ -75,6 +91,9 @@ public abstract class AbstractILMultiDimensional extends InformationLoss<double[
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#min(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public void min(final InformationLoss<?> other) {
         if (this.compareTo(other) > 0) {
@@ -82,16 +101,22 @@ public abstract class AbstractILMultiDimensional extends InformationLoss<double[
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public abstract double relativeTo(InformationLoss<?> min,
                                       InformationLoss<?> max);
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#toString()
+     */
     @Override
     public abstract String toString();
 
     /**
-     * Converter method
-     * 
+     * Converter method.
+     *
      * @param other
      * @return
      */

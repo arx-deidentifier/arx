@@ -35,18 +35,19 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDPrecision extends MetricMDNMPrecision {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = 8514706682676049814L;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDPrecision() {
         super(true, true, AggregateFunction.ARITHMETIC_MEAN);
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param function
      */
     protected MetricMDPrecision(AggregateFunction function){
@@ -54,7 +55,9 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(true,                       // monotonic
@@ -65,11 +68,17 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNMPrecision#toString()
+     */
     @Override
     public String toString() {
         return "Monotonic precision";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNMPrecision#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);

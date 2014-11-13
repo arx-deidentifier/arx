@@ -25,28 +25,36 @@ import org.deidentifier.arx.framework.data.DataManager;
 
 /**
  * This is a special criterion that does not enforce any privacy guarantees
- * but allows to define a data subset
- * 
+ * but allows to define a data subset.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class Inclusion extends DPresence {
     
+    /**  TODO */
     private static final long serialVersionUID = -3984193225980793775L;
     
     /**
-     * Creates a new instance of the enclosure criterion
+     * Creates a new instance of the enclosure criterion.
+     *
      * @param subset Research subset
      */
     public Inclusion(DataSubset subset) {
         super(subset);
     }
         
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.DPresence#initialize(org.deidentifier.arx.framework.data.DataManager)
+     */
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.DPresence#getRequirements()
+     */
     @Override
     public int getRequirements(){
         // Requires two counters
@@ -54,11 +62,17 @@ public class Inclusion extends DPresence {
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.DPresence#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
+     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.DPresence#toString()
+     */
     @Override
     public String toString() {
         return "Inclusion";

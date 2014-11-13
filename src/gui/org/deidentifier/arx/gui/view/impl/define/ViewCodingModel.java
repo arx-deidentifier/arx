@@ -39,27 +39,45 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * This class allows to configure the coding model
+ * This class allows to configure the coding model.
+ *
  * @author Fabian Prasser
  */
 public class ViewCodingModel implements IView {
     
+    /**  TODO */
     private final Color COLOR_MEDIUM;
+    
+    /**  TODO */
     private final Color COLOR_LIGHT;
+    
+    /**  TODO */
     private final Color COLOR_DARK;
 
+    /**  TODO */
     private static final int MINIMUM    = 0;
+    
+    /**  TODO */
     private static final int MAXIMUM    = 1000;
 
+    /**  TODO */
     private Controller       controller = null;
+    
+    /**  TODO */
     private Model            model      = null;
 
+    /**  TODO */
     private final Scale      slider;
+    
+    /**  TODO */
     private final Composite  root;
+    
+    /**  TODO */
     private final Canvas     canvas;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -182,7 +200,8 @@ public class ViewCodingModel implements IView {
     }
 
     /**
-     * Sets the current suppression weight
+     * Sets the current suppression weight.
+     *
      * @param d
      */
     private void setSuppressionWeight(double d) {
@@ -192,13 +211,17 @@ public class ViewCodingModel implements IView {
     }
 
     /**
-     * Returns the current suppression weight
+     * Returns the current suppression weight.
+     *
      * @return
      */
     private double getSuppressionWeight() {
         return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -208,6 +231,9 @@ public class ViewCodingModel implements IView {
         COLOR_DARK.dispose();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         root.setRedraw(false);
@@ -215,6 +241,9 @@ public class ViewCodingModel implements IView {
         root.setRedraw(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {

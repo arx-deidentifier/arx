@@ -26,16 +26,20 @@ import org.eclipse.nebula.widgets.nattable.resize.config.DefaultColumnResizeBind
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The column layer
+ * The column layer.
+ *
  * @author Fabian Prasser
  */
 public class LayerColumnHeader extends CTLayer {
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param dataProvider
      * @param bodyLayer
+     * @param config
+     * @param context
      */
     public LayerColumnHeader(Composite parent,
                                   IDataProvider dataProvider,

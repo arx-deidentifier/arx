@@ -50,39 +50,38 @@ import cern.colt.Swapper;
  */
 public abstract class DataHandle {
 
-    /** The data types */
+    /** The data types. */
     protected DataType<?>[][]   dataTypes  = null;
 
-    /** The data definition */
+    /** The data definition. */
     protected DataDefinition    definition = null;
 
-    /** The header */
+    /** The header. */
     protected String[]          header     = null;
 
-    /** The node */
+    /** The node. */
     protected ARXNode           node       = null;
 
-    /** The current registry */
+    /** The current registry. */
     protected DataRegistry      registry   = null;
 
-    /** The statistics */
+    /** The statistics. */
     protected StatisticsBuilder statistics = null;
 
-    /** The current research subset */
+    /** The current research subset. */
     protected DataHandle        subset     = null;
 
     /**
-     * Returns the name of the specified column
-     * 
-     * @param col
-     *            The column index
+     * Returns the name of the specified column.
+     *
+     * @param col The column index
      * @return
      */
     public abstract String getAttributeName(int col);
     
     /**
-     * Returns the index of the given attribute, -1 if it is not in the header
-     * 
+     * Returns the index of the given attribute, -1 if it is not in the header.
+     *
      * @param attribute
      * @return
      */
@@ -95,8 +94,8 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns the according datatype
-     * 
+     * Returns the according datatype.
+     *
      * @param attribute
      * @return
      */
@@ -106,12 +105,10 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns a date/time value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * Returns a date/time value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
      * @return
      * @throws ParseException
      */
@@ -126,7 +123,8 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns the data definition
+     * Returns the data definition.
+     *
      * @return
      */
     public DataDefinition getDefinition() {
@@ -135,10 +133,9 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns an array containing the distinct values in the given column
-     * 
-     * @param column
-     *            The column to process
+     * Returns an array containing the distinct values in the given column.
+     *
+     * @param column The column to process
      * @return
      */
     public final String[] getDistinctValues(int column) {
@@ -150,12 +147,10 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns a double value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * Returns a double value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
      * @return
      * @throws ParseException
      */
@@ -172,12 +167,10 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns a float value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * Returns a float value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
      * @return
      * @throws ParseException
      */
@@ -194,20 +187,18 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns the generalization level for the attribute
-     * 
+     * Returns the generalization level for the attribute.
+     *
      * @param attribute
      * @return
      */
     public abstract int getGeneralization(String attribute);
 
     /**
-     * Returns an int value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * Returns an int value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
      * @return
      * @throws ParseException
      */
@@ -222,12 +213,10 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns a long value from the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * Returns a long value from the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
      * @return
      * @throws ParseException
      */
@@ -241,15 +230,24 @@ public abstract class DataHandle {
         }
     }
 
-    /** Returns the number of columns in the dataset */
+    /**
+     * Returns the number of columns in the dataset.
+     *
+     * @return
+     */
     public abstract int getNumColumns();
 
-    /** Returns the number of rows in the dataset */
+    /**
+     * Returns the number of rows in the dataset.
+     *
+     * @return
+     */
     public abstract int getNumRows();
 
     /**
      * Returns an object providing access to basic descriptive statistics about the data represented
-     * by this handle
+     * by this handle.
+     *
      * @return
      */
     public StatisticsBuilder getStatistics(){
@@ -257,7 +255,8 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns the transformation 
+     * Returns the transformation .
+     *
      * @return
      */
     public ARXNode getTransformation(){
@@ -265,18 +264,17 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns the value in the specified cell
-     * 
-     * @param row
-     *            The cell's row index
-     * @param col
-     *            The cell's column index
+     * Returns the value in the specified cell.
+     *
+     * @param row The cell's row index
+     * @param col The cell's column index
      * @return
      */
     public abstract String getValue(int row, int col);
 
     /**
-     * Returns a new data handle that represents a context specific view on the dataset
+     * Returns a new data handle that represents a context specific view on the dataset.
+     *
      * @return
      */
     public DataHandle getView(){
@@ -298,9 +296,10 @@ public abstract class DataHandle {
 
     /**
      * Determines whether a given row is an outlier in the currently associated
-     * data transformation
-     * 
+     * data transformation.
+     *
      * @param row
+     * @return
      */
     public boolean isOutlier(int row){
         checkRegistry();
@@ -308,8 +307,8 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns an iterator over the data
-     * 
+     * Returns an iterator over the data.
+     *
      * @return
      */
     public abstract Iterator<String[]> iterator();
@@ -325,12 +324,10 @@ public abstract class DataHandle {
     }
 
     /**
-     * Writes the data to a CSV file
-     * 
-     * @param file
-     *            A file
-     * @param separator
-     *            The utilized separator character
+     * Writes the data to a CSV file.
+     *
+     * @param file A file
+     * @param separator The utilized separator character
      * @throws IOException
      */
     public void save(final File file, final char separator) throws IOException {
@@ -340,12 +337,10 @@ public abstract class DataHandle {
     }
 
     /**
-     * Writes the data to a CSV file
-     * 
-     * @param out
-     *            Output stream
-     * @param separator
-     *            The utilized separator character
+     * Writes the data to a CSV file.
+     *
+     * @param out Output stream
+     * @param separator The utilized separator character
      * @throws IOException
      */
     public void save(final OutputStream out, final char separator) throws IOException {
@@ -355,12 +350,10 @@ public abstract class DataHandle {
     }
 
     /**
-     * Writes the data to a CSV file
-     * 
-     * @param path
-     *            A path
-     * @param separator
-     *            The utilized separator character
+     * Writes the data to a CSV file.
+     *
+     * @param path A path
+     * @param separator The utilized separator character
      * @throws IOException
      */
     public void save(final String path, final char separator) throws IOException {
@@ -372,11 +365,9 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
-     * 
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(boolean ascending, int... columns) {
         checkRegistry();
@@ -386,15 +377,11 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns and the given range.
      * Will sort input and output analogously.
-     * 
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param from The lower bound
+     * @param to The upper bound
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(int from, int to, boolean ascending, int... columns) {
         checkRegistry();
@@ -404,12 +391,10 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns. Will sort input and
      * output analogously.
-     * @param swapper
-     *            A swapper
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param swapper A swapper
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(Swapper swapper, boolean ascending, int... columns) {
         checkRegistry();
@@ -419,17 +404,12 @@ public abstract class DataHandle {
     /**
      * Sorts the dataset according to the given columns and the given range.
      * Will sort input and output analogously.
-     * 
-     * @param swapper
-     *            A swapper
-     * @param from
-     *            The lower bound
-     * @param to
-     *            The upper bound
-     * @param columns
-     *            An integer array containing column indicides
-     * @param ascending
-     *            Sort ascending or descending
+     *
+     * @param swapper A swapper
+     * @param from The lower bound
+     * @param to The upper bound
+     * @param ascending Sort ascending or descending
+     * @param columns An integer array containing column indicides
      */
     public void sort(Swapper swapper, int from, int to, boolean ascending, int... columns) {
         checkRegistry();
@@ -437,7 +417,8 @@ public abstract class DataHandle {
     }
 
     /**
-     * Swaps both rows
+     * Swaps both rows.
+     *
      * @param row1
      * @param row2
      */
@@ -447,10 +428,9 @@ public abstract class DataHandle {
     }
     
     /**
-     * Checks a column index
-     * 
+     * Checks a column index.
+     *
      * @param column1
-     * @param length
      */
     protected void checkColumn(final int column1) {
         if ((column1 < 0) || (column1 > (header.length - 1))) { 
@@ -459,10 +439,9 @@ public abstract class DataHandle {
     }
 
     /**
-     * Checks the column indexes
-     * 
+     * Checks the column indexes.
+     *
      * @param columns
-     * @return
      */
     protected void checkColumns(final int[] columns) {
 
@@ -484,7 +463,7 @@ public abstract class DataHandle {
     }
 
     /**
-     * Checks whether a registry is referenced
+     * Checks whether a registry is referenced.
      */
     protected void checkRegistry() {
         if (registry == null) {
@@ -494,8 +473,8 @@ public abstract class DataHandle {
     }
     
     /**
-     * Checks a row index
-     * 
+     * Checks a row index.
+     *
      * @param row1
      * @param length
      */
@@ -506,12 +485,13 @@ public abstract class DataHandle {
     }
     
     /**
-     * Releases all resources
+     * Releases all resources.
      */
     protected abstract void doRelease();
 
     /**
-     * Returns the base data type without generalization
+     * Returns the base data type without generalization.
+     *
      * @param attribute
      * @return
      */
@@ -521,14 +501,15 @@ public abstract class DataHandle {
     }
 
     /**
-     * Generates an array of data types
-     * 
+     * Generates an array of data types.
+     *
      * @return
      */
     protected abstract DataType<?>[][] getDataTypeArray();
 
     /**
-     * Returns the distinct values
+     * Returns the distinct values.
+     *
      * @param column
      * @param handler
      * @return
@@ -536,7 +517,8 @@ public abstract class DataHandle {
     protected abstract String[] getDistinctValues(int column, InterruptHandler handler);
 
     /**
-     * Returns the registry associated with this handle
+     * Returns the registry associated with this handle.
+     *
      * @return
      */
     protected DataRegistry getRegistry() {
@@ -544,7 +526,8 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns the string inserted for suppressed data items
+     * Returns the string inserted for suppressed data items.
+     *
      * @return
      */
     protected String getSuppressionString(){
@@ -586,8 +569,8 @@ public abstract class DataHandle {
     }  
     
     /**
-     * Internal representation of get value
-     * 
+     * Internal representation of get value.
+     *
      * @param row
      * @param col
      * @return
@@ -595,7 +578,8 @@ public abstract class DataHandle {
     protected abstract String internalGetValue(int row, int col);
     
     /**
-     * Updates the registry
+     * Updates the registry.
+     *
      * @param registry
      */
     protected void setRegistry(DataRegistry registry){
@@ -603,7 +587,8 @@ public abstract class DataHandle {
     }
 
     /**
-     * Sets the subset
+     * Sets the subset.
+     *
      * @param handle
      */
     protected void setView(DataHandle handle){

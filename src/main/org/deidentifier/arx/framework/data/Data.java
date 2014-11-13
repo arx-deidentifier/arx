@@ -23,29 +23,29 @@ import java.util.Arrays;
 /**
  * Encodes a data object consisting of a dictionary encoded two-dimensional
  * array, an associated dictionary, a header and a mapping to the columns in the
- * input data set
- * 
+ * input data set.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class Data implements Cloneable{
 
-    /** The outliers mask */
+    /** The outliers mask. */
     public static final int  OUTLIER_MASK        = 1 << 31;
 
-    /** The inverse outliers mask */
+    /** The inverse outliers mask. */
     public static final int  REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
 
     /** Row, Dimension. */
     private final int[][]    data;
 
-    /** The header */
+    /** The header. */
     private final String[]   header;
 
-    /** The associated dictionary */
+    /** The associated dictionary. */
     private final Dictionary dictionary;
 
-    /** The associated map */
+    /** The associated map. */
     private final int[]      map;
 
     /**
@@ -71,8 +71,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the data array
-     * 
+     * Returns the data array.
+     *
      * @return
      */
     public int[][] getArray() {
@@ -80,8 +80,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return
      */
     public int[][] getData() {
@@ -98,8 +98,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the dictionary
-     * 
+     * Returns the dictionary.
+     *
      * @return
      */
     public Dictionary getDictionary() {
@@ -107,8 +107,8 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the header
-     * 
+     * Returns the header.
+     *
      * @return
      */
     public String[] getHeader() {
@@ -116,14 +116,17 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the map
-     * 
+     * Returns the map.
+     *
      * @return
      */
     public int[] getMap() {
         return map;
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
     @Override
     public Data clone(){
         int[][] newData = new int[data.length][];

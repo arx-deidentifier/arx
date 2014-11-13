@@ -36,28 +36,34 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A custom implementation of the default SWT WizardDialog that is more
- * compact and allows adding additional buttons
+ * compact and allows adding additional buttons.
+ *
  * @author Fabian Prasser
  */
 public class ARXWizardDialog extends WizardDialog {
 
     /**
-     * A specification for a button to add to the wizard
-     * @author Fabian Prasser
+     * A specification for a button to add to the wizard.
      *
+     * @author Fabian Prasser
      */
     protected static class ARXWizardButton{
         
-        /** Var*/
+        /** Var. */
         private static int ID = Integer.MAX_VALUE - 10;
-        /** Var*/
+        
+        /** Var. */
         private final int id = ID--;
-        /** Var*/
+        
+        /** Var. */
         private final String text;
-        /** Var*/
+        
+        /** Var. */
         private final SelectionListener listener;
+        
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param text
          * @param listener
          */
@@ -67,13 +73,15 @@ public class ARXWizardDialog extends WizardDialog {
         }
     }
     
-    /** Var*/
+    /** Var. */
     private final List<ARXWizardButton> buttons;
-    /** Var*/
+    
+    /** Var. */
     private final Map<ARXWizardButton, Button> map;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parentShell
      * @param newWizard
      */
@@ -84,7 +92,8 @@ public class ARXWizardDialog extends WizardDialog {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parentShell
      * @param newWizard
      * @param buttons
@@ -96,6 +105,9 @@ public class ARXWizardDialog extends WizardDialog {
         this.map = new HashMap<ARXWizardButton, Button>();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         this.getShell().setImages(Resources.getIconSet(getShell().getDisplay()));
@@ -110,6 +122,9 @@ public class ARXWizardDialog extends WizardDialog {
         super.createButtonsForButtonBar(parent);
     }
    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(Composite parent) {
         Control ctrl = super.createDialogArea(parent);
@@ -119,7 +134,8 @@ public class ARXWizardDialog extends WizardDialog {
 
 
     /**
-     * Returns the button created for the given specification
+     * Returns the button created for the given specification.
+     *
      * @param button
      * @return
      */
@@ -127,6 +143,9 @@ public class ARXWizardDialog extends WizardDialog {
         return map.get(button);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardDialog#getProgressMonitor()
+     */
     @Override
     protected IProgressMonitor getProgressMonitor() {
         ProgressMonitorPart monitor = (ProgressMonitorPart) super.getProgressMonitor();

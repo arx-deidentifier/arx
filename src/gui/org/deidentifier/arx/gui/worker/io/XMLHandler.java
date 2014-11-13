@@ -24,15 +24,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * The default XML handler
- * 
+ * The default XML handler.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class XMLHandler extends DefaultHandler {
 
+    /**  TODO */
     public String payload;
 
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+     */
     @Override
     public void characters(final char[] ch,
                            final int start,
@@ -41,10 +45,22 @@ public abstract class XMLHandler extends DefaultHandler {
         payload = new String(ch, start, length);
     }
 
+    /**
+     * 
+     *
+     * @param uri
+     * @param localName
+     * @param qName
+     * @return
+     * @throws SAXException
+     */
     protected abstract boolean end(String uri,
                                    String localName,
                                    String qName) throws SAXException;
 
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     */
     @Override
     public void endElement(final String uri,
                            final String localName,
@@ -52,12 +68,25 @@ public abstract class XMLHandler extends DefaultHandler {
         if (!end(uri, localName, qName)) { throw new SAXException(Resources.getMessage("WorkerLoad.0") + localName); } //$NON-NLS-1$
     }
 
+    /**
+     * 
+     *
+     * @param uri
+     * @param localName
+     * @param qName
+     * @param attributes
+     * @return
+     * @throws SAXException
+     */
     protected abstract boolean
             start(String uri,
                   String localName,
                   String qName,
                   Attributes attributes) throws SAXException;
 
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
     @Override
     public void
             startElement(final String uri,

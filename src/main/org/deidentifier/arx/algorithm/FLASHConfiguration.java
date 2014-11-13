@@ -21,19 +21,20 @@ package org.deidentifier.arx.algorithm;
 import org.deidentifier.arx.framework.lattice.NodeAction;
 
 /**
- * This class parameterizes a phase the interwoven two-phase Flash algorithm
- * 
+ * This class parameterizes a phase the interwoven two-phase Flash algorithm.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- *
  */
 public class FLASHConfiguration {
 
     /**
-     * Creates a binary-phase only configuration
+     * Creates a binary-phase only configuration.
+     *
      * @param config
      * @param triggerSnapshotStore
      * @param triggerTagEvent
+     * @param pruneDueToLowerBound
      * @return
      */
     public static FLASHConfiguration createBinaryPhaseConfiguration(FLASHPhaseConfiguration config,
@@ -44,10 +45,12 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Creates a linear-phase only configuration
+     * Creates a linear-phase only configuration.
+     *
      * @param config
      * @param triggerSnapshotStore
      * @param triggerTagEvent
+     * @param pruneDueToLowerBound
      * @return
      */
     public static FLASHConfiguration createLinearPhaseConfiguration(FLASHPhaseConfiguration config,
@@ -58,10 +61,13 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Creates a two-phase configuration
-     * @param config
+     * Creates a two-phase configuration.
+     *
+     * @param binaryPhaseConfiguration
+     * @param linearPhaseConfiguration
      * @param triggerSnapshotStore
      * @param triggerTagEvent
+     * @param pruneDueToLowerBound
      * @return
      */
     public static FLASHConfiguration createTwoPhaseConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
@@ -76,27 +82,29 @@ public class FLASHConfiguration {
                                       pruneDueToLowerBound);
     }
 
-    /** A configuration for the binary phase */
+    /** A configuration for the binary phase. */
     private final FLASHPhaseConfiguration binaryPhaseConfiguration;
 
-    /** A configuration for the linear phase */
+    /** A configuration for the linear phase. */
     private final FLASHPhaseConfiguration linearPhaseConfiguration;
 
-    /** Prune based on lower bounds from monotonic shares of metrics for information loss */
+    /** Prune based on lower bounds from monotonic shares of metrics for information loss. */
     private final boolean                 pruneInsufficientUtility;
 
-    /** A trigger controlling which transformations are snapshotted */
+    /** A trigger controlling which transformations are snapshotted. */
     private final NodeAction              triggerSnapshotStore;
 
-    /** A trigger firing when a tag event should be triggered */
+    /** A trigger firing when a tag event should be triggered. */
     private final NodeAction              triggerTagEvent;
 
     /**
-     * Creates a new configuration for the FLASH algorithm
+     * Creates a new configuration for the FLASH algorithm.
+     *
      * @param binaryPhaseConfiguration
      * @param linearPhaseConfiguration
      * @param triggerSnapshotStore
      * @param triggerTagEvent
+     * @param pruneDueToLowerBound
      */
     private FLASHConfiguration(FLASHPhaseConfiguration binaryPhaseConfiguration,
                                FLASHPhaseConfiguration linearPhaseConfiguration,
@@ -111,7 +119,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Getter
+     * Getter.
+     *
      * @return
      */
     public FLASHPhaseConfiguration getBinaryPhaseConfiguration() {
@@ -119,7 +128,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Getter
+     * Getter.
+     *
      * @return
      */
     public FLASHPhaseConfiguration getLinearPhaseConfiguration() {
@@ -127,7 +137,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Getter: A trigger controlling which transformations are snapshotted
+     * Getter: A trigger controlling which transformations are snapshotted.
+     *
      * @return
      */
     public NodeAction getTriggerSnapshotStore() {
@@ -135,7 +146,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Getter: A trigger firing when a tag event should be triggered on the lattice
+     * Getter: A trigger firing when a tag event should be triggered on the lattice.
+     *
      * @return
      */
     public NodeAction getTriggerTagEvent() {
@@ -143,7 +155,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Is a binary phase required
+     * Is a binary phase required.
+     *
      * @return
      */
     public boolean isBinaryPhaseRequired() {
@@ -151,7 +164,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     * Is a linear phase required
+     * Is a linear phase required.
+     *
      * @return
      */
     public boolean isLinearPhaseRequired() {
@@ -159,7 +173,8 @@ public class FLASHConfiguration {
     }
 
     /**
-     *  Prune based on lower bounds from monotonic shares of metrics for information loss?
+     * Prune based on lower bounds from monotonic shares of metrics for information loss?.
+     *
      * @return
      */
     public boolean isPruneInsufficientUtility() {

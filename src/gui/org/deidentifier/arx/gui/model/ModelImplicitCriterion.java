@@ -19,12 +19,12 @@
 package org.deidentifier.arx.gui.model;
 
 /**
- * This class implements a (marker) base-class for implicit criteria
- * @author Fabian Prasser
+ * This class implements a (marker) base-class for implicit criteria.
  *
+ * @author Fabian Prasser
  */
 public abstract class ModelImplicitCriterion extends ModelCriterion{
 
-    /** SVUID*/
+    /** SVUID. */
 	private static final long serialVersionUID = 7568685950981139601L;
 }

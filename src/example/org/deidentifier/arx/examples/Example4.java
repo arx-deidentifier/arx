@@ -35,8 +35,8 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
- * This class implements an example on how to use the API for tools such as GUIs
- * 
+ * This class implements an example on how to use the API for tools such as GUIs.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

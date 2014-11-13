@@ -23,27 +23,33 @@ import java.io.Serializable;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 
 /**
- * A class a configuration of a metric
+ * A class a configuration of a metric.
+ *
  * @author Fabian Prasser
  */
 public class MetricConfiguration implements Serializable {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 871854276489749340L;
 
-    /** Monotonic variant */
+    /** Monotonic variant. */
     private boolean           monotonic               = false;
-    /** Coding model */
+    
+    /** Coding model. */
     private double            gsFactor                = 0.5d;
-    /** Precomputed */
+    
+    /** Precomputed. */
     private boolean           precomputed             = false;
-    /** Precomputation threshold */
+    
+    /** Precomputation threshold. */
     private double            precomputationThreshold = 0.1d;
-    /** Aggregate function */
+    
+    /** Aggregate function. */
     private AggregateFunction aggregateFunction       = AggregateFunction.RANK;
     
     /**
-     * Constructs a new instance
+     * Constructs a new instance.
+     *
      * @param monotonic
      * @param gsFactor
      * @param precomputed

@@ -75,11 +75,20 @@ public class ImportWizardPageColumns extends WizardPage {
      *
      */
     private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
+        
+        /**
+         * 
+         *
+         * @param parent
+         */
         protected AutoDropComboBoxViewerCellEditor(Composite parent) {
             super(parent, SWT.READ_ONLY);
             setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ComboBoxViewerCellEditor#createControl(org.eclipse.swt.widgets.Composite)
+         */
         @Override
         protected Control createControl(Composite parent) {
             final Control control = super.createControl(parent);
@@ -101,9 +110,7 @@ public class ImportWizardPageColumns extends WizardPage {
      */
     public class DatatypeEditingSupport extends EditingSupport {
 
-        /**
-         * Reference to actual editor
-         */
+        /** Reference to actual editor. */
         private AutoDropComboBoxViewerCellEditor editor;
 
         /**
@@ -140,7 +147,10 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Indicates that enabled cells within this column can be edited
+         * Indicates that enabled cells within this column can be edited.
+         *
+         * @param column
+         * @return
          */
         @Override
         protected boolean canEdit(Object column) {
@@ -149,6 +159,9 @@ public class ImportWizardPageColumns extends WizardPage {
 
         /**
          * Returns a reference to {@link #editor}.
+         *
+         * @param arg0
+         * @return
          */
         @Override
         protected CellEditor getCellEditor(Object arg0) {
@@ -156,7 +169,10 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Returns current index of {@link #choices} for given column datatype
+         * Returns current index of {@link #choices} for given column datatype.
+         *
+         * @param element
+         * @return
          */
         @Override
         protected Object getValue(Object element) {
@@ -176,6 +192,9 @@ public class ImportWizardPageColumns extends WizardPage {
          * the other hand will try to apply the format string to the available
          * preview data {@link ImportWizardModel#getPreviewData()} making sure
          * that it matches. In case of an error the choice is discarded.
+         *
+         * @param element
+         * @param value
          */
         @Override
         protected void setValue(Object element, Object value) {
@@ -250,9 +269,7 @@ public class ImportWizardPageColumns extends WizardPage {
      */
     public class NameEditingSupport extends EditingSupport {
 
-        /**
-         * Reference to actual editor
-         */
+        /** Reference to actual editor. */
         private TextCellEditor editor;
 
         /**
@@ -268,20 +285,29 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Indicates that enabled cells within this column can be edited
+         * Indicates that enabled cells within this column can be edited.
+         *
+         * @param column
+         * @return
          */
         @Override
         protected boolean canEdit(Object column) {
             return ((ImportWizardModelColumn) column).isEnabled();
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
+         */
         @Override
         protected CellEditor getCellEditor(Object arg0) {
             return editor;
         }
 
         /**
-         * Retrieves name of column ({@link ImportColumn#getAliasName()})
+         * Retrieves name of column ({@link ImportColumn#getAliasName()}).
+         *
+         * @param arg0
+         * @return
          */
         @Override
         protected Object getValue(Object arg0) {
@@ -289,7 +315,10 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Sets name for given column ({@link ImportColumn#setAliasName(String)})
+         * Sets name for given column ({@link ImportColumn#setAliasName(String)}).
+         *
+         * @param element
+         * @param value
          */
         @Override
         protected void setValue(Object element, Object value) {
@@ -310,9 +339,10 @@ public class ImportWizardPageColumns extends WizardPage {
         /**
          * (Un)checks all of the items at once
          * 
-         * This iterates through all of the items and invokes
-         * {@link #setChecked(int, Boolean)} for all of them. Furthermore the
+         * This iterates through all of the items and invokes {@link #setChecked(int, Boolean)} for all of them. Furthermore the
          * tooltip is changed appropriately.
+         *
+         * @param arg0
          */
         @Override
         public void widgetSelected(SelectionEvent arg0) {
@@ -333,12 +363,10 @@ public class ImportWizardPageColumns extends WizardPage {
         }
 
         /**
-         * Applies a boolean value to the given item
-         * 
-         * @param i
-         *            Item that <code>check</code> should be applied to
-         * @param check
-         *            Value that should be applied to item <code>i</code>
+         * Applies a boolean value to the given item.
+         *
+         * @param i Item that <code>check</code> should be applied to
+         * @param check Value that should be applied to item <code>i</code>
          */
         private void setChecked(int i, Boolean check) {
 
@@ -357,37 +385,53 @@ public class ImportWizardPageColumns extends WizardPage {
             }
         }
     }
-    /**
-     * Reference to the wizard containing this page
-     */
+    
+    /** Reference to the wizard containing this page. */
     private ImportWizard        wizardImport;
     /* Widgets */
+    /**  TODO */
     private Table               table;
+    
+    /**  TODO */
     private CheckboxTableViewer checkboxTableViewer;
+    
+    /**  TODO */
     private TableColumn         tblclmnName;
+    
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnName;
+    
+    /**  TODO */
     private TableColumn         tblclmnDatatype;
+    
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnDatatype;
+    
+    /**  TODO */
     private TableColumn         tblclmnEnabled;
+    
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnEnabled;
+    
+    /**  TODO */
     private TableColumn         tblclmnFormat;
 
+    /**  TODO */
     private TableViewerColumn   tableViewerColumnFormat;
 
+    /**  TODO */
     private Button              btnUp;
 
+    /**  TODO */
     private Button              btnDown;
 
-    /**
-     * Indicator for the next action of {@link ColumnEnabledSelectionListener}
-     */
+    /** Indicator for the next action of {@link ColumnEnabledSelectionListener}. */
     private boolean             selectAll = false;
 
     /**
-     * Creates a new instance of this page and sets its title and description
-     * 
-     * @param wizardImport
-     *            Reference to wizard containing this page
+     * Creates a new instance of this page and sets its title and description.
+     *
+     * @param wizardImport Reference to wizard containing this page
      */
     public ImportWizardPageColumns(ImportWizard wizardImport) {
 
@@ -401,7 +445,9 @@ public class ImportWizardPageColumns extends WizardPage {
     }
 
     /**
-     * Creates the design of this page along with the appropriate listeners
+     * Creates the design of this page along with the appropriate listeners.
+     *
+     * @param parent
      */
     public void createControl(Composite parent) {
 
@@ -672,7 +718,9 @@ public class ImportWizardPageColumns extends WizardPage {
     }
 
     /**
-     * Adds input to table viewer once page gets visible
+     * Adds input to table viewer once page gets visible.
+     *
+     * @param visible
      */
     @Override
     public void setVisible(boolean visible) {
@@ -686,8 +734,8 @@ public class ImportWizardPageColumns extends WizardPage {
     }
 
     /**
-     * Checks whether column names are unique
-     * 
+     * Checks whether column names are unique.
+     *
      * @return True if column names are unique, false otherwise
      */
     protected boolean uniqueColumnNames() {

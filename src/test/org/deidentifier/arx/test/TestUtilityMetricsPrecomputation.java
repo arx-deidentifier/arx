@@ -33,16 +33,23 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for utility transformations
- * 
+ * Test for utility transformations.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
 public class TestUtilityMetricsPrecomputation extends TestUtilityMetricsPrecomputationAbstract {
 
+    /**  TODO */
     private final static double threshold = 1d;
 
+    /**
+     * 
+     *
+     * @return
+     * @throws IOException
+     */
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
         return Arrays.asList(new Object[][] {
@@ -74,6 +81,11 @@ public class TestUtilityMetricsPrecomputation extends TestUtilityMetricsPrecompu
         });
     }
 
+    /**
+     * 
+     *
+     * @param testCase
+     */
     public TestUtilityMetricsPrecomputation(final ARXUtilityMetricsTestCase testCase) {
         super(testCase);
     }

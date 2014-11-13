@@ -27,19 +27,29 @@ import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
  */
 public class DataProviderWrapped implements CTDataProvider {
     
+    /**  TODO */
     private IDataProvider data = null;
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.table.CTDataProvider#clear()
+     */
     @Override
     public void clear() {
         this.setData(null);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getColumnCount()
+     */
     @Override
     public int getColumnCount() {
         if (data == null) return 0;
         else return data.getColumnCount();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getDataValue(int, int)
+     */
     @Override
     public Object getDataValue(int columnIndex, int rowIndex) {
         if (columnIndex == -1 || rowIndex == -1) return "";
@@ -47,17 +57,26 @@ public class DataProviderWrapped implements CTDataProvider {
         else return data.getDataValue(columnIndex, rowIndex);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getRowCount()
+     */
     @Override
     public int getRowCount() {
         if (data == null) return 0;
         else return data.getRowCount();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.table.CTDataProvider#setData(org.eclipse.nebula.widgets.nattable.data.IDataProvider)
+     */
     @Override
     public void setData(IDataProvider data) {
         this.data = data;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#setDataValue(int, int, java.lang.Object)
+     */
     @Override
     public void setDataValue(int columnIndex, int rowIndex, Object newValue) {
         if (data == null) return;

@@ -34,14 +34,14 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class orchestrates the process of checking a node for k-anonymity
- * 
+ * This class orchestrates the process of checking a node for k-anonymity.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class NodeChecker implements INodeChecker {
 
-    /** The config */
+    /** The config. */
     private final ARXConfigurationInternal config;
 
     /** The data. */
@@ -119,11 +119,17 @@ public class NodeChecker implements INodeChecker {
                                            dictionarySensFreq);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#check(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     public INodeChecker.Result check(final Node node) {
         return check(node, false);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#check(org.deidentifier.arx.framework.lattice.Node, boolean)
+     */
     @Override
     public INodeChecker.Result check(final Node node, final boolean forceMeasureInfoLoss) {
         
@@ -177,50 +183,75 @@ public class NodeChecker implements INodeChecker {
                                        bound);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getBuffer()
+     */
     @Override
     public Data getBuffer() {
         return new Data(transformer.getBuffer(), data.getHeader(), data.getMap(), data.getDictionary());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getConfiguration()
+     */
     @Override
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getData()
+     */
     @Override
     public Data getData() {
         return data;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getGroupify()
+     */
     @Override
     public IHashGroupify getGroupify() {
         return currentGroupify;
     }
 
     /**
-     * Returns the checkers history, if any
+     * Returns the checkers history, if any.
+     *
      * @return
      */
     public History getHistory() {
         return history;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getInformationLoss(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     @Deprecated
     public double getInformationLoss(final Node node) {
         throw new UnsupportedOperationException("Not implemented!");
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getMetric()
+     */
     @Override
     public Metric<?> getMetric() {
         return metric;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#getNumberOfGroups()
+     */
     @Override
     public int getNumberOfGroups() {
         return currentGroupify.size();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.framework.check.INodeChecker#applyAndSetProperties(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     public TransformedData applyAndSetProperties(final Node transformation) {
 

@@ -10,17 +10,24 @@ import java.util.List;
 public class DialogHelpConfig {
 
     /**
-     * An entry in the help dialog
+     * An entry in the help dialog.
+     *
      * @author Fabian Prasser
      */
     public static class Entry {
         
+        /**  TODO */
         public final String id;
+        
+        /**  TODO */
         public final String title;
+        
+        /**  TODO */
         public final String url;
         
         /**
-         * Creates a new entry
+         * Creates a new entry.
+         *
          * @param id
          * @param title
          * @param url
@@ -32,10 +39,11 @@ public class DialogHelpConfig {
         }
     }
     
+    /**  TODO */
     private List<Entry> entries = new ArrayList<Entry>();
     
     /**
-     * Creates a new config
+     * Creates a new config.
      */
     public DialogHelpConfig(){
         
@@ -102,7 +110,8 @@ public class DialogHelpConfig {
     }
     
     /**
-     * Returns all entries
+     * Returns all entries.
+     *
      * @return
      */
     public List<Entry> getEntries(){
@@ -110,7 +119,8 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the index for a given ID
+     * Returns the index for a given ID.
+     *
      * @param id
      * @return
      */
@@ -124,7 +134,8 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the index of a given URL
+     * Returns the index of a given URL.
+     *
      * @param url
      * @return
      */
@@ -138,7 +149,8 @@ public class DialogHelpConfig {
     }
 
     /**
-     * Returns the URL for a given index
+     * Returns the URL for a given index.
+     *
      * @param index
      * @return
      */

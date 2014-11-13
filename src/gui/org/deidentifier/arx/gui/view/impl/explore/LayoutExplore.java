@@ -28,15 +28,18 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This class layouts the exploration view
+ * This class layouts the exploration view.
+ *
  * @author Fabian Prasser
  */
 public class LayoutExplore implements ILayout {
 
+    /**  TODO */
     private final Composite root;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */

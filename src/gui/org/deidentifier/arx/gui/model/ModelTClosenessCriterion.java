@@ -23,32 +23,39 @@ import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 
 /**
- * This class implements a model for the t-closeness criterion
+ * This class implements a model for the t-closeness criterion.
+ *
  * @author Fabian Prasser
  */
 public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = 4901053938589514626L;
         
-    /** Variant*/
+    /** Variant. */
     public static final int   VARIANT_EQUAL        = 0;
-    /** Variant*/
+    
+    /** Variant. */
     public static final int   VARIANT_HIERARCHICAL = 1;
 
-	/** The variant*/
+	/** The variant. */
 	private int variant = 0;
-	/** T*/
+	
+	/** T. */
 	private double t = 0.001d;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param attribute
      */
     public ModelTClosenessCriterion(String attribute) {
         super(attribute);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
+     */
     @Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    switch (variant) {
@@ -60,21 +67,26 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	}
 	
 	/**
-	 * Returns T
-	 * @return
-	 */
+     * Returns T.
+     *
+     * @return
+     */
 	public double getT() {
 		return t;
 	}
 	
 	/**
-     * Returns the variant
+     * Returns the variant.
+     *
      * @return
      */
 	public int getVariant() {
 		return variant;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.model.ModelExplicitCriterion#pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)
+	 */
 	@Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelTClosenessCriterion)) {
@@ -86,20 +98,26 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     }
 
 	/**
-	 * Sets T
-	 * @param t
-	 */
+     * Sets T.
+     *
+     * @param t
+     */
 	public void setT(double t) {
 		this.t = t;
 	}
 
     /**
-	 * Sets the variant
-	 * @param variant
-	 */
+     * Sets the variant.
+     *
+     * @param variant
+     */
 	public void setVariant(int variant) {
 		this.variant = variant;
 	}
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
+     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties

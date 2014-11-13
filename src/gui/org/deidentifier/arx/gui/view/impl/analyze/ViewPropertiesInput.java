@@ -41,43 +41,62 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * This view displays basic properties about input data
- * 
+ * This view displays basic properties about input data.
+ *
  * @author Fabian Prasser
  */
 public class ViewPropertiesInput extends ViewProperties {
 
     /**
-     * A content provider
+     * A content provider.
+     *
      * @author Fabian Prasser
      */
     private class InputContentProvider implements ITreeContentProvider {
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+         */
         @Override
         public void dispose() {
             // Nothing to do
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+         */
         @Override
         public Object[] getChildren(final Object arg0) {
             return ((Property) arg0).children.toArray();
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
+         */
         @Override
         public Object[] getElements(final Object arg0) {
             return roots.toArray();
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+         */
         @Override
         public Object getParent(final Object arg0) {
             return ((Property) arg0).parent;
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+         */
         @Override
         public boolean hasChildren(final Object arg0) {
             return !((Property) arg0).children.isEmpty();
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+         */
         @Override
         public void inputChanged(final Viewer arg0,
                                  final Object arg1,
@@ -88,28 +107,40 @@ public class ViewPropertiesInput extends ViewProperties {
     }
 
     /**
-     * A label provider
-     * @author Fabian Prasser
+     * A label provider.
      *
+     * @author Fabian Prasser
      */
     private class InputLabelProvider implements ITableLabelProvider {
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+         */
         @Override
         public void addListener(final ILabelProviderListener listener) {
             // Nothing to do
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+         */
         @Override
         public void dispose() {
             // Nothing to do
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+         */
         @Override
         public Image
                 getColumnImage(final Object element, final int columnIndex) {
             return null;
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+         */
         @Override
         public String
                 getColumnText(final Object element, final int columnIndex) {
@@ -125,12 +156,18 @@ public class ViewPropertiesInput extends ViewProperties {
             }
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+         */
         @Override
         public boolean isLabelProperty(final Object element,
                                        final String property) {
             return false;
         }
 
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+         */
         @Override
         public void removeListener(final ILabelProviderListener listener) {
             // Nothing to do
@@ -139,7 +176,8 @@ public class ViewPropertiesInput extends ViewProperties {
 
     
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param parent
      * @param controller
      */
@@ -152,7 +190,8 @@ public class ViewPropertiesInput extends ViewProperties {
     }
 
     /**
-     * Creates the view
+     * Creates the view.
+     *
      * @param group
      */
     private void create(final Composite group) {
@@ -205,7 +244,7 @@ public class ViewPropertiesInput extends ViewProperties {
     }
 
     /**
-     * Update the view
+     * Update the view.
      */
     protected void update() {
 

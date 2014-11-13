@@ -35,8 +35,8 @@ import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an example on how to apply the d-presence criterion
- * and create a research subset by providing a data subset
- * 
+ * and create a research subset by providing a data subset.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

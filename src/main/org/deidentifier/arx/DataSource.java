@@ -30,13 +30,15 @@ import org.deidentifier.arx.io.ImportConfigurationJDBC;
 
 /**
  * This class provides configuration options for importing data from CSV-files, from Excel-files
- * or via a JDBC connection
+ * or via a JDBC connection.
+ *
  * @author Fabian Prasser
  */
 public class DataSource {
     
     /**
-     * Creates a CSV data source
+     * Creates a CSV data source.
+     *
      * @param file
      * @param separator
      * @param containsHeader
@@ -47,7 +49,8 @@ public class DataSource {
     }
     
     /**
-     * Creates a CSV data source
+     * Creates a CSV data source.
+     *
      * @param file
      * @param separator
      * @param containsHeader
@@ -58,7 +61,8 @@ public class DataSource {
     }
 
     /**
-     * Creates an Excel data source
+     * Creates an Excel data source.
+     *
      * @param file
      * @param sheetIndex
      * @param containsHeader
@@ -69,7 +73,8 @@ public class DataSource {
     }
 
     /**
-     * Creates an Excel data source
+     * Creates an Excel data source.
+     *
      * @param file
      * @param sheetIndex
      * @param containsHeader
@@ -81,7 +86,8 @@ public class DataSource {
 
 
     /**
-     * Creates a JDBC data source
+     * Creates a JDBC data source.
+     *
      * @param url
      * @param table
      * @return
@@ -92,7 +98,8 @@ public class DataSource {
     }
 
     /**
-     * Creates a JDBC data source
+     * Creates a JDBC data source.
+     *
      * @param url
      * @param user
      * @param password
@@ -104,11 +111,12 @@ public class DataSource {
         return new DataSource(url, user, password, table);
     }
     
-    /** The config*/
+    /** The config. */
     private final ImportConfiguration config;
 
     /**
-     * Creates a CSV source
+     * Creates a CSV source.
+     *
      * @param file
      * @param separator
      * @param containsHeader
@@ -118,7 +126,8 @@ public class DataSource {
     }
     
     /**
-     * Creates an Excel source
+     * Creates an Excel source.
+     *
      * @param file
      * @param sheetIndex
      * @param containsHeader
@@ -128,29 +137,32 @@ public class DataSource {
     }
     
     /**
-     * Creates a JDBC data source
+     * Creates a JDBC data source.
+     *
      * @param url
      * @param table
-     * @throws SQLException 
+     * @throws SQLException
      */
     private DataSource(String url, String table) throws SQLException {
         config = new ImportConfigurationJDBC(url, table);
     }
     
     /**
-     * Creates a JDBC data source
+     * Creates a JDBC data source.
+     *
      * @param url
      * @param user
      * @param password
      * @param table
-     * @throws SQLException 
+     * @throws SQLException
      */
     private DataSource(String url, String user, String password, String table) throws SQLException {
         config = new ImportConfigurationJDBC(url, user, password, table);
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param index
      */
     public void addColumn(int index) {
@@ -158,7 +170,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param index
      * @param datatype
      */
@@ -173,7 +186,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param index
      * @param alias
      */
@@ -182,7 +196,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param index
      * @param alias
      * @param datatype
@@ -198,7 +213,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param name
      */
     public void addColumn(String name) {
@@ -206,7 +222,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param name
      * @param datatype
      */
@@ -221,7 +238,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param name
      * @param alias
      */
@@ -230,7 +248,8 @@ public class DataSource {
     }
     
     /**
-     * Adds a new column
+     * Adds a new column.
+     *
      * @param name
      * @param alias
      * @param datatype
@@ -246,7 +265,8 @@ public class DataSource {
     }
     
     /**
-     * Returns the configuration
+     * Returns the configuration.
+     *
      * @return
      */
     protected ImportConfiguration getConfiguration(){

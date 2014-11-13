@@ -32,25 +32,21 @@ import org.deidentifier.arx.DataType;
 abstract public class ImportColumn {
 
     /**
-     * Alias name of column
-     * 
+     * Alias name of column.
+     *
      * @note Note that this is alias name of the column. The original names
      *       might be different in case of {@link IImportColumnNamed}.
      */
     private String      aliasName;
 
-    /**
-     * Datatype of column
-     */
+    /** Datatype of column. */
     private DataType<?> dataType;
 
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
-     * @param aliasName
-     *            {@link #aliasName}
-     * @param dataType
-     *            {@link #dataType}
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param aliasName {@link #aliasName}
+     * @param dataType {@link #dataType}
      */
     public ImportColumn(String aliasName, DataType<?> dataType) {
 

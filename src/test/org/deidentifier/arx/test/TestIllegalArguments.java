@@ -31,19 +31,27 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A test case for illegal arguments
- * 
+ * A test case for illegal arguments.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class TestIllegalArguments extends AbstractTest {
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.test.AbstractTest#setUp()
+     */
     @Override
     @Before
     public void setUp() {
         super.setUp();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testEmptyDatasetWithAttributeDefinition() throws IOException {
         try {
@@ -64,6 +72,11 @@ public class TestIllegalArguments extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testEmptyDatasetWithoutAttributeDefinition() throws IOException {
 
@@ -82,6 +95,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testEmptyDefinition() throws IOException {
 
@@ -98,6 +116,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testEmptyHierarchy() throws IOException {
 
@@ -116,6 +139,9 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     */
     @Test
     public void testHistorySize() {
 
@@ -128,6 +154,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testInvalidHierarchies() throws IOException {
         provider.createWrongDataDefinition();
@@ -146,6 +177,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testKRangeNegative() throws IOException {
 
@@ -163,6 +199,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testKRangeTooLarge() throws IOException {
 
@@ -179,6 +220,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testKRangeZero() throws IOException {
 
@@ -195,6 +241,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testMaxOutliersEqualsOne() throws IOException {
 
@@ -211,6 +262,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testMaxOutliersNegative() throws IOException {
 
@@ -227,6 +283,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testMaxOutliersTooLarge() throws IOException {
 
@@ -243,6 +304,9 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     */
     @Test
     public void testMetric() {
 
@@ -255,6 +319,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testMissingHierarchyValue() throws IOException {
         provider.createDataDefinitionMissing();
@@ -273,6 +342,11 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testNullHierarchy() throws IOException {
         try {
@@ -289,6 +363,9 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     */
     @Test
     public void testSnapshotSizeNegative() {
 
@@ -301,6 +378,9 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     */
     @Test
     public void testSnapshotSizeTooLarge() {
 
@@ -313,6 +393,9 @@ public class TestIllegalArguments extends AbstractTest {
         Assert.fail();
     }
 
+    /**
+     * 
+     */
     @Test
     public void testSnapshotSizeZero() {
 

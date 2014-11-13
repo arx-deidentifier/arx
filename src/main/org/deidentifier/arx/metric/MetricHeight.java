@@ -35,22 +35,25 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricHeight extends MetricDefault {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 5911337622032778562L;
 
-    /** The minimum height */
+    /** The minimum height. */
     private int               minHeight        = -1;
 
-    /** The maximum height */
+    /** The maximum height. */
     private int               maxHeight        = -1;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricHeight() {
         super(true, true);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#createMaxInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (maxHeight == -1) {
@@ -60,6 +63,9 @@ public class MetricHeight extends MetricDefault {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#createMinInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (minHeight == -1) {
@@ -69,22 +75,34 @@ public class MetricHeight extends MetricDefault {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Height";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
         int level = node.getLevel();
         return new InformationLossDefaultWithBound(level, level);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return new InformationLossDefault(node.getLevel());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
@@ -105,6 +123,9 @@ public class MetricHeight extends MetricDefault {
         return minHeight;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input,

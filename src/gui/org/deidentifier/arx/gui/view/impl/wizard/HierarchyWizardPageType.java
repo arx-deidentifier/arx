@@ -30,34 +30,43 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A hierarchy page for choosing the type of builder
- * @author Fabian Prasser
+ * A hierarchy page for choosing the type of builder.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageType<T> extends WizardPage {
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardModel<T>         model;
-    /** Var */
+    
+    /** Var. */
     private Button                                interval;
-    /** Var */
+    
+    /** Var. */
     private Button                                order;
-    /** Var */
+    
+    /** Var. */
     private Button                                redaction;
-    /** Var */
+    
+    /** Var. */
     private IWizardPage                           next;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardPageIntervals<T> intervalPage;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardPageOrder<T>     orderPage;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardPageRedaction<T> redactionPage;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizard<T>              wizard;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param wizard
      * @param model
      * @param intervalPage
@@ -82,11 +91,17 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         setPageComplete(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
+     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -149,16 +164,25 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         setControl(composite);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+     */
     @Override
     public IWizardPage getNextPage() {
         return next;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+     */
     @Override
     public boolean isPageComplete() {
         return true;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
     @Override
     public void setVisible(boolean value){
         
@@ -172,7 +196,7 @@ public class HierarchyWizardPageType<T> extends WizardPage {
     }
 
     /**
-     * Updates the page
+     * Updates the page.
      */
     public void updatePage() {
         interval.setSelection(model.getType() == Type.INTERVAL_BASED);

@@ -48,21 +48,36 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * A dialog for selecting privacy criteria
+ * A dialog for selecting privacy criteria.
+ *
  * @author Fabian Prasser
  */
 public class DialogCriterionSelection extends TitleAreaDialog implements IDialog {
 
+    /**  TODO */
     private Button                       ok         = null;
+    
+    /**  TODO */
     private Button                       cancel     = null;
+    
+    /**  TODO */
     private List<ModelExplicitCriterion> elements   = null;
+    
+    /**  TODO */
     private ModelExplicitCriterion       selection  = null;
+    
+    /**  TODO */
     private Image                        symbolL    = null;
+    
+    /**  TODO */
     private Image                        symbolT    = null;
+    
+    /**  TODO */
     private Controller                   controller = null;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param controller
      * @param parent
      * @param elements
@@ -75,6 +90,9 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         this.controller = controller;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#close()
+     */
     @Override
     public boolean close() {
         if (symbolL != null) symbolL.dispose();
@@ -83,19 +101,26 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     }
 
     /**
-     * Returns the selected criterion
+     * Returns the selected criterion.
+     *
      * @return
      */
     public ModelExplicitCriterion getCriterion() {
         return this.selection;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -123,6 +148,9 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createContents(Composite parent) {
         Control contents = super.createContents(parent);
@@ -131,6 +159,9 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         return contents;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
 
@@ -183,6 +214,9 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         return parent;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getShellListener()
+     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -193,6 +227,9 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         };
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return false;

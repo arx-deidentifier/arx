@@ -21,21 +21,22 @@ package org.deidentifier.arx.metric.v2;
 import java.io.Serializable;
 
 /**
- * Base interface for domain shares
- * 
- * @author Fabian Prasser
+ * Base interface for domain shares.
  *
+ * @author Fabian Prasser
  */
 public interface DomainShare extends Serializable{
 
     /**
-     * Returns the size of the domain
+     * Returns the size of the domain.
+     *
      * @return
      */
     public abstract double getDomainSize();
 
     /**
-     * Returns the share of the given value
+     * Returns the share of the given value.
+     *
      * @param value
      * @param level
      * @return

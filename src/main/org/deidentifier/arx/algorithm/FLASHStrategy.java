@@ -38,7 +38,7 @@ public class FLASHStrategy implements Comparator<Node> {
     /** The maximal level in the lattice. */
     private final int        maxlevel;
 
-    /** The maximal level for each qi */
+    /** The maximal level for each qi. */
     private final int[]      maxLevels;
 
     /** The criteria for a node with id 'index'. */

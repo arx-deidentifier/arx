@@ -31,22 +31,25 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class Distribution {
 
-    /** The size */
+    /** The size. */
     private int                 size;
-    /** The threshold used for rehashing */
+    
+    /** The threshold used for rehashing. */
     private int                 threshold;
 
     /** The elements. Even index contains value, odd index contains frequency */
     private int[]               elements;
-    /** The sorted element array - used for history entries only */
+    
+    /** The sorted element array - used for history entries only. */
     private int[]               packedElements;
-    /** The sorted frequency array - used for history entries only */
+    
+    /** The sorted frequency array - used for history entries only. */
     private int[]               packedFrequencies;
 
-    /** The loadfactor */
+    /** The loadfactor. */
     private final static float  LOADFACTOR       = 0.75f;
 
-    /** The initial default capacity of the hashtable */
+    /** The initial default capacity of the hashtable. */
     private static final int    DEFAULT_CAPACITY = 8;          // power of two
 
     /**
@@ -57,8 +60,8 @@ public class Distribution {
     }
 
     /**
-     * Constructor used to create frequency set from a history entry
-     * 
+     * Constructor used to create frequency set from a history entry.
+     *
      * @param element
      * @param frequency
      */
@@ -95,7 +98,7 @@ public class Distribution {
     }
 
     /**
-     * Clears the table
+     * Clears the table.
      */
     public void clear() {
         Arrays.fill(elements, -1);
@@ -103,8 +106,8 @@ public class Distribution {
     }
 
     /**
-     * Gets all buckets of the hash table
-     * 
+     * Gets all buckets of the hash table.
+     *
      * @return
      */
     public int[] getBuckets() {
@@ -112,8 +115,8 @@ public class Distribution {
     }
 
     /**
-     * Gets all elements of the packed table
-     * 
+     * Gets all elements of the packed table.
+     *
      * @return
      */
     public int[] getPackedElements() {
@@ -121,8 +124,8 @@ public class Distribution {
     }
 
     /**
-     * Gets the frequency of the packed table
-     * 
+     * Gets the frequency of the packed table.
+     *
      * @return
      */
     public int[] getPackedFrequency() {
@@ -144,8 +147,8 @@ public class Distribution {
     }
 
     /**
-     * Merge a frequency set with a history entry
-     * 
+     * Merge a frequency set with a history entry.
+     *
      * @param elements
      * @param frequency
      */
@@ -191,8 +194,8 @@ public class Distribution {
     }
 
     /**
-     * Adds an element with the given frequency
-     * 
+     * Adds an element with the given frequency.
+     *
      * @param element
      * @param value
      */
@@ -223,7 +226,7 @@ public class Distribution {
     }
 
     /**
-     * Rehashes the frequency set table
+     * Rehashes the frequency set table.
      */
     private void rehash() {
         final int capacity = HashTableUtil.calculateCapacity(elements.length);

@@ -24,21 +24,27 @@ import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 
 /**
- * The body layer
+ * The body layer.
+ *
  * @author Fabian Prasser
  */
 public class LayerBody extends CTLayer {
 
-    /** Selection layer */
+    /** Selection layer. */
     private final SelectionLayer selectionLayer;
-    /** Data layer */
+    
+    /** Data layer. */
     private final DataLayer dataLayer;
-    /** Viewport layer */
+    
+    /** Viewport layer. */
     private final LayerViewport viewportLayer;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param dataProvider
+     * @param config
+     * @param context
      */
     public LayerBody(IDataProvider dataProvider, CTConfiguration config, CTContext context) {
         super(config, context);
@@ -69,7 +75,8 @@ public class LayerBody extends CTLayer {
     }
 
     /**
-     * Returns the selection layer
+     * Returns the selection layer.
+     *
      * @return
      */
     public SelectionLayer getSelectionLayer() {
@@ -77,7 +84,8 @@ public class LayerBody extends CTLayer {
     }
     
     /**
-     * Returns the data layer
+     * Returns the data layer.
+     *
      * @return
      */
     public DataLayer getDataLayer() {
@@ -85,7 +93,8 @@ public class LayerBody extends CTLayer {
     }
     
     /**
-     * Returns the viewport layer
+     * Returns the viewport layer.
+     *
      * @return
      */
     public LayerViewport getViewportLayer() {

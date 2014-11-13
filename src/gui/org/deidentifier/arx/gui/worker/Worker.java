@@ -21,20 +21,22 @@ package org.deidentifier.arx.gui.worker;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
- * A base class for workers that perform asynchronous tasks in a progress dialog
- * @author Fabian Prasser
+ * A base class for workers that perform asynchronous tasks in a progress dialog.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public abstract class Worker<T> implements IRunnableWithProgress {
 
-	/** Error, if any*/
+	/** Error, if any. */
     protected Exception error  = null;
-    /** Result, if any*/
+    
+    /** Result, if any. */
     protected T         result = null;
 
     /**
-     * Returns the error
+     * Returns the error.
+     *
      * @return
      */
     public Exception getError() {
@@ -42,7 +44,8 @@ public abstract class Worker<T> implements IRunnableWithProgress {
     }
 
     /**
-     * Returns the result
+     * Returns the result.
+     *
      * @return
      */
     public T getResult() {
@@ -50,7 +53,8 @@ public abstract class Worker<T> implements IRunnableWithProgress {
     }
 
     /**
-     * Sets the error
+     * Sets the error.
+     *
      * @param e
      */
     public void setError(final Exception e) {

@@ -21,36 +21,51 @@ package org.deidentifier.arx.gui.model;
 import java.io.Serializable;
 
 /**
- * This class models the current view configuration
- * @author Fabian Prasser
+ * This class models the current view configuration.
  *
+ * @author Fabian Prasser
  */
 public class ModelViewConfig implements Serializable {
 
-    /** Mode*/
+    /**
+     * Mode.
+     */
     public static enum Mode {
+        
+        /**  TODO */
         SORTED_INPUT,
+        
+        /**  TODO */
         SORTED_OUTPUT,
+        
+        /**  TODO */
         GROUPED,
+        
+        /**  TODO */
         UNSORTED
     }
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = 4770598345842536623L;
 
-    /** Mode*/
+    /** Mode. */
     private Mode              mode             = Mode.UNSORTED;
-    /** Attribute*/
+    
+    /** Attribute. */
     private String            attribute        = null;
-    /** Subset*/
+    
+    /** Subset. */
     private boolean           subset           = false;
-    /** Sort order*/
+    
+    /** Sort order. */
     private boolean           sortOrder        = true;
-    /** Changed flag*/
+    
+    /** Changed flag. */
     private boolean           changed          = false;
 
     /**
-     * Returns the attribute
+     * Returns the attribute.
+     *
      * @return
      */
     public String getAttribute() {
@@ -58,7 +73,8 @@ public class ModelViewConfig implements Serializable {
     }
     
     /**
-     * Returns the mode
+     * Returns the mode.
+     *
      * @return
      */
     public Mode getMode() {
@@ -66,7 +82,8 @@ public class ModelViewConfig implements Serializable {
     }
 
     /**
-     * Returns the sort order
+     * Returns the sort order.
+     *
      * @return
      */
     public boolean getSortOrder(){
@@ -74,7 +91,8 @@ public class ModelViewConfig implements Serializable {
     }
 
     /**
-     * Returns whether the config has changed, and resets the flag to unmodified
+     * Returns whether the config has changed, and resets the flag to unmodified.
+     *
      * @return
      */
     public boolean isChanged(){
@@ -87,7 +105,8 @@ public class ModelViewConfig implements Serializable {
     }
 
     /**
-     * Returns whether we show the subset only
+     * Returns whether we show the subset only.
+     *
      * @return
      */
     public boolean isSubset() {
@@ -95,7 +114,8 @@ public class ModelViewConfig implements Serializable {
     }
 
     /**
-     * Sets the attribute
+     * Sets the attribute.
+     *
      * @param attribute
      */
     public void setAttribute(String attribute) {
@@ -105,7 +125,8 @@ public class ModelViewConfig implements Serializable {
     }
 
     /**
-     * Sets the mode
+     * Sets the mode.
+     *
      * @param mode
      */
     public void setMode(Mode mode) {
@@ -115,7 +136,8 @@ public class ModelViewConfig implements Serializable {
     }
 
     /**
-     * Sets the sort order
+     * Sets the sort order.
+     *
      * @param order
      */
     public void setSortOrder(boolean order){
@@ -126,7 +148,8 @@ public class ModelViewConfig implements Serializable {
     }
     
     /**
-     * Sets whether we show the subset only
+     * Sets whether we show the subset only.
+     *
      * @param subset
      */
     public void setSubset(boolean subset) {

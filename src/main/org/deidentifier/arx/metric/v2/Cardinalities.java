@@ -34,15 +34,18 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
  */
 public class Cardinalities implements Serializable {
     
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = 6164578830669365810L;
     
-    /** Cardinalities: Column -> Id -> Level -> Count */
+    /** Cardinalities: Column -> Id -> Level -> Count. */
     private final int[][][] cardinalities;
     
     /**
-     * Creates a new instance for the given data set
-     * @param hierarchy
+     * Creates a new instance for the given data set.
+     *
+     * @param data
+     * @param subset
+     * @param hierarchies
      */
     public Cardinalities(Data data, RowSet subset, GeneralizationHierarchy[] hierarchies){
 
@@ -79,7 +82,8 @@ public class Cardinalities implements Serializable {
     }
     
     /**
-     * For backwards compatibility, derives the cardinalities from the given array
+     * For backwards compatibility, derives the cardinalities from the given array.
+     *
      * @param cardinalities
      */
     public Cardinalities(int[][][] cardinalities) {
@@ -87,9 +91,8 @@ public class Cardinalities implements Serializable {
     }
 
     /**
-     * Returns the cardinalities of the given value
-     * @param value
-     * @param level
+     * Returns the cardinalities of the given value.
+     *
      * @return
      */
     public int[][][] getCardinalities(){

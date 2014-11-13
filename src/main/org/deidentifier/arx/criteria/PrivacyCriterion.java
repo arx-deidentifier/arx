@@ -24,20 +24,22 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
- * An abstract base class for privacy criteria
+ * An abstract base class for privacy criteria.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class PrivacyCriterion implements Serializable{
 
+    /**  TODO */
     private static final long serialVersionUID = -8460571120677880409L;
     
-    /** Is the criterion monotonic when allowing for tuple suppression*/
+    /** Is the criterion monotonic when allowing for tuple suppression. */
     private final boolean monotonic;
     
     /**
-     * Instantiates a new criterion
-     * @param snapshotLength
+     * Instantiates a new criterion.
+     *
      * @param monotonic
      */
     public PrivacyCriterion(boolean monotonic){
@@ -45,7 +47,8 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
-     * Override this to initialize the criterion
+     * Override this to initialize the criterion.
+     *
      * @param manager
      */
     public void initialize(DataManager manager){
@@ -53,20 +56,23 @@ public abstract class PrivacyCriterion implements Serializable{
     }
 
     /**
-     * Returns the criterion's requirements
+     * Returns the criterion's requirements.
+     *
      * @return
      */
     public abstract int getRequirements();
     
     /**
-     * Implement this, to enforce the criterion
+     * Implement this, to enforce the criterion.
+     *
      * @param entry
      * @return
      */
     public abstract boolean isAnonymous(HashGroupifyEntry entry);
 
     /**
-     * Returns whether the criterion is monotonic with tuple suppression
+     * Returns whether the criterion is monotonic with tuple suppression.
+     *
      * @return
      */
     public boolean isMonotonic() {
@@ -74,7 +80,9 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
-     * Returns a string representation
+     * Returns a string representation.
+     *
+     * @return
      */
     public abstract String toString();
 }

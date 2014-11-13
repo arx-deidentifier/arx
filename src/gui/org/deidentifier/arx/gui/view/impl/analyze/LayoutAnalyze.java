@@ -39,25 +39,34 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * This class layouts the analysis view
+ * This class layouts the analysis view.
+ *
  * @author Fabian Prasser
  */
 public class LayoutAnalyze implements ILayout {
 
     /**
-     * A runnable for synchronizing both tables
+     * A runnable for synchronizing both tables.
+     *
      * @author Fabian Prasser
      */
     private class Synchronizer implements Runnable {
 
+        /**  TODO */
         final ViewData in;
+        
+        /**  TODO */
         final ViewData out;
         
+        /**  TODO */
         Boolean        stop     = false;
+        
+        /**  TODO */
         Runnable       runnable = null;
 
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param in
          * @param out
          */
@@ -80,13 +89,17 @@ public class LayoutAnalyze implements ILayout {
         }
 
         /**
-         * Returns the input view
+         * Returns the input view.
+         *
          * @return
          */
         public ViewData getIn() {
             return in;
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Runnable#run()
+         */
         @Override
         public void run() {
             final long time = System.currentTimeMillis();
@@ -114,6 +127,9 @@ public class LayoutAnalyze implements ILayout {
             }
         }
 
+        /**
+         * 
+         */
         public void stop() {
             stop = true;
             synchronized (monitor) {
@@ -128,28 +144,54 @@ public class LayoutAnalyze implements ILayout {
         }
     }
 
+    /**  TODO */
     private static final int       WEIGHT_TOP    = 75;
+    
+    /**  TODO */
     private static final int       WEIGHT_BOTTOM = 25;
+    
+    /**  TODO */
     private static final int       WEIGHT_LEFT   = 50;
+    
+    /**  TODO */
     private static final int       WEIGHT_RIGHT  = 50;
 
+    /**  TODO */
     private final Composite        centerLeft;
+    
+    /**  TODO */
     private final Composite        centerRight;
+    
+    /**  TODO */
     private final Composite        bottomLeft;
+    
+    /**  TODO */
     private final Composite        bottomRight;
+    
+    /**  TODO */
     private final SashForm         centerSash;
     
+    /**  TODO */
     private final ViewData         dataInputView;
+    
+    /**  TODO */
     private final ViewData         dataOutputView;
 
+    /**  TODO */
     private final LayoutStatistics statisticsInputLayout;
+    
+    /**  TODO */
     private final LayoutStatistics statisticsOutputLayout;
 
+    /**  TODO */
     private Synchronizer           synchronizer  = null;
+    
+    /**  TODO */
     private String[]               monitor = new String[0];
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -253,8 +295,8 @@ public class LayoutAnalyze implements ILayout {
     }
 
     /**
-     * Synchronizes the tables for another second
-     * 
+     * Synchronizes the tables for another second.
+     *
      * @param in
      * @param out
      */

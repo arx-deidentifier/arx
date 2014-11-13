@@ -19,7 +19,8 @@
 package org.deidentifier.arx.gui.view.def;
 
 /**
- * An interface for layouts
+ * An interface for layouts.
+ *
  * @author Fabian Prasser
  */
 public interface ILayout {

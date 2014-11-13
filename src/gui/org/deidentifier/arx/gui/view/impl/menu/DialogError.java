@@ -38,21 +38,26 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A dialog for displaying error messages
- * @author Fabian Prasser
+ * A dialog for displaying error messages.
  *
+ * @author Fabian Prasser
  */
 public class DialogError extends TitleAreaDialog implements IDialog {
 
+    /**  TODO */
     private Image image;
+    
+    /**  TODO */
     private final String message;
+    
+    /**  TODO */
     private final String error;
 
     /**
-     * Constructor for displaying two messages
+     * Constructor for displaying two messages.
+     *
      * @param parentShell
      * @param controller
-     * @param title
      * @param message
      * @param error
      */
@@ -63,6 +68,9 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#close()
+     */
     @Override
     public boolean close() {
         if (image != null)
@@ -70,12 +78,18 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         return super.close();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -93,6 +107,9 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -102,6 +119,9 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         return contents;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
 
@@ -115,6 +135,9 @@ public class DialogError extends TitleAreaDialog implements IDialog {
         return parent;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return false;

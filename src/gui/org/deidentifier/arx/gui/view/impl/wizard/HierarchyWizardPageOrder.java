@@ -38,26 +38,31 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * A page for configuring the order-based builder
- * @author Fabian Prasser
+ * A page for configuring the order-based builder.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardModelOrder<T> model;
-    /** Var */
+    
+    /** Var. */
     private final Controller                   controller;
-    /** Var */
+    
+    /** Var. */
     private ComponentTable                     table;
-    /** Var */
+    
+    /** Var. */
     private Combo                              combo;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardEditor<T>           editor; 
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param wizard
      * @param model
@@ -75,6 +80,9 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         setPageComplete(true);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -85,6 +93,9 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         setControl(composite);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
+     */
     @Override
     public void updatePage() {
         table.setData(getDataProvider(model.getData()), new String[]{"Values"});
@@ -94,7 +105,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
     
     /**
-     * Moves the selected item down
+     * Moves the selected item down.
      */
     private void actionDown() {
         Integer index = table.getSelectedRow();
@@ -107,7 +118,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
     
     /**
-     * Sorts according to the index of a data type
+     * Sorts according to the index of a data type.
+     *
      * @param index
      * @return
      */
@@ -177,7 +189,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
     
     /**
-     * Moves the selected item up
+     * Moves the selected item up.
      */
     private void actionUp() {
         Integer index = table.getSelectedRow();
@@ -190,7 +202,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
 
     /**
-     * Create the grouping-part of the page
+     * Create the grouping-part of the page.
+     *
      * @param parent
      */
     private void createGroups(Composite parent){
@@ -203,7 +216,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
 
     /**
-     * Create the ordering-part of the page
+     * Create the ordering-part of the page.
+     *
      * @param parent
      */
     private void createOrder(Composite parent){
@@ -273,7 +287,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
 
     /**
-     * Returns a description for the given label
+     * Returns a description for the given label.
+     *
      * @param label
      * @return
      */
@@ -287,7 +302,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
     
     /**
-     * Returns the labels of all available data types
+     * Returns the labels of all available data types.
+     *
      * @return
      */
     private String[] getDataTypes(){
@@ -299,7 +315,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
     
     /**
-     * Returns the index of a given data type
+     * Returns the index of a given data type.
+     *
      * @param type
      * @return
      */
@@ -315,7 +332,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
 
     /**
-     * Checks whether the data type is valid
+     * Checks whether the data type is valid.
+     *
      * @param type
      * @param values
      * @return
@@ -330,7 +348,9 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
     
     /**
-     * Returns a data provider for the given array
+     * Returns a data provider for the given array.
+     *
+     * @param array
      * @return
      */
     private IDataProvider getDataProvider(final String[] array){

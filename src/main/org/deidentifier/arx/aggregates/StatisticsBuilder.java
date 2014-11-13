@@ -40,45 +40,55 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 
 /**
- * A class offering basic descriptive statistics about data handles
+ * A class offering basic descriptive statistics about data handles.
+ *
  * @author Fabian Prasser
  */
 public class StatisticsBuilder {
     
     /**
-     *  Local class for interrupts
+     * Local class for interrupts.
+     *
      * @author Fabian Prasser
      */
     class ComputationInterruptedException extends RuntimeException {
+        
+        /**  TODO */
         private static final long serialVersionUID = 5339918851212367422L;
 
+        /**
+         * 
+         *
+         * @param message
+         */
         public ComputationInterruptedException(String message) {
             super(message);
         }
 
+        /**
+         * 
+         *
+         * @param cause
+         */
         public ComputationInterruptedException(Throwable cause) {
             super(cause);
         }
     }
     
-    /** The handle*/
+    /** The handle. */
     private DataHandleStatistics handle;
     
-    /** The equivalence class statistics*/
+    /** The equivalence class statistics. */
     private StatisticsEquivalenceClasses ecStatistics;
     
-    /** The stop flag*/
+    /** The stop flag. */
     private volatile boolean interrupt;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param handle
-     * @param averageEquivalenceClassSize
-     * @param maximalEquivalenceClassSize
-     * @param minimalEquivalenceClassSize
-     * @param numberOfGroups
-     * @param numberOfOutlyingEquivalenceClasses
-     * @param numberOfOutlyingTuples
+     * @param ecStatistics
      */
     public StatisticsBuilder(DataHandleStatistics handle,
                           StatisticsEquivalenceClasses ecStatistics) {
@@ -87,16 +97,16 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns a contingency table for the given columns
-     * 
-     * @param column1                   The first column
-     * @param orderFromDefinition1      Indicates whether the order that should be assumed for string data items 
-     *                                  can (and should) be derived from the hierarchy provided in the data 
-     *                                  definition (if any)
-     * @param column2                   The second column
-     * @param orderFromDefinition2      Indicates whether the order that should be assumed for string data items 
-     *                                  can (and should) be derived from the hierarchy provided in the data 
-     *                                  definition (if any)
+     * Returns a contingency table for the given columns.
+     *
+     * @param column1 The first column
+     * @param orderFromDefinition1 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
+     * @param column2 The second column
+     * @param orderFromDefinition2 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
      * @return
      */
     public StatisticsContingencyTable getContingencyTable(int column1, boolean orderFromDefinition1,
@@ -208,18 +218,18 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns a contingency table for the given columns
-     * 
-     * @param column1                   The first column
-     * @param size1                     The maximal size in this dimension
-     * @param orderFromDefinition1      Indicates whether the order that should be assumed for string data items 
-     *                                  can (and should) be derived from the hierarchy provided in the data 
-     *                                  definition (if any)
-     * @param column2                   The second column
-     * @param size2                     The maximal size in this dimension
-     * @param orderFromDefinition2      Indicates whether the order that should be assumed for string data items 
-     *                                  can (and should) be derived from the hierarchy provided in the data 
-     *                                  definition (if any)
+     * Returns a contingency table for the given columns.
+     *
+     * @param column1 The first column
+     * @param size1 The maximal size in this dimension
+     * @param orderFromDefinition1 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
+     * @param column2 The second column
+     * @param size2 The maximal size in this dimension
+     * @param orderFromDefinition2 Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
      * @return
      */
     public StatisticsContingencyTable getContingencyTable(int column1, 
@@ -370,8 +380,8 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns the distinct set of data items from the given column
-     * 
+     * Returns the distinct set of data items from the given column.
+     *
      * @param column The column
      * @return
      */
@@ -397,12 +407,12 @@ public class StatisticsBuilder {
     }
 
     /**
-     * Returns an ordered list of the distinct set of data items from the given column
-     * 
-     * @param column                   The column
-     * @param orderFromDefinition      Indicates whether the order that should be assumed for string data 
-     *                                 items can (and should) be derived from the hierarchy provided in the 
-     *                                 data definition (if any)
+     * Returns an ordered list of the distinct set of data items from the given column.
+     *
+     * @param column The column
+     * @param orderFromDefinition Indicates whether the order that should be assumed for string data
+     *            items can (and should) be derived from the hierarchy provided in the
+     *            data definition (if any)
      * @return
      */
     public String[] getDistinctValuesOrdered(int column, boolean orderFromDefinition) {
@@ -482,7 +492,8 @@ public class StatisticsBuilder {
     }
 
     /**
-     * Returns statistics about the equivalence classes
+     * Returns statistics about the equivalence classes.
+     *
      * @return
      */
     public StatisticsEquivalenceClasses getEquivalenceClassStatistics(){
@@ -502,12 +513,12 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns a frequency distribution for the values in the given column
-     * 
-     * @param column                   The column
-     * @param orderFromDefinition      Indicates whether the order that should be assumed for string data items 
-     *                                 can (and should) be derived from the hierarchy provided in the data 
-     *                                 definition (if any)
+     * Returns a frequency distribution for the values in the given column.
+     *
+     * @param column The column
+     * @param orderFromDefinition Indicates whether the order that should be assumed for string data items
+     *            can (and should) be derived from the hierarchy provided in the data
+     *            definition (if any)
      * @return
      */
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column, boolean orderFromDefinition) {
@@ -555,15 +566,19 @@ public class StatisticsBuilder {
         // Return
         return new StatisticsFrequencyDistribution(values, frequencies, count);
     }
-    /** 
-     * Returns an interruptible instance of this object
+    
+    /**
+     * 
+     * Returns an interruptible instance of this object.
+     *
+     * @return
      */
     public StatisticsBuilderInterruptible getInterruptibleInstance(){
         return new StatisticsBuilderInterruptible(handle, ecStatistics);
     }
     
     /**
-     * Checks whether an interruption happened
+     * Checks whether an interruption happened.
      */
     private void checkInterrupt(){
         if (interrupt) {
@@ -572,10 +587,11 @@ public class StatisticsBuilder {
     }
 
     /**
-     * Returns the appropriate hierarchy, if any
-     * 
+     * Returns the appropriate hierarchy, if any.
+     *
      * @param column
      * @param orderFromDefinition
+     * @return
      */
     private Hierarchy getHierarchy(int column, boolean orderFromDefinition){
 
@@ -597,7 +613,8 @@ public class StatisticsBuilder {
     
 
     /**
-     * Scales the given string array
+     * Scales the given string array.
+     *
      * @param values
      * @param length The resulting length
      * @return
@@ -632,10 +649,11 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Orders the given array by data type
-     * 
+     * Orders the given array by data type.
+     *
      * @param array
      * @param type
+     * @param suppressionString
      */
     private void sort(final String[] array, final DataType<?> type, final String suppressionString){
         GenericSorting.mergeSort(0, array.length, new IntComparator(){
@@ -665,10 +683,10 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Orders the given array by the given sort order
-     * 
+     * Orders the given array by the given sort order.
+     *
      * @param array
-     * @param type
+     * @param order
      */
     private void sort(final String[] array, final Map<String, Integer> order){
         GenericSorting.mergeSort(0, array.length, new IntComparator(){

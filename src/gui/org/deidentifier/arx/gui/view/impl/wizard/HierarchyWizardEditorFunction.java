@@ -34,42 +34,56 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for functions
- * @author Fabian Prasser
+ * Editor for functions.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorFunction<T> {
     
     /**
-     * Tiny callback for parents
-     * @author Fabian Prasser
+     * Tiny callback for parents.
      *
+     * @author Fabian Prasser
      * @param <T>
      */
     public static interface IHierarchyFunctionEditorParent<T> {
+        
+        /**
+         * 
+         *
+         * @param function
+         */
         public void setFunction(AggregateFunction<T> function);
     }
 
-    /** Var */
+    /** Var. */
     private final AggregateFunction<T>            defaultFunction;
-    /** Var */
+    
+    /** Var. */
     private final List<AggregateFunction<T>>      functions;
-    /** Var */
+    
+    /** Var. */
     private final List<String>                    labels;
-    /** Var */
+    
+    /** Var. */
     private final EditorSelection                 editor1;
-    /** Var */
+    
+    /** Var. */
     private final EditorString                    editor2;
-    /** Var */
+    
+    /** Var. */
     private AggregateFunction<T>                  function = null;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T> model;
-    /** Var */
+    
+    /** Var. */
     private final boolean                         general;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      * @param composite
@@ -162,7 +176,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
     
     /**
-     * Returns the default function
+     * Returns the default function.
+     *
      * @return
      */
     public AggregateFunction<T> getDefaultFunction(){
@@ -170,7 +185,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
     
     /**
-     * Returns whether this is the default function
+     * Returns whether this is the default function.
+     *
      * @param function
      * @return
      */
@@ -179,7 +195,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
 
     /**
-     * Sets the function to display
+     * Sets the function to display.
+     *
      * @param function
      */
     public void setFunction(AggregateFunction<T> function){
@@ -191,7 +208,7 @@ public class HierarchyWizardEditorFunction<T> {
     }
 
     /**
-     * Updates all editors
+     * Updates all editors.
      */
     public void update() {
 
@@ -212,7 +229,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
     
     /**
-     * Creates a function entry
+     * Creates a function entry.
+     *
      * @param function
      */
     private void createEntry(AggregateFunction<T> function) {
@@ -221,7 +239,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
     
     /**
-     * Creates a label
+     * Creates a label.
+     *
      * @param composite
      * @param string
      * @return
@@ -237,7 +256,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
 
     /**
-     * Return control1
+     * Return control1.
+     *
      * @return
      */
     public Control getControl1() {
@@ -245,7 +265,8 @@ public class HierarchyWizardEditorFunction<T> {
     }
 
     /**
-     * Return control2
+     * Return control2.
+     *
      * @return
      */
     public Control getControl2() {

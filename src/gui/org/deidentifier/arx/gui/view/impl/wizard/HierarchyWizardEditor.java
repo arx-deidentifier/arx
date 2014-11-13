@@ -42,30 +42,37 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The general editor for hierarchies
- * @author Fabian Prasser
+ * The general editor for hierarchies.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T> {
 
-    /** Var */
+    /** Var. */
     private HierarchyWizardModelGrouping<T>  model;
-    /** Var */
+    
+    /** Var. */
     private Composite                        composite;
-    /** Var */
+    
+    /** Var. */
     private Composite                        canvascomposite;
-    /** Var */
+    
+    /** Var. */
     private ScrolledComposite                scrolledcomposite;
-    /** Var */
+    
+    /** Var. */
     private CTabFolder                       folder;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardEditorMenu<T>     menu;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardEditorFunction<T> editor;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      */
@@ -129,6 +136,9 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
         this.model.update();
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent#setFunction(org.deidentifier.arx.aggregates.AggregateFunction)
+     */
     @Override
     public void setFunction(AggregateFunction<T> function) {
         model.setDefaultFunction(function);
@@ -137,13 +147,17 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Set the controls layout data
+     * Set the controls layout data.
+     *
      * @param object
      */
     public void setLayoutData(Object object){
         this.composite.setLayoutData(object);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
+     */
     @Override
     public void update() {
         this.canvascomposite.redraw();
@@ -151,7 +165,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Create a tab
+     * Create a tab.
+     *
      * @param tabFolder
      */
     private void createGeneralTab(CTabFolder tabFolder) {
@@ -166,7 +181,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Create a tab
+     * Create a tab.
+     *
      * @param tabFolder
      */
     private void createGroupTab(CTabFolder tabFolder) {
@@ -180,7 +196,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Create a tab
+     * Create a tab.
+     *
      * @param tabFolder
      */
     private void createIntervalTab(CTabFolder tabFolder) {
@@ -193,7 +210,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
     
     /**
-     * Create a tab
+     * Create a tab.
+     *
      * @param tabFolder
      */
     private void createRangeTab(CTabFolder tabFolder) {
@@ -207,7 +225,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Draws a string
+     * Draws a string.
+     *
      * @param gc
      * @param string
      * @param r
@@ -221,7 +240,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Is the component selected
+     * Is the component selected.
+     *
      * @param component
      * @return
      */
@@ -235,7 +255,8 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
     }
 
     /**
-     * Paints the intervals and fanouts
+     * Paints the intervals and fanouts.
+     *
      * @param gc
      */
     protected void paint(GC gc) {

@@ -55,20 +55,24 @@ import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This worker saves a project file to disk
+ * This worker saves a project file to disk.
+ *
  * @author Fabian Prasser
  */
 public class WorkerSave extends Worker<Model> {
 
-    /** The vocabulary to use*/
+    /** The vocabulary to use. */
     private Vocabulary vocabulary = new Vocabulary_V2();
-	/** The path*/
+	
+	/** The path. */
     private final String     path;
-    /** The model*/
+    
+    /** The model. */
     private final Model      model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param path
      * @param controller
      * @param model
@@ -80,6 +84,9 @@ public class WorkerSave extends Worker<Model> {
         this.model = model;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
@@ -122,8 +129,8 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts an attribute name to a file name
-     * 
+     * Converts an attribute name to a file name.
+     *
      * @param a
      * @return
      */
@@ -132,11 +139,11 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts a configuration to XML
-     * 
-     * @param model
+     * Converts a configuration to XML.
+     *
+     * @param config
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final ModelConfiguration config) throws IOException {
         
@@ -184,13 +191,13 @@ public class WorkerSave extends Worker<Model> {
     }
     
     /**
-     * Returns an XML representation of the data definition
-     * @param config 
-     * 
+     * Returns an XML representation of the data definition.
+     *
+     * @param config
      * @param handle
      * @param definition
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final ModelConfiguration config, 
                          final DataHandle handle,
@@ -234,12 +241,11 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Returns an XML representation of the lattice
-     * 
+     * Returns an XML representation of the lattice.
+     *
      * @param map
      * @param l
      * @param zip
-     * @return
      * @throws IOException
      */
     private void toXML(final Map<String, Integer> map,
@@ -296,12 +302,12 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Returns an XML representation of the clipboard
-     * 
+     * Returns an XML representation of the clipboard.
+     *
      * @param map
      * @param clipboard
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final Map<String, Integer> map,
                          final List<ARXNode> clipboard) throws IOException {
@@ -316,11 +322,11 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Converts a model to XML
-     * 
+     * Converts a model to XML.
+     *
      * @param model
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String toXML(final Model model) throws IOException {
     	
@@ -343,8 +349,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the clipboard to the file
-     * 
+     * Writes the clipboard to the file.
+     *
+     * @param model
      * @param map
      * @param zip
      * @throws IOException
@@ -363,8 +370,10 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the configuration to the file
-     * 
+     * Writes the configuration to the file.
+     *
+     * @param config
+     * @param prefix
      * @param zip
      * @throws IOException
      */
@@ -387,8 +396,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the configuration to the file
-     * 
+     * Writes the configuration to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -403,8 +413,10 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the data definition to the file
-     * 
+     * Writes the data definition to the file.
+     *
+     * @param config
+     * @param prefix
      * @param zip
      * @throws IOException
      */
@@ -427,8 +439,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the current filter to the file
-     * 
+     * Writes the current filter to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -441,8 +454,10 @@ public class WorkerSave extends Worker<Model> {
     }
     
     /**
-     * Writes the hierarchies to the file
-     * 
+     * Writes the hierarchies to the file.
+     *
+     * @param config
+     * @param prefix
      * @param zip
      * @throws IOException
      */
@@ -458,8 +473,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the input to the file
-     * 
+     * Writes the input to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -478,8 +494,9 @@ public class WorkerSave extends Worker<Model> {
     
 
     /**
-     * Writes the input subset to the file
-     * 
+     * Writes the input subset to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -494,8 +511,9 @@ public class WorkerSave extends Worker<Model> {
     }
     
     /**
-     * Writes the lattice to the file
-     * 
+     * Writes the lattice to the file.
+     *
+     * @param model
      * @param zip
      * @return
      * @throws IOException
@@ -558,9 +576,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the meta data to the file
-     * 
-     * @param map
+     * Writes the meta data to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -579,8 +597,9 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the project to the file
-     * 
+     * Writes the project to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */
@@ -597,11 +616,12 @@ public class WorkerSave extends Worker<Model> {
     }
 
 	/**
-	 * Writes the output to the file
-	 * 
-	 * @param zip
-	 * @throws IOException
-	 */
+     * Writes the output to the file.
+     *
+     * @param model
+     * @param zip
+     * @throws IOException
+     */
 	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
 		if (model.getOutput() != null) {
 			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
@@ -611,8 +631,9 @@ public class WorkerSave extends Worker<Model> {
 	}
 
     /**
-     * Writes the output to the file
-     * 
+     * Writes the output to the file.
+     *
+     * @param model
      * @param zip
      * @throws IOException
      */

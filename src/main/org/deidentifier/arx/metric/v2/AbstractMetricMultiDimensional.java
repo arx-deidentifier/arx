@@ -35,28 +35,30 @@ import org.deidentifier.arx.metric.Metric;
  */
 public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMultiDimensional> {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = 3909752748519119689L;
 
-    /** The weights */
+    /** The weights. */
     private double[]                weights;
 
-    /** Number of dimensions */
+    /** Number of dimensions. */
     private int                     dimensions;
 
-    /** Min */
+    /** Min. */
     private double[]                min;
 
-    /** Max */
+    /** Max. */
     private double[]                max;
 
-    /** The aggregate function*/
+    /** The aggregate function. */
     private final AggregateFunction function;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param monotonic
      * @param independent
+     * @param function
      */
     AbstractMetricMultiDimensional(final boolean monotonic,
                                    final boolean independent,
@@ -66,6 +68,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
     
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (max == null) {
@@ -75,6 +80,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#createMinInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (min == null) {
@@ -84,13 +92,17 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getAggregateFunction()
+     */
     @Override
     public AggregateFunction getAggregateFunction() {
         return this.function;
     }
   
     /**
-     * Helper method for creating information loss
+     * Helper method for creating information loss.
+     *
      * @param values
      * @return
      */
@@ -114,7 +126,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
 
 
     /**
-     * Helper method for creating information loss
+     * Helper method for creating information loss.
+     *
      * @param values
      * @param bound
      * @return
@@ -126,7 +139,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     /**
-     * Helper method for creating information loss
+     * Helper method for creating information loss.
+     *
      * @param values
      * @return
      */
@@ -135,7 +149,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     /**
-     * Returns the number of dimensions
+     * Returns the number of dimensions.
+     *
      * @return
      */
     protected int getDimensions() {
@@ -143,7 +158,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
     
     /**
-     * For backwards compatibility only
+     * For backwards compatibility only.
+     *
      * @param dimensions
      */
     protected void initialize(int dimensions){
@@ -151,6 +167,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         Arrays.fill(weights, 1d);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -188,7 +207,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     /**
-     * Sets the maximal information loss
+     * Sets the maximal information loss.
+     *
      * @param max
      */
     protected void setMax(double[] max) {
@@ -196,7 +216,8 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     /**
-     * Sets the minimal information loss
+     * Sets the minimal information loss.
+     *
      * @param min
      */
     protected void setMin(double[] min) {

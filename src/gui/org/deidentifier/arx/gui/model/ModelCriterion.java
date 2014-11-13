@@ -23,59 +23,69 @@ import java.io.Serializable;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 
 /**
- * A base class for models for criteria
+ * A base class for models for criteria.
+ *
  * @author Fabian Prasser
  */
 public abstract class ModelCriterion implements Serializable {
 
-    /** SVUID*/
+    /** SVUID. */
 	private static final long serialVersionUID = 8097643412538848066L;
-	/** Is this criterion enabled*/
+	
+	/** Is this criterion enabled. */
 	private boolean enabled = false;
-	/** Is this criterion active*/
+	
+	/** Is this criterion active. */
 	private boolean active = false;
 
 	/**
-	 * Implement this to return the criterion
-	 * @param model
-	 * @return
-	 */
+     * Implement this to return the criterion.
+     *
+     * @param model
+     * @return
+     */
 	public abstract PrivacyCriterion getCriterion(Model model);
 	
 	/**
-	 * Is this criterion active
-	 * @return
-	 */
+     * Is this criterion active.
+     *
+     * @return
+     */
 	public boolean isActive() {
 		return active;
 	}
 
 	/**
-	 * Is this criterion enabled
-	 * @return
-	 */
+     * Is this criterion enabled.
+     *
+     * @return
+     */
 	public boolean isEnabled() {
 		return enabled;
 	}
 	
 	/**
-	 * Sets the criterion active/inactive
-	 * @param active
-	 */
+     * Sets the criterion active/inactive.
+     *
+     * @param active
+     */
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 
 	/**
-	 * Sets the criterion enabled/disabled
-	 * @param enabled
-	 */
+     * Sets the criterion enabled/disabled.
+     *
+     * @param enabled
+     */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 	
 	/**
-	 * Implement this to return a string representation
-	 */
+     * Implement this to return a string representation.
+     *
+     * @return
+     */
     public abstract String toString();
 }

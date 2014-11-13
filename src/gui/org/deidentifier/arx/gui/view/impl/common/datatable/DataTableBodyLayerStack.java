@@ -29,20 +29,28 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * A BodyLayerStack for the DataView
+ * A BodyLayerStack for the DataView.
+ *
  * @author Fabian Prasser
  */
 public class DataTableBodyLayerStack extends AbstractLayerTransform {
 
+	/**  TODO */
 	private final SelectionLayer selectionLayer;
+	
+	/**  TODO */
 	private final ViewportLayer viewportLayer;
+	
+	/**  TODO */
 	private ILayer rowHeaderLayer;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param underlyingLayer
      * @param table
      * @param context
+     * @param parent
      */
     public DataTableBodyLayerStack(IUniqueIndexLayer underlyingLayer, NatTable table, DataTableContext context, Control parent) {
         this.selectionLayer = new DataTableSelectionLayer(underlyingLayer, context);
@@ -53,7 +61,8 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
     }
 
     /**
-     * Returns the selection layer
+     * Returns the selection layer.
+     *
      * @return
      */
     public SelectionLayer getSelectionLayer() {
@@ -61,20 +70,25 @@ public class DataTableBodyLayerStack extends AbstractLayerTransform {
     }
 
     /**
-     * Returns the viewport layer
+     * Returns the viewport layer.
+     *
      * @return
      */
     public ViewportLayer getViewportLayer() {
         return viewportLayer;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform#setClientAreaProvider(org.eclipse.nebula.widgets.nattable.util.IClientAreaProvider)
+     */
     @Override
     public void setClientAreaProvider(IClientAreaProvider clientAreaProvider) {
         super.setClientAreaProvider(clientAreaProvider);
     }
 
     /**
-     * Sets the row header layer
+     * Sets the row header layer.
+     *
      * @param rowHeaderLayer
      */
 	public void setRowHeaderLayer(ILayer rowHeaderLayer) {

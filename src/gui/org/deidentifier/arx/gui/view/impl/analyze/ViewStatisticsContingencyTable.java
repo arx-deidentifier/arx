@@ -41,23 +41,26 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 
 /**
- * This class displays a contingency table
+ * This class displays a contingency table.
+ *
  * @author Fabian Prasser
  */
 public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisContextVisualizationContingency> {
 
-    /** Internal stuff */
+    /** Internal stuff. */
     private ComponentTable  table;
-    /** Internal stuff */
+    
+    /** Internal stuff. */
     private AnalysisManager manager;
 
 	/**
-	 * Creates a new density plot
-	 * @param parent
-	 * @param controller
-	 * @param target
-	 * @param reset
-	 */
+     * Creates a new density plot.
+     *
+     * @param parent
+     * @param controller
+     * @param target
+     * @param reset
+     */
     public ViewStatisticsContingencyTable(final Composite parent,
                        final Controller controller,
                        final ModelPart target,
@@ -67,6 +70,9 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createControl(Composite parent) {
         
@@ -84,12 +90,18 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
     }
 
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#createViewConfig(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContext)
+     */
     @Override
     protected AnalysisContextVisualizationContingency createViewConfig(AnalysisContext context) {
         return new AnalysisContextVisualizationContingency(context);
     }
 
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doReset()
+     */
     @Override
     protected void doReset() {
         if (this.manager != null) {
@@ -98,6 +110,9 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         this.table.clear();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.ViewStatistics#doUpdate(org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization)
+     */
     @Override
     protected void doUpdate(AnalysisContextVisualizationContingency context) {
 

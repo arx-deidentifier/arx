@@ -39,15 +39,22 @@ import org.deidentifier.arx.framework.lattice.Node;
  */
 public class MetricAECS extends MetricDefault {
 
+    /**  TODO */
     private static final long serialVersionUID = -532478849890959974L;
 
-    /** Number of tuples*/
+    /** Number of tuples. */
     private double rowCount = 0;
     
+    /**
+     * 
+     */
     protected MetricAECS() {
         super(false, false);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#createMaxInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (rowCount == 0) {
@@ -57,16 +64,25 @@ public class MetricAECS extends MetricDefault {
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#createMinInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new InformationLossDefault(1);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Average Equivalence Class Size";
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Node node, final IHashGroupify g) {
 
@@ -98,11 +114,17 @@ public class MetricAECS extends MetricDefault {
                                                (double)tuples / (double)groupsWithoutSuppression);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected InformationLossDefault getLowerBoundInternal(Node node,
                                                            IHashGroupify groupify) {
@@ -122,13 +144,17 @@ public class MetricAECS extends MetricDefault {
     }
 
     /**
-     * Returns the row count
+     * Returns the row count.
+     *
      * @return
      */
     protected double getRowCount() {
         return rowCount;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.MetricDefault#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(DataDefinition definition, Data input, GeneralizationHierarchy[] hierarchies, ARXConfiguration config) {
         super.initializeInternal(definition, input, hierarchies, config);

@@ -25,32 +25,35 @@ package org.deidentifier.arx.gui.model;
  */
 public abstract class ModelExplicitCriterion extends ModelCriterion {
 
-    /** SVUID*/
+    /** SVUID. */
 	private static final long serialVersionUID = 2140859935908452477L;
 	
-	/** The attribute*/
+	/** The attribute. */
 	private final String attribute;
 
 	/**
-	 * Creates a new instance
-	 * @param attribute
-	 */
+     * Creates a new instance.
+     *
+     * @param attribute
+     */
 	public ModelExplicitCriterion(String attribute) {
 		super();
 		this.attribute = attribute;
 	}
 
 	/**
-	 * Returns the associated attribute
-	 * @return
-	 */
+     * Returns the associated attribute.
+     *
+     * @return
+     */
 	public String getAttribute() {
 		return attribute;
 	}
 	
 	/**
-	 * Implement this, to update data
-	 * @param criterion
-	 */
+     * Implement this, to update data.
+     *
+     * @param criterion
+     */
     public abstract void pull(ModelExplicitCriterion criterion);
 }

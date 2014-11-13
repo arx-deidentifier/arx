@@ -28,24 +28,48 @@ import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
  */
 public abstract class CTLayer extends AbstractLayerTransform implements CTComponent {
 
+    /**  TODO */
     private final CTConfiguration config;
+    
+    /**  TODO */
     private final CTContext context;
     
+    /**
+     * 
+     *
+     * @param config
+     * @param context
+     */
     public CTLayer(CTConfiguration config, CTContext context){
         this.config = config;
         this.context = context;
     }
     
+    /**
+     * 
+     *
+     * @param underlyingDataLayer
+     * @param config
+     * @param context
+     */
     public CTLayer(IUniqueIndexLayer underlyingDataLayer, CTConfiguration config, CTContext context) {
         super(underlyingDataLayer);
         this.config = config;
         this.context = context;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.table.CTComponent#getConfig()
+     */
     public CTConfiguration getConfig(){
         return config;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public CTContext getContext() {
         return context;
     }

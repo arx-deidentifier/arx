@@ -44,18 +44,18 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long   serialVersionUID = 8053878428909814308L;
 
-    /** Not available in the cache */
+    /** Not available in the cache. */
     private static final double NOT_AVAILABLE    = Double.POSITIVE_INFINITY;
 
-    /** Log 2 */
+    /** Log 2. */
     private static final double LOG2             = Math.log(2);
 
     /**
-     * Computes log 2
-     * 
+     * Computes log 2.
+     *
      * @param num
      * @return
      */
@@ -63,17 +63,18 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         return Math.log(num) / LOG2;
     }
 
-    /** Cardinalities */
+    /** Cardinalities. */
     private Cardinalities cardinalities;
 
-    /** Column -> Level -> Value */
+    /** Column -> Level -> Value. */
     private double[][]    cache;
 
-    /** Column -> Id -> Level -> Output */
+    /** Column -> Id -> Level -> Output. */
     private int[][][]     hierarchies;
 
     /**
-     * Precomputed
+     * Precomputed.
+     *
      * @param monotonic
      * @param independent
      * @param function
@@ -85,14 +86,15 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDNUEntropyPrecomputed() {
         super(true, true, AggregateFunction.SUM);
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param function
      */
     protected MetricMDNUEntropyPrecomputed(AggregateFunction function){
@@ -100,7 +102,9 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(true,                       // monotonic
@@ -111,11 +115,17 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Non-uniform entropy";
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         
@@ -131,6 +141,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                                super.createInformationLoss(result));
     }
     
+    /**
+     * 
+     *
+     * @param node
+     * @param g
+     * @return
+     */
     protected double[] getInformationLossInternalRaw(final Node node, final IHashGroupify g) {
 
         // Prepare
@@ -163,11 +180,17 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         return this.getInformationLossInternal(node, null).getLowerBound();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                                IHashGroupify groupify) {
@@ -175,7 +198,11 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     /**
-     * For backwards compatibility
+     * For backwards compatibility.
+     *
+     * @param cache
+     * @param cardinalities
+     * @param hierarchies
      */
     protected void initialize(double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
         
@@ -199,6 +226,9 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMin(min);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,

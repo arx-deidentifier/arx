@@ -34,15 +34,17 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class provides access to basic resources
+ * This class provides access to basic resources.
+ *
  * @author Fabian Prasser
  */
 public class Resources {
 
     /**
-     * Returns the logo
+     * Returns the logo.
+     *
+     * @param display
      * @return
-     * @throws IOException
      */
 	public static Image[] getIconSet(Display display) {
 	    
@@ -57,9 +59,13 @@ public class Resources {
 	    return iconset;
 	}
     
-    /** 
+    /**
+     * 
      * Returns the associated message
-     * TODO: Make this method non-static
+     * TODO: Make this method non-static.
+     *
+     * @param key
+     * @return
      */
     public static String getMessage(String key) {
         try {
@@ -70,9 +76,10 @@ public class Resources {
     }
     
     /**
-     * Returns the splash image
+     * Returns the splash image.
+     *
+     * @param display
      * @return
-     * @throws IOException
      */
     public static Image getSplash(Display display) {
         if (splash == null) {
@@ -82,7 +89,8 @@ public class Resources {
     }
 
     /**
-     * Returns the version
+     * Returns the version.
+     *
      * @return
      */
     public static String getVersion() {
@@ -107,22 +115,24 @@ public class Resources {
         return image;
     }
 
+    /**  TODO */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
 
-    /** The splash*/
+    /** The splash. */
     private static Image splash = null;
     
-    /** The iconset*/
+    /** The iconset. */
     private static Image[] iconset = null;
 
-    /** Logger*/
+    /** Logger. */
     private final Logger logger = Logger.getRootLogger();
 
-    /** Shell*/
+    /** Shell. */
     private final Shell  shell;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param shell
      */
     public Resources(final Shell shell) {
@@ -137,7 +147,8 @@ public class Resources {
     }
     
     /**
-     * Returns the display
+     * Returns the display.
+     *
      * @return
      */
     public Display getDisplay() {
@@ -145,7 +156,8 @@ public class Resources {
     }
 
     /**
-     * Returns the size of the gradient used in heatmaps
+     * Returns the size of the gradient used in heatmaps.
+     *
      * @return
      */
     public int getGradientLength() {
@@ -153,7 +165,8 @@ public class Resources {
     }
 
     /**
-     * Returns an image
+     * Returns an image.
+     *
      * @param name
      * @return
      */
@@ -164,7 +177,8 @@ public class Resources {
     }
 
     /**
-     * Returns the logger
+     * Returns the logger.
+     *
      * @return
      */
     public Logger getLogger() {
@@ -172,7 +186,8 @@ public class Resources {
     }
 
     /**
-     * Returns the shell
+     * Returns the shell.
+     *
      * @return
      */
     public Shell getShell() {
@@ -180,7 +195,8 @@ public class Resources {
     }
 
     /**
-     * Returns a stream
+     * Returns a stream.
+     *
      * @param name
      * @return
      */

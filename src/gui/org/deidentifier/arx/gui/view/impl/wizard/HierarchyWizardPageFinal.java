@@ -29,28 +29,34 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 
 /**
- * The final page that shows an overview of the resulting hierarchy
- * @author Fabian Prasser
+ * The final page that shows an overview of the resulting hierarchy.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageFinal<T> extends WizardPage{
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizard<T> wizard;
-    /** Var */
+    
+    /** Var. */
     private Composite                composite;
-    /** Var */
+    
+    /** Var. */
     private List                     list;
-    /** Var */
+    
+    /** Var. */
     private ViewHierarchy            view;
-    /** Var */
+    
+    /** Var. */
     private int[]                    groups;
-    /** Var */
+    
+    /** Var. */
     private Hierarchy                hierarchy;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param wizard
      */
     public HierarchyWizardPageFinal(final HierarchyWizard<T> wizard) {
@@ -61,11 +67,17 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         setPageComplete(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
+     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void  createControl(final Composite parent) {
         composite = new Composite(parent, SWT.NONE);
@@ -92,13 +104,17 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
         setControl(composite);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+     */
     @Override
     public boolean isPageComplete() {
         return false;
     }
     
     /**
-     * Sets the groups
+     * Sets the groups.
+     *
      * @param groups
      */
     public void setGroups(int[] groups){
@@ -106,13 +122,17 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
     }
     
     /**
-     * Sets the hierarchy
+     * Sets the hierarchy.
+     *
      * @param hierarchy
      */
     public void setHierarchy(Hierarchy hierarchy){
         this.hierarchy = hierarchy;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
     @Override
     public void setVisible(boolean value){
         

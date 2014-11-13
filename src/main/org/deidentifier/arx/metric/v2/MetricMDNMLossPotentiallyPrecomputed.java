@@ -23,14 +23,14 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of NDS
- * TODO: Add reference
- * 
+ * TODO: Add reference.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDimensionalPotentiallyPrecomputed {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -409964525491865637L;
 
     /**
@@ -76,7 +76,9 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
     }
     
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(false,                      // monotonic
@@ -87,6 +89,9 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Loss";

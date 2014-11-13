@@ -31,22 +31,26 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class implements a splash window
+ * This class implements a splash window.
+ *
  * @author Fabian Prasser, Florian Kohlmayer
  */
 public class MainSplash {
 
-    /** Version*/
+    /** Version. */
     private final String version;
-    /** Splash*/
+    
+    /** Splash. */
     private final Image splash;
-    /** Shell*/
+    
+    /** Shell. */
     private final Shell shell;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param display
-     * @throws IOException
+     * @param monitor
      */
     public MainSplash(Display display, Monitor monitor) {
         
@@ -68,7 +72,8 @@ public class MainSplash {
     }
 
     /**
-     * Paint
+     * Paint.
+     *
      * @param gc
      */
     private void paint(GC gc) {
@@ -104,7 +109,8 @@ public class MainSplash {
     }
 
     /**
-     * Is this shell disposed
+     * Is this shell disposed.
+     *
      * @return
      */
     public boolean isDisposed() {
@@ -112,7 +118,7 @@ public class MainSplash {
     }
 
     /**
-     * Disposes the shell
+     * Disposes the shell.
      */
     public void hide() {
         if (shell != null && !shell.isDisposed()) {
@@ -121,7 +127,8 @@ public class MainSplash {
     }
 
     /**
-     * Detect os x
+     * Detect os x.
+     *
      * @return
      */
     private boolean isMac() {

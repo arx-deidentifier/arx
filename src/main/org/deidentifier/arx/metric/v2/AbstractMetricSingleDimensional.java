@@ -36,14 +36,15 @@ import org.deidentifier.arx.metric.Metric;
  */
 public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDimensional> {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -1082954137578580790L;
 
-    /** Row count*/
+    /** Row count. */
     private Double            tuples         = null;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param monotonic
      * @param independent
      */
@@ -51,24 +52,34 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         super(monotonic, independent);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#createMaxInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         return new ILSingleDimensional(Double.MAX_VALUE);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#createMinInformationLoss()
+     */
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new ILSingleDimensional(0d);
     }
     
     /**
-     * Returns the number of rows in the dataset or subset
+     * Returns the number of rows in the dataset or subset.
+     *
      * @return
      */
     protected Double getNumTuples() {
         return tuples;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 
@@ -86,8 +97,9 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     }
 
     /**
-     * Returns the number of rows in the dataset or subset
-     * @return
+     * Returns the number of rows in the dataset or subset.
+     *
+     * @param tuples
      */
     protected void setNumTuples(Double tuples) {
         this.tuples = tuples;

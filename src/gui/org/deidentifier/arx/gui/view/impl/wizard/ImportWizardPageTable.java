@@ -59,20 +59,20 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class ImportWizardPageTable extends WizardPage {
 
-    /**
-     * Reference to the wizard containing this page
-     */
+    /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
 
     /* SWT Widgets */
+    /**  TODO */
     private Table        table;
+    
+    /**  TODO */
     private TableViewer  tableViewer;
 
     /**
-     * Creates a new instance of this page and sets its title and description
-     * 
-     * @param wizardImport
-     *            Reference to wizard containing this page
+     * Creates a new instance of this page and sets its title and description.
+     *
+     * @param wizardImport Reference to wizard containing this page
      */
     public ImportWizardPageTable(ImportWizard wizardImport) {
 
@@ -83,7 +83,9 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
-     * Creates the design of this page along with the appropriate listeners
+     * Creates the design of this page along with the appropriate listeners.
+     *
+     * @param parent
      */
     public void createControl(Composite parent) {
 
@@ -221,7 +223,9 @@ public class ImportWizardPageTable extends WizardPage {
     }
 
     /**
-     * Applies previously detected tables to {@link #tableViewer}
+     * Applies previously detected tables to {@link #tableViewer}.
+     *
+     * @param visible
      */
     @Override
     public void setVisible(boolean visible) {

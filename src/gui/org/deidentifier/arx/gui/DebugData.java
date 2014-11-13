@@ -29,18 +29,22 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 
 /**
- * Class for creating debug data
- * @author Fabian Prasser
+ * Class for creating debug data.
  *
+ * @author Fabian Prasser
  */
 public class DebugData {
     
+    /**  TODO */
     private static final int MAX_BUFFER_SIZE = 1000;
+    
+    /**  TODO */
     private List<String> eventBuffer = new ArrayList<String>();
     
     /**
-     * Returns some debug data
-     * @param Model The model
+     * Returns some debug data.
+     *
+     * @param model
      * @return
      */
     protected String getData(Model model){
@@ -98,9 +102,11 @@ public class DebugData {
     }
     
     /**
-     * Returns a string representation of a handle
+     * Returns a string representation of a handle.
+     *
      * @param prefix
      * @param handle
+     * @param view
      * @return
      */
     private String getDebugData(String prefix, DataHandle handle, boolean view){
@@ -121,7 +127,8 @@ public class DebugData {
     }
 
     /**
-     * Returns a string representation of a definition
+     * Returns a string representation of a definition.
+     *
      * @param definition
      * @return
      */
@@ -134,8 +141,9 @@ public class DebugData {
     }
     
     /**
-     * Returns a string representation of a hierarchy
-     * @param definition
+     * Returns a string representation of a hierarchy.
+     *
+     * @param hierarchy
      * @return
      */
     private String getDebugData(Hierarchy hierarchy){
@@ -145,7 +153,8 @@ public class DebugData {
     }
 
     /**
-     * Adds an event to the buffer
+     * Adds an event to the buffer.
+     *
      * @param event
      */
     public void addEvent(ModelEvent event) {
@@ -156,7 +165,7 @@ public class DebugData {
     }
 
     /**
-     * Clears the event log
+     * Clears the event log.
      */
     public void clearEventLog() {
         this.eventBuffer.clear();

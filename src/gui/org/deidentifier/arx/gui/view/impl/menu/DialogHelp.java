@@ -50,19 +50,30 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * A help dialog
+ * A help dialog.
+ *
  * @author Fabian Prasser
  */
 public class DialogHelp extends TitleAreaDialog implements IDialog {
 
+    /**  TODO */
     private String           id;
+    
+    /**  TODO */
     private Browser          browser;
+    
+    /**  TODO */
     private List             list;
+    
+    /**  TODO */
     private Image            image;
+    
+    /**  TODO */
     private DialogHelpConfig config = new DialogHelpConfig();
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param parentShell
      * @param controller
      * @param id
@@ -73,6 +84,9 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#close()
+     */
     @Override
     public boolean close() {
         if (image != null)
@@ -81,7 +95,8 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Returns the index of a url
+     * Returns the index of a url.
+     *
      * @param location
      * @return
      */
@@ -89,12 +104,18 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return config.getIndexForUrl(location);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -112,6 +133,9 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         });
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -121,6 +145,9 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return contents;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         
@@ -186,13 +213,17 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return parent;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
+     */
     @Override
     protected Point getInitialSize() {
         return new Point(900,600);
     }
 
     /**
-     * Returns the url for an index
+     * Returns the url for an index.
+     *
      * @param index
      * @return
      */
@@ -200,6 +231,9 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return config.getUrlForIndex(index);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return true;

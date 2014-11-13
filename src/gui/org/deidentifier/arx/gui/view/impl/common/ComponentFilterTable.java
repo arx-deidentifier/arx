@@ -23,43 +23,54 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * This class implements a table, in which properties can be filtered
- * 
+ * This class implements a table, in which properties can be filtered.
+ *
  * @author Fabian Prasser
  */
 public class ComponentFilterTable {
 
-    /** Constant */
+    /** Constant. */
     private static final int                  LABEL_WIDTH      = 100;
-    /** Constant */
+    
+    /** Constant. */
     private static final int                  CHECKBOX_WIDTH   = 20;
 
-    /** Image */
+    /** Image. */
     private final Image                       IMAGE_ENABLED;
-    /** Image */
+    
+    /** Image. */
     private final Image                       IMAGE_DISABLED;
 
-    /** Widget */
+    /** Widget. */
     private Table                             table;
-    /** Widgets */
+    
+    /** Widgets. */
     private Map<String, TableItem>            items;
-    /** The registered listeners */
+    
+    /** The registered listeners. */
     private List<SelectionListener>           listeners;
-    /** The selection map */
+    
+    /** The selection map. */
     private Map<String, Map<String, Boolean>> selected;
-    /** The list of properties */
+    
+    /** The list of properties. */
     private Map<String, List<String>>         itemProperties;
-    /** The list of properties */
+    
+    /** The list of properties. */
     private List<String>                      properties;
-    /** The list of entries */
+    
+    /** The list of entries. */
     private List<String>                      entries;
-    /** Selected entry */
+    
+    /** Selected entry. */
     private String                            selectedEntry    = null;
-    /** Selected property */
+    
+    /** Selected property. */
     private String                            selectedProperty = null;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param properties
@@ -124,7 +135,9 @@ public class ComponentFilterTable {
 
     /**
      * Adds a new entry, i.e., a row in the table
+     *
      * @param entry
+     * @param properties
      */
     public void addEntry(String entry, List<String> properties){
         
@@ -151,7 +164,8 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Adds a selection listener
+     * Adds a selection listener.
+     *
      * @param listener
      */
     public void addSelectionListener(SelectionListener listener) {
@@ -159,7 +173,7 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Clears the table
+     * Clears the table.
      */
     public void clear(){
         this.table.setRedraw(false);
@@ -180,14 +194,15 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Disposes this widget
+     * Disposes this widget.
      */
     public void dispose(){
         this.table.dispose();
     }
     
     /**
-     * Returns the entries
+     * Returns the entries.
+     *
      * @return
      */
     public List<String> getEntries() {
@@ -195,7 +210,8 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Returns the properties
+     * Returns the properties.
+     *
      * @return
      */
     public List<String> getProperties() {
@@ -203,7 +219,8 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Returns the currently selected entry
+     * Returns the currently selected entry.
+     *
      * @return
      */
     public String getSelectedEntry(){
@@ -211,7 +228,8 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Returns the currently selected property
+     * Returns the currently selected property.
+     *
      * @return
      */
     public String getSelectedProperty(){
@@ -219,7 +237,8 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Returns whether the given property is selected for the given entry
+     * Returns whether the given property is selected for the given entry.
+     *
      * @param entry
      * @param property
      * @return
@@ -242,7 +261,8 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Removes a selection listener
+     * Removes a selection listener.
+     *
      * @param listener
      */
     public void removeSelectionListener(SelectionListener listener) {
@@ -250,7 +270,8 @@ public class ComponentFilterTable {
     }
     
     /**
-     * Enable/disable
+     * Enable/disable.
+     *
      * @param enabled
      */
     public void setEnabled(boolean enabled) {
@@ -258,7 +279,8 @@ public class ComponentFilterTable {
     } 
     
     /**
-     * Sets layout data
+     * Sets layout data.
+     *
      * @param layoutData
      */
     public void setLayoutData(Object layoutData) {
@@ -286,11 +308,11 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Sets the given property selected for the given entry 
+     * Sets the given property selected for the given entry .
+     *
      * @param entry
      * @param property
      * @param selected
-     * @return
      */
     public void setSelected(String entry, String property, boolean selected) {
         if (!this.entries.contains(entry)) {
@@ -311,7 +333,7 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Fires a new event
+     * Fires a new event.
      */
     private void fireSelectionEvent(){
         Event event = new Event();
@@ -325,8 +347,10 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Returns the item at the given location
-     * @param pt
+     * Returns the item at the given location.
+     *
+     * @param x
+     * @param y
      * @return
      */
     private int getItemColumnAt(int x, int y) {
@@ -346,8 +370,10 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Returns the item at the given location
-     * @param pt
+     * Returns the item at the given location.
+     *
+     * @param x
+     * @param y
      * @return
      */
     private int getItemRowAt(int x, int y) {

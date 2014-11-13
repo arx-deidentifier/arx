@@ -63,8 +63,8 @@ public class Dictionary {
     }
 
     /**
-     * Returns the mapping array
-     * 
+     * Returns the mapping array.
+     *
      * @return
      */
     public String[][] getMapping() {
@@ -72,8 +72,8 @@ public class Dictionary {
     }
 
     /**
-     * Returns the number of dimensions in the dictionary
-     * 
+     * Returns the number of dimensions in the dictionary.
+     *
      * @return
      */
     public int getNumDimensions() {
@@ -82,8 +82,9 @@ public class Dictionary {
 
     /**
      * Returns the number of unique values contained before finalizing the
-     * dictionary
-     * 
+     * dictionary.
+     *
+     * @param dimension
      * @return
      */
     public int getNumUniqueUnfinalizedValues(final int dimension) {
@@ -91,8 +92,8 @@ public class Dictionary {
     }
 
     /**
-     * Returns the registered value if present, null otherwise
-     * 
+     * Returns the registered value if present, null otherwise.
+     *
      * @param dimension
      * @param string
      * @return
@@ -119,8 +120,8 @@ public class Dictionary {
     }
 
     /**
-     * Merges this dictionary with another dictionary
-     * 
+     * Merges this dictionary with another dictionary.
+     *
      * @param targetDimension
      * @param dictionary
      * @param sourceDimension

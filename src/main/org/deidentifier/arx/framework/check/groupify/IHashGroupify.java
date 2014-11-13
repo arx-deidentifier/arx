@@ -21,10 +21,14 @@ package org.deidentifier.arx.framework.check.groupify;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
+/**
+ * 
+ */
 public interface IHashGroupify {
 
     /**
-     * Generic adder for all combinations of criteria in mode transform ALL
+     * Generic adder for all combinations of criteria in mode transform ALL.
+     *
      * @param outtuple
      * @param representant
      * @param count
@@ -34,7 +38,8 @@ public interface IHashGroupify {
     public abstract void addAll(int[] outtuple, int representant, int count, int[] sensitive, int pcount);
 
     /**
-     * Generic adder for all combinations of criteria in mode transform GROUPIFY
+     * Generic adder for all combinations of criteria in mode transform GROUPIFY.
+     *
      * @param outtuple
      * @param representant
      * @param count
@@ -45,7 +50,8 @@ public interface IHashGroupify {
 
 
     /**
-     * Generic adder for all combinations of criteria in mode transform SNAPSHOT
+     * Generic adder for all combinations of criteria in mode transform SNAPSHOT.
+     *
      * @param outtuple
      * @param representant
      * @param count
@@ -80,14 +86,15 @@ public interface IHashGroupify {
     public abstract HashGroupifyEntry getFirstEntry();
 
     /**
-     * Returns statistics about the groups
+     * Returns statistics about the groups.
+     *
      * @return
      */
     public abstract GroupStatistics getGroupStatistics();
 
     /**
-     * Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples
-     * 
+     * Are all defined privacy criteria fulfilled by this transformation, given the specified limit on suppressed tuples.
+     *
      * @return true, if successful
      */
     public abstract boolean isAnonymous();
@@ -101,14 +108,14 @@ public interface IHashGroupify {
     
 
     /**
-     * Marks all outliers
-     * 
-     * @param data
+     * Marks all outliers.
+     *
+     * @param buffer
      */
     public abstract void markOutliers(int[][] buffer);
 
     /**
-     * Resets all flags that indicate that equivalence classes are suppressed
+     * Resets all flags that indicate that equivalence classes are suppressed.
      */
     public abstract void resetSuppression();
     

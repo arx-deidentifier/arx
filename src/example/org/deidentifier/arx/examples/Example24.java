@@ -35,8 +35,8 @@ import cern.colt.Arrays;
 
 /**
  * This class implements examples on how to directly use empty and functional
- * hierarchies
- * 
+ * hierarchies.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

@@ -32,31 +32,37 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 
 /**
- * This class implements sorting and swapping for a set of paired data handles
+ * This class implements sorting and swapping for a set of paired data handles.
+ *
  * @author Fabian Prasser
  */
 class DataRegistry {
 
-    /** The input handle, if any*/
+    /** The input handle, if any. */
     private DataHandleInput input;
-    /** The input subset handle, if any*/
+    
+    /** The input subset handle, if any. */
     private DataHandleSubset inputSubset;
-    /** The output handle, if any*/
+    
+    /** The output handle, if any. */
     private Map<ARXNode, DataHandleOutput> output = new HashMap<ARXNode, DataHandleOutput>();
-    /** The output subset handle, if any*/
+    
+    /** The output subset handle, if any. */
     private Map<ARXNode, DataHandleSubset> outputSubset = new HashMap<ARXNode, DataHandleSubset>();
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public DataRegistry(){
         // Empty by design
     }
     
     /**
-     * Helper that creates a view on a research subset
+     * Helper that creates a view on a research subset.
+     *
      * @param handle
      * @param subset
+     * @param eqStatistics
      * @return
      */
     private DataHandleSubset createSubset(DataHandle handle, DataSubset subset, StatisticsEquivalenceClasses eqStatistics) {
@@ -67,7 +73,8 @@ class DataRegistry {
     }
     
     /**
-     * Returns any of the registered subsets
+     * Returns any of the registered subsets.
+     *
      * @return
      */
     private DataHandleSubset getSubset() {
@@ -81,7 +88,8 @@ class DataRegistry {
     }
     
     /**
-     * Sort
+     * Sort.
+     *
      * @param handle
      * @param swapper
      * @param from
@@ -123,7 +131,8 @@ class DataRegistry {
     }
     
     /**
-     * Sort
+     * Sort.
+     *
      * @param handle
      * @param swapper
      * @param from
@@ -159,7 +168,8 @@ class DataRegistry {
     }
 
     /**
-     * Swap
+     * Swap.
+     *
      * @param handle
      * @param row1
      * @param row2
@@ -177,7 +187,8 @@ class DataRegistry {
     }
     
     /**
-     * Swap
+     * Swap.
+     *
      * @param handle
      * @param row1
      * @param row2
@@ -192,7 +203,9 @@ class DataRegistry {
     }
     
     /**
-     * Creates the views on the subset
+     * Creates the views on the subset.
+     *
+     * @param config
      */
     protected void createInputSubset(ARXConfiguration config){
         
@@ -205,8 +218,11 @@ class DataRegistry {
     }
 
     /**
-     * Creates the views on the subset
-     * @param peqStatistics 
+     * Creates the views on the subset.
+     *
+     * @param node
+     * @param config
+     * @param peqStatistics
      */
     protected void createOutputSubset(ARXNode node, ARXConfiguration config, StatisticsEquivalenceClasses peqStatistics){
         if (config.containsCriterion(DPresence.class)) {
@@ -218,7 +234,8 @@ class DataRegistry {
     }
 
     /**
-     * Returns the base data type without generalization
+     * Returns the base data type without generalization.
+     *
      * @param attribute
      * @return
      */
@@ -227,7 +244,8 @@ class DataRegistry {
     }
 
     /**
-     * Returns a registered handle, if any
+     * Returns a registered handle, if any.
+     *
      * @param node
      * @return
      */
@@ -236,7 +254,8 @@ class DataRegistry {
     }
     
     /**
-     * Implementation of {@link DataHandle#isOutlier(row)}
+     * Implementation of {@link DataHandle#isOutlier(row)}.
+     *
      * @param handle
      * @param row
      * @return
@@ -255,8 +274,9 @@ class DataRegistry {
     }
 
     /**
-     * Releases the given handle
-     * @param dataHandle
+     * Releases the given handle.
+     *
+     * @param handle
      */
     protected void release(DataHandle handle) {
         
@@ -285,7 +305,7 @@ class DataRegistry {
     }
 
     /**
-     * Removes the association to all handles, but the input handle
+     * Removes the association to all handles, but the input handle.
      */
     protected void reset() {
         while (!this.output.entrySet().isEmpty()) {
@@ -370,8 +390,9 @@ class DataRegistry {
     }
 
     /**
-     * Implementation of {@link DataHandle#swap(int, int)}
-     * @param dataHandle
+     * Implementation of {@link DataHandle#swap(int, int)}.
+     *
+     * @param handle
      * @param row1
      * @param row2
      */
@@ -384,7 +405,8 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
      * @param input
      */
     protected void updateInput(DataHandleInput input){
@@ -392,7 +414,8 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
      * @param inputSubset
      */
     protected void updateInputSubset(DataHandleSubset inputSubset){
@@ -400,7 +423,9 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
+     * @param node
      * @param output
      */
     protected void updateOutput(ARXNode node, DataHandleOutput output){
@@ -408,7 +433,9 @@ class DataRegistry {
     }
 
     /**
-     * Update the registry
+     * Update the registry.
+     *
+     * @param node
      * @param outputSubset
      */
     protected void updateOutputSubset(ARXNode node, DataHandleSubset outputSubset){

@@ -32,29 +32,43 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
  * using redaction. Data items are 1) aligned left-to-right or right-to-left, 2) differences in
  * length are filled with a padding character, 3) then, equally long values are redacted character by character
  * from left-to-right or right-to-left.
- * 
- * @author Fabian Prasser
  *
+ * @author Fabian Prasser
+ * @param <T>
  */
 public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable {
 
+    /**
+     * 
+     */
     public static enum Order {
+        
+        /**  TODO */
         LEFT_TO_RIGHT,
+        
+        /**  TODO */
         RIGHT_TO_LEFT
     }
 
+    /**  TODO */
     private static final long serialVersionUID = 3625654600380531803L;
 
     /**
      * Values are aligned left-to-right and redacted right-to-left. Redacted characters
      * are replaced with the given character. The same character is used for padding.
+     *
+     * @param <T>
      * @param redactionCharacter
+     * @return
      */
     public static <T> HierarchyBuilderRedactionBased<T> create(char redactionCharacter){
         return new HierarchyBuilderRedactionBased<T>(redactionCharacter);
     }
+    
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -74,11 +88,14 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
-     * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder. 
+     * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder.
      * Redacted characters are replaced with the given character. The same character is used for padding.
+     *
+     * @param <T>
      * @param alignmentOrder
      * @param redactionOrder
      * @param redactionCharacter
+     * @return
      */
     public static <T> HierarchyBuilderRedactionBased<T> create(Order alignmentOrder, 
                                                                Order redactionOrder, 
@@ -87,12 +104,15 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
-     * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder. 
+     * Values are aligned according to the alignmentOrder and redacted according to the redactionOrder.
      * Redacted characters are replaced with the given character. The padding character is used for padding.
+     *
+     * @param <T>
      * @param alignmentOrder
      * @param redactionOrder
      * @param paddingCharacter
      * @param redactionCharacter
+     * @return
      */
     public static <T> HierarchyBuilderRedactionBased<T> create(Order alignmentOrder, 
                                                                Order redactionOrder, 
@@ -102,7 +122,9 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
 
     /**
-     * Loads a builder specification from the given file
+     * Loads a builder specification from the given file.
+     *
+     * @param <T>
      * @param file
      * @return
      * @throws IOException
@@ -111,19 +133,19 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
         return create(new File(file));
     }
     
-    /** Alignment order*/
+    /** Alignment order. */
     private Order                aligmentOrder      = Order.LEFT_TO_RIGHT;
     
-    /** Padding character*/
+    /** Padding character. */
     private char                 paddingCharacter   = '*';
     
-    /** Redaction character*/
+    /** Redaction character. */
     private char                 redactionCharacter = '*';
     
-    /** Redaction order*/
+    /** Redaction order. */
     private Order                redactionOrder     = Order.RIGHT_TO_LEFT;
 
-    /** Result */
+    /** Result. */
     private transient String[][] result;
 
     /**
@@ -193,7 +215,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
 
 
     /**
-     * Creates a new hierarchy, based on the predefined specification
+     * Creates a new hierarchy, based on the predefined specification.
+     *
      * @return
      */
     public Hierarchy build(){
@@ -210,7 +233,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
-     * Creates a new hierarchy, based on the predefined specification
+     * Creates a new hierarchy, based on the predefined specification.
+     *
      * @param data
      * @return
      */
@@ -220,7 +244,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
-     * Returns the alignment order
+     * Returns the alignment order.
+     *
      * @return
      */
     public Order getAligmentOrder() {
@@ -257,8 +282,10 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     public Double getMaxValueLength() {
         return maxValueLength;
     }
+    
     /**
-     * Returns the padding character
+     * Returns the padding character.
+     *
      * @return
      */
     public char getPaddingCharacter() {
@@ -266,7 +293,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
-     * Returns the redaction character
+     * Returns the redaction character.
+     *
      * @return
      */
     public char getRedactionCharacter() {
@@ -274,7 +302,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
 
     /**
-     * Returns the redaction order
+     * Returns the redaction order.
+     *
      * @return
      */
     public Order getRedactionOrder() {
@@ -293,6 +322,8 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
 
     /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level
+     *
+     * @param data
      * @return
      */
     public int[] prepare(String[] data){
@@ -387,7 +418,9 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     }
     
     /**
-     * Computes the hierarchy
+     * Computes the hierarchy.
+     *
+     * @param data
      */
     private void prepareResult(String[] data){
 

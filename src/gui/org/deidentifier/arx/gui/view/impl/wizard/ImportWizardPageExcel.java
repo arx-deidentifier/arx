@@ -89,14 +89,12 @@ public class ImportWizardPageExcel extends WizardPage {
      */
     class ExcelColumnLabelProvider extends ColumnLabelProvider {
 
-        /**
-         * Index of the column this instance is representing
-         */
+        /** Index of the column this instance is representing. */
         private int index;
 
 
         /**
-         * Creates new instance of this class for the given index
+         * Creates new instance of this class for the given index.
          *
          * @param index Index the instance should be created for
          */
@@ -105,7 +103,10 @@ public class ImportWizardPageExcel extends WizardPage {
         }
 
         /**
-         * Returns the string value for the given column
+         * Returns the string value for the given column.
+         *
+         * @param element
+         * @return
          */
         @Override
         public String getText(Object element) {
@@ -114,9 +115,12 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /**
          * Returns tooltip for each element of given column
-         *
+         * 
          * The tooltip contains the current row as well as the column index
          * itself.
+         *
+         * @param element
+         * @return
          */
         @Override
         public String getToolTipText(Object element) {
@@ -126,44 +130,48 @@ public class ImportWizardPageExcel extends WizardPage {
         }
     }
 
-    /**
-     * Reference to the wizard containing this page
-     */
+    /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
 
-    /**
-     * Columns detected by this page and passed on to {@link ImportWizardModel}
-     */
+    /** Columns detected by this page and passed on to {@link ImportWizardModel}. */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
     /* Widgets */
+    /**  TODO */
     private Label lblLocation;
+    
+    /**  TODO */
     private Combo comboLocation;
+    
+    /**  TODO */
     private Button btnChoose;
+    
+    /**  TODO */
     private Button btnContainsHeader;
+    
+    /**  TODO */
     private Combo comboSheet;
+    
+    /**  TODO */
     private Label lblSheet;
+    
+    /**  TODO */
     private Table tablePreview;
 
+    /**  TODO */
     private TableViewer tableViewerPreview;
 
-    /**
-     * Preview data
-     */
+    /** Preview data. */
     ArrayList<String[]> previewData = new ArrayList<String[]>();
 
 
-    /**
-     * Workbook
-     *
-     * Either HSSFWorkbook or XSSFWorkbook, depending upon file type
-     */
+    /** Workbook Either HSSFWorkbook or XSSFWorkbook, depending upon file type. */
     private Workbook workbook;
     
-    /** Input stream*/
+    /** Input stream. */
     private InputStream stream;
 
     /**
-     * Creates a new instance of this page and sets its title and description
+     * Creates a new instance of this page and sets its title and description.
      *
      * @param wizardImport Reference to wizard containing this page
      */
@@ -180,9 +188,10 @@ public class ImportWizardPageExcel extends WizardPage {
 
     /**
      * Creates the design of this page
-     *
+     * 
      * This adds all the controls to the page along with their listeners.
      *
+     * @param parent
      * @note {@link #tablePreview} is not visible until a file is loaded.
      */
     public void createControl(Composite parent)
@@ -374,11 +383,11 @@ public class ImportWizardPageExcel extends WizardPage {
 
     /**
      * Reads in preview data
-     *
+     * 
      * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
-     * within the appropriate file and reads them in. It uses
-     * {@link ImportAdapter} in combination with
-     * {@link ImportConfigurationExcel} to actually read in the data.
+     * within the appropriate file and reads them in. It uses {@link ImportAdapter} in combination with {@link ImportConfigurationExcel} to actually read in the data.
+     *
+     * @throws IOException
      */
     private void readPreview() throws IOException {
 
@@ -471,9 +480,10 @@ public class ImportWizardPageExcel extends WizardPage {
 
     /**
      * Reads in the available sheets from file
+     * 
+     * This reads in the available sheets from the file chosen at {@link #comboLocation} and adds them as items to {@link #comboSheet}.
      *
-     * This reads in the available sheets from the file chosen at
-     * {@link #comboLocation} and adds them as items to {@link #comboSheet}.
+     * @throws IOException
      */
     private void readSheets() throws IOException {
 
@@ -500,6 +510,9 @@ public class ImportWizardPageExcel extends WizardPage {
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
     @Override
     public void setVisible(boolean value){
         super.setVisible(value);

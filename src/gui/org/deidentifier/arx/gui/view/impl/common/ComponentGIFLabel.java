@@ -39,16 +39,32 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class ComponentGIFLabel extends Canvas {
     
+    /**
+     * 
+     */
     private class GIFHandler implements Runnable {
 
+        /**  TODO */
         private int         imageNumber = 0;
+        
+        /**  TODO */
         private ImageLoader loader      = null;
+        
+        /**  TODO */
         private boolean     stop        = false;
 
+        /**
+         * 
+         *
+         * @param loader
+         */
         public GIFHandler(ImageLoader loader) {
             this.loader = loader;
         }
         
+        /* (non-Javadoc)
+         * @see java.lang.Runnable#run()
+         */
         @Override
         public void run() {
             int delayTime = loader.data[imageNumber].delayTime;
@@ -64,43 +80,74 @@ public class ComponentGIFLabel extends Canvas {
             }
         } 
         
+        /**
+         * 
+         */
         public void stop(){
             this.stop = true;
         }
     }
     
-    /** Gap between icon and text */
+    /** Gap between icon and text. */
     private static final int    GAP            = 5;
-    /** Left and right margins */
+    
+    /** Left and right margins. */
     private static final int    DEFAULT_MARGIN = 3;
-    /** A string inserted in the middle of text that has been shortened */
+    
+    /** A string inserted in the middle of text that has been shortened. */
     private static final String ELLIPSIS       = "..."; //$NON-NLS-1$
 
     /** The alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
     private int        align        = SWT.LEFT;
+    
+    /**  TODO */
     private int        leftMargin   = DEFAULT_MARGIN;
+    
+    /**  TODO */
     private int        topMargin    = DEFAULT_MARGIN;
+    
+    /**  TODO */
     private int        rightMargin  = DEFAULT_MARGIN;
+    
+    /**  TODO */
     private int        bottomMargin = DEFAULT_MARGIN;
+    
+    /**  TODO */
     private String     text;
+    
+    /**  TODO */
     private Image      image;
 
+    /**  TODO */
     private String     appToolTipText;
+    
+    /**  TODO */
     private boolean    ignoreDispose;
+    
+    /**  TODO */
     private Image      backgroundImage;
+    
+    /**  TODO */
     private Color[]    gradientColors;
+    
+    /**  TODO */
     private int[]      gradientPercents;
 
+    /**  TODO */
     private boolean    gradientVertical;
 
+    /**  TODO */
     private Color      background;
 
+    /**  TODO */
     private GIFHandler thread       = null;
 
+    /**  TODO */
     private static int DRAW_FLAGS   = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
 
     /**
-     * Checkstyle method
+     * Checkstyle method.
+     *
      * @param style
      * @return
      */
@@ -111,6 +158,12 @@ public class ComponentGIFLabel extends Canvas {
         return style |= SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED;
     }
     
+    /**
+     * 
+     *
+     * @param parent
+     * @param style
+     */
     public ComponentGIFLabel(Composite parent, int style) {
         super(parent, checkStyle(style));
         if ((style & (SWT.CENTER | SWT.RIGHT)) == 0) style |= SWT.LEFT;
@@ -142,6 +195,9 @@ public class ComponentGIFLabel extends Canvas {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
+     */
     public Point computeSize(int wHint, int hHint, boolean changed) {
         checkWidget();
         Point e = getTotalSize(image, text);
@@ -158,36 +214,67 @@ public class ComponentGIFLabel extends Canvas {
         return e;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Widget#dispose()
+     */
     @Override
     public void dispose() {
         super.dispose();
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getAlignment() {
         // checkWidget();
         return align;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getBottomMargin() {
         // checkWidget();
         return bottomMargin;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public Image getImage() {
         // checkWidget();
         return image;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getLeftMargin() {
         // checkWidget();
         return leftMargin;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getRightMargin() {
         // checkWidget();
         return rightMargin;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Widget#getStyle()
+     */
     public int getStyle() {
         int style = super.getStyle();
         switch (align) {
@@ -204,21 +291,39 @@ public class ComponentGIFLabel extends Canvas {
         return style;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public String getText() {
         // checkWidget();
         return text;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Control#getToolTipText()
+     */
     public String getToolTipText() {
         checkWidget();
         return appToolTipText;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int getTopMargin() {
         // checkWidget();
         return topMargin;
     }
 
+    /**
+     * 
+     *
+     * @param align
+     */
     public void setAlignment(int align) {
         checkWidget();
         if (align != SWT.LEFT && align != SWT.RIGHT && align != SWT.CENTER) {
@@ -230,6 +335,9 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+     */
     public void setBackground(Color color) {
         super.setBackground(color);
         // Are these settings the same as before?
@@ -247,10 +355,23 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param colors
+     * @param percents
+     */
     public void setBackground(Color[] colors, int[] percents) {
         setBackground(colors, percents, false);
     }
 
+    /**
+     * 
+     *
+     * @param colors
+     * @param percents
+     * @param vertical
+     */
     public void setBackground(Color[] colors, int[] percents, boolean vertical) {
         checkWidget();
         if (colors != null) {
@@ -312,6 +433,11 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param image
+     */
     public void setBackground(Image image) {
         checkWidget();
         if (image == backgroundImage) return;
@@ -324,6 +450,11 @@ public class ComponentGIFLabel extends Canvas {
 
     }
 
+    /**
+     * 
+     *
+     * @param bottomMargin
+     */
     public void setBottomMargin(int bottomMargin) {
         checkWidget();
         if (this.bottomMargin == bottomMargin || bottomMargin < 0) return;
@@ -331,11 +462,19 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Canvas#setFont(org.eclipse.swt.graphics.Font)
+     */
     public void setFont(Font font) {
         super.setFont(font);
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param inputStream
+     */
     public void setGIF(InputStream inputStream) {
         checkWidget();
         if (thread != null) {
@@ -362,6 +501,11 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param path
+     */
     public void setGIF(String path) {
         try {
             this.setGIF(new FileInputStream(new File(path)));
@@ -371,6 +515,11 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /**
+     * 
+     *
+     * @param image
+     */
     public void setImage(Image image) {
         checkWidget();
         if (thread != null) {
@@ -384,6 +533,11 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /**
+     * 
+     *
+     * @param leftMargin
+     */
     public void setLeftMargin(int leftMargin) {
         checkWidget();
         if (this.leftMargin == leftMargin || leftMargin < 0) return;
@@ -391,6 +545,14 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param leftMargin
+     * @param topMargin
+     * @param rightMargin
+     * @param bottomMargin
+     */
     public void setMargins(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
         checkWidget();
         this.leftMargin = Math.max(0, leftMargin);
@@ -400,6 +562,11 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param rightMargin
+     */
     public void setRightMargin(int rightMargin) {
         checkWidget();
         if (this.rightMargin == rightMargin || rightMargin < 0) return;
@@ -407,6 +574,11 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param text
+     */
     public void setText(String text) {
         checkWidget();
         if (text == null) text = ""; //$NON-NLS-1$
@@ -416,11 +588,19 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Control#setToolTipText(java.lang.String)
+     */
     public void setToolTipText(String string) {
         super.setToolTipText(string);
         appToolTipText = super.getToolTipText();
     }
 
+    /**
+     * 
+     *
+     * @param topMargin
+     */
     public void setTopMargin(int topMargin) {
         checkWidget();
         if (this.topMargin == topMargin || topMargin < 0) return;
@@ -428,6 +608,17 @@ public class ComponentGIFLabel extends Canvas {
         redraw();
     }
 
+    /**
+     * 
+     *
+     * @param gc
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param topleft
+     * @param bottomright
+     */
     private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topleft, Color bottomright) {
         gc.setForeground(bottomright);
         gc.drawLine(x + w, y, x + w, y + h);
@@ -438,6 +629,13 @@ public class ComponentGIFLabel extends Canvas {
         gc.drawLine(x, y, x, y + h - 1);
     }
 
+    /**
+     * 
+     *
+     * @param image
+     * @param text
+     * @return
+     */
     private Point getTotalSize(Image image, String text) {
         Point size = new Point(0, 0);
 
@@ -461,6 +659,9 @@ public class ComponentGIFLabel extends Canvas {
         return size;
     }
 
+    /**
+     * 
+     */
     private void initAccessible() {
         Accessible accessible = getAccessible();
         accessible.addAccessibleListener(new AccessibleAdapter() {
@@ -507,6 +708,12 @@ public class ComponentGIFLabel extends Canvas {
         });
     }
 
+    /**
+     * 
+     *
+     * @param gc
+     * @param r
+     */
     private void paintBorder(GC gc, Rectangle r) {
         Display disp = getDisplay();
 
@@ -529,6 +736,12 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /**
+     * 
+     *
+     * @param text
+     * @return
+     */
     private String[] splitString(String text) {
         String[] lines = new String[1];
         int start = 0, pos;
@@ -548,6 +761,14 @@ public class ComponentGIFLabel extends Canvas {
         return lines;
     }
 
+    /**
+     * 
+     *
+     * @param gc
+     * @param t
+     * @param width
+     * @return
+     */
     protected String shortenText(GC gc, String t, int width) {
         if (t == null) return null;
         int w = gc.textExtent(ELLIPSIS, DRAW_FLAGS).x;
@@ -580,6 +801,12 @@ public class ComponentGIFLabel extends Canvas {
         return result;
     }
 
+    /**
+     * 
+     *
+     * @param string
+     * @return
+     */
     char _findMnemonic(String string) {
         if (string == null) return '\0';
         int index = 0;
@@ -594,6 +821,11 @@ public class ComponentGIFLabel extends Canvas {
         return '\0';
     }
 
+    /**
+     * 
+     *
+     * @param event
+     */
     void onDispose(Event event) {
         /* make this handler run after other dispose listeners */
         if (ignoreDispose) {
@@ -612,6 +844,11 @@ public class ComponentGIFLabel extends Canvas {
         appToolTipText = null;
     }
 
+    /**
+     * 
+     *
+     * @param event
+     */
     void onMnemonic(TraverseEvent event) {
         char mnemonic = _findMnemonic(text);
         if (mnemonic == '\0') return;
@@ -635,6 +872,11 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /**
+     * 
+     *
+     * @param event
+     */
     void onPaint(PaintEvent event) {
         Rectangle rect = getClientArea();
         if (rect.width == 0 || rect.height == 0) return;
@@ -811,6 +1053,13 @@ public class ComponentGIFLabel extends Canvas {
         }
     }
 
+    /**
+     * 
+     *
+     * @param layout
+     * @param offset
+     * @return
+     */
     int validateOffset(TextLayout layout, int offset) {
         int nextOffset = layout.getNextOffset(offset, SWT.MOVEMENT_CLUSTER);
         if (nextOffset != offset) return layout.getPreviousOffset(nextOffset, SWT.MOVEMENT_CLUSTER);

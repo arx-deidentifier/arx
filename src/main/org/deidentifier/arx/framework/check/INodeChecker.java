@@ -27,27 +27,33 @@ import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This interface implements a generic interface for node checkers
- * 
+ * This interface implements a generic interface for node checkers.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public interface INodeChecker {
 
-    /** The result of a check*/
+    /**
+     * The result of a check.
+     */
     public static class Result {
         
-        /** Overall anonymity*/
+        /** Overall anonymity. */
         public final boolean anonymous;
-        /** k-Anonymity sub-criterion*/
+        
+        /** k-Anonymity sub-criterion. */
         public final boolean kAnonymous;
-        /** Information loss*/
+        
+        /** Information loss. */
         public final InformationLoss<?> informationLoss;
-        /** Lower bound*/
+        
+        /** Lower bound. */
         public final InformationLoss<?> lowerBound;
         
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param anonymous
          * @param kAnonymous
          * @param infoLoss
@@ -62,16 +68,16 @@ public interface INodeChecker {
     }
 
     /**
-     * Checks the given node
-     * 
+     * Checks the given node.
+     *
      * @param node The node to check
      * @return Result
      */
     public abstract INodeChecker.Result check(final Node node);
 
     /**
-     * Checks the given node
-     * 
+     * Checks the given node.
+     *
      * @param node The node to check
      * @param forceMeasureInfoLoss
      * @return Result
@@ -79,60 +85,67 @@ public interface INodeChecker {
     public INodeChecker.Result check(Node node, boolean forceMeasureInfoLoss);
 
     /**
-     * Returns the buffer as a Data object
-     * 
+     * Returns the buffer as a Data object.
+     *
      * @return
      */
     public abstract Data getBuffer();
 
     /**
-     * Returns the current config
-     * 
+     * Returns the current config.
+     *
      * @return
      */
     public abstract ARXConfigurationInternal getConfiguration();
 
     /**
-     * Returns the data
-     * 
+     * Returns the data.
+     *
      * @return
      */
     public abstract Data getData();
 
     /**
-     * Returns the current hash groupify
-     * 
+     * Returns the current hash groupify.
+     *
      * @return
      */
     public abstract IHashGroupify getGroupify();
 
 
     /**
-     * Returns the history, if there is any
+     * Returns the history, if there is any.
+     *
      * @return
      */
     public abstract History getHistory();
 
+    /**
+     * 
+     *
+     * @param node
+     * @return
+     */
     @Deprecated
     public abstract double getInformationLoss(final Node node);
 
     /**
-     * Returns the metric used by this checker
-     * 
+     * Returns the metric used by this checker.
+     *
      * @return
      */
     public abstract Metric<?> getMetric();
 
     /**
-     * Returns the number of groups from the previous check
-     * 
+     * Returns the number of groups from the previous check.
+     *
      * @return
      */
     public abstract int getNumberOfGroups();
 
     /**
-     * Applies the given transformation and sets its properties
-     * 
+     * Applies the given transformation and sets its properties.
+     *
      * @param transformation
      * @return
      */

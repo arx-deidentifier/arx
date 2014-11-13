@@ -41,16 +41,16 @@ public class CSVDataOutput {
     /** The separator. */
     private final char         separator;
 
-    /** Size of the buffer */
+    /** Size of the buffer. */
     private static final int   BUFFER_SIZE = 1024 * 1024;
 
-    /** Are we writing to a stream? */
+    /** Are we writing to a stream?. */
     private boolean            stream      = false;
 
     /**
-     * New instance
-     * 
-     * @param output
+     * New instance.
+     *
+     * @param file
      * @param separator
      * @throws FileNotFoundException
      */
@@ -60,8 +60,8 @@ public class CSVDataOutput {
     }
 
     /**
-     * New instance
-     * 
+     * New instance.
+     *
      * @param out
      * @param separator
      */
@@ -72,8 +72,8 @@ public class CSVDataOutput {
     }
 
     /**
-     * New instance
-     * 
+     * New instance.
+     *
      * @param output
      * @param separator
      * @throws FileNotFoundException
@@ -84,8 +84,8 @@ public class CSVDataOutput {
     }
 
     /**
-     * Write the results
-     * 
+     * Write the results.
+     *
      * @param iterator
      * @throws IOException
      */
@@ -94,8 +94,8 @@ public class CSVDataOutput {
     }
 
     /**
-     * Write the given number of columns from the results
-     * 
+     * Write the given number of columns from the results.
+     *
      * @param iterator
      * @param numColumns
      * @throws IOException
@@ -124,6 +124,12 @@ public class CSVDataOutput {
         }
     }
 
+    /**
+     * 
+     *
+     * @param hierarchy
+     * @throws IOException
+     */
     public void write(final String[][] hierarchy) throws IOException {
         BufferedWriter os = null;
         try {

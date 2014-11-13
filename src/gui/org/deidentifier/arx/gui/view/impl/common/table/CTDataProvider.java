@@ -27,6 +27,15 @@ import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
  */
 public interface CTDataProvider extends IDataProvider{
 
+    /**
+     * 
+     */
     public void clear();
+    
+    /**
+     * 
+     *
+     * @param data
+     */
     public void setData(IDataProvider data);
 }

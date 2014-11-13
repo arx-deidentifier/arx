@@ -32,19 +32,18 @@ public class LatticeBuilder {
     /** The maxlevels. */
     private int[]    maxLevels  = null;
 
-    /** The minlevels */
+    /** The minlevels. */
     private int[]    minLevels  = null;
 
-    /** The maxheights */
+    /** The maxheights. */
     private int[]    maxHeights = null;
 
     /**
      * Instantiates a new lattice builder.
-     * 
-     * @param maxLevels
-     *            the maxlevels
-     * @param minLevels
-     *            the minlevels
+     *
+     * @param maxLevels the maxlevels
+     * @param minLevels the minlevels
+     * @param maxHeights
      */
     public LatticeBuilder(final int[] maxLevels,
                           final int[] minLevels,

@@ -24,27 +24,42 @@ import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data.DefaultData;
 
 /**
- * Provides data for test cases
- * 
+ * Provides data for test cases.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class DataProvider {
 
+    /**  TODO */
     protected DefaultData          data;
+    
+    /**  TODO */
     protected DefaultHierarchy     age;
+    
+    /**  TODO */
     private final DefaultHierarchy ageWrong;
+    
+    /**  TODO */
     private final DefaultHierarchy gender;
+    
+    /**  TODO */
     private final DefaultHierarchy zipcode;
 
+    /**  TODO */
     private final DefaultHierarchy ageOne;
+    
+    /**  TODO */
     private final DefaultHierarchy genderOne;
+    
+    /**  TODO */
     private final DefaultHierarchy zipcodeOne;
 
+    /**  TODO */
     private final DefaultHierarchy ageMissing;
 
     /**
-     * Init
+     * Init.
      */
     public DataProvider() {
 
@@ -109,9 +124,7 @@ public class DataProvider {
     }
 
     /**
-     * Returns a standard data definition
-     * 
-     * @return
+     * Returns a standard data definition.
      */
     public void createDataDefinition() {
         // Create a standard definition
@@ -121,9 +134,7 @@ public class DataProvider {
     }
 
     /**
-     * Returns a standard data definition
-     * 
-     * @return
+     * Returns a standard data definition.
      */
     public void createDataDefinitionMissing() {
         // Create a standard definition
@@ -133,9 +144,7 @@ public class DataProvider {
     }
 
     /**
-     * Returns a standard data definition
-     * 
-     * @return
+     * Returns a standard data definition.
      */
     public void createDataDefinitionWithHeightOne() {
         // Create a standard definition
@@ -145,9 +154,7 @@ public class DataProvider {
     }
 
     /**
-     * Returns a standard data definition
-     * 
-     * @return
+     * Returns a standard data definition.
      */
     public void createWrongDataDefinition() {
         // Create a standard definition

@@ -31,8 +31,10 @@ import org.deidentifier.arx.DataType;
 public class ImportColumnCSV extends ImportColumnIndexed {
 
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index
+     * @param datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnCSV(int index, DataType<?> datatype) {
@@ -40,8 +42,11 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index
+     * @param aliasName
+     * @param datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnCSV(int index, String aliasName, DataType<?> datatype) {
@@ -49,7 +54,8 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
      * @param name
      * @param datatype
      */
@@ -58,7 +64,8 @@ public class ImportColumnCSV extends ImportColumnIndexed {
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
      * @param name
      * @param alias
      * @param datatype

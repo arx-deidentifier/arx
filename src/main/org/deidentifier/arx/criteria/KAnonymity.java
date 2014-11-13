@@ -33,9 +33,10 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  */
 public class KAnonymity extends ImplicitPrivacyCriterion{
 
+    /**  TODO */
     private static final long serialVersionUID = -8370928677928140572L;
     
-    /** The parameter k*/
+    /** The parameter k. */
     private final int k;
     
     /**
@@ -49,25 +50,35 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         this.k = k;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
+     */
     @Override
     public int getRequirements(){
         // Requires only one counter
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
+     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         throw new RuntimeException("This should never be called!");
     }
 
     /**
-     * Returns the parameter k
+     * Returns the parameter k.
+     *
      * @return
      */
     public int getK() {
         return k;
     }
     
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
+	 */
 	@Override
 	public String toString() {
 		return k+"-anonymity";

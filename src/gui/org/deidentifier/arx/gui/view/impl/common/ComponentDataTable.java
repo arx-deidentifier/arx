@@ -81,15 +81,27 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class ComponentDataTable implements IComponent {
 
+    /**  TODO */
     private NatTable                table;
+    
+    /**  TODO */
     private DataTableContext        context;
+    
+    /**  TODO */
     private DataTableBodyLayerStack bodyLayer;
+    
+    /**  TODO */
     private DataTableGridLayer      gridLayer;
+    
+    /**  TODO */
     private Font                    font;
+    
+    /**  TODO */
     private Control                 parent;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      * @param parent
      */
@@ -105,7 +117,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Adds a scroll bar listener
+     * Adds a scroll bar listener.
+     *
      * @param listener
      */
     public void addScrollBarListener(final Listener listener) {
@@ -114,7 +127,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Adds a select layer listener
+     * Adds a select layer listener.
+     *
      * @param listener
      */
     public void addSelectionLayerListener(ILayerListener listener){
@@ -122,7 +136,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Creates the control contents
+     * Creates the control contents.
+     *
      * @param parent
      * @return
      */
@@ -140,7 +155,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Creates the nattable
+     * Creates the nattable.
+     *
      * @param parent
      * @return
      */
@@ -207,7 +223,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Creates the table styling
+     * Creates the table styling.
+     *
      * @param natTable
      */
     private void createTableStyling(final NatTable natTable) {
@@ -278,14 +295,15 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Disposes the control
+     * Disposes the control.
      */
     public void dispose() {
         if (!table.isDisposed()) table.dispose();
     }
 
     /**
-     * Returns the displayed data
+     * Returns the displayed data.
+     *
      * @return
      */
     public DataHandle getData() {
@@ -293,7 +311,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Returns the list of header images
+     * Returns the list of header images.
+     *
      * @return
      */
     public List<Image> getHeaderImages() {
@@ -301,7 +320,8 @@ public class ComponentDataTable implements IComponent {
     }
     
     /**
-     * Returns the viewport layer
+     * Returns the viewport layer.
+     *
      * @return
      */
     public ViewportLayer getViewportLayer() {
@@ -309,14 +329,14 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Redraws the component
+     * Redraws the component.
      */
     public void redraw() {
         this.table.redraw();
     }
   
     /**
-     * Resets the component
+     * Resets the component.
      */
     public void reset() {
         this.table.setRedraw(false);
@@ -337,7 +357,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Sets the selected attribute
+     * Sets the selected attribute.
+     *
      * @param attribute
      */
     public void setSelectedAttribute(String attribute) {
@@ -350,7 +371,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Sets the displayed data
+     * Sets the displayed data.
+     *
      * @param handle
      */
     public void setData(final DataHandle handle) {
@@ -373,7 +395,8 @@ public class ComponentDataTable implements IComponent {
     }
     
     /**
-     * Enables/disables the component
+     * Enables/disables the component.
+     *
      * @param val
      */
     public void setEnabled(final boolean val) {
@@ -383,7 +406,8 @@ public class ComponentDataTable implements IComponent {
     }
     
     /**
-     * Sets information about equivalence classes
+     * Sets information about equivalence classes.
+     *
      * @param groups
      */
     public void setGroups(int[] groups) {
@@ -391,7 +415,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Sets layout data
+     * Sets layout data.
+     *
      * @param data
      */
     public void setLayoutData(final Object data) {
@@ -399,7 +424,8 @@ public class ComponentDataTable implements IComponent {
     }
 
     /**
-     * Sets information about the research subset
+     * Sets information about the research subset.
+     *
      * @param researchSubset
      */
     public void setResearchSubset(RowSet researchSubset) {

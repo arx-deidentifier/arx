@@ -44,21 +44,36 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * This view displays properties about the currently selected transformation
+ * This view displays properties about the currently selected transformation.
+ *
  * @author Fabian Prasser
  */
 public class ViewProperties implements IView {
 
+    /**  TODO */
     private final List<TableColumn> columns = new ArrayList<TableColumn>();
+    
+    /**  TODO */
     private final Controller        controller;
+    
+    /**  TODO */
     private final NumberFormat      format  = new DecimalFormat("##0.000"); //$NON-NLS-1$
+    
+    /**  TODO */
     private final List<TableItem>   items   = new ArrayList<TableItem>();
+    
+    /**  TODO */
     private ARXResult               result;
+    
+    /**  TODO */
     private final Composite         root;
+    
+    /**  TODO */
     private Table                   table;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -82,11 +97,17 @@ public class ViewProperties implements IView {
         reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         table.setRedraw(false);
@@ -131,6 +152,9 @@ public class ViewProperties implements IView {
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.RESULT) {
@@ -147,8 +171,8 @@ public class ViewProperties implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent
-     * 
+     * Converts an information loss into a relative value in percent.
+     *
      * @param infoLoss
      * @return
      */
@@ -159,7 +183,8 @@ public class ViewProperties implements IView {
     }
 
     /**
-     * Creates the required controls
+     * Creates the required controls.
+     *
      * @param parent
      */
     private void create(final Composite parent) {
@@ -183,7 +208,8 @@ public class ViewProperties implements IView {
     }
 
     /**
-     * Updates the view
+     * Updates the view.
+     *
      * @param node
      */
     private void update(final ARXNode node) {

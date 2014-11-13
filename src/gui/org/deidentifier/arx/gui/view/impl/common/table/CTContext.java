@@ -27,23 +27,51 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
  */
 public abstract class CTContext {
     
+    /**  TODO */
     private boolean columnExpanded = false;
+    
+    /**  TODO */
     private boolean rowExpanded = false;
     
+    /**
+     * 
+     *
+     * @return
+     */
     public abstract NatTable getTable();
 
+    /**
+     * 
+     *
+     * @return
+     */
     public boolean isColumnExpanded() {
         return columnExpanded;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public boolean isRowExpanded() {
         return rowExpanded;
     }
 
+    /**
+     * 
+     *
+     * @param columnExpanded
+     */
     public void setColumnExpanded(boolean columnExpanded) {
         this.columnExpanded = columnExpanded;
     }
 
+    /**
+     * 
+     *
+     * @param rowExpanded
+     */
     public void setRowExpanded(boolean rowExpanded) {
         this.rowExpanded = rowExpanded;
     }

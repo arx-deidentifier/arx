@@ -31,29 +31,31 @@ import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
- * Normalized Domain Share
- * 
+ * Normalized Domain Share.
+ *
  * @author Fabian Prasser
  */
 public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
 
-    /** SUID */
+    /** SUID. */
     private static final long serialVersionUID = -7505441444551612996L;
 
-    /** Cardinalities */
+    /** Cardinalities. */
     private Cardinalities     cardinalities;
-    /** Distinct values: attribute -> level -> values */
+    
+    /** Distinct values: attribute -> level -> values. */
     private int[][][]         values;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDNMLossPrecomputed() {
         super();
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param function
      */
     protected MetricMDNMLossPrecomputed(AggregateFunction function) {
@@ -61,7 +63,8 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param gsFactor
      * @param function
      */
@@ -71,7 +74,9 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(false,                      // monotonic
@@ -82,6 +87,9 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                                        );
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNMLoss#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
 
@@ -119,11 +127,17 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
         return super.createInformationLoss(bound);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNMLoss#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node, IHashGroupify g) {
         return this.getLowerBoundInternal(node);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.MetricMDNMLoss#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

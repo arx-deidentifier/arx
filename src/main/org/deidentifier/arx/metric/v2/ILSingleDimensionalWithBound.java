@@ -21,14 +21,15 @@ package org.deidentifier.arx.metric.v2;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 
 /**
- * Information loss with a potential lower bound
- * @author Fabian Prasser
+ * Information loss with a potential lower bound.
  *
+ * @author Fabian Prasser
  */
 public class ILSingleDimensionalWithBound extends InformationLossWithBound<ILSingleDimensional> {
 
     /**
-     * Creates a new instance without a lower bound
+     * Creates a new instance without a lower bound.
+     *
      * @param informationLoss
      */
     public ILSingleDimensionalWithBound(double informationLoss) {
@@ -36,7 +37,8 @@ public class ILSingleDimensionalWithBound extends InformationLossWithBound<ILSin
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param informationLoss
      * @param lowerBound
      */

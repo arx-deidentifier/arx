@@ -24,26 +24,33 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.model.Model;
 
 /**
- * The current context
+ * The current context.
+ *
  * @author Fabian Prasser
  */
 public class AnalysisContextVisualizationDistribution implements AnalysisContextVisualization{
 
-    /** Context information */
+    /** Context information. */
     public String        attribute     = null;
-    /** Context information */
+    
+    /** Context information. */
     public DataType<?>   dataType      = null;
-    /** Context information */
+    
+    /** Context information. */
     public AttributeType attributeType = null;
-    /** Context information */
+    
+    /** Context information. */
     public DataHandle    handle         = null;
-    /** Context information */
+    
+    /** Context information. */
     public Model         model          = null;
-    /** Context information */
+    
+    /** Context information. */
     public AnalysisContext context       = null;
     
     /**
-     * Creates a new context from the given context
+     * Creates a new context from the given context.
+     *
      * @param context
      */
     public AnalysisContextVisualizationDistribution(AnalysisContext context){
@@ -60,7 +67,8 @@ public class AnalysisContextVisualizationDistribution implements AnalysisContext
     }
     
     /**
-     * Is this a valid context
+     * Is this a valid context.
+     *
      * @return
      */
     public boolean isValid(){
@@ -72,6 +80,9 @@ public class AnalysisContextVisualizationDistribution implements AnalysisContext
         else return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.analyze.AnalysisContextVisualization#isAttributeSelected(java.lang.String)
+     */
     @Override
     public boolean isAttributeSelected(String attribute) {
         if (attribute==null) return false;

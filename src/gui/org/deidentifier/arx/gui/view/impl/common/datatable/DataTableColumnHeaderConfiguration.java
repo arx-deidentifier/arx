@@ -33,17 +33,24 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * A column style for the data view
+ * A column style for the data view.
+ *
  * @author Fabian Prasser
  */
 public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyleConfiguration {
 
+    /**  TODO */
     private final Image            IMAGE_COL_BACK;
+    
+    /**  TODO */
     private final Image            IMAGE_COL_SELECT;
+    
+    /**  TODO */
     private final DataTableContext context;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param context
      */
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
@@ -55,7 +62,8 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
     }
 
     /**
-     * Add normal styling to the registry
+     * Add normal styling to the registry.
+     *
      * @param configRegistry
      */
     private void addNormalModeStyling(final IConfigRegistry configRegistry) {
@@ -81,7 +89,8 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
     }
 
     /**
-     * Add selected styling to the registry
+     * Add selected styling to the registry.
+     *
      * @param configRegistry
      */
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
@@ -101,6 +110,9 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
                                                GridRegion.COLUMN_HEADER);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderStyleConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(final IConfigRegistry configRegistry) {
         super.configureRegistry(configRegistry);

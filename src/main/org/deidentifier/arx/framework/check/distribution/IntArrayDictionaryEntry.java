@@ -61,6 +61,11 @@ public class IntArrayDictionaryEntry {
         next = null;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int decRefCount() {
         refCount--;
         return refCount;
@@ -102,6 +107,9 @@ public class IntArrayDictionaryEntry {
         return value;
     }
 
+    /**
+     * 
+     */
     public void incRefCount() {
         refCount++;
 

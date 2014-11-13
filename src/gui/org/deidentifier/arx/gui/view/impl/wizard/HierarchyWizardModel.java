@@ -31,32 +31,37 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 
 /**
- * The base model for the wizard
- * @author Fabian Prasser
+ * The base model for the wizard.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardModel<T> {
 
-    /** Var */
+    /** Var. */
     private Type                             type;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardModelOrder<T>     orderModel;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardModelIntervals<T> intervalModel;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardModelRedaction<T> redactionModel;
-    /** Var */
+    
+    /** Var. */
     private final DataType<T>                dataType;
-    /** Var */
+    
+    /** Var. */
     private final String[]                   data;
     
     /**
-     * Creates a new instance for the given data type
+     * Creates a new instance for the given data type.
+     *
      * @param dataType
      * @param locale
      * @param data
-     * @param builder 
      */
     public HierarchyWizardModel(DataType<T> dataType, Locale locale, String[] data){
         
@@ -86,8 +91,11 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns the current builder
+     * Returns the current builder.
+     *
+     * @param serializable
      * @return
+     * @throws Exception
      */
     public HierarchyBuilder<T> getBuilder(boolean serializable) throws Exception {
         if (type == Type.INTERVAL_BASED) {
@@ -102,7 +110,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the data type
+     * Returns the data type.
+     *
      * @return
      */
     public DataType<T> getDataType() {
@@ -110,7 +119,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns the current hierarchy
+     * Returns the current hierarchy.
+     *
      * @return
      */
     public Hierarchy getHierarchy() {
@@ -126,7 +136,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the model of the interval-based builder
+     * Returns the model of the interval-based builder.
+     *
      * @return
      */
     public HierarchyWizardModelIntervals<T> getIntervalModel() {
@@ -134,7 +145,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the model of the order-based builder
+     * Returns the model of the order-based builder.
+     *
      * @return
      */
     public HierarchyWizardModelOrder<T> getOrderModel() {
@@ -142,7 +154,8 @@ public class HierarchyWizardModel<T> {
     }
     
     /**
-     * Returns the model of the redaction-based builder
+     * Returns the model of the redaction-based builder.
+     *
      * @return
      */
     public HierarchyWizardModelRedaction<T> getRedactionModel() {
@@ -150,7 +163,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns the type
+     * Returns the type.
+     *
      * @return
      */
     public Type getType(){
@@ -158,8 +172,10 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Updates the model with a new specification
+     * Updates the model with a new specification.
+     *
      * @param builder
+     * @throws IllegalArgumentException
      */
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException{
         
@@ -180,7 +196,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Sets the type
+     * Sets the type.
+     *
      * @param type
      */
     public void setType(Type type){
@@ -190,7 +207,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Simple comparison of data types
+     * Simple comparison of data types.
+     *
      * @param type
      * @param other
      * @return
@@ -200,9 +218,8 @@ public class HierarchyWizardModel<T> {
     }
 
     /**
-     * Returns data for the order-based builder
-     * @param type
-     * @param data
+     * Returns data for the order-based builder.
+     *
      * @return
      */
     private String[] getOrderData(){

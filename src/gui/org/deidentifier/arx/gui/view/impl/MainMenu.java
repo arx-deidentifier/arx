@@ -32,18 +32,27 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class implements the global main menu
+ * This class implements the global main menu.
+ *
  * @author Fabian Prasser
  */
 public class MainMenu implements IView {
 
+    /**  TODO */
     private static final String FILE_NAME = Resources.getMessage("MainMenu.0"); //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String EDIT_NAME = Resources.getMessage("MainMenu.1"); //$NON-NLS-1$
+    
+    /**  TODO */
     private static final String HELP_NAME = Resources.getMessage("MainMenu.2"); //$NON-NLS-1$
 
+    /**  TODO */
     private Menu menu;
+    
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param shell
      * @param controller
      */
@@ -247,7 +256,8 @@ public class MainMenu implements IView {
     }
     
     /**
-     * Enable/disable a menu
+     * Enable/disable a menu.
+     *
      * @param menu
      * @param text
      * @param enabled
@@ -264,16 +274,25 @@ public class MainMenu implements IView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         // Nothing to do for now
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         // Nothing to do for now
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {

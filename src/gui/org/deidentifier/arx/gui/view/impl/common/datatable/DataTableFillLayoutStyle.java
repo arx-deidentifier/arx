@@ -32,28 +32,49 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Style config for fill layouts
- * @author Fabian Prasser
+ * Style config for fill layouts.
  *
+ * @author Fabian Prasser
  */
 public class DataTableFillLayoutStyle extends AbstractRegistryConfiguration {
     
+    /**  TODO */
     public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_";
 
+    /**  TODO */
     private BorderStyle borderStyle = new BorderStyle(0, GUIHelper.getColor(240, 240, 240), LineStyleEnum.SOLID);
+    
+    /**  TODO */
     private Color fgColor = GUIHelper.COLOR_BLACK;
+    
+    /**  TODO */
     private Color bgColor = GUIHelper.getColor(245, 245, 245);
+    
+    /**  TODO */
     private Font font;
     
+    /**
+     * 
+     *
+     * @param control
+     */
     public DataTableFillLayoutStyle(Control control) {
         font = control.getFont();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         addFillLayoutStyleConfig(configRegistry);
     }
     
+    /**
+     * 
+     *
+     * @param configRegistry
+     */
     protected void addFillLayoutStyleConfig(IConfigRegistry configRegistry) {
         Style cellStyle = new Style();
         cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);

@@ -51,18 +51,21 @@ import org.eclipse.swt.widgets.Composite;
 public class ImportWizardPageSource extends WizardPage {
 
     /* Widgets */
+    /**  TODO */
     private Button btnCsv;
+    
+    /**  TODO */
     private Button btnExcel;
+    
+    /**  TODO */
     private Button btnJdbc;
 
-    /**
-     * Reference to the wizard containing this page
-     */
+    /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
 
 
     /**
-     * Creates a new instance of this page and sets its title and description
+     * Creates a new instance of this page and sets its title and description.
      *
      * @param wizardImport Reference to wizard containing this page
      */
@@ -75,10 +78,12 @@ public class ImportWizardPageSource extends WizardPage {
 
     /**
      * Creates the design of this page
-     *
+     * 
      * This adds all the controls to the page along with their listeners. It
      * basically waits for any radio button to be pressed, which will mark the
      * page as completed and lets the user proceed to the next page.
+     *
+     * @param parent
      */
     public void createControl(Composite parent) {
 

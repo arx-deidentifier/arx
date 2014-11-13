@@ -30,62 +30,40 @@ import org.deidentifier.arx.metric.InformationLoss;
  */
 public class Node {
 
-    /**
-     * All privacy criteria are fulfilled
-     */
+    /** All privacy criteria are fulfilled. */
     public static final int    PROPERTY_ANONYMOUS            = 1 << 0;
 
-    /**
-     * Not all privacy criteria are fulfilled
-     */
+    /** Not all privacy criteria are fulfilled. */
     public static final int    PROPERTY_NOT_ANONYMOUS        = 1 << 1;
 
-    /**
-     * A k-anonymity sub-criterion is fulfilled
-     */
+    /** A k-anonymity sub-criterion is fulfilled. */
     public static final int    PROPERTY_K_ANONYMOUS          = 1 << 2;
 
-    /**
-     * A k-anonymity sub-criterion is not fulfilled
-     */
+    /** A k-anonymity sub-criterion is not fulfilled. */
     public static final int    PROPERTY_NOT_K_ANONYMOUS      = 1 << 3;
 
-    /**
-     * The transformation results in insufficient utility
-     */
+    /** The transformation results in insufficient utility. */
     public static final int    PROPERTY_INSUFFICIENT_UTILITY = 1 << 4;
 
-    /**
-     * The transformation has been checked explicitly
-     */
+    /** The transformation has been checked explicitly. */
     public static final int    PROPERTY_CHECKED              = 1 << 5;
 
-    /**
-     * A snapshot for this transformation must be created if it fits the size
-     * limits, regardless of whether it triggers the storage condition
-     */
+    /** A snapshot for this transformation must be created if it fits the size limits, regardless of whether it triggers the storage condition. */
     public static final int    PROPERTY_FORCE_SNAPSHOT       = 1 << 6;
 
-    /**
-     * This node has already been visited during the second phase
-     */
+    /** This node has already been visited during the second phase. */
     public static final int    PROPERTY_VISITED              = 1 << 7;
 
-    /**
-     * Marks nodes for which the search algorithm guarantees to never check any
-     * of its successors
-     */
+    /** Marks nodes for which the search algorithm guarantees to never check any of its successors. */
     public static final int    PROPERTY_SUCCESSORS_PRUNED    = 1 << 8;
 
-    /**
-     * We have already fired an event for this node
-     */
+    /** We have already fired an event for this node. */
     public static final int    PROPERTY_EVENT_FIRED          = 1 << 9;
 
     /** The id. */
     public final int           id;
 
-    /** Set of properties */
+    /** Set of properties. */
     private int                properties;
 
     /** The predecessors. */
@@ -112,11 +90,13 @@ public class Node {
     /** The up index. */
     private int                sucIndex;
 
-    /** Associated data */
+    /** Associated data. */
     private Object             data;
 
     /**
      * Instantiates a new node.
+     *
+     * @param id
      */
     public Node(int id) {
         this.id = id;
@@ -141,14 +121,18 @@ public class Node {
         return true;
     }
 
-    /** Associated data*/
+    /**
+     * Associated data.
+     *
+     * @return
+     */
     public Object getData() {
         return data;
     }
 
     /**
-     * Returns the information loss
-     * 
+     * Returns the information loss.
+     *
      * @return
      */
     public InformationLoss<?> getInformationLoss() {
@@ -156,8 +140,8 @@ public class Node {
     }
 
     /**
-     * Returns the level
-     * 
+     * Returns the level.
+     *
      * @return
      */
     public int getLevel() {
@@ -172,8 +156,8 @@ public class Node {
     }
 
     /**
-     * Returns the predecessors
-     * 
+     * Returns the predecessors.
+     *
      * @return
      */
     public Node[] getPredecessors() {
@@ -181,8 +165,8 @@ public class Node {
     }
 
     /**
-     * Returns the successors
-     * 
+     * Returns the successors.
+     *
      * @return
      */
     public Node[] getSuccessors() {
@@ -190,8 +174,8 @@ public class Node {
     }
 
     /**
-     * Returns the transformation
-     * 
+     * Returns the transformation.
+     *
      * @return
      */
     public int[] getTransformation() {
@@ -209,7 +193,8 @@ public class Node {
     }
 
     /**
-     * Returns whether the node has the given property
+     * Returns whether the node has the given property.
+     *
      * @param property
      * @return
      */
@@ -217,15 +202,20 @@ public class Node {
         return (properties & property) == property;
     }
 
-    /** Associated data*/
+    /**
+     * Associated data.
+     *
+     * @param data
+     */
     public void setData(Object data) {
         this.data = data;
     }
 
     /**
-     * Sets the transformation
-     * 
+     * Sets the transformation.
+     *
      * @param transformation
+     * @param level
      */
     public void setTransformation(int[] transformation, int level) {
         this.transformation = transformation;
@@ -233,8 +223,8 @@ public class Node {
     }
 
     /**
-     * Sets the information loss
-     * 
+     * Sets the information loss.
+     *
      * @param informationLoss
      */
     protected void setInformationLoss(final InformationLoss<?> informationLoss) {
@@ -244,9 +234,9 @@ public class Node {
     }
 
     /**
-     * Sets the information loss
-     * 
-     * @param informationLoss
+     * Sets the information loss.
+     *
+     * @param lowerBound
      */
     protected void setLowerBound(final InformationLoss<?> lowerBound) {
         if (this.lowerBound == null) {
@@ -256,8 +246,8 @@ public class Node {
 
     
     /**
-     * Sets the predecessors
-     * 
+     * Sets the predecessors.
+     *
      * @param nodes
      */
     protected void setPredecessors(Node[] nodes) {
@@ -265,17 +255,17 @@ public class Node {
     }
 
     /**
-     * Sets the given property
+     * Sets the given property.
+     *
      * @param property
-     * @return
      */
     protected void setProperty(int property){
         properties |= property;
     }
   
     /**
-     * Sets the successors
-     * 
+     * Sets the successors.
+     *
      * @param nodes
      */
     protected void setSuccessors(Node[] nodes) {
@@ -283,8 +273,8 @@ public class Node {
     }
 
     /**
-     * Adds a predecessor
-     * 
+     * Adds a predecessor.
+     *
      * @param predecessor
      */
     void addPredecessor(Node predecessor) {
@@ -292,8 +282,8 @@ public class Node {
     }
 
     /**
-     * Adds a successor
-     * 
+     * Adds a successor.
+     *
      * @param successor
      */
     void addSuccessor(Node successor) {

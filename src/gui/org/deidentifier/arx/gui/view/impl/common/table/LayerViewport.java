@@ -32,16 +32,29 @@ import org.eclipse.nebula.widgets.nattable.viewport.command.ViewportSelectRowCom
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * 
+ */
 public class LayerViewport extends ViewportLayer{
 
+    /**  TODO */
     private CTContext context;
     
+    /**
+     * 
+     *
+     * @param underlyingLayer
+     * @param context
+     */
     public LayerViewport(IUniqueIndexLayer underlyingLayer, CTContext context) {
         super(underlyingLayer);
         this.context = context;
     }
     
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#doCommand(org.eclipse.nebula.widgets.nattable.command.ILayerCommand)
+     */
     @Override
     public boolean doCommand(ILayerCommand command) {
         
@@ -68,6 +81,9 @@ public class LayerViewport extends ViewportLayer{
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#moveCellPositionIntoViewport(int, int)
+     */
     @Override
     public void moveCellPositionIntoViewport(int scrollableColumnPosition, int scrollableRowPosition) {
         if (!(context.isRowExpanded() && context.isColumnExpanded())) {
@@ -75,6 +91,9 @@ public class LayerViewport extends ViewportLayer{
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#moveColumnPositionIntoViewport(int)
+     */
     @Override
     public void moveColumnPositionIntoViewport(int scrollableColumnPosition) {
         if (!context.isColumnExpanded()) {
@@ -83,6 +102,9 @@ public class LayerViewport extends ViewportLayer{
     }
 
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#moveRowPositionIntoViewport(int)
+     */
     @Override
     public void moveRowPositionIntoViewport(int scrollableRowPosition) {
         if (!context.isRowExpanded()) {
@@ -90,6 +112,9 @@ public class LayerViewport extends ViewportLayer{
         }
     }
 
+    /**
+     * 
+     */
     private void checkScrollBars() {
         
         if (context.getTable().isDisposed()) {
@@ -123,12 +148,18 @@ public class LayerViewport extends ViewportLayer{
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#isLastColumnCompletelyDisplayed()
+     */
     @Override
     protected boolean isLastColumnCompletelyDisplayed() {
         if (context.isColumnExpanded()) return true;
         else return super.isLastColumnCompletelyDisplayed();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#isLastRowCompletelyDisplayed()
+     */
     @Override
     protected boolean isLastRowCompletelyDisplayed() {
         if (context.isRowExpanded()) return true;
@@ -136,6 +167,9 @@ public class LayerViewport extends ViewportLayer{
     }
 
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer#registerCommandHandlers()
+     */
     @Override
     protected void registerCommandHandlers() {
         registerCommandHandler(new RecalculateScrollBarsCommandHandler(this));

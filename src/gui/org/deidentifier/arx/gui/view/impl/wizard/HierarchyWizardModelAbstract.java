@@ -23,28 +23,34 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 
 /**
- * An abstract base model for all builders
- * @author Fabian Prasser
+ * An abstract base model for all builders.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public abstract class HierarchyWizardModelAbstract<T> {
 
-    /** Var */
+    /** Var. */
     protected final String[]      data;
-    /** Var */
+    
+    /** Var. */
     protected int[]               groupsizes;
-    /** Var */
+    
+    /** Var. */
     protected Hierarchy           hierarchy;
-    /** Var */
+    
+    /** Var. */
     protected String              error;
-    /** Var */
+    
+    /** Var. */
     protected HierarchyWizardView view;
-    /** Var */
+    
+    /** Var. */
     protected boolean             visible = false;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param data
      */
     public HierarchyWizardModelAbstract(String[] data) {
@@ -52,7 +58,8 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
     
     /**
-     * Set visible
+     * Set visible.
+     *
      * @param visible
      */
     protected void setVisible(boolean visible){
@@ -61,13 +68,17 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
 
     /**
-     * Returns the builder currently configured
+     * Returns the builder currently configured.
+     *
+     * @param serializable
      * @return
+     * @throws Exception
      */
     public abstract HierarchyBuilder<T> getBuilder(boolean serializable) throws Exception;
 
     /**
-     * Returns the data
+     * Returns the data.
+     *
      * @return
      */
     public String[] getData() {
@@ -75,7 +86,8 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
 
     /**
-     * Returns an error message, null if everything is ok
+     * Returns an error message, null if everything is ok.
+     *
      * @return
      */
     public String getError() {
@@ -83,7 +95,8 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
     
     /**
-     * Returns the sizes of the resulting groups
+     * Returns the sizes of the resulting groups.
+     *
      * @return
      */
     public int[] getGroups() {
@@ -91,7 +104,8 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
 
     /**
-     * Returns the resulting hierarchy
+     * Returns the resulting hierarchy.
+     *
      * @return
      */
     public Hierarchy getHierarchy() {
@@ -99,13 +113,15 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
     
     /**
-     * Parses a builder and updates the model accordingly
+     * Parses a builder and updates the model accordingly.
+     *
      * @param builder
      */
     public abstract void parse(HierarchyBuilder<T> builder);
     
     /**
-     * Sets the according view
+     * Sets the according view.
+     *
      * @param view
      */
     public void setView(HierarchyWizardView view){
@@ -113,7 +129,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
     
     /**
-     * Updates the resulting hierarchy and the view
+     * Updates the resulting hierarchy and the view.
      */
     public void update(){
         if (visible) build();
@@ -121,7 +137,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
     
     /**
-     * Implement this to run the builder
+     * Implement this to run the builder.
      */
     protected abstract void build();
 }

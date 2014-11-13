@@ -24,31 +24,36 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 
 /**
- * This class implements a model for the l-diversity criterion
- * @author Fabian Prasser
+ * This class implements a model for the l-diversity criterion.
  *
+ * @author Fabian Prasser
  */
 public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -9172448654255959945L;
     
-    /** Variant*/
+    /** Variant. */
     public static final int VARIANT_DISTINCT = 0;
-    /** Variant*/
+    
+    /** Variant. */
     public static final int VARIANT_ENTROPY = 1;
-    /** Variant*/
+    
+    /** Variant. */
     public static final int VARIANT_RECURSIVE = 2;
 
-	/** The variant to use*/
+	/** The variant to use. */
 	private int variant = 0;
-	/** L*/
+	
+	/** L. */
 	private int l = 2;
-	/** C, if any*/
+	
+	/** C, if any. */
 	private double c = 0.001d;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param attribute
      */
     public ModelLDiversityCriterion(String attribute) {
@@ -56,13 +61,17 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     }
     
     /**
-	 * Gets C
-	 * @return
-	 */
+     * Gets C.
+     *
+     * @return
+     */
 	public double getC() {
 		return c;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
+	 */
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    switch (variant) {
@@ -74,21 +83,26 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 	}
 	
 	/**
-	 * Returns L
-	 * @return
-	 */
+     * Returns L.
+     *
+     * @return
+     */
 	public int getL() {
 		return l;
 	}
 	
 	/**
-     * Returns the variant
+     * Returns the variant.
+     *
      * @return
      */
 	public int getVariant() {
 		return variant;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.model.ModelExplicitCriterion#pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)
+	 */
 	@Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
@@ -101,28 +115,35 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
     }
 	
 	/**
-	 * Sets C
-	 * @param c
-	 */
+     * Sets C.
+     *
+     * @param c
+     */
 	public void setC(double c) {
 		this.c = c;
 	}
 
 	/**
-	 * Sets L
-	 * @param l
-	 */
+     * Sets L.
+     *
+     * @param l
+     */
 	public void setL(int l) {
 		this.l = l;
 	}
 	
     /**
-	 * Sets the variant
-	 * @param variant
-	 */
+     * Sets the variant.
+     *
+     * @param variant
+     */
 	public void setVariant(int variant) {
 		this.variant = variant;
 	}
+    
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
+     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties

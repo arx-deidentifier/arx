@@ -19,7 +19,8 @@
 package org.deidentifier.arx.gui.view.def;
 
 /**
- * Interface for components
+ * Interface for components.
+ *
  * @author Fabian Prasser
  */
 public interface IComponent {

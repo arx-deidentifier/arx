@@ -35,16 +35,21 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * A view on a k-anonymity criterion
+ * A view on a k-anonymity criterion.
+ *
  * @author Fabian Prasser
  */
 public class ViewCriterionKAnonymity extends ViewCriterion {
 
+    /**  TODO */
     private Label labelK;
+    
+    /**  TODO */
     private Scale sliderK;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param model
@@ -56,6 +61,9 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
@@ -64,6 +72,9 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         super.update(event);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
+     */
     @Override
     public void reset() {
         sliderK.setSelection(0);
@@ -71,6 +82,9 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         super.reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Composite build(Composite parent) {
 
@@ -112,6 +126,9 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         return group;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
+     */
     @Override
     protected void parse() {
         ModelKAnonymityCriterion m = model.getKAnonymityModel();
@@ -131,7 +148,8 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
     }
 
     /**
-     * Updates the label and tooltip text
+     * Updates the label and tooltip text.
+     *
      * @param text
      */
     private void updateLabel(String text) {

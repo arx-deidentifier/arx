@@ -32,30 +32,35 @@ import de.linearbits.objectselector.SelectorBuilder;
 import de.linearbits.objectselector.datatypes.DataType;
 
 /**
- * A selector for tuples
+ * A selector for tuples.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- *
  */
 public class DataSelector {
     
     /**
-     * An accessor for data elements
+     * An accessor for data elements.
+     *
      * @author Fabian Prasser
      */
     private class DataAccessor implements IAccessor<Integer>{
 
-        /** The data handle*/
+        /** The data handle. */
         private final DataHandle handle;
-        /** The data definition*/
+        
+        /** The data definition. */
         private final DataDefinition definition;
-        /** The data types*/
+        
+        /** The data types. */
         private final Map<String, DataType<?>> types;
-        /** The indices*/
+        
+        /** The indices. */
         private final Map<String, Integer> indices;
         
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param data
          */
         protected DataAccessor(Data data){
@@ -65,16 +70,25 @@ public class DataSelector {
             this.indices = getIndices();
         }
         
+        /* (non-Javadoc)
+         * @see de.linearbits.objectselector.IAccessor#exists(java.lang.String)
+         */
         @Override
         public boolean exists(String arg0) {
             return indices.containsKey(arg0);
         }
 
+        /* (non-Javadoc)
+         * @see de.linearbits.objectselector.IAccessor#getType(java.lang.String)
+         */
         @Override
         public DataType<?> getType(String arg0) {
             return types.get(arg0);
         }
 
+        /* (non-Javadoc)
+         * @see de.linearbits.objectselector.IAccessor#getValue(java.lang.Object, java.lang.String)
+         */
         @Override
         public Object getValue(Integer arg0, String arg1) {
             
@@ -84,18 +98,25 @@ public class DataSelector {
             return type.fromString(value);
         }
 
+        /* (non-Javadoc)
+         * @see de.linearbits.objectselector.IAccessor#isDataTypesSupported()
+         */
         @Override
         public boolean isDataTypesSupported() {
             return true;
         }
 
+        /* (non-Javadoc)
+         * @see de.linearbits.objectselector.IAccessor#isExistanceSupported()
+         */
         @Override
         public boolean isExistanceSupported() {
             return true;
         }
 
         /**
-         * Returns the indices
+         * Returns the indices.
+         *
          * @return
          */
         private Map<String, Integer> getIndices() {
@@ -107,7 +128,8 @@ public class DataSelector {
         }
 
         /**
-         * Returns the data types
+         * Returns the data types.
+         *
          * @return
          */
         private Map<String, DataType<?>> getTypes() {
@@ -133,98 +155,206 @@ public class DataSelector {
         }        
     }
     
+    /**
+     * 
+     *
+     * @param data
+     * @return
+     */
     public static DataSelector create(Data data){
         return new DataSelector(data);
     }
+    
+    /**
+     * 
+     *
+     * @param data
+     * @param query
+     * @return
+     * @throws ParseException
+     */
     public static DataSelector create(Data data, String query) throws ParseException{
         return new DataSelector(data, query);
     }
    
-    /** The builder*/
+    /** The builder. */
     private final SelectorBuilder<Integer> builder;
 
-    /** The selector*/
+    /** The selector. */
     private Selector<Integer> selector = null;
 
+    /**
+     * 
+     *
+     * @param data
+     */
     private DataSelector(Data data){
         this.builder = new SelectorBuilder<Integer>(new DataAccessor(data)); 
     }
 
+    /**
+     * 
+     *
+     * @param data
+     * @param query
+     * @throws ParseException
+     */
     private DataSelector(Data data, String query) throws ParseException {
         this.builder = new SelectorBuilder<Integer>(new DataAccessor(data), query);
     }
     
+    /**
+     * 
+     *
+     * @return
+     */
     public DataSelector and(){
         this.builder.and();
         return this;
     }
     
+    /**
+     * 
+     *
+     * @return
+     */
     public DataSelector begin(){
         this.builder.begin();
         return this;
     }
     
+    /**
+     * 
+     *
+     * @throws ParseException
+     */
     public void build() throws ParseException{
         this.selector = this.builder.build();
     }
     
+    /**
+     * 
+     *
+     * @return
+     */
     public DataSelector end(){
         this.builder.end();
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector equals(final Date val){
         this.builder.equals(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector equals(final double val){
         this.builder.equals(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector equals(final String val){
         this.builder.equals(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param name
+     * @return
+     */
     public DataSelector field(String name){
         this.builder.field(name);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector geq(final Date val){
         this.builder.geq(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector geq(final double val){
         this.builder.geq(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector geq(final String val){
         this.builder.geq(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector greater(final Date val){
         this.builder.greater(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector greater(final double val){
         this.builder.greater(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector greater(final String val){
         this.builder.greater(val);
         return this;
     }
     
     /**
-     * Determines whether the given row is selected by the expression
+     * Determines whether the given row is selected by the expression.
+     *
      * @param row
      * @return
      */
@@ -242,6 +372,12 @@ public class DataSelector {
     /* **************************************
      * Datetime
      * **************************************/
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector leq(final Date val){
         this.builder.leq(val);
         return this;
@@ -249,6 +385,12 @@ public class DataSelector {
     
     /*
      * NUMERIC
+     */
+    /**
+     * 
+     *
+     * @param val
+     * @return
      */
     public DataSelector leq(final double val){
         this.builder.leq(val);
@@ -258,26 +400,55 @@ public class DataSelector {
     /* **************************************
      * STRING
      * **************************************/
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector leq(final String val){
         this.builder.leq(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector less(final Date val){
         this.builder.less(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector less(final double val){
         this.builder.less(val);
         return this;
     }
     
+    /**
+     * 
+     *
+     * @param val
+     * @return
+     */
     public DataSelector less(final String val){
         this.builder.less(val);
         return this;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public DataSelector or(){
         this.builder.or();
         return this;

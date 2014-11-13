@@ -23,20 +23,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A page for configuring the interval-based builder
- * @author Fabian Prasser
+ * A page for configuring the interval-based builder.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<T> {
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardModelIntervals<T> model;
-    /** Var */
+    
+    /** Var. */
     private HierarchyWizardEditor<T> editor;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param wizard
      * @param model
      * @param finalPage
@@ -51,6 +53,9 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         setPageComplete(true);
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -63,6 +68,9 @@ public class HierarchyWizardPageIntervals<T> extends HierarchyWizardPageBuilder<
         setControl(composite);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardPageBuilder#updatePage()
+     */
     @Override
     public void updatePage() {
         model.update();

@@ -30,14 +30,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * 
+ */
 public abstract class EditorString implements IEditor<String> {
 
+    /**  TODO */
     private final String  category;
+    
+    /**  TODO */
     private final String  label;
+    
+    /**  TODO */
     private final boolean multi;
+    
+    /**  TODO */
     private final Button  ok;
+    
+    /**  TODO */
     private Text text;
     
+    /**
+     * 
+     *
+     * @param composite
+     */
     public EditorString(Composite composite) {
         this.category = null;
         this.label = null;
@@ -46,6 +63,14 @@ public abstract class EditorString implements IEditor<String> {
         this.createControl(composite);
     }
     
+    /**
+     * 
+     *
+     * @param category
+     * @param label
+     * @param ok
+     * @param multi
+     */
     public EditorString(final String category,
                         final String label,
                         final Button ok,
@@ -56,6 +81,9 @@ public abstract class EditorString implements IEditor<String> {
         this.ok = ok;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         
@@ -84,22 +112,33 @@ public abstract class EditorString implements IEditor<String> {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getCategory()
+     */
     @Override
     public String getCategory() {
         return category;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public Control getControl() {
         return text;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getLabel()
+     */
     @Override
     public String getLabel() {
         return label;
     }
 
     /**
-     * Update
+     * Update.
      */
     public void update(){
         if (text!=null){

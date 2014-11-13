@@ -35,18 +35,27 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
 /**
- * A view on a d-presence criterion
+ * A view on a d-presence criterion.
+ *
  * @author Fabian Prasser
  */
 public class ViewCriterionDPresence extends ViewCriterion {
 
+    /**  TODO */
     private Scale sliderDMin;
+    
+    /**  TODO */
     private Scale sliderDMax;
+    
+    /**  TODO */
     private Label labelDMin;
+    
+    /**  TODO */
     private Label labelDMax;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      * @param model
@@ -59,6 +68,9 @@ public class ViewCriterionDPresence extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
@@ -67,6 +79,9 @@ public class ViewCriterionDPresence extends ViewCriterion {
         super.update(event);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
+     */
     @Override
     public void reset() {
 
@@ -77,6 +92,9 @@ public class ViewCriterionDPresence extends ViewCriterion {
         super.reset();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Composite build(Composite parent) {
 
@@ -147,6 +165,9 @@ public class ViewCriterionDPresence extends ViewCriterion {
         return group;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
+     */
     @Override
     protected void parse() {
         ModelDPresenceCriterion m = model.getDPresenceModel();
@@ -168,7 +189,8 @@ public class ViewCriterionDPresence extends ViewCriterion {
     }
 
     /**
-     * Updates the "dMin" label and tooltip text
+     * Updates the "dMin" label and tooltip text.
+     *
      * @param text
      */
     private void updateDMinLabel(String text) {
@@ -177,7 +199,8 @@ public class ViewCriterionDPresence extends ViewCriterion {
     }
 
     /**
-     * Updates the "dMax" label and tooltip text
+     * Updates the "dMax" label and tooltip text.
+     *
      * @param text
      */
     private void updateDMaxLabel(String text) {

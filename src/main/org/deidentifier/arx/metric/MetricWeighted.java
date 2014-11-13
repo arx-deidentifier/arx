@@ -29,20 +29,22 @@ import org.deidentifier.arx.framework.lattice.Node;
 
 /**
  * This class provides an abstract skeleton for the implementation of weighted metrics.
- * 
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @param <T>
  */
 public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metric<T> {
 
-    /** SSUID*/
+    /** SSUID. */
     private static final long         serialVersionUID = 6508220940790010968L;
     
-    /** The weights */
+    /** The weights. */
     protected double[]                weights;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param monotonic
      * @param independent
      */
@@ -50,18 +52,27 @@ public abstract class MetricWeighted<T extends InformationLoss<?>> extends Metri
         super(monotonic, independent);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected T getLowerBoundInternal(final Node node) {
         return (T)node.getLowerBound();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected T getLowerBoundInternal(final Node node, final IHashGroupify groupify) {
         return (T)node.getLowerBound();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(final DataDefinition definition,
                                       final Data input, 

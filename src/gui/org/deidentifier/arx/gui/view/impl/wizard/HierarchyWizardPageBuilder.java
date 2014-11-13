@@ -24,22 +24,25 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Button;
 
 /**
- * An abstract base class for pages that allow configuring a builder
- * @author Fabian Prasser
+ * An abstract base class for pages that allow configuring a builder.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implements HierarchyWizardView {
 
-    /** Var */
+    /** Var. */
     private final HierarchyWizardPageFinal<T>     finalPage;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelAbstract<T> model;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizard<T>              wizard;
 
     /**
-     * Creates a new base class
+     * Creates a new base class.
+     *
      * @param wizard
      * @param model
      * @param finalPage
@@ -55,17 +58,26 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
         this.model.update();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
+     */
     @Override
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
 
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+     */
     @Override
     public IWizardPage getNextPage() {
         return finalPage;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
     @Override
     public void setVisible(boolean value){
         
@@ -78,6 +90,9 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
         model.setVisible(value);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
+     */
     @Override
     public void update() {
         if (model.getError() != null) {
@@ -98,7 +113,7 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
     }
 
     /**
-     * Update the page when the model has changed
+     * Update the page when the model has changed.
      */
     public abstract void updatePage();
 }

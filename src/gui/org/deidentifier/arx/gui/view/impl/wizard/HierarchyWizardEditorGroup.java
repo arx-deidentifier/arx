@@ -30,24 +30,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Editor for groups
- * @author Fabian Prasser
+ * Editor for groups.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T>{
 
-    /** Var */
+    /** Var. */
     private HierarchyWizardGroupingGroup<T>        group = null;
-    /** Var */
+    
+    /** Var. */
     private final EditorString                     editorSize;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T>  model;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardEditorFunction<T> editorFunction;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      */
@@ -92,6 +96,9 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         };
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent#setFunction(org.deidentifier.arx.aggregates.AggregateFunction)
+     */
     @Override
     public void setFunction(AggregateFunction<T> function) {
         if (this.group == null) return;
@@ -103,6 +110,9 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         model.update(this);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void update() {
@@ -123,7 +133,8 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
     }
 
     /**
-     * Creates a label
+     * Creates a label.
+     *
      * @param composite
      * @param string
      * @return

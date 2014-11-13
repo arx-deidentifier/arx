@@ -27,25 +27,32 @@ package org.deidentifier.arx.metric;
  */
 class InformationLossDefault extends InformationLoss<Double> {
 
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long           serialVersionUID = -4341081298410703417L;
 
-    /** Current value */
+    /** Current value. */
     private double                      value;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param value
      */
     InformationLossDefault(final double value){
         this.value = value;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#clone()
+     */
     @Override
     public InformationLoss<Double> clone() {
         return new InformationLossDefault(value);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#compareTo(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public int compareTo(InformationLoss<?> other) {
         InformationLossDefault o = convert(other);
@@ -53,6 +60,9 @@ class InformationLossDefault extends InformationLoss<Double> {
         else return Double.valueOf(value).compareTo(o.getValue());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -62,16 +72,25 @@ class InformationLossDefault extends InformationLoss<Double> {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#getValue()
+     */
     @Override
     public Double getValue() {
         return value;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#hashCode()
+     */
     @Override
     public int hashCode() {
         return Double.valueOf(value).hashCode();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#max(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public void max(final InformationLoss<?> other) {
         InformationLossDefault o = convert(other);
@@ -81,6 +100,9 @@ class InformationLossDefault extends InformationLoss<Double> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#min(org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public void min(final InformationLoss<?> other) {
         InformationLossDefault o = convert(other);
@@ -90,6 +112,9 @@ class InformationLossDefault extends InformationLoss<Double> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)
+     */
     @Override
     public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
         if (min == null) {
@@ -103,13 +128,17 @@ class InformationLossDefault extends InformationLoss<Double> {
         else return (this.value - _min.value) / (_max.value - _min.value);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.InformationLoss#toString()
+     */
     @Override
     public String toString() {
         return Double.valueOf(this.value).toString();
     }
 
     /**
-     * Converter method
+     * Converter method.
+     *
      * @param other
      * @return
      */

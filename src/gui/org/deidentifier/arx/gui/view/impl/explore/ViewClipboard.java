@@ -51,40 +51,51 @@ import org.eclipse.swt.widgets.TableItem;
 import cern.colt.Arrays;
 
 /**
- * This class displays the clipboard
+ * This class displays the clipboard.
+ *
  * @author Fabian Prasser
  */
 public class ViewClipboard implements IView {
 
-    /** Identifier for key in the nodes' attribute maps */
+    /** Identifier for key in the nodes' attribute maps. */
     private static final int        NODE_COMMENT = 111;
-    /** Image */
+    
+    /** Image. */
     private final Image             IMAGE_DOWN;
-    /** Image */
+    
+    /** Image. */
     private final Image             IMAGE_UP;
-    /** Image */
+    
+    /** Image. */
     private final Image             IMAGE_SORT;
-    /** Image */
+    
+    /** Image. */
     private final Image             IMAGE_REMOVE;
 
-    /** Component */
+    /** Component. */
     private final Table             table;
-    /** Component */
+    
+    /** Component. */
     private final List<TableColumn> columns      = new ArrayList<TableColumn>();
-    /** Component */
+    
+    /** Component. */
     private final Composite         root;
-    /** Component */
+    
+    /** Component. */
     private final Menu              menu;
-    /** Component */
+    
+    /** Component. */
     private TableItem               selectedItem = null;
 
-    /** Model */
+    /** Model. */
     private Model                   model;
-    /** Controller */
+    
+    /** Controller. */
     private final Controller        controller;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -193,6 +204,9 @@ public class ViewClipboard implements IView {
         c2.pack();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -202,6 +216,9 @@ public class ViewClipboard implements IView {
         IMAGE_REMOVE.dispose();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         
@@ -212,6 +229,9 @@ public class ViewClipboard implements IView {
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -249,8 +269,9 @@ public class ViewClipboard implements IView {
             }
         }
     }
+    
     /**
-     * Action
+     * Action.
      */
     private void actionApplyTransformation() {
         if (selectedItem != null) {
@@ -258,8 +279,9 @@ public class ViewClipboard implements IView {
             controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
         }
     }
+    
     /**
-     * Action
+     * Action.
      */
     private void actionCopy() {
         if (table != null) {
@@ -268,7 +290,7 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionDown() {
         if (selectedItem != null) {
@@ -288,7 +310,7 @@ public class ViewClipboard implements IView {
     }
     
     /**
-     * Action
+     * Action.
      */
     private void actionEditComment() {
         if (selectedItem != null) {
@@ -306,7 +328,7 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionRemove() {
         if (selectedItem != null) {
@@ -332,7 +354,7 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionSort() {
         if (selectedItem != null) {
@@ -352,7 +374,7 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Action
+     * Action.
      */
     private void actionUp() {
         if (selectedItem != null) {
@@ -372,7 +394,7 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Adds all items from the model
+     * Adds all items from the model.
      */
     private void addAllItemsFromModel() {
         // Add all to table
@@ -387,8 +409,11 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Adds an item
-     * 
+     * Adds an item.
+     *
+     * @param node
+     * @param index
+     * @return
      */
     private TableItem addItem(ARXNode node, int index) {
         
@@ -404,7 +429,8 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * This method creates the context menu
+     * This method creates the context menu.
+     *
      * @param parent
      * @return
      */
@@ -476,8 +502,10 @@ public class ViewClipboard implements IView {
     }
 
     /**
-     * Returns the item at the given location
-     * @param pt
+     * Returns the item at the given location.
+     *
+     * @param x
+     * @param y
      * @return
      */
     private TableItem getItemAt(int x, int y) {
@@ -495,7 +523,8 @@ public class ViewClipboard implements IView {
     }
     
     /**
-     * Returns the index of the given item
+     * Returns the index of the given item.
+     *
      * @param item
      * @return
      */
@@ -511,7 +540,7 @@ public class ViewClipboard implements IView {
     }
     
     /**
-     * Removes all items
+     * Removes all items.
      */
     private void removeAllItems() {
         for (final TableItem i : table.getItems()) {
@@ -521,8 +550,10 @@ public class ViewClipboard implements IView {
     }
     
     /**
-     * Removes the item
+     * Removes the item.
+     *
      * @param item
+     * @return
      */
     private int removeItem(final TableItem item) {
         int index = getItemIndex(item);

@@ -45,22 +45,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * This view displays settings regarding the utility metrics
+ * This view displays settings regarding the utility metrics.
+ *
  * @author Fabian Prasser
  */
 public class ViewMetric implements IView {
 
-    /** Static settings */
+    /** Static settings. */
     private static final int                     LABEL_HEIGHT = 20;
 
-    /** Static settings */
+    /** Static settings. */
     private static final List<MetricDescription> METRICS      = Metric.list();
-    /** Static settings */
+    
+    /** Static settings. */
     private static final String[]                LABELS       = getLabels(METRICS);
 
     /**
-     * Returns a list of names of all available metrics
-     * 
+     * Returns a list of names of all available metrics.
+     *
      * @param metrics
      * @return
      */
@@ -72,29 +74,39 @@ public class ViewMetric implements IView {
         return labels;
     }
 
-    /** Controller */
+    /** Controller. */
     private final Controller      controller;
-    /** Model */
+    
+    /** Model. */
     private Model                 model;
-    /** View */
+    
+    /** View. */
     private Combo                 comboMetric;
-    /** View */
+    
+    /** View. */
     private Composite             root;
-    /** View */
+    
+    /** View. */
     private ComponentTitledFolder folder;
-    /** View */
+    
+    /** View. */
     private IView                 viewCodingModel;
-    /** View */
+    
+    /** View. */
     private IView                 viewAttributeWeights;
-    /** View */
+    
+    /** View. */
     private Button                monotonicVariant;
-    /** View */
+    
+    /** View. */
     private Combo                 comboAggregate;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
+     * @param folder
      */
     public ViewMetric(final Composite parent,
                       final Controller controller,
@@ -111,11 +123,17 @@ public class ViewMetric implements IView {
         this.root = build(parent);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
 
@@ -124,6 +142,9 @@ public class ViewMetric implements IView {
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -160,6 +181,12 @@ public class ViewMetric implements IView {
         }
     }
 
+    /**
+     * 
+     *
+     * @param parent
+     * @return
+     */
     private Composite build(final Composite parent) {
 
         final Composite mBase = new Composite(parent, SWT.NONE);
@@ -247,7 +274,7 @@ public class ViewMetric implements IView {
     }
 
     /**
-     * Hides the settings for the attribute weights
+     * Hides the settings for the attribute weights.
      */
     private void hideSettingsAttributeWeights(){
 
@@ -259,7 +286,7 @@ public class ViewMetric implements IView {
     }
     
     /**
-     * Hides the settings for the coding model
+     * Hides the settings for the coding model.
      */
     private void hideSettingsCodingModel(){
         if (this.viewCodingModel != null) {
@@ -270,7 +297,8 @@ public class ViewMetric implements IView {
     }
 
     /**
-     * Select metric action
+     * Select metric action.
+     *
      * @param metric
      */
     private void selectMetricAction(final MetricDescription metric) {
@@ -300,7 +328,7 @@ public class ViewMetric implements IView {
     }
     
     /**
-     * Shows the settings for the attribute weights
+     * Shows the settings for the attribute weights.
      */
     private void showSettingsAttributeWeights(){
         if (this.viewAttributeWeights != null) return;
@@ -311,7 +339,7 @@ public class ViewMetric implements IView {
     }
   
     /**
-     * Shows the settings for the coding model
+     * Shows the settings for the coding model.
      */
     private void showSettingsCodingModel(){
         if (this.viewCodingModel != null) return;
@@ -323,7 +351,7 @@ public class ViewMetric implements IView {
 
     /**
      * This method adjusts the toolbar attached to the folder with criteria
-     * according to the current state of the model
+     * according to the current state of the model.
      */
     private void updateControlls(){
 

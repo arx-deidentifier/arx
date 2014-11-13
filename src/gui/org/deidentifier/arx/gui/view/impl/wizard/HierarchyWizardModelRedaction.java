@@ -24,30 +24,37 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 
 /**
- * A model for redaction-based builders
- * @author Fabian Prasser
+ * A model for redaction-based builders.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstract<T> {
 
-    /** Var */
+    /** Var. */
     private Order  redactionOrder     = Order.RIGHT_TO_LEFT;
-    /** Var */
+    
+    /** Var. */
     private Order  alignmentOrder     = Order.LEFT_TO_RIGHT;
-    /** Var */
+    
+    /** Var. */
     private char   paddingCharacter   = ' ';
-    /** Var */
+    
+    /** Var. */
     private char   redactionCharacter = '*';
-    /** Meta-data about the nature of the domain of the attribute */
+    
+    /** Meta-data about the nature of the domain of the attribute. */
     private Integer maxValueLength;
-    /** Meta-data about the nature of the domain of the attribute */
+    
+    /** Meta-data about the nature of the domain of the attribute. */
     private Integer domainSize;
-    /** Meta-data about the nature of the domain of the attribute */
+    
+    /** Meta-data about the nature of the domain of the attribute. */
     private Integer alphabetSize;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param dataType
      * @param data
      */
@@ -57,7 +64,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Returns the alignment order
+     * Returns the alignment order.
+     *
      * @return
      */
     public Order getAlignmentOrder() {
@@ -71,6 +79,9 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         return alphabetSize;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#getBuilder(boolean)
+     */
     @Override
     public HierarchyBuilderRedactionBased<T> getBuilder(boolean serializable) {
         
@@ -108,7 +119,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Returns the padding character
+     * Returns the padding character.
+     *
      * @return
      */
     public char getPaddingCharacter() {
@@ -116,7 +128,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Returns the redaction parameter
+     * Returns the redaction parameter.
+     *
      * @return
      */
     public char getRedactionCharacter() {
@@ -124,13 +137,17 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Returns the redaction order
+     * Returns the redaction order.
+     *
      * @return
      */
     public Order getRedactionOrder() {
         return redactionOrder;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#parse(org.deidentifier.arx.aggregates.HierarchyBuilder)
+     */
     @Override
     public void parse(HierarchyBuilder<T> _builder) {
         
@@ -149,7 +166,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Sets the alignment order
+     * Sets the alignment order.
+     *
      * @param alignmentOrder
      */
     public void setAlignmentOrder(Order alignmentOrder) {
@@ -181,7 +199,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Sets the padding character
+     * Sets the padding character.
+     *
      * @param paddingCharacter
      */
     public void setPaddingCharacter(char paddingCharacter) {
@@ -192,7 +211,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Sets the redaction character
+     * Sets the redaction character.
+     *
      * @param redactionCharacter
      */
     public void setRedactionCharacter(char redactionCharacter) {
@@ -203,7 +223,8 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
     }
 
     /**
-     * Sets the redaction order
+     * Sets the redaction order.
+     *
      * @param redactionOrder
      */
     public void setRedactionOrder(Order redactionOrder) {
@@ -213,6 +234,9 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardModelAbstract#build()
+     */
     @Override
     protected void build() {
         super.hierarchy = null;

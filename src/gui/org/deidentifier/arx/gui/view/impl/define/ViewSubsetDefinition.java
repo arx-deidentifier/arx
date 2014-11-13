@@ -36,29 +36,51 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This view displays basic information about the research subset
+ * This view displays basic information about the research subset.
+ *
  * @author Fabian Prasser
  */
 public class ViewSubsetDefinition implements IView{
 
+    /**  TODO */
     private Controller controller;
+    
+    /**  TODO */
     private Composite root;
+    
+    /**  TODO */
     private Model model;
     
+    /**  TODO */
     private Label size;
+    
+    /**  TODO */
     private Label origin;
+    
+    /**  TODO */
     private Label total;
+    
+    /**  TODO */
     private Label percent;
 
+    /**  TODO */
     private ToolItem all;
+    
+    /**  TODO */
     private ToolItem none;
+    
+    /**  TODO */
     private ToolItem file;
+    
+    /**  TODO */
     private ToolItem filter;
     
+    /**  TODO */
     private DecimalFormat format = new DecimalFormat("##0.00");
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -73,7 +95,8 @@ public class ViewSubsetDefinition implements IView{
     }
 
     /**
-     * Builds the view
+     * Builds the view.
+     *
      * @param parent
      * @return
      */
@@ -154,11 +177,17 @@ public class ViewSubsetDefinition implements IView{
         return group;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         size.setText("0");
@@ -169,7 +198,7 @@ public class ViewSubsetDefinition implements IView{
     }
     
     /**
-     * Enables the view
+     * Enables the view.
      */
     private void enable(){
         // TODO: Maybe make this a default for all views?
@@ -181,7 +210,7 @@ public class ViewSubsetDefinition implements IView{
     }
     
     /**
-     * Disables the view
+     * Disables the view.
      */
     private void disable(){
         // TODO: Maybe make this a default for all views?
@@ -192,6 +221,9 @@ public class ViewSubsetDefinition implements IView{
         SWTUtil.disable(root);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -214,7 +246,7 @@ public class ViewSubsetDefinition implements IView{
     }
 
     /**
-     * Updates the view
+     * Updates the view.
      */
     private void update() {
         // TODO: Maybe make this a default for all views?

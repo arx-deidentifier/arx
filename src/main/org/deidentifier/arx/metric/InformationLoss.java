@@ -28,72 +28,93 @@ import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.__MetricV2;
 
 /**
- * This class implements an abstract base class for information loss
- * 
+ * This class implements an abstract base class for information loss.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @param <T>
  */
 public abstract class InformationLoss<T> implements Comparable<InformationLoss<?>>, Serializable {
 
+    /**  TODO */
     private static final long serialVersionUID = -5347658129539223333L;
     
+    /**
+     * 
+     */
     protected InformationLoss(){
         // Protected
     }
     
     /**
-     * Returns a clone of this object
+     * Returns a clone of this object.
+     *
+     * @return
      */
     @Override
     public abstract InformationLoss<T> clone();
     
     /**
-     * Compares the loss to the other
+     * Compares the loss to the other.
+     *
      * @param other
      * @return
      */
     public abstract int compareTo(InformationLoss<?> other);
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public abstract boolean equals(Object obj);
 
+    /**
+     * 
+     *
+     * @return
+     */
     public abstract T getValue();
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public abstract int hashCode();
 
     /**
-     * Retains the maximum of this and other
-     * 
+     * Retains the maximum of this and other.
+     *
      * @param other
      */
     public abstract void max(InformationLoss<?> other);
 
     /**
-     * Retains the minimum of this and other
-     * 
+     * Retains the minimum of this and other.
+     *
      * @param other
      */
     public abstract void min(InformationLoss<?> other);
     
     /**
-     * Returns the value relative to the other instance
-     * @param other
+     * Returns the value relative to the other instance.
+     *
+     * @param min
+     * @param max
      * @return
      */
     public abstract double relativeTo(InformationLoss<?> min, InformationLoss<?> max);
 
     /**
-     * Returns a string representation
-     * 
+     * Returns a string representation.
+     *
      * @return
      */
     public abstract String toString();
 
     /**
      * Converter method, converting information loss from version 1 to information loss from version 2,
-     * if necessary
-     * 
+     * if necessary.
+     *
      * @param loss
      * @param metric
      * @param minLevel

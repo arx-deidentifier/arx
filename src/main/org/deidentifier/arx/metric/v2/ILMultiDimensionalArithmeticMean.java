@@ -22,14 +22,14 @@ import org.deidentifier.arx.metric.InformationLoss;
 
 /**
  * This class implements an information loss which can be represented as a
- * decimal number per quasi-identifier
- * 
+ * decimal number per quasi-identifier.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class ILMultiDimensionalArithmeticMean extends AbstractILMultiDimensionalReduced {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = 5142553922311764185L;
    
     /**
@@ -42,8 +42,8 @@ public class ILMultiDimensionalArithmeticMean extends AbstractILMultiDimensional
     }
 
     /**
-     * Creates a new instance
-     * 
+     * Creates a new instance.
+     *
      * @param values
      * @param weights
      */
@@ -52,12 +52,18 @@ public class ILMultiDimensionalArithmeticMean extends AbstractILMultiDimensional
         super(values, weights);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensionalReduced#clone()
+     */
     @Override
     public InformationLoss<double[]> clone() {
         return new ILMultiDimensionalArithmeticMean(getValues(),
                                                     getWeights());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractILMultiDimensionalReduced#getAggregate()
+     */
     @Override
     protected double getAggregate() {
         double[] values = getValues();

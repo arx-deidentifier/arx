@@ -30,16 +30,16 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 
 /**
- * This class provides a base class for examples
- * 
+ * This class provides a base class for examples.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class Example {
 
     /**
-     * Prints the result
-     * 
+     * Prints the result.
+     *
      * @param result
      * @param data
      */
@@ -94,7 +94,8 @@ public abstract class Example {
     }
 
     /**
-     * Prints a given datahandle
+     * Prints a given datahandle.
+     *
      * @param handle
      */
     protected static void print(DataHandle handle) {
@@ -103,7 +104,8 @@ public abstract class Example {
     }
 
     /**
-     * Prints a given iterator
+     * Prints a given iterator.
+     *
      * @param iterator
      */
     protected static void print(Iterator<String[]> iterator) {
@@ -114,8 +116,9 @@ public abstract class Example {
     }
 
     /**
-     * Prints java array
-     * @param iterator
+     * Prints java array.
+     *
+     * @param array
      */
     protected static void printArray(String[][] array) {
         System.out.print("{");
@@ -138,7 +141,8 @@ public abstract class Example {
     }
     
     /**
-     * Prints java array
+     * Prints java array.
+     *
      * @param iterator
      */
     protected static void printIterator(Iterator<String[]> iterator) {
@@ -162,7 +166,8 @@ public abstract class Example {
     }
     
     /**
-     * Prints a given data handle
+     * Prints a given data handle.
+     *
      * @param handle
      */
     protected static void printHandle(DataHandle handle) {

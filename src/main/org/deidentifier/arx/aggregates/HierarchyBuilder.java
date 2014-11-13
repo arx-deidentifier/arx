@@ -28,21 +28,24 @@ import java.io.Serializable;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
 /**
- * Base class for hierarchy builders. Hierarchies can be built in two ways:<br> 
+ * Base class for hierarchy builders. Hierarchies can be built in two ways:<br>
  * 1. Call prepare(data), which returns some metadata and preserves a state, and then calling build(), or<br>
  * 2. Call build(data)
- * 
- * @author Fabian Prasser
  *
+ * @author Fabian Prasser
+ * @param <T>
  */
 public abstract class HierarchyBuilder<T> implements Serializable {
     
+    /**  TODO */
     private static final long serialVersionUID = -4182364711973630816L;
-    /** The type*/
+    
+    /** The type. */
     private Type type;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param type
      */
     protected HierarchyBuilder(Type type){
@@ -50,19 +53,24 @@ public abstract class HierarchyBuilder<T> implements Serializable {
     }
     
     /**
-     * Loads a builder from a file
+     * Loads a builder from a file.
+     *
+     * @param <T>
      * @param file
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public static <T> HierarchyBuilder<T> create(String file) throws IOException{
         return create(new File(file));
     }
 
     /**
-     * Loads a builder from a file
+     * Loads a builder from a file.
+     *
+     * @param <T>
      * @param file
      * @return
+     * @throws IOException
      */
     @SuppressWarnings("unchecked")
     public static <T> HierarchyBuilder<T> create(File file) throws IOException{
@@ -79,36 +87,49 @@ public abstract class HierarchyBuilder<T> implements Serializable {
     }
     
     /**
-     * The three types of builders
+     * The three types of builders.
+     *
      * @author Fabian Prasser
      */
     public static enum Type {
+        
+        /**  TODO */
         INTERVAL_BASED,
+        
+        /**  TODO */
         ORDER_BASED,
+        
+        /**  TODO */
         REDACTION_BASED
     }
+    
     /**
-     * Creates a new hierarchy, based on the predefined specification
+     * Creates a new hierarchy, based on the predefined specification.
+     *
      * @param data
      * @return
      */
     public abstract Hierarchy build(String[] data);
     
     /**
-     * Creates a new hierarchy, based on the predefined specification
+     * Creates a new hierarchy, based on the predefined specification.
+     *
      * @return
      */
     public abstract Hierarchy build();
     
     /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level
+     *
+     * @param data
      * @return
      */
     public abstract int[] prepare(String[] data);
     
 
     /**
-     * Saves the specification of this builder to the given file
+     * Saves the specification of this builder to the given file.
+     *
      * @param file
      * @throws IOException
      */
@@ -117,7 +138,8 @@ public abstract class HierarchyBuilder<T> implements Serializable {
     }
     
     /**
-     * Saves the specification of this builder to the given file
+     * Saves the specification of this builder to the given file.
+     *
      * @param file
      * @throws IOException
      */
@@ -134,7 +156,8 @@ public abstract class HierarchyBuilder<T> implements Serializable {
     }
 
     /**
-     * Returns the type of builder
+     * Returns the type of builder.
+     *
      * @return
      */
     public Type getType() {

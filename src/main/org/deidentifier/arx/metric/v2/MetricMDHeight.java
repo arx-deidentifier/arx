@@ -35,25 +35,29 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  */
 public class MetricMDHeight extends AbstractMetricMultiDimensional {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long serialVersionUID = -4720395539299677086L;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected MetricMDHeight() {
         super(true, true, AggregateFunction.SUM);
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
+     * @param function
      */
     protected MetricMDHeight(AggregateFunction function) {
         super(true, true, function);
     }
 
     /**
-     * Returns the configuration of this metric
+     * Returns the configuration of this metric.
+     *
+     * @return
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(true,                       // monotonic
@@ -65,7 +69,8 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
     }
     
     /**
-     * For backwards compatibility only
+     * For backwards compatibility only.
+     *
      * @param minHeight
      * @param maxHeight
      */
@@ -75,17 +80,26 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         setMax(new double[]{maxHeight});
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#toString()
+     */
     @Override
     public String toString() {
         return "Height";
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Node node, final IHashGroupify g) {
         AbstractILMultiDimensional loss = getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node) {
         double[] result = new double[getDimensions()];
@@ -96,12 +110,18 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         return super.createInformationLoss(result);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.Metric#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)
+     */
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Node node,
                                                        IHashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional#initializeInternal(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)
+     */
     @Override
     protected void initializeInternal(DataDefinition definition,
                                       Data input,

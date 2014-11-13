@@ -38,9 +38,7 @@ import org.deidentifier.arx.framework.lattice.NodeAction;
  */
 public class History {
     
-    /**
-     * Store only non-anonymous transformations
-     */
+    /** Store only non-anonymous transformations. */
     public static final NodeAction STORAGE_TRIGGER_NON_ANONYMOUS = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
@@ -48,9 +46,7 @@ public class History {
         }
     };
 
-    /**
-     * Store all transformations
-     */
+    /** Store all transformations. */
     public static final NodeAction STORAGE_TRIGGER_ALL = new NodeAction(){
         @Override
         public boolean appliesTo(Node node) {
@@ -61,13 +57,13 @@ public class History {
     /** The actual buffer. */
     private MRUCache<Node>                   cache                         = null;
 
-    /** Current configuration */
+    /** Current configuration. */
     private final ARXConfigurationInternal config;
 
-    /** The dictionary for frequencies of the distributions */
+    /** The dictionary for frequencies of the distributions. */
     private final IntArrayDictionary         dictionarySensFreq;
 
-    /** The dictionary for values of the distributions */
+    /** The dictionary for values of the distributions. */
     private final IntArrayDictionary         dictionarySensValue;
 
     /** Maximal number of entries. */
@@ -76,30 +72,31 @@ public class History {
     /** A map from nodes to snapshots. */
     private HashMap<Node, int[]>             nodeToSnapshot                = null;
 
-    /** The current storage strategy */
+    /** The current storage strategy. */
     private NodeAction                       storageTrigger;
 
-    /** The current requirements */
+    /** The current requirements. */
     private final int                        requirements;
 
-    /** The node backing the last returned snapshot */
+    /** The node backing the last returned snapshot. */
     private Node                             resultNode;
 
     /** The snapshotSizeDataset for the size of entries. */
     private final long                       snapshotSizeDataset;
 
-    /** The snapshotSizeDataset for the minimum required reduction of a snapshot */
+    /** The snapshotSizeDataset for the minimum required reduction of a snapshot. */
     private final double                     snapshotSizeSnapshot;
 
     /**
      * Creates a new history.
-     * 
-     * @param rowCount
-     *            the row count
-     * @param size
-     *            the max size
-     * @param snapshotSizeDataset
-     *            the snapshotSizeDataset
+     *
+     * @param rowCount the row count
+     * @param size the max size
+     * @param snapshotSizeDataset the snapshotSizeDataset
+     * @param snapshotSizeSnapshot
+     * @param config
+     * @param dictionarySensValue
+     * @param dictionarySensFreq
      */
     public History(final int rowCount,
                    final int size,
@@ -169,8 +166,8 @@ public class History {
     }
     
     /**
-     * Method needed for benchmarking
-     * 
+     * Method needed for benchmarking.
+     *
      * @return
      */
     public IntArrayDictionary getDictionarySensFreq() {
@@ -178,8 +175,8 @@ public class History {
     }
 
     /**
-     * Method needed for benchmarking
-     * 
+     * Method needed for benchmarking.
+     *
      * @return
      */
     public IntArrayDictionary getDictionarySensValue() {
@@ -187,8 +184,8 @@ public class History {
     }
 
     /**
-     * Returns the node backing the last returned snapshot
-     * 
+     * Returns the node backing the last returned snapshot.
+     *
      * @return
      */
     public Node getTransformation() {
@@ -196,8 +193,8 @@ public class History {
     }
     
     /**
-     * Returns the current storage strategy
-     * 
+     * Returns the current storage strategy.
+     *
      * @return
      */
     public NodeAction getStorageTrigger() {
@@ -216,7 +213,8 @@ public class History {
     }
     
     /**
-     * Sets the size of this history
+     * Sets the size of this history.
+     *
      * @param size
      */
     public void setSize(int size) {
@@ -224,21 +222,27 @@ public class History {
     }
     
     /**
-     * Set the storage strategy
-     * 
-     * @param strategy
+     * Set the storage strategy.
+     *
+     * @param trigger
      */
     public void setStorageTrigger(NodeAction trigger) {
         storageTrigger = trigger;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public int size() {
         return cache.size();
 
     }
 
     /**
-     * Stores a snapshot in the buffer
+     * Stores a snapshot in the buffer.
+     *
      * @param transformation The transformation
      * @param groupify The groupify operator
      * @param snapshot The snapshot that was previously used, if any
@@ -283,7 +287,7 @@ public class History {
     }
 
     /**
-     * Remove pruned entries from the cache
+     * Remove pruned entries from the cache.
      */
     private final void cleanUpHistory() {
 
@@ -298,8 +302,8 @@ public class History {
     }
     
     /**
-     * Creates a generic snapshot for all criteria
-     * 
+     * Creates a generic snapshot for all criteria.
+     *
      * @param g the g
      * @return the int[]
      */
@@ -350,8 +354,8 @@ public class History {
     }
 
     /**
-     * Removes a snapshot
-     * 
+     * Removes a snapshot.
+     *
      * @param node
      */
     private final void removeHistoryEntry(final Node node) {

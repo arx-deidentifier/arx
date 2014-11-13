@@ -35,18 +35,36 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DataTableContext {
 
+    /**  TODO */
     private Font                 font          = null;
+    
+    /**  TODO */
     private List<Image>          images        = new ArrayList<Image>();
+    
+    /**  TODO */
     private List<ILayerListener> listeners     = new ArrayList<ILayerListener>();
+    
+    /**  TODO */
     private RowSet               rows          = null;
+    
+    /**  TODO */
     private int[]                groups        = null;
+    
+    /**  TODO */
     private DataHandle           handle        = null;
+    
+    /**  TODO */
     private Controller           controller    = null;
+    
+    /**  TODO */
     private int                  selectedIndex = -1;
+	
+	/**  TODO */
 	private NatTable             table         = null;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param controller
      */
     public DataTableContext(Controller controller) {
@@ -54,7 +72,8 @@ public class DataTableContext {
     }
     
     /**
-     * Sets the underlying table
+     * Sets the underlying table.
+     *
      * @param table
      */
     public void setTable(NatTable table) {
@@ -62,7 +81,8 @@ public class DataTableContext {
 	}
 
 	/**
-     * Returns the underlying table
+     * Returns the underlying table.
+     *
      * @return
      */
     public NatTable getTable() {
@@ -70,7 +90,8 @@ public class DataTableContext {
 	}
 
 	/**
-     * Returns the controller
+     * Returns the controller.
+     *
      * @return
      */
     public Controller getController() {
@@ -78,7 +99,8 @@ public class DataTableContext {
     }
     
     /**
-     * Returns information about the equivalence classes
+     * Returns information about the equivalence classes.
+     *
      * @return
      */
     public int[] getGroups() {
@@ -86,7 +108,8 @@ public class DataTableContext {
     }
 
     /**
-     * Returns the data handle, if any
+     * Returns the data handle, if any.
+     *
      * @return
      */
     public DataHandle getHandle() {
@@ -94,7 +117,8 @@ public class DataTableContext {
     }
 
     /**
-     * Returns the header images
+     * Returns the header images.
+     *
      * @return
      */
     public List<Image> getImages() {
@@ -102,7 +126,8 @@ public class DataTableContext {
     }
 
     /**
-     * Returns all layer listeners
+     * Returns all layer listeners.
+     *
      * @return
      */
     public List<ILayerListener> getListeners() {
@@ -110,7 +135,8 @@ public class DataTableContext {
     }
 
     /**
-     * Returns the research subset
+     * Returns the research subset.
+     *
      * @return
      */
     public RowSet getRows() {
@@ -118,7 +144,8 @@ public class DataTableContext {
     }
 
     /**
-     * Returns the selected index
+     * Returns the selected index.
+     *
      * @return
      */
     public int getSelectedIndex() {
@@ -126,7 +153,7 @@ public class DataTableContext {
     }
 
     /**
-     * Resets the context
+     * Resets the context.
      */
     public void reset() {
         this.handle = null;
@@ -136,7 +163,8 @@ public class DataTableContext {
     }
 
     /**
-     * Sets the groups
+     * Sets the groups.
+     *
      * @param groups
      */
     public void setGroups(int[] groups) {
@@ -144,7 +172,8 @@ public class DataTableContext {
     }
 
     /**
-     * Sets a data handle
+     * Sets a data handle.
+     *
      * @param handle
      */
     public void setHandle(DataHandle handle) {
@@ -152,7 +181,8 @@ public class DataTableContext {
     }
 
     /**
-     * Sets the header images
+     * Sets the header images.
+     *
      * @param images
      */
     public void setImages(List<Image> images) {
@@ -160,7 +190,8 @@ public class DataTableContext {
     }
 
     /**
-     * Sets the layer listeners
+     * Sets the layer listeners.
+     *
      * @param listeners
      */
     public void setListeners(List<ILayerListener> listeners) {
@@ -168,7 +199,8 @@ public class DataTableContext {
     }
     
     /**
-     * Sets the research subset
+     * Sets the research subset.
+     *
      * @param rows
      */
     public void setRows(RowSet rows) {
@@ -176,7 +208,8 @@ public class DataTableContext {
     }
     
     /**
-     * Sets the selected column index
+     * Sets the selected column index.
+     *
      * @param index
      */
     public void setSelectedIndex(int index) {
@@ -184,7 +217,8 @@ public class DataTableContext {
     }
 
     /**
-     * Sets the font
+     * Sets the font.
+     *
      * @return
      */
     public Font getFont() {
@@ -192,18 +226,29 @@ public class DataTableContext {
     }
 
     /**
-     * Gets the font
+     * Gets the font.
+     *
      * @param font
      */
     public void setFont(Font font) {
         this.font = font;
     }
 
+	/**
+     * 
+     *
+     * @return
+     */
 	public boolean isRowExpanded() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+     * 
+     *
+     * @return
+     */
 	public boolean isColumnExpanded() {
 		// TODO Auto-generated method stub
 		return false;

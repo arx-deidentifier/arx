@@ -27,20 +27,30 @@ import org.deidentifier.arx.gui.view.def.IComponent;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * A basic title bar, which offers some buttons
- * 
+ * A basic title bar, which offers some buttons.
+ *
  * @author Fabian Prasser
  */
 public class ComponentTitledFolderButton implements IComponent{
     
+    /**  TODO */
     private List<String> titles = new ArrayList<String>();
+    
+    /**  TODO */
     private Map<String, Image> images = new HashMap<String, Image>();
+    
+    /**  TODO */
     private Map<String, Boolean> toggle = new HashMap<String, Boolean>();
+    
+    /**  TODO */
     private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
+    
+    /**  TODO */
     private String id;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param id
      */
     public ComponentTitledFolderButton(String id) {    
@@ -48,7 +58,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
 
     /**
-     * Adds a button
+     * Adds a button.
+     *
      * @param title
      * @param image
      * @param toggle
@@ -62,7 +73,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
 
     /**
-     * Adds a new button
+     * Adds a new button.
+     *
      * @param title
      * @param image
      * @param runnable
@@ -72,7 +84,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
 
     /**
-     * Returns the id
+     * Returns the id.
+     *
      * @return
      */
     public String getId(){
@@ -80,7 +93,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
 
     /**
-     * Returns the image for the given button
+     * Returns the image for the given button.
+     *
      * @param title
      * @return
      */
@@ -89,7 +103,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
 
     /**
-     * Returns the runnable for the given button
+     * Returns the runnable for the given button.
+     *
      * @param title
      * @return
      */
@@ -98,7 +113,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
     
     /**
-     * Returns the titles of all buttons
+     * Returns the titles of all buttons.
+     *
      * @return
      */
     public List<String> getTitles() {
@@ -106,7 +122,8 @@ public class ComponentTitledFolderButton implements IComponent{
     }
 
     /**
-     * Returns whether the given button is a toggle button
+     * Returns whether the given button is a toggle button.
+     *
      * @param title
      * @return
      */

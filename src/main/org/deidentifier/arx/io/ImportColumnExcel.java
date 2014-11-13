@@ -32,8 +32,10 @@ import org.deidentifier.arx.DataType;
 public class ImportColumnExcel extends ImportColumnIndexed {
 
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index
+     * @param datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnExcel(int index, DataType<?> datatype) {
@@ -41,8 +43,11 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
-     * 
+     * Creates a new instance of this object with the given parameters.
+     *
+     * @param index
+     * @param aliasName
+     * @param datatype
      * @see {@link ImportColumnIndexed}
      */
     public ImportColumnExcel(int index, String aliasName, DataType<?> datatype) {
@@ -50,7 +55,8 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
      * @param name
      * @param datatype
      */
@@ -59,7 +65,8 @@ public class ImportColumnExcel extends ImportColumnIndexed {
     }
 
     /**
-     * Creates a new instance of this object with the given parameters
+     * Creates a new instance of this object with the given parameters.
+     *
      * @param name
      * @param alias
      * @param datatype

@@ -40,31 +40,55 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * A view on a <code>Data</code> object
+ * A view on a <code>Data</code> object.
+ *
  * @author Fabian Prasser
  */
 public abstract class ViewData implements IView {
     
+    /**  TODO */
     private final Image                IMAGE_ASCENDING;
+    
+    /**  TODO */
     private final Image                IMAGE_DESCENDING;
+    
+    /**  TODO */
     private final Image                IMAGE_INSENSITIVE;
+    
+    /**  TODO */
     private final Image                IMAGE_SENSITIVE;
+    
+    /**  TODO */
     private final Image                IMAGE_QUASI_IDENTIFYING;
+    
+    /**  TODO */
     private final Image                IMAGE_IDENTIFYING;
 
+    /**  TODO */
     private final ToolItem             groupsButton;
+    
+    /**  TODO */
     private final ToolItem             subsetButton;
+    
+    /**  TODO */
     private final ToolItem             ascendingButton;
+    
+    /**  TODO */
     private final ToolItem             descendingButton;
 
+    /**  TODO */
     protected final ComponentDataTable table;
+    
+    /**  TODO */
     protected final Controller         controller;
 
+    /**  TODO */
     protected Model                    model;
 
-    /** 
-     * Creates a new data view
+    /**
      * 
+     * Creates a new data view.
+     *
      * @param parent
      * @param controller
      * @param title
@@ -164,13 +188,17 @@ public abstract class ViewData implements IView {
     }
     
     /**
-     * Add a scrollbar listener to this view
+     * Add a scrollbar listener to this view.
+     *
      * @param listener
      */
     public void addScrollBarListener(final Listener listener) {
         table.addScrollBarListener(listener);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -184,13 +212,17 @@ public abstract class ViewData implements IView {
     }
     
     /**
-     * Returns the NatTable viewport layer
+     * Returns the NatTable viewport layer.
+     *
      * @return
      */
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         table.reset();
@@ -200,6 +232,9 @@ public abstract class ViewData implements IView {
         descendingButton.setEnabled(false);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
 
@@ -233,7 +268,8 @@ public abstract class ViewData implements IView {
     }
 
     /**
-     * Selects the given column
+     * Selects the given column.
+     *
      * @param index
      */
     private void actionColumnSelected(int index){
@@ -247,7 +283,8 @@ public abstract class ViewData implements IView {
     }
 
     /**
-     * Cell selection event
+     * Cell selection event.
+     *
      * @param arg1
      */
     protected void actionCellSelected(CellSelectionEvent arg1){
@@ -258,7 +295,8 @@ public abstract class ViewData implements IView {
     }
     
     /**
-     * Column selection event
+     * Column selection event.
+     *
      * @param arg1
      */
     protected void actionColumnSelected(ColumnSelectionEvent arg1) {
@@ -269,12 +307,12 @@ public abstract class ViewData implements IView {
     }
     
     /**
-     * Called when the sort button is pressed
+     * Called when the sort button is pressed.
      */
     protected abstract void actionSort();
 
     /**
-     * Enable sorting
+     * Enable sorting.
      */
     protected void enableSorting(){
         ascendingButton.setEnabled(true);
@@ -282,20 +320,23 @@ public abstract class ViewData implements IView {
     }
     
     /**
-     * Returns the data definition
+     * Returns the data definition.
+     *
      * @return
      */
     protected abstract DataDefinition getDefinition();
     
 
     /**
-     * Returns the data definition
+     * Returns the data definition.
+     *
      * @return
      */
     protected abstract DataHandle getHandle();
 
     /**
-     * Updates the header image in the table
+     * Updates the header image in the table.
+     *
      * @param index
      * @param type
      */

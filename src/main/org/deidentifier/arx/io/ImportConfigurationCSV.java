@@ -21,35 +21,30 @@ package org.deidentifier.arx.io;
 
 
 /**
- * Configuration describing a CSV file
- * 
+ * Configuration describing a CSV file.
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
  */
 public class ImportConfigurationCSV extends ImportConfigurationFile implements
         IImportConfigurationWithHeader {
 
-    /**
-     * Character that separates the columns from each other
-     */
+    /** Character that separates the columns from each other. */
     private char    separator;
 
     /**
-     * Indicates whether first row contains header (names of columns)
-     * 
+     * Indicates whether first row contains header (names of columns).
+     *
      * @see {@link IImportConfigurationWithHeader}
      */
     private boolean containsHeader;
 
     /**
-     * Creates a new instance of this object
-     * 
-     * @param fileLocation
-     *            {@link #setFileLocation(String)}
-     * @param separator
-     *            {@link #separator}
-     * @param containsHeader
-     *            {@link #containsHeader}
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param separator {@link #separator}
+     * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
                                   char separator,
@@ -128,8 +123,8 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     }
 
     /**
-     * Sets the indexes based on the header
-     * 
+     * Sets the indexes based on the header.
+     *
      * @param row
      */
     public void prepare(String[] row) {

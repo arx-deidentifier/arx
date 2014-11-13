@@ -35,29 +35,27 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  */
 public class DomainShareMaterialized implements DomainShare {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long           serialVersionUID = -8981924690395236648L;
 
-    /** The value representing a non-existent entry */
+    /** The value representing a non-existent entry. */
     private static final double         NOT_AVAILABLE    = -Double.MAX_VALUE;
 
-    /** The size of the domain */
+    /** The size of the domain. */
     private final double                size;
 
-    /** One share per attribute */
+    /** One share per attribute. */
     private final double[]              shares;
 
-    /**
-     * If an attribute exists with different shares on different generalization
-     * levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>
-     */
+    /** If an attribute exists with different shares on different generalization levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>. */
     private transient LongDoubleOpenHashMap duplicates;
 
     /**
-     * Creates a new set of domain shares derived from the given attribute
+     * Creates a new set of domain shares derived from the given attribute.
+     *
      * @param rawHierarchy
-     * @param encodedValues 
-     * @param encodedHierarchy 
+     * @param encodedValues
+     * @param encodedHierarchy
      */
     public DomainShareMaterialized(String[][] rawHierarchy, 
                                    String[] encodedValues, 
@@ -125,7 +123,8 @@ public class DomainShareMaterialized implements DomainShare {
     }
 
     /**
-     * Returns the size of the domain
+     * Returns the size of the domain.
+     *
      * @return
      */
     @Override
@@ -134,7 +133,8 @@ public class DomainShareMaterialized implements DomainShare {
     }
 
     /**
-     * Returns the share of the given value
+     * Returns the share of the given value.
+     *
      * @param value
      * @param level
      * @return
@@ -151,7 +151,11 @@ public class DomainShareMaterialized implements DomainShare {
     }
 
     /**
-     * De-serialization
+     * De-serialization.
+     *
+     * @param aInputStream
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
@@ -163,7 +167,10 @@ public class DomainShareMaterialized implements DomainShare {
     }
 
     /**
-     * Serialization
+     * Serialization.
+     *
+     * @param aOutputStream
+     * @throws IOException
      */
     private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
 

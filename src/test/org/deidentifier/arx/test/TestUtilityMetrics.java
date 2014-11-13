@@ -36,14 +36,20 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test for utility transformations
- * 
+ * Test for utility transformations.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 @RunWith(Parameterized.class)
 public class TestUtilityMetrics extends TestUtilityMetricsAbstract {
 
+    /**
+     * 
+     *
+     * @return
+     * @throws IOException
+     */
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
         return Arrays.asList(new Object[][] {
@@ -221,6 +227,11 @@ public class TestUtilityMetrics extends TestUtilityMetricsAbstract {
         });
     }
 
+    /**
+     * 
+     *
+     * @param testCase
+     */
     public TestUtilityMetrics(final ARXUtilityMetricsTestCase testCase) {
         super(testCase);
     }

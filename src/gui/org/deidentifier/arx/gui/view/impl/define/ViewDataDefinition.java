@@ -40,19 +40,30 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This view displays settings for all attributes
+ * This view displays settings for all attributes.
+ *
  * @author Fabian Prasser
  */
 public class ViewDataDefinition implements IView {
 
+    /**  TODO */
     private final Controller           controller;
+    
+    /**  TODO */
     private final CTabFolder           folder;
+    
+    /**  TODO */
     private final Map<Integer, String> names = new HashMap<Integer, String>();
+    
+    /**  TODO */
     private final Set<IView>           views = new HashSet<IView>();
+    
+    /**  TODO */
     private Model                      model;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -93,6 +104,9 @@ public class ViewDataDefinition implements IView {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -101,6 +115,9 @@ public class ViewDataDefinition implements IView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         folder.setRedraw(false);
@@ -118,7 +135,7 @@ public class ViewDataDefinition implements IView {
     }
 
     /**
-     * Handle a selection event
+     * Handle a selection event.
      */
     private void selectionEvent() {
         int index = folder.getSelectionIndex();
@@ -133,6 +150,9 @@ public class ViewDataDefinition implements IView {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {

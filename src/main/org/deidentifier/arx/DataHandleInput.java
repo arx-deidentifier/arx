@@ -28,34 +28,34 @@ import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
- * An implementation of the DataHandle interface for input data
- * 
+ * An implementation of the DataHandle interface for input data.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class DataHandleInput extends DataHandle {
 
-    /** The data */
+    /** The data. */
     protected int[][]    data       = null;
 
-    /** The dictionary */
+    /** The dictionary. */
     protected Dictionary dictionary = null;
 
-    /** The data */
+    /** The data. */
     private int[][]      dataQI     = null;
 
-    /** The data */
+    /** The data. */
     private int[][]      dataSE     = null;
 
-    /** The data */
+    /** The data. */
     private int[][]      dataIS     = null;
     
-    /** Is this handle locked?*/
+    /** Is this handle locked?. */
     private boolean      locked     = false;
 
     /**
-     * Creates a new data handle
-     * 
+     * Creates a new data handle.
+     *
      * @param data
      */
     protected DataHandleInput(final Data data) {
@@ -104,6 +104,9 @@ public class DataHandleInput extends DataHandle {
         this.statistics = new StatisticsBuilder(new DataHandleStatistics(this), null);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getAttributeName(int)
+     */
     @Override
     public String getAttributeName(final int column) {
         checkRegistry();
@@ -111,24 +114,36 @@ public class DataHandleInput extends DataHandle {
         return header[column];
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getGeneralization(java.lang.String)
+     */
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return 0;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getNumColumns()
+     */
     @Override
     public int getNumColumns() {
         checkRegistry();
         return header.length;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getNumRows()
+     */
     @Override
     public int getNumRows() {
         checkRegistry();
         return data.length;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getValue(int, int)
+     */
     @Override
     public String getValue(final int row, final int column) {
         checkRegistry();
@@ -137,11 +152,17 @@ public class DataHandleInput extends DataHandle {
         return internalGetValue(row, column);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#isOutlier(int)
+     */
     @Override
     public boolean isOutlier(int row){
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#iterator()
+     */
     @Override
     public Iterator<String[]> iterator() {
         checkRegistry();
@@ -177,7 +198,8 @@ public class DataHandleInput extends DataHandle {
     }
 
     /**
-     * Swaps two rows
+     * Swaps two rows.
+     *
      * @param row1
      * @param row2
      * @param data
@@ -189,7 +211,7 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Releases all resources
+     * Releases all resources.
      */
     protected void doRelease() {
         this.setLocked(false);
@@ -198,11 +220,17 @@ public class DataHandleInput extends DataHandle {
         dataIS = null;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getBaseDataType(java.lang.String)
+     */
     @Override
     protected DataType<?> getBaseDataType(final String attribute) {
         return this.getDataType(attribute);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getDataTypeArray()
+     */
     @Override
     protected DataType<?>[][] getDataTypeArray() {
         checkRegistry();
@@ -218,6 +246,9 @@ public class DataHandleInput extends DataHandle {
         return dataTypes;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getDistinctValues(int, org.deidentifier.arx.DataHandleStatistics.InterruptHandler)
+     */
     @Override
     protected String[] getDistinctValues(final int column, InterruptHandler handler) {
         checkRegistry();
@@ -243,7 +274,8 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Swaps the rows
+     * Swaps the rows.
+     *
      * @param row1
      * @param row2
      */
@@ -261,7 +293,8 @@ public class DataHandleInput extends DataHandle {
     }
 
     /**
-     * Is this handle locked?
+     * Is this handle locked?.
+     *
      * @return
      */
     protected boolean isLocked(){
@@ -269,7 +302,8 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Overrides the handles data definition
+     * Overrides the handles data definition.
+     *
      * @param definition
      */
     protected void setDefinition(DataDefinition definition) {
@@ -277,7 +311,8 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Lock/unlock this handle
+     * Lock/unlock this handle.
+     *
      * @param locked
      */
     protected void setLocked(boolean locked){
@@ -285,7 +320,8 @@ public class DataHandleInput extends DataHandle {
     }
 
     /**
-     * Update the definition
+     * Update the definition.
+     *
      * @param data
      */
     protected void update(Data data){
@@ -298,7 +334,8 @@ public class DataHandleInput extends DataHandle {
     }
 
     /**
-     * Updates the definition with further data to swap
+     * Updates the definition with further data to swap.
+     *
      * @param dataQI
      * @param dataSE
      * @param dataIS

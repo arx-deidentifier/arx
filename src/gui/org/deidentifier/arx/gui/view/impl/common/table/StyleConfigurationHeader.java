@@ -36,29 +36,53 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Header style
+ * Header style.
+ *
  * @author Fabian Prasser
  */
 public class StyleConfigurationHeader extends CTStyleConfiguration {
 
+    /**  TODO */
     private final Font                    font;
+    
+    /**  TODO */
     private final Color                   bgColor         = GUIHelper.COLOR_WIDGET_BACKGROUND;
+    
+    /**  TODO */
     private final Color                   fgColor         = GUIHelper.COLOR_WIDGET_FOREGROUND;
+    
+    /**  TODO */
     private final Color                   gradientBgColor = GUIHelper.COLOR_WHITE;
+    
+    /**  TODO */
     private final Color                   gradientFgColor = GUIHelper.getColor(136,
                                                                                212,
                                                                                215);
+    
+    /**  TODO */
     private final HorizontalAlignmentEnum hAlign          = HorizontalAlignmentEnum.CENTER;
+    
+    /**  TODO */
     private final VerticalAlignmentEnum   vAlign          = VerticalAlignmentEnum.MIDDLE;
+    
+    /**  TODO */
     private final BorderStyle             borderStyle     = null;
+    
+    /**  TODO */
     private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter());
+    
+    /**  TODO */
     private final Boolean                 renderGridLines = Boolean.FALSE;
+    
+    /**  TODO */
     private final String                  region;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param region
+     * @param config
      */
     public StyleConfigurationHeader(Composite parent, String region, CTConfiguration config){
         super (config);
@@ -66,6 +90,9 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
         this.region = region;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         //configure the painter

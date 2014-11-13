@@ -53,17 +53,43 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * 
+ */
 public class DialogSeparator extends TitleAreaDialog implements IDialog {
 
+    /**  TODO */
     private static final int        LINES      = 5;
+    
+    /**  TODO */
     private int                     selection;
+    
+    /**  TODO */
     private Table                   table;
+    
+    /**  TODO */
     private final List<TableColumn> columns    = new ArrayList<TableColumn>();
+    
+    /**  TODO */
     private final char[]            separators = { ';', ',', '|', '\t' };
+    
+    /**  TODO */
     private final String[]          labels     = { ";", ",", "|", "Tab" };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    
+    /**  TODO */
     private final String            file;
+    
+    /**  TODO */
     private final boolean           data;
 
+    /**
+     * 
+     *
+     * @param parent
+     * @param controller
+     * @param file
+     * @param data
+     */
     public DialogSeparator(final Shell parent,
                            final Controller controller,
                            final String file,
@@ -73,6 +99,9 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         this.data = data;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#create()
+     */
     @Override
     public void create() {
         super.create();
@@ -83,13 +112,18 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         SWTUtil.center(super.getShell(), super.getParentShell());
     }
     
+    /**
+     * 
+     *
+     * @return
+     */
     public char getSeparator() {
         return separators[selection];
     }
 
     /**
-     * Detects the most frequent separator in the first few lines
-     * 
+     * Detects the most frequent separator in the first few lines.
+     *
      * @param file
      * @throws IOException
      */
@@ -133,10 +167,9 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Reds the first few files with chosen separator
-     * 
+     * Reds the first few files with chosen separator.
+     *
      * @param file
-     * @return
      * @throws IOException
      */
     private void read(final String file) throws IOException {
@@ -198,12 +231,18 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         table.redraw();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -234,6 +273,9 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         parent.setLayout(new GridLayout());
@@ -292,6 +334,9 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getShellListener()
+     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -302,6 +347,9 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         };
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return false;

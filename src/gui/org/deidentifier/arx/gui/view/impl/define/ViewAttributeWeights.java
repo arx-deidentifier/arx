@@ -46,29 +46,33 @@ import de.linearbits.swt.widgets.KnobColorProfile;
 import de.linearbits.swt.widgets.KnobRange;
 
 /**
- * This class allows to define weights for attributes
+ * This class allows to define weights for attributes.
+ *
  * @author Fabian Prasser
  */
 public class ViewAttributeWeights implements IView {
 
-    /** Controller*/
+    /** Controller. */
     private Controller          controller = null;
     
-    /** Model*/
+    /** Model. */
     private Model               model      = null;
-    /** Model*/
+    
+    /** Model. */
     private final Set<String>   attributes = new HashSet<String>();
     
-    /** View*/
+    /** View. */
     private Composite           panel      = null;
-    /** View*/
+    
+    /** View. */
     private final Composite     root;
     
-    /** Misc*/
+    /** Misc. */
     private final DecimalFormat format     = new DecimalFormat("0.000");
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param controller
      */
@@ -87,12 +91,18 @@ public class ViewAttributeWeights implements IView {
         root.pack();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
         controller.removeListener(this);
         root.dispose();
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
         root.setRedraw(false);
@@ -104,6 +114,9 @@ public class ViewAttributeWeights implements IView {
         root.setRedraw(true);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
 

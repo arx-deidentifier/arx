@@ -26,21 +26,39 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * 
+ */
 public abstract class EditorBoolean implements IEditor<Boolean> {
 
+    /**  TODO */
     private final String category;
+    
+    /**  TODO */
     private final String label;
 
+    /**
+     * 
+     *
+     * @param category
+     * @param label
+     */
     public EditorBoolean(final String category, final String label) {
         this.category = category;
         this.label = label;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#accepts(java.lang.Object)
+     */
     @Override
     public boolean accepts(final Boolean t) {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         final Button result = new Button(parent, SWT.CHECK);
@@ -54,11 +72,17 @@ public abstract class EditorBoolean implements IEditor<Boolean> {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getCategory()
+     */
     @Override
     public String getCategory() {
         return category;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getLabel()
+     */
     @Override
     public String getLabel() {
         return label;

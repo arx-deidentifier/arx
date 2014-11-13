@@ -31,13 +31,16 @@ import org.deidentifier.arx.ARXConfiguration;
  */
 public abstract class TCloseness extends ExplicitPrivacyCriterion {
 
+    /**  TODO */
     private static final long serialVersionUID = -139670758266526116L;
     
-    /** The param t*/
+    /** The param t. */
     protected final double       t;
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
+     * @param attribute
      * @param t
      */
     public TCloseness(String attribute, double t) {
@@ -45,6 +48,9 @@ public abstract class TCloseness extends ExplicitPrivacyCriterion {
         this.t = t;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
+     */
     @Override
     public int getRequirements(){
         // Requires a distribution
@@ -52,7 +58,8 @@ public abstract class TCloseness extends ExplicitPrivacyCriterion {
     }
     
     /**
-     * Returns the parameter t
+     * Returns the parameter t.
+     *
      * @return
      */
     public double getT(){

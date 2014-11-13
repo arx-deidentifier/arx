@@ -31,22 +31,25 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 
 /**
- * Main entry point
- * 
+ * Main entry point.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class Main {
 
-    /** Is the project already loaded*/
+    /** Is the project already loaded. */
     private static String     loaded = null;
-    /** The splash*/
+    
+    /** The splash. */
     private static MainSplash splash = null;
-    /** The main window*/
+    
+    /** The main window. */
     private static MainWindow main   = null;
 
     /**
-     * Main entry point
+     * Main entry point.
+     *
      * @param args
      */
     public static void main(final String[] args) {
@@ -116,7 +119,8 @@ public class Main {
     }
 
     /**
-     * Returns the monitor on which the application was launched
+     * Returns the monitor on which the application was launched.
+     *
      * @param display
      * @return
      */
@@ -131,7 +135,8 @@ public class Main {
     }
 
     /**
-     * Loads a project
+     * Loads a project.
+     *
      * @param main
      * @param path
      */

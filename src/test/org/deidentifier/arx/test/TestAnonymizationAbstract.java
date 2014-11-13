@@ -41,32 +41,45 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test for data transformations
- * 
+ * Test for data transformations.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public abstract class TestAnonymizationAbstract extends AbstractTest {
 
     /**
-     * Represents a test case
-     * 
+     * Represents a test case.
+     *
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
 
+        /**  TODO */
         public ARXConfiguration config;
+        
+        /**  TODO */
         public String           dataset;
+        
+        /**  TODO */
         public String           sensitiveAttribute;
+        
+        /**  TODO */
         public String           optimalInformationLoss;
+        
+        /**  TODO */
         public int[]            optimalTransformation;
+        
+        /**  TODO */
         public boolean          practical;
+        
+        /**  TODO */
         public int[]            statistics;
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
          * @param dataset
          * @param optimalInformationLoss
@@ -82,8 +95,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
          * @param dataset
          * @param optimalInformationLoss
@@ -101,8 +114,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -120,8 +133,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -147,8 +160,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -166,8 +179,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
 
         /**
-         * Creates a new instance
-         * 
+         * Creates a new instance.
+         *
          * @param config
          * @param sensitiveAttribute
          * @param dataset
@@ -192,6 +205,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
             this.statistics = statistics;
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
         @Override
         public String toString() {
             return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
@@ -199,12 +215,12 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         }
     }
 
-    /** The test case */
+    /** The test case. */
     protected final ARXAnonymizationTestCase testCase;
 
     /**
-     * Creates a new instance
-     * 
+     * Creates a new instance.
+     *
      * @param testCase
      */
     public TestAnonymizationAbstract(final ARXAnonymizationTestCase testCase) {
@@ -212,8 +228,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     }
 
     /**
-     * Returns the data object for the test case
-     * 
+     * Returns the data object for the test case.
+     *
      * @param testCase
      * @return
      * @throws IOException
@@ -260,6 +276,9 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         return data;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.test.AbstractTest#setUp()
+     */
     @Override
     @Before
     public void setUp() {
@@ -267,6 +286,11 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
         // We also intentionally don't call super.setUp()
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void test() throws IOException {
 
@@ -340,8 +364,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     }
 
     /**
-     * Returns the configuration of FLASH
-     * 
+     * Returns the configuration of FLASH.
+     *
      * @param config
      * @return
      */
@@ -366,8 +390,8 @@ public abstract class TestAnonymizationAbstract extends AbstractTest {
     }
 
     /**
-     * Transforms it into a string representation
-     * 
+     * Transforms it into a string representation.
+     *
      * @param classification
      * @return
      */

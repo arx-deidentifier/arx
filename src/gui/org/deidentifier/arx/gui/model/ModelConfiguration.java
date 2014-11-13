@@ -34,35 +34,45 @@ import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class represents an input or output configuration
- * 
+ * This class represents an input or output configuration.
+ *
  * @author Fabian Prasser
  */
 public class ModelConfiguration implements Serializable, Cloneable {
 
-    /** SVUID */
+    /** SVUID. */
     private static final long                serialVersionUID  = -2887699232096897527L;
-    /** Minimum generalization */
+    
+    /** Minimum generalization. */
     private Map<String, Integer>             min               = new HashMap<String, Integer>();
-    /** Maximum generalization */
+    
+    /** Maximum generalization. */
     private Map<String, Integer>             max               = new HashMap<String, Integer>();
-    /** Input data */
+    
+    /** Input data. */
     private transient Data                   input             = null;
-    /** Associated ARXConfiguration */
+    
+    /** Associated ARXConfiguration. */
     private ARXConfiguration                 config            = ARXConfiguration.create();
-    /** Is this model modified */
+    
+    /** Is this model modified. */
     private boolean                          modified          = false;
-    /** The associated hierarchies */
+    
+    /** The associated hierarchies. */
     private Map<String, Hierarchy>           hierarchies       = new HashMap<String, Hierarchy>();
-    /** The associated research subset */
+    
+    /** The associated research subset. */
     private RowSet                           researchSubset    = null;
-    /** The suppression weight */
+    
+    /** The suppression weight. */
     private Double                           suppressionWeight = null;
-    /** Hierarchy builder*/
+    
+    /** Hierarchy builder. */
     private Map<String, HierarchyBuilder<?>> hierarchyBuilders = null;
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @param c
      * @return
      */
@@ -71,6 +81,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.addCriterion(c);
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
     @Override
     public ModelConfiguration clone() {
 
@@ -90,7 +103,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @param clazz
      * @return
      */
@@ -99,7 +113,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @return
      */
     public double getAllowedOutliers() {
@@ -107,7 +122,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the associated attribute weight
+     * Returns the associated attribute weight.
+     *
      * @param attribute
      * @return
      */
@@ -116,7 +132,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns all weights
+     * Returns all weights.
+     *
      * @return
      */
     public Map<String, Double> getAttributeWeights() {
@@ -124,7 +141,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the current config
+     * Returns the current config.
+     *
      * @return
      */
     public ARXConfiguration getConfig(){
@@ -132,7 +150,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @return
      */
     public Set<PrivacyCriterion> getCriteria() {
@@ -140,7 +159,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
+     * @param <T>
      * @param clazz
      * @return
      */
@@ -149,7 +170,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
+     * @param <T>
      * @param clazz
      * @return
      */
@@ -158,7 +181,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns the set of all assigned hierarchies
+     * Returns the set of all assigned hierarchies.
+     *
      * @return
      */
     public Map<String, Hierarchy> getHierarchies(){
@@ -167,14 +191,17 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     /**
      * Returns the assigned hierarchy, if any. Else null.
+     *
      * @param attribute
+     * @return
      */
     public Hierarchy getHierarchy(String attribute){
         return this.hierarchies.get(attribute);
     }
 
     /**
-     * Returns the according builder
+     * Returns the according builder.
+     *
      * @param attr
      * @return
      */
@@ -191,9 +218,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Maximum generalization
+     * Maximum generalization.
+     *
      * @param attribute
-     * @param min
+     * @return
      */
     public Integer getMaximumGeneralization(String attribute){
         if (this.max == null) {
@@ -203,7 +231,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @return
      */
     public Metric<?> getMetric() {
@@ -211,9 +240,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Minimum generalization
+     * Minimum generalization.
+     *
      * @param attribute
-     * @param min
+     * @return
      */
     public Integer getMinimumGeneralization(String attribute){
         if (this.min == null) {
@@ -223,7 +253,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the current research subset
+     * Returns the current research subset.
+     *
      * @return
      */
 	public RowSet getResearchSubset() {
@@ -240,7 +271,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     /**
      * Returns the suppression/generalization weight, that will be respected by
-     * the NDS metric
+     * the NDS metric.
+     *
      * @return
      */
     public double getSuppressionWeight() {
@@ -262,7 +294,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @return
      */
     public boolean isCriterionMonotonic() {
@@ -270,7 +303,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Has the config been modified
+     * Has the config been modified.
+     *
      * @return
      */
     public boolean isModified() {
@@ -278,7 +312,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @return
      */
     public boolean isPracticalMonotonicity() {
@@ -286,9 +321,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-	 * Protect sensitive associations
-	 * @return
-	 */
+     * Protect sensitive associations.
+     *
+     * @return
+     */
 	public boolean isProtectSensitiveAssociations() {
 		return config.isProtectSensitiveAssociations();
 	}
@@ -302,15 +338,17 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Removes all criteria
+     * Removes all criteria.
      */
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
     
     /**
-     * Delegates to an instance of ARXConfiguration
-     * @param clazz
+     * Delegates to an instance of ARXConfiguration.
+     *
+     * @param <T>
+     * @param c
      * @return
      */
     public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion c) {
@@ -319,9 +357,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Removes the builder for the given attribute
+     * Removes the builder for the given attribute.
+     *
      * @param attr
-     * @return
      */
     public void removeHierarchyBuilder(String attr){
         if (hierarchyBuilders==null) return;
@@ -330,7 +368,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 	
 	/**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @param supp
      */
     public void setAllowedOutliers(double supp) {
@@ -349,7 +388,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 	
 	/**
-     * Sets the according attribute weight
+     * Sets the according attribute weight.
+     *
      * @param attribute
      * @param weight
      */
@@ -359,7 +399,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Assigns a hierarchy
+     * Assigns a hierarchy.
+     *
      * @param attribute
      * @param hierarchy
      */
@@ -369,7 +410,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Sets the given hierarchy builder
+     * Sets the given hierarchy builder.
+     *
      * @param attr
      * @param builder
      */
@@ -391,9 +433,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Maximum generalization
+     * Maximum generalization.
+     *
      * @param attribute
-     * @param min
+     * @param max
      */
     public void setMaximumGeneralization(String attribute, Integer max){
         if (this.max == null) {
@@ -404,7 +447,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @param metric
      */
     public void setMetric(Metric<?> metric) {
@@ -413,7 +457,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Minimum generalization
+     * Minimum generalization.
+     *
      * @param attribute
      * @param min
      */
@@ -426,7 +471,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration
+     * Delegates to an instance of ARXConfiguration.
+     *
      * @param assumeMonotonicity
      */
     public void setPracticalMonotonicity(boolean assumeMonotonicity) {
@@ -435,18 +481,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-	 * Protect sensitive associations
-	 * @param selection
-	 */
+     * Protect sensitive associations.
+     *
+     * @param selection
+     */
 	public void setProtectSensitiveAssociations(boolean selection) {
 	    setModified();
 		config.setProtectSensitiveAssociations(selection);
 	}
 
     /**
-	 * Sets the current research subset
-	 * @param subset
-	 */
+     * Sets the current research subset.
+     *
+     * @param subset
+     */
 	public void setResearchSubset(RowSet subset) {
 	    setModified();
 	    this.researchSubset = subset;
@@ -472,7 +520,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     /**
      * Sets the suppression/generalization weight, that will be respected by
-     * the NDS metric
+     * the NDS metric.
+     *
      * @param suppressionWeight
      */
     public void setSuppressionWeight(double suppressionWeight) {
@@ -481,14 +530,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Sets the config unmodified
+     * Sets the config unmodified.
      */
     public void setUnmodified() {
         modified = false;
     }
 
     /**
-     * Mark as modified
+     * Mark as modified.
      */
     private void setModified() {
         modified = true;

@@ -48,18 +48,17 @@ public abstract class ImportConfiguration {
 
 
     /**
-     * Adds a single column to import from
+     * Adds a single column to import from.
      *
      * @param column A single column to import from
-     *
      * @note This needs to be implemented by the specific configuration class,
-     * as {@link ImportColumn} is only an abstract superclass for various kind of
-     * columns.
+     *       as {@link ImportColumn} is only an abstract superclass for various kind of
+     *       columns.
      */
     abstract public void addColumn(ImportColumn column);
 
     /**
-     * Returns all added columns
+     * Returns all added columns.
      *
      * @return {@link #columns}
      */

@@ -30,29 +30,50 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 
 /**
- * Style config for fill layouts
- * @author Fabian Prasser
+ * Style config for fill layouts.
  *
+ * @author Fabian Prasser
  */
 public class StyleConfigurationFillLayout extends CTStyleConfiguration {
     
+    /**  TODO */
     public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_";
 
+    /**  TODO */
     private BorderStyle borderStyle = new BorderStyle(0, GUIHelper.getColor(240, 240, 240), LineStyleEnum.SOLID);
+    
+    /**  TODO */
     private Color fgColor = GUIHelper.COLOR_BLACK;
+    
+    /**  TODO */
     private Color bgColor = GUIHelper.getColor(245, 245, 245);
+    
+    /**  TODO */
     private Font font;
     
+    /**
+     * 
+     *
+     * @param config
+     */
     public StyleConfigurationFillLayout(CTConfiguration config) {
         super(config);
         font = config.getFont();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.config.IConfiguration#configureRegistry(org.eclipse.nebula.widgets.nattable.config.IConfigRegistry)
+     */
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
         addFillLayoutStyleConfig(configRegistry);
     }
     
+    /**
+     * 
+     *
+     * @param configRegistry
+     */
     protected void addFillLayoutStyleConfig(IConfigRegistry configRegistry) {
         Style cellStyle = new Style();
         cellStyle.setAttributeValue(CellStyleAttributes.FONT, font);

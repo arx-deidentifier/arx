@@ -31,28 +31,34 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * An editor for intervals
- * @author Fabian Prasser
+ * An editor for intervals.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IHierarchyFunctionEditorParent<T>{
 
-    /** Var */
+    /** Var. */
     private HierarchyWizardGroupingInterval<T>     interval = null;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardModelGrouping<T>  model;
-    /** Var */
+    
+    /** Var. */
     private final EditorString                     editorMin;
-    /** Var */
+    
+    /** Var. */
     private final EditorString                     editorMax;
-    /** Var */
+    
+    /** Var. */
     private final DataTypeWithRatioScale<T>        type;
-    /** Var */
+    
+    /** Var. */
     private final HierarchyWizardEditorFunction<T> editorFunction;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      */
@@ -126,6 +132,9 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
         };
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizardEditorFunction.IHierarchyFunctionEditorParent#setFunction(org.deidentifier.arx.aggregates.AggregateFunction)
+     */
     @Override
     public void setFunction(AggregateFunction<T> function) {
         if (this.interval == null) return;
@@ -137,6 +146,9 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
         model.update(this);
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView#update()
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void update() {
@@ -169,7 +181,8 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
     }
 
     /**
-     * Creates a label
+     * Creates a label.
+     *
      * @param composite
      * @param string
      * @return

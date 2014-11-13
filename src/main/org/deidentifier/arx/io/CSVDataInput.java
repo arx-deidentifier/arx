@@ -26,25 +26,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * This class implements a reader for CSV encoded information
- * 
- * @author Fabian Prasser 
+ * This class implements a reader for CSV encoded information.
+ *
+ * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class CSVDataInput extends CSVAbstractInput {
 
-    /** The number of columns in the dataset */
+    /** The number of columns in the dataset. */
     private int                  columns     = -1;
 
-    /** A reader */
+    /** A reader. */
     private final BufferedReader reader;
 
-    /** Size of the buffer */
+    /** Size of the buffer. */
     private static final int     BUFFER_SIZE = 1024 * 1024;
 
     /**
-     * Instantiate
-     * 
+     * Instantiate.
+     *
      * @param file
      * @param separator
      * @throws IOException
@@ -55,8 +55,8 @@ public class CSVDataInput extends CSVAbstractInput {
     }
 
     /**
-     * Instantiate
-     * 
+     * Instantiate.
+     *
      * @param stream
      * @param separator
      * @throws IOException
@@ -67,8 +67,8 @@ public class CSVDataInput extends CSVAbstractInput {
     }
 
     /**
-     * Instantiate
-     * 
+     * Instantiate.
+     *
      * @param file
      * @param separator
      * @throws IOException
@@ -78,14 +78,17 @@ public class CSVDataInput extends CSVAbstractInput {
         reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.io.CSVAbstractInput#close()
+     */
     @Override
     public void close() throws IOException {
         reader.close();
     }
 
     /**
-     * Counts the number of columns
-     * 
+     * Counts the number of columns.
+     *
      * @param line
      * @return
      */
@@ -101,6 +104,9 @@ public class CSVDataInput extends CSVAbstractInput {
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.io.CSVAbstractInput#readRow()
+     */
     @Override
     protected String[] readRow() throws IOException {
 

@@ -22,18 +22,19 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 /**
- * Wraps a writer
- * 
+ * Wraps a writer.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class FileBuilder {
 	
-	/** Stream*/
+	/** Stream. */
     private final OutputStreamWriter w;
 
     /**
-     * Create a new instance
+     * Create a new instance.
+     *
      * @param w
      */
     public FileBuilder(final OutputStreamWriter w) {
@@ -41,7 +42,8 @@ public class FileBuilder {
     }
 
     /**
-     * Append a string
+     * Append a string.
+     *
      * @param s
      * @return
      * @throws IOException
@@ -52,7 +54,8 @@ public class FileBuilder {
     }
 
     /**
-     * Flush
+     * Flush.
+     *
      * @throws IOException
      */
     public void flush() throws IOException {

@@ -47,22 +47,28 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 /**
- * This class implements a dialog for editing project properties
+ * This class implements a dialog for editing project properties.
+ *
  * @author Fabian Prasser
  */
 public class DialogProperties extends TitleAreaDialog implements IDialog {
 
     /**
-     * Validates double input
-     * 
+     * Validates double input.
+     *
      * @author Fabian Prasser
      */
     private static class DoubleValidator {
+        
+        /**  TODO */
         private final double min;
+        
+        /**  TODO */
         private final double max;
 
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param min
          * @param max
          */
@@ -72,7 +78,8 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         }
 
         /**
-         * Validates the string
+         * Validates the string.
+         *
          * @param s
          * @return
          */
@@ -89,16 +96,21 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Validates integer input
-     * 
+     * Validates integer input.
+     *
      * @author Fabian Prasser
      */
     private static class IntegerValidator {
+        
+        /**  TODO */
         private final int min;
+        
+        /**  TODO */
         private final int max;
 
         /**
-         * Creates a new instance
+         * Creates a new instance.
+         *
          * @param min
          * @param max
          */
@@ -107,6 +119,12 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
             this.max = max;
         }
 
+        /**
+         * 
+         *
+         * @param s
+         * @return
+         */
         public boolean validate(final String s) {
             // TODO: Ugly
             try {
@@ -118,13 +136,18 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         }
     }
 
+    /**  TODO */
     private final Model model;
 
+    /**  TODO */
     private Button      ok;
+    
+    /**  TODO */
     private TabFolder   folder;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      * @param model
      */
@@ -133,6 +156,9 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         this.model = model;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#create()
+     */
     @Override
     public void create() {
         super.create();
@@ -163,8 +189,8 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Builds the content for a specific category
-     * 
+     * Builds the content for a specific category.
+     *
      * @param folder
      * @param category
      * @param editors
@@ -186,8 +212,8 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Builds all editors for the model
-     * 
+     * Builds all editors for the model.
+     *
      * @param model
      * @return
      */
@@ -468,12 +494,18 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -491,6 +523,9 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         });
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         parent.setLayout(new GridLayout(1, false));
@@ -501,6 +536,9 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getShellListener()
+     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -511,6 +549,9 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
         };
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
     @Override
     protected boolean isResizable() {
         return false;

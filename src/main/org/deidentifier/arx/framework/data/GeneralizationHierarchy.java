@@ -39,8 +39,8 @@ public class GeneralizationHierarchy {
     protected final String  attribute;
 
     /**
-     * Can be used to create a copy of the generalization hierarchy
-     * 
+     * Can be used to create a copy of the generalization hierarchy.
+     *
      * @param name
      * @param map
      * @param distinctValues
@@ -54,8 +54,8 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Creates a new generalization hierarchy
-     * 
+     * Creates a new generalization hierarchy.
+     *
      * @param name
      * @param hierarchy
      * @param dimension
@@ -112,8 +112,8 @@ public class GeneralizationHierarchy {
     }
     
     /**
-     * Returns the array
-     * 
+     * Returns the array.
+     *
      * @return
      */
     public int[][] getArray() {
@@ -121,8 +121,8 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Returns the number of distinct values
-     * 
+     * Returns the number of distinct values.
+     *
      * @return
      */
     public int[] getDistinctValues() {
@@ -130,8 +130,8 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Returns the distinct values
-     * 
+     * Returns the distinct values.
+     *
      * @param level
      * @return
      */
@@ -155,8 +155,8 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Returns the height of the hierarchy
-     * 
+     * Returns the height of the hierarchy.
+     *
      * @return
      */
     public int getHeight() {
@@ -164,8 +164,8 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Returns the name
-     * 
+     * Returns the name.
+     *
      * @return
      */
     public String getName() {
@@ -173,9 +173,11 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Throws an exception, if the hierarchy is not monotonic. 
+     * Throws an exception, if the hierarchy is not monotonic.
      * 
      * TODO: This is a potentially expensive check that should be done when loading the hierarchy
+     *
+     * @param manager
      */
     public void checkMonotonicity(DataManager manager) {
         

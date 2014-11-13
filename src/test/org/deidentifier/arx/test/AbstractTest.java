@@ -27,19 +27,44 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
 
+/**
+ * 
+ */
 public abstract class AbstractTest extends TestCase {
 
+    /**
+     * 
+     */
     public static enum TestMetric {
+        
+        /**  TODO */
         DMSTAR,
+        
+        /**  TODO */
         DM,
+        
+        /**  TODO */
         HEIGHT,
+        
+        /**  TODO */
         PREC,
+        
+        /**  TODO */
         ENTROPY,
+        
+        /**  TODO */
         NMENTROPY
     }
 
+    /**  TODO */
     protected DataProvider provider = null;
 
+    /**
+     * 
+     *
+     * @param metricType
+     * @return
+     */
     protected Metric<?> createMetric(final TestMetric metricType) {
         // create metric
         Metric<?> metric = null;
@@ -65,6 +90,12 @@ public abstract class AbstractTest extends TestCase {
         return metric;
     }
 
+    /**
+     * 
+     *
+     * @param iterator
+     * @return
+     */
     protected String[][] iteratorToArray(final Iterator<String[]> iterator) {
         final ArrayList<String[]> list = new ArrayList<String[]>();
         while (iterator.hasNext()) {
@@ -73,6 +104,11 @@ public abstract class AbstractTest extends TestCase {
         return list.toArray(new String[list.size()][]);
     }
 
+    /**
+     * 
+     *
+     * @param array
+     */
     protected void printArray(final String[][] array) {
         System.out.print("{");
 
@@ -97,6 +133,12 @@ public abstract class AbstractTest extends TestCase {
         System.out.print("}");
     }
 
+    /**
+     * 
+     *
+     * @param result
+     * @return
+     */
     protected String[][] resultToArray(final ARXResult result) {
         final ArrayList<String[]> list = new ArrayList<String[]>();
         final Iterator<String[]> transformed = result.getOutput(false).iterator();
@@ -106,6 +148,9 @@ public abstract class AbstractTest extends TestCase {
         return list.toArray(new String[list.size()][]);
     }
 
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#setUp()
+     */
     @Override
     @Before
     public void setUp() {

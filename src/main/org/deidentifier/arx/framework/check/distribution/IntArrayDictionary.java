@@ -31,8 +31,8 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
 public class IntArrayDictionary {
 
     /**
-     * Calculates the MURMUR v3 hashcode
-     * 
+     * Calculates the MURMUR v3 hashcode.
+     *
      * @param key
      * @return
      */
@@ -67,7 +67,7 @@ public class IntArrayDictionary {
     /** Current number of elements. */
     private int                                      elementCount;
 
-    /** The list */
+    /** The list. */
     private final ArrayList<IntArrayDictionaryEntry> list;
 
     /** Load factor. */
@@ -80,10 +80,9 @@ public class IntArrayDictionary {
     private int                                      threshold;
 
     /**
-     * Constructs a new dictionary
-     * 
-     * @param capacity
-     *            the capacity
+     * Constructs a new dictionary.
+     *
+     * @param capacity the capacity
      */
     public IntArrayDictionary(int capacity) {
         list = new ArrayList<IntArrayDictionaryEntry>();
@@ -111,9 +110,9 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Removes a element from the dictionary
-     * 
-     * @param element
+     * Removes a element from the dictionary.
+     *
+     * @param index
      */
     public void decrementRefCount(final int index) {
 
@@ -146,8 +145,8 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Returns the according entry
-     * 
+     * Returns the according entry.
+     *
      * @param index
      * @return
      */
@@ -158,9 +157,9 @@ public class IntArrayDictionary {
     /**
      * Probes the dictionary and either inserts a new entry index or returns the
      * corresponding entry index.
-     * 
-     * @param key
-     *            the key
+     *
+     * @param key the key
+     * @return
      */
     public int probe(final int[] key) {
 
@@ -182,8 +181,8 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Returns the element count of the dictionary
-     * 
+     * Returns the element count of the dictionary.
+     *
      * @return the int
      */
     public int size() {
@@ -192,15 +191,10 @@ public class IntArrayDictionary {
 
     /**
      * Creates a new entry.
-     * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param hash
-     *            the hash
-     * @param value
-     *            the value
+     *
+     * @param key the key
+     * @param index the index
+     * @param hash the hash
      * @return the hash groupify entry
      */
     private IntArrayDictionaryEntry createEntry(final int[] key,

@@ -38,8 +38,17 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * 
+ */
 public class TestDataHandle extends AbstractTest {
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testSubset1() throws IllegalArgumentException, IOException {
 
@@ -72,6 +81,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testSubset2() throws IllegalArgumentException, IOException {
 
@@ -103,6 +118,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testSubset3() throws IllegalArgumentException, IOException {
 
@@ -130,6 +151,12 @@ public class TestDataHandle extends AbstractTest {
         assertTrue(Arrays.deepEquals(given, expected));
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testSubset4() throws IllegalArgumentException, IOException {
 
@@ -153,6 +180,12 @@ public class TestDataHandle extends AbstractTest {
         assertTrue(Arrays.deepEquals(given, expected));
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testSubset5() throws IllegalArgumentException, IOException {
 
@@ -184,6 +217,12 @@ public class TestDataHandle extends AbstractTest {
         assertTrue(Arrays.deepEquals(given, expected));
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testGetters() throws IllegalArgumentException, IOException {
 
@@ -197,6 +236,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testSorting() throws IllegalArgumentException, IOException {
 
@@ -223,6 +268,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testStableSorting() throws IllegalArgumentException, IOException {
 
@@ -253,6 +304,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testMultipleDataHandlesFork() throws IllegalArgumentException, IOException {
 
@@ -293,6 +350,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testMultipleDataHandlesNoForkLocked() throws IllegalArgumentException, IOException {
 
@@ -324,6 +387,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testMultipleDataHandlesNoForkOrphaned() throws IllegalArgumentException, IOException {
 
@@ -359,6 +428,12 @@ public class TestDataHandle extends AbstractTest {
 
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testMultipleDataHandlesForkSync() throws IllegalArgumentException, IOException {
 

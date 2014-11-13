@@ -26,29 +26,36 @@ import java.util.List;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 
 /**
- * A class describing a metric and its configuration options
+ * A class describing a metric and its configuration options.
+ *
  * @author Fabian Prasser
  */
 public abstract class MetricDescription implements Serializable {
 
-    /** SVUID*/
+    /** SVUID. */
     private static final long serialVersionUID = -2774981286637344244L;
     
-    /** Name*/
+    /** Name. */
     private final String  name;
-    /** Monotonic variant supported*/
+    
+    /** Monotonic variant supported. */
     private final boolean monotonicVariantSupported;
-    /** Attribute weights supported*/
+    
+    /** Attribute weights supported. */
     private final boolean attributeWeightsSupported;
-    /** Configurable coding model supported*/
+    
+    /** Configurable coding model supported. */
     private final boolean configurableCodingModelSupported;
-    /** Pre-computation supported*/
+    
+    /** Pre-computation supported. */
     private final boolean precomputationSupported;
-    /** Aggregate functions supported*/
+    
+    /** Aggregate functions supported. */
     private final boolean aggregateFunctionSupported;
     
     /**
-     * Creates a new description
+     * Creates a new description.
+     *
      * @param name
      * @param monotonicVariantSupported
      * @param attributeWeightsSupported
@@ -71,7 +78,8 @@ public abstract class MetricDescription implements Serializable {
     }
 
     /**
-     * Creates an instance with the given configuration options
+     * Creates an instance with the given configuration options.
+     *
      * @param config
      * @return
      */
@@ -85,7 +93,8 @@ public abstract class MetricDescription implements Serializable {
     }
 
     /**
-     * Returns a list of all supported aggregate functions
+     * Returns a list of all supported aggregate functions.
+     *
      * @return
      */
     public List<Metric.AggregateFunction> getSupportedAggregateFunctions() {
@@ -115,7 +124,8 @@ public abstract class MetricDescription implements Serializable {
     }
     
     /**
-     * Returns whether an aggregate function is supported by the metric
+     * Returns whether an aggregate function is supported by the metric.
+     *
      * @return
      */
     public boolean isAggregateFunctionSupported() {
@@ -123,7 +133,8 @@ public abstract class MetricDescription implements Serializable {
     }
     
     /**
-     * Returns whether the given metric is an instance of this description
+     * Returns whether the given metric is an instance of this description.
+     *
      * @param metric
      * @return
      */

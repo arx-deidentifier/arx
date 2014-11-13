@@ -30,9 +30,7 @@ package org.deidentifier.arx.io;
  */
 abstract public class ImportConfigurationFile extends ImportConfiguration {
 
-    /**
-     * Location of file
-     */
+    /** Location of file. */
     private String fileLocation;
 
 

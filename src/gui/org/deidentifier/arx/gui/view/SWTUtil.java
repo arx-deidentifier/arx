@@ -36,17 +36,18 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This class provides some utility methods for working with SWT
- * @author Fabian Prasser
+ * This class provides some utility methods for working with SWT.
  *
+ * @author Fabian Prasser
  */
 public class SWTUtil {
 
-    /** Static settings */
+    /** Static settings. */
     public static final int SLIDER_MAX = 1000;
 
     /**
-     * Centers the shell on the given monitor
+     * Centers the shell on the given monitor.
+     *
      * @param shell
      * @param monitor
      */
@@ -59,7 +60,8 @@ public class SWTUtil {
     }
 
     /**
-     * Centers the given shell
+     * Centers the given shell.
+     *
      * @param shell
      * @param parent
      */
@@ -73,7 +75,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createFillGridData() {
@@ -88,7 +91,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createFillHorizontallyGridData() {
@@ -103,7 +107,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createFillVerticallyGridData() {
@@ -118,7 +123,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createGridData() {
@@ -131,7 +137,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates a grid layout
+     * Creates a grid layout.
+     *
      * @param columns
      * @return
      */
@@ -148,7 +155,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates a grid layout
+     * Creates a grid layout.
+     *
      * @param columns
      * @param compact
      * @return
@@ -161,7 +169,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates a help button in the given folder
+     * Creates a help button in the given folder.
+     *
      * @param controller
      * @param tabFolder
      * @param id
@@ -184,7 +193,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @return
      */
     public static GridData createNoFillGridData() {
@@ -197,7 +207,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @param i
      * @return
      */
@@ -210,7 +221,8 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data
+     * Creates grid data.
+     *
      * @param i
      * @return
      */
@@ -224,7 +236,8 @@ public class SWTUtil {
 
 
     /**
-     * Disables the composite and its children
+     * Disables the composite and its children.
+     *
      * @param elem
      */
     public static void disable(final Composite elem) {
@@ -232,7 +245,8 @@ public class SWTUtil {
     }
 
     /**
-     * Disables the control
+     * Disables the control.
+     *
      * @param elem
      */
     public static void disable(final Control elem) {
@@ -240,7 +254,12 @@ public class SWTUtil {
     }
 
     /**
-     * Converts the double value to a slider selection
+     * Converts the double value to a slider selection.
+     *
+     * @param min
+     * @param max
+     * @param value
+     * @return
      */
     public static int doubleToSlider(final double min,
                                      final double max,
@@ -256,7 +275,8 @@ public class SWTUtil {
     }
 
     /**
-     * Enables the composite and its children
+     * Enables the composite and its children.
+     *
      * @param elem
      */
     public static void enable(final Composite elem) {
@@ -264,7 +284,8 @@ public class SWTUtil {
     }
 
     /**
-     * Enables the control
+     * Enables the control.
+     *
      * @param elem
      */
     public static void enable(final Control elem) {
@@ -272,7 +293,8 @@ public class SWTUtil {
     }
 
     /**
-     *  Converts the integer value to a slider selection
+     * Converts the integer value to a slider selection.
+     *
      * @param min
      * @param max
      * @param value
@@ -283,7 +305,8 @@ public class SWTUtil {
     }
 
     /**
-     * Converts the slider value to a double
+     * Converts the slider value to a double.
+     *
      * @param min
      * @param max
      * @param value
@@ -303,7 +326,8 @@ public class SWTUtil {
     }
 
     /**
-     * Converts the slider value to an integer
+     * Converts the slider value to an integer.
+     *
      * @param min
      * @param max
      * @param value
@@ -314,7 +338,8 @@ public class SWTUtil {
     }
 
     /**
-     * En-/disables the composite and its children
+     * En-/disables the composite and its children.
+     *
      * @param elem
      * @param val
      */

@@ -31,24 +31,31 @@ import org.deidentifier.arx.framework.lattice.NodeAction.NodeActionOR;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class provides a static method for instantiating the FLASH algorithm
- * 
+ * This class provides a static method for instantiating the FLASH algorithm.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
 public class FLASHAlgorithm {
 
     /**
-     * Monotonicity
+     * Monotonicity.
      */
     private static enum Monotonicity {
+        
+        /**  TODO */
         FULL,
+        
+        /**  TODO */
         PARTIAL,
+        
+        /**  TODO */
         NONE
     }
 
     /**
-     * Creates a new instance of the FLASH algorithm
+     * Creates a new instance of the FLASH algorithm.
+     *
      * @param lattice
      * @param checker
      * @param strategy
@@ -135,7 +142,8 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric
+     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     *
      * @param lattice
      * @param checker
      * @param strategy
@@ -201,7 +209,8 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric
+     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     *
      * @param lattice
      * @param checker
      * @param strategy
@@ -327,7 +336,8 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric
+     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     *
      * @param lattice
      * @param checker
      * @param strategy
@@ -388,7 +398,8 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric
+     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     *
      * @param lattice
      * @param checker
      * @param strategy
@@ -435,7 +446,8 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric
+     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     *
      * @param lattice
      * @param checker
      * @param strategy
@@ -569,7 +581,8 @@ public class FLASHAlgorithm {
     }
 
     /**
-     * Semantics of method name: monotonicity of criteria + monotonicity of metric
+     * Semantics of method name: monotonicity of criteria + monotonicity of metric.
+     *
      * @param lattice
      * @param checker
      * @param strategy

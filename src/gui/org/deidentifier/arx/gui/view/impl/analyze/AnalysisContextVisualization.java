@@ -21,19 +21,22 @@ package org.deidentifier.arx.gui.view.impl.analyze;
 
 
 /**
- * The current context
+ * The current context.
+ *
  * @author Fabian Prasser
  */
 public interface AnalysisContextVisualization {
     
     /**
-     * Is this a valid context
+     * Is this a valid context.
+     *
      * @return
      */
     public boolean isValid();
     
     /**
-     * Is the provided attribute selected according to the config?
+     * Is the provided attribute selected according to the config?.
+     *
      * @param attribute
      * @return
      */

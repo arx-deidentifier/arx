@@ -27,12 +27,21 @@ import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
  */
 public abstract class CTStyleConfiguration extends AbstractRegistryConfiguration implements CTComponent {
 
+    /**  TODO */
     private final CTConfiguration config;
     
+    /**
+     * 
+     *
+     * @param config
+     */
     public CTStyleConfiguration(CTConfiguration config){
         this.config = config;
     }
     
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.impl.common.table.CTComponent#getConfig()
+     */
     @Override
     public CTConfiguration getConfig() {
         return config;

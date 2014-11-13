@@ -39,9 +39,9 @@ import org.deidentifier.arx.metric.v2.__MetricV2;
 import cern.colt.Arrays;
 
 /**
- * This class implements an example for using the generalized loss metric with different types of 
- * generalization hierarchies
- * 
+ * This class implements an example for using the generalized loss metric with different types of
+ * generalization hierarchies.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

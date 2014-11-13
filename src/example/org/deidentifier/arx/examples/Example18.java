@@ -39,8 +39,8 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
 import cern.colt.Arrays;
 
 /**
- * This class implements examples of how to use the builders for generalization hierarchies
- * 
+ * This class implements examples of how to use the builders for generalization hierarchies.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
@@ -48,9 +48,8 @@ public class Example18 extends Example {
 
     /**
      * Entry point.
-     * 
+     *
      * @param args The arguments
-     * @throws ParseException 
      */
     public static void main(final String[] args) {
    
@@ -63,7 +62,7 @@ public class Example18 extends Example {
     }
 
     /**
-     * Shows how to load and store hierarchy specifications
+     * Shows how to load and store hierarchy specifications.
      */
     private static void loadStore() {
         try {
@@ -101,7 +100,7 @@ public class Example18 extends Example {
     }
 
     /**
-     * Exemplifies the use of the order-based builder
+     * Exemplifies the use of the order-based builder.
      */
     private static void orderBased() {
 
@@ -140,7 +139,7 @@ public class Example18 extends Example {
     }
 
     /**
-     * Exemplifies the use of the interval-based builder
+     * Exemplifies the use of the interval-based builder.
      */
     private static void intervalBased() {
 
@@ -189,7 +188,7 @@ public class Example18 extends Example {
     }
 
     /**
-     * Exemplifies the use of the redaction-based builder
+     * Exemplifies the use of the redaction-based builder.
      */
     private static void redactionBased() {
 
@@ -217,7 +216,7 @@ public class Example18 extends Example {
     
     /**
      * Exemplifies the use of the interval-based builder for LDL cholesterol
-     * in mmol/l
+     * in mmol/l.
      */
     private static void ldlCholesterol() {
 
@@ -265,7 +264,7 @@ public class Example18 extends Example {
     }
 
     /**
-     * Exemplifies the use of the order-based builder
+     * Exemplifies the use of the order-based builder.
      */
     private static void dates() {
 
@@ -308,7 +307,8 @@ public class Example18 extends Example {
     }
     
     /**
-     * Returns example data
+     * Returns example data.
+     *
      * @return
      */
     private static String[] getExampleData(){
@@ -321,7 +321,9 @@ public class Example18 extends Example {
     }
     
     /**
-     * Returns example date data
+     * Returns example date data.
+     *
+     * @param stringFormat
      * @return
      */
     private static String[] getExampleDateData(String stringFormat){
@@ -340,7 +342,8 @@ public class Example18 extends Example {
     }
     
     /**
-     * Returns example data
+     * Returns example data.
+     *
      * @return
      */
     private static String[] getExampleLDLData() {

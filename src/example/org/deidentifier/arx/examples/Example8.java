@@ -35,8 +35,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply the t-closeness criterion
- * 
+ * This class implements an example on how to apply the t-closeness criterion.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

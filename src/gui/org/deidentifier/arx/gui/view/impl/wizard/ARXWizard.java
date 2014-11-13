@@ -27,22 +27,24 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class implements an abstract base class for wizards
- * @author Fabian Prasser
+ * This class implements an abstract base class for wizards.
  *
+ * @author Fabian Prasser
  * @param <T>
  */
 public abstract class ARXWizard<T> extends Wizard implements IWizard {
 
-    /** Var */
+    /** Var. */
     private ARXWizardDialog   dialog;
-    /** Var */
+    
+    /** Var. */
     private ARXWizardButton[] buttons;
-    /** Var */
+    
+    /** Var. */
     private final Point       pageSize;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     protected ARXWizard() {
         this.pageSize = null;
@@ -50,7 +52,8 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
     }
     
     /**
-     * Creates a new instance with given page size
+     * Creates a new instance with given page size.
+     *
      * @param pageSize
      */
     protected ARXWizard(Point pageSize) {
@@ -59,13 +62,15 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
     }
 
     /**
-     * Returns the result
+     * Returns the result.
+     *
      * @return
      */
     public abstract T getResult();
 
     /**
-     * Opens the dialog
+     * Opens the dialog.
+     *
      * @param shell
      * @return Finish performed
      */
@@ -80,13 +85,17 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
         return dialog.open() == 0;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.Wizard#performFinish()
+     */
     @Override
     public boolean performFinish() {
         return true;
     }
     
     /**
-     * Returns the button created for the given specification
+     * Returns the button created for the given specification.
+     *
      * @param button
      * @return
      */
@@ -96,14 +105,17 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
     }
     
     /**
-     * Returns the associated dialog
+     * Returns the associated dialog.
+     *
+     * @return
      */
     protected ARXWizardDialog getDialog(){
         return dialog;
     }
     
     /**
-     * Sets the buttons
+     * Sets the buttons.
+     *
      * @param buttons
      */
     protected void setButtons(ARXWizardButton... buttons){

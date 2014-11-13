@@ -32,11 +32,13 @@ public class Transformer13 extends AbstractTransformer {
 
     /**
      * Instantiates a new transformer.
-     * 
-     * @param data
-     *            the data
-     * @param hierarchies
-     *            the hierarchies
+     *
+     * @param data the data
+     * @param hierarchies the hierarchies
+     * @param sensitiveValues
+     * @param dictionarySensValue
+     * @param dictionarySensFreq
+     * @param config
      */
     public Transformer13(final int[][] data,
                          final GeneralizationHierarchy[] hierarchies,

@@ -28,25 +28,30 @@ import org.deidentifier.arx.io.ImportConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This worker loads external data
+ * This worker loads external data.
+ *
  * @author Fabian Prasser
  */
 public class WorkerImport extends Worker<Data> {
 
-    /** The path */
+    /** The path. */
     private final ImportConfiguration config;
-    /** The stop flag */
+    
+    /** The stop flag. */
     private volatile boolean              stop = false;
 
     /**
-     * Creates a new instance
-     * @param path
-     * @param separator
+     * Creates a new instance.
+     *
+     * @param config
      */
     public WorkerImport(final ImportConfiguration config) {
         this.config = config;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+     */
     @Override
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {

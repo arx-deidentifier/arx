@@ -23,18 +23,24 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 
 /**
- * This class implements a model for the d-presence criterion
+ * This class implements a model for the d-presence criterion.
+ *
  * @author Fabian Prasser
  */
 public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 
-    /** SVUID*/
+    /** SVUID. */
 	private static final long serialVersionUID = -1765428286262869856L;
-	/** Dmin*/
+	
+	/** Dmin. */
 	private double dmin = 0.0d;
-	/** Dmax*/
+	
+	/** Dmax. */
 	private double dmax = 0.0d;
 	
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
+	 */
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
@@ -42,37 +48,44 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	}
 	
 	/**
-	 * Returns dmax
-	 * @return
-	 */
+     * Returns dmax.
+     *
+     * @return
+     */
 	public double getDmax() {
 		return dmax;
 	}
 	
 	/**
-	 * Returns dmin
-	 * @return
-	 */
+     * Returns dmin.
+     *
+     * @return
+     */
 	public double getDmin() {
 		return dmin;
 	}
 	
 	/**
-	 * Sets dmax
-	 * @param dmax
-	 */
+     * Sets dmax.
+     *
+     * @param dmax
+     */
 	public void setDmax(double dmax) {
 		this.dmax = dmax;
 	}
 	
 	/**
-	 * Sets dmin
-	 * @param dmin
-	 */
+     * Sets dmin.
+     *
+     * @param dmin
+     */
 	public void setDmin(double dmin) {
 		this.dmin = dmin;
 	}
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
+     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties

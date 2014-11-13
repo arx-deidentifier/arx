@@ -34,7 +34,8 @@ public class __MetricV2 {
 
     /**
      * Creates a new instance of the AECS metric.
-     * 
+     *
+     * @param rowCount
      * @return
      */
     public static Metric<ILSingleDimensional> createAECSMetric(double rowCount) {
@@ -51,9 +52,8 @@ public class __MetricV2 {
     }
     
     /**
-     * Creates an instance of the discernability metric
-     * 
-     * @param monotonic If set to true, the monotonic variant (DM*) will be created
+     * Creates an instance of the discernability metric.
+     *
      * @return
      */
     public static Metric<ILSingleDimensional> createDiscernabilityMetric() {
@@ -137,9 +137,11 @@ public class __MetricV2 {
      * Creates an instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
-     * 
+     *
      * @param monotonic If set to true, the monotonic variant of the metric will be created
-     * 
+     * @param cache
+     * @param cardinalities
+     * @param hierarchies
      * @return
      */
     public static Metric<AbstractILMultiDimensional> createEntropyMetric(boolean monotonic, double[][] cache, int[][][] cardinalities, int[][][] hierarchies) {
@@ -158,13 +160,14 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createHeightMetric() {
         return new MetricMDHeight();
     }
+    
     /**
      * Creates an instance of the height metric. The default aggregate function, which is the sum-function,
      * will be used for comparing results.
      * This metric will respect attribute weights defined in the configuration.
-     * @param maxHeight 
-     * @param minHeight 
-     * 
+     *
+     * @param minHeight
+     * @param maxHeight
      * @return
      */
     public static Metric<AbstractILMultiDimensional> createHeightMetric(int minHeight, int maxHeight) {
@@ -216,6 +219,8 @@ public class __MetricV2 {
      * Creates an instance of the loss metric which treats generalization and suppression equally.
      * The default aggregate function, which is the rank function, will be used.
      * This metric will respect attribute weights defined in the configuration.
+     *
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createLossMetric() {
         return new MetricMDNMLoss();
@@ -224,8 +229,9 @@ public class __MetricV2 {
     /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
      * This metric will respect attribute weights defined in the configuration.
-     * 
+     *
      * @param function The aggregate function to use for comparing results
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createLossMetric(AggregateFunction function) {
         return new MetricMDNMLoss(function);
@@ -235,13 +241,14 @@ public class __MetricV2 {
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
      * The default aggregate function, which is the rank function, will be used.
      * This metric will respect attribute weights defined in the configuration.
-     * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
-     *                 The default value is 0.5, which means that generalization
-     *                 and suppression will be treated equally. A factor of 0
-     *                 will favor suppression, and a factor of 1 will favor
-     *                 generalization. The values in between can be used for
-     *                 balancing both methods. 
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor) {
         return new MetricMDNMLoss(gsFactor, AggregateFunction.RANK);
@@ -250,15 +257,16 @@ public class __MetricV2 {
     /**
      * Creates an instance of the loss metric with factors for weighting generalization and suppression.
      * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
-     *                 The default value is 0.5, which means that generalization
-     *                 and suppression will be treated equally. A factor of 0
-     *                 will favor suppression, and a factor of 1 will favor
-     *                 generalization. The values in between can be used for
-     *                 balancing both methods. 
-     *                 
      * @param function The aggregate function to use for comparing results
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createLossMetric(double gsFactor, AggregateFunction function) {
         return new MetricMDNMLoss(gsFactor, function);
@@ -303,9 +311,10 @@ public class __MetricV2 {
      * Creates an instance of the precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
-     * 
+     *
      * @param monotonic If set to true, the monotonic variant of the metric will be created
-     * 
+     * @param heights
+     * @param cells
      * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, int[] heights, double cells) {
@@ -318,9 +327,9 @@ public class __MetricV2 {
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
-     * 
+     *
      * @param monotonic If set to true, the monotonic variant of the metric will be created
-     * 
+     * @param function
      * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, AggregateFunction function) {
@@ -380,13 +389,14 @@ public class __MetricV2 {
     }
     
     /**
-     * Creates a potentially precomputed instance of the loss metric which treats generalization 
-     * and suppression equally. 
+     * Creates a potentially precomputed instance of the loss metric which treats generalization
+     * and suppression equally.
      * The default aggregate function, which is the rank function, will be used.
      * This metric will respect attribute weights defined in the configuration.
-     * 
-     * @param threshold The precomputed variant of the metric will be used if 
-     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     *
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold) {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold);
@@ -395,11 +405,11 @@ public class __MetricV2 {
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.
      * This metric will respect attribute weights defined in the configuration.
-     * 
+     *
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
      * @param function The aggregate function to use for comparing results
-     * 
-     * @param threshold The precomputed variant of the metric will be used if 
-     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, AggregateFunction function) {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, function);
@@ -410,16 +420,17 @@ public class __MetricV2 {
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * The default aggregate function, which is the rank function, will be used.
      * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
-     *                 The default value is 0.5, which means that generalization
-     *                 and suppression will be treated equally. A factor of 0
-     *                 will favor suppression, and a factor of 1 will favor
-     *                 generalization. The values in between can be used for
-     *                 balancing both methods. 
-     *                 
-     * @param threshold The precomputed variant of the metric will be used if 
-     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor) {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, AggregateFunction.RANK);
@@ -428,18 +439,18 @@ public class __MetricV2 {
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * This metric will respect attribute weights defined in the configuration.
+     *
+     * @param threshold The precomputed variant of the metric will be used if
+     *            #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
      * 
-     * @param gsFactor A factor [0,1] weighting generalization and suppression. 
-     *                 The default value is 0.5, which means that generalization
-     *                 and suppression will be treated equally. A factor of 0
-     *                 will favor suppression, and a factor of 1 will favor
-     *                 generalization. The values in between can be used for
-     *                 balancing both methods. 
-     *                 
      * @param function The aggregate function to use for comparing results
-     * 
-     * @param threshold The precomputed variant of the metric will be used if 
-     *                  #distinctValues / #rows <= threshold for all quasi-identifiers.
+     * @return
      */
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor, AggregateFunction function) {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, function);

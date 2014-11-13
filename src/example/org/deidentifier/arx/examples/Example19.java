@@ -34,8 +34,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
  * This class implements an example of how to use the API for creating different
- * output representations of an input dataset
- * 
+ * output representations of an input dataset.
+ *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */

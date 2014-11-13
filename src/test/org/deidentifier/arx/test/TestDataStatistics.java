@@ -37,8 +37,17 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
+/**
+ * 
+ */
 public class TestDataStatistics extends AbstractTest {
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testDistribution1() throws IllegalArgumentException, IOException {
 
@@ -72,6 +81,12 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(frequency, distribution.frequency));
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testDistribution2() throws IllegalArgumentException, IOException {
 
@@ -105,6 +120,12 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(frequency, distribution.frequency));
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testContingency1() throws IllegalArgumentException, IOException {
 
@@ -161,6 +182,12 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
     }
 
+    /**
+     * 
+     *
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     @Test
     public void testContingency2() throws IllegalArgumentException, IOException {
 
@@ -213,6 +240,12 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
     }
 
+    /**
+     * 
+     *
+     * @param contingency
+     * @return
+     */
     private double[][] contingencyToArray(StatisticsContingencyTable contingency) {
 
         List<double[]> list = new ArrayList<double[]>();

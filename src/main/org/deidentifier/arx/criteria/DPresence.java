@@ -35,13 +35,16 @@ import org.deidentifier.arx.framework.data.DataManager;
  */
 public class DPresence extends ImplicitPrivacyCriterion{
     
+    /**  TODO */
     private static final long serialVersionUID = 8534004943055128797L;
     
-    /** Delta min*/
+    /** Delta min. */
     private final double dMin;
-    /** Delta max*/
+    
+    /** Delta max. */
     private final double dMax;
-    /** A compressed representation of the research subset*/
+    
+    /** A compressed representation of the research subset. */
     private DataSubset subset;
     
     /**
@@ -61,7 +64,8 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
     
     /**
-     * For building the inclusion criterion
+     * For building the inclusion criterion.
+     *
      * @param subset
      */
     protected DPresence(DataSubset subset) {
@@ -71,11 +75,17 @@ public class DPresence extends ImplicitPrivacyCriterion{
         this.subset = subset;
     }
         
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#initialize(org.deidentifier.arx.framework.data.DataManager)
+     */
     @Override
     public void initialize(DataManager manager) {
         // Nothing to do
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
+     */
     @Override
     public int getRequirements(){
         // Requires two counters
@@ -83,6 +93,9 @@ public class DPresence extends ImplicitPrivacyCriterion{
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
+     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
@@ -90,7 +103,8 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
 
     /**
-     * Returns the research subset
+     * Returns the research subset.
+     *
      * @return
      */
     public DataSubset getSubset() {
@@ -98,7 +112,8 @@ public class DPresence extends ImplicitPrivacyCriterion{
     }
 
     /**
-     * Returns dMin
+     * Returns dMin.
+     *
      * @return
      */
     public double getDMin() {
@@ -107,13 +122,17 @@ public class DPresence extends ImplicitPrivacyCriterion{
     
 
     /**
-     * Returns dMax
+     * Returns dMax.
+     *
      * @return
      */
     public double getDMax() {
         return dMax;
     }
     
+	/* (non-Javadoc)
+	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
+	 */
 	@Override
 	public String toString() {
 		return "("+dMin+","+dMax+")-presence";

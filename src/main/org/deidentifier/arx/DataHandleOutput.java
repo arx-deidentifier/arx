@@ -99,10 +99,10 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
-    /** The current result */
+    /** The current result. */
     private ARXResult     result;
 
-    /** The current node */
+    /** The current node. */
     private ARXNode       node;
 
     /** The data. */
@@ -129,24 +129,22 @@ public class DataHandleOutput extends DataHandle {
     /** The names of the quasiIdentifer. */
     private String[]      quasiIdentifiers;
 
-    /** Suppression handling */
+    /** Suppression handling. */
     private final int     suppressedAttributeTypes;
 
-    /** Suppression handling */
+    /** Suppression handling. */
     private final String  suppressionString;
 
     /**
      * Instantiates a new handle.
-     * 
+     *
+     * @param result
      * @param registry The registry
      * @param manager The data manager
-     * @param checker The node checker
-     * @param node The node to apply
-     * @param statistics Statistics for the dataset
-     * @param suppressionString The suppression string
-     * @param definition The data definition
-     * @param removeOutliers Do we remove outliers
+     * @param buffer
      * @param node The underlying transformation
+     * @param statistics Statistics for the dataset
+     * @param definition The data definition
      * @param config The underlying config
      */
     protected DataHandleOutput(final ARXResult result,
@@ -232,6 +230,9 @@ public class DataHandleOutput extends DataHandle {
         return header[col];
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getDataType(java.lang.String)
+     */
     @Override
     public DataType<?> getDataType(String attribute) {
         
@@ -249,6 +250,9 @@ public class DataHandleOutput extends DataHandle {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.DataHandle#getGeneralization(java.lang.String)
+     */
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
@@ -312,7 +316,7 @@ public class DataHandleOutput extends DataHandle {
 
 
     /**
-     * Releases all resources
+     * Releases all resources.
      */
     protected void doRelease() {
         result.releaseBuffer(this);
@@ -336,6 +340,8 @@ public class DataHandleOutput extends DataHandle {
 
     /**
      * Creates the data type array.
+     *
+     * @return
      */
     @Override
     protected DataType<?>[][] getDataTypeArray() {
@@ -375,8 +381,9 @@ public class DataHandleOutput extends DataHandle {
  
     /**
      * Gets the distinct values.
-     * 
+     *
      * @param col the column
+     * @param handler
      * @return the distinct values
      */
     @Override
@@ -396,7 +403,8 @@ public class DataHandleOutput extends DataHandle {
     }
 
     /**
-     * Returns the suppression string
+     * Returns the suppression string.
+     *
      * @return
      */
     protected String getSuppressionString(){
@@ -481,7 +489,8 @@ public class DataHandleOutput extends DataHandle {
     }
     
     /**
-     * Returns whether the given row is an outlier
+     * Returns whether the given row is an outlier.
+     *
      * @param row
      * @return
      */

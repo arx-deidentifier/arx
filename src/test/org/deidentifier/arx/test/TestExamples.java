@@ -47,8 +47,14 @@ import org.deidentifier.arx.examples.Example9;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * 
+ */
 public class TestExamples {
 
+    /**
+     * 
+     */
     @Test
     public void testExample1() {
         try {
@@ -59,6 +65,11 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     *
+     * @throws IOException
+     */
     @Test
     public void testExample2() throws IOException {
         try {
@@ -69,6 +80,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample3() {
         try {
@@ -79,6 +93,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample4() {
         try {
@@ -89,6 +106,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample5() {
         try {
@@ -99,6 +119,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample6() {
         try {
@@ -109,6 +132,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample7() {
         try {
@@ -119,6 +145,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample8() {
         try {
@@ -129,6 +158,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample9() {
         try {
@@ -139,6 +171,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample10() {
         try {
@@ -149,6 +184,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample11() {
         try {
@@ -159,6 +197,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample12() {
         try {
@@ -169,6 +210,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample13() {
         try {
@@ -179,6 +223,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample16() {
         try {
@@ -189,6 +236,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample17() {
         try {
@@ -199,6 +249,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample18() {
         try {
@@ -209,6 +262,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample19() {
         try {
@@ -219,6 +275,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample20() {
         try {
@@ -229,6 +288,9 @@ public class TestExamples {
         }
     }
 
+    /**
+     * 
+     */
     @Test
     public void testExample21() {
         try {
@@ -239,6 +301,9 @@ public class TestExamples {
         }
     }
     
+    /**
+     * 
+     */
     @Test
     public void testExample22() {
         try {
@@ -248,6 +313,10 @@ public class TestExamples {
             Assert.fail();
         }
     }
+    
+    /**
+     * 
+     */
     @Test
     public void testExample23() {
         try {
@@ -257,6 +326,10 @@ public class TestExamples {
             Assert.fail();
         }
     }
+    
+    /**
+     * 
+     */
     @Test
     public void testExample24() {
         try {
@@ -266,6 +339,10 @@ public class TestExamples {
             Assert.fail();
         }
     }
+    
+    /**
+     * 
+     */
     @Test
     public void testExample25() {
         try {
@@ -275,6 +352,10 @@ public class TestExamples {
             Assert.fail();
         }
     }
+    
+    /**
+     * 
+     */
     @Test
     public void testExample26() {
         try {

@@ -24,22 +24,27 @@ import org.deidentifier.arx.RowSet;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /**
- * A data provider based on a data handle
+ * A data provider based on a data handle.
+ *
  * @author Fabian Prasser
  */
 public class DataTableHandleDataProvider implements IDataProvider {
 
+    /**  TODO */
     private final DataTableContext context;
 
     /**
-     * Creates a new instance
-     * @param data
+     * Creates a new instance.
+     *
      * @param context
      */
     public DataTableHandleDataProvider(final DataTableContext context) {
         this.context = context;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getColumnCount()
+     */
     @Override
     public int getColumnCount() {
         DataHandle data = context.getHandle();
@@ -47,6 +52,9 @@ public class DataTableHandleDataProvider implements IDataProvider {
         return data.getNumColumns() + (context.getRows() != null ? 1 : 0);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getDataValue(int, int)
+     */
     @Override
     public Object getDataValue(int arg0, int arg1) {
         DataHandle data = context.getHandle();
@@ -66,6 +74,9 @@ public class DataTableHandleDataProvider implements IDataProvider {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#getRowCount()
+     */
     @Override
     public int getRowCount() {
         DataHandle data = context.getHandle();
@@ -73,6 +84,9 @@ public class DataTableHandleDataProvider implements IDataProvider {
         return data.getNumRows();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.nebula.widgets.nattable.data.IDataProvider#setDataValue(int, int, java.lang.Object)
+     */
     @Override
     public void setDataValue(final int arg0, final int arg1, final Object arg2) {
         return;

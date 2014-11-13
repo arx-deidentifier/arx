@@ -26,36 +26,34 @@ import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
 /**
- * Configuration describing a JDBC source
- * 
+ * Configuration describing a JDBC source.
+ *
  * @author Karol Babioch
  * @author Fabian Prasser
  */
 public class ImportConfigurationJDBC extends ImportConfiguration {
 
     /**
-     * Connection to be used
-     * 
+     * Connection to be used.
+     *
      * @see {@link #setConnection(Connection)}
      * @see {@link #getConnection()}
      */
     private Connection connection;
 
     /**
-     * Name of table to be used
-     * 
+     * Name of table to be used.
+     *
      * @see {@link #setTable(String)}
      * @see {@link #getTable()}
      */
     private String     table;
 
     /**
-     * Creates a new instance of this object
-     * 
-     * @param connection
-     *            {@link #setConnection(Connection)}
-     * @param table
-     *            {@link #setTable(String)}
+     * Creates a new instance of this object.
+     *
+     * @param connection {@link #setConnection(Connection)}
+     * @param table {@link #setTable(String)}
      */
     public ImportConfigurationJDBC(Connection connection, String table) {
         setConnection(connection);
@@ -63,13 +61,11 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
 
     /**
-     * Creates a new instance of this object
-     * 
+     * Creates a new instance of this object.
+     *
      * @param url
-     * @param user
-     * @param password
      * @param table {@link #setTable(String)}
-     * @throws SQLException 
+     * @throws SQLException
      */
     public ImportConfigurationJDBC(String url, String table) throws SQLException {
         setConnection(DriverManager.getConnection(url));
@@ -77,13 +73,13 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
     }
 
     /**
-     * Creates a new instance of this object
-     * 
+     * Creates a new instance of this object.
+     *
      * @param url
      * @param user
      * @param password
      * @param table {@link #setTable(String)}
-     * @throws SQLException 
+     * @throws SQLException
      */
     public ImportConfigurationJDBC(String url, String user, String password, String table) throws SQLException {
         setConnection(DriverManager.getConnection(url, user, password));
@@ -155,6 +151,13 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         this.table = table;
     }
 
+    /**
+     * 
+     *
+     * @param aliasName
+     * @return
+     * @throws NoSuchElementException
+     */
     private int getIndexForColumn(String aliasName) throws NoSuchElementException {
         try {
 

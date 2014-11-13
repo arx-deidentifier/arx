@@ -48,32 +48,42 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This class implements a dialog for creating a project
+ * This class implements a dialog for creating a project.
+ *
  * @author Fabian Prasser
  */
 public class DialogProject extends TitleAreaDialog implements IDialog {
 
-    /** Widget*/
+    /** Widget. */
     private Text   name        = null;
-    /** Widget*/
+    
+    /** Widget. */
     private Text   description = null;
-    /** Widget*/
+    
+    /** Widget. */
     private Button ok          = null;
-    /** Model*/
+    
+    /** Model. */
     private Model  model       = null;
-    /** Widget*/
+    
+    /** Widget. */
     private Combo  locale      = null;
-    /** Locale*/
+    
+    /** Locale. */
     private Locale selectedLocale    = Locale.getDefault();
     
     /**
-     * Creates a new instance
+     * Creates a new instance.
+     *
      * @param parent
      */
     public DialogProject(final Shell parent) {
         super(parent);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#create()
+     */
     @Override
     public void create() {
         super.create();
@@ -113,19 +123,26 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
     }
 
     /**
-     * Returns the resulting project
+     * Returns the resulting project.
+     *
      * @return
      */
     public Model getProject() {
         return model;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
@@ -166,6 +183,9 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         });
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         final GridLayout l = new GridLayout();
@@ -207,6 +227,9 @@ public class DialogProject extends TitleAreaDialog implements IDialog {
         return parent;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getShellListener()
+     */
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

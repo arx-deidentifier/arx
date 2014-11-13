@@ -27,13 +27,29 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * 
+ */
 public abstract class EditorSelection implements IEditor<String> {
 
+    /**  TODO */
     private final String   category;
+    
+    /**  TODO */
     private final String   label;
+    
+    /**  TODO */
     private final String[] elems;
+    
+    /**  TODO */
     private Combo combo;
 
+    /**
+     * 
+     *
+     * @param composite
+     * @param elems
+     */
     public EditorSelection(Composite composite, final String[] elems) {
         this.category = null;
         this.label = null;
@@ -41,6 +57,13 @@ public abstract class EditorSelection implements IEditor<String> {
         this.createControl(composite);
     }
 
+    /**
+     * 
+     *
+     * @param category
+     * @param label
+     * @param elems
+     */
     public EditorSelection(final String category,
                            final String label,
                            final String[] elems) {
@@ -49,11 +72,17 @@ public abstract class EditorSelection implements IEditor<String> {
         this.elems = elems;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#accepts(java.lang.Object)
+     */
     @Override
     public boolean accepts(final String s) {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#createControl(org.eclipse.swt.widgets.Composite)
+     */
     @Override
     public void createControl(final Composite parent) {
         combo = new Combo(parent, SWT.READ_ONLY);
@@ -70,22 +99,33 @@ public abstract class EditorSelection implements IEditor<String> {
         });
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getCategory()
+     */
     @Override
     public String getCategory() {
         return category;
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     public Control getControl(){
         return combo;
     }
 
+    /* (non-Javadoc)
+     * @see org.deidentifier.arx.gui.view.def.IEditor#getLabel()
+     */
     @Override
     public String getLabel() {
         return label;
     }
 
     /**
-     * Update
+     * Update.
      */
     public void update(){
         if (combo!=null){
@@ -100,6 +140,12 @@ public abstract class EditorSelection implements IEditor<String> {
         }
     }
     
+    /**
+     * 
+     *
+     * @param value
+     * @return
+     */
     private int indexOf(final String value) {
         for (int i = 0; i < elems.length; i++) {
             if (elems[i].equals(value)) { return i; }
