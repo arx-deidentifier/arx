@@ -59,6 +59,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             private static final long serialVersionUID = -1723392257250720908L;
             @Override public DataType<Date> newInstance() { return DATE; }
             @Override public DataType<Date> newInstance(String format) {return createDate(format);}
+            @Override public DataType<Date> newInstance(String format, Locale locale) {return createDate(format, locale);}
         };
 
         /** Format */
@@ -298,6 +299,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             private static final long serialVersionUID = -3549629178680030868L;
             @Override public DataType<Double> newInstance() { return DECIMAL; }
             @Override public DataType<Double> newInstance(String format) {return createDecimal(format);}
+            @Override public DataType<Double> newInstance(String format, Locale locale) {return createDecimal(format, locale);}
         };
 
         /** Format */
@@ -529,6 +531,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             private static final long serialVersionUID = -4498725217659811835L;
             @Override public DataType<Long> newInstance() { return INTEGER; }
             @Override public DataType<Long> newInstance(String format) {return createInteger(format);}
+            @Override public DataType<Long> newInstance(String format, Locale locale) {return createInteger(format, locale);}
         };
 
         /** Format */
@@ -762,6 +765,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             private static final long serialVersionUID = -6300869938311742699L;
             @Override public DataType<String> newInstance() { return ORDERED_STRING; }
             @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
+            @Override public DataType<String> newInstance(String format, Locale locale) {return createOrderedString(format);}
         };
         
         /**
@@ -968,6 +972,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             private static final long serialVersionUID = -6679110898204862834L;
             @Override public DataType<String> newInstance() { return STRING; }
             @Override public DataType<String> newInstance(String format) {return STRING;}
+            @Override public DataType<String> newInstance(String format, Locale locale) {return STRING;}
         };
         
         @Override
@@ -1084,17 +1089,25 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         }
         
         /**
-         * Creates a new instance with default format string
+         * Creates a new instance with default format string and default locale
          * @return
          */
         public abstract DataType<T> newInstance();
         
         /**
-         * Creates a new instance with the given format string
+         * Creates a new instance with the given format string and default locale
          * @param format
          * @return
          */
         public abstract DataType<T> newInstance(String format);
+
+        /**
+         * Creates a new instance with the given format string and the given locale
+         * @param format
+         * @param locale
+         * @return
+         */
+        public abstract DataType<T> newInstance(String format, Locale locale);
     }
 
 	/**
@@ -1178,6 +1191,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static final DataType<Date> createDate(final String format) {
         return new ARXDate(format);
+    }
+
+    /**
+     * A date data type with given format
+     * 
+     * @see SimpleDateFormat
+     * @param format
+     * @param locale
+     * @return
+     */
+    public static final DataType<Date> createDate(final String format, final Locale locale) {
+        return new ARXDate(format, locale);
     }
     
     /**
