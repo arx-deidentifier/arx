@@ -295,4 +295,9 @@ public class Vocabulary_V1 extends Vocabulary {
     public String getSuppressedAttributeTypes() {
         return "suppressedAttributeTypes"; //$NON-NLS-1$
     }
+
+    @Override
+    public String getLocale() {
+        return "locale";
+    }
 }

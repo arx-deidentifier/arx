@@ -62,7 +62,7 @@ public abstract class EditorString implements IEditor<String> {
         final GridData ldata = SWTUtil.createFillHorizontallyGridData();
         if (multi) {
             text = new Text(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
-            ldata.heightHint = 100;
+            ldata.heightHint = 60;
         } else {
             text = new Text(parent, SWT.SINGLE | SWT.BORDER);
         }

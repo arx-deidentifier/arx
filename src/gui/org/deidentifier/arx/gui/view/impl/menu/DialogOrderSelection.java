@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
@@ -69,23 +70,28 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     private DataType<?> type;
     /** Combo control*/
     private Combo       combo;
+    /** Locale*/
+    private Locale      locale;
 
     /**
      * Creates a new instance
      * @param parentShell
      * @param elements
      * @param type
+     * @param locale
      * @param controller
      */
     public DialogOrderSelection(final Shell parentShell,
                                 final String[] elements,
                                 final DataType<?> type,
+                                final Locale locale,
                                 final Controller controller) {
         super(parentShell);
         this.controller = controller;
         this.image = controller.getResources().getImage("logo_small.png"); //$NON-NLS-1$
         this.elements = elements.clone();
         this.type = type;
+        this.locale = locale;
     }
 
     @Override
@@ -417,12 +423,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                         if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, description, elements);
+                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, locale, description, elements);
                             if (format == null) {
                                 type = DataType.STRING;
                                 combo.select(getIndexOfDataType(DataType.STRING)+1);
                             } else {
-                                type = description.newInstance(format);
+                                type = description.newInstance(format, locale);
                             }
                         } else {
                             type = description.newInstance();

@@ -105,6 +105,8 @@ public abstract class Vocabulary {
     
     public abstract String getSuppressionAlwaysEnabled();
     public abstract String getSuppressedAttributeTypes();
+
+    public abstract String getLocale();
     
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
 	public boolean isVersion(String value){return value.equals(getVersion());}
@@ -154,7 +156,7 @@ public abstract class Vocabulary {
     public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
     public boolean isSuppressedAttributeTypes(String value) {return value.equals(getSuppressedAttributeTypes());}
     
-    public abstract void checkVersion(String version) throws SAXException;
-
+    public boolean isLocale(String value) {return value.equals(getLocale());}
     
+    public abstract void checkVersion(String version) throws SAXException;    
 }

@@ -203,6 +203,7 @@ public class ImportWizardPageColumns extends WizardPage {
                                                                             HEADER,
                                                                             BODY,
                                                                             ((DataTypeWithFormat) column.getDataType()).getFormat(),
+                                                                            wizardImport.getModel().getLocale(),
                                                                             description,
                                                                             previewData);
 
@@ -210,12 +211,13 @@ public class ImportWizardPageColumns extends WizardPage {
                             format = controller.actionShowFormatInputDialog(getShell(),
                                                                             HEADER,
                                                                             BODY,
+                                                                            wizardImport.getModel().getLocale(),
                                                                             description,
                                                                             previewData);
                         }
 
                         if (format != null) {
-                            datatype = description.newInstance(format);
+                            datatype = description.newInstance(format, wizardImport.getModel().getLocale());
                         } else {
                             /* Invalid string or aborted by user */
                             return;

@@ -329,6 +329,7 @@ public class WorkerSave extends Worker<Model> {
         writer.write(vocabulary.getName(), model.getName());
         writer.write(vocabulary.getSeparator(), model.getSeparator());
         writer.write(vocabulary.getDescription(), model.getDescription());
+        writer.write(vocabulary.getLocale(), model.getLocale().getLanguage().toUpperCase());
         writer.write(vocabulary.getHistorySize(), model.getHistorySize());
         writer.write(vocabulary.getSnapshotSizeDataset(), model.getSnapshotSizeDataset());
         writer.write(vocabulary.getSnapshotSizeSnapshot(), model.getSnapshotSizeSnapshot());

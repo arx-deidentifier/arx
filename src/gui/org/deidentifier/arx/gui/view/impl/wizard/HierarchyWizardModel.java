@@ -19,6 +19,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
@@ -53,17 +54,18 @@ public class HierarchyWizardModel<T> {
     /**
      * Creates a new instance for the given data type
      * @param dataType
+     * @param locale
      * @param data
      * @param builder 
      */
-    public HierarchyWizardModel(DataType<T> dataType, String[] data){
+    public HierarchyWizardModel(DataType<T> dataType, Locale locale, String[] data){
         
         // Store
         this.data = data;
         this.dataType = dataType;
         
         // Create models
-        orderModel = new HierarchyWizardModelOrder<T>(dataType, getOrderData());
+        orderModel = new HierarchyWizardModelOrder<T>(dataType, locale, getOrderData());
         if (dataType instanceof DataTypeWithRatioScale){
             intervalModel = new HierarchyWizardModelIntervals<T>(dataType, data);
         }

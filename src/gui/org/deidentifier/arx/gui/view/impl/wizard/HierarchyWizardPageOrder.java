@@ -65,8 +65,8 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
      */
     public HierarchyWizardPageOrder(final Controller controller,
                                     final HierarchyWizard<T> wizard,
-                                       final HierarchyWizardModel<T> model, 
-                                       final HierarchyWizardPageFinal<T> finalPage) {
+                                    final HierarchyWizardModel<T> model,
+                                    final HierarchyWizardPageFinal<T> finalPage) {
         super(wizard, model.getOrderModel(), finalPage);
         this.model = model.getOrderModel();
         this.controller = controller;
@@ -131,6 +131,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
                 String[] array = controller.actionShowOrderValuesDialog(getShell(), 
                                                                         text1, text2,
                                                                         DataType.STRING,
+                                                                        model.getLocale(),
                                                                         model.getData());
                 if (array == null) {
                     type = DataType.STRING;
@@ -152,12 +153,13 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
                 final String format = controller.actionShowFormatInputDialog(getShell(),
                                                                              text1,
                                                                              text2,
+                                                                             model.getLocale(),
                                                                              description,
                                                                              model.getData());
                 if (format == null) {
                     type = DataType.STRING;
                 } else {
-                    type = description.newInstance(format);
+                    type = description.newInstance(format, model.getLocale());
                 }
             } else {
                 type = description.newInstance();

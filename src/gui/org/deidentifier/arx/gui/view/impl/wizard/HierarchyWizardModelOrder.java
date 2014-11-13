@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -37,14 +38,19 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     /** Var */
     private final transient String[] data;
 
+    /** Locale */
+    private Locale                   locale;
+
     /**
      * Constructor to create an initial definition
      * @param dataType
+     * @param locale
      * @param data
      */
-    public HierarchyWizardModelOrder(final DataType<T> dataType, String[] data) {
+    public HierarchyWizardModelOrder(final DataType<T> dataType, final Locale locale, String[] data) {
         super(data, dataType, false);
         this.data = data;
+        this.locale = locale;
         this.internalSort(super.getDataType());
         this.update();
     }
@@ -72,6 +78,18 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
     }
     
     /**
+     * Returns the current locale
+     * @return
+     */
+    public Locale getLocale() {
+        if (locale == null) {
+            return Locale.getDefault();
+        } else {
+            return locale;
+        }
+    }
+    
+    /**
      * Moves an item down
      * @param index
      */
@@ -96,7 +114,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         update();
         return true;
     }
-    
+
     @Override
     public void parse(HierarchyBuilder<T> builder) throws IllegalArgumentException {
         
@@ -115,6 +133,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
         update();
         return result;
     }
+    
 
     /**
      * Sort
@@ -135,7 +154,6 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
             return false;
         }
     }
-    
 
     @Override
     protected void build() {

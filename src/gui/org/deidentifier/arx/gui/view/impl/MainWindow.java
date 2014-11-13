@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
@@ -283,11 +284,12 @@ public class MainWindow implements IView {
      * @param header
      * @param text
      * @param preselected Preselected format string, can be null
+     * @param locale The current locale
      * @param description
      * @param values
      * @return
      */
-    public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final DataTypeDescription<?> description, final Collection<String> values) {
+    public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final Locale locale, final DataTypeDescription<?> description, final Collection<String> values) {
 
         // Check
         if (!description.hasFormat()) {
@@ -306,7 +308,7 @@ public class MainWindow implements IView {
                     if (arg0.equals(DEFAULT)) {
                         type = description.newInstance();
                     } else {
-                        type = description.newInstance(arg0);
+                        type = description.newInstance(arg0, locale);
                     }
                 } catch (final Exception e) {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
@@ -418,13 +420,14 @@ public class MainWindow implements IView {
      * @param header
      * @param text
      * @param type
+     * @param locale
      * @param values
      * @return
      */
-    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final String[] values) {
+    public String[] showOrderValuesDialog(final Shell shell, final String header, final String text, final DataType<?> type, final Locale locale, final String[] values) {
 
         // Open dialog
-        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, controller);
+        DialogOrderSelection dlg = new DialogOrderSelection(shell, values, type, locale, controller);
         if (dlg.open() == Window.OK) {
             return dlg.getResult();
         } else {

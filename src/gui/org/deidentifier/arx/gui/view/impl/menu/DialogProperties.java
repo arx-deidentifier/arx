@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.model.Model;
@@ -252,6 +253,31 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
             @Override
             public void setValue(final String s) {
                 model.setSeparator(s.toCharArray()[0]);
+            }
+        });
+
+        // Create list of locales
+        List<String> languages = new ArrayList<String>();
+        languages.add("Default");
+        for (String lang : Locale.getISOLanguages()) {
+            languages.add(lang.toUpperCase());
+        }
+        
+        // Create editor
+        result.add(new EditorSelection(Resources.getMessage("PropertyDialog.8"), Resources.getMessage("PropertyDialog.33"), languages.toArray(new String[]{})) { //$NON-NLS-1$ //$NON-NLS-2$
+
+            @Override
+            public String getValue() {
+                return String.valueOf(model.getLocale().getLanguage().toUpperCase());
+            }
+
+            @Override
+            public void setValue(final String s) {
+                if (s.equals("Default")) {
+                    model.setLocale(Locale.getDefault());
+                } else {
+                    model.setLocale(new Locale(s.toLowerCase()));
+                }
             }
         });
 

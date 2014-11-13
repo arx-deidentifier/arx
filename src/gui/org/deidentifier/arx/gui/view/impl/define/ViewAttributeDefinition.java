@@ -234,7 +234,8 @@ public class ViewAttributeDefinition implements IView {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                                    text1, text2, DataType.STRING, getValuesAsArray());
+                                                                                    text1, text2, DataType.STRING, 
+                                                                                    model.getLocale(), getValuesAsArray());
                             if (array == null) {
                                 type = DataType.STRING;
                             } else {
@@ -253,11 +254,11 @@ public class ViewAttributeDefinition implements IView {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                             final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                         text1, text2, description, getValuesAsList());
+                                                                                         text1, text2, model.getLocale(), description, getValuesAsList());
                             if (format == null) {
                                 type = DataType.STRING;
                             } else {
-                                type = description.newInstance(format);
+                                type = description.newInstance(format, model.getLocale());
                             }
                         } else {
                             type = description.newInstance();

@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -427,7 +428,7 @@ public class Controller implements IView {
 
         HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        ARXWizard<HierarchyWizardResult<?>> wizard = new HierarchyWizard(this, attr, builder, type, data);
+        ARXWizard<HierarchyWizardResult<?>> wizard = new HierarchyWizard(this, attr, builder, type, model.getLocale(), data);
 
         if (wizard.open(main.getShell())) {
             HierarchyWizardResult<?> result = wizard.getResult();
@@ -939,6 +940,7 @@ public class Controller implements IView {
      * @param shell The parent shell
      * @param title The dialog's title
      * @param text The dialog's text
+     * @param locale The locale
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
@@ -946,10 +948,11 @@ public class Controller implements IView {
     public String actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
+                                              final Locale locale,
                                               final DataTypeDescription<?> type,
                                               final Collection<String> values) {
 
-        return main.showFormatInputDialog(shell, title, text, null, type, values);
+        return main.showFormatInputDialog(shell, title, text, null, locale, type, values);
     }
 
     /**
@@ -958,6 +961,7 @@ public class Controller implements IView {
      * @param shell The parent shell
      * @param title The dialog's title
      * @param text The dialog's text
+     * @param locale The locale
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
@@ -965,10 +969,11 @@ public class Controller implements IView {
     public String actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
+                                              final Locale locale,
                                               final DataTypeDescription<?> type,
                                               final String[] values) {
 
-        return main.showFormatInputDialog(shell, title, text, null, type, Arrays.asList(values));
+        return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
 
     /**
@@ -978,6 +983,7 @@ public class Controller implements IView {
      * @param title The dialog's title
      * @param text The dialog's text
      * @param preselected A preselected format string
+     * @param locale The locale
      * @param type The description of the data type for which to choose a format string
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
@@ -986,10 +992,11 @@ public class Controller implements IView {
                                               final String title,
                                               final String text,
                                               final String preselected,
+                                              final Locale locale,
                                               final DataTypeDescription<?> type,
                                               final Collection<String> values) {
 
-        return main.showFormatInputDialog(shell, title, text, preselected, type, values);
+        return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
     }
 
     /**
@@ -1046,15 +1053,17 @@ public class Controller implements IView {
      * @param title The dialog's title
      * @param text The dialog's text
      * @param type The data type
+     * @param locale
      * @param values The values
      */
     public String[] actionShowOrderValuesDialog(final Shell shell,
                                                 final String title,
                                                 final String text,
                                                 final DataType<?> type,
+                                                final Locale locale,
                                                 final String[] values) {
 
-        return main.showOrderValuesDialog(shell, title, text, type, values);
+        return main.showOrderValuesDialog(shell, title, text, type, locale, values);
     }
 
     /**

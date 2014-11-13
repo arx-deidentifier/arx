@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.util.Locale;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
@@ -93,13 +95,15 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * @param controller
      * @param attribute
      * @param datatype
+     * @param locale
      * @param items
      */
     public HierarchyWizard(final Controller controller,
                            final String attribute,
                            final DataType<T> datatype,
+                           final Locale locale,
                            final String[] items) {
-        this(controller, attribute, null, datatype, items);
+        this(controller, attribute, null, datatype, locale, items);
     }
     
     /**
@@ -108,6 +112,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      * @param attribute
      * @param builder
      * @param datatype
+     * @param locale
      * @param items
      */
     @SuppressWarnings("unchecked")
@@ -115,11 +120,12 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
                            final String attribute,
                            final HierarchyBuilder<?> builder,
                            final DataType<T> datatype,
+                           final Locale locale,
                            final String[] items) {
         super(new Point(800, 400));
         
         // Store
-        this.model = new HierarchyWizardModel<T>(datatype, items);
+        this.model = new HierarchyWizardModel<T>(datatype, locale, items);
         this.controller = controller;
         
         // Parse given builder, if needed
@@ -129,7 +135,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
             }
         } catch (Exception e){ 
             /* Die silently, and recover*/
-            this.model = new HierarchyWizardModel<T>(datatype, items);
+            this.model = new HierarchyWizardModel<T>(datatype, locale, items);
         }
         
         // Initialize window

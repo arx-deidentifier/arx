@@ -22,6 +22,7 @@ package org.deidentifier.arx.gui.model;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -105,6 +106,9 @@ public class Model implements Serializable {
     private char                                  separator                       = ';';                                            //$NON-NLS-1$
     /** Execution time of last anonymization */
     private long                                  time;
+    /** Locale */
+    private Locale                                locale                          = null;
+    // TODO: This is only a quick-fix. A locale should be definable for each data type individually.
 
     /* *****************************************
      * DEBUGGING
@@ -423,6 +427,18 @@ public class Model implements Serializable {
 	 */
 	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
 		return lDiversityModel;
+	}
+	
+	/**
+	 * Returns the project locale
+	 * @return
+	 */
+	public Locale getLocale() {
+	    if (this.locale == null) {
+	        return Locale.getDefault();
+	    } else {
+	        return locale;
+	    }
 	}
 
 	/**
@@ -806,6 +822,16 @@ public class Model implements Serializable {
 		this.metricConfig = config.getMetric().getConfiguration();
 		this.metricDescription = config.getMetric().getDescription();
 	}
+
+    /**
+     * Sets the project locale
+     * @param locale Null for default locale
+     * @return
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+        this.setModified();
+    }
 
 	/**
 	 * Sets the according parameter
