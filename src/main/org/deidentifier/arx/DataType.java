@@ -365,13 +365,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public int compare(Double t1, Double t2) {
-            return parse(format(t1)).compareTo(parse(format(t2)));
+            double d1 = parse(format(t1));
+            double d2 = parse(format(t2));
+            d1 = d1 == -0.0d ? 0d : d1;
+            d2 = d2 == -0.0d ? 0d : d2;
+            return Double.valueOf(d1).compareTo(Double.valueOf(d2));
         }
 
         @Override
         public int compare(final String s1, final String s2) throws NumberFormatException {
             try {
-                return parse(s1).compareTo(parse(s2));
+                double d1 = parse(s1);
+                double d2 = parse(s2);
+                d1 = d1 == -0.0d ? 0d : d1;
+                d2 = d2 == -0.0d ? 0d : d2;
+                return Double.valueOf(d1).compareTo(Double.valueOf(d2));
             } catch (Exception e) {
                 throw new IllegalArgumentException("Invalid value: '"+s1+"' or '"+s2+"'", e);
             }
