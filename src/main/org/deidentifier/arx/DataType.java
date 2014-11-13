@@ -1305,7 +1305,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         result.add("yyyy-MM-dd'T'HH:mm:ssz");
         result.add("yyyy-MM-dd'T'HH:mm:ss");
         result.add("yyyy-MM-dd'T'HH:mm:ssZZ");
-        result.add("yyyy-MM-dd");
         return result;
     }
 
