@@ -1205,6 +1205,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     }
     
     /**
+     * An integer data type with given format using the given locale
+     * 
+     * @see DecimalFormat
+     * @param format
+     * @return
+     */
+    public static final DataType<Long> createInteger(final String format, Locale locale) {
+        return new ARXInteger(format, locale);
+    }
+    
+    /**
      * A ordered string type with given format. 
      * 
      * @param format List of ordered strings
