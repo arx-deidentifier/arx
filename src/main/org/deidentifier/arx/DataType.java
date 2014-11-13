@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
@@ -54,17 +56,20 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         /** The description of the data type*/
         private static final DataTypeDescription<Date> description = new DataTypeDescription<Date>(Date.class, "Date/Time",  true, listDateFormats()){
-            /**
-             * 
-             */
             private static final long serialVersionUID = -1723392257250720908L;
             @Override public DataType<Date> newInstance() { return DATE; }
             @Override public DataType<Date> newInstance(String format) {return createDate(format);}
         };
         
-        private SimpleDateFormat format;
+        /** Format */
+        private SimpleDateFormat                       format;
 
-        private String           string;
+        /** Format string */
+        private String                                 string;
+
+        /** Locale */
+        private Locale                                 locale;
+        
         /**
          * Create a data with a "dd.MM.yyyy" format string
          * for <code>SimpleDateFormat</code>.
@@ -89,6 +94,25 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 this.string = formatString;
             }
         }
+        
+        /**
+         * Create a date with a format string. Format strings must be valid formats
+         * for <code>SimpleDateFormat</code>.
+         * @param format
+         * @param locale
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
+         */
+        private ARXDate(String formatString, Locale locale) {
+            if (formatString == null || formatString.equals("Default")) {
+                this.string = "dd.MM.yyyy";
+                this.format = new SimpleDateFormat(string);
+                this.locale = null;
+            } else {
+                this.format = new SimpleDateFormat(formatString, locale);
+                this.string = formatString;
+                this.locale =locale;
+            }
+        }
 
         @Override
         public Date add(Date augend, Date addend) {
@@ -99,7 +123,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public DataType<Date> clone() {
-            return new ARXDate(string);
+            return this;
         }
 
         @Override
@@ -138,6 +162,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             final ARXDate other = (ARXDate) obj;
             if (string == null) { if (other.string != null) { return false; }
             } else if (!string.equals(other.string)) { return false; }
+            if (getLocale() == null) { if (other.getLocale() != null) { return false; }
+            } else if (!getLocale().equals(other.getLocale())) { return false; }
             return true;
         }
         
@@ -156,6 +182,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return string;
         }
         
+        /**
+         * Returns the locale of the format
+         * @return
+         */
+        public Locale getLocale() {
+            if (this.locale == null) {
+                return Locale.getDefault();
+            } else {
+                return locale;
+            }
+        }
+        
         @Override
         public Date getMaximum() {
             return new Date(Long.MAX_VALUE);
@@ -168,8 +206,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
+            if (string == null) return 0;
+            else {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + ((string == null) ? 0 : string.hashCode());
+                result = prime * result + ((getLocale() == null) ? 0 : getLocale().hashCode());
+                return result;
+            }
         }
 
         @Override
@@ -249,18 +293,21 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         /** The description of the data type*/
         private static final DataTypeDescription<Double> description = new DataTypeDescription<Double>(Double.class, "Decimal", true, listDecimalFormats()){
-            /**
-             * 
-             */
             private static final long serialVersionUID = -3549629178680030868L;
             @Override public DataType<Double> newInstance() { return DECIMAL; }
             @Override public DataType<Double> newInstance(String format) {return createDecimal(format);}
         };
         
+        /** Format*/
         private DecimalFormat format;
         
+        /** Format string*/
         private String        string;
         
+        /** Locale*/
+        private Locale        locale;
+        
+        /** Default constructor*/
         private ARXDecimal(){
             this("Default");
         }
@@ -281,9 +328,29 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         }
         
+
+        /**
+         * Create a numeric with a format string. Format strings must be valid formats
+         * for <code>DecimalFormat</code>.
+         * @param format
+         * @param locale
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
+         */
+        private ARXDecimal(String format, Locale locale) {
+            if (format == null || format.equals("Default")){
+                this.format = null;
+                this.string = null;
+                this.locale = null;
+            } else {
+                this.format = new DecimalFormat(format, new DecimalFormatSymbols(locale));
+                this.string = format;
+                this.locale = locale;
+            }
+        }
+
         @Override
         public Double add(Double augend, Double addend) {
-            return augend + addend;
+            return parse(format(augend + addend));
         }
         
         @Override
@@ -293,7 +360,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public int compare(Double t1, Double t2) {
-            return t1.compareTo(t2);
+            return parse(format(t1)).compareTo(parse(format(t2)));
         }
 
         @Override
@@ -307,7 +374,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double divide(Double dividend, Double divisor) {
-            return dividend / divisor;
+            return parse(format(dividend / divisor));
         }
 
         @Override
@@ -325,6 +392,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             final ARXDecimal other = (ARXDecimal) obj;
             if (string == null) { if (other.string != null) { return false; }
             } else if (!string.equals(other.string)) { return false; }
+            if (getLocale() == null) { if (other.getLocale() != null) { return false; }
+            } else if (!getLocale().equals(other.getLocale())) { return false; }
             return true;
         }
 
@@ -346,6 +415,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public String getFormat() {
             return string;
         }
+        
+        /**
+         * Returns the locale of the format
+         * @return
+         */
+        public Locale getLocale() {
+            if (this.locale == null) {
+                return Locale.getDefault();
+            } else {
+                return locale;
+            }
+        }
 
         @Override
         public Double getMaximum() {
@@ -356,11 +437,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public Double getMinimum() {
             return -Double.MAX_VALUE;
         }
-
+        
         @Override
-        public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
+        public int hashCode() { 
+            if (string==null) {
+                return getLocale().hashCode();
+            }
+            else {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + ((string == null) ? 0 : string.hashCode());
+                result = prime * result + ((getLocale() == null) ? 0 : getLocale().hashCode());
+                return result;
+            }
         }
 
         @Override
@@ -375,17 +464,17 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double multiply(Double multiplicand, double multiplicator) {
-            return multiplicand * multiplicator;
+            return parse(format(multiplicand * multiplicator));
         }
 
         @Override
         public Double multiply(Double multiplicand, Double multiplicator) {
-            return multiplicand * multiplicator;
+            return parse(format(multiplicand * multiplicator));
         }
 
         @Override
         public Double multiply(Double multiplicand, int multiplicator) {
-            return multiplicand * multiplicator;
+            return parse(format(multiplicand* multiplicator));
         }
 
         @Override
@@ -410,12 +499,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public double ratio(Double dividend, Double divisor) {
-            return dividend / divisor;
+            return parse(format(dividend / divisor));
         }
 
         @Override
         public Double subtract(Double minuend, Double subtrahend) {
-            return minuend - subtrahend;
+            return parse(format(minuend - subtrahend));
         }
 
         @Override
@@ -434,17 +523,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         /** The description of the data type*/
         private static final DataTypeDescription<Long> description = new DataTypeDescription<Long>(Long.class, "Integer", false, new ArrayList<String>()){
-            /**
-             * 
-             */
             private static final long serialVersionUID = -4498725217659811835L;
             @Override public DataType<Long> newInstance() { return INTEGER; }
             @Override public DataType<Long> newInstance(String format) {return createInteger(format);}
         };
         
+        /** Format */
         private DecimalFormat format;
-        
+
+        /** Format string */
         private String        string;
+        
+        /** Locale */
+        private Locale locale;
         
         private ARXInteger(){
             this("Default");
@@ -463,6 +554,24 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             } else {
                 this.format = new DecimalFormat(format);
                 this.string = format;
+            }
+        }
+        
+        /**
+         * Create a numeric with a format string. Format strings must be valid formats
+         * for <code>DecimalFormat</code>.
+         * @param format
+         * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html">DecimalFormat</a>
+         */
+        private ARXInteger(String format, Locale locale){
+            if (format == null || format.equals("Default")){
+                this.format = null;
+                this.string = null;
+                this.locale = null;
+            } else {
+                this.format = new DecimalFormat(format, new DecimalFormatSymbols(locale));
+                this.string = format;
+                this.locale = locale;
             }
         }
         
@@ -510,6 +619,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             final ARXInteger other = (ARXInteger) obj;
             if (string == null) { if (other.string != null) { return false; }
             } else if (!string.equals(other.string)) { return false; }
+            if (getLocale() == null) { if (other.getLocale() != null) { return false; }
+            } else if (!getLocale().equals(other.getLocale())) { return false; }
             return true;
         }
         
@@ -521,6 +632,19 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return format.format(s);
             }
         }
+        
+        /**
+         * Returns the locale of the format
+         * @return
+         */
+        public Locale getLocale() {
+            if (this.locale == null) {
+                return Locale.getDefault();
+            } else {
+                return locale;
+            }
+        }
+
 
         @Override
         public DataTypeDescription<Long> getDescription(){
@@ -544,8 +668,14 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public int hashCode() {
-            if (string==null) return 0;
-            else return string.hashCode();
+            if (string == null) return 0;
+            else {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + ((string == null) ? 0 : string.hashCode());
+                result = prime * result + ((getLocale() == null) ? 0 : getLocale().hashCode());
+                return result;
+            }
         }
 
         @Override
@@ -620,7 +750,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         /** The description of the data type*/
         private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "OrderedString", true, new ArrayList<String>()){
-            
             private static final long serialVersionUID = -6300869938311742699L;
             @Override public DataType<String> newInstance() { return ORDERED_STRING; }
             @Override public DataType<String> newInstance(String format) {return createOrderedString(format);}
@@ -737,6 +866,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         	return s;
         }
         
+        /**
+         * Returns the locale of the format
+         * @return
+         */
+        public Locale getLocale() {
+            throw new UnsupportedOperationException("Data type does not have a locale");
+        }
+
+        
         @Override
         public DataTypeDescription<String> getDescription(){
             return description;
@@ -819,9 +957,6 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         
         /** The description of the data type*/
         private static final DataTypeDescription<String> description = new DataTypeDescription<String>(String.class, "String", false, new ArrayList<String>()){
-            /**
-             * 
-             */
             private static final long serialVersionUID = -6679110898204862834L;
             @Override public DataType<String> newInstance() { return STRING; }
             @Override public DataType<String> newInstance(String format) {return STRING;}
@@ -959,7 +1094,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      * @author Fabian Prasser
      */
     public static interface DataTypeWithFormat {
+        
         public abstract String getFormat();
+        public abstract Locale getLocale();
     }
 
     /**
@@ -1044,6 +1181,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     public static final DataType<Double> createDecimal(final String format) {
         return new ARXDecimal(format);
+    }
+    
+    /**
+     * Creates a decimal data type with a format string from the given locale
+     * @param format
+     * @param locale
+     * @return
+     */
+    public static DataType<Double> createDecimal(String format, Locale locale) {
+        return new ARXDecimal(format, locale);
     }
     
     /**
