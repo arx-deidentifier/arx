@@ -165,13 +165,13 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDefault.html#createMaxInformationLoss()">createMaxInformationLoss</a></strong>()</code>
-<div class="block">Returns an instance of the maximal value</div>
+<div class="block">Returns an instance of the maximal value.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDefault.html#createMinInformationLoss()">createMinInformationLoss</a></strong>()</code>
-<div class="block">Returns an instance of the minimal value</div>
+<div class="block">Returns an instance of the minimal value.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -233,6 +233,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <h4>MetricDefault</h4>
 <pre>public&nbsp;MetricDefault(boolean&nbsp;monotonic,
              boolean&nbsp;independent)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - </dd><dd><code>independent</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -251,7 +252,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <h4>createMaxInformationLoss</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;createMaxInformationLoss()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/metric/Metric.html#createMaxInformationLoss()">Metric</a></code></strong></div>
-<div class="block">Returns an instance of the maximal value</div>
+<div class="block">Returns an instance of the maximal value.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/metric/Metric.html#createMaxInformationLoss()">createMaxInformationLoss</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;org.deidentifier.arx.metric.InformationLossDefault&gt;</code></dd>
@@ -266,7 +267,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <h4>createMinInformationLoss</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;createMinInformationLoss()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/metric/Metric.html#createMinInformationLoss()">Metric</a></code></strong></div>
-<div class="block">Returns an instance of the minimal value</div>
+<div class="block">Returns an instance of the minimal value.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/metric/Metric.html#createMinInformationLoss()">createMinInformationLoss</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;org.deidentifier.arx.metric.InformationLossDefault&gt;</code></dd>
@@ -300,14 +301,14 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <pre>protected&nbsp;org.deidentifier.arx.metric.InformationLossDefault&nbsp;getLowerBoundInternal(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
                                                                        <a href="../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;groupify)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">Metric</a></code></strong></div>
-<div class="block">Returns a lower bound for the information loss for the given node. 
+<div class="block">Returns a lower bound for the information loss for the given node.
  This can be used to expose the results of monotonic shares of a metric,
  which can significantly speed-up the anonymization process. If no
  such metric exists, simply return <code>null</code>. <br>
  <br>
  This variant of the method allows computing a monotonic share based on
  a groupified data representation. IMPORTANT NOTE: The groups may not have
- been classified correctly when the method is called, i.e., 
+ been classified correctly when the method is called, i.e.,
  HashGroupifyEntry.isNotOutlier may not be set correctly!</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>

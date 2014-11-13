@@ -96,7 +96,7 @@
 <br>
 <pre>public class <span class="strong">StatisticsBuilder</span>
 extends java.lang.Object</pre>
-<div class="block">A class offering basic descriptive statistics about data handles</div>
+<div class="block">A class offering basic descriptive statistics about data handles.</div>
 </li>
 </ul>
 </div>
@@ -117,7 +117,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#StatisticsBuilder(org.deidentifier.arx.DataHandleStatistics, org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses)">StatisticsBuilder</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a>&nbsp;handle,
                  <a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;ecStatistics)</code>
-<div class="block">Creates a new instance</div>
+<div class="block">Creates a new instance.</div>
 </td>
 </tr>
 </table>
@@ -150,7 +150,7 @@ extends java.lang.Object</pre>
                    boolean&nbsp;orderFromDefinition1,
                    int&nbsp;column2,
                    boolean&nbsp;orderFromDefinition2)</code>
-<div class="block">Returns a contingency table for the given columns</div>
+<div class="block">Returns a contingency table for the given columns.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -179,7 +179,7 @@ extends java.lang.Object</pre>
                    int&nbsp;column2,
                    int&nbsp;size2,
                    boolean&nbsp;orderFromDefinition2)</code>
-<div class="block">Returns a contingency table for the given columns</div>
+<div class="block">Returns a contingency table for the given columns.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -194,7 +194,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValues(int)">getDistinctValues</a></strong>(int&nbsp;column)</code>
-<div class="block">Returns the distinct set of data items from the given column</div>
+<div class="block">Returns the distinct set of data items from the given column.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -214,13 +214,13 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getDistinctValuesOrdered(int, boolean)">getDistinctValuesOrdered</a></strong>(int&nbsp;column,
                         boolean&nbsp;orderFromDefinition)</code>
-<div class="block">Returns an ordered list of the distinct set of data items from the given column</div>
+<div class="block">Returns an ordered list of the distinct set of data items from the given column.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getEquivalenceClassStatistics()">getEquivalenceClassStatistics</a></strong>()</code>
-<div class="block">Returns statistics about the equivalence classes</div>
+<div class="block">Returns statistics about the equivalence classes.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -240,13 +240,13 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates">StatisticsFrequencyDistribution</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getFrequencyDistribution(int, boolean)">getFrequencyDistribution</a></strong>(int&nbsp;column,
                         boolean&nbsp;orderFromDefinition)</code>
-<div class="block">Returns a frequency distribution for the values in the given column</div>
+<div class="block">Returns a frequency distribution for the values in the given column.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html#getInterruptibleInstance()">getInterruptibleInstance</a></strong>()</code>
-<div class="block">Returns an interruptible instance of this object</div>
+<div class="block">Returns an interruptible instance of this object.</div>
 </td>
 </tr>
 </table>
@@ -279,8 +279,8 @@ extends java.lang.Object</pre>
 <h4>StatisticsBuilder</h4>
 <pre>public&nbsp;StatisticsBuilder(<a href="../../../../org/deidentifier/arx/DataHandleStatistics.html" title="class in org.deidentifier.arx">DataHandleStatistics</a>&nbsp;handle,
                  <a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;ecStatistics)</pre>
-<div class="block">Creates a new instance</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>averageEquivalenceClassSize</code> - </dd><dd><code>maximalEquivalenceClassSize</code> - </dd><dd><code>minimalEquivalenceClassSize</code> - </dd><dd><code>numberOfGroups</code> - </dd><dd><code>numberOfOutlyingEquivalenceClasses</code> - </dd><dd><code>numberOfOutlyingTuples</code> - </dd></dl>
+<div class="block">Creates a new instance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>ecStatistics</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -301,12 +301,12 @@ extends java.lang.Object</pre>
                                              boolean&nbsp;orderFromDefinition1,
                                              int&nbsp;column2,
                                              boolean&nbsp;orderFromDefinition2)</pre>
-<div class="block">Returns a contingency table for the given columns</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>orderFromDefinition1</code> - Indicates whether the order that should be assumed for string data items 
-                                  can (and should) be derived from the hierarchy provided in the data 
-                                  definition (if any)</dd><dd><code>column2</code> - The second column</dd><dd><code>orderFromDefinition2</code> - Indicates whether the order that should be assumed for string data items 
-                                  can (and should) be derived from the hierarchy provided in the data 
-                                  definition (if any)</dd>
+<div class="block">Returns a contingency table for the given columns.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>orderFromDefinition1</code> - Indicates whether the order that should be assumed for string data items
+            can (and should) be derived from the hierarchy provided in the data
+            definition (if any)</dd><dd><code>column2</code> - The second column</dd><dd><code>orderFromDefinition2</code> - Indicates whether the order that should be assumed for string data items
+            can (and should) be derived from the hierarchy provided in the data
+            definition (if any)</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -353,12 +353,12 @@ extends java.lang.Object</pre>
                                              int&nbsp;column2,
                                              int&nbsp;size2,
                                              boolean&nbsp;orderFromDefinition2)</pre>
-<div class="block">Returns a contingency table for the given columns</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>size1</code> - The maximal size in this dimension</dd><dd><code>orderFromDefinition1</code> - Indicates whether the order that should be assumed for string data items 
-                                  can (and should) be derived from the hierarchy provided in the data 
-                                  definition (if any)</dd><dd><code>column2</code> - The second column</dd><dd><code>size2</code> - The maximal size in this dimension</dd><dd><code>orderFromDefinition2</code> - Indicates whether the order that should be assumed for string data items 
-                                  can (and should) be derived from the hierarchy provided in the data 
-                                  definition (if any)</dd>
+<div class="block">Returns a contingency table for the given columns.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column1</code> - The first column</dd><dd><code>size1</code> - The maximal size in this dimension</dd><dd><code>orderFromDefinition1</code> - Indicates whether the order that should be assumed for string data items
+            can (and should) be derived from the hierarchy provided in the data
+            definition (if any)</dd><dd><code>column2</code> - The second column</dd><dd><code>size2</code> - The maximal size in this dimension</dd><dd><code>orderFromDefinition2</code> - Indicates whether the order that should be assumed for string data items
+            can (and should) be derived from the hierarchy provided in the data
+            definition (if any)</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -404,7 +404,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDistinctValues</h4>
 <pre>public&nbsp;java.lang.String[]&nbsp;getDistinctValues(int&nbsp;column)</pre>
-<div class="block">Returns the distinct set of data items from the given column</div>
+<div class="block">Returns the distinct set of data items from the given column.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -431,10 +431,10 @@ extends java.lang.Object</pre>
 <h4>getDistinctValuesOrdered</h4>
 <pre>public&nbsp;java.lang.String[]&nbsp;getDistinctValuesOrdered(int&nbsp;column,
                                           boolean&nbsp;orderFromDefinition)</pre>
-<div class="block">Returns an ordered list of the distinct set of data items from the given column</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd><dd><code>orderFromDefinition</code> - Indicates whether the order that should be assumed for string data 
-                                 items can (and should) be derived from the hierarchy provided in the 
-                                 data definition (if any)</dd>
+<div class="block">Returns an ordered list of the distinct set of data items from the given column.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd><dd><code>orderFromDefinition</code> - Indicates whether the order that should be assumed for string data
+            items can (and should) be derived from the hierarchy provided in the
+            data definition (if any)</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -459,7 +459,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getEquivalenceClassStatistics</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsEquivalenceClasses.html" title="class in org.deidentifier.arx.aggregates">StatisticsEquivalenceClasses</a>&nbsp;getEquivalenceClassStatistics()</pre>
-<div class="block">Returns statistics about the equivalence classes</div>
+<div class="block">Returns statistics about the equivalence classes.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -485,10 +485,10 @@ extends java.lang.Object</pre>
 <h4>getFrequencyDistribution</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsFrequencyDistribution.html" title="class in org.deidentifier.arx.aggregates">StatisticsFrequencyDistribution</a>&nbsp;getFrequencyDistribution(int&nbsp;column,
                                                        boolean&nbsp;orderFromDefinition)</pre>
-<div class="block">Returns a frequency distribution for the values in the given column</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd><dd><code>orderFromDefinition</code> - Indicates whether the order that should be assumed for string data items 
-                                 can (and should) be derived from the hierarchy provided in the data 
-                                 definition (if any)</dd>
+<div class="block">Returns a frequency distribution for the values in the given column.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The column</dd><dd><code>orderFromDefinition</code> - Indicates whether the order that should be assumed for string data items
+            can (and should) be derived from the hierarchy provided in the data
+            definition (if any)</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -513,7 +513,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getInterruptibleInstance</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilderInterruptible</a>&nbsp;getInterruptibleInstance()</pre>
-<div class="block">Returns an interruptible instance of this object</div>
+<div class="block">Returns an interruptible instance of this object.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

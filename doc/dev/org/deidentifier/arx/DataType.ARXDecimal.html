@@ -110,7 +110,7 @@
 <pre>public static class <span class="strong">DataType.ARXDecimal</span>
 extends <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;
 implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a>, <a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</pre>
-<div class="block">Base class for numeric types</div>
+<div class="block">Base class for numeric types.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../serialized-form.html#org.deidentifier.arx.DataType.ARXDecimal">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -173,7 +173,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#compare(java.lang.Double, java.lang.Double)">compare</a></strong>(java.lang.Double&nbsp;t1,
        java.lang.Double&nbsp;t2)</code>
-<div class="block">Compare</div>
+<div class="block">Compare.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -200,13 +200,13 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#format(java.lang.Double)">format</a></strong>(java.lang.Double&nbsp;s)</code>
-<div class="block">Converts a value into a string</div>
+<div class="block">Converts a value into a string.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="class in org.deidentifier.arx">DataType.DataTypeDescription</a>&lt;java.lang.Double&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#getDescription()">getDescription</a></strong>()</code>
-<div class="block">Returns a description of the data type</div>
+<div class="block">Returns a description of the data type.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -214,60 +214,66 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#getFormat()">getFormat</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.util.Locale</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#getLocale()">getLocale</a></strong>()</code>
+<div class="block">Returns the locale of the format.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#getMaximum()">getMaximum</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#getMinimum()">getMinimum</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#isValid(java.lang.String)">isValid</a></strong>(java.lang.String&nbsp;s)</code>
-<div class="block">Checks whether the given string conforms to the data type's format</div>
+<div class="block">Checks whether the given string conforms to the data type's format.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#multiply(java.lang.Double, double)">multiply</a></strong>(java.lang.Double&nbsp;multiplicand,
         double&nbsp;multiplicator)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#multiply(java.lang.Double, java.lang.Double)">multiply</a></strong>(java.lang.Double&nbsp;multiplicand,
         java.lang.Double&nbsp;multiplicator)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#multiply(java.lang.Double, int)">multiply</a></strong>(java.lang.Double&nbsp;multiplicand,
         int&nbsp;multiplicator)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#multiply(java.lang.String, java.lang.String)">multiply</a></strong>(java.lang.String&nbsp;multiplicand,
         java.lang.String&nbsp;multiplicator)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#parse(java.lang.String)">parse</a></strong>(java.lang.String&nbsp;s)</code>
-<div class="block">Converts a string into a value</div>
+<div class="block">Converts a string into a value.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#ratio(java.lang.Double, java.lang.Double)">ratio</a></strong>(java.lang.Double&nbsp;dividend,
      java.lang.Double&nbsp;divisor)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#subtract(java.lang.Double, java.lang.Double)">subtract</a></strong>(java.lang.Double&nbsp;minuend,
         java.lang.Double&nbsp;subtrahend)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXDecimal.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -277,7 +283,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a></h3>
-<code><a href="../../../org/deidentifier/arx/DataType.html#createAggregate()">createAggregate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String)">createDate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String)">createDecimal</a>, <a href="../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String)">createInteger</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.util.List)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String[])">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#list()">list</a>, <a href="../../../org/deidentifier/arx/DataType.html#list(java.lang.Class)">list</a></code></li>
+<code><a href="../../../org/deidentifier/arx/DataType.html#createAggregate()">createAggregate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String)">createDate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String, java.util.Locale)">createDate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String)">createDecimal</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String, java.util.Locale)">createDecimal</a>, <a href="../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String)">createInteger</a>, <a href="../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String, java.util.Locale)">createInteger</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.util.List)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String[])">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#list()">list</a>, <a href="../../../org/deidentifier/arx/DataType.html#list(java.lang.Class)">list</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -311,7 +317,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#add(T, T)">add</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="clone()">
@@ -336,7 +342,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <pre>public&nbsp;int&nbsp;compare(java.lang.Double&nbsp;t1,
           java.lang.Double&nbsp;t2)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#compare(T, T)">DataType</a></code></strong></div>
-<div class="block">Compare</div>
+<div class="block">Compare.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code>compare</code>&nbsp;in interface&nbsp;<code>java.util.Comparator&lt;java.lang.Double&gt;</code></dd>
@@ -365,6 +371,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#compare(java.lang.String, java.lang.String)">compare</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#compare(java.lang.String, java.lang.String)">compare</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.NumberFormatException</code></dd></dl>
 </li>
@@ -380,7 +387,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#divide(T, T)">divide</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="divide(java.lang.String, java.lang.String)">
@@ -394,7 +401,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#divide(java.lang.String, java.lang.String)">divide</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="equals(java.lang.Object)">
@@ -420,13 +427,13 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>format</h4>
 <pre>public&nbsp;java.lang.String&nbsp;format(java.lang.Double&nbsp;s)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#format(T)">DataType</a></code></strong></div>
-<div class="block">Converts a value into a string</div>
+<div class="block">Converts a value into a string.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#format(T)">format</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#format(T)">format</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getDescription()">
@@ -437,13 +444,13 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>getDescription</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="class in org.deidentifier.arx">DataType.DataTypeDescription</a>&lt;java.lang.Double&gt;&nbsp;getDescription()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#getDescription()">DataType</a></code></strong></div>
-<div class="block">Returns a description of the data type</div>
+<div class="block">Returns a description of the data type.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#getDescription()">getDescription</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#getDescription()">getDescription</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getFormat()">
@@ -456,7 +463,21 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html#getFormat()">getFormat</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a></code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getLocale()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLocale</h4>
+<pre>public&nbsp;java.util.Locale&nbsp;getLocale()</pre>
+<div class="block">Returns the locale of the format.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html#getLocale()">getLocale</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getMaximum()">
@@ -469,7 +490,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#getMaximum()">getMaximum</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getMinimum()">
@@ -482,7 +503,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#getMinimum()">getMinimum</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="hashCode()">
@@ -506,13 +527,13 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>isValid</h4>
 <pre>public&nbsp;boolean&nbsp;isValid(java.lang.String&nbsp;s)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#isValid(java.lang.String)">DataType</a></code></strong></div>
-<div class="block">Checks whether the given string conforms to the data type's format</div>
+<div class="block">Checks whether the given string conforms to the data type's format.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#isValid(java.lang.String)">isValid</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#isValid(java.lang.String)">isValid</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="multiply(java.lang.Double, double)">
@@ -526,7 +547,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#multiply(T, double)">multiply</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="multiply(java.lang.Double, java.lang.Double)">
@@ -540,7 +561,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#multiply(T, T)">multiply</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="multiply(java.lang.Double, int)">
@@ -554,7 +575,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#multiply(T, int)">multiply</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="multiply(java.lang.String, java.lang.String)">
@@ -568,7 +589,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#multiply(java.lang.String, java.lang.String)">multiply</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="parse(java.lang.String)">
@@ -579,13 +600,13 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>parse</h4>
 <pre>public&nbsp;java.lang.Double&nbsp;parse(java.lang.String&nbsp;s)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#parse(java.lang.String)">DataType</a></code></strong></div>
-<div class="block">Converts a string into a value</div>
+<div class="block">Converts a string into a value.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#parse(java.lang.String)">parse</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#parse(java.lang.String)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="ratio(java.lang.Double, java.lang.Double)">
@@ -599,7 +620,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#ratio(T, T)">ratio</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="subtract(java.lang.Double, java.lang.Double)">
@@ -613,7 +634,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html#subtract(T, T)">subtract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithRatioScale.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithRatioScale</a>&lt;java.lang.Double&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="toString()">

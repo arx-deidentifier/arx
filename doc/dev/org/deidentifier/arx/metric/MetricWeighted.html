@@ -97,6 +97,7 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd></dl>
 <dl>
 <dt>All Implemented Interfaces:</dt>
 <dd>java.io.Serializable</dd>
@@ -147,7 +148,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <tr class="altColor">
 <td class="colFirst"><code>protected double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricWeighted.html#weights">weights</a></strong></code>
-<div class="block">The weights</div>
+<div class="block">The weights.</div>
 </td>
 </tr>
 </table>
@@ -167,7 +168,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricWeighted.html#MetricWeighted(boolean, boolean)">MetricWeighted</a></strong>(boolean&nbsp;monotonic,
               boolean&nbsp;independent)</code>
-<div class="block">Constructor</div>
+<div class="block">Constructor.</div>
 </td>
 </tr>
 </table>
@@ -243,7 +244,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <li class="blockList">
 <h4>weights</h4>
 <pre>protected&nbsp;double[] weights</pre>
-<div class="block">The weights</div>
+<div class="block">The weights.</div>
 </li>
 </ul>
 </li>
@@ -262,7 +263,7 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <h4>MetricWeighted</h4>
 <pre>public&nbsp;MetricWeighted(boolean&nbsp;monotonic,
               boolean&nbsp;independent)</pre>
-<div class="block">Constructor</div>
+<div class="block">Constructor.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - </dd><dd><code>independent</code> - </dd></dl>
 </li>
 </ul>
@@ -301,14 +302,14 @@ extends <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="cla
 <pre>protected&nbsp;<a href="../../../../org/deidentifier/arx/metric/MetricWeighted.html" title="type parameter in MetricWeighted">T</a>&nbsp;getLowerBoundInternal(<a href="../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
                       <a href="../../../../org/deidentifier/arx/framework/check/groupify/IHashGroupify.html" title="interface in org.deidentifier.arx.framework.check.groupify">IHashGroupify</a>&nbsp;groupify)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.groupify.IHashGroupify)">Metric</a></code></strong></div>
-<div class="block">Returns a lower bound for the information loss for the given node. 
+<div class="block">Returns a lower bound for the information loss for the given node.
  This can be used to expose the results of monotonic shares of a metric,
  which can significantly speed-up the anonymization process. If no
  such metric exists, simply return <code>null</code>. <br>
  <br>
  This variant of the method allows computing a monotonic share based on
  a groupified data representation. IMPORTANT NOTE: The groups may not have
- been classified correctly when the method is called, i.e., 
+ been classified correctly when the method is called, i.e.,
  HashGroupifyEntry.isNotOutlier may not be set correctly!</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>

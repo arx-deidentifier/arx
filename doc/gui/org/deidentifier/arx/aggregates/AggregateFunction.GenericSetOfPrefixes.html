@@ -102,6 +102,7 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd></dl>
 <dl>
 <dt>All Implemented Interfaces:</dt>
 <dd>java.io.Serializable</dd>
@@ -114,7 +115,7 @@
 <br>
 <pre>public static class <span class="strong">AggregateFunction.GenericSetOfPrefixes&lt;T&gt;</span>
 extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>&lt;T&gt;</pre>
-<div class="block">An aggregate function that returns a set of the prefixes of the data values</div>
+<div class="block">An aggregate function that returns a set of the prefixes of the data values.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.deidentifier.arx.aggregates.AggregateFunction.GenericSetOfPrefixes">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -167,31 +168,31 @@ extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.A
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html#acceptsParameter(java.lang.String)">acceptsParameter</a></strong>(java.lang.String&nbsp;parameter)</code>
-<div class="block">Returns whether the function accepts this parameter</div>
+<div class="block">Returns whether the function accepts this parameter.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html#aggregate(java.lang.String[])">aggregate</a></strong>(java.lang.String[]&nbsp;values)</code>
-<div class="block">This function returns an aggregate value</div>
+<div class="block">This function returns an aggregate value.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html#getParameter()">getParameter</a></strong>()</code>
-<div class="block">Returns the parameter</div>
+<div class="block">Returns the parameter.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html#newInstance(java.lang.String)">newInstance</a></strong>(java.lang.String&nbsp;parameter)</code>
-<div class="block">Creates a new instance with the given parameter</div>
+<div class="block">Creates a new instance with the given parameter.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html#toLabel()">toLabel</a></strong>()</code>
-<div class="block">Returns a label</div>
+<div class="block">Returns a label.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -235,11 +236,11 @@ extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.A
 <h4>acceptsParameter</h4>
 <pre>public&nbsp;boolean&nbsp;acceptsParameter(java.lang.String&nbsp;parameter)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html#acceptsParameter(java.lang.String)">AggregateFunction.AggregateFunctionWithParameter</a></code></strong></div>
-<div class="block">Returns whether the function accepts this parameter</div>
+<div class="block">Returns whether the function accepts this parameter.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html#acceptsParameter(java.lang.String)">acceptsParameter</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="aggregate(java.lang.String[])">
@@ -250,7 +251,7 @@ extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.A
 <h4>aggregate</h4>
 <pre>public&nbsp;java.lang.String&nbsp;aggregate(java.lang.String[]&nbsp;values)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html#aggregate(java.lang.String[])">AggregateFunction</a></code></strong></div>
-<div class="block">This function returns an aggregate value</div>
+<div class="block">This function returns an aggregate value.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html#aggregate(java.lang.String[])">aggregate</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;</code></dd>
@@ -265,11 +266,11 @@ extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.A
 <h4>getParameter</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getParameter()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html#getParameter()">AggregateFunction.AggregateFunctionWithParameter</a></code></strong></div>
-<div class="block">Returns the parameter</div>
+<div class="block">Returns the parameter.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html#getParameter()">getParameter</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="newInstance(java.lang.String)">
@@ -280,11 +281,11 @@ extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.A
 <h4>newInstance</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;&nbsp;newInstance(java.lang.String&nbsp;parameter)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html#newInstance(java.lang.String)">AggregateFunction.AggregateFunctionWithParameter</a></code></strong></div>
-<div class="block">Creates a new instance with the given parameter</div>
+<div class="block">Creates a new instance with the given parameter.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html#newInstance(java.lang.String)">newInstance</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionWithParameter.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionWithParameter</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="toLabel()">
@@ -295,7 +296,7 @@ extends <a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.A
 <h4>toLabel</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toLabel()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html#toLabel()">AggregateFunction</a></code></strong></div>
-<div class="block">Returns a label</div>
+<div class="block">Returns a label.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html#toLabel()">toLabel</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.GenericSetOfPrefixes.html" title="type parameter in AggregateFunction.GenericSetOfPrefixes">T</a>&gt;</code></dd>

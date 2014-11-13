@@ -101,7 +101,7 @@
 <pre>public class <span class="strong">DataSubset</span>
 extends java.lang.Object
 implements java.io.Serializable</pre>
-<div class="block">This class represents a data subset as required for d-presence</div>
+<div class="block">This class represents a data subset as required for d-presence.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../serialized-form.html#org.deidentifier.arx.DataSubset">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -124,13 +124,13 @@ implements java.io.Serializable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>protected int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSubset.html#array">array</a></strong></code>
-<div class="block">The subset as a sorted array of indices</div>
+<div class="block">The subset as a sorted array of indices.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSubset.html#set">set</a></strong></code>
-<div class="block">The subset as a bitset</div>
+<div class="block">The subset as a bitset.</div>
 </td>
 </tr>
 </table>
@@ -159,21 +159,21 @@ implements java.io.Serializable</pre>
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.DataSelector)">create</a></strong>(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a>&nbsp;selector)</code>
-<div class="block">Creates a subset from the given selector</div>
+<div class="block">Creates a subset from the given selector.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, org.deidentifier.arx.RowSet)">create</a></strong>(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       <a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</code>
-<div class="block">Creates a new subset from the given row set, from which a copy is created</div>
+<div class="block">Creates a new subset from the given row set, from which a copy is created.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataSubset.html#create(org.deidentifier.arx.Data, java.util.Set)">create</a></strong>(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
       java.util.Set&lt;java.lang.Integer&gt;&nbsp;subset)</code>
-<div class="block">Creates a new subset from the given set of tuple indices</div>
+<div class="block">Creates a new subset from the given set of tuple indices.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -213,7 +213,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>set</h4>
 <pre>protected&nbsp;<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a> set</pre>
-<div class="block">The subset as a bitset</div>
+<div class="block">The subset as a bitset.</div>
 </li>
 </ul>
 <a name="array">
@@ -223,7 +223,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>array</h4>
 <pre>protected&nbsp;int[] array</pre>
-<div class="block">The subset as a sorted array of indices</div>
+<div class="block">The subset as a sorted array of indices.</div>
 </li>
 </ul>
 </li>
@@ -243,7 +243,7 @@ implements java.io.Serializable</pre>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;create(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
                 <a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;subset)</pre>
 <div class="block">Create a subset by matching two data instances.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>file</code> - </dd><dd><code>separator</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>subset</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -255,7 +255,7 @@ implements java.io.Serializable</pre>
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;create(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
                 <a href="../../../org/deidentifier/arx/DataSelector.html" title="class in org.deidentifier.arx">DataSelector</a>&nbsp;selector)</pre>
-<div class="block">Creates a subset from the given selector</div>
+<div class="block">Creates a subset from the given selector.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>selector</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -268,7 +268,7 @@ implements java.io.Serializable</pre>
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;create(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
                 <a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;subset)</pre>
-<div class="block">Creates a new subset from the given row set, from which a copy is created</div>
+<div class="block">Creates a new subset from the given row set, from which a copy is created.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>subset</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -281,7 +281,7 @@ implements java.io.Serializable</pre>
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;create(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
                 java.util.Set&lt;java.lang.Integer&gt;&nbsp;subset)</pre>
-<div class="block">Creates a new subset from the given set of tuple indices</div>
+<div class="block">Creates a new subset from the given set of tuple indices.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd><dd><code>subset</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -293,6 +293,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getArray</h4>
 <pre>public&nbsp;int[]&nbsp;getArray()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getSet()">
@@ -302,6 +303,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getSet</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;getSet()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

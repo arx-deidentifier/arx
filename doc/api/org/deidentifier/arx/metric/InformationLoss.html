@@ -92,6 +92,7 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd></dl>
 <dl>
 <dt>All Implemented Interfaces:</dt>
 <dd>java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&gt;</dd>
@@ -105,7 +106,7 @@
 <pre>public abstract class <span class="strong">InformationLoss&lt;T&gt;</span>
 extends java.lang.Object
 implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&gt;, java.io.Serializable</pre>
-<div class="block">This class implements an abstract base class for information loss</div>
+<div class="block">This class implements an abstract base class for information loss.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.deidentifier.arx.metric.InformationLoss">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -128,13 +129,13 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#clone()">clone</a></strong>()</code>
-<div class="block">Returns a clone of this object</div>
+<div class="block">Returns a clone of this object.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#compareTo(org.deidentifier.arx.metric.InformationLoss)">compareTo</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
-<div class="block">Compares the loss to the other</div>
+<div class="block">Compares the loss to the other.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -144,7 +145,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
                      int&nbsp;minLevel,
                      int&nbsp;maxLevel)</code>
 <div class="block">Converter method, converting information loss from version 1 to information loss from version 2,
- if necessary</div>
+ if necessary.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -162,26 +163,26 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#max(org.deidentifier.arx.metric.InformationLoss)">max</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
-<div class="block">Retains the maximum of this and other</div>
+<div class="block">Retains the maximum of this and other.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#min(org.deidentifier.arx.metric.InformationLoss)">min</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
-<div class="block">Retains the minimum of this and other</div>
+<div class="block">Retains the minimum of this and other.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>abstract double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)">relativeTo</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;min,
           <a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;max)</code>
-<div class="block">Returns the value relative to the other instance</div>
+<div class="block">Returns the value relative to the other instance.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#toString()">toString</a></strong>()</code>
-<div class="block">Returns a string representation</div>
+<div class="block">Returns a string representation.</div>
 </td>
 </tr>
 </table>
@@ -213,11 +214,11 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>clone</h4>
 <pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a>&gt;&nbsp;clone()</pre>
-<div class="block">Returns a clone of this object</div>
+<div class="block">Returns a clone of this object.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="compareTo(org.deidentifier.arx.metric.InformationLoss)">
@@ -227,7 +228,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>compareTo</h4>
 <pre>public abstract&nbsp;int&nbsp;compareTo(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</pre>
-<div class="block">Compares the loss to the other</div>
+<div class="block">Compares the loss to the other.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&gt;</code></dd>
@@ -255,6 +256,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>getValue</h4>
 <pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a>&nbsp;getValue()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="hashCode()">
@@ -277,7 +279,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>max</h4>
 <pre>public abstract&nbsp;void&nbsp;max(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</pre>
-<div class="block">Retains the maximum of this and other</div>
+<div class="block">Retains the maximum of this and other.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>other</code> - </dd></dl>
 </li>
 </ul>
@@ -288,7 +290,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>min</h4>
 <pre>public abstract&nbsp;void&nbsp;min(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</pre>
-<div class="block">Retains the minimum of this and other</div>
+<div class="block">Retains the minimum of this and other.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>other</code> - </dd></dl>
 </li>
 </ul>
@@ -300,8 +302,8 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <h4>relativeTo</h4>
 <pre>public abstract&nbsp;double&nbsp;relativeTo(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;min,
                 <a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;max)</pre>
-<div class="block">Returns the value relative to the other instance</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>other</code> - </dd>
+<div class="block">Returns the value relative to the other instance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>max</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -312,7 +314,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>toString</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;toString()</pre>
-<div class="block">Returns a string representation</div>
+<div class="block">Returns a string representation.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
@@ -330,7 +332,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
                                        int&nbsp;minLevel,
                                        int&nbsp;maxLevel)</pre>
 <div class="block">Converter method, converting information loss from version 1 to information loss from version 2,
- if necessary</div>
+ if necessary.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>loss</code> - </dd><dd><code>metric</code> - </dd><dd><code>minLevel</code> - </dd><dd><code>maxLevel</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>

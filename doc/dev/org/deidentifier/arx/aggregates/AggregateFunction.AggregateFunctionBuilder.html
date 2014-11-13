@@ -92,6 +92,7 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd></dl>
 <dl>
 <dt>Enclosing class:</dt>
 <dd><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="type parameter in AggregateFunction">T</a>&gt;</dd>
@@ -100,7 +101,7 @@
 <br>
 <pre>public static class <span class="strong">AggregateFunction.AggregateFunctionBuilder&lt;T&gt;</span>
 extends java.lang.Object</pre>
-<div class="block">A builder for aggregate functions</div>
+<div class="block">A builder for aggregate functions.</div>
 </li>
 </ul>
 </div>
@@ -122,27 +123,27 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createBoundsFunction()">createBoundsFunction</a></strong>()</code>
-<div class="block">An aggregate function that returns an interval consisting of the 
- first and the last element following the predefined order</div>
+<div class="block">An aggregate function that returns an interval consisting of the
+ first and the last element following the predefined order.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createConstantFunction(java.lang.String)">createConstantFunction</a></strong>(java.lang.String&nbsp;value)</code>
-<div class="block">An aggregate function that returns a constant value</div>
+<div class="block">An aggregate function that returns a constant value.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createIntervalFunction()">createIntervalFunction</a></strong>()</code>
-<div class="block">An aggregate function that returns an interval [min, max]</div>
+<div class="block">An aggregate function that returns an interval [min, max].</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createIntervalFunction(boolean, boolean)">createIntervalFunction</a></strong>(boolean&nbsp;lowerIncluded,
                       boolean&nbsp;upperIncluded)</code>
-<div class="block">An aggregate function that returns an interval [min, max]</div>
+<div class="block">An aggregate function that returns an interval [min, max].</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -160,7 +161,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createSetFunction()">createSetFunction</a></strong>()</code>
-<div class="block">An aggregate function that returns a set of all data values</div>
+<div class="block">An aggregate function that returns a set of all data values .</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -172,7 +173,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createSetOfPrefixesFunction(int)">createSetOfPrefixesFunction</a></strong>(int&nbsp;length)</code>
-<div class="block">An aggregate function that returns a set of the prefixes of the data values</div>
+<div class="block">An aggregate function that returns a set of the prefixes of the data values.</div>
 </td>
 </tr>
 </table>
@@ -204,8 +205,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createBoundsFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createBoundsFunction()</pre>
-<div class="block">An aggregate function that returns an interval consisting of the 
- first and the last element following the predefined order</div>
+<div class="block">An aggregate function that returns an interval consisting of the
+ first and the last element following the predefined order.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createConstantFunction(java.lang.String)">
@@ -215,7 +217,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createConstantFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createConstantFunction(java.lang.String&nbsp;value)</pre>
-<div class="block">An aggregate function that returns a constant value</div>
+<div class="block">An aggregate function that returns a constant value.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createIntervalFunction()">
@@ -225,7 +229,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createIntervalFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createIntervalFunction()</pre>
-<div class="block">An aggregate function that returns an interval [min, max]</div>
+<div class="block">An aggregate function that returns an interval [min, max].</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createIntervalFunction(boolean, boolean)">
@@ -236,7 +241,9 @@ extends java.lang.Object</pre>
 <h4>createIntervalFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createIntervalFunction(boolean&nbsp;lowerIncluded,
                                           boolean&nbsp;upperIncluded)</pre>
-<div class="block">An aggregate function that returns an interval [min, max]</div>
+<div class="block">An aggregate function that returns an interval [min, max].</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lowerIncluded</code> - </dd><dd><code>upperIncluded</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createPrefixFunction()">
@@ -247,6 +254,7 @@ extends java.lang.Object</pre>
 <h4>createPrefixFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createPrefixFunction()</pre>
 <div class="block">An aggregate function that returns a common prefix.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createPrefixFunction(java.lang.Character)">
@@ -258,7 +266,8 @@ extends java.lang.Object</pre>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createPrefixFunction(java.lang.Character&nbsp;redaction)</pre>
 <div class="block">An aggregate function that returns a common prefix. The remaining characters will be redacted with
  the given character</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>redaction</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>redaction</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createSetFunction()">
@@ -268,8 +277,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createSetFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createSetFunction()</pre>
-<div class="block">An aggregate function that returns a set of all data values</div>
-<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>V</code> - </dd></dl>
+<div class="block">An aggregate function that returns a set of all data values .</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createSetOfPrefixesFunction()">
@@ -280,7 +289,7 @@ extends java.lang.Object</pre>
 <h4>createSetOfPrefixesFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createSetOfPrefixesFunction()</pre>
 <div class="block">An aggregate function that returns a set of the prefixes of the data values. Length is 1</div>
-<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createSetOfPrefixesFunction(int)">
@@ -290,8 +299,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createSetOfPrefixesFunction</h4>
 <pre>public final&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;&nbsp;createSetOfPrefixesFunction(int&nbsp;length)</pre>
-<div class="block">An aggregate function that returns a set of the prefixes of the data values</div>
-<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>length</code> - </dd></dl>
+<div class="block">An aggregate function that returns a set of the prefixes of the data values.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>length</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

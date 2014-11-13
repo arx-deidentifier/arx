@@ -101,7 +101,7 @@
 <pre>public class <span class="strong">ARXConfiguration</span>
 extends java.lang.Object
 implements java.io.Serializable, java.lang.Cloneable</pre>
-<div class="block">A generic configuration for the ARX anonymizer</div>
+<div class="block">A generic configuration for the ARX anonymizer.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../serialized-form.html#org.deidentifier.arx.ARXConfiguration">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -145,19 +145,19 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#REQUIREMENT_COUNTER">REQUIREMENT_COUNTER</a></strong></code>
-<div class="block">Do the criteria require a counter per equivalence class</div>
+<div class="block">Do the criteria require a counter per equivalence class.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#REQUIREMENT_DISTRIBUTION">REQUIREMENT_DISTRIBUTION</a></strong></code>
-<div class="block">Do the criteria require distributions of sensitive values in the equivalence classes</div>
+<div class="block">Do the criteria require distributions of sensitive values in the equivalence classes.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#REQUIREMENT_SECONDARY_COUNTER">REQUIREMENT_SECONDARY_COUNTER</a></strong></code>
-<div class="block">Do the criteria require a second counter</div>
+<div class="block">Do the criteria require a second counter.</div>
 </td>
 </tr>
 </table>
@@ -178,32 +178,32 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#addCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">addCriterion</a></strong>(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;c)</code>
-<div class="block">Adds a criterion to the configuration</div>
+<div class="block">Adds a criterion to the configuration.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#clone()">clone</a></strong>()</code>
-<div class="block">Clones this config</div>
+<div class="block">Clones this config.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#containsCriterion(java.lang.Class)">containsCriterion</a></strong>(java.lang.Class&lt;? extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</code>
-<div class="block">Returns whether the configuration contains a criterion of the given class</div>
+<div class="block">Returns whether the configuration contains a criterion of the given class.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create()">create</a></strong>()</code>
-<div class="block">Creates a new config without tuple suppression</div>
+<div class="block">Creates a new config without tuple suppression.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create(double)">create</a></strong>(double&nbsp;supp)</code>
 <div class="block">Creates a new config that allows the given percentage of outliers and
- thus implements tuple suppression</div>
+ thus implements tuple suppression.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -223,13 +223,13 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getAbsoluteMaxOutliers()">getAbsoluteMaxOutliers</a></strong>()</code>
-<div class="block">Returns the maximum number of allowed outliers</div>
+<div class="block">Returns the maximum number of allowed outliers.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getAttributeWeight(java.lang.String)">getAttributeWeight</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Returns the weight for the given attribute</div>
+<div class="block">Returns the weight for the given attribute.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -247,7 +247,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>java.util.Set&lt;T&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getCriteria(java.lang.Class)">getCriteria</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
-<div class="block">Returns all privacy criteria that are instances of the given class</div>
+<div class="block">Returns all privacy criteria that are instances of the given class.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -265,19 +265,19 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getInternalConfiguration()">getInternalConfiguration</a></strong>()</code>
-<div class="block">TODO: This is a hack and should be removed in future releases</div>
+<div class="block">TODO: This is a hack and should be removed in future releases.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getMaxOutliers()">getMaxOutliers</a></strong>()</code>
-<div class="block">Returns the maximum number of allowed outliers</div>
+<div class="block">Returns the maximum number of allowed outliers.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getMetric()">getMetric</a></strong>()</code>
-<div class="block">Returns the metric used for measuring information loss</div>
+<div class="block">Returns the metric used for measuring information loss.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -289,19 +289,19 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getRequirements()">getRequirements</a></strong>()</code>
-<div class="block">Returns the criteria's requirements</div>
+<div class="block">Returns the criteria's requirements.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSnapshotLength()">getSnapshotLength</a></strong>()</code>
-<div class="block">Returns the specific length of each entry in a snapshot</div>
+<div class="block">Returns the specific length of each entry in a snapshot.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressedAttributeTypes()">getSuppressedAttributeTypes</a></strong>()</code>
-<div class="block">Returns an integer representing all attribute types that must be suppressed</div>
+<div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -313,7 +313,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
-<div class="block">Initializes the configuration</div>
+<div class="block">Initializes the configuration.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -326,19 +326,19 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isCriterionMonotonic()">isCriterionMonotonic</a></strong>()</code>
-<div class="block">Determines whether the anonymity criterion is montonic</div>
+<div class="block">Determines whether the anonymity criterion is montonic.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
-<div class="block">Is practical monotonicity assumed</div>
+<div class="block">Is practical monotonicity assumed.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isProtectSensitiveAssociations()">isProtectSensitiveAssociations</a></strong>()</code>
-<div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account</div>
+<div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -350,13 +350,13 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</code>
-<div class="block">Removes the given criterion</div>
+<div class="block">Removes the given criterion.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#requires(int)">requires</a></strong>(int&nbsp;requirement)</code>
-<div class="block">Convenience method for checking the requirements</div>
+<div class="block">Convenience method for checking the requirements.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -370,39 +370,39 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String, double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   double&nbsp;weight)</code>
-<div class="block">Sets the weight for the given attribute</div>
+<div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String, java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   java.lang.Double&nbsp;weight)</code>
-<div class="block">Sets the weight for the given attribute</div>
+<div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMaxOutliers(double)">setMaxOutliers</a></strong>(double&nbsp;supp)</code>
 <div class="block">Allows for a certain percentage of outliers and thus
- triggers tuple suppression</div>
+ triggers tuple suppression.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setMetric(org.deidentifier.arx.metric.Metric)">setMetric</a></strong>(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
-<div class="block">Sets the utility metric for measuring information loss</div>
+<div class="block">Sets the utility metric for measuring information loss .</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setPracticalMonotonicity(boolean)">setPracticalMonotonicity</a></strong>(boolean&nbsp;assumeMonotonicity)</code>
-<div class="block">Set, if practical monotonicity assumed</div>
+<div class="block">Set, if practical monotonicity assumed.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setProtectSensitiveAssociations(boolean)">setProtectSensitiveAssociations</a></strong>(boolean&nbsp;protect)</code>
-<div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account</div>
+<div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -446,7 +446,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>REQUIREMENT_COUNTER</h4>
 <pre>public static final&nbsp;int REQUIREMENT_COUNTER</pre>
-<div class="block">Do the criteria require a counter per equivalence class</div>
+<div class="block">Do the criteria require a counter per equivalence class.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#org.deidentifier.arx.ARXConfiguration.REQUIREMENT_COUNTER">Constant Field Values</a></dd></dl>
 </li>
 </ul>
@@ -457,7 +457,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>REQUIREMENT_DISTRIBUTION</h4>
 <pre>public static final&nbsp;int REQUIREMENT_DISTRIBUTION</pre>
-<div class="block">Do the criteria require distributions of sensitive values in the equivalence classes</div>
+<div class="block">Do the criteria require distributions of sensitive values in the equivalence classes.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#org.deidentifier.arx.ARXConfiguration.REQUIREMENT_DISTRIBUTION">Constant Field Values</a></dd></dl>
 </li>
 </ul>
@@ -468,7 +468,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>REQUIREMENT_SECONDARY_COUNTER</h4>
 <pre>public static final&nbsp;int REQUIREMENT_SECONDARY_COUNTER</pre>
-<div class="block">Do the criteria require a second counter</div>
+<div class="block">Do the criteria require a second counter.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#org.deidentifier.arx.ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER">Constant Field Values</a></dd></dl>
 </li>
 </ul>
@@ -487,7 +487,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create()</pre>
-<div class="block">Creates a new config without tuple suppression</div>
+<div class="block">Creates a new config without tuple suppression.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="create(double)">
@@ -498,8 +499,9 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create(double&nbsp;supp)</pre>
 <div class="block">Creates a new config that allows the given percentage of outliers and
- thus implements tuple suppression</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd></dl>
+ thus implements tuple suppression.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="create(double, org.deidentifier.arx.metric.Metric)">
@@ -512,7 +514,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
                       <a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</pre>
 <div class="block">Creates a new config that allows the given percentage of outliers and
  thus implements tuple suppression. Defines the metric for measuring information loss.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd><dd><code>metric</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd><dd><code>metric</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="create(org.deidentifier.arx.metric.Metric)">
@@ -523,7 +526,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;create(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</pre>
 <div class="block">Creates a new config that allows to define the metric for measuring information loss.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>metric</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>metric</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="addCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">
@@ -533,8 +537,9 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>addCriterion</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;addCriterion(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;c)</pre>
-<div class="block">Adds a criterion to the configuration</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>c</code> - </dd></dl>
+<div class="block">Adds a criterion to the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>c</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="clone()">
@@ -544,11 +549,11 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>clone</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;clone()</pre>
-<div class="block">Clones this config</div>
+<div class="block">Clones this config.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="containsCriterion(java.lang.Class)">
@@ -558,7 +563,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>containsCriterion</h4>
 <pre>public&nbsp;boolean&nbsp;containsCriterion(java.lang.Class&lt;? extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</pre>
-<div class="block">Returns whether the configuration contains a criterion of the given class</div>
+<div class="block">Returns whether the configuration contains a criterion of the given class.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -570,7 +575,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getAttributeWeight</h4>
 <pre>public&nbsp;double&nbsp;getAttributeWeight(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the weight for the given attribute</div>
+<div class="block">Returns the weight for the given attribute.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -606,8 +611,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getCriteria</h4>
 <pre>public&nbsp;&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;java.util.Set&lt;T&gt;&nbsp;getCriteria(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
-<div class="block">Returns all privacy criteria that are instances of the given class</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
+<div class="block">Returns all privacy criteria that are instances of the given class.</div>
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -619,7 +624,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>getCriterion</h4>
 <pre>public&nbsp;&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;T&nbsp;getCriterion(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
 <div class="block">Returns an instance of the class, if any. Throws an exception if more than one such criterion exists.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -630,7 +635,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getMaxOutliers</h4>
 <pre>public final&nbsp;double&nbsp;getMaxOutliers()</pre>
-<div class="block">Returns the maximum number of allowed outliers</div>
+<div class="block">Returns the maximum number of allowed outliers.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -641,7 +646,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getMetric</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;getMetric()</pre>
-<div class="block">Returns the metric used for measuring information loss</div>
+<div class="block">Returns the metric used for measuring information loss.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -676,7 +681,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>isCriterionMonotonic</h4>
 <pre>public final&nbsp;boolean&nbsp;isCriterionMonotonic()</pre>
-<div class="block">Determines whether the anonymity criterion is montonic</div>
+<div class="block">Determines whether the anonymity criterion is montonic.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -687,7 +692,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>isPracticalMonotonicity</h4>
 <pre>public&nbsp;boolean&nbsp;isPracticalMonotonicity()</pre>
-<div class="block">Is practical monotonicity assumed</div>
+<div class="block">Is practical monotonicity assumed.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -698,7 +703,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>isProtectSensitiveAssociations</h4>
 <pre>public&nbsp;boolean&nbsp;isProtectSensitiveAssociations()</pre>
-<div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account</div>
+<div class="block">Returns, whether the anonymizer should take associations between sensitive attributes into account.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="isSuppressionAlwaysEnabled()">
@@ -721,8 +727,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>removeCriterion</h4>
 <pre>public&nbsp;&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;boolean&nbsp;removeCriterion(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</pre>
-<div class="block">Removes the given criterion</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - </dd>
+<div class="block">Removes the given criterion.</div>
+<dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - </dd><dt><span class="strong">Parameters:</span></dt><dd><code>arg</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -747,7 +753,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>setAttributeWeight</h4>
 <pre>public&nbsp;void&nbsp;setAttributeWeight(java.lang.String&nbsp;attribute,
                       double&nbsp;weight)</pre>
-<div class="block">Sets the weight for the given attribute</div>
+<div class="block">Sets the weight for the given attribute.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>weight</code> - </dd></dl>
 </li>
 </ul>
@@ -759,7 +765,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>setAttributeWeight</h4>
 <pre>public&nbsp;void&nbsp;setAttributeWeight(java.lang.String&nbsp;attribute,
                       java.lang.Double&nbsp;weight)</pre>
-<div class="block">Sets the weight for the given attribute</div>
+<div class="block">Sets the weight for the given attribute.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>weight</code> - </dd></dl>
 </li>
 </ul>
@@ -771,7 +777,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>setMaxOutliers</h4>
 <pre>public&nbsp;void&nbsp;setMaxOutliers(double&nbsp;supp)</pre>
 <div class="block">Allows for a certain percentage of outliers and thus
- triggers tuple suppression</div>
+ triggers tuple suppression.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>supp</code> - </dd></dl>
 </li>
 </ul>
@@ -782,7 +788,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>setMetric</h4>
 <pre>public&nbsp;void&nbsp;setMetric(<a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</pre>
-<div class="block">Sets the utility metric for measuring information loss</div>
+<div class="block">Sets the utility metric for measuring information loss .</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>metric</code> - </dd></dl>
 </li>
 </ul>
@@ -793,7 +799,8 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>setPracticalMonotonicity</h4>
 <pre>public&nbsp;void&nbsp;setPracticalMonotonicity(boolean&nbsp;assumeMonotonicity)</pre>
-<div class="block">Set, if practical monotonicity assumed</div>
+<div class="block">Set, if practical monotonicity assumed.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>assumeMonotonicity</code> - </dd></dl>
 </li>
 </ul>
 <a name="setProtectSensitiveAssociations(boolean)">
@@ -803,7 +810,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>setProtectSensitiveAssociations</h4>
 <pre>public&nbsp;void&nbsp;setProtectSensitiveAssociations(boolean&nbsp;protect)</pre>
-<div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account</div>
+<div class="block">Set, whether the anonymizer should take associations between sensitive attributes into account.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>protect</code> - </dd></dl>
 </li>
 </ul>
@@ -838,7 +845,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getAbsoluteMaxOutliers</h4>
 <pre>protected final&nbsp;int&nbsp;getAbsoluteMaxOutliers()</pre>
-<div class="block">Returns the maximum number of allowed outliers</div>
+<div class="block">Returns the maximum number of allowed outliers.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -849,7 +856,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getInternalConfiguration</h4>
 <pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;getInternalConfiguration()</pre>
-<div class="block">TODO: This is a hack and should be removed in future releases</div>
+<div class="block">TODO: This is a hack and should be removed in future releases.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -884,7 +891,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getRequirements</h4>
 <pre>protected&nbsp;int&nbsp;getRequirements()</pre>
-<div class="block">Returns the criteria's requirements</div>
+<div class="block">Returns the criteria's requirements.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -895,7 +902,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getSnapshotLength</h4>
 <pre>protected&nbsp;int&nbsp;getSnapshotLength()</pre>
-<div class="block">Returns the specific length of each entry in a snapshot</div>
+<div class="block">Returns the specific length of each entry in a snapshot.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -906,7 +913,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getSuppressedAttributeTypes</h4>
 <pre>protected&nbsp;int&nbsp;getSuppressedAttributeTypes()</pre>
-<div class="block">Returns an integer representing all attribute types that must be suppressed</div>
+<div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -917,7 +924,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>initialize</h4>
 <pre>protected&nbsp;void&nbsp;initialize(<a href="../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</pre>
-<div class="block">Initializes the configuration</div>
+<div class="block">Initializes the configuration.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd></dl>
 </li>
 </ul>
@@ -928,7 +935,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>requires</h4>
 <pre>protected&nbsp;boolean&nbsp;requires(int&nbsp;requirement)</pre>
-<div class="block">Convenience method for checking the requirements</div>
+<div class="block">Convenience method for checking the requirements.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>requirement</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>

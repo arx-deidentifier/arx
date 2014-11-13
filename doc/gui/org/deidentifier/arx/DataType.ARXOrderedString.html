@@ -110,7 +110,7 @@
 <pre>public static class <span class="strong">DataType.ARXOrderedString</span>
 extends <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.String&gt;
 implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a></pre>
-<div class="block">Base class for ordered string types</div>
+<div class="block">Base class for ordered string types.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../serialized-form.html#org.deidentifier.arx.DataType.ARXOrderedString">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -168,7 +168,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#compare(java.lang.String, java.lang.String)">compare</a></strong>(java.lang.String&nbsp;s1,
        java.lang.String&nbsp;s2)</code>
-<div class="block">Compare</div>
+<div class="block">Compare.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -178,19 +178,19 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#format(java.lang.String)">format</a></strong>(java.lang.String&nbsp;s)</code>
-<div class="block">Converts a value into a string</div>
+<div class="block">Converts a value into a string.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="class in org.deidentifier.arx">DataType.DataTypeDescription</a>&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#getDescription()">getDescription</a></strong>()</code>
-<div class="block">Returns a description of the data type</div>
+<div class="block">Returns a description of the data type.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#getElements()">getElements</a></strong>()</code>
-<div class="block">Returns all elements backing this datatype</div>
+<div class="block">Returns all elements backing this datatype.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -198,22 +198,28 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#getFormat()">getFormat</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>java.util.Locale</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#getLocale()">getLocale</a></strong>()</code>
+<div class="block">Returns the locale of the format.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#isValid(java.lang.String)">isValid</a></strong>(java.lang.String&nbsp;s)</code>
-<div class="block">Checks whether the given string conforms to the data type's format</div>
+<div class="block">Checks whether the given string conforms to the data type's format.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#parse(java.lang.String)">parse</a></strong>(java.lang.String&nbsp;s)</code>
+<div class="block">Converts a string into a value.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#parse(java.lang.String)">parse</a></strong>(java.lang.String&nbsp;s)</code>
-<div class="block">Converts a string into a value</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataType.ARXOrderedString.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -223,7 +229,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.<a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a></h3>
-<code><a href="../../../org/deidentifier/arx/DataType.html#createAggregate()">createAggregate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String)">createDate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String)">createDecimal</a>, <a href="../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String)">createInteger</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.util.List)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String[])">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#list()">list</a>, <a href="../../../org/deidentifier/arx/DataType.html#list(java.lang.Class)">list</a></code></li>
+<code><a href="../../../org/deidentifier/arx/DataType.html#createAggregate()">createAggregate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String)">createDate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String, java.util.Locale)">createDate</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String)">createDecimal</a>, <a href="../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String, java.util.Locale)">createDecimal</a>, <a href="../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String)">createInteger</a>, <a href="../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String, java.util.Locale)">createInteger</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.util.List)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String)">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#createOrderedString(java.lang.String[])">createOrderedString</a>, <a href="../../../org/deidentifier/arx/DataType.html#list()">list</a>, <a href="../../../org/deidentifier/arx/DataType.html#list(java.lang.Class)">list</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -268,7 +274,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <pre>public&nbsp;int&nbsp;compare(java.lang.String&nbsp;s1,
           java.lang.String&nbsp;s2)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#compare(T, T)">DataType</a></code></strong></div>
-<div class="block">Compare</div>
+<div class="block">Compare.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code>compare</code>&nbsp;in interface&nbsp;<code>java.util.Comparator&lt;java.lang.String&gt;</code></dd>
@@ -300,10 +306,24 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>format</h4>
 <pre>public&nbsp;java.lang.String&nbsp;format(java.lang.String&nbsp;s)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#format(T)">DataType</a></code></strong></div>
-<div class="block">Converts a value into a string</div>
+<div class="block">Converts a value into a string.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#format(T)">format</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.String&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getLocale()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLocale</h4>
+<pre>public&nbsp;java.util.Locale&nbsp;getLocale()</pre>
+<div class="block">Returns the locale of the format.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html#getLocale()">getLocale</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -315,7 +335,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>getDescription</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="class in org.deidentifier.arx">DataType.DataTypeDescription</a>&lt;java.lang.String&gt;&nbsp;getDescription()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#getDescription()">DataType</a></code></strong></div>
-<div class="block">Returns a description of the data type</div>
+<div class="block">Returns a description of the data type.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#getDescription()">getDescription</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.String&gt;</code></dd>
@@ -329,7 +349,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <li class="blockList">
 <h4>getElements</h4>
 <pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getElements()</pre>
-<div class="block">Returns all elements backing this datatype</div>
+<div class="block">Returns all elements backing this datatype.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -343,7 +363,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html#getFormat()">getFormat</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.html" title="interface in org.deidentifier.arx">DataType.DataTypeWithFormat</a></code></dd>
-</dl>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="hashCode()">
@@ -367,7 +387,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>isValid</h4>
 <pre>public&nbsp;boolean&nbsp;isValid(java.lang.String&nbsp;s)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#isValid(java.lang.String)">DataType</a></code></strong></div>
-<div class="block">Checks whether the given string conforms to the data type's format</div>
+<div class="block">Checks whether the given string conforms to the data type's format.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#isValid(java.lang.String)">isValid</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.String&gt;</code></dd>
@@ -382,7 +402,7 @@ implements <a href="../../../org/deidentifier/arx/DataType.DataTypeWithFormat.ht
 <h4>parse</h4>
 <pre>public&nbsp;java.lang.String&nbsp;parse(java.lang.String&nbsp;s)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html#parse(java.lang.String)">DataType</a></code></strong></div>
-<div class="block">Converts a string into a value</div>
+<div class="block">Converts a string into a value.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/deidentifier/arx/DataType.html#parse(java.lang.String)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.String&gt;</code></dd>

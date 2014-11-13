@@ -148,7 +148,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createDiscernabilityMetric()">createDiscernabilityMetric</a></strong>()</code>
-<div class="block">Creates an instance of the discernability metric</div>
+<div class="block">Creates an instance of the discernability metric.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -311,7 +311,7 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/__MetricV2.html#createPrecomputedLossMetric(double)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold)</code>
-<div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization 
+<div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization
  and suppression equally.</div>
 </td>
 </tr>
@@ -397,7 +397,8 @@ extends java.lang.Object</pre>
 <h4>createAECSMetric</h4>
 <pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;&nbsp;createAECSMetric(double&nbsp;rowCount)</pre>
 <div class="block">Creates a new instance of the AECS metric.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rowCount</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createAECSMetric()">
@@ -418,9 +419,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createDiscernabilityMetric</h4>
 <pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/ILSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">ILSingleDimensional</a>&gt;&nbsp;createDiscernabilityMetric()</pre>
-<div class="block">Creates an instance of the discernability metric</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant (DM*) will be created</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+<div class="block">Creates an instance of the discernability metric.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createDiscernabilityMetric(boolean)">
@@ -502,7 +502,7 @@ extends java.lang.Object</pre>
 <div class="block">Creates an instance of the non-uniform entropy metric. The default aggregate function,
  which is the sum-function, will be used for comparing results.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd><dd><code>cache</code> - </dd><dd><code>cardinalities</code> - </dd><dd><code>hierarchies</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -530,7 +530,7 @@ extends java.lang.Object</pre>
 <div class="block">Creates an instance of the height metric. The default aggregate function, which is the sum-function,
  will be used for comparing results.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxHeight</code> - </dd><dd><code>minHeight</code> - </dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>minHeight</code> - </dd><dd><code>maxHeight</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -593,6 +593,7 @@ extends java.lang.Object</pre>
 <div class="block">Creates an instance of the loss metric which treats generalization and suppression equally.
  The default aggregate function, which is the rank function, will be used.
  This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createLossMetric(org.deidentifier.arx.metric.Metric.AggregateFunction)">
@@ -604,7 +605,8 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createLossMetric(<a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
 <div class="block">Creates an instance of the loss metric which treats generalization and suppression equally.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createLossMetric(double)">
@@ -617,12 +619,13 @@ extends java.lang.Object</pre>
 <div class="block">Creates an instance of the loss metric with factors for weighting generalization and suppression.
  The default aggregate function, which is the rank function, will be used.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression. 
-                 The default value is 0.5, which means that generalization
-                 and suppression will be treated equally. A factor of 0
-                 will favor suppression, and a factor of 1 will favor
-                 generalization. The values in between can be used for
-                 balancing both methods.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">
@@ -635,12 +638,13 @@ extends java.lang.Object</pre>
                                                   <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
 <div class="block">Creates an instance of the loss metric with factors for weighting generalization and suppression.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression. 
-                 The default value is 0.5, which means that generalization
-                 and suppression will be treated equally. A factor of 0
-                 will favor suppression, and a factor of 1 will favor
-                 generalization. The values in between can be used for
-                 balancing both methods.</dd><dd><code>function</code> - The aggregate function to use for comparing results</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd><dd><code>function</code> - The aggregate function to use for comparing results</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createPrecisionMetric()">
@@ -695,7 +699,7 @@ extends java.lang.Object</pre>
 <div class="block">Creates an instance of the precision metric.
  The default aggregate function, which is the arithmetic mean, will be used.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd><dd><code>heights</code> - </dd><dd><code>cells</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -709,7 +713,7 @@ extends java.lang.Object</pre>
                                                        <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
 <div class="block">Creates an instance of the precision metric.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>monotonic</code> - If set to true, the monotonic variant of the metric will be created</dd><dd><code>function</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -767,12 +771,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createPrecomputedLossMetric</h4>
 <pre>public static&nbsp;<a href="../../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecomputedLossMetric(double&nbsp;threshold)</pre>
-<div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization 
- and suppression equally. 
+<div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization
+ and suppression equally.
  The default aggregate function, which is the rank function, will be used.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if 
-                  #distinctValues / #rows <= threshold for all quasi-identifiers.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if
+            #distinctValues / #rows <= threshold for all quasi-identifiers.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createPrecomputedLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">
@@ -785,8 +790,9 @@ extends java.lang.Object</pre>
                                                              <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
 <div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd><dd><code>threshold</code> - The precomputed variant of the metric will be used if 
-                  #distinctValues / #rows <= threshold for all quasi-identifiers.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if
+            #distinctValues / #rows <= threshold for all quasi-identifiers.</dd><dd><code>function</code> - The aggregate function to use for comparing results</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createPrecomputedLossMetric(double, double)">
@@ -800,13 +806,14 @@ extends java.lang.Object</pre>
 <div class="block">Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
  The default aggregate function, which is the rank function, will be used.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression. 
-                 The default value is 0.5, which means that generalization
-                 and suppression will be treated equally. A factor of 0
-                 will favor suppression, and a factor of 1 will favor
-                 generalization. The values in between can be used for
-                 balancing both methods.</dd><dd><code>threshold</code> - The precomputed variant of the metric will be used if 
-                  #distinctValues / #rows <= threshold for all quasi-identifiers.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if
+            #distinctValues / #rows <= threshold for all quasi-identifiers.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createPrecomputedLossMetric(double, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">
@@ -820,13 +827,14 @@ extends java.lang.Object</pre>
                                                              <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
 <div class="block">Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
  This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression. 
-                 The default value is 0.5, which means that generalization
-                 and suppression will be treated equally. A factor of 0
-                 will favor suppression, and a factor of 1 will favor
-                 generalization. The values in between can be used for
-                 balancing both methods.</dd><dd><code>function</code> - The aggregate function to use for comparing results</dd><dd><code>threshold</code> - The precomputed variant of the metric will be used if 
-                  #distinctValues / #rows <= threshold for all quasi-identifiers.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if
+            #distinctValues / #rows <= threshold for all quasi-identifiers.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd><dd><code>function</code> - The aggregate function to use for comparing results</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="createStaticMetric(java.util.Map)">

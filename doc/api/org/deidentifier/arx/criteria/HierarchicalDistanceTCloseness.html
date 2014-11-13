@@ -115,7 +115,7 @@
 <br>
 <pre>public class <span class="strong">HierarchicalDistanceTCloseness</span>
 extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" title="class in org.deidentifier.arx.criteria">TCloseness</a></pre>
-<div class="block">The t-closeness criterion with hierarchical-distance EMD</div>
+<div class="block">The t-closeness criterion with hierarchical-distance EMD.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness">Serialized Form</a></dd></dl>
 </li>
 </ul>
@@ -160,25 +160,25 @@ extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" titl
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#getHierarchy()">getHierarchy</a></strong>()</code>
-<div class="block">Returns the hierarchy backing the EMD calculations</div>
+<div class="block">Returns the hierarchy backing the EMD calculations.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</code>
-<div class="block">Override this to initialize the criterion</div>
+<div class="block">Override this to initialize the criterion.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
-<div class="block">Implement this, to enforce the criterion</div>
+<div class="block">Implement this, to enforce the criterion.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/HierarchicalDistanceTCloseness.html#toString()">toString</a></strong>()</code>
-<div class="block">Returns a string representation</div>
+<div class="block">Returns a string representation.</div>
 </td>
 </tr>
 </table>
@@ -234,10 +234,10 @@ extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" titl
                               double&nbsp;t,
                               <a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;h)</pre>
 <div class="block">Creates a new instance of the t-closeness criterion with hierarchical earth-movers-distance as proposed in:
- Li N, Li T, Venkatasubramanian S. 
- t-Closeness: Privacy beyond k-anonymity and l-diversity. 
+ Li N, Li T, Venkatasubramanian S.
+ t-Closeness: Privacy beyond k-anonymity and l-diversity.
  23rd International Conference on Data Engineering. 2007:106-115.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>t</code> - </dd><dd><code>h</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>t</code> - </dd><dd><code>h</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -256,7 +256,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" titl
 <h4>initialize</h4>
 <pre>public&nbsp;void&nbsp;initialize(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">PrivacyCriterion</a></code></strong></div>
-<div class="block">Override this to initialize the criterion</div>
+<div class="block">Override this to initialize the criterion.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a></code></dd>
@@ -271,7 +271,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" titl
 <h4>isAnonymous</h4>
 <pre>public&nbsp;boolean&nbsp;isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
-<div class="block">Implement this, to enforce the criterion</div>
+<div class="block">Implement this, to enforce the criterion.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
@@ -285,7 +285,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" titl
 <li class="blockList">
 <h4>getHierarchy</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a>&nbsp;getHierarchy()</pre>
-<div class="block">Returns the hierarchy backing the EMD calculations</div>
+<div class="block">Returns the hierarchy backing the EMD calculations.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -297,7 +297,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/TCloseness.html" titl
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">PrivacyCriterion</a></code></strong></div>
-<div class="block">Returns a string representation</div>
+<div class="block">Returns a string representation.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
