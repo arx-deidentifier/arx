@@ -374,7 +374,6 @@ public class HierarchyWizardEditorRenderer<T> {
         gc.setFont(FONT);
         int width = 0;
         for (Object elem : list){
-            
             width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).bounds).x);
         }
         return width;
