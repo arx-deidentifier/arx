@@ -114,21 +114,6 @@ public class ImportWizardPageCSV extends WizardPage {
         public String getText(Object element) {
             return ((String[]) element)[index];
         }
-
-        /**
-         * Returns tooltip for each element of given column
-         * 
-         * The tooltip contains the current row as well as the column index
-         * itself.
-         *
-         * @param element
-         * @return
-         */
-        @Override
-        public String getToolTipText(Object element) {
-            int row = previewData.indexOf(element);
-            return "Row: " + (row + 1) + ", Column: " + (index + 1);
-        }
     }
 
     /** Reference to the wizard containing this page. */
