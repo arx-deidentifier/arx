@@ -18,7 +18,7 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.util.HashMap;
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * A dictionary mapping integers to strings for different dimensions.
@@ -29,10 +29,10 @@ import java.util.HashMap;
 public class Dictionary {
 
     /** The resulting array mapping dimension->integer->string. */
-    private final String[][]           mapping;
+    private final String[][]               mapping;
 
     /** Map used when building the dictionary. */
-    private HashMap<String, Integer>[] maps;
+    private ObjectIntOpenHashMap<String>[] maps;
 
     /**
      * Instantiates a new dictionary.
@@ -42,10 +42,10 @@ public class Dictionary {
      */
     @SuppressWarnings("unchecked")
     public Dictionary(final int dimensions) {
-        maps = new HashMap[dimensions];
+        maps = new ObjectIntOpenHashMap[dimensions];
         mapping = new String[dimensions][];
         for (int i = 0; i < dimensions; i++) {
-            maps[i] = new HashMap<String, Integer>(10000);
+            maps[i] = new ObjectIntOpenHashMap<String>();
         }
     }
 
@@ -55,9 +55,15 @@ public class Dictionary {
     public void finalizeAll() {
         for (int i = 0; i < maps.length; i++) {
             mapping[i] = new String[maps[i].size()];
-            for (final String val : maps[i].keySet()) {
-                mapping[i][maps[i].get(val)] = val;
+            final Object[] keys = maps[i].keys;
+            final int[] values = maps[i].values;
+            final boolean[] allocated = maps[i].allocated;
+            for (int j = 0; j < allocated.length; j++) {
+                if (allocated[j]) {
+                    mapping[i][values[j]] = (String)keys[j];
+                }
             }
+
         }
         maps = null;
     }
@@ -112,11 +118,17 @@ public class Dictionary {
      * @return the int
      */
     public int register(final int dimension, final String string) {
-        final Integer current = maps[dimension].get(string);
-        if (current != null) { return current; }
-        final int idx = maps[dimension].size();
-        maps[dimension].put(string, idx);
-        return idx;
+        
+        // Prepare
+        ObjectIntOpenHashMap<String> map = maps[dimension];
+        int size = map.size();
+        
+        // Return or store
+        if (map.putIfAbsent(string, size)) {
+            return size;
+        } else {
+            return map.lget();
+        }
     }
 
     /**
