@@ -154,6 +154,18 @@ public class HierarchyWizardEditorRenderer<T> {
         }
     }
 
+    /**
+     * Returns the font.
+     *
+     * @return
+     */
+    private static Font getFont(){
+
+        FontData fontdata = GUIHelper.DEFAULT_FONT.getFontData()[0];
+        fontdata.setHeight(9);
+        return GUIHelper.getFont(fontdata);
+    }
+    
     /** Constants. */
     public static final Font  FONT                   = getFont();
     
@@ -180,21 +192,9 @@ public class HierarchyWizardEditorRenderer<T> {
     
     /** Constants. */
     public static final Color NORMAL_BACKGROUND      = GUIHelper.getColor(230, 230, 230);
-    
+
     /** Constants. */
     public static final Color SELECTED_BACKGROUND    = GUIHelper.COLOR_YELLOW;
-
-    /**
-     * Returns the font.
-     *
-     * @return
-     */
-    private static Font getFont(){
-
-        FontData fontdata = GUIHelper.DEFAULT_FONT.getFontData()[0];
-        fontdata.setHeight(9);
-        return GUIHelper.getFont(fontdata);
-    }
 
     /** Var. */
     private final List<RenderedInterval<T>>        intervals         = new ArrayList<RenderedInterval<T>>();
@@ -296,6 +296,108 @@ public class HierarchyWizardEditorRenderer<T> {
         updateGroups(factors, modelIntervals);
     }
 
+    /**
+     * Update graphics layout.
+     *
+     * @param gc
+     */
+    public void update(GC gc){
+        
+        int intervalLabelWidth = 0;
+        int intervalBoundWidth = 0;
+        int intervalTotalWidth = 0;
+        if (model.isShowIntervals()) {
+            intervalLabelWidth = getRequiredLabelWidth(gc, intervals) + OFFSET;
+            intervalBoundWidth = getRequiredBoundWidth(gc, intervals) + OFFSET;
+            intervalTotalWidth = intervalLabelWidth + intervalBoundWidth;
+        }
+        
+        List<Integer> fanoutLabelWidth = new ArrayList<Integer>();
+        List<Integer> fanoutBoundWidth = new ArrayList<Integer>();
+        List<Integer> fanoutTotalWidth = new ArrayList<Integer>();
+        
+        for (List<RenderedGroup<T>> list : groups){
+            int label = getRequiredLabelWidth(gc, list) + OFFSET;
+            int bound = getRequiredBoundWidth(gc, list) + OFFSET;
+            fanoutLabelWidth.add(label);
+            fanoutBoundWidth.add(bound);
+            fanoutTotalWidth.add(label + bound);
+        }
+        
+        int top = OFFSET;
+        if (model.isShowIntervals()) {
+            for (RenderedInterval<T> context : intervals){
+                context.rectangle1 = new Rectangle(OFFSET, top, intervalBoundWidth, INTERVAL_HEIGHT);
+                context.rectangle2 = new Rectangle(OFFSET + intervalBoundWidth, top, intervalLabelWidth, INTERVAL_HEIGHT);
+                top += INTERVAL_HEIGHT + OFFSET;
+            }
+        }
+        
+        int left = OFFSET * 2 + intervalTotalWidth;
+        for (int i=0; i<groups.size(); i++){
+            top = OFFSET;
+            int offset = 0;
+            for (RenderedGroup<T> context : groups.get(i)) {
+                int height = INTERVAL_HEIGHT;
+                if (layout.isPretty()){
+                    if (i==0){
+                        height = INTERVAL_HEIGHT * context.group.size + OFFSET * (context.group.size - 1);
+                    } else {
+                        RenderedGroup<T> reference1 = groups.get(i-1).get(offset);
+                        offset += context.group.size;
+                        RenderedGroup<T> reference2 = groups.get(i-1).get(offset - 1);
+                        height = reference2.rectangle1.y + reference2.rectangle1.height - reference1.rectangle1.y;
+                    }
+                }
+                context.rectangle1 = new Rectangle(left, top, fanoutBoundWidth.get(i), height);
+                context.rectangle2 = new Rectangle(left + fanoutBoundWidth.get(i), top, fanoutLabelWidth.get(i), height);
+                top += height + OFFSET;
+            }
+            left += fanoutTotalWidth.get(i) + OFFSET;
+        }
+        
+        renderedIntervals.clear();
+        renderedIntervals.addAll(intervals);
+        renderedGroups.clear();
+        renderedGroups.addAll(groups);
+    }
+
+    /**
+     * 
+     *
+     * @param gc
+     * @param list
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private int getRequiredBoundWidth(GC gc, List<?> list){
+        gc.setFont(FONT);
+        int width = 0;
+        for (Object elem : list){
+            
+            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).bounds).x);
+        }
+        return width;
+    }
+
+    /**
+     * 
+     *
+     * @param gc
+     * @param list
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private int getRequiredLabelWidth(GC gc, List<?> list){
+        gc.setFont(FONT);
+        int width = 0;
+        for (Object elem : list){
+            
+            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).label).x);
+        }
+        return width;
+    }
+    
     /**
      * 
      *
@@ -437,107 +539,5 @@ public class HierarchyWizardEditorRenderer<T> {
         }
      
         return modelIntervals;
-    }
-
-    /**
-     * Update graphics layout.
-     *
-     * @param gc
-     */
-    public void update(GC gc){
-        
-        int intervalLabelWidth = 0;
-        int intervalBoundWidth = 0;
-        int intervalTotalWidth = 0;
-        if (model.isShowIntervals()) {
-            intervalLabelWidth = getRequiredLabelWidth(gc, intervals) + OFFSET;
-            intervalBoundWidth = getRequiredBoundWidth(gc, intervals) + OFFSET;
-            intervalTotalWidth = intervalLabelWidth + intervalBoundWidth;
-        }
-        
-        List<Integer> fanoutLabelWidth = new ArrayList<Integer>();
-        List<Integer> fanoutBoundWidth = new ArrayList<Integer>();
-        List<Integer> fanoutTotalWidth = new ArrayList<Integer>();
-        
-        for (List<RenderedGroup<T>> list : groups){
-            int label = getRequiredLabelWidth(gc, list) + OFFSET;
-            int bound = getRequiredBoundWidth(gc, list) + OFFSET;
-            fanoutLabelWidth.add(label);
-            fanoutBoundWidth.add(bound);
-            fanoutTotalWidth.add(label + bound);
-        }
-        
-        int top = OFFSET;
-        if (model.isShowIntervals()) {
-            for (RenderedInterval<T> context : intervals){
-                context.rectangle1 = new Rectangle(OFFSET, top, intervalBoundWidth, INTERVAL_HEIGHT);
-                context.rectangle2 = new Rectangle(OFFSET + intervalBoundWidth, top, intervalLabelWidth, INTERVAL_HEIGHT);
-                top += INTERVAL_HEIGHT + OFFSET;
-            }
-        }
-        
-        int left = OFFSET * 2 + intervalTotalWidth;
-        for (int i=0; i<groups.size(); i++){
-            top = OFFSET;
-            int offset = 0;
-            for (RenderedGroup<T> context : groups.get(i)) {
-                int height = INTERVAL_HEIGHT;
-                if (layout.isPretty()){
-                    if (i==0){
-                        height = INTERVAL_HEIGHT * context.group.size + OFFSET * (context.group.size - 1);
-                    } else {
-                        RenderedGroup<T> reference1 = groups.get(i-1).get(offset);
-                        offset += context.group.size;
-                        RenderedGroup<T> reference2 = groups.get(i-1).get(offset - 1);
-                        height = reference2.rectangle1.y + reference2.rectangle1.height - reference1.rectangle1.y;
-                    }
-                }
-                context.rectangle1 = new Rectangle(left, top, fanoutBoundWidth.get(i), height);
-                context.rectangle2 = new Rectangle(left + fanoutBoundWidth.get(i), top, fanoutLabelWidth.get(i), height);
-                top += height + OFFSET;
-            }
-            left += fanoutTotalWidth.get(i) + OFFSET;
-        }
-        
-        renderedIntervals.clear();
-        renderedIntervals.addAll(intervals);
-        renderedGroups.clear();
-        renderedGroups.addAll(groups);
-    }
-    
-    /**
-     * 
-     *
-     * @param gc
-     * @param list
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private int getRequiredBoundWidth(GC gc, List<?> list){
-        gc.setFont(FONT);
-        int width = 0;
-        for (Object elem : list){
-            
-            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).bounds).x);
-        }
-        return width;
-    }
-
-    /**
-     * 
-     *
-     * @param gc
-     * @param list
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private int getRequiredLabelWidth(GC gc, List<?> list){
-        gc.setFont(FONT);
-        int width = 0;
-        for (Object elem : list){
-            
-            width = Math.max(width, gc.textExtent(((RenderedComponent<T>)elem).label).x);
-        }
-        return width;
     }
 }
