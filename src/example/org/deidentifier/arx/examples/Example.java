@@ -94,7 +94,7 @@ public abstract class Example {
     }
 
     /**
-     * Prints a given datahandle.
+     * Prints a given data handle.
      *
      * @param handle
      */
