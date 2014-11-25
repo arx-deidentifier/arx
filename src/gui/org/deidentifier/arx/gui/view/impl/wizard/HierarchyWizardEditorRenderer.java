@@ -265,8 +265,8 @@ public class HierarchyWizardEditorRenderer<T> {
         Object result = null;
         for (RenderedComponent<T> component : getComponents()) {
             if (component.enabled) {
-                if (component.rectangle1.contains(x, y) || 
-                    component.rectangle2.contains(x, y)) {
+                if ((component.rectangle1 != null && component.rectangle1.contains(x, y)) || 
+                    (component.rectangle2 != null && component.rectangle2.contains(x, y))) {
                     if (component instanceof RenderedInterval) {
                         result = ((RenderedInterval<T>)component).interval;
                     } else {
