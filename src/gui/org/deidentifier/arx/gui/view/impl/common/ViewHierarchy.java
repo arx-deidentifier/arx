@@ -901,7 +901,7 @@ public class ViewHierarchy implements IView {
         final List<String> minItems = new ArrayList<String>();
         final List<String> maxItems = new ArrayList<String>();
         minItems.add(ITEM_ALL);
-        for (int i = 0; i < (hierarchy==null ? 0 : hierarchy[0].length); i++) {
+        for (int i = 0; i < (hierarchy==null || hierarchy.length == 0 ? 0 : hierarchy[0].length); i++) {
             minItems.add(String.valueOf(i));
             maxItems.add(String.valueOf(i));
         }
