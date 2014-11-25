@@ -22,6 +22,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
+import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 
 /**
  * A model for redaction-based builders.
@@ -232,6 +233,11 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
             this.redactionOrder = redactionOrder;
             this.update();
         }
+    }
+
+    @Override
+    public void updateUI(HierarchyWizardView sender) {
+        // Empty by design
     }
 
     /* (non-Javadoc)

@@ -105,7 +105,7 @@ public class HierarchyWizardEditor<T> implements HierarchyWizardView, IHierarchy
             @Override public void mouseUp(MouseEvent arg0) {
                 
                 if (HierarchyWizardEditor.this.model.getRenderer().select(arg0.x, arg0.y)){
-                    HierarchyWizardEditor.this.model.update(HierarchyWizardEditor.this);
+                    HierarchyWizardEditor.this.model.updateUI(HierarchyWizardEditor.this);
                     canvascomposite.redraw();
                     Object selected = HierarchyWizardEditor.this.model.getSelectedElement();
                     if (selected instanceof HierarchyWizardGroupingInterval){

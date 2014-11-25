@@ -337,6 +337,19 @@ public class ImportWizardPageExcel extends WizardPage {
 
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+     */
+    @Override
+    public void setVisible(boolean value){
+        super.setVisible(value);
+        try { 
+            if (stream != null) stream.close();
+        } catch (Exception e){
+            /* Die silently*/
+        }
+    }
+
     /**
      * Evaluates the page
      *
@@ -477,7 +490,7 @@ public class ImportWizardPageExcel extends WizardPage {
         tablePreview.layout();
         tablePreview.setRedraw(true);
     }
-
+    
     /**
      * Reads in the available sheets from file
      * 
@@ -507,19 +520,6 @@ public class ImportWizardPageExcel extends WizardPage {
         /* Add all sheets to combo */
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             comboSheet.add(workbook.getSheetName(i));
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
-     */
-    @Override
-    public void setVisible(boolean value){
-        super.setVisible(value);
-        try { 
-            if (stream != null) stream.close();
-        } catch (Exception e){
-            /* Die silently*/
         }
     }
 }

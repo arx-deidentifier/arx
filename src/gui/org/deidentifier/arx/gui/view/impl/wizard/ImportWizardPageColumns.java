@@ -70,39 +70,6 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ImportWizardPageColumns extends WizardPage {
     
     /**
-     * Works around JFace bugs. 
-     * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=230398
-     *
-     */
-    private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
-        
-        /**
-         * 
-         *
-         * @param parent
-         */
-        protected AutoDropComboBoxViewerCellEditor(Composite parent) {
-            super(parent, SWT.READ_ONLY);
-            setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ComboBoxViewerCellEditor#createControl(org.eclipse.swt.widgets.Composite)
-         */
-        @Override
-        protected Control createControl(Composite parent) {
-            final Control control = super.createControl(parent);
-            getViewer().getCCombo().addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent e) {
-                    focusLost();
-                }
-            });
-            return control;
-        }
-    }
-
-    /**
      * Implements editing support for datatype column within the column page
      * 
      * This allows to change the datatype of columns. The modifications are
@@ -326,6 +293,39 @@ public class ImportWizardPageColumns extends WizardPage {
             ((ImportWizardModelColumn) element).getColumn()
                                                .setAliasName((String) value);
             getViewer().update(element, null);
+        }
+    }
+
+    /**
+     * Works around JFace bugs. 
+     * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=230398
+     *
+     */
+    private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
+        
+        /**
+         * 
+         *
+         * @param parent
+         */
+        protected AutoDropComboBoxViewerCellEditor(Composite parent) {
+            super(parent, SWT.READ_ONLY);
+            setActivationStyle(DROP_DOWN_ON_MOUSE_ACTIVATION);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ComboBoxViewerCellEditor#createControl(org.eclipse.swt.widgets.Composite)
+         */
+        @Override
+        protected Control createControl(Composite parent) {
+            final Control control = super.createControl(parent);
+            getViewer().getCCombo().addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    focusLost();
+                }
+            });
+            return control;
         }
     }
     /**

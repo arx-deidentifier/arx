@@ -213,6 +213,22 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     }
 
     /**
+     * 
+     * Cancel pressed.
+     *
+     * @return
+     */
+    @Override
+    public boolean performCancel() {
+        try {
+            if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
+                data.getJdbcConnection().close();
+            }
+        } catch (Exception e) { /* Die silently */ }
+        return true;
+    }
+    
+    /**
      * Gets executed once the wizard is about to finish
      * 
      * This will build an appropriate {@link ImportConfiguration} object, depending
@@ -261,22 +277,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
             } catch (Exception e) { /* Die silently */ }
         }
         
-        return true;
-    }
-    
-    /**
-     * 
-     * Cancel pressed.
-     *
-     * @return
-     */
-    @Override
-    public boolean performCancel() {
-        try {
-            if (data.getJdbcConnection() != null && !data.getJdbcConnection().isClosed()) {
-                data.getJdbcConnection().close();
-            }
-        } catch (Exception e) { /* Die silently */ }
         return true;
     }
 

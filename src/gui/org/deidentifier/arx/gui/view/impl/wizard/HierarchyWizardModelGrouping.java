@@ -630,25 +630,31 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     }
 
     /**
-     * Update all UI components.
+     * Update the model and all UI components.
      */
     @Override
     public void update(){
         super.update();
         renderer.update();
-        for (HierarchyWizardView c : components){
-            c.update();
-        }
+        updateUI(null);
     }
 
     /**
-     * Update all UI components, apart from the sender.
+     * Update the model and all UI components, apart from the sender.
      *
      * @param sender
      */
     public void update(HierarchyWizardView sender){
         super.update();
         renderer.update();
+        updateUI(sender);
+    }
+    
+    /**
+     * Update the UI components.
+     */
+    @Override
+    public void updateUI(HierarchyWizardView sender){
         for (HierarchyWizardView c : components){
             if (c != sender) {
                 c.update();

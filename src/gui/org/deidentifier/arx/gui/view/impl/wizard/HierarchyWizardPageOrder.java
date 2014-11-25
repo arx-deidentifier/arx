@@ -287,6 +287,35 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
     }
 
     /**
+     * Returns a data provider for the given array.
+     *
+     * @param array
+     * @return
+     */
+    private IDataProvider getDataProvider(final String[] array){
+        return new IDataProvider(){
+            @Override
+            public int getColumnCount() {
+                return 1;
+            }
+            @Override
+            public Object getDataValue(int columnIndex, int rowIndex) {
+                return array[rowIndex];
+            }
+            @Override
+            public int getRowCount() {
+                return array.length;
+            }
+            @Override
+            public void setDataValue(int columnIndex,
+                                     int rowIndex,
+                                     Object newValue) {
+                /* Ignore*/
+            }
+        };
+    }
+    
+    /**
      * Returns a description for the given label.
      *
      * @param label
@@ -313,7 +342,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         }
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Returns the index of a given data type.
      *
@@ -330,7 +359,7 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
         }
         return -1;
     }
-
+    
     /**
      * Checks whether the data type is valid.
      *
@@ -345,34 +374,5 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             }
         }
         return true;
-    }
-    
-    /**
-     * Returns a data provider for the given array.
-     *
-     * @param array
-     * @return
-     */
-    private IDataProvider getDataProvider(final String[] array){
-        return new IDataProvider(){
-            @Override
-            public Object getDataValue(int columnIndex, int rowIndex) {
-                return array[rowIndex];
-            }
-            @Override
-            public void setDataValue(int columnIndex,
-                                     int rowIndex,
-                                     Object newValue) {
-                /* Ignore*/
-            }
-            @Override
-            public int getColumnCount() {
-                return 1;
-            }
-            @Override
-            public int getRowCount() {
-                return array.length;
-            }
-        };
     }
 }

@@ -176,6 +176,24 @@ public class HierarchyWizardEditorFunction<T> {
     }
     
     /**
+     * Return control1.
+     *
+     * @return
+     */
+    public Control getControl1() {
+        return editor1.getControl();
+    }
+    
+    /**
+     * Return control2.
+     *
+     * @return
+     */
+    public Control getControl2() {
+        return editor2.getControl();
+    }
+
+    /**
      * Returns the default function.
      *
      * @return
@@ -183,7 +201,7 @@ public class HierarchyWizardEditorFunction<T> {
     public AggregateFunction<T> getDefaultFunction(){
         return this.defaultFunction;
     }
-    
+
     /**
      * Returns whether this is the default function.
      *
@@ -193,7 +211,7 @@ public class HierarchyWizardEditorFunction<T> {
     public boolean isDefaultFunction(AggregateFunction<T> function){
         return this.defaultFunction == function;
     }
-
+    
     /**
      * Sets the function to display.
      *
@@ -206,7 +224,7 @@ public class HierarchyWizardEditorFunction<T> {
         this.function = function;
         this.update();
     }
-
+    
     /**
      * Updates all editors.
      */
@@ -227,7 +245,7 @@ public class HierarchyWizardEditorFunction<T> {
             SWTUtil.disable(editor2.getControl());
         }
     }
-    
+
     /**
      * Creates a function entry.
      *
@@ -237,7 +255,7 @@ public class HierarchyWizardEditorFunction<T> {
         this.functions.add(function);
         this.labels.add(function.toLabel());
     }
-    
+
     /**
      * Creates a label.
      *
@@ -253,23 +271,5 @@ public class HierarchyWizardEditorFunction<T> {
         data.verticalAlignment = SWT.CENTER;
         label.setLayoutData(data);
         return label;
-    }
-
-    /**
-     * Return control1.
-     *
-     * @return
-     */
-    public Control getControl1() {
-        return editor1.getControl();
-    }
-
-    /**
-     * Return control2.
-     *
-     * @return
-     */
-    public Control getControl2() {
-        return editor2.getControl();
     }
 }

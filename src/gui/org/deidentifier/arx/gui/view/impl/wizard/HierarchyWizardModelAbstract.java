@@ -58,16 +58,6 @@ public abstract class HierarchyWizardModelAbstract<T> {
     }
     
     /**
-     * Set visible.
-     *
-     * @param visible
-     */
-    protected void setVisible(boolean visible){
-        this.visible = visible;
-        if (visible) update();
-    }
-
-    /**
      * Returns the builder currently configured.
      *
      * @param serializable
@@ -93,7 +83,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
     public String getError() {
         return error;
     }
-    
+
     /**
      * Returns the sizes of the resulting groups.
      *
@@ -102,7 +92,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
     public int[] getGroups() {
         return groupsizes;
     }
-
+    
     /**
      * Returns the resulting hierarchy.
      *
@@ -111,7 +101,7 @@ public abstract class HierarchyWizardModelAbstract<T> {
     public Hierarchy getHierarchy() {
         return hierarchy;
     }
-    
+
     /**
      * Parses a builder and updates the model accordingly.
      *
@@ -136,8 +126,23 @@ public abstract class HierarchyWizardModelAbstract<T> {
         if (view != null) view.update();
     }
     
+    /** 
+     * Updates all UI components apart from the sender
+     */
+    public abstract void updateUI(HierarchyWizardView sender);
+    
     /**
      * Implement this to run the builder.
      */
     protected abstract void build();
+    
+    /**
+     * Set visible.
+     *
+     * @param visible
+     */
+    protected void setVisible(boolean visible){
+        this.visible = visible;
+        if (visible) update();
+    }
 }
