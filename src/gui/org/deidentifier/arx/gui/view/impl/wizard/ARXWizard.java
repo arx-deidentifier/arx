@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import java.util.Arrays;
 
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizardDialog.ARXWizardButton;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Point;
@@ -72,7 +73,7 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
      * Opens the dialog.
      *
      * @param shell
-     * @return Finish performed
+     * @return OK pressed
      */
     public boolean open(final Shell shell) {
         
@@ -82,7 +83,7 @@ public abstract class ARXWizard<T> extends Wizard implements IWizard {
             this.dialog = new ARXWizardDialog(shell, this);   
         }
         if (pageSize != null) this.dialog.setPageSize(pageSize);
-        return dialog.open() == 0;
+        return dialog.open() == Window.OK;
     }
 
     /* (non-Javadoc)
