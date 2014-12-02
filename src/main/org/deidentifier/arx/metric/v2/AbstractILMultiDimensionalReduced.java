@@ -112,7 +112,9 @@ public abstract class AbstractILMultiDimensionalReduced extends AbstractILMultiD
     protected AbstractILMultiDimensionalReduced convert(InformationLoss<?> other) {
         if (other == null) return null;
         if (!other.getClass().equals(this.getClass())) {
-            throw new IllegalArgumentException("Incompatible class (" +
+            throw new IllegalArgumentException("Incompatible class. Should ("+
+                                               this.getClass().getSimpleName()
+                                               +") but is (" +
                                                other.getClass().getSimpleName() +
                                                ")");
         } else {
