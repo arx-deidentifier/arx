@@ -872,6 +872,17 @@ public class ARXLattice implements Serializable {
         // Default de-serialization
         aInputStream.defaultReadObject();
         
+        // Translate minimum and maximum
+        this.maximumInformationLoss = InformationLoss.createInformationLoss(this.maximumInformationLoss,
+                                                                            metric,
+                                                                            getDeserializationContext().minLevel,
+                                                                            getDeserializationContext().maxLevel);
+        
+        this.minimumInformationLoss = InformationLoss.createInformationLoss(this.minimumInformationLoss,
+                                                                            metric,
+                                                                            getDeserializationContext().minLevel,
+                                                                            getDeserializationContext().maxLevel);
+        
         // Translate metric, if necessary
         this.metric = Metric.createMetric(this.metric, 
                                           getDeserializationContext().minLevel, 
