@@ -60,7 +60,18 @@ public class HierarchyWizardModelRedaction<T> extends HierarchyWizardModelAbstra
      * @param data
      */
     public HierarchyWizardModelRedaction(DataType<T> dataType, String[] data) {
+        
+        // Super
         super(data);
+        
+        // Init
+        HierarchyBuilderRedactionBased<T> temp = HierarchyBuilderRedactionBased.create('c');
+        temp.setDomainMetadata(data);
+        this.maxValueLength = temp.getMaxValueLength().intValue();
+        this.domainSize = temp.getDomainSize().intValue();
+        this.alphabetSize = temp.getAlphabetSize().intValue();
+        
+        // Update
         this.update();
     }
 
