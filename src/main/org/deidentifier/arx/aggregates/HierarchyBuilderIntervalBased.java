@@ -712,7 +712,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     private Interval<T> getIntervalUpperSnap(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
 
         // Find interval
-        int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
+        double shift = Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
         T offset = type.multiply(type.subtract(index.max, index.min), shift);
         T value = type.subtract(tValue, offset);
         Interval<T> interval = null;
