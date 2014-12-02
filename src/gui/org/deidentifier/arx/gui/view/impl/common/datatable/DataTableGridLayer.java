@@ -19,7 +19,9 @@
 package org.deidentifier.arx.gui.view.impl.common.datatable;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
+import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.DefaultColumnHeaderDataLayer;
@@ -30,7 +32,11 @@ import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
+import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEventMatcher;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
+import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -169,7 +175,7 @@ public class DataTableGridLayer extends GridLayer {
      * @param cornerDataLayer
      * @param parent
      */
-    protected void init(IUniqueIndexLayer bodyDataLayer,
+    protected void init(final IUniqueIndexLayer bodyDataLayer,
                         IUniqueIndexLayer columnHeaderDataLayer,
                         IUniqueIndexLayer rowHeaderDataLayer,
                         IUniqueIndexLayer cornerDataLayer,
@@ -183,6 +189,17 @@ public class DataTableGridLayer extends GridLayer {
         // Column header
         this.columnHeaderDataLayer = columnHeaderDataLayer;
         ILayer columnHeaderLayer = new ColumnHeaderLayer(columnHeaderDataLayer, bodyLayer, selectionLayer);
+        
+        // Configure the column resize action
+        ((ColumnHeaderLayer) columnHeaderLayer).addConfiguration(new AbstractUiBindingConfiguration() {
+            @Override
+            public void configureUiBindings(UiBindingRegistry paramUiBindingRegistry) {
+                paramUiBindingRegistry.registerFirstDoubleClickBinding(new ColumnResizeEventMatcher(SWT.NONE,
+                                                                                                    GridRegion.COLUMN_HEADER,
+                                                                                                    MouseEventMatcher.LEFT_BUTTON),
+                                                                       new DataTableResizeColumnAction(bodyDataLayer));
+            }
+        });
 
         // Row header
         this.rowHeaderDataLayer = rowHeaderDataLayer;
