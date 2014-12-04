@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -96,6 +97,7 @@ public class WorkerSave extends Worker<Model> {
         try {
             final FileOutputStream f = new FileOutputStream(path);
             final ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
+            zip.setLevel(Deflater.BEST_SPEED);
             model.createConfig(); 
             writeMetadata(model, zip);
             arg0.worked(1);
