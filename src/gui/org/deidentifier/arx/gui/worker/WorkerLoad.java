@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx.gui.worker;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -161,7 +162,7 @@ public class WorkerLoad extends Worker<Model> {
 
         // Parse
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        final InputSource inputSource = new InputSource(zip.getInputStream(entry));
+        final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             @Override
             protected boolean end(final String uri,
@@ -237,7 +238,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return; }
 
         // Read config
-        final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
+        final ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         final ModelConfiguration config = (ModelConfiguration) oos.readObject();
         
         // Convert metric from v1 to v2
@@ -330,7 +331,7 @@ public class WorkerLoad extends Worker<Model> {
 
         // Read xml
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        final InputSource inputSource = new InputSource(zip.getInputStream(entry));
+        final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
             String attr, dtype, atype, ref, min, max, format;
@@ -533,7 +534,7 @@ public class WorkerLoad extends Worker<Model> {
         // Read filter
         final ZipEntry entry = zip.getEntry("filter.dat"); //$NON-NLS-1$
         if (entry == null) { return; }
-        final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
+        final ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         model.setNodeFilter((ModelNodeFilter) oos.readObject());
         oos.close();
     }
@@ -553,7 +554,7 @@ public class WorkerLoad extends Worker<Model> {
     	
         final ZipEntry entry = zip.getEntry(prefix + ref);
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.5")); } //$NON-NLS-1$
-        final InputStream is = zip.getInputStream(entry);
+        final InputStream is = new BufferedInputStream(zip.getInputStream(entry));
         return Hierarchy.create(is, model.getSeparator());
     }
 
@@ -570,7 +571,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return; }
 
         // Read input
-        config.setInput(Data.create(zip.getInputStream(entry),
+        config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
                                     model.getSeparator()));
         
         // Disable visualization
@@ -603,7 +604,7 @@ public class WorkerLoad extends Worker<Model> {
         // Read infoloss
         final Map<Integer, InformationLoss<?>> max;
         final Map<Integer, InformationLoss<?>> min;
-        ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
+        ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         min = (Map<Integer, InformationLoss<?>>) oos.readObject();
         max = (Map<Integer, InformationLoss<?>>) oos.readObject();
         oos.close();
@@ -619,14 +620,14 @@ public class WorkerLoad extends Worker<Model> {
 
         // Read attributes
         final Map<Integer, Map<Integer, Object>> attrs;
-        oos = new ObjectInputStream(zip.getInputStream(entry));
+        oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         attrs = (Map<Integer, Map<Integer, Object>>) oos.readObject();
         oos.close();
 
         // Read lattice skeleton
         entry = zip.getEntry("lattice.dat"); //$NON-NLS-1$
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.8")); } //$NON-NLS-1$
-        oos = new ObjectInputStream(zip.getInputStream(entry));
+        oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         lattice = (ARXLattice) oos.readObject();
         final Map<String, Integer> headermap = (Map<String, Integer>) oos.readObject();
         oos.close();
@@ -639,7 +640,7 @@ public class WorkerLoad extends Worker<Model> {
 
         final Map<Integer, ARXNode> map = new HashMap<Integer, ARXNode>();
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        InputSource inputSource = new InputSource(zip.getInputStream(entry));
+        InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
 
             private int       level = 0;
@@ -723,7 +724,7 @@ public class WorkerLoad extends Worker<Model> {
         // Read the lattice for the second time
         entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
         xmlReader = XMLReaderFactory.createXMLReader();
-        inputSource = new InputSource(zip.getInputStream(entry));
+        inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
             private int                   id;
@@ -849,7 +850,7 @@ public class WorkerLoad extends Worker<Model> {
 
         // Read vocabulary
         final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        final InputSource inputSource = new InputSource(zip.getInputStream(entry));
+        final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             
             Vocabulary_V2 vocabulary = new Vocabulary_V2();
@@ -915,7 +916,7 @@ public class WorkerLoad extends Worker<Model> {
         
         // Read
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        InputSource inputSource = new InputSource(zip.getInputStream(entry));
+        InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             
             @Override
@@ -961,7 +962,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
 
         // Read model
-        final ObjectInputStream oos = new ObjectInputStream(zip.getInputStream(entry));
+        final ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         model = (Model) oos.readObject();
         oos.close();
     }
