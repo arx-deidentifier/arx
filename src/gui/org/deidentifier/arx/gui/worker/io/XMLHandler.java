@@ -23,6 +23,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.carrotsearch.hppc.CharArrayList;
+
 /**
  * The default XML handler.
  *
@@ -31,8 +33,11 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public abstract class XMLHandler extends DefaultHandler {
 
-    /**  TODO */
+    /**  The payload */
     public String payload;
+    
+    /** The arraylist */
+    private CharArrayList sb = new CharArrayList();
 
     /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
@@ -41,8 +46,8 @@ public abstract class XMLHandler extends DefaultHandler {
     public void characters(final char[] ch,
                            final int start,
                            final int length) throws SAXException {
-        // Directly unescape stuff
-        payload = new String(ch, start, length);
+        // Add to chararraylist
+        sb.add(ch, start, length);
     }
 
     /**
@@ -65,6 +70,7 @@ public abstract class XMLHandler extends DefaultHandler {
     public void endElement(final String uri,
                            final String localName,
                            final String qName) throws SAXException {
+        payload =  new String(sb.buffer, 0, sb.size());
         if (!end(uri, localName, qName)) { throw new SAXException(Resources.getMessage("WorkerLoad.0") + localName); } //$NON-NLS-1$
     }
 
@@ -93,6 +99,7 @@ public abstract class XMLHandler extends DefaultHandler {
                          final String localName,
                          final String qName,
                          final Attributes attributes) throws SAXException {
+        sb.clear();
         if (!start(uri, localName, qName, attributes)) { throw new SAXException(Resources.getMessage("WorkerLoad.1") + localName); } //$NON-NLS-1$
     }
 }
