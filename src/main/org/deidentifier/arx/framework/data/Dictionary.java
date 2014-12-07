@@ -60,7 +60,7 @@ public class Dictionary {
             final boolean[] allocated = maps[i].allocated;
             for (int j = 0; j < allocated.length; j++) {
                 if (allocated[j]) {
-                    mapping[i][values[j]] = (String)keys[j];
+                    mapping[i][values[j]] = (String) keys[j];
                 }
             }
 
@@ -105,7 +105,12 @@ public class Dictionary {
      * @return
      */
     public Integer probe(final int dimension, final String string) {
-        return maps[dimension].get(string);
+        if (maps[dimension].containsKey(string)) {
+            return maps[dimension].lget();
+        } else {
+            return null;
+        }
+        // return maps[dimension].get(string);
     }
 
     /**
@@ -118,11 +123,11 @@ public class Dictionary {
      * @return the int
      */
     public int register(final int dimension, final String string) {
-        
+
         // Prepare
         ObjectIntOpenHashMap<String> map = maps[dimension];
         int size = map.size();
-        
+
         // Return or store
         if (map.putIfAbsent(string, size)) {
             return size;
