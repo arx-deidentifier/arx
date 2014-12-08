@@ -35,9 +35,6 @@ public class LatticeBuilder {
     /** The minlevels. */
     private int[]    minLevels  = null;
 
-    /** The maxheights. */
-    private int[]    maxHeights = null;
-
     /**
      * Instantiates a new lattice builder.
      *
@@ -46,11 +43,9 @@ public class LatticeBuilder {
      * @param maxHeights
      */
     public LatticeBuilder(final int[] maxLevels,
-                          final int[] minLevels,
-                          final int[] maxHeights) {
+                          final int[] minLevels) {
         this.maxLevels = maxLevels;
         this.minLevels = minLevels;
-        this.maxHeights = maxHeights;
     }
 
     /**
@@ -60,7 +55,7 @@ public class LatticeBuilder {
      */
     public Lattice build() {
         final int numNodes = buildLevelsAndMap();
-        return new Lattice(levels, maxHeights, numNodes);
+        return new Lattice(levels, numNodes);
     }
 
     /**

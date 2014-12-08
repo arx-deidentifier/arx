@@ -55,7 +55,10 @@ public class FLASHStrategy implements Comparator<Node> {
     public FLASHStrategy(final Lattice lattice,
                          final GeneralizationHierarchy[] hier) {
 
-        maxLevels = lattice.getMaximumGeneralizationLevels();
+        maxLevels = lattice.getTop().getTransformation().clone();
+        for (int i=0; i < maxLevels.length; i++) {
+            maxLevels[i] ++;
+        }
         distinct = new int[hier.length][];
         for (int i = 0; i < hier.length; i++) {
             distinct[i] = hier[i].getDistinctValues();

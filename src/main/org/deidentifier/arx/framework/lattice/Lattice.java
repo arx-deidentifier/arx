@@ -33,9 +33,6 @@ public class Lattice {
     /** The levels. */
     private final Node[][] levels;
 
-    /** The maximal transformation levels for each attribute. */
-    private final int[]    maxLevels;
-
     /** The size. */
     private final int      size;
 
@@ -50,11 +47,9 @@ public class Lattice {
      *
      * @param levels the levels
      * @param maxLevels the max levels
-     * @param numNodes the num nodes
      */
-    public Lattice(final Node[][] levels, final int[] maxLevels, final int numNodes) {
+    public Lattice(final Node[][] levels, final int numNodes) {
 
-        this.maxLevels = maxLevels;
         this.levels = levels;
         this.size = numNodes;
     }
@@ -82,18 +77,6 @@ public class Lattice {
      */
     public Node[][] getLevels() {
         return levels;
-    }
-
-    
-    
-    
-    /**
-     * Returns the maximal levels for each quasi identifier.
-     *
-     * @return
-     */
-    public int[] getMaximumGeneralizationLevels() {
-        return maxLevels;
     }
 
     /**

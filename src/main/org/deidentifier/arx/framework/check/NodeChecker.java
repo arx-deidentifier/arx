@@ -275,7 +275,7 @@ public class NodeChecker implements INodeChecker {
         }
         
         // Set properties
-        Lattice lattice = new Lattice(new Node[][]{{transformation}}, null, 0);
+        Lattice lattice = new Lattice(new Node[][]{{transformation}}, 0);
         lattice.setChecked(transformation, new Result(currentGroupify.isAnonymous(), 
                                                       currentGroupify.isKAnonymous(),
                                                       loss,
