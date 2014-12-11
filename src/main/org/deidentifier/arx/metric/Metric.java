@@ -65,19 +65,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static enum AggregateFunction implements Serializable{
         
-        /**  TODO */
+        /** Sum */
         SUM("Sum"),
         
-        /**  TODO */
+        /** Maximum */
         MAXIMUM("Maximum"),
         
-        /**  TODO */
+        /** Arithmetic mean */
         ARITHMETIC_MEAN("Arithmetric Mean"),
         
-        /**  TODO */
+        /** Geometric mean: Zero (0) values are converted to one (1) for the calculation */
         GEOMETRIC_MEAN("Geometric Mean"),
         
-        /**  TODO */
+        /** Rank: Ordered list of values, compared lexicographically. */
         RANK("Rank");
         
         /**  TODO */
