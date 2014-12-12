@@ -66,10 +66,9 @@ public class Main {
             splash = new MainSplash(display, monitor);
             splash.show();
             
-            // Main window
+            // Create main window
             main = new MainWindow(display, monitor);
-            main.show();
-
+            
             // Handler for loading a project
             if (args.length > 0 && args[0].endsWith(".deid")) {
                 main.onShow(new Runnable() {
@@ -78,6 +77,9 @@ public class Main {
                     }
                 });
             }
+            
+            // Show window
+            main.show();
             
             // Main event loop
             while (!main.isDisposed()) {
