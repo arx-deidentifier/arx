@@ -132,7 +132,9 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.Order.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased.Order</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.Order.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased.Order</a></strong></code>
+<div class="block">Order</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -273,6 +275,12 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#setDomainMetadata(java.lang.String[])">setDomainMetadata</a></strong>(java.lang.String[]&nbsp;data)</code>
+<div class="block">Sets properties about the attribute's domain.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#setDomainSize(int, int)">setDomainSize</a></strong>(int&nbsp;domainSize,
              int&nbsp;maxValueLength)</code>
@@ -568,7 +576,7 @@ implements java.io.Serializable</pre>
 <a name="setDomainSize(int, int)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setDomainSize</h4>
 <pre>public&nbsp;void&nbsp;setDomainSize(int&nbsp;domainSize,
@@ -586,6 +594,19 @@ implements java.io.Serializable</pre>
  <p>This method will estimate the size of the alphabet as 
  alphabetSize = pow(domainSize, 1.0d / maxValueLength)</p></div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>domainSize</code> - </dd><dd><code>maxValueLength</code> - </dd></dl>
+</li>
+</ul>
+<a name="setDomainMetadata(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setDomainMetadata</h4>
+<pre>public&nbsp;void&nbsp;setDomainMetadata(java.lang.String[]&nbsp;data)</pre>
+<div class="block"><p>Sets properties about the attribute's domain. Currently, this information is only used for
+ evaluating information loss with the generalized loss metric for attributes with functional
+ redaction-based hierarchies.</p></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - </dd></dl>
 </li>
 </ul>
 </li>

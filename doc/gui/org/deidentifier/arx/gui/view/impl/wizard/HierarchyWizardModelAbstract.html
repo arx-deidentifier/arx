@@ -250,6 +250,12 @@ extends java.lang.Object</pre>
 <div class="block">Updates the resulting hierarchy and the view.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>abstract void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelAbstract.html#updateUI(org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView)">updateUI</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizard.HierarchyWizardView.html" title="interface in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizard.HierarchyWizardView</a>&nbsp;sender)</code>
+<div class="block">Updates all UI components apart from the sender</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -359,17 +365,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="setVisible(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setVisible</h4>
-<pre>protected&nbsp;void&nbsp;setVisible(boolean&nbsp;visible)</pre>
-<div class="block">Set visible.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>visible</code> - </dd></dl>
-</li>
-</ul>
 <a name="getBuilder(boolean)">
 <!--   -->
 </a>
@@ -461,14 +456,35 @@ extends java.lang.Object</pre>
 <div class="block">Updates the resulting hierarchy and the view.</div>
 </li>
 </ul>
+<a name="updateUI(org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateUI</h4>
+<pre>public abstract&nbsp;void&nbsp;updateUI(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizard.HierarchyWizardView.html" title="interface in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizard.HierarchyWizardView</a>&nbsp;sender)</pre>
+<div class="block">Updates all UI components apart from the sender</div>
+</li>
+</ul>
 <a name="build()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>build</h4>
 <pre>protected abstract&nbsp;void&nbsp;build()</pre>
 <div class="block">Implement this to run the builder.</div>
+</li>
+</ul>
+<a name="setVisible(boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setVisible</h4>
+<pre>protected&nbsp;void&nbsp;setVisible(boolean&nbsp;visible)</pre>
+<div class="block">Set visible.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>visible</code> - </dd></dl>
 </li>
 </ul>
 </li>

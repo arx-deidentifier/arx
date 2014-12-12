@@ -302,22 +302,6 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
 <dt><span class="strong">Parameters:</span></dt><dd><code>visible</code> - </dd></dl>
 </li>
 </ul>
-<a name="getNumberOfRows(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNumberOfRows</h4>
-<pre>protected&nbsp;long&nbsp;getNumberOfRows(java.lang.String&nbsp;table)</pre>
-<div class="block">Gets the number of rows for given table
- 
- This uses the JDBC connection
- <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
- rows for given table.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>table</code> - Table number of rows should be returned for</dd>
-<dt><span class="strong">Returns:</span></dt><dd>Number of rows for given table, -1 in case of error</dd></dl>
-</li>
-</ul>
 <a name="getNumberOfColumns(java.lang.String)">
 <!--   -->
 </a>
@@ -330,6 +314,22 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
  This uses the JDBC connection
  <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
  columns for given table.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>table</code> - Table number of rows should be returned for</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Number of rows for given table, -1 in case of error</dd></dl>
+</li>
+</ul>
+<a name="getNumberOfRows(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumberOfRows</h4>
+<pre>protected&nbsp;long&nbsp;getNumberOfRows(java.lang.String&nbsp;table)</pre>
+<div class="block">Gets the number of rows for given table
+ 
+ This uses the JDBC connection
+ <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
+ rows for given table.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>table</code> - Table number of rows should be returned for</dd>
 <dt><span class="strong">Returns:</span></dt><dd>Number of rows for given table, -1 in case of error</dd></dl>
 </li>

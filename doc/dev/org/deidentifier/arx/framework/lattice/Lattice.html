@@ -115,8 +115,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#Lattice(org.deidentifier.arx.framework.lattice.Node[][], int[], int)">Lattice</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>[][]&nbsp;levels,
-       int[]&nbsp;maxLevels,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#Lattice(org.deidentifier.arx.framework.lattice.Node[][], int)">Lattice</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>[][]&nbsp;levels,
        int&nbsp;numNodes)</code>
 <div class="block">Initializes a lattice.</div>
 </td>
@@ -149,58 +148,52 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#getMaximumGeneralizationLevels()">getMaximumGeneralizationLevels</a></strong>()</code>
-<div class="block">Returns the maximal levels for each quasi identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#getSize()">getSize</a></strong>()</code>
 <div class="block">Returns the number of nodes in the lattice.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#getTop()">getTop</a></strong>()</code>
 <div class="block">Returns the top node.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setChecked(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.framework.check.INodeChecker.Result)">setChecked</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
           <a href="../../../../../org/deidentifier/arx/framework/check/INodeChecker.Result.html" title="class in org.deidentifier.arx.framework.check">INodeChecker.Result</a>&nbsp;result)</code>
 <div class="block">Sets the properties to the given node.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setInformationLoss(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.metric.InformationLoss)">setInformationLoss</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
                   <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;informationLoss)</code>
 <div class="block">Sets the information loss.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">Attaches a listener.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setLowerBound(org.deidentifier.arx.framework.lattice.Node, org.deidentifier.arx.metric.InformationLoss)">setLowerBound</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
              <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;lowerBound)</code>
 <div class="block">Sets the lower bound.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setProperty(org.deidentifier.arx.framework.lattice.Node, int)">setProperty</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
            int&nbsp;property)</code>
 <div class="block">Sets the property to the given node.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setPropertyDownwards(org.deidentifier.arx.framework.lattice.Node, boolean, int)">setPropertyDownwards</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
                     boolean&nbsp;include,
@@ -208,7 +201,7 @@ extends java.lang.Object</pre>
 <div class="block">Sets the property to all predecessors of the given node.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setPropertyUpwards(org.deidentifier.arx.framework.lattice.Node, boolean, int)">setPropertyUpwards</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>&nbsp;node,
                   boolean&nbsp;include,
@@ -216,7 +209,7 @@ extends java.lang.Object</pre>
 <div class="block">Sets the property to all successors of the given node.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Lattice.html#setTagTrigger(org.deidentifier.arx.framework.lattice.NodeAction)">setTagTrigger</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/lattice/NodeAction.html" title="class in org.deidentifier.arx.framework.lattice">NodeAction</a>&nbsp;trigger)</code>
 <div class="block">When this trigger executed, a tagged event will be fired.</div>
@@ -244,17 +237,16 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Lattice(org.deidentifier.arx.framework.lattice.Node[][], int[], int)">
+<a name="Lattice(org.deidentifier.arx.framework.lattice.Node[][], int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Lattice</h4>
 <pre>public&nbsp;Lattice(<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>[][]&nbsp;levels,
-       int[]&nbsp;maxLevels,
        int&nbsp;numNodes)</pre>
 <div class="block">Initializes a lattice.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>levels</code> - the levels</dd><dd><code>maxLevels</code> - the max levels</dd><dd><code>numNodes</code> - the num nodes</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>levels</code> - the levels</dd><dd><code>maxLevels</code> - the max levels</dd></dl>
 </li>
 </ul>
 </li>
@@ -284,17 +276,6 @@ extends java.lang.Object</pre>
 <h4>getLevels</h4>
 <pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/framework/lattice/Node.html" title="class in org.deidentifier.arx.framework.lattice">Node</a>[][]&nbsp;getLevels()</pre>
 <div class="block">Returns all levels in the lattice.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getMaximumGeneralizationLevels()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getMaximumGeneralizationLevels</h4>
-<pre>public&nbsp;int[]&nbsp;getMaximumGeneralizationLevels()</pre>
-<div class="block">Returns the maximal levels for each quasi identifier.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
