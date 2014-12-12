@@ -77,7 +77,7 @@ Specific limitations
 ###
     
 
-1. ARX implements in-memory data management, meaning that the dataset that is to be anonymized must fit into a machine’s main memory. This should normally not be a problem, as ARX can handle datasets with several million entries on current commodity hardware. For very large datsets, memory consumption may be reduced by removing attributes that are insensitive and irrelevant to the anonymization process. If these must be re-integrated after the de-identification process, a tuple identifier can be introduced. Moreover, ARX implements a space-time trade-off that may be used to reduce memory consumption.
+1. ARX implements in-memory data management, meaning that the dataset that is to be anonymized must fit into a machine’s main memory. This should normally not be a problem, as ARX can handle datasets with several million entries on current commodity hardware. For very large datasets, memory consumption may be reduced by removing attributes that are insensitive and irrelevant to the anonymization process. If these must be re-integrated after the de-identification process, a tuple identifier can be introduced. Moreover, ARX implements a space-time trade-off that may be used to reduce memory consumption.
 2. ARX currently relies on a globally-optimal search strategy and currently materializes the complete solution space. As a consequence, it can only handle anonymization problems in which the search space is small enough to allow materialization. As a rule of thumb ARX can handle datasets with up to ~15 quasi-identifiers, but this depends on the size of the generalization hierarchies utilized. In the near future ARX will be extended with methods that overcome this limitation.
 
 General limitations
