@@ -36,7 +36,7 @@ import org.deidentifier.arx.framework.lattice.Node;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
- * Normalized Domain Share.
+ * This class implements a variant of the Loss metric.
  *
  * @author Fabian Prasser
  */

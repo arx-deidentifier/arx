@@ -22,7 +22,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 
 
 /**
- * This class provides an implementation of NDS
+ * This class implements a variant of the Loss metric.
  * TODO: Add reference.
  *
  * @author Fabian Prasser
