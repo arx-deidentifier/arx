@@ -74,7 +74,9 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         /** Arithmetic mean */
         ARITHMETIC_MEAN("Arithmetric Mean"),
         
-        /** Geometric mean: Zero (0) values are converted to Double.MIN_VALUE for the calculation. */
+        /** Geometric mean: To handle zero values while not violating guarantees required for pruning
+         * based on lower bounds, 1d is added to every individual value and 1d is subtracted from the
+         * final result. */
         GEOMETRIC_MEAN("Geometric Mean"),
         
         /** Rank: Ordered list of values, compared lexicographically. */

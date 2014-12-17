@@ -23,7 +23,9 @@ import org.deidentifier.arx.metric.InformationLoss;
 /**
  * This class implements an information loss which can be represented as a
  * decimal number per quasi-identifier. As an aggregate function, the geometric mean
- * is applied. Zero (0) values are converted to Double.MIN_VALUE for the calculation. 
+ * is applied. To handle zero values while not violating guarantees required for pruning
+ * based on lower bounds, 1d is added to every individual value and 1d is subtracted from the
+ * final result.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -62,8 +64,7 @@ public class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalR
         double[] weights = getWeights();
         double result = 1.0d;
         for (int i = 0; i < values.length; i++) {
-            result *= Math.pow((values[i] > 0d ? values[i] : Double.MIN_VALUE) * weights[i],
-                               1.0d / (double) values.length);
+            result *= Math.pow((values[i] + 1d) * weights[i], 1.0d / (double) values.length) - 1d;
         }
         return result;
     }
