@@ -18,6 +18,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 import org.deidentifier.arx.metric.InformationLoss;
@@ -155,7 +157,8 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
     }
 
     /**
-     * Returns the geometric mean.
+     * Returns the geometric mean. Handles zero values by adding 1 to each component
+     * and subtracting 1 from the result.
      *
      * @return
      */
@@ -163,9 +166,22 @@ public class ILMultiDimensionalRank extends AbstractILMultiDimensional {
         double[] values = getValues();
         double result = 1.0d;
         for (int i = 0; i < values.length; i++) {
-            result *= Math.pow(values[i], 1.0d / (double) values.length);
+            result *= Math.pow(values[i] + 1.0d, 1.0d / (double) values.length);
         }
-        return result;
+        return result - 1d;
+    }
+
+    /**
+     * Overwritten to handle changes in how the mean is computed.
+     * 
+     * @param stream
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readObject(ObjectInputStream stream) throws IOException,
+                                                     ClassNotFoundException {
+        stream.defaultReadObject();
+        mean = getMean();
     }
 
     /**
