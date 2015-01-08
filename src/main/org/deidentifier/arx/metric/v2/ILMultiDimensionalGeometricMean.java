@@ -64,8 +64,8 @@ public class ILMultiDimensionalGeometricMean extends AbstractILMultiDimensionalR
         double[] weights = getWeights();
         double result = 1.0d;
         for (int i = 0; i < values.length; i++) {
-            result *= Math.pow((values[i] + 1d) * weights[i], 1.0d / (double) values.length) - 1d;
+            result *= Math.pow((values[i] + 1d) * weights[i], 1.0d / (double) values.length);
         }
-        return result;
+        return result - 1d;
     }
 }
