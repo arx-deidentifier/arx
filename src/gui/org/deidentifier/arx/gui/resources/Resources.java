@@ -17,7 +17,10 @@
 
 package org.deidentifier.arx.gui.resources;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -201,5 +204,36 @@ public class Resources {
      */
     public InputStream getStream(final String name) {
         return this.getClass().getResourceAsStream(name);
+    }
+
+    /**
+     * Reads the content from the file license.txt located in the package org.deidentifier.arx.gui.resources and
+     * returns the content as string.
+     * @return
+     */
+    public static String getLicencseText() {
+        InputStream stream = Resources.class.getResourceAsStream("license.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        String content = "";
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            content = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return content;
     }
 }
