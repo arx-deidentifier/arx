@@ -68,6 +68,44 @@ public class ModelNodeFilter implements Serializable {
             generalizations[i] = new HashSet<Integer>();
         }
     }
+    
+    /**
+     * Creates a new instance used for cloning.
+     * 
+     * @param anonymity
+     * @param generalizations
+     * @param maxNumNodesInitial
+     * @param minInformationLoss
+     * @param maxInformationLoss
+     */
+    @SuppressWarnings("unchecked")
+    private ModelNodeFilter(Set<Anonymity> anonymity, Set<Integer>[] generalizations, int maxNumNodesInitial, double minInformationLoss, double maxInformationLoss) {
+        for (Anonymity element : anonymity) {
+            this.anonymity.add(element);
+        }
+
+        this.generalizations = new Set[generalizations.length];
+        for (int i = 0; i < generalizations.length; i++) {
+            Set<Integer> current = generalizations[i];
+            this.generalizations[i] = new HashSet<Integer>();
+            for (Integer integer : current) {
+                this.generalizations[i].add(integer);
+            }
+        }
+
+        this.maxNumNodesInitial = maxNumNodesInitial;
+        this.minInformationLoss = minInformationLoss;
+        this.maxInformationLoss = maxInformationLoss;
+
+    }
+
+    /**
+     * Clones the ModelNodeFilter instance.
+     */
+    public ModelNodeFilter clone() {
+        return new ModelNodeFilter(anonymity, generalizations, maxNumNodesInitial, minInformationLoss, maxInformationLoss);
+    }
+
 
     /**
      * Allows transformations with any information loss to pass the filter.

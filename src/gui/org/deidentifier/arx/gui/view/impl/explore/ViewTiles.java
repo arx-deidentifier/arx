@@ -234,11 +234,13 @@ public class ViewTiles implements IView {
         
         if (filter == null) return;
         
+        
+        final ModelNodeFilter filterClone = filter.clone();
         controller.getResources().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 tiles.setFilter(new Filter<ARXNode>(){
                     public boolean accepts(ARXNode node) {
-                        return filter.isAllowed(lattice, node);
+                        return filterClone.isAllowed(lattice, node);
                     }
                 });
                 tiles.update();
