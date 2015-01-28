@@ -160,7 +160,7 @@ public class ViewTiles implements IView {
                 return true;
             }
         });
-        tiles.update();
+        tiles.update();            final int index = (levels[level].length - 1 - levelsize[level]);
         SWTUtil.disable(tiles);
     }
 
@@ -236,7 +236,8 @@ public class ViewTiles implements IView {
     private DecoratorColor<ARXNode> createDecoratorBackgroundColor() {
 
         final Gradient gradient = new GradientHeatscale(tiles);
-
+        final Color gray = new Color(tiles.getDisplay(), 160, 160, 160);
+        
         DecoratorColor<ARXNode> decorator = new DecoratorColor<ARXNode>() {
 
             @Override
@@ -245,17 +246,20 @@ public class ViewTiles implements IView {
                 case NOT_ANONYMOUS:
                 case UNKNOWN:
                 case PROBABLY_NOT_ANONYMOUS:
-                    return new Color(tiles.getDisplay(), 160, 160, 160);
+                    return gray;
                 default:
                     return gradient.getColor(asRelativeValue(element.getMinimumInformationLoss()) / 100d);
                 }
             }
+            
+            
         };
 
         decorator.addDecoratorListener(new DecoratorListener() {
             @Override
             public void disposed() {
                 gradient.dispose();
+                gray.dispose();
             }
         });
 
