@@ -148,6 +148,12 @@ public class ViewTiles implements IView {
         tiles.setRedraw(false);
         tiles.setItems(new ArrayList<ARXNode>());
         tiles.setRedraw(true);
+        tiles.setFilter(new Filter<ARXNode>(){
+            public boolean accepts(ARXNode arg0) {
+                return true;
+            }
+        });
+        tiles.update();
         SWTUtil.disable(tiles);
     }
 
