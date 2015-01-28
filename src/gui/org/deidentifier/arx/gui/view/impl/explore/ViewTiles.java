@@ -36,11 +36,11 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 
 import cern.colt.Arrays;
 import de.linearbits.tiles.DecoratorColor;
-import de.linearbits.tiles.DecoratorColorGradient;
 import de.linearbits.tiles.DecoratorListener;
 import de.linearbits.tiles.DecoratorString;
 import de.linearbits.tiles.Filter;
@@ -66,7 +66,7 @@ public class ViewTiles implements IView {
     private Model                model;
 
     /** The format. */
-    private final NumberFormat  format = new DecimalFormat("##0.000"); //$NON-NLS-1$
+    private final NumberFormat   format = new DecimalFormat("##0.000"); //$NON-NLS-1$
 
     /**
      * Init.
@@ -88,51 +88,58 @@ public class ViewTiles implements IView {
         tiles.setLayoutData(SWTUtil.createFillGridData());
 
         // Set layout
-        tiles.setTileLayout(new TileLayoutDynamic(10, 10, 5, 5));
-        tiles.setComparator(new Comparator<ARXNode>(){
+        tiles.setTileLayout(new TileLayoutDynamic(10, 20, 5, 5));
+        tiles.setComparator(new Comparator<ARXNode>() {
             public int compare(ARXNode o1, ARXNode o2) {
                 int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
                 return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
             }
         });
-        tiles.setFilter(new Filter<ARXNode>(){
+        tiles.setFilter(new Filter<ARXNode>() {
             public boolean accepts(ARXNode arg0) {
                 return true;
             }
         });
-        tiles.setDecoratorLabel(new DecoratorString<ARXNode>(){
+        tiles.setDecoratorLabel(new DecoratorString<ARXNode>() {
             @Override
             public String decorate(ARXNode node) {
                 return Arrays.toString(node.getTransformation());
             }
         });
         tiles.setDecoratorBackgroundColor(createDecoratorBackgroundColor());
-        tiles.setDecoratorTooltip(new DecoratorString<ARXNode>(){
+        tiles.setDecoratorTooltip(new DecoratorString<ARXNode>() {
             @Override
             public String decorate(ARXNode node) {
-                String min = null;
-                if (node.getMinimumInformationLoss() != null) {
-                    min = node.getMinimumInformationLoss().toString() +
-                          " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
-                } else {
-                    min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
-                }
+                final StringBuffer b = new StringBuffer();
+                b.append(Resources.getMessage("LatticeView.1")); //$NON-NLS-1$
+                b.append(format.format(asRelativeValue(node.getMinimumInformationLoss())));
+                b.append(" - "); //$NON-NLS-1$
+                b.append(format.format(asRelativeValue(node.getMaximumInformationLoss())));
+                b.append(" [%]\n"); //$NON-NLS-1$
+                if (model.getOutputDefinition() != null) {
+                    for (final String qi : node.getQuasiIdentifyingAttributes()) {
 
-                String max = null;
-                if (node.getMaximumInformationLoss() != null) {
-                    max = node.getMaximumInformationLoss().toString() +
-                          " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
-                } else {
-                    max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
+                        // Determine height of hierarchy
+                        int height = model.getOutputDefinition().isHierarchyAvailable(qi) ?
+                                model.getOutputDefinition().getHierarchy(qi)[0].length : 0;
+                        b.append(" * "); //$NON-NLS-1$
+                        b.append(qi);
+                        b.append(": "); //$NON-NLS-1$
+                        b.append(format.format(asRelativeValue(node.getGeneralization(qi), height - 1)));
+                        b.append(" [%]\n"); //$NON-NLS-1$
+                    }
                 }
-                
-                return min+" - "+max;
+                b.setLength(b.length() - 1);
+                return b.toString();
+
             }
         });
         tiles.update();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.deidentifier.arx.gui.view.def.IView#dispose()
      */
     @Override
@@ -148,7 +155,7 @@ public class ViewTiles implements IView {
         tiles.setRedraw(false);
         tiles.setItems(new ArrayList<ARXNode>());
         tiles.setRedraw(true);
-        tiles.setFilter(new Filter<ARXNode>(){
+        tiles.setFilter(new Filter<ARXNode>() {
             public boolean accepts(ARXNode arg0) {
                 return true;
             }
@@ -157,7 +164,9 @@ public class ViewTiles implements IView {
         SWTUtil.disable(tiles);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
      */
     @Override
@@ -169,7 +178,7 @@ public class ViewTiles implements IView {
             } else {
                 updateLattice(model.getResult().getLattice());
             }
-        } else  if (event.part == ModelPart.SELECTED_NODE) {
+        } else if (event.part == ModelPart.SELECTED_NODE) {
             // selectedNode = (ARXNode) event.data;
         } else if (event.part == ModelPart.MODEL) {
             reset();
@@ -194,39 +203,62 @@ public class ViewTiles implements IView {
      * @return
      */
     private double asRelativeValue(final InformationLoss<?> infoLoss) {
-
         if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
             model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
-            return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
+            return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(),
                                        model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
         } else {
             return 0;
         }
     }
-    
+
+    /**
+     * Converts a generalization to a relative value.
+     *
+     * @param generalization
+     * @param max
+     * @return
+     */
+    private double asRelativeValue(final int generalization, final int max) {
+        if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
+            model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
+            return ((double) generalization / (double) max) * 100d;
+        } else {
+            return 0;
+        }
+
+    }
 
     /**
      * Creates a background decorator
      * @return
      */
     private DecoratorColor<ARXNode> createDecoratorBackgroundColor() {
-        
+
         final Gradient gradient = new GradientHeatscale(tiles);
-        
-        DecoratorColor<ARXNode> decorator = new DecoratorColorGradient<ARXNode>(gradient){
+
+        DecoratorColor<ARXNode> decorator = new DecoratorColor<ARXNode>() {
+
             @Override
-            protected double getValue(ARXNode element) {
-                return asRelativeValue(element.getMinimumInformationLoss()) / 100d;
+            public Color decorate(ARXNode element) {
+                switch (element.getAnonymity()) {
+                case NOT_ANONYMOUS:
+                case UNKNOWN:
+                case PROBABLY_NOT_ANONYMOUS:
+                    return new Color(tiles.getDisplay(), 160, 160, 160);
+                default:
+                    return gradient.getColor(asRelativeValue(element.getMinimumInformationLoss()) / 100d);
+                }
             }
         };
-        
-        decorator.addDecoratorListener(new DecoratorListener(){
+
+        decorator.addDecoratorListener(new DecoratorListener() {
             @Override
             public void disposed() {
                 gradient.dispose();
             }
         });
-        
+
         return decorator;
     }
 
@@ -237,14 +269,13 @@ public class ViewTiles implements IView {
      * @param filter
      */
     private void updateFilter(final ARXLattice lattice, final ModelNodeFilter filter) {
-        
+
         if (filter == null) return;
-        
-        
+
         final ModelNodeFilter filterClone = filter.clone();
         controller.getResources().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                tiles.setFilter(new Filter<ARXNode>(){
+                tiles.setFilter(new Filter<ARXNode>() {
                     public boolean accepts(ARXNode node) {
                         return filterClone.isAllowed(lattice, node);
                     }
@@ -260,19 +291,19 @@ public class ViewTiles implements IView {
      * @param lattice
      */
     private void updateLattice(final ARXLattice lattice) {
-        
+
         if (lattice == null) {
             reset();
             return;
         }
-        
+
         controller.getResources().getDisplay().asyncExec(new Runnable() {
 
             @Override
             public void run() {
                 SWTUtil.enable(tiles);
                 tiles.setRedraw(true);
-                
+
                 List<ARXNode> list = new ArrayList<ARXNode>();
                 for (final ARXNode[] level : lattice.getLevels()) {
                     for (final ARXNode node : level) {
