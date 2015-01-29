@@ -161,34 +161,6 @@ public class ViewList extends ViewSolutionSpace {
         SWTUtil.disable(table);
     }
 
-    @Override
-    protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
-        update(result, filter);
-    }
-
-    @Override
-    protected void eventModelChanged() {
-        update(getModel().getResult(), getModel().getNodeFilter());
-    }
-
-    @Override
-    protected void eventNodeSelected() {
-        int index = -1;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals(getSelectedNode())) {
-                index = i;
-                break;
-            }
-        }
-        if (index == -1) return;
-        this.table.select(index);
-    }
-
-    @Override
-    protected void eventResultChanged(ARXResult result) {
-        if (result == null) reset();
-    }
-
     /**
      * Creates an item in the list.
      *
@@ -300,5 +272,33 @@ public class ViewList extends ViewSolutionSpace {
     @Override
     protected void actionRedraw() {
         this.table.redraw();
+    }
+
+    @Override
+    protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
+        update(result, filter);
+    }
+
+    @Override
+    protected void eventModelChanged() {
+        update(getModel().getResult(), getModel().getNodeFilter());
+    }
+
+    @Override
+    protected void eventNodeSelected() {
+        int index = -1;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(getSelectedNode())) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) return;
+        this.table.select(index);
+    }
+
+    @Override
+    protected void eventResultChanged(ARXResult result) {
+        if (result == null) reset();
     }
 }

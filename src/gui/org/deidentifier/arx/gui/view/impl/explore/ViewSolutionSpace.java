@@ -75,6 +75,30 @@ public abstract class ViewSolutionSpace implements IView {
     /** The optimum. */
     private ARXNode                   optimum                 = null;
 
+    /** Color. */
+    private static final Color         COLOR_GREEN             = GUIHelper.getColor(50, 205, 50);
+
+    /** Color. */
+    private static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(150, 255, 150);
+
+    /** Color. */
+    private static final Color         COLOR_RED               = GUIHelper.getColor(255, 99, 71);
+
+    /** Color. */
+    private static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(255, 150, 150);
+
+    /** Color. */
+    private static final Color         COLOR_BLUE              = GUIHelper.getColor(0, 0, 255);
+
+    /** Color. */
+    private static final Color         COLOR_YELLOW            = GUIHelper.getColor(255, 215, 0);
+
+    /** Color. */
+    private static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
+
+    /** Color. */
+    private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
+    
     /**
      * Constructor
      * @param parent
@@ -95,16 +119,6 @@ public abstract class ViewSolutionSpace implements IView {
         initializeMenu();
         initializeTooltip();
     }
-
-    /**
-     * Resets the view.
-     */
-    @Override
-    public void reset() {
-        this.optimum = null;
-        this.selectedNode = null;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -114,7 +128,16 @@ public abstract class ViewSolutionSpace implements IView {
     public void dispose() {
         controller.removeListener(this);
     }
-
+    
+    /**
+     * Resets the view.
+     */
+    @Override
+    public void reset() {
+        this.optimum = null;
+        this.selectedNode = null;
+    }
+    
     /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
      */
@@ -207,7 +230,7 @@ public abstract class ViewSolutionSpace implements IView {
             }
         };
     }
-
+    
     /**
      * Action to redraw
      */
@@ -222,7 +245,7 @@ public abstract class ViewSolutionSpace implements IView {
         getModel().setSelectedNode(node);
         controller.update(new ModelEvent(this, ModelPart.SELECTED_NODE, node));
     }
-    
+
     /**
      * Action show menu
      * @param x
@@ -232,6 +255,7 @@ public abstract class ViewSolutionSpace implements IView {
         menu.setLocation(x, y);
         menu.setVisible(true);
     }
+
     /**
      * Converts an information loss into a relative value in percent.
      *
@@ -247,7 +271,7 @@ public abstract class ViewSolutionSpace implements IView {
             return 0;
         }
     }
-    
+
     /**
      * Converts a generalization to a relative value.
      *
@@ -263,7 +287,7 @@ public abstract class ViewSolutionSpace implements IView {
             return 0;
         }
     }
-    
+
     /**
      * Event: filter changed
      * @param result
@@ -275,7 +299,7 @@ public abstract class ViewSolutionSpace implements IView {
      * Event: model changed
      */
     protected abstract void eventModelChanged();
-
+    
     /**
      * Event: node selected
      */
@@ -286,7 +310,7 @@ public abstract class ViewSolutionSpace implements IView {
      * @param result
      */
     protected abstract void eventResultChanged(ARXResult result);
-
+    
     /**
      * Returns the controller
      * @return
@@ -294,31 +318,7 @@ public abstract class ViewSolutionSpace implements IView {
     protected Controller getController() {
         return this.controller;
     }
-
-    /**
-     * Returns the model
-     * @return
-     */
-    protected Model getModel() {
-        return this.model;
-    }
-
-    /**
-     * Returns the selected node
-     * @return
-     */
-    protected ARXNode getSelectedNode() {
-        return this.selectedNode;
-    }
-
-    /**
-     * Returns the tool tip decorator
-     * @return
-     */
-    protected DecoratorString<ARXNode> getTooltipDecorator() {
-        return this.tooltipDecorator;
-    }
-
+    
     /**
      * Returns the number formatter
      * @return
@@ -326,30 +326,6 @@ public abstract class ViewSolutionSpace implements IView {
     protected NumberFormat getFormat() {
         return this.format;
     }
-
-    /** Color. */
-    private static final Color         COLOR_GREEN             = GUIHelper.getColor(50, 205, 50);
-    
-    /** Color. */
-    private static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(150, 255, 150);
-    
-    /** Color. */
-    private static final Color         COLOR_RED               = GUIHelper.getColor(255, 99, 71);
-    
-    /** Color. */
-    private static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(255, 150, 150);
-    
-    /** Color. */
-    private static final Color         COLOR_BLUE              = GUIHelper.getColor(0, 0, 255);
-    
-    /** Color. */
-    private static final Color         COLOR_YELLOW            = GUIHelper.getColor(255, 215, 0);
-    
-    /** Color. */
-    private static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
-
-    /** Color. */
-    private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
     
     /**
      * Returns the inner color.
@@ -370,6 +346,14 @@ public abstract class ViewSolutionSpace implements IView {
             return COLOR_RED;
         }
     }
+    
+    /**
+     * Returns the model
+     * @return
+     */
+    protected Model getModel() {
+        return this.model;
+    }
 
     /**
      * Returns the outer color.
@@ -380,7 +364,7 @@ public abstract class ViewSolutionSpace implements IView {
     protected Color getOuterColor(final ARXNode node) {
         return node.isChecked() ? COLOR_BLUE : COLOR_BLACK;
     }
-
+    
     /**
      * Returns the outer stroke width.
      *
@@ -392,6 +376,22 @@ public abstract class ViewSolutionSpace implements IView {
         int result = node.isChecked() ? width / 100 : 1;
         result = node.isChecked() ? result + 1 : result;
         return result >=1 ? result < 1 ? 1 : result : 1;
+    }
+
+    /**
+     * Returns the selected node
+     * @return
+     */
+    protected ARXNode getSelectedNode() {
+        return this.selectedNode;
+    }
+
+    /**
+     * Returns the tool tip decorator
+     * @return
+     */
+    protected DecoratorString<ARXNode> getTooltipDecorator() {
+        return this.tooltipDecorator;
     }
 
 }

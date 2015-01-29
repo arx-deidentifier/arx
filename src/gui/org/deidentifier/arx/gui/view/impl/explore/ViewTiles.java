@@ -123,25 +123,6 @@ public class ViewTiles extends ViewSolutionSpace {
                   int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
                   return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
                 }
-                
-//                    
-//                    if (o1.getMinimumInformationLoss().compareTo(o1.getMaximumInformationLoss())!=0 &&
-//                        asRelativeValue(o1.getMinimumInformationLoss())==0d){
-//                        return 0;
-//                    } else {
-//                        return +1;
-//                    }
-//                        
-//                } else {
-//                    
-//                    if (o1.getMinimumInformationLoss().compareTo(o1.getMaximumInformationLoss()) != 0 &&
-//                        asRelativeValue(o1.getMinimumInformationLoss()) == 0d) {
-//                        return +1;
-//                    } else {
-//                        int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
-//                        return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
-//                    }
-//                }
             }
         });
         tiles.setFilter(new Filter<ARXNode>() {
@@ -160,32 +141,6 @@ public class ViewTiles extends ViewSolutionSpace {
         tiles.setDecoratorLineColor(createDecoratorLineColor());
         tiles.setDecoratorLineWidth(createDecoratorLineWidth());
         tiles.update();
-    }
-
-    /**
-     * Creates a decorator
-     * @return
-     */
-    private DecoratorInteger<ARXNode> createDecoratorLineWidth() {
-        return new DecoratorInteger<ARXNode>() {
-            @Override
-            public Integer decorate(ARXNode node) {
-                return getOuterStrokeWidth(node, (tiles.getSize().x - NUM_COLUMNS * MARGIN) / NUM_COLUMNS);
-            }
-        };
-    }
-
-    /**
-     * Creates a decorator
-     * @return
-     */
-    private DecoratorColor<ARXNode> createDecoratorLineColor() {
-        return new DecoratorColor<ARXNode>() {
-            @Override
-            public Color decorate(ARXNode node) {
-                return getInnerColor(node);
-            }
-        };
     }
 
     /**
@@ -237,6 +192,32 @@ public class ViewTiles extends ViewSolutionSpace {
         });
 
         return decorator;
+    }
+
+    /**
+     * Creates a decorator
+     * @return
+     */
+    private DecoratorColor<ARXNode> createDecoratorLineColor() {
+        return new DecoratorColor<ARXNode>() {
+            @Override
+            public Color decorate(ARXNode node) {
+                return getInnerColor(node);
+            }
+        };
+    }
+
+    /**
+     * Creates a decorator
+     * @return
+     */
+    private DecoratorInteger<ARXNode> createDecoratorLineWidth() {
+        return new DecoratorInteger<ARXNode>() {
+            @Override
+            public Integer decorate(ARXNode node) {
+                return getOuterStrokeWidth(node, (tiles.getSize().x - NUM_COLUMNS * MARGIN) / NUM_COLUMNS);
+            }
+        };
     }
 
     /**
