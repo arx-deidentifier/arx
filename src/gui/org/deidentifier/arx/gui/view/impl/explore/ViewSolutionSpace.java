@@ -21,6 +21,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -30,9 +31,11 @@ import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -69,6 +72,9 @@ public abstract class ViewSolutionSpace implements IView {
     /** Tooltip decorator */
     private DecoratorString<ARXNode> tooltipDecorator = null;
 
+    /** The optimum. */
+    private ARXNode                   optimum                 = null;
+
     /**
      * Constructor
      * @param parent
@@ -95,6 +101,7 @@ public abstract class ViewSolutionSpace implements IView {
      */
     @Override
     public void reset() {
+        this.optimum = null;
         this.selectedNode = null;
     }
 
@@ -118,9 +125,21 @@ public abstract class ViewSolutionSpace implements IView {
             selectedNode = (ARXNode) event.data;
             eventNodeSelected();
         } else if (event.part == ModelPart.RESULT) {
+            if (model != null && model.getResult() != null &&
+                model.getResult().getGlobalOptimum() != null) {
+                optimum = model.getResult().getGlobalOptimum();
+            } else {
+                optimum = null;
+            }
             eventResultChanged(model.getResult());
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
+            if (model != null && model.getResult() != null &&
+                model.getResult().getGlobalOptimum() != null) {
+                optimum = model.getResult().getGlobalOptimum();
+            } else {
+                optimum = null;
+            }
             eventModelChanged();
         } else if (event.part == ModelPart.FILTER) {
             if (model != null) {
@@ -307,4 +326,72 @@ public abstract class ViewSolutionSpace implements IView {
     protected NumberFormat getFormat() {
         return this.format;
     }
+
+    /** Color. */
+    private static final Color         COLOR_GREEN             = GUIHelper.getColor(50, 205, 50);
+    
+    /** Color. */
+    private static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(150, 255, 150);
+    
+    /** Color. */
+    private static final Color         COLOR_RED               = GUIHelper.getColor(255, 99, 71);
+    
+    /** Color. */
+    private static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(255, 150, 150);
+    
+    /** Color. */
+    private static final Color         COLOR_BLUE              = GUIHelper.getColor(0, 0, 255);
+    
+    /** Color. */
+    private static final Color         COLOR_YELLOW            = GUIHelper.getColor(255, 215, 0);
+    
+    /** Color. */
+    private static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
+
+    /** Color. */
+    private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
+    
+    /**
+     * Returns the inner color.
+     *
+     * @param node
+     * @return
+     */
+    protected Color getInnerColor(final ARXNode node) {
+        if (node.getAnonymity() == Anonymity.ANONYMOUS) {
+            return node.equals(optimum) ? COLOR_YELLOW : COLOR_GREEN;
+        } else if (node.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
+            return COLOR_LIGHT_GREEN;
+        } else if (node.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
+            return COLOR_LIGHT_RED;
+        } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
+            return COLOR_DARK_GRAY;
+        } else {
+            return COLOR_RED;
+        }
+    }
+
+    /**
+     * Returns the outer color.
+     *
+     * @param node
+     * @return
+     */
+    protected Color getOuterColor(final ARXNode node) {
+        return node.isChecked() ? COLOR_BLUE : COLOR_BLACK;
+    }
+
+    /**
+     * Returns the outer stroke width.
+     *
+     * @param node
+     * @param width
+     * @return
+     */
+    protected int getOuterStrokeWidth(final ARXNode node, final int width) {
+        int result = node.isChecked() ? width / 100 : 1;
+        result = node.isChecked() ? result + 1 : result;
+        return result >=1 ? result < 1 ? 1 : result : 1;
+    }
+
 }

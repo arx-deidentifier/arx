@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import cern.colt.Arrays;
 import de.linearbits.tiles.DecoratorColor;
+import de.linearbits.tiles.DecoratorInteger;
 import de.linearbits.tiles.DecoratorListener;
 import de.linearbits.tiles.DecoratorString;
 import de.linearbits.tiles.Filter;
@@ -59,6 +60,12 @@ public class ViewTiles extends ViewSolutionSpace {
 
     /** The tiles. */
     private final Tiles<ARXNode> tiles;
+    /** Config */
+    private static final int     NUM_COLUMNS = 10;
+    /** Config */
+    private static final int     NUM_ROWS    = 20;
+    /** Config */
+    private static final int     MARGIN      = 5;
 
     /**
      * Constructor
@@ -99,11 +106,42 @@ public class ViewTiles extends ViewSolutionSpace {
         });
 
         // Set layout
-        tiles.setTileLayout(new TileLayoutDynamic(10, 20, 5, 5));
+        tiles.setTileLayout(new TileLayoutDynamic(NUM_COLUMNS, NUM_ROWS, MARGIN, MARGIN));
         tiles.setComparator(new Comparator<ARXNode>() {
             public int compare(ARXNode o1, ARXNode o2) {
-                int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
-                return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
+                
+                boolean unknown2 = o2.getMinimumInformationLoss().compareTo(o2.getMaximumInformationLoss())!=0 &&
+                                   asRelativeValue(o2.getMinimumInformationLoss())==0d;
+                
+                boolean unknown1 = o1.getMinimumInformationLoss().compareTo(o1.getMaximumInformationLoss())!=0 &&
+                        asRelativeValue(o1.getMinimumInformationLoss())==0d;
+                
+                if (unknown1 && unknown2) return 0;
+                else if (unknown1 && !unknown2) return +1;
+                else if (!unknown1 && unknown2) return -1;
+                else {
+                  int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
+                  return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
+                }
+                
+//                    
+//                    if (o1.getMinimumInformationLoss().compareTo(o1.getMaximumInformationLoss())!=0 &&
+//                        asRelativeValue(o1.getMinimumInformationLoss())==0d){
+//                        return 0;
+//                    } else {
+//                        return +1;
+//                    }
+//                        
+//                } else {
+//                    
+//                    if (o1.getMinimumInformationLoss().compareTo(o1.getMaximumInformationLoss()) != 0 &&
+//                        asRelativeValue(o1.getMinimumInformationLoss()) == 0d) {
+//                        return +1;
+//                    } else {
+//                        int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
+//                        return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
+//                    }
+//                }
             }
         });
         tiles.setFilter(new Filter<ARXNode>() {
@@ -119,7 +157,35 @@ public class ViewTiles extends ViewSolutionSpace {
         });
         tiles.setDecoratorBackgroundColor(createDecoratorBackgroundColor());
         tiles.setDecoratorTooltip(super.getTooltipDecorator());
+        tiles.setDecoratorLineColor(createDecoratorLineColor());
+        tiles.setDecoratorLineWidth(createDecoratorLineWidth());
         tiles.update();
+    }
+
+    /**
+     * Creates a decorator
+     * @return
+     */
+    private DecoratorInteger<ARXNode> createDecoratorLineWidth() {
+        return new DecoratorInteger<ARXNode>() {
+            @Override
+            public Integer decorate(ARXNode node) {
+                return getOuterStrokeWidth(node, (tiles.getSize().x - NUM_COLUMNS * MARGIN) / NUM_COLUMNS);
+            }
+        };
+    }
+
+    /**
+     * Creates a decorator
+     * @return
+     */
+    private DecoratorColor<ARXNode> createDecoratorLineColor() {
+        return new DecoratorColor<ARXNode>() {
+            @Override
+            public Color decorate(ARXNode node) {
+                return getInnerColor(node);
+            }
+        };
     }
 
     /**
@@ -153,17 +219,13 @@ public class ViewTiles extends ViewSolutionSpace {
 
             @Override
             public Color decorate(ARXNode element) {
-                switch (element.getAnonymity()) {
-                case NOT_ANONYMOUS:
-                case UNKNOWN:
-                case PROBABLY_NOT_ANONYMOUS:
+                if (element.getMinimumInformationLoss().compareTo(element.getMaximumInformationLoss())!=0 &&
+                    asRelativeValue(element.getMinimumInformationLoss())==0d){
                     return gray;
-                default:
+                } else {
                     return gradient.getColor(asRelativeValue(element.getMinimumInformationLoss()) / 100d);
                 }
             }
-            
-            
         };
 
         decorator.addDecoratorListener(new DecoratorListener() {

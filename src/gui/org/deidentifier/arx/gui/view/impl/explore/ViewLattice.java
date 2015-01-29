@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -128,37 +127,13 @@ public class ViewLattice extends ViewSolutionSpace {
     }
 
     /** Color. */
-    public static final Color         COLOR_GREEN             = GUIHelper.getColor(50, 205, 50);
+    private static final Color         COLOR_WHITE             = GUIHelper.getColor(255, 255, 255);
     
     /** Color. */
-    public static final Color         COLOR_LIGHT_GREEN       = GUIHelper.getColor(150, 255, 150);
+    private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
     
     /** Color. */
-    public static final Color         COLOR_ORANGE            = GUIHelper.getColor(255, 145, 0);
-    
-    /** Color. */
-    public static final Color         COLOR_RED               = GUIHelper.getColor(255, 99, 71);
-    
-    /** Color. */
-    public static final Color         COLOR_LIGHT_RED         = GUIHelper.getColor(255, 150, 150);
-    
-    /** Color. */
-    public static final Color         COLOR_BLUE              = GUIHelper.getColor(0, 0, 255);
-    
-    /** Color. */
-    public static final Color         COLOR_YELLOW            = GUIHelper.getColor(255, 215, 0);
-    
-    /** Color. */
-    public static final Color         COLOR_WHITE             = GUIHelper.getColor(255, 255, 255);
-    
-    /** Color. */
-    public static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
-    
-    /** Color. */
-    public static final Color         COLOR_LIGHT_GRAY        = GUIHelper.getColor(211, 211, 211);
-    
-    /** Color. */
-    public static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
+    private static final Color         COLOR_LIGHT_GRAY        = GUIHelper.getColor(211, 211, 211);
 
     /** Attribute constant. */
     private static final int          ATTRIBUTE_CENTER        = 4;
@@ -247,9 +222,6 @@ public class ViewLattice extends ViewSolutionSpace {
     /** Drag parameters. */
     private DragType                  dragType                = DragType.NONE;
 
-    /** The optimum. */
-    private ARXNode                   optimum                 = null;
-
     /** The tool tip. */
     private int                       tooltipX                = -1;
     
@@ -319,7 +291,6 @@ public class ViewLattice extends ViewSolutionSpace {
     public void reset() {
         super.reset();
         this.numNodes = 0;
-        this.optimum = null;
         this.arxLattice = null;
         this.clearLatticeAndDisposePaths();
         this.latticeWidth = 0;
@@ -585,26 +556,6 @@ public class ViewLattice extends ViewSolutionSpace {
     }
 
     /**
-     * Returns the inner color.
-     *
-     * @param node
-     * @return
-     */
-    private Color getInnerColor(final ARXNode node) {
-        if (node.getAnonymity() == Anonymity.ANONYMOUS) {
-            return node.equals(optimum) ? COLOR_YELLOW : COLOR_GREEN;
-        } else if (node.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
-            return COLOR_LIGHT_GREEN;
-        } else if (node.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
-            return COLOR_LIGHT_RED;
-        } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
-            return COLOR_DARK_GRAY;
-        } else {
-            return COLOR_RED;
-        }
-    }
-
-    /**
      * Returns a line color for drawing the connections.
      *
      * @param nodeWidth
@@ -639,29 +590,6 @@ public class ViewLattice extends ViewSolutionSpace {
     }
 
     /**
-     * Returns the outer color.
-     *
-     * @param node
-     * @return
-     */
-    private Color getOuterColor(final ARXNode node) {
-        return node.isChecked() ? COLOR_BLUE : COLOR_BLACK;
-    }
-
-    /**
-     * Returns the outer stroke width.
-     *
-     * @param node
-     * @param width
-     * @return
-     */
-    private int getOuterStrokeWidth(final ARXNode node, final int width) {
-        int result = node.isChecked() ? width / 100 : 1;
-        result = node.isChecked() ? result + 1 : result;
-        return result >=1 ? result < 1 ? 1 : result : 1;
-    }
-
-    /**
      * Initializes the data structures for displaying a new lattice.
      *
      * @param result
@@ -687,7 +615,6 @@ public class ViewLattice extends ViewSolutionSpace {
         ARXLattice originalLattice = result.getLattice();
         this.latticeWidth = 0;
         this.numNodes = 0;
-        this.optimum = result.getGlobalOptimum();
         for (ARXNode[] originalLevel : originalLattice.getLevels()) {
             List<ARXNode> level = new ArrayList<ARXNode>();
             for (ARXNode node : originalLevel) {

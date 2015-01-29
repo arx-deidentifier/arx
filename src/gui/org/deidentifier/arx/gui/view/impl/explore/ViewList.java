@@ -27,10 +27,11 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
-import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -115,6 +116,31 @@ public class ViewList extends ViewSolutionSpace {
         column2.pack();
         column3.pack();
         column4.pack();
+
+        // Create tooltip listener
+        Listener tableListener = new Listener() {
+
+            private TableItem previousHighlighted = null;
+
+            public void handleEvent(Event event) {
+                if (previousHighlighted != null) {
+                    if (!previousHighlighted.isDisposed()) {
+                        previousHighlighted.setBackground(getInnerColor((ARXNode)previousHighlighted.getData()));
+                    }
+                }
+
+                TableItem item = table.getItem(new Point(event.x, event.y));
+                if (item != null) {
+                    item.setBackground(GUIHelper.COLOR_GRAY);
+                    previousHighlighted = item;
+                    ARXNode node = (ARXNode) item.getData();
+                    table.redraw();
+                    table.setToolTipText(getTooltipDecorator().decorate(node));
+                }
+            }
+        };
+        table.addListener(SWT.MouseMove, tableListener);
+        table.addListener(SWT.MouseExit, tableListener);
     }
 
     /**
@@ -196,6 +222,9 @@ public class ViewList extends ViewSolutionSpace {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
         item.setText(3, max);
+        item.setData(node);
+        item.setBackground(getInnerColor(node));
+        item.setForeground(getOuterColor(node));
     }
 
     /**
