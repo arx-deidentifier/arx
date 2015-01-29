@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.explore;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,15 +26,18 @@ import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.metric.InformationLoss;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -48,23 +49,14 @@ import cern.colt.Arrays;
 
 /**
  * This class implements a list view on selected nodes.
- * TODO: Highlight optimum and currently selected node in list
  * 
- * @author prasser
+ * @author Fabian Prasser
+ * @author Florian Kohlmayer
  */
-public class ViewList implements IView {
-
-    /** The controller. */
-    private final Controller    controller;
-
-    /** The format. */
-    private final NumberFormat  format = new DecimalFormat("##0.000"); //$NON-NLS-1$
+public class ViewList extends ViewSolutionSpace {
 
     /** The table. */
     private final Table         table;
-
-    /** The model. */
-    private Model               model;
 
     /** The list. */
     private final List<ARXNode> list   = new ArrayList<ARXNode>();
@@ -73,24 +65,41 @@ public class ViewList implements IView {
     private Listener            listener;
 
     /**
-     * Init.
+     * Contructor
      *
      * @param parent
      * @param controller
      */
     public ViewList(final Composite parent, final Controller controller) {
-
-        // Listen
-        controller.addListener(ModelPart.SELECTED_NODE, this);
-        controller.addListener(ModelPart.FILTER, this);
-        controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.RESULT, this);
-
-        this.controller = controller;
+        
+        super(parent, controller);
 
         table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
+        
+        table.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                ARXNode node = list.get(table.getSelectionIndex());
+                ViewList.this.actionSelectNode(node);
+            }
+        });
+        
+        table.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseUp(MouseEvent arg0) {
+                if (arg0.button == 3) {
+                    if (getSelectedNode() != null) {
+                        Point display = table.toDisplay(arg0.x, arg0.y);
+                        getModel().setSelectedNode(getSelectedNode());
+                        controller.update(new ModelEvent(ViewList.this, 
+                                                         ModelPart.SELECTED_NODE, getSelectedNode()));
+                        actionShowMenu(display.x, display.y);
+                    }
+                }
+            }
+        });
         
         final TableColumn column1 = new TableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
@@ -107,14 +116,31 @@ public class ViewList implements IView {
         column2.pack();
         column3.pack();
         column4.pack();
-    }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
+        // Create tooltip listener
+        Listener tableListener = new Listener() {
+
+            private TableItem previousHighlighted = null;
+
+            public void handleEvent(Event event) {
+                if (previousHighlighted != null) {
+                    if (!previousHighlighted.isDisposed()) {
+                        previousHighlighted.setBackground(getInnerColor((ARXNode)previousHighlighted.getData()));
+                    }
+                }
+
+                TableItem item = table.getItem(new Point(event.x, event.y));
+                if (item != null) {
+                    item.setBackground(GUIHelper.COLOR_GRAY);
+                    previousHighlighted = item;
+                    ARXNode node = (ARXNode) item.getData();
+                    table.redraw();
+                    table.setToolTipText(getTooltipDecorator().decorate(node));
+                }
+            }
+        };
+        table.addListener(SWT.MouseMove, tableListener);
+        table.addListener(SWT.MouseExit, tableListener);
     }
 
     /**
@@ -122,6 +148,7 @@ public class ViewList implements IView {
      */
     @Override
     public void reset() {
+        super.reset();
         table.setRedraw(false);
         for (final TableItem i : table.getItems()) {
             i.dispose();
@@ -132,44 +159,6 @@ public class ViewList implements IView {
             table.removeListener(SWT.SetData, listener);
         }
         SWTUtil.disable(table);
-    }
-
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
-    @Override
-    public void update(final ModelEvent event) {
-
-        if (event.part == ModelPart.RESULT) {
-            if (model.getResult() == null) reset();
-        } else  if (event.part == ModelPart.SELECTED_NODE) {
-            // selectedNode = (ARXNode) event.data;
-        } else if (event.part == ModelPart.MODEL) {
-            reset();
-            model = (Model) event.data;
-            update(model.getResult(), model.getNodeFilter());
-        } else if (event.part == ModelPart.FILTER) {
-            if (model != null) {
-                update(model.getResult(), (ModelNodeFilter) event.data);
-            }
-        }
-    }
-
-    /**
-     * Converts an information loss into a relative value in percent.
-     *
-     * @param infoLoss
-     * @return
-     */
-    private double asRelativeValue(final InformationLoss<?> infoLoss) {
-
-        if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
-            model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
-            return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
-                                       model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
-        } else {
-            return 0;
-        }
     }
 
     /**
@@ -191,7 +180,7 @@ public class ViewList implements IView {
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
             min = node.getMinimumInformationLoss().toString() +
-                  " [" + format.format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+                  " [" + getFormat().format(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
@@ -200,11 +189,14 @@ public class ViewList implements IView {
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
             max = node.getMaximumInformationLoss().toString() +
-                  " [" + format.format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+                  " [" + getFormat().format(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
         item.setText(3, max);
+        item.setData(node);
+        item.setBackground(getInnerColor(node));
+        item.setForeground(getOuterColor(node));
     }
 
     /**
@@ -218,7 +210,7 @@ public class ViewList implements IView {
         if (result == null || result.getLattice() == null) return;
         if (filter == null) return;
         
-        controller.getResources().getDisplay().asyncExec(new Runnable() {
+        getController().getResources().getDisplay().asyncExec(new Runnable() {
 
             @Override
             public void run() {
@@ -248,7 +240,7 @@ public class ViewList implements IView {
                 });
 
                 // Check
-                if (list.size() > model.getMaxNodesInViewer()) {
+                if (list.size() > getModel().getMaxNodesInViewer()) {
                     list.clear();
                 }
 
@@ -275,5 +267,38 @@ public class ViewList implements IView {
                 table.setRedraw(true);
             }
         });
+    }
+
+    @Override
+    protected void actionRedraw() {
+        this.table.redraw();
+    }
+
+    @Override
+    protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
+        update(result, filter);
+    }
+
+    @Override
+    protected void eventModelChanged() {
+        update(getModel().getResult(), getModel().getNodeFilter());
+    }
+
+    @Override
+    protected void eventNodeSelected() {
+        int index = -1;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(getSelectedNode())) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) return;
+        this.table.select(index);
+    }
+
+    @Override
+    protected void eventResultChanged(ARXResult result) {
+        if (result == null) reset();
     }
 }
