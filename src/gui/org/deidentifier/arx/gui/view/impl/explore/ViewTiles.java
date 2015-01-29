@@ -160,7 +160,7 @@ public class ViewTiles implements IView {
                 return true;
             }
         });
-        tiles.update();            final int index = (levels[level].length - 1 - levelsize[level]);
+        tiles.update();
         SWTUtil.disable(tiles);
     }
 
