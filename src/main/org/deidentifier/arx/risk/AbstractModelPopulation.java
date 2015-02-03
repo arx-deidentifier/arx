@@ -115,6 +115,6 @@ abstract class AbstractModelPopulation {
      *         depending on the model this estimate is based on population
      *         uniqueness or equivalence class size and frequency
      */
-    protected abstract double computeRisk();
+    protected abstract double getRisk();
 
 }

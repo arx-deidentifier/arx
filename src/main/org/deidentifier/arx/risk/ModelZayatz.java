@@ -82,12 +82,12 @@ class ModelZayatz extends AbstractModelUniqueness {
     }
 
     @Override
-    protected double computeRisk() {
+    protected double getRisk() {
         return (computeConditionalUniquenessTotal() / sampleSize);
     }
 
     @Override
-    protected double computeUniquenessTotal() {
+    protected double getPopulationUniques() {
         final double condUniqPercentage = computeConditionalUniquenessPercentage();
         return ((eqClasses.get(1) * condUniqPercentage) / samplingFraction);
     }
