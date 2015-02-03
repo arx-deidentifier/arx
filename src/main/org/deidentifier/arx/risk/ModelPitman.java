@@ -28,7 +28,7 @@ import org.apache.commons.math3.special.Gamma;
  * @version 1.0
  */
 
-public class PitmanModel extends UniquenessModel {
+class ModelPitman extends AbstractModelUniqueness {
 
     /**
      * number of equivalence classes of size one in the sample
@@ -51,7 +51,7 @@ public class PitmanModel extends UniquenessModel {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public PitmanModel(final double pi, final Map<Integer, Integer> eqClasses) {
+    protected ModelPitman(final double pi, final Map<Integer, Integer> eqClasses) {
         super(pi, eqClasses);
 
         c1 = this.eqClasses.get(1);
@@ -59,12 +59,12 @@ public class PitmanModel extends UniquenessModel {
     }
 
     @Override
-    public double computeRisk() {
+    protected double computeRisk() {
         return (computeUniquenessTotal() / populationSize);
     }
 
     @Override
-    public double computeUniquenessTotal() throws IllegalArgumentException {
+    protected double computeUniquenessTotal() throws IllegalArgumentException {
 
         // initial guess
         final double c = (c1 * (c1 - 1)) / c2;
@@ -76,7 +76,7 @@ public class PitmanModel extends UniquenessModel {
 
         // apply Newton-Rhapson algorithm to solve the Maximum Likelihood
         // Estimates
-        final NewtonPitman pitmanNewton = new NewtonPitman(numberOfEquivalenceClasses,
+        final AlgorithmNewtonPitman pitmanNewton = new AlgorithmNewtonPitman(numberOfEquivalenceClasses,
                                                            sampleSize,
                                                            eqClasses);
         final double[] initialGuess = { thetaGuess, alphaGuess };

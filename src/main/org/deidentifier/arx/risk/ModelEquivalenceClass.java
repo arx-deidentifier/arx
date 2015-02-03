@@ -27,7 +27,7 @@ package org.deidentifier.arx.risk;
 
 import java.util.Map;
 
-public class EquivalenceClassModel extends PopulationModel {
+class ModelEquivalenceClass extends AbstractModelPopulation {
 
     /**
      * The equivalence class model makes a worst case disclosure risk estimation
@@ -39,12 +39,12 @@ public class EquivalenceClassModel extends PopulationModel {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public EquivalenceClassModel(final Map<Integer, Integer> eqClasses) {
+    protected ModelEquivalenceClass(final Map<Integer, Integer> eqClasses) {
         super(0, eqClasses);
     }
 
     @Override
-    public double computeRisk() {
+    protected double computeRisk() {
         double result = 0;
 
         for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {

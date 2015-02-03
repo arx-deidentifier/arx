@@ -26,7 +26,7 @@ package org.deidentifier.arx.risk;
 
 import java.util.Map;
 
-public abstract class UniquenessModel extends PopulationModel {
+abstract class AbstractModelUniqueness extends AbstractModelPopulation {
 
     /**
      * Model based on the number of population uniques, estimating the
@@ -40,16 +40,15 @@ public abstract class UniquenessModel extends PopulationModel {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public UniquenessModel(final double pi,
+    public AbstractModelUniqueness(final double pi,
                            final Map<Integer, Integer> eqClasses) {
         super(pi, eqClasses);
     }
 
     /**
-     * @return Population Uniqueness estimate as total number of individuals in
-     *         a population
+     * @return Population Uniqueness estimate as total number of individuals in a population
      * 
      */
-    abstract public double computeUniquenessTotal();
+    protected abstract double computeUniquenessTotal();
 
 }

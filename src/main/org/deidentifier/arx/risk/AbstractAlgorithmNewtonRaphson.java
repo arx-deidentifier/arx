@@ -24,7 +24,7 @@ import Jama.Matrix;
  * Newton-Raphson algorithm
  */
 
-public abstract class NewtonRaphsonAlgorithm {
+abstract class AbstractAlgorithmNewtonRaphson {
 
     /**
      * Convergence threshold for the Newton-Raphson algorithm.
@@ -72,7 +72,7 @@ public abstract class NewtonRaphsonAlgorithm {
      * Default NewtonRaphsonAlgorithm constructor.
      */
 
-    public NewtonRaphsonAlgorithm() {
+    AbstractAlgorithmNewtonRaphson() {
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class NewtonRaphsonAlgorithm {
      *         iterated solutions.
      */
 
-    public abstract double[][] firstDerivativeMatrix(double[] iteratedSolution);
+    protected abstract double[][] firstDerivativeMatrix(double[] iteratedSolution);
 
     /**
      * Returns the vector of solutions obtained by the Newton-Raphson algorithm.
@@ -99,7 +99,7 @@ public abstract class NewtonRaphsonAlgorithm {
      *                singular.
      */
 
-    public double[] getSolution(final double[] initialValue) {
+    protected double[] getSolution(final double[] initialValue) {
 
         solutionVector = new Matrix(initialValue, initialValue.length);
         updatedSolutionVector = new Matrix(initialValue, initialValue.length);
@@ -149,6 +149,6 @@ public abstract class NewtonRaphsonAlgorithm {
      * @return the object functions evaluated at the iterated solutions.
      */
 
-    public abstract double[] objectFunctionVector(double[] iteratedSolution);
+    protected abstract double[] objectFunctionVector(double[] iteratedSolution);
 
 }

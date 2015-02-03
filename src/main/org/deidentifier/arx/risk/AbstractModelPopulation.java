@@ -27,7 +27,7 @@ import java.util.Map;
  * @version 1.0
  */
 
-public abstract class PopulationModel {
+abstract class AbstractModelPopulation {
 
     /**
      * size of biggest equivalence class in the data set
@@ -79,7 +79,7 @@ public abstract class PopulationModel {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public PopulationModel(final double pi,
+    public AbstractModelPopulation(final double pi,
                            final Map<Integer, Integer> eqClasses) {
         this.samplingFraction = pi;
         this.eqClasses = eqClasses;
@@ -115,6 +115,6 @@ public abstract class PopulationModel {
      *         depending on the model this estimate is based on population
      *         uniqueness or equivalence class size and frequency
      */
-    abstract public double computeRisk();
+    protected abstract double computeRisk();
 
 }

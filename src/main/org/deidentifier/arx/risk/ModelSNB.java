@@ -26,7 +26,7 @@ import java.util.Map;
  * @version 1.09
  */
 
-public class SNBModel extends UniquenessModel {
+class ModelSNB extends AbstractModelUniqueness {
 
     /**
      * number of equivalence classes of size one
@@ -55,7 +55,7 @@ public class SNBModel extends UniquenessModel {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public SNBModel(final double pi, final Map<Integer, Integer> eqClasses) {
+    ModelSNB(final double pi, final Map<Integer, Integer> eqClasses) {
         super(pi, eqClasses);
         samplingFraction = pi;
         numberOfNonEmptyClasses = estimateNonEmptyEquivalenceClasses();
@@ -63,16 +63,16 @@ public class SNBModel extends UniquenessModel {
     }
 
     @Override
-    public double computeRisk() {
+    protected double computeRisk() {
         return (computeUniquenessTotal() / populationSize);
     }
 
     @Override
-    public double computeUniquenessTotal() {
+    protected double computeUniquenessTotal() {
         double result = Double.NaN;
         double alpha = 0, beta = 0;
 
-        final NewtonSNB snbModel = new NewtonSNB(numberOfNonEmptyClasses,
+        final AlgorithmNewtonSNB snbModel = new AlgorithmNewtonSNB(numberOfNonEmptyClasses,
                                                  samplingFraction,
                                                  eqClasses);
 
@@ -95,7 +95,7 @@ public class SNBModel extends UniquenessModel {
      *         Shlosser
      * 
      */
-    public double estimateNonEmptyEquivalenceClasses() {
+    private double estimateNonEmptyEquivalenceClasses() {
         double var1 = 0, var2 = 0, var3 = 0, var4 = 0;
 
         for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
