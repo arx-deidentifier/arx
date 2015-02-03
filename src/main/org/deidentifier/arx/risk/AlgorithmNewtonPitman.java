@@ -28,7 +28,7 @@ import java.util.Map;
  * @version 1.0
  */
 
-public class NewtonPitman extends NewtonRaphsonAlgorithm {
+class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
 
     /**
      * The number of equivalence class sizes (keys) and corresponding frequency
@@ -54,7 +54,7 @@ public class NewtonPitman extends NewtonRaphsonAlgorithm {
      *            The number of equivalence class sizes (keys) and corresponding
      *            frequency (values)
      */
-    public NewtonPitman(final double u,
+    AlgorithmNewtonPitman(final double u,
                         final double n,
                         final Map<Integer, Integer> eqClasses) {
         this.numberOfEquivalenceClasses = u;
@@ -72,7 +72,7 @@ public class NewtonPitman extends NewtonRaphsonAlgorithm {
      *         iterated solutions.
      */
     @Override
-    public double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
+    protected double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
 
         final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
         double temp1 = 0, temp2 = 0, temp3 = 0;
@@ -128,7 +128,7 @@ public class NewtonPitman extends NewtonRaphsonAlgorithm {
      * @return the object functions evaluated at the iterated solutions.
      */
     @Override
-    public double[] objectFunctionVector(final double[] iteratedSolution) {
+    protected double[] objectFunctionVector(final double[] iteratedSolution) {
         // theta is at iteratedSolution[0], alpha at [1]
         final double[] result = new double[iteratedSolution.length];
         double temp1 = 0, temp2 = 0, temp3 = 0;

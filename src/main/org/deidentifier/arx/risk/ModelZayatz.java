@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 
-public class ZayatzModel extends UniquenessModel {
+class ModelZayatz extends AbstractModelUniqueness {
 
     /**
      * Zayatz model, based on Zayatz, 1991
@@ -42,7 +42,7 @@ public class ZayatzModel extends UniquenessModel {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public ZayatzModel(final double Pi, final Map<Integer, Integer> eqClasses) {
+    protected ModelZayatz(final double Pi, final Map<Integer, Integer> eqClasses) {
         super(Pi, eqClasses);
     }
 
@@ -52,7 +52,7 @@ public class ZayatzModel extends UniquenessModel {
      *         1 in the sample was chosen from an equivalence class of size 1 in
      *         the population
      */
-    public double computeConditionalUniquenessPercentage() {
+    private double computeConditionalUniquenessPercentage() {
         double temp = 0;
 
         for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
@@ -77,17 +77,17 @@ public class ZayatzModel extends UniquenessModel {
      * @return estimate of the total number of sample uniques that are also
      *         population uniques
      */
-    public double computeConditionalUniquenessTotal() {
+    private double computeConditionalUniquenessTotal() {
         return (eqClasses.get(1) * computeConditionalUniquenessPercentage());
     }
 
     @Override
-    public double computeRisk() {
+    protected double computeRisk() {
         return (computeConditionalUniquenessTotal() / sampleSize);
     }
 
     @Override
-    public double computeUniquenessTotal() {
+    protected double computeUniquenessTotal() {
         final double condUniqPercentage = computeConditionalUniquenessPercentage();
         return ((eqClasses.get(1) * condUniqPercentage) / samplingFraction);
     }

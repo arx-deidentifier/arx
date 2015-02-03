@@ -26,7 +26,7 @@ import java.util.Map;
  * @version 1.0
  */
 
-public class NewtonSNB extends NewtonRaphsonAlgorithm {
+class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
 
     /**
      * number of equivalence classes of size one in the sample
@@ -63,7 +63,7 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
      *            number of non zero classes equivalence classes in the
      *            population (estimated)
      */
-    public NewtonSNB(final double k,
+    protected AlgorithmNewtonSNB(final double k,
                      final double pi,
                      final Map<Integer, Integer> eqClasses) {
         this.estimatedNumberOfNonEmptyClasses = k;
@@ -82,7 +82,7 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
      *         iterated solutions.
      */
     @Override
-    public double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
+    protected double[][] firstDerivativeMatrix(final double[] iteratedSolution) {
         final double[][] result = new double[iteratedSolution.length][iteratedSolution.length];
         final double iBeta = iteratedSolution[1] - 1;
         // The derivation of the following formulas has been obtained using
@@ -91,7 +91,7 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
         // Formula 1, d alpha
         result[0][0] = (-(samplingFraction *
                           estimatedNumberOfNonEmptyClasses *
-                          mathHelper((iteratedSolution[1] / ((iteratedSolution[1] * (-samplingFraction)) +
+                          power((iteratedSolution[1] / ((iteratedSolution[1] * (-samplingFraction)) +
                                                              iteratedSolution[1] + samplingFraction)),
                                      iteratedSolution[0]) * ((((iteratedSolution[0] *
                                                                 iBeta * (samplingFraction - 1)) +
@@ -104,15 +104,15 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
                          samplingFraction *
                          Math.pow((iteratedSolution[1] / ((iteratedSolution[1] + samplingFraction) - (iteratedSolution[1] * samplingFraction))),
                                   iteratedSolution[0] - 1) *
-                         ((iteratedSolution[1] * (samplingFraction - 1) * (1 + ((iteratedSolution[0] - 1) * samplingFraction))) + (samplingFraction * ((iteratedSolution[0] + samplingFraction) - (iteratedSolution[0] * samplingFraction)))) * estimatedNumberOfNonEmptyClasses) / (mathHelper(((iteratedSolution[1] + samplingFraction) - (iteratedSolution[1] * samplingFraction)),
+                         ((iteratedSolution[1] * (samplingFraction - 1) * (1 + ((iteratedSolution[0] - 1) * samplingFraction))) + (samplingFraction * ((iteratedSolution[0] + samplingFraction) - (iteratedSolution[0] * samplingFraction)))) * estimatedNumberOfNonEmptyClasses) / (power(((iteratedSolution[1] + samplingFraction) - (iteratedSolution[1] * samplingFraction)),
                                                                                                                                                                                                                                                                                                 3)));
 
         // Formula 2, d alpha
-        result[1][0] = (mathHelper(2, -iteratedSolution[0] - 2) *
+        result[1][0] = (power(2, -iteratedSolution[0] - 2) *
                         (1 - iteratedSolution[1]) *
-                        mathHelper(iteratedSolution[1], iteratedSolution[0]) *
+                        power(iteratedSolution[1], iteratedSolution[0]) *
                         (samplingFraction * samplingFraction) *
-                        mathHelper(((iteratedSolution[1] + samplingFraction) - (iteratedSolution[1] * samplingFraction)),
+                        power(((iteratedSolution[1] + samplingFraction) - (iteratedSolution[1] * samplingFraction)),
                                    -iteratedSolution[0] - 2) *
                         estimatedNumberOfNonEmptyClasses * (((1 +
                                                               iteratedSolution[1] +
@@ -124,16 +124,16 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
                                                                                                                                                                                                                 (iteratedSolution[1] - 1) * (samplingFraction - 1)) + samplingFraction) - (iteratedSolution[1] * samplingFraction))) * (Math.log(iteratedSolution[1]) - Math.log(2 * ((iteratedSolution[1] + samplingFraction) - (iteratedSolution[1] * samplingFraction)))))));
 
         // Formula 2, d beta
-        result[1][1] = (mathHelper(-2, -iteratedSolution[0] - 2) *
+        result[1][1] = (power(-2, -iteratedSolution[0] - 2) *
                         iteratedSolution[0] *
-                        mathHelper(iteratedSolution[1], iteratedSolution[0] - 1) *
+                        power(iteratedSolution[1], iteratedSolution[0] - 1) *
                         (samplingFraction * samplingFraction) *
-                        mathHelper((iteratedSolution[1] + samplingFraction) -
+                        power((iteratedSolution[1] + samplingFraction) -
                                            (iteratedSolution[1] * samplingFraction),
                                    -iteratedSolution[0] - 3) *
                         (((2 * iteratedSolution[1] * ((1 + iteratedSolution[0]) - (iteratedSolution[0] * iteratedSolution[1]))) - ((iteratedSolution[0] * ((-1 + (iteratedSolution[0] * (iteratedSolution[1] - 1))) - (3 * iteratedSolution[1]))) * ((iteratedSolution[1] - 1) * samplingFraction))) + ((iteratedSolution[0] - 1) *
                                                                                                                                                                                                                                                                                                         iteratedSolution[0] *
-                                                                                                                                                                                                                                                                                                        mathHelper((iteratedSolution[1] - 1),
+                                                                                                                                                                                                                                                                                                        power((iteratedSolution[1] - 1),
                                                                                                                                                                                                                                                                                                                    2) * (samplingFraction * samplingFraction))) * estimatedNumberOfNonEmptyClasses);
         return result;
     }
@@ -149,7 +149,7 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
      * @return value of the first argument raised to the power of the second
      *         argument
      */
-    public double mathHelper(final double base, final double power) {
+    private double power(final double base, final double power) {
         double result;
         if (base < 0) {
             if (power < 0) {
@@ -177,7 +177,7 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
      * @return the object functions evaluated at the iterated solutions.
      */
     @Override
-    public double[] objectFunctionVector(final double[] iteratedSolution) {
+    protected double[] objectFunctionVector(final double[] iteratedSolution) {
         final double[] result = new double[iteratedSolution.length];
         final double dividend = ((1 - samplingFraction) * (1 - iteratedSolution[1]));
 
@@ -185,14 +185,14 @@ public class NewtonSNB extends NewtonRaphsonAlgorithm {
         // beta in the SNB Model:
         result[0] = (estimatedNumberOfNonEmptyClasses *
                      samplingFraction *
-                     mathHelper((iteratedSolution[1] / (1 - dividend)),
+                     power((iteratedSolution[1] / (1 - dividend)),
                                 iteratedSolution[0]) * (((iteratedSolution[0] * dividend) / (1 - dividend)) + 1)) -
                     c1;
 
         result[1] = (estimatedNumberOfNonEmptyClasses *
                      ((iteratedSolution[0] *
-                       mathHelper(iteratedSolution[1], iteratedSolution[0]) *
-                       (samplingFraction * samplingFraction) * (1 - iteratedSolution[1])) / (2 * mathHelper((1 - dividend),
+                       power(iteratedSolution[1], iteratedSolution[0]) *
+                       (samplingFraction * samplingFraction) * (1 - iteratedSolution[1])) / (2 * power((1 - dividend),
                                                                                                             iteratedSolution[0] + 2))) * (2 - ((1 - iteratedSolution[0]) * dividend))) -
                     c2;
 
