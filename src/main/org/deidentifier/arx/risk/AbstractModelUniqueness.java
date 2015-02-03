@@ -17,15 +17,14 @@
 
 package org.deidentifier.arx.risk;
 
+import java.util.Map;
+
 /**
  * This class abstracts the different population uniqueness scenarios
  * 
  * @author Michael Schneider
  * @version 1.0
  */
-
-import java.util.Map;
-
 abstract class AbstractModelUniqueness extends AbstractModelPopulation {
 
     /**

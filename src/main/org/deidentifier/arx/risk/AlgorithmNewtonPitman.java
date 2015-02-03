@@ -27,7 +27,6 @@ import java.util.Map;
  * @author Michael Schneider
  * @version 1.0
  */
-
 class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
 
     /**

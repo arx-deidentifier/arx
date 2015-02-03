@@ -25,7 +25,6 @@ import java.util.Map;
  * @author Michael Schneider
  * @version 1.09
  */
-
 class ModelSNB extends AbstractModelUniqueness {
 
     /**

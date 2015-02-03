@@ -31,8 +31,7 @@ import org.deidentifier.arx.DataHandle;
  * @author Fabian Prasser
  * @version 1.0
  */
-
-public class DisclosureRisk {
+public class RiskEstimator {
 
     /**
      * Allows to include or exclude the SNB Model. If true, the SNBModel is
@@ -72,7 +71,7 @@ public class DisclosureRisk {
      * @param handle
      *            This class provides access to dictionary encoded data.
      */
-    public DisclosureRisk(final DataDefinition definition,
+    public RiskEstimator(final DataDefinition definition,
                           final DataHandle handle) {
         this(-1, definition, handle);
     }
@@ -88,7 +87,7 @@ public class DisclosureRisk {
      * @param handle
      *            This class provides access to dictionary encoded data.
      */
-    public DisclosureRisk(final double pi,
+    public RiskEstimator(final double pi,
                           final DataDefinition definition,
                           final DataHandle handle) {
         if ((pi == 0) || (pi > 1)) {
