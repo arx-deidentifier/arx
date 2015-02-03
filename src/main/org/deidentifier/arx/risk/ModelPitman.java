@@ -59,12 +59,12 @@ class ModelPitman extends AbstractModelUniqueness {
     }
 
     @Override
-    protected double computeRisk() {
-        return (computeUniquenessTotal() / populationSize);
+    protected double getRisk() {
+        return (getPopulationUniques() / populationSize);
     }
 
     @Override
-    protected double computeUniquenessTotal() throws IllegalArgumentException {
+    protected double getPopulationUniques() throws IllegalArgumentException {
 
         // initial guess
         final double c = (c1 * (c1 - 1)) / c2;

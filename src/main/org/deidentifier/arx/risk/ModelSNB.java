@@ -102,12 +102,12 @@ class ModelSNB extends AbstractModelUniqueness {
     }
 
     @Override
-    protected double computeRisk() {
-        return (computeUniquenessTotal() / populationSize);
+    protected double getRisk() {
+        return (getPopulationUniques() / populationSize);
     }
 
     @Override
-    protected double computeUniquenessTotal() {
+    protected double getPopulationUniques() {
         double result = Double.NaN;
         double alpha = 0, beta = 0;
 

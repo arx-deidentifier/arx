@@ -49,6 +49,6 @@ abstract class AbstractModelUniqueness extends AbstractModelPopulation {
      * @return Population Uniqueness estimate as total number of individuals in a population
      * 
      */
-    protected abstract double computeUniquenessTotal();
+    protected abstract double getPopulationUniques();
 
 }

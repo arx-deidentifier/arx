@@ -116,7 +116,7 @@ public class DisclosureRisk {
      */
     public double getEquivalenceClassRisk() {
         final ModelEquivalenceClass equiModel = new ModelEquivalenceClass(eqClasses);
-        return equiModel.computeRisk();
+        return equiModel.getRisk();
     }
 
     /**
@@ -268,7 +268,7 @@ public class DisclosureRisk {
             if (eqClasses.containsKey(1) && !eqClasses.containsKey(2)) {
                 final ModelZayatz model = new ModelZayatz(samplingFraction,
                                                           eqClasses);
-                result = model.computeRisk();
+                result = model.getRisk();
                 return result;
             }
             if (!eqClasses.containsKey(1)) {
@@ -278,20 +278,20 @@ public class DisclosureRisk {
             if (samplingFraction <= 0.1) {
                 final ModelPitman model = new ModelPitman(samplingFraction,
                                                           eqClasses);
-                result = model.computeRisk();
+                result = model.getRisk();
                 if (Double.isNaN(result)) {
                     final ModelZayatz zayatzModel = new ModelZayatz(samplingFraction,
                                                                     eqClasses);
-                    result = zayatzModel.computeRisk();
+                    result = zayatzModel.getRisk();
                 }
             } else {
                 final ModelZayatz model = new ModelZayatz(samplingFraction,
                                                           eqClasses);
-                result = model.computeRisk();
+                result = model.getRisk();
                 if (Double.isNaN(result)) {
                     final ModelPitman pitmanModel = new ModelPitman(samplingFraction,
                                                                     eqClasses);
-                    result = pitmanModel.computeRisk();
+                    result = pitmanModel.getRisk();
                 }
             }
             return result;
@@ -303,7 +303,7 @@ public class DisclosureRisk {
             if (eqClasses.containsKey(1) && !eqClasses.containsKey(2)) {
                 final ModelZayatz model = new ModelZayatz(samplingFraction,
                                                           eqClasses);
-                result = model.computeRisk();
+                result = model.getRisk();
                 return result;
             }
             if (!eqClasses.containsKey(1)) {
@@ -313,24 +313,24 @@ public class DisclosureRisk {
             if (samplingFraction <= 0.1) {
                 final ModelPitman model = new ModelPitman(samplingFraction,
                                                           eqClasses);
-                result = model.computeRisk();
+                result = model.getRisk();
                 if (Double.isNaN(result)) {
                     final ModelZayatz zayatzModel = new ModelZayatz(samplingFraction,
                                                                     eqClasses);
-                    result = zayatzModel.computeRisk();
+                    result = zayatzModel.getRisk();
                 }
             } else {
                 final ModelZayatz model = new ModelZayatz(samplingFraction,
                                                           eqClasses);
                 final ModelSNB model2 = new ModelSNB(samplingFraction, eqClasses);
-                result = model.computeRisk();
-                final double result2 = model2.computeRisk();
+                result = model.getRisk();
+                final double result2 = model2.getRisk();
                 if (Double.isNaN(result)) {
                     result = result2;
                     if (Double.isNaN(result)) {
                         final ModelPitman pitmanModel = new ModelPitman(samplingFraction,
                                                                         eqClasses);
-                        result = pitmanModel.computeRisk();
+                        result = pitmanModel.getRisk();
                         return result;
                     }
                 }
@@ -338,7 +338,7 @@ public class DisclosureRisk {
                     if (Double.isNaN(result)) {
                         final ModelPitman pitmanModel = new ModelPitman(samplingFraction,
                                                                         eqClasses);
-                        result = pitmanModel.computeRisk();
+                        result = pitmanModel.getRisk();
                     }
                     return result;
                 } else {

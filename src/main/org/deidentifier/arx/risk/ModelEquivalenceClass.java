@@ -44,7 +44,7 @@ class ModelEquivalenceClass extends AbstractModelPopulation {
     }
 
     @Override
-    protected double computeRisk() {
+    protected double getRisk() {
         double result = 0;
 
         for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
