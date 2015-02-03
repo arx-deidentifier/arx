@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.risk;
 
+import java.util.Map;
+
 /**
  * This class allows to estimate the disclosure risk of a given data set based solely on the sample information
  * using the information about size and frequency of equivalence classes to give a worst case estimate for the disclosure risk
@@ -24,9 +26,6 @@ package org.deidentifier.arx.risk;
  * @author Michael Schneider
  * @version 1.0
  */
-
-import java.util.Map;
-
 class ModelEquivalenceClass extends AbstractModelPopulation {
 
     /**

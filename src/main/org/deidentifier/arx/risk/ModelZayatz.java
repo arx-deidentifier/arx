@@ -17,6 +17,10 @@
 
 package org.deidentifier.arx.risk;
 
+import java.util.Map;
+
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
 /**
  * This class implements the ZayatzModel based on Equivalence Class, for details see the paper
  * ESTIMATION OF THE NUMBER OF UNIQUE POPULATION ELEMENTS USING A SAMPLE, Zayatz, 1991
@@ -24,11 +28,6 @@ package org.deidentifier.arx.risk;
  * @author Michael Schneider
  * @version 1.0
  */
-
-import java.util.Map;
-
-import org.apache.commons.math3.distribution.HypergeometricDistribution;
-
 class ModelZayatz extends AbstractModelUniqueness {
 
     /**

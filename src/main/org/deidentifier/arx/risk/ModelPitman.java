@@ -27,7 +27,6 @@ import org.apache.commons.math3.special.Gamma;
  * @author Michael Schneider
  * @version 1.0
  */
-
 class ModelPitman extends AbstractModelUniqueness {
 
     /**
