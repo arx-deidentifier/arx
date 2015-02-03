@@ -65,31 +65,22 @@ public class RiskEstimator {
      * Creates a new instance of a class that allows to estimate different risk
      * measures for a given data set with a default sampling fraction of 0.1
      * 
-     * @param definition
-     *            Encapsulates a definition of the types of attributes contained
-     *            in a dataset
      * @param handle
      *            This class provides access to dictionary encoded data.
      */
-    public RiskEstimator(final DataDefinition definition,
-                          final DataHandle handle) {
-        this(-1, definition, handle);
+    public RiskEstimator(final DataHandle handle) {
+        this(handle, 0.1d);
     }
     
     /**
      * Creates a new instance of a class that allows to estimate different risk
      * measures for a given data set
      * 
+     * @param handle This class provides access to dictionary encoded data.
+     *            
      * @param pi  sampling fraction, defaults to 0.1
-     * @param definition
-     *            Encapsulates a definition of the types of attributes contained
-     *            in a dataset
-     * @param handle
-     *            This class provides access to dictionary encoded data.
      */
-    public RiskEstimator(final double pi,
-                          final DataDefinition definition,
-                          final DataHandle handle) {
+    public RiskEstimator(final DataHandle handle, final double pi) {
         if ((pi == 0) || (pi > 1)) {
             this.samplingFraction = 0.1;
         } else {
@@ -98,7 +89,7 @@ public class RiskEstimator {
 
         // create map containing the equivalence class sizes (as keys) of the
         // data set and the corresponding frequency (as values)
-        this.eqClasses = getEquivalenceClasses(definition, handle);
+        this.eqClasses = getEquivalenceClasses(handle);
 
         // set values for Cmin and Cmax
         initialize();
@@ -372,9 +363,6 @@ public class RiskEstimator {
      * quasi-identifiers and extracts the size and frequency of all equivalence
      * classes
      * 
-     * @param definition
-     *            Encapsulates a definition of the types of attributes contained
-     *            in a given data set
      * @param handle
      *            This class provides access to dictionary encoded data.
      *            
@@ -382,9 +370,10 @@ public class RiskEstimator {
      *          the corresponding frequency (as values) e.g. if the key 2 has value 3
      *          then there are 3 equivalence classes of size two.
      */
-    private Map<Integer, Integer> getEquivalenceClasses(final DataDefinition definition,
-                          final DataHandle handle) {
+    private Map<Integer, Integer> getEquivalenceClasses(final DataHandle handle) {
 
+        DataDefinition definition = handle.getDefinition();
+        
         // Sort by quasi-identifiers
         Map<Integer, Integer> result = new HashMap<Integer, Integer>();
         final int[] indices = new int[definition.getQuasiIdentifyingAttributes()
