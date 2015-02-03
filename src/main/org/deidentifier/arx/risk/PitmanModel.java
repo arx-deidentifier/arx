@@ -22,10 +22,11 @@ import java.util.Map;
 import org.apache.commons.math3.special.Gamma;
 
 /**
-* This class implements the PitmanModel, for details see Hoshino, 2001
-* @author Michael Schneider
-* @version 1.0
-*/
+ * This class implements the PitmanModel, for details see Hoshino, 2001
+ * 
+ * @author Michael Schneider
+ * @version 1.0
+ */
 
 public class PitmanModel extends UniquenessModel {
 
@@ -41,9 +42,14 @@ public class PitmanModel extends UniquenessModel {
 
     /**
      * Population model according to Pitman, 1996
-     * @param pi sampling fraction
-     * @param eqClasses Map containing the equivalence class sizes (as keys) of the data set and the corresponding frequency (as values)
-     * e.g. if the key 2 has value 3 then there are 3 equivalence classes of size two.
+     * 
+     * @param pi
+     *            sampling fraction
+     * @param eqClasses
+     *            Map containing the equivalence class sizes (as keys) of the
+     *            data set and the corresponding frequency (as values) e.g. if
+     *            the key 2 has value 3 then there are 3 equivalence classes of
+     *            size two.
      */
     public PitmanModel(final double pi, final Map<Integer, Integer> eqClasses) {
         super(pi, eqClasses);
@@ -54,7 +60,7 @@ public class PitmanModel extends UniquenessModel {
 
     @Override
     public double computeRisk() {
-        return (computeUniquenessTotal() / N);
+        return (computeUniquenessTotal() / populationSize);
     }
 
     @Override
@@ -62,11 +68,17 @@ public class PitmanModel extends UniquenessModel {
 
         // initial guess
         final double c = (c1 * (c1 - 1)) / c2;
-        final double thetaGuess = ((n * u * c) - (c1 * (n - 1) * ((2 * u) + c))) / (((2 * c1 * u) + (c1 * c)) - (n * c));
-        final double alphaGuess = ((thetaGuess * (c1 - n)) + ((n - 1) * c1)) / (n * u);
+        final double thetaGuess = ((sampleSize * numberOfEquivalenceClasses * c) - (c1 *
+                                                                                    (sampleSize - 1) * ((2 * numberOfEquivalenceClasses) + c))) /
+                                  (((2 * c1 * numberOfEquivalenceClasses) + (c1 * c)) - (sampleSize * c));
+        final double alphaGuess = ((thetaGuess * (c1 - sampleSize)) + ((sampleSize - 1) * c1)) /
+                                  (sampleSize * numberOfEquivalenceClasses);
 
-        // apply Newton-Rhapson algorithm to solve the Maximum Likelihood Estimates
-        final NewtonPitman pitmanNewton = new NewtonPitman(u, n, eqClasses);
+        // apply Newton-Rhapson algorithm to solve the Maximum Likelihood
+        // Estimates
+        final NewtonPitman pitmanNewton = new NewtonPitman(numberOfEquivalenceClasses,
+                                                           sampleSize,
+                                                           eqClasses);
         final double[] initialGuess = { thetaGuess, alphaGuess };
         final double[] output = pitmanNewton.getSolution(initialGuess);
 
@@ -74,8 +86,11 @@ public class PitmanModel extends UniquenessModel {
         final double alpha = output[1];
         double result;
         if (alpha != 0) {
-            // result = ( (Gamma.gamma(theta + 1) / Gamma.gamma(theta + alpha)) * Math.pow(N, alpha) );
-            result = Math.exp(Gamma.logGamma(theta + 1) - Gamma.logGamma(theta + alpha)) * Math.pow(N, alpha);
+            // result = ( (Gamma.gamma(theta + 1) / Gamma.gamma(theta + alpha))
+            // * Math.pow(N, alpha) );
+            result = Math.exp(Gamma.logGamma(theta + 1) -
+                              Gamma.logGamma(theta + alpha)) *
+                     Math.pow(populationSize, alpha);
         } else {
             result = Double.NaN;
         }

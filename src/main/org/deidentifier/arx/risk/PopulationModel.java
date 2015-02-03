@@ -20,86 +20,100 @@ package org.deidentifier.arx.risk;
 import java.util.Map;
 
 /**
-* This class is the basis for estimating both population uniqueness and equivalence class risk.
-* @author Michael Schneider
-* @version 1.0
-*/
+ * This class is the basis for estimating both population uniqueness and
+ * equivalence class risk.
+ * 
+ * @author Michael Schneider
+ * @version 1.0
+ */
 
 public abstract class PopulationModel {
 
     /**
      * size of biggest equivalence class in the data set
      */
-    protected int                   Cmax;
+    protected int                   cMax;
 
     /**
      * size of smallest equivalence class in the data set
      */
-    protected int                   Cmin;
+    protected int                   cMin;
 
     /**
-     * Map containing the equivalence class sizes (as keys) of the data set and the corresponding frequency (as values)
-     * e.g. if the key 2 has value 3 then there are 3 equivalence classes of size two.
+     * Map containing the equivalence class sizes (as keys) of the data set and
+     * the corresponding frequency (as values) e.g. if the key 2 has value 3
+     * then there are 3 equivalence classes of size two.
      */
     protected Map<Integer, Integer> eqClasses;
 
     /**
      * size of the data set aka sample
      */
-    protected int                   n;
+    protected int                   sampleSize;
 
     /**
-     * size of the population, this value is estimated using the sample size and the sampling fraction
+     * size of the population, this value is estimated using the sample size and
+     * the sampling fraction
      */
-    protected int                   N;
+    protected int                   populationSize;
 
     /**
      * sampling fraction
      */
-    protected double                pi;
+    protected double                samplingFraction;
 
     /**
      * Number of equivalence classes that exist in the sample
      */
-    protected int                   u;
+    protected int                   numberOfEquivalenceClasses;
 
     /**
-     * Creates a model of the data set that allows for estimating the disclosure risk of the data
-     * @param pi sampling fraction
-     * @param eqClasses Map containing the equivalence class sizes (as keys) of the data set and the corresponding frequency (as values)
-     * e.g. if the key 2 has value 3 then there are 3 equivalence classes of size two.
+     * Creates a model of the data set that allows for estimating the disclosure
+     * risk of the data
+     * 
+     * @param pi
+     *            sampling fraction
+     * @param eqClasses
+     *            Map containing the equivalence class sizes (as keys) of the
+     *            data set and the corresponding frequency (as values) e.g. if
+     *            the key 2 has value 3 then there are 3 equivalence classes of
+     *            size two.
      */
-    public PopulationModel(final double pi, final Map<Integer, Integer> eqClasses) {
-        this.pi = pi;
+    public PopulationModel(final double pi,
+                           final Map<Integer, Integer> eqClasses) {
+        this.samplingFraction = pi;
         this.eqClasses = eqClasses;
-        n = 0;
-        u = 0;
+        sampleSize = 0;
+        numberOfEquivalenceClasses = 0;
 
         // set the class attributes
-        Cmax = 0;
-        Cmin = Integer.MAX_VALUE;
+        cMax = 0;
+        cMin = Integer.MAX_VALUE;
         for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            Cmin = entry.getKey();
-            n += entry.getKey() * entry.getValue();
-            u += entry.getValue();
-            if (entry.getKey() > Cmax) {
-                Cmax = entry.getKey();
+            cMin = entry.getKey();
+            sampleSize += entry.getKey() * entry.getValue();
+            numberOfEquivalenceClasses += entry.getValue();
+            if (entry.getKey() > cMax) {
+                cMax = entry.getKey();
             }
-            if (entry.getKey() < Cmin) {
-                Cmin = entry.getKey();
+            if (entry.getKey() < cMin) {
+                cMin = entry.getKey();
             }
         }
-        if (Cmin == Integer.MAX_VALUE) {
-            Cmin = 0;
+        if (cMin == Integer.MAX_VALUE) {
+            cMin = 0;
         }
-        N = (int) (n / this.pi);
+        populationSize = (int) (sampleSize / this.samplingFraction);
     }
 
     /**
-     * computes the re-identification risk on a file level for a given data set and a given measurement scenario 
-     * (population unique vs. equivalence class based)
+     * computes the re-identification risk on a file level for a given data set
+     * and a given measurement scenario (population unique vs. equivalence class
+     * based)
+     * 
      * @return A single number representing the disclosure risk on a file level,
-     * depending on the model this estimate is based on population uniqueness or equivalence class size and frequency
+     *         depending on the model this estimate is based on population
+     *         uniqueness or equivalence class size and frequency
      */
     abstract public double computeRisk();
 

@@ -30,9 +30,14 @@ import java.util.Map;
 public class EquivalenceClassModel extends PopulationModel {
 
     /**
-     * The equivalence class model makes a worst case disclosure risk estimation for the data set as a whole based solely on the sample.
-     * @param eqClasses Map containing the equivalence class sizes (as keys) of the data set and the corresponding frequency (as values)
-     * e.g. if the key 2 has value 3 then there are 3 equivalence classes of size two.
+     * The equivalence class model makes a worst case disclosure risk estimation
+     * for the data set as a whole based solely on the sample.
+     * 
+     * @param eqClasses
+     *            Map containing the equivalence class sizes (as keys) of the
+     *            data set and the corresponding frequency (as values) e.g. if
+     *            the key 2 has value 3 then there are 3 equivalence classes of
+     *            size two.
      */
     public EquivalenceClassModel(final Map<Integer, Integer> eqClasses) {
         super(0, eqClasses);
@@ -46,7 +51,7 @@ public class EquivalenceClassModel extends PopulationModel {
             result += entry.getValue();
         }
 
-        return (result / n);
+        return (result / sampleSize);
     }
 
 }

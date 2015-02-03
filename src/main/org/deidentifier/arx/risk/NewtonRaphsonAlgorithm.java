@@ -30,13 +30,13 @@ public abstract class NewtonRaphsonAlgorithm {
      * Convergence threshold for the Newton-Raphson algorithm.
      */
 
-    public double   accuracy     = 1.0e-9;
+    public double   accuracy      = 1.0e-9;
 
     /**
      * Maximum number of iterations.
      */
 
-    public int      maxIteration = 300;
+    public int      maxIterations = 300;
 
     /**
      * The solutions.
@@ -79,7 +79,9 @@ public abstract class NewtonRaphsonAlgorithm {
      * The abstract method (need to be implemented in sub-classes) for computing
      * the first derivatives of the object functions evaluated at the iterated
      * solutions.
-     * @param iteratedSolution the iterated vector of solutions.
+     * 
+     * @param iteratedSolution
+     *            the iterated vector of solutions.
      * @return the first derivatives of the object functions evaluated at the
      *         iterated solutions.
      */
@@ -88,10 +90,13 @@ public abstract class NewtonRaphsonAlgorithm {
 
     /**
      * Returns the vector of solutions obtained by the Newton-Raphson algorithm.
-     * @param initialValue the vector of initial values.
+     * 
+     * @param initialValue
+     *            the vector of initial values.
      * @return the vector of solutions.
-     * @exception IllegalArgumentException the first derivative matrix of
-     *                                     the object functions is singular.
+     * @exception IllegalArgumentException
+     *                the first derivative matrix of the object functions is
+     *                singular.
      */
 
     public double[] getSolution(final double[] initialValue) {
@@ -99,17 +104,21 @@ public abstract class NewtonRaphsonAlgorithm {
         solutionVector = new Matrix(initialValue, initialValue.length);
         updatedSolutionVector = new Matrix(initialValue, initialValue.length);
         differenceVector = new Matrix(initialValue.length, 1, 100);
-        firstDerivativeMatrix = new Matrix(initialValue.length, initialValue.length);
+        firstDerivativeMatrix = new Matrix(initialValue.length,
+                                           initialValue.length);
         int i = 0;
-        while ((differenceVector.normF() > accuracy) && (i++ < maxIteration)) {
+        while ((differenceVector.normF() > accuracy) && (i++ < maxIterations)) {
 
             firstDerivativeMatrix = new Matrix(firstDerivativeMatrix(solutionVector.getColumnPackedCopy()));
             if (firstDerivativeMatrix.det() != 0.0) {
-                differenceVector = firstDerivativeMatrix.inverse().times(new Matrix(objectFunctionVector(solutionVector.getColumnPackedCopy()), initialValue.length));
+                differenceVector = firstDerivativeMatrix.inverse()
+                                                        .times(new Matrix(objectFunctionVector(solutionVector.getColumnPackedCopy()),
+                                                                          initialValue.length));
                 updatedSolutionVector = solutionVector.minus(differenceVector);
             } else {
                 System.out.println("Newton Raphson Algorithm:");
-                System.out.println("The first derivative matrix of the object functions is " + "singular. Using different method to estimate Population Uniqueness!");
+                System.out.println("The first derivative matrix of the object functions is "
+                                   + "singular. Using different method to estimate Population Uniqueness!");
                 final double[] result = solutionVector.getColumnPackedCopy();
                 for (int j = 0; j < result.length; j++) {
                     result[j] = Double.NaN;
@@ -117,14 +126,14 @@ public abstract class NewtonRaphsonAlgorithm {
                 return result;
                 /*
                  * throw new IllegalArgumentException(
-                 * "The first derivative matrix of the object functions is "
-                 * + "singular.");
+                 * "The first derivative matrix of the object functions is " +
+                 * "singular.");
                  */
             }
             solutionVector = updatedSolutionVector;
         }
 
-        if (i == maxIteration) {
+        if (i == maxIterations) {
             System.out.println("Maximum number of iterations have been acheived.");
         }
 
@@ -134,7 +143,9 @@ public abstract class NewtonRaphsonAlgorithm {
     /**
      * The abstract method (need to be implemented in sub-classes) for computing
      * the object functions evaluated at the iterated solutions.
-     * @param iteratedSolution the iterated vector of solutions.
+     * 
+     * @param iteratedSolution
+     *            the iterated vector of solutions.
      * @return the object functions evaluated at the iterated solutions.
      */
 
