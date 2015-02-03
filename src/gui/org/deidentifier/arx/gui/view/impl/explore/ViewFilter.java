@@ -62,7 +62,10 @@ import org.mihalis.opal.rangeSlider.RangeSlider;
 public class ViewFilter implements IView {
 
     /** Scale size. */
-    private static final int SCALE_MAX_VALUE = 1000;
+    private static final int     SCALE_MAX_VALUE       = 1000;
+
+    /** Scale update interval. */
+    private static final int     SCALE_UPDATE_INTERVAL = 100;
 
     /** Image. */
     private final Image          IMG_RESET;
@@ -72,36 +75,39 @@ public class ViewFilter implements IView {
 
     /** Widget. */
     private Composite            root;
-    
+
     /** Widget. */
     private ComponentFilterTable generalization;
-    
+
     /** Widget. */
     private Button               anonymous;
-    
+
     /** Widget. */
     private Button               nonanonymous;
-    
+
     /** Widget. */
     private Button               unknown;
-    
-    /** Widget*/
+
+    /** Widget */
     private RangeSlider          slider;
-    
+
     /** Model. */
     private Controller           controller;
-    
+
     /** Model. */
-    private ModelNodeFilter      filter          = null;
-    
+    private ModelNodeFilter      filter                = null;
+
     /** Model. */
-    private Model                model           = null;
-    
+    private Model                model                 = null;
+
     /** Model. */
-    private ARXResult            result          = null;
-    
+    private ARXResult            result                = null;
+
     /** Model. */
-    private boolean              mouseDown       = false;
+    private boolean              mouseDown             = false;
+
+    /** Fire the event */
+    private volatile Boolean     fireEvent             = false;
 
     /**
      * Creates a new instance.
@@ -152,6 +158,18 @@ public class ViewFilter implements IView {
         border.setSelection(0);
         border.setEnabled(true);
         reset();
+        
+        parent.getDisplay().timerExec(SCALE_UPDATE_INTERVAL, new Runnable(){
+            public void run() {
+                synchronized(fireEvent) {
+                    if (fireEvent) {
+                        fireEvent = false;
+                        actionInfoLossChanged();
+                    }
+                }
+                parent.getDisplay().timerExec(SCALE_UPDATE_INTERVAL, this);
+            }
+        });
     }
 
     /* (non-Javadoc)
@@ -226,22 +244,10 @@ public class ViewFilter implements IView {
     /**
      * Action.
      */
-    private void actionMaxInfoLossChanged() {
+    private void actionInfoLossChanged() {
         if (filter != null) {
             double maxLoss = (double)slider.getUpperValue() / (double)SCALE_MAX_VALUE;
-            double minLoss = filter.getAllowedMinInformationLoss();
-            filter.allowInformationLoss(minLoss, maxLoss);
-            fireModelEvent();
-        }
-    }
-
-    /**
-     * Action.
-     */
-    private void actionMinInfoLossChanged() {
-        if (filter != null) {
             double minLoss = (double)slider.getLowerValue() / (double)SCALE_MAX_VALUE;
-            double maxLoss = filter.getAllowedMaxInformationLoss();
             filter.allowInformationLoss(minLoss, maxLoss);
             fireModelEvent();
         }
@@ -320,6 +326,15 @@ public class ViewFilter implements IView {
             if (!unknown.getSelection()) filter.disallowUnknown();
             else filter.allowUnknown();
             fireModelEvent();
+        }
+    }
+    
+    /**
+     * Fires the according events
+     */
+    private void actionUpdateSlider(){
+        synchronized(fireEvent){
+            fireEvent = true;
         }
     }
     
@@ -438,15 +453,13 @@ public class ViewFilter implements IView {
         this.slider.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.slider.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent arg0) {
-                actionMinInfoLossChanged();
-                actionMaxInfoLossChanged();
+                actionUpdateSlider();
             }
         });
         this.slider.addListener(SWT.MouseMove, new Listener() {
             public void handleEvent(Event e) {
                 if (mouseDown == true) {
-                    actionMinInfoLossChanged();
-                    actionMaxInfoLossChanged();
+                    actionUpdateSlider();
                 }
             }
         });
@@ -464,14 +477,12 @@ public class ViewFilter implements IView {
         });
         this.slider.addListener(SWT.KeyDown, new Listener() {
             public void handleEvent(Event e) {
-                actionMinInfoLossChanged();
-                actionMaxInfoLossChanged();
+                actionUpdateSlider();
             }
         });
         this.slider.addListener(SWT.KeyUp, new Listener() {
             public void handleEvent(Event e) {
-                actionMinInfoLossChanged();
-                actionMaxInfoLossChanged();
+                actionUpdateSlider();
             }
         });
     }
