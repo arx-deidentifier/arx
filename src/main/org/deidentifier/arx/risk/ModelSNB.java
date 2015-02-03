@@ -62,33 +62,6 @@ class ModelSNB extends AbstractModelUniqueness {
         c1 = eqClasses.get(1);
     }
 
-    @Override
-    protected double computeRisk() {
-        return (computeUniquenessTotal() / populationSize);
-    }
-
-    @Override
-    protected double computeUniquenessTotal() {
-        double result = Double.NaN;
-        double alpha = 0, beta = 0;
-
-        final AlgorithmNewtonSNB snbModel = new AlgorithmNewtonSNB(numberOfNonEmptyClasses,
-                                                 samplingFraction,
-                                                 eqClasses);
-
-        // start values are initialized randomly
-        alpha = Math.random();
-        beta = Math.random();
-        final double[] initialGuess = { alpha, beta };
-
-        // use Newton Raphson Algorithm to compute solution for the nonlinear
-        // multivariate equations
-        final double[] output = snbModel.getSolution(initialGuess);
-
-        result = numberOfNonEmptyClasses * Math.pow(output[1], output[0]);
-        return result;
-    }
-
     /**
      * @return Shlosser estimator for variable K, giving number of non zero
      *         classes in the population estimated according to Haas, 1998 and
@@ -126,6 +99,33 @@ class ModelSNB extends AbstractModelUniqueness {
         final double K = numberOfEquivalenceClasses +
                          (c1 * (var1 / var2) * ((var3 / var4) * (var3 / var4)));
         return K;
+    }
+
+    @Override
+    protected double computeRisk() {
+        return (computeUniquenessTotal() / populationSize);
+    }
+
+    @Override
+    protected double computeUniquenessTotal() {
+        double result = Double.NaN;
+        double alpha = 0, beta = 0;
+
+        final AlgorithmNewtonSNB snbModel = new AlgorithmNewtonSNB(numberOfNonEmptyClasses,
+                                                 samplingFraction,
+                                                 eqClasses);
+
+        // start values are initialized randomly
+        alpha = Math.random();
+        beta = Math.random();
+        final double[] initialGuess = { alpha, beta };
+
+        // use Newton Raphson Algorithm to compute solution for the nonlinear
+        // multivariate equations
+        final double[] output = snbModel.getSolution(initialGuess);
+
+        result = numberOfNonEmptyClasses * Math.pow(output[1], output[0]);
+        return result;
     }
 
 }

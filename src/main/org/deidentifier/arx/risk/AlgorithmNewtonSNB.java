@@ -73,6 +73,36 @@ class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
     }
 
     /**
+     * Helper function to compute the value of the first argument raised to the
+     * power of the second argument.
+     * 
+     * @param base
+     *            (first argument)
+     * @param power
+     *            (second argument)
+     * @return value of the first argument raised to the power of the second
+     *         argument
+     */
+    private double power(final double base, final double power) {
+        double result;
+        if (base < 0) {
+            if (power < 0) {
+                result = -1.0 / Math.pow(Math.abs(base), Math.abs(power));
+            } else {
+                result = -Math.pow(Math.abs(base), power);
+            }
+        } else {
+            if (power < 0) {
+                result = 1.0 / Math.pow(Math.abs(base), Math.abs(power));
+            } else {
+                result = Math.pow(Math.abs(base), power);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * The method for computing the first derivatives of the object functions
      * evaluated at the iterated solutions.
      * 
@@ -135,36 +165,6 @@ class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
                                                                                                                                                                                                                                                                                                         iteratedSolution[0] *
                                                                                                                                                                                                                                                                                                         power((iteratedSolution[1] - 1),
                                                                                                                                                                                                                                                                                                                    2) * (samplingFraction * samplingFraction))) * estimatedNumberOfNonEmptyClasses);
-        return result;
-    }
-
-    /**
-     * Helper function to compute the value of the first argument raised to the
-     * power of the second argument.
-     * 
-     * @param base
-     *            (first argument)
-     * @param power
-     *            (second argument)
-     * @return value of the first argument raised to the power of the second
-     *         argument
-     */
-    private double power(final double base, final double power) {
-        double result;
-        if (base < 0) {
-            if (power < 0) {
-                result = -1.0 / Math.pow(Math.abs(base), Math.abs(power));
-            } else {
-                result = -Math.pow(Math.abs(base), power);
-            }
-        } else {
-            if (power < 0) {
-                result = 1.0 / Math.pow(Math.abs(base), Math.abs(power));
-            } else {
-                result = Math.pow(Math.abs(base), power);
-            }
-        }
-
         return result;
     }
 
