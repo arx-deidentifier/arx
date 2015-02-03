@@ -32,6 +32,7 @@ import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
+import org.deidentifier.arx.risk.RiskEstimator;
 
 import cern.colt.Swapper;
 
@@ -242,6 +243,23 @@ public abstract class DataHandle {
      * @return
      */
     public abstract int getNumRows();
+    
+    /**
+     * Returns a risk estimator for a sample fraction of 0.1
+     * @return
+     */
+    public RiskEstimator getRiskEstimator() {
+        return new RiskEstimator(this);
+    }
+
+    /**
+     * Returns a risk estimator
+     * @param sampleFraction The sample fraction (defaults to 0.1)
+     * @return
+     */
+    public RiskEstimator getRiskEstimator(double sampleFraction) {
+        return new RiskEstimator(this, sampleFraction);
+    }
 
     /**
      * Returns an object providing access to basic descriptive statistics about the data represented
