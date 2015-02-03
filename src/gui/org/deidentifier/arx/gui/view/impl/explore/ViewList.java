@@ -277,7 +277,6 @@ public class ViewList extends ViewSolutionSpace {
                 };
                 table.addListener(SWT.SetData, listener);
                 table.setItemCount(list.size());
-                
                 table.setRedraw(true);
             }
         });
