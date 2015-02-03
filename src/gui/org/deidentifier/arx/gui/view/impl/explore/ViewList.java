@@ -56,17 +56,20 @@ import cern.colt.Arrays;
  */
 public class ViewList extends ViewSolutionSpace {
 
+    /** Symbol */
+    private static final String SYMBOL     = new String(new char[] { '\u26AB' });
+
     /** The table. */
     private final DynamicTable  table;
 
     /** The list. */
-    private final List<ARXNode> list   = new ArrayList<ARXNode>();
+    private final List<ARXNode> list       = new ArrayList<ARXNode>();
 
     /** The listener. */
     private Listener            listener;
 
     /** Color */
-    private Color               background;
+    private Color               background = null;
 
     /**
      * Contructor
@@ -104,7 +107,10 @@ public class ViewList extends ViewSolutionSpace {
                 }
             }
         });
-        
+
+        final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
+        column0.setText(""); //$NON-NLS-1$
+        column0.setWidth("30px");
         final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
         column1.setWidth("25%", "100px");
@@ -120,12 +126,14 @@ public class ViewList extends ViewSolutionSpace {
 
         table.setItemCount(0);
         
+        column0.pack();
         column1.pack();
         column2.pack();
         column3.pack();
         column4.pack();
 
         // Create tooltip listener
+        // TODO: Does not work on Windows
         Listener tableListener = new Listener() {
 
             private TableItem previousHighlighted = null;
@@ -179,11 +187,13 @@ public class ViewList extends ViewSolutionSpace {
 
         final ARXNode node = list.get(index);
 
+        item.setText(0, SYMBOL);
+        
         final String transformation = Arrays.toString(node.getTransformation());
-        item.setText(0, transformation);
+        item.setText(1, transformation);
 
         final String anonymity = node.getAnonymity().toString();
-        item.setText(1, anonymity);
+        item.setText(2, anonymity);
 
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
@@ -192,8 +202,7 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
-        item.setText(2, min);
-
+        item.setText(3, min);
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
             max = node.getMaximumInformationLoss().toString() +
@@ -201,9 +210,10 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
-        item.setText(3, max);
+        item.setText(4, max);
         item.setData(node);
-        this.background = item.getBackground();
+        item.setForeground(0, super.getInnerColor(node));
+        this.background = this.background != null ? this.background : item.getBackground();
     }
 
     /**
