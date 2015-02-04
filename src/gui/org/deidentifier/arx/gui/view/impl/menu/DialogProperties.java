@@ -18,28 +18,23 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.gui.view.impl.menu.properties.PWCharText;
-import org.deidentifier.arx.gui.view.impl.menu.properties.PWRestrictedFloatText;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Shell;
-import org.mihalis.opal.preferenceWindow.PWTab;
-import org.mihalis.opal.preferenceWindow.PreferenceWindow;
-import org.mihalis.opal.preferenceWindow.widgets.PWCheckbox;
-import org.mihalis.opal.preferenceWindow.widgets.PWCombo;
-import org.mihalis.opal.preferenceWindow.widgets.PWSpinner;
-import org.mihalis.opal.preferenceWindow.widgets.PWStringText;
-import org.mihalis.opal.preferenceWindow.widgets.PWTextarea;
-import org.mihalis.opal.preferenceWindow.widgets.PWWidget;
+
+import de.linearbits.preferences.DialogPreference;
+import de.linearbits.preferences.PreferenceBoolean;
+import de.linearbits.preferences.PreferenceCharacter;
+import de.linearbits.preferences.PreferenceDouble;
+import de.linearbits.preferences.PreferenceInteger;
+import de.linearbits.preferences.PreferenceSelection;
+import de.linearbits.preferences.PreferenceString;
 
 /**
  * This class implements a dialog for editing project properties.
@@ -49,16 +44,13 @@ import org.mihalis.opal.preferenceWindow.widgets.PWWidget;
 public class DialogProperties implements IDialog {
 
     /** Model */
-    private final Model               model;
+    private final Model            model;
 
     /** Controller */
-    private final Controller          controller;
+    private final Controller       controller;
 
     /** Window */
-    private final PreferenceWindow    window;
-
-    /** Properties */
-    private final Map<String, Object> properties;
+    private final DialogPreference dialog;
 
     /**
      * Creates a new instance.
@@ -72,225 +64,134 @@ public class DialogProperties implements IDialog {
         this.controller = controller;
         this.model = model;
         
-        // Create
-        this.properties = getProperties(model);
-        this.window = PreferenceWindow.create(parent, properties);
-        createTabProject(window);
-        createTabTransformation(window);
-        createTabInternals(window);
-        createTabVisualization(window);
+        // Create dialog
+        this.dialog = new DialogPreference(parent, "Settings", "Project-specific preferences");
+        createTabProject(this.dialog);
+        createTabTransformation(this.dialog);
+        createTabInternals(this.dialog);
+        createTabVisualization(this.dialog);
     }
 
     /**
      * Opens the dialog
      */
     public void open() {
-        if (window.open()) {
-            setProperties(window.getValues(), model);
-        }
+        dialog.open();
     }
 
     /**
      * Create a tab
      * @param window
      */
-    private void createTabInternals(PreferenceWindow window) {
+    private void createTabInternals(DialogPreference window) {
         
-        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
-                                  Resources.getMessage("PropertyDialog.16")); //$NON-NLS-1$
+        window.addCategory(Resources.getMessage("PropertyDialog.16"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
         
-        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.17"), "historySize", 0, 1000000))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.19"), "snapshotSizeDataset", 0d, 1d))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.21"), "snapshotSizeSnapshot", 0d, 1d))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.28"), "maximalSizeForComplexOperations", 0, Integer.MAX_VALUE))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.29"), "debugEnabled"))); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    /**
-     * Formats a widget
-     * @param widget
-     * @return
-     */
-    private PWWidget format(PWWidget widget) {
-        widget.setGrabExcessSpace(true);
-        widget.setAlignment(GridData.BEGINNING);
-        widget.setWidth(300);
-        return widget;
-    }
-
-    /**
-     * Create a tab
-     * @param window
-     */
-    private void createTabProject(PreferenceWindow window) {
-        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
-                                  Resources.getMessage("PropertyDialog.3")); //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.17"), 0, 1000000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getHistorySize(); }
+            protected void setValue(Object t) { model.setHistorySize((Integer)t); }});
         
-        tab.add(format(new PWStringText(Resources.getMessage("PropertyDialog.4"), "name"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWTextarea(Resources.getMessage("PropertyDialog.7"), "description"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWCharText(Resources.getMessage("PropertyDialog.9"), "separator"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWCombo(Resources.getMessage("PropertyDialog.33"), "locale", getLocales()))); //$NON-NLS-1$ //$NON-NLS-2$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.19"), 0d, 1d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getSnapshotSizeDataset(); }
+            protected void setValue(Object t) { model.setSnapshotSizeDataset((Double)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.21"), 0d, 1d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getSnapshotSizeSnapshot(); }
+            protected void setValue(Object t) { model.setSnapshotSizeSnapshot((Double)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.28"), 0, Integer.MAX_VALUE) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getMaximalSizeForComplexOperations(); }
+            protected void setValue(Object t) { model.setMaximalSizeForComplexOperations((Integer)t); }});
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.29")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.isDebugEnabled(); }
+            protected void setValue(Object t) { model.setDebugEnabled((Boolean)t); }});
     }
 
     /**
      * Create a tab
      * @param window
      */
-    private void createTabTransformation(PreferenceWindow window) {
+    private void createTabProject(DialogPreference window) {
+        
+        window.addCategory(Resources.getMessage("PropertyDialog.3"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
+          
+        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.4")) { //$NON-NLS-1$
+            protected String getValue() { return model.getName(); }
+            protected void setValue(Object t) { model.setName((String)t); }});
+        
+        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.7")) { //$NON-NLS-1$
+            protected String getValue() { return model.getDescription(); }
+            protected void setValue(Object t) { model.setDescription((String)t); }});
+
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.9")) { //$NON-NLS-1$
+            protected String getValue() { return String.valueOf(model.getSeparator()); }
+            protected void setValue(Object t) { model.setSeparator(((String)t).charAt(0)); }});
+
+        window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.33"), getLocales()) { //$NON-NLS-1$
+            protected String getValue() { return model.getLocale().getLanguage().toUpperCase(); }
+            protected void setValue(Object t) { model.setLocale(((String)t).equals("Default") ? Locale.getDefault() : new Locale(((String)t).toLowerCase())); }});
+    }
+
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabTransformation(DialogPreference window) {
        
-        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
-                                  Resources.getMessage("PropertyDialog.10")); //$NON-NLS-1$
+        window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
+
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getInputConfig().isSuppressionAlwaysEnabled(); }
+            protected void setValue(Object t) { model.getInputConfig().setSuppressionAlwaysEnabled((Boolean)t); }});
         
-        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.11"), "suppressionAlwaysEnabled"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.31"), "isSensitiveAttributesSuppressed"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.32"), "isInsensitiveAttributesSuppressed"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWStringText(Resources.getMessage("PropertyDialog.13"), "suppressionString"))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.15"), "maxNodesInLattice", 0, 1000000))); //$NON-NLS-1$ //$NON-NLS-2$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.31")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE); }
+            protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, (Boolean)t); }});
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32")) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE); }
+            protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, (Boolean)t); }});
+        
+        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13")) { //$NON-NLS-1$
+            protected String getValue() { return model.getInputConfig().getSuppressionString(); }
+            protected void setValue(Object t) { model.getInputConfig().setSuppressionString((String)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.15"), 0, 1000000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getMaxNodesInLattice(); }
+            protected void setValue(Object t) { model.setMaxNodesInLattice((Integer)t); }});
     }
 
     /**
      * Create a tab
      * @param window
      */
-    private void createTabVisualization(PreferenceWindow window) {
-        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
-                                  Resources.getMessage("PropertyDialog.22")); //$NON-NLS-1$
+    private void createTabVisualization(DialogPreference window) {
+        window.addCategory(Resources.getMessage("PropertyDialog.22"), //$NON-NLS-1$
+                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
         
-        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.23"), "initialNodesInViewer", 0, 10000))); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.25"), "maxNodesInViewer", 0, 10000))); //$NON-NLS-1$ //$NON-NLS-2$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.23"), 0, 10000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInitialNodesInViewer(); }
+            protected void setValue(Object t) { model.setInitialNodesInViewer((Integer)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.25"), 0, 10000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getMaxNodesInViewer(); }
+            protected void setValue(Object t) { model.setMaxNodesInViewer((Integer)t); }});
     }
 
     /**
      * Returns a list of available locales
      * @return
      */
-    private Object[] getLocales() {
+    private String[] getLocales() {
         List<String> languages = new ArrayList<String>();
         languages.add("Default");
         for (String lang : Locale.getISOLanguages()) {
             languages.add(lang.toUpperCase());
         }
-        return languages.toArray();
-    }
-
-    /**
-     * Returns a map for the given model
-     * @param model
-     * @return
-     */
-    private Map<String, Object> getProperties(Model model) {
-
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("initialNodesInViewer", model.getInitialNodesInViewer()); //$NON-NLS-1$
-        data.put("maxNodesInViewer", model.getMaxNodesInViewer()); //$NON-NLS-1$
-        data.put("historySize", model.getHistorySize()); //$NON-NLS-1$
-        data.put("snapshotSizeDataset", (float)model.getSnapshotSizeDataset()); //$NON-NLS-1$
-        data.put("snapshotSizeSnapshot", (float)model.getSnapshotSizeSnapshot()); //$NON-NLS-1$
-        data.put("maximalSizeForComplexOperations", model.getMaximalSizeForComplexOperations()); //$NON-NLS-1$
-        data.put("debugEnabled", model.isDebugEnabled()); //$NON-NLS-1$
-        data.put("suppressionAlwaysEnabled", model.getInputConfig().isSuppressionAlwaysEnabled()); //$NON-NLS-1$
-        data.put("isSensitiveAttributesSuppressed", model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE)); //$NON-NLS-1$
-        data.put("isInsensitiveAttributesSuppressed", model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE)); //$NON-NLS-1$
-        data.put("suppressionString", model.getInputConfig().getSuppressionString()); //$NON-NLS-1$
-        data.put("maxNodesInLattice", model.getMaxNodesInLattice()); //$NON-NLS-1$
-        data.put("name", model.getName()); //$NON-NLS-1$
-        data.put("description", model.getDescription()); //$NON-NLS-1$
-        data.put("separator", String.valueOf(model.getSeparator())); //$NON-NLS-1$
-        data.put("locale", model.getLocale().getLanguage().toUpperCase()); //$NON-NLS-1$
-        return data;
-    }
-    /**
-     * Writes the map to the given model
-     * @param data
-     * @param model
-     */
-    private void setProperties(Map<String, Object> data, Model model) {
-
-        int initialNodesInViewer = (Integer)data.get("initialNodesInViewer");
-        if (initialNodesInViewer != model.getInitialNodesInViewer()) {
-            model.setInitialNodesInViewer(initialNodesInViewer);
-        }
-        
-        int maxNodesInViewer = (Integer)data.get("maxNodesInViewer");
-        if (maxNodesInViewer != model.getMaxNodesInViewer()) {
-            model.setMaxNodesInViewer(maxNodesInViewer);
-        }
-        
-        int historySize = (Integer)data.get("historySize");
-        if (historySize != model.getHistorySize()) {
-            model.setHistorySize(historySize);
-        }
-        
-        float snapshotSizeDataset = (Float)data.get("snapshotSizeDataset");
-        if (snapshotSizeDataset != model.getSnapshotSizeDataset()) {
-            model.setSnapshotSizeDataset(snapshotSizeDataset);
-        }
-
-        float snapshotSizeSnapshot = (Float)data.get("snapshotSizeSnapshot");
-        if (snapshotSizeSnapshot != model.getSnapshotSizeSnapshot()) {
-            model.setSnapshotSizeSnapshot(snapshotSizeSnapshot);
-        }
-
-        int maximalSizeForComplexOperations = (Integer)data.get("maximalSizeForComplexOperations");
-        if (maximalSizeForComplexOperations != model.getMaximalSizeForComplexOperations()) {
-            model.setMaximalSizeForComplexOperations(maximalSizeForComplexOperations);
-        }
-        
-        boolean debugEnabled = (Boolean)data.get("debugEnabled");
-        if (debugEnabled != model.isDebugEnabled()) {
-            model.setDebugEnabled(debugEnabled);
-        }
-        
-        boolean suppressionAlwaysEnabled = (Boolean)data.get("suppressionAlwaysEnabled");
-        if (suppressionAlwaysEnabled != model.getInputConfig().isSuppressionAlwaysEnabled()) {
-            model.getInputConfig().setSuppressionAlwaysEnabled(suppressionAlwaysEnabled);
-        }
-        
-        boolean isSensitiveAttributesSuppressed = (Boolean)data.get("isSensitiveAttributesSuppressed");
-        if (isSensitiveAttributesSuppressed != model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE)) {
-            model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, isSensitiveAttributesSuppressed);
-        }
-        
-        boolean isInsensitiveAttributesSuppressed = (Boolean)data.get("isInsensitiveAttributesSuppressed");
-        if (isInsensitiveAttributesSuppressed != model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE)) {
-            model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, isInsensitiveAttributesSuppressed);
-        }
-        
-        String suppressionString = (String)data.get("suppressionString");
-        if (!suppressionString.equals(model.getInputConfig().getSuppressionString())) {
-            model.getInputConfig().setSuppressionString(suppressionString);
-        }
-
-        String name = (String)data.get("name");
-        if (!name.equals(model.getName())) {
-            model.setName(name);
-        }
-
-        String description = (String)data.get("description");
-        if (!description.equals(model.getDescription())) {
-            model.setDescription(description);
-        }
-        
-        char separator = ((String)data.get("separator")).toCharArray()[0];
-        if (separator != model.getSeparator()) {
-            model.setSeparator(separator);
-        }
-
-        int maxNodesInLattice = (Integer)data.get("maxNodesInLattice");
-        if (maxNodesInLattice != model.getMaxNodesInLattice()) {
-            model.setMaxNodesInLattice(maxNodesInLattice);
-        }
-        
-
-        String slocale = (String)data.get("locale");
-        Locale locale;
-        if (slocale.equals("Default")) {
-            locale = Locale.getDefault();
-        } else {
-            locale = new Locale(slocale.toLowerCase());
-        }
-        if (!locale.equals(model.getLocale())) {
-            model.setLocale(locale);
-        }
+        return languages.toArray(new String[]{});
     }
 }
