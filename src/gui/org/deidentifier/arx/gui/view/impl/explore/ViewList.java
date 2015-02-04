@@ -116,21 +116,29 @@ public class ViewList extends ViewSolutionSpace {
             }
         });
 
+        final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
+        column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
+        column1.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+
         final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
         column0.setText("     "); //$NON-NLS-1$
         column0.setWidth("30px"); //$NON-NLS-1$
-        final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
-        column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
-        column1.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        
         final DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.LEFT);
         column4.setText(Resources.getMessage("ListView.2")); //$NON-NLS-1$
-        column4.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column4.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+
+        final DynamicTableColumn column5 = new DynamicTableColumn(table, SWT.LEFT);
+        column5.setText("     "); //$NON-NLS-1$
+        column5.setWidth("30px"); //$NON-NLS-1$
+        
         final DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.LEFT);
         column2.setText(Resources.getMessage("ListView.3")); //$NON-NLS-1$
-        column2.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column2.setWidth("35%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         final DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.LEFT);
         column3.setText(Resources.getMessage("ListView.4")); //$NON-NLS-1$
-        column3.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column3.setWidth("35%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         table.setItemCount(0);
         
@@ -139,6 +147,7 @@ public class ViewList extends ViewSolutionSpace {
         column2.pack();
         column3.pack();
         column4.pack();
+        column5.pack();
 
         // Create tooltip listener
         // TODO: Does not work on Windows
@@ -221,7 +230,7 @@ public class ViewList extends ViewSolutionSpace {
         final ARXNode node = list.get(index);
 
         final String transformation = Arrays.toString(node.getTransformation());
-        item.setText(1, transformation);
+        item.setText(0, transformation);
 
         final String anonymity = node.getAnonymity().toString();
         item.setText(2, anonymity);
@@ -233,7 +242,7 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
-        item.setText(3, min);
+        item.setText(4, min);
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
             max = node.getMaximumInformationLoss().toString() +
@@ -241,10 +250,11 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
-        item.setText(4, max);
+        item.setText(5, max);
         item.setData(node);
 
-        item.setImage(0, getSymbol(super.getInnerColor(node)));
+        item.setImage(1, getSymbol(super.getInnerColor(node)));
+        item.setImage(3, getSymbol(super.getUtilityColor(node)));
         
         this.background = this.background != null ? this.background : item.getBackground();
     }

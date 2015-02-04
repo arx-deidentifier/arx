@@ -97,8 +97,14 @@ public abstract class ViewSolutionSpace implements IView {
     private static final Color         COLOR_DARK_GRAY         = GUIHelper.getColor(180, 180, 180);
 
     /** Color. */
+    private static final Color         COLOR_GRAY              = GUIHelper.getColor(160, 160, 160);
+
+    /** Color. */
     private static final Color         COLOR_BLACK             = GUIHelper.getColor(0, 0, 0);
-    
+
+    /** Decorator */
+    private Gradient                   gradient;
+
     /**
      * Constructor
      * @param parent
@@ -118,6 +124,8 @@ public abstract class ViewSolutionSpace implements IView {
         
         initializeMenu();
         initializeTooltip();
+        
+        gradient = new Gradient(parent.getDisplay());
     }
     /*
      * (non-Javadoc)
@@ -127,6 +135,7 @@ public abstract class ViewSolutionSpace implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
+        gradient.dispose();
     }
     
     /**
@@ -231,7 +240,7 @@ public abstract class ViewSolutionSpace implements IView {
         };
     }
     
-    /**
+    /**gray.dispose();
      * Action to redraw
      */
     protected abstract void actionRedraw();
@@ -394,4 +403,18 @@ public abstract class ViewSolutionSpace implements IView {
         return this.tooltipDecorator;
     }
 
+    /**
+     * Returns the color according to a nodes utility
+     * 
+     * @param node The node
+     * @return
+     */
+    protected Color getUtilityColor(ARXNode node) {
+        if (node.getMinimumInformationLoss().compareTo(node.getMaximumInformationLoss()) != 0 &&
+            asRelativeValue(node.getMinimumInformationLoss()) == 0d) {
+            return COLOR_GRAY;
+        } else {
+            return gradient.getColor(asRelativeValue(node.getMinimumInformationLoss()) / 100d);
+        }
+    }
 }
