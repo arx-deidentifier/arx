@@ -167,6 +167,15 @@ public class ViewList extends ViewSolutionSpace {
         };
         table.addListener(SWT.MouseMove, tableListener);
         table.addListener(SWT.MouseExit, tableListener);
+        
+        // Fix for Bug #50163
+        table.addListener(SWT.EraseItem, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+              event.gc.setBackground(((TableItem)event.item).getBackground(event.index));
+              event.gc.fillRectangle(event.getBounds());
+            }
+          });
     }
 
     /**
