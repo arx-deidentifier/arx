@@ -463,8 +463,8 @@ public class Controller implements IView {
         }
         try {
             final DialogProperties dialog = new DialogProperties(main.getShell(),
-                                                                 model);
-            dialog.create();
+                                                                 model,
+                                                                 main.getController());
             dialog.open();
 
             // Update the title

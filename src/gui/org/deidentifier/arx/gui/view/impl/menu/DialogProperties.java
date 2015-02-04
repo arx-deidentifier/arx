@@ -18,131 +18,45 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.gui.view.def.IEditor;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.deidentifier.arx.gui.view.impl.menu.properties.PWCharText;
+import org.deidentifier.arx.gui.view.impl.menu.properties.PWRestrictedFloatText;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
+import org.mihalis.opal.preferenceWindow.PWTab;
+import org.mihalis.opal.preferenceWindow.PreferenceWindow;
+import org.mihalis.opal.preferenceWindow.widgets.PWCheckbox;
+import org.mihalis.opal.preferenceWindow.widgets.PWCombo;
+import org.mihalis.opal.preferenceWindow.widgets.PWSpinner;
+import org.mihalis.opal.preferenceWindow.widgets.PWStringText;
+import org.mihalis.opal.preferenceWindow.widgets.PWTextarea;
 
 /**
  * This class implements a dialog for editing project properties.
  *
  * @author Fabian Prasser
  */
-public class DialogProperties extends TitleAreaDialog implements IDialog {
+public class DialogProperties implements IDialog {
 
-    /**
-     * Validates double input.
-     *
-     * @author Fabian Prasser
-     */
-    private static class DoubleValidator {
-        
-        /**  TODO */
-        private final double min;
-        
-        /**  TODO */
-        private final double max;
+    /** Model */
+    private final Model               model;
 
-        /**
-         * Creates a new instance.
-         *
-         * @param min
-         * @param max
-         */
-        public DoubleValidator(final double min, final double max) {
-            this.min = min;
-            this.max = max;
-        }
+    /** Controller */
+    private final Controller          controller;
 
-        /**
-         * Validates the string.
-         *
-         * @param s
-         * @return
-         */
-        public boolean validate(final String s) {
-            
-            // TODO: Ugly
-            try {
-                final double i = Double.valueOf(s);
-                return (i > min) && (i < max);
-            } catch (final Exception e) {
-                return false;
-            }
-        }
-    }
+    /** Window */
+    private final PreferenceWindow    window;
 
-    /**
-     * Validates integer input.
-     *
-     * @author Fabian Prasser
-     */
-    private static class IntegerValidator {
-        
-        /**  TODO */
-        private final int min;
-        
-        /**  TODO */
-        private final int max;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param min
-         * @param max
-         */
-        public IntegerValidator(final int min, final int max) {
-            this.min = min;
-            this.max = max;
-        }
-
-        /**
-         * 
-         *
-         * @param s
-         * @return
-         */
-        public boolean validate(final String s) {
-            // TODO: Ugly
-            try {
-                final int i = Integer.valueOf(s);
-                return (i >= min) && (i <= max);
-            } catch (final Exception e) {
-                return false;
-            }
-        }
-    }
-
-    /**  TODO */
-    private final Model model;
-
-    /**  TODO */
-    private Button      ok;
-    
-    /**  TODO */
-    private TabFolder   folder;
+    /** Properties */
+    private final Map<String, Object> properties;
 
     /**
      * Creates a new instance.
@@ -150,409 +64,219 @@ public class DialogProperties extends TitleAreaDialog implements IDialog {
      * @param parent
      * @param model
      */
-    public DialogProperties(final Shell parent, final Model model) {
-        super(parent);
-        this.model = model;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#create()
-     */
-    @Override
-    public void create() {
-        super.create();
-        setTitle(Resources.getMessage("PropertyDialog.0")); //$NON-NLS-1$
-        setMessage(Resources.getMessage("PropertyDialog.1"), IMessageProvider.NONE); //$NON-NLS-1$
-
-        // Obtain editors and categories
-        final List<IEditor<?>> editors = getEditors(model);
-        final List<String> categories = new ArrayList<String>();
-        for (final IEditor<?> e : editors) {
-            if (!categories.contains(e.getCategory())) {
-                categories.add(e.getCategory());
-            }
-        }
-
-        // Build tabs
-        for (final String category : categories) {
-
-            // Create the tab folder
-            final TabItem tab = new TabItem(folder, SWT.NONE);
-            tab.setText(category);
-            final Composite tabC = buildCategory(folder, category, editors);
-            tab.setControl(tabC);
-        }
-
-        // Repack the dialog
-        super.getShell().pack();
-    }
-
-    /**
-     * Builds the content for a specific category.
-     *
-     * @param folder
-     * @param category
-     * @param editors
-     * @return
-     */
-    private Composite buildCategory(final TabFolder folder,
-                                    final String category,
-                                    final List<IEditor<?>> editors) {
-        final Composite c = new Composite(folder, SWT.NONE);
-        c.setLayout(new GridLayout(2, false));
-        for (final IEditor<?> e : editors) {
-            if (e.getCategory().equals(category)) {
-                final Label l = new Label(c, SWT.NONE);
-                l.setText(e.getLabel() + ":"); //$NON-NLS-1$
-                e.createControl(c);
-            }
-        }
-        return c;
-    }
-
-    /**
-     * Builds all editors for the model.
-     *
-     * @param model
-     * @return
-     */
-    private List<IEditor<?>> getEditors(final Model model) {
-
+    public DialogProperties(final Shell parent, final Model model, final Controller controller) {
+        
         // Init
-        final List<IEditor<?>> result = new ArrayList<IEditor<?>>();
+        this.controller = controller;
+        this.model = model;
+        
+        // Create
+        this.properties = getProperties(model);
+        this.window = PreferenceWindow.create(parent, properties);
+        createTabProject(window);
+        createTabTransformation(window);
+        createTabInternals(window);
+        createTabVisualization(window);
+    }
 
-        // Project category
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.3"), Resources.getMessage("PropertyDialog.4"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                if (s.equals("")) { //$NON-NLS-1$
-                    return false;
-                } else {
-                    return true;
-                }
-            }
+    /**
+     * Opens the dialog
+     */
+    public void open() {
+        if (window.open()) {
+            setProperties(window.getValues(), model);
+        }
+    }
 
-            @Override
-            public String getValue() {
-                return model.getName();
-            }
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabInternals(PreferenceWindow window) {
+        
+        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
+                                  Resources.getMessage("PropertyDialog.16")); //$NON-NLS-1$
+        
+        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.17"), "historySize", 0, 1000000)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.19"), "snapshotSizeDataset", 0d, 1d)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.21"), "snapshotSizeSnapshot", 0d, 1d)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.28"), "maximalSizeForComplexOperations", 0, Integer.MAX_VALUE)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.29"), "debugEnabled")); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-            @Override
-            public void setValue(final String s) {
-                model.setName(s);
-            }
-        });
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabProject(PreferenceWindow window) {
+        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
+                                  Resources.getMessage("PropertyDialog.3")); //$NON-NLS-1$
+        
+        tab.add(new PWStringText(Resources.getMessage("PropertyDialog.4"), "name")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWTextarea(Resources.getMessage("PropertyDialog.7"), "description")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWCharText(Resources.getMessage("PropertyDialog.9"), "separator")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWCombo(Resources.getMessage("PropertyDialog.33"), "locale", getLocales())); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.6"), Resources.getMessage("PropertyDialog.7"), ok, true) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return true;
-            }
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabTransformation(PreferenceWindow window) {
+       
+        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
+                                  Resources.getMessage("PropertyDialog.10")); //$NON-NLS-1$
+        
+        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.11"), "suppressionAlwaysEnabled")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.31"), "isSensitiveAttributesSuppressed")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.32"), "isInsensitiveAttributesSuppressed")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWStringText(Resources.getMessage("PropertyDialog.13"), "suppressionString")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.15"), "maxNodesInLattice", 0, 1000000)); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-            @Override
-            public String getValue() {
-                return model.getDescription();
-            }
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabVisualization(PreferenceWindow window) {
+        PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
+                                  Resources.getMessage("PropertyDialog.22")); //$NON-NLS-1$
+        
+        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.23"), "initialNodesInViewer", 0, 10000)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.25"), "maxNodesInViewer", 0, 10000)); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-            @Override
-            public void setValue(final String s) {
-                model.setDescription(s);
-            }
-        });
-
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.8"), Resources.getMessage("PropertyDialog.9"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                if (s.length() == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getSeparator());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setSeparator(s.toCharArray()[0]);
-            }
-        });
-
-        // Create list of locales
+    /**
+     * Returns a list of available locales
+     * @return
+     */
+    private Object[] getLocales() {
         List<String> languages = new ArrayList<String>();
         languages.add("Default");
         for (String lang : Locale.getISOLanguages()) {
             languages.add(lang.toUpperCase());
         }
+        return languages.toArray();
+    }
+
+    /**
+     * Returns a map for the given model
+     * @param model
+     * @return
+     */
+    private Map<String, Object> getProperties(Model model) {
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("initialNodesInViewer", model.getInitialNodesInViewer()); //$NON-NLS-1$
+        data.put("maxNodesInViewer", model.getMaxNodesInViewer()); //$NON-NLS-1$
+        data.put("historySize", model.getHistorySize()); //$NON-NLS-1$
+        data.put("snapshotSizeDataset", (float)model.getSnapshotSizeDataset()); //$NON-NLS-1$
+        data.put("snapshotSizeSnapshot", (float)model.getSnapshotSizeSnapshot()); //$NON-NLS-1$
+        data.put("maximalSizeForComplexOperations", model.getMaximalSizeForComplexOperations()); //$NON-NLS-1$
+        data.put("debugEnabled", model.isDebugEnabled()); //$NON-NLS-1$
+        data.put("suppressionAlwaysEnabled", model.getInputConfig().isSuppressionAlwaysEnabled()); //$NON-NLS-1$
+        data.put("isSensitiveAttributesSuppressed", model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE)); //$NON-NLS-1$
+        data.put("isInsensitiveAttributesSuppressed", model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE)); //$NON-NLS-1$
+        data.put("suppressionString", model.getInputConfig().getSuppressionString()); //$NON-NLS-1$
+        data.put("maxNodesInLattice", model.getMaxNodesInLattice()); //$NON-NLS-1$
+        data.put("name", model.getName()); //$NON-NLS-1$
+        data.put("description", model.getDescription()); //$NON-NLS-1$
+        data.put("separator", String.valueOf(model.getSeparator())); //$NON-NLS-1$
+        data.put("locale", model.getLocale().getLanguage().toUpperCase()); //$NON-NLS-1$
+        return data;
+    }
+    /**
+     * Writes the map to the given model
+     * @param data
+     * @param model
+     */
+    private void setProperties(Map<String, Object> data, Model model) {
+
+        int initialNodesInViewer = (Integer)data.get("initialNodesInViewer");
+        if (initialNodesInViewer != model.getInitialNodesInViewer()) {
+            model.setInitialNodesInViewer(initialNodesInViewer);
+        }
         
-        // Create editor
-        result.add(new EditorSelection(Resources.getMessage("PropertyDialog.8"), Resources.getMessage("PropertyDialog.33"), languages.toArray(new String[]{})) { //$NON-NLS-1$ //$NON-NLS-2$
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getLocale().getLanguage().toUpperCase());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                if (s.equals("Default")) {
-                    model.setLocale(Locale.getDefault());
-                } else {
-                    model.setLocale(new Locale(s.toLowerCase()));
-                }
-            }
-        });
-
-        // Transformation category
-        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public Boolean getValue() {
-                return model.getInputConfig().isSuppressionAlwaysEnabled();
-            }
-
-            @Override
-            public void setValue(final Boolean t) {
-                model.getInputConfig().setSuppressionAlwaysEnabled(t);
-            }
-        });
-        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.31")) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public Boolean getValue() {
-                return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE);
-            }
-
-            @Override
-            public void setValue(final Boolean t) {
-                model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, t);
-            }
-        });
-        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.10"), Resources.getMessage("PropertyDialog.32")) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public Boolean getValue() {
-                return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE);
-            }
-
-            @Override
-            public void setValue(final Boolean t) {
-                model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, t);
-            }
-        });
+        int maxNodesInViewer = (Integer)data.get("maxNodesInViewer");
+        if (maxNodesInViewer != model.getMaxNodesInViewer()) {
+            model.setMaxNodesInViewer(maxNodesInViewer);
+        }
         
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.12"), Resources.getMessage("PropertyDialog.13"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return true;
-            }
+        int historySize = (Integer)data.get("historySize");
+        if (historySize != model.getHistorySize()) {
+            model.setHistorySize(historySize);
+        }
+        
+        float snapshotSizeDataset = (Float)data.get("snapshotSizeDataset");
+        if (snapshotSizeDataset != model.getSnapshotSizeDataset()) {
+            model.setSnapshotSizeDataset(snapshotSizeDataset);
+        }
 
-            @Override
-            public String getValue() {
-                return model.getInputConfig().getSuppressionString();
-            }
+        float snapshotSizeSnapshot = (Float)data.get("snapshotSizeSnapshot");
+        if (snapshotSizeSnapshot != model.getSnapshotSizeSnapshot()) {
+            model.setSnapshotSizeSnapshot(snapshotSizeSnapshot);
+        }
 
-            @Override
-            public void setValue(final String s) {
-                model.getInputConfig().setSuppressionString(s);
-            }
-        });
-        final IntegerValidator v = new IntegerValidator(0, 1000001);
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.14"), Resources.getMessage("PropertyDialog.15"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v.validate(s);
-            }
+        int maximalSizeForComplexOperations = (Integer)data.get("maximalSizeForComplexOperations");
+        if (maximalSizeForComplexOperations != model.getMaximalSizeForComplexOperations()) {
+            model.setMaximalSizeForComplexOperations(maximalSizeForComplexOperations);
+        }
+        
+        boolean debugEnabled = (Boolean)data.get("debugEnabled");
+        if (debugEnabled != model.isDebugEnabled()) {
+            model.setDebugEnabled(debugEnabled);
+        }
+        
+        boolean suppressionAlwaysEnabled = (Boolean)data.get("suppressionAlwaysEnabled");
+        if (suppressionAlwaysEnabled != model.getInputConfig().isSuppressionAlwaysEnabled()) {
+            model.getInputConfig().setSuppressionAlwaysEnabled(suppressionAlwaysEnabled);
+        }
+        
+        boolean isSensitiveAttributesSuppressed = (Boolean)data.get("isSensitiveAttributesSuppressed");
+        if (isSensitiveAttributesSuppressed != model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE)) {
+            model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, isSensitiveAttributesSuppressed);
+        }
+        
+        boolean isInsensitiveAttributesSuppressed = (Boolean)data.get("isInsensitiveAttributesSuppressed");
+        if (isInsensitiveAttributesSuppressed != model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE)) {
+            model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, isInsensitiveAttributesSuppressed);
+        }
+        
+        String suppressionString = (String)data.get("suppressionString");
+        if (!suppressionString.equals(model.getInputConfig().getSuppressionString())) {
+            model.getInputConfig().setSuppressionString(suppressionString);
+        }
 
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getMaxNodesInLattice());
-            }
+        String name = (String)data.get("name");
+        if (!name.equals(model.getName())) {
+            model.setName(name);
+        }
 
-            @Override
-            public void setValue(final String s) {
-                model.setMaxNodesInLattice(Integer.valueOf(s));
-            }
-        });
+        String description = (String)data.get("description");
+        if (!description.equals(model.getDescription())) {
+            model.setDescription(description);
+        }
+        
+        char separator = ((String)data.get("separator")).toCharArray()[0];
+        if (separator != model.getSeparator()) {
+            model.setSeparator(separator);
+        }
 
-        // Internals category
-        final IntegerValidator v2 = new IntegerValidator(0, 1000001);
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.16"), Resources.getMessage("PropertyDialog.17"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v2.validate(s);
-            }
+        int maxNodesInLattice = (Integer)data.get("maxNodesInLattice");
+        if (maxNodesInLattice != model.getMaxNodesInLattice()) {
+            model.setMaxNodesInLattice(maxNodesInLattice);
+        }
+        
 
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getHistorySize());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setHistorySize(Integer.valueOf(s));
-            }
-        });
-        final DoubleValidator v3 = new DoubleValidator(0d, 1d);
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.18"), Resources.getMessage("PropertyDialog.19"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v3.validate(s);
-            }
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getSnapshotSizeDataset());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setSnapshotSizeDataset(Double.valueOf(s));
-            }
-        });
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.21"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v3.validate(s);
-            }
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getSnapshotSizeSnapshot());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setSnapshotSizeSnapshot(Double.valueOf(s));
-            }
-        });
-        final IntegerValidator v5 = new IntegerValidator(0, Integer.MAX_VALUE);
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.28"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v5.validate(s);
-            }
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getMaximalSizeForComplexOperations());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setMaximalSizeForComplexOperations(Integer.valueOf(s));
-            }
-        });
-        result.add(new EditorBoolean(Resources.getMessage("PropertyDialog.20"), Resources.getMessage("PropertyDialog.29")) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public Boolean getValue() {
-                return model.isDebugEnabled();
-            }
-
-            @Override
-            public void setValue(final Boolean s) {
-                model.setDebugEnabled(s);
-            }
-        });
-
-        // Viewer category
-        final IntegerValidator v4 = new IntegerValidator(0, 10000);
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.22"), Resources.getMessage("PropertyDialog.23"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v4.validate(s);
-            }
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getInitialNodesInViewer());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setInitialNodesInViewer(Integer.valueOf(s));
-            }
-        });
-        result.add(new EditorString(Resources.getMessage("PropertyDialog.24"), Resources.getMessage("PropertyDialog.25"), ok, false) { //$NON-NLS-1$ //$NON-NLS-2$
-            @Override
-            public boolean accepts(final String s) {
-                return v4.validate(s);
-            }
-
-            @Override
-            public String getValue() {
-                return String.valueOf(model.getMaxNodesInViewer());
-            }
-
-            @Override
-            public void setValue(final String s) {
-                model.setMaxNodesInViewer(Integer.valueOf(s));
-            }
-        });
-        // Return
-        return result;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
-    @Override
-    protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setImages(Resources.getIconSet(newShell.getDisplay()));
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-     */
-    @Override
-    protected void createButtonsForButtonBar(final Composite parent) {
-
-        // Create OK Button
-        parent.setLayoutData(SWTUtil.createFillGridData());
-        ok = createButton(parent,
-                          Window.OK,
-                          Resources.getMessage("PropertyDialog.26"), true); //$NON-NLS-1$
-        ok.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                setReturnCode(Window.OK);
-                close();
-            }
-        });
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
-    @Override
-    protected Control createDialogArea(final Composite parent) {
-        parent.setLayout(new GridLayout(1, false));
-
-        folder = new TabFolder(parent, SWT.NONE);
-        folder.setLayoutData(SWTUtil.createFillGridData());
-
-        return parent;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getShellListener()
-     */
-    @Override
-    protected ShellListener getShellListener() {
-        return new ShellAdapter() {
-            @Override
-            public void shellClosed(final ShellEvent event) {
-                setReturnCode(Window.CANCEL);
-            }
-        };
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-     */
-    @Override
-    protected boolean isResizable() {
-        return false;
+        String slocale = (String)data.get("locale");
+        Locale locale;
+        if (slocale.equals("Default")) {
+            locale = Locale.getDefault();
+        } else {
+            locale = new Locale(slocale.toLowerCase());
+        }
+        if (!locale.equals(model.getLocale())) {
+            model.setLocale(locale);
+        }
     }
 }
