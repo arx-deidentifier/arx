@@ -18,9 +18,13 @@
 package org.deidentifier.arx.gui.view.impl.explore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -38,15 +42,19 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.mihalis.opal.dynamictablecolumns.DynamicTable;
 import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
 
-import cern.colt.Arrays;
 
 /**
  * This class implements a list view on selected nodes.
@@ -55,9 +63,6 @@ import cern.colt.Arrays;
  * @author Florian Kohlmayer
  */
 public class ViewList extends ViewSolutionSpace {
-
-    /** Symbol */
-    private static final String SYMBOL     = new String(new char[] { '\u26AB' });
 
     /** The table. */
     private final DynamicTable  table;
@@ -70,6 +75,9 @@ public class ViewList extends ViewSolutionSpace {
 
     /** Color */
     private Color               background = null;
+
+    /** Map */
+    private Map<Color, Image>   symbols    = new HashMap<Color, Image>();
 
     /**
      * Contructor
@@ -178,7 +186,21 @@ public class ViewList extends ViewSolutionSpace {
         }
         SWTUtil.disable(table);
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        for (Entry<Color, Image> entry : symbols.entrySet()) {
+            entry.getValue().dispose();
+        }
+        symbols.clear();
+    }
+    
     /**
      * Creates an item in the list.
      *
@@ -189,8 +211,6 @@ public class ViewList extends ViewSolutionSpace {
 
         final ARXNode node = list.get(index);
 
-        item.setText(0, SYMBOL);
-        
         final String transformation = Arrays.toString(node.getTransformation());
         item.setText(1, transformation);
 
@@ -214,8 +234,57 @@ public class ViewList extends ViewSolutionSpace {
         }
         item.setText(4, max);
         item.setData(node);
-        item.setForeground(0, super.getInnerColor(node));
+
+        item.setImage(0, getSymbol(super.getInnerColor(node)));
+        
         this.background = this.background != null ? this.background : item.getBackground();
+    }
+
+    /**
+     * Dynamically creates an image with the given color
+     * @param color
+     * @return
+     */
+    private Image getSymbol(Color color) {
+        
+        // Check cache
+        if (symbols.containsKey(color)) {
+            return symbols.get(color);
+        }
+        
+        // Render
+        final int WIDTH = 16;
+        final int HEIGHT = 16;
+        Image image = getTransparentImage(table.getDisplay(), WIDTH, HEIGHT);
+        GC gc = new GC(image);
+        gc.setAntialias(SWT.ON);
+        gc.setBackground(color);
+        gc.fillOval(0, 0, WIDTH, HEIGHT);
+        gc.setAntialias(SWT.OFF);
+        gc.dispose();
+        
+        // Store in cache and return
+        symbols.put(color, image);
+        return image;
+    }
+    
+    /**
+     * Creates a transparent image
+     * @param display
+     * @param width
+     * @param height
+     * @return
+     */
+    private Image getTransparentImage(Display display, int width, int height) {
+        ImageData imData = new ImageData(width,
+                                         height,
+                                         24,
+                                         new PaletteData(0xff0000,
+                                                         0x00ff00,
+                                                         0x0000ff));
+        imData.setAlpha(0, 0, 0);
+        Arrays.fill(imData.alphaData, (byte) 0);
+        return new Image(display, imData);
     }
 
     /**
