@@ -176,15 +176,6 @@ public class ViewList extends ViewSolutionSpace {
         };
         table.addListener(SWT.MouseMove, tableListener);
         table.addListener(SWT.MouseExit, tableListener);
-        
-        // Fix for Bug #50163
-        table.addListener(SWT.EraseItem, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-              event.gc.setBackground(((TableItem)event.item).getBackground(event.index));
-              event.gc.fillRectangle(event.getBounds());
-            }
-          });
     }
 
     /**
@@ -276,10 +267,17 @@ public class ViewList extends ViewSolutionSpace {
         final int HEIGHT = 16;
         Image image = getTransparentImage(table.getDisplay(), WIDTH, HEIGHT);
         GC gc = new GC(image);
-        gc.setAntialias(SWT.ON);
         gc.setBackground(color);
-        gc.fillOval(0, 0, WIDTH, HEIGHT);
-        gc.setAntialias(SWT.OFF);
+
+        // "Fix" for Bug #50163
+        if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
+            gc.fillRectangle(0, 0, WIDTH, HEIGHT);
+        } else {
+            gc.setAntialias(SWT.ON);
+            gc.fillOval(0, 0, WIDTH, HEIGHT);
+            gc.setAntialias(SWT.OFF);
+        }
+        
         gc.dispose();
         
         // Store in cache and return
