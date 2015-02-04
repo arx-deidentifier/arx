@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
 import org.deidentifier.arx.gui.view.impl.menu.properties.PWCharText;
 import org.deidentifier.arx.gui.view.impl.menu.properties.PWRestrictedFloatText;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Shell;
 import org.mihalis.opal.preferenceWindow.PWTab;
 import org.mihalis.opal.preferenceWindow.PreferenceWindow;
@@ -38,6 +39,7 @@ import org.mihalis.opal.preferenceWindow.widgets.PWCombo;
 import org.mihalis.opal.preferenceWindow.widgets.PWSpinner;
 import org.mihalis.opal.preferenceWindow.widgets.PWStringText;
 import org.mihalis.opal.preferenceWindow.widgets.PWTextarea;
+import org.mihalis.opal.preferenceWindow.widgets.PWWidget;
 
 /**
  * This class implements a dialog for editing project properties.
@@ -97,11 +99,23 @@ public class DialogProperties implements IDialog {
         PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
                                   Resources.getMessage("PropertyDialog.16")); //$NON-NLS-1$
         
-        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.17"), "historySize", 0, 1000000)); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.19"), "snapshotSizeDataset", 0d, 1d)); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.21"), "snapshotSizeSnapshot", 0d, 1d)); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.28"), "maximalSizeForComplexOperations", 0, Integer.MAX_VALUE)); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.29"), "debugEnabled")); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.17"), "historySize", 0, 1000000))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.19"), "snapshotSizeDataset", 0d, 1d))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWRestrictedFloatText(Resources.getMessage("PropertyDialog.21"), "snapshotSizeSnapshot", 0d, 1d))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.28"), "maximalSizeForComplexOperations", 0, Integer.MAX_VALUE))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.29"), "debugEnabled"))); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    /**
+     * Formats a widget
+     * @param widget
+     * @return
+     */
+    private PWWidget format(PWWidget widget) {
+        widget.setGrabExcessSpace(true);
+        widget.setAlignment(GridData.BEGINNING);
+        widget.setWidth(300);
+        return widget;
     }
 
     /**
@@ -112,10 +126,10 @@ public class DialogProperties implements IDialog {
         PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
                                   Resources.getMessage("PropertyDialog.3")); //$NON-NLS-1$
         
-        tab.add(new PWStringText(Resources.getMessage("PropertyDialog.4"), "name")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWTextarea(Resources.getMessage("PropertyDialog.7"), "description")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWCharText(Resources.getMessage("PropertyDialog.9"), "separator")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWCombo(Resources.getMessage("PropertyDialog.33"), "locale", getLocales())); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWStringText(Resources.getMessage("PropertyDialog.4"), "name"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWTextarea(Resources.getMessage("PropertyDialog.7"), "description"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWCharText(Resources.getMessage("PropertyDialog.9"), "separator"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWCombo(Resources.getMessage("PropertyDialog.33"), "locale", getLocales()))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -127,11 +141,11 @@ public class DialogProperties implements IDialog {
         PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
                                   Resources.getMessage("PropertyDialog.10")); //$NON-NLS-1$
         
-        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.11"), "suppressionAlwaysEnabled")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.31"), "isSensitiveAttributesSuppressed")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWCheckbox(Resources.getMessage("PropertyDialog.32"), "isInsensitiveAttributesSuppressed")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWStringText(Resources.getMessage("PropertyDialog.13"), "suppressionString")); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.15"), "maxNodesInLattice", 0, 1000000)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.11"), "suppressionAlwaysEnabled"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.31"), "isSensitiveAttributesSuppressed"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWCheckbox(Resources.getMessage("PropertyDialog.32"), "isInsensitiveAttributesSuppressed"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWStringText(Resources.getMessage("PropertyDialog.13"), "suppressionString"))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.15"), "maxNodesInLattice", 0, 1000000))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -142,8 +156,8 @@ public class DialogProperties implements IDialog {
         PWTab tab = window.addTab(controller.getResources().getImage("settings.png"), //$NON-NLS-1$
                                   Resources.getMessage("PropertyDialog.22")); //$NON-NLS-1$
         
-        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.23"), "initialNodesInViewer", 0, 10000)); //$NON-NLS-1$ //$NON-NLS-2$
-        tab.add(new PWSpinner(Resources.getMessage("PropertyDialog.25"), "maxNodesInViewer", 0, 10000)); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.23"), "initialNodesInViewer", 0, 10000))); //$NON-NLS-1$ //$NON-NLS-2$
+        tab.add(format(new PWSpinner(Resources.getMessage("PropertyDialog.25"), "maxNodesInViewer", 0, 10000))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
