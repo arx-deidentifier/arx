@@ -35,8 +35,8 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentFilterTable;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -49,10 +49,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.mihalis.opal.rangeSlider.RangeSlider;
+import org.eclipse.swt.widgets.Scale;
 
 /**
  * This class displays a filter for the lattice.
@@ -85,9 +83,12 @@ public class ViewFilter implements IView {
     /** Widget. */
     private Button               unknown;
     
-    /** Widget*/
-    private RangeSlider          slider;
+    /** Widget. */
+    private Scale                max;
     
+    /** Widget. */
+    private Scale                min;
+
     /** Model. */
     private Controller           controller;
     
@@ -99,9 +100,6 @@ public class ViewFilter implements IView {
     
     /** Model. */
     private ARXResult            result          = null;
-    
-    /** Model. */
-    private boolean              mouseDown       = false;
 
     /**
      * Creates a new instance.
@@ -174,8 +172,10 @@ public class ViewFilter implements IView {
         anonymous.setSelection(false);
         nonanonymous.setSelection(false);
         unknown.setSelection(false);
-        slider.setSelection(slider.getMinimum(), slider.getMaximum());
-        slider.setEnabled(false);
+        min.setSelection(min.getMinimum());
+        max.setSelection(max.getMaximum());
+        min.setEnabled(false);
+        max.setEnabled(false);
         generalization.clear();
         SWTUtil.disable(root);
     }
@@ -228,7 +228,7 @@ public class ViewFilter implements IView {
      */
     private void actionMaxInfoLossChanged() {
         if (filter != null) {
-            double maxLoss = (double)slider.getUpperValue() / (double)SCALE_MAX_VALUE;
+            double maxLoss = (double)max.getSelection() / (double)SCALE_MAX_VALUE;
             double minLoss = filter.getAllowedMinInformationLoss();
             filter.allowInformationLoss(minLoss, maxLoss);
             fireModelEvent();
@@ -240,7 +240,7 @@ public class ViewFilter implements IView {
      */
     private void actionMinInfoLossChanged() {
         if (filter != null) {
-            double minLoss = (double)slider.getLowerValue() / (double)SCALE_MAX_VALUE;
+            double minLoss = (double)min.getSelection() / (double)SCALE_MAX_VALUE;
             double maxLoss = filter.getAllowedMaxInformationLoss();
             filter.allowInformationLoss(minLoss, maxLoss);
             fireModelEvent();
@@ -430,47 +430,26 @@ public class ViewFilter implements IView {
         });
         
         final Label tableItem5 = new Label(parent, SWT.NONE);
-        tableItem5.setText(Resources.getMessage("NodeFilterView.22")); //$NON-NLS-1$
-        
-        this.slider = new RangeSlider(parent, SWT.HORIZONTAL);
-        this.slider.setMaximum(SCALE_MAX_VALUE);
-        this.slider.setMinimum(0);
-        this.slider.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.slider.addSelectionListener(new SelectionAdapter() {
+        tableItem5.setText(Resources.getMessage("NodeFilterView.15")); //$NON-NLS-1$
+        min = new Scale(parent, SWT.HORIZONTAL);
+        min.setMaximum(SCALE_MAX_VALUE);
+        min.setMinimum(0);
+        min.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        min.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent arg0) {
                 actionMinInfoLossChanged();
-                actionMaxInfoLossChanged();
-            }
-        });
-        this.slider.addListener(SWT.MouseMove, new Listener() {
-            public void handleEvent(Event e) {
-                if (mouseDown == true) {
-                    actionMinInfoLossChanged();
-                    actionMaxInfoLossChanged();
-                }
             }
         });
 
-        this.slider.addListener(SWT.MouseDown, new Listener() {
-            public void handleEvent(Event e) {
-                mouseDown = true;
-            }
-        });
-
-        this.slider.addListener(SWT.MouseUp, new Listener() {
-            public void handleEvent(Event e) {
-                mouseDown = false;
-            }
-        });
-        this.slider.addListener(SWT.KeyDown, new Listener() {
-            public void handleEvent(Event e) {
-                actionMinInfoLossChanged();
-                actionMaxInfoLossChanged();
-            }
-        });
-        this.slider.addListener(SWT.KeyUp, new Listener() {
-            public void handleEvent(Event e) {
-                actionMinInfoLossChanged();
+        final Label tableItem6 = new Label(parent, SWT.NONE);
+        tableItem6.setText(Resources.getMessage("NodeFilterView.16")); //$NON-NLS-1$
+        max = new Scale(parent, SWT.HORIZONTAL);
+        max.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        max.setMaximum(SCALE_MAX_VALUE);
+        max.setMinimum(0);
+        max.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
                 actionMaxInfoLossChanged();
             }
         });
@@ -595,8 +574,8 @@ public class ViewFilter implements IView {
         unknown.setSelection(filter.isAllowedUnknown());
         
         // Min and max
-        this.slider.setSelection((int)Math.round(filter.getAllowedMinInformationLoss() * (double)SCALE_MAX_VALUE), 
-                                 (int)Math.round(filter.getAllowedMaxInformationLoss() * (double)SCALE_MAX_VALUE));
+        this.min.setSelection((int)Math.round(filter.getAllowedMinInformationLoss() * (double)SCALE_MAX_VALUE));
+        this.max.setSelection((int)Math.round(filter.getAllowedMaxInformationLoss() * (double)SCALE_MAX_VALUE));
         
         // Draw
         this.root.setRedraw(true);
@@ -606,4 +585,3 @@ public class ViewFilter implements IView {
         SWTUtil.enable(root);
     }
 }
-

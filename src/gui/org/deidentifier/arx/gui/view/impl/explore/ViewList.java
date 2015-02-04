@@ -37,13 +37,14 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.mihalis.opal.dynamictablecolumns.DynamicTable;
+import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
 
 import cern.colt.Arrays;
 
@@ -55,14 +56,20 @@ import cern.colt.Arrays;
  */
 public class ViewList extends ViewSolutionSpace {
 
+    /** Symbol */
+    private static final String SYMBOL     = new String(new char[] { '\u26AB' });
+
     /** The table. */
-    private final Table         table;
+    private final DynamicTable  table;
 
     /** The list. */
-    private final List<ARXNode> list   = new ArrayList<ARXNode>();
+    private final List<ARXNode> list       = new ArrayList<ARXNode>();
 
     /** The listener. */
     private Listener            listener;
+
+    /** Color */
+    private Color               background = null;
 
     /**
      * Contructor
@@ -74,7 +81,7 @@ public class ViewList extends ViewSolutionSpace {
         
         super(parent, controller);
 
-        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = new DynamicTable(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         
@@ -100,24 +107,33 @@ public class ViewList extends ViewSolutionSpace {
                 }
             }
         });
-        
-        final TableColumn column1 = new TableColumn(table, SWT.LEFT);
+
+        final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
+        column0.setText(""); //$NON-NLS-1$
+        column0.setWidth("30px");
+        final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
-        final TableColumn column4 = new TableColumn(table, SWT.LEFT);
+        column1.setWidth("25%", "100px");
+        final DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.LEFT);
         column4.setText(Resources.getMessage("ListView.2")); //$NON-NLS-1$
-        final TableColumn column2 = new TableColumn(table, SWT.LEFT);
+        column4.setWidth("25%", "100px");
+        final DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.LEFT);
         column2.setText(Resources.getMessage("ListView.3")); //$NON-NLS-1$
-        final TableColumn column3 = new TableColumn(table, SWT.LEFT);
+        column2.setWidth("25%", "100px");
+        final DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.LEFT);
         column3.setText(Resources.getMessage("ListView.4")); //$NON-NLS-1$
+        column3.setWidth("25%", "100px");
 
         table.setItemCount(0);
         
+        column0.pack();
         column1.pack();
         column2.pack();
         column3.pack();
         column4.pack();
 
         // Create tooltip listener
+        // TODO: Does not work on Windows
         Listener tableListener = new Listener() {
 
             private TableItem previousHighlighted = null;
@@ -125,7 +141,7 @@ public class ViewList extends ViewSolutionSpace {
             public void handleEvent(Event event) {
                 if (previousHighlighted != null) {
                     if (!previousHighlighted.isDisposed()) {
-                        previousHighlighted.setBackground(getInnerColor((ARXNode)previousHighlighted.getData()));
+                        previousHighlighted.setBackground(background);
                     }
                 }
 
@@ -171,11 +187,13 @@ public class ViewList extends ViewSolutionSpace {
 
         final ARXNode node = list.get(index);
 
+        item.setText(0, SYMBOL);
+        
         final String transformation = Arrays.toString(node.getTransformation());
-        item.setText(0, transformation);
+        item.setText(1, transformation);
 
         final String anonymity = node.getAnonymity().toString();
-        item.setText(1, anonymity);
+        item.setText(2, anonymity);
 
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
@@ -184,8 +202,7 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
-        item.setText(2, min);
-
+        item.setText(3, min);
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
             max = node.getMaximumInformationLoss().toString() +
@@ -193,10 +210,10 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
-        item.setText(3, max);
+        item.setText(4, max);
         item.setData(node);
-        item.setBackground(getInnerColor(node));
-        item.setForeground(getOuterColor(node));
+        item.setForeground(0, super.getInnerColor(node));
+        this.background = this.background != null ? this.background : item.getBackground();
     }
 
     /**
@@ -214,8 +231,10 @@ public class ViewList extends ViewSolutionSpace {
 
             @Override
             public void run() {
+                if (!table.isEnabled()) {
+                    SWTUtil.enable(table);
+                }
                 table.setRedraw(false);
-                SWTUtil.enable(table);
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
@@ -258,12 +277,6 @@ public class ViewList extends ViewSolutionSpace {
                 };
                 table.addListener(SWT.SetData, listener);
                 table.setItemCount(list.size());
-
-                TableColumn[] colums = table.getColumns();
-                for (TableColumn tableColumn : colums) {
-                    tableColumn.setWidth(120);
-                }
-                
                 table.setRedraw(true);
             }
         });
