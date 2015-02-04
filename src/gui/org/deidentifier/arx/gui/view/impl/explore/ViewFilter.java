@@ -167,9 +167,7 @@ public class ViewFilter implements IView {
                         actionInfoLossChanged();
                     }
                 }
-                if (!parent.isDisposed() && !parent.getDisplay().isDisposed()) {
-                    parent.getDisplay().timerExec(SCALE_UPDATE_INTERVAL, this);
-                }
+                parent.getDisplay().timerExec(SCALE_UPDATE_INTERVAL, this);
             }
         });
     }
