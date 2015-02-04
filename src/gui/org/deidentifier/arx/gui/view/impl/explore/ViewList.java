@@ -109,7 +109,7 @@ public class ViewList extends ViewSolutionSpace {
         });
 
         final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
-        column0.setText(""); //$NON-NLS-1$
+        column0.setText("     "); //$NON-NLS-1$
         column0.setWidth("30px");
         final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
@@ -150,8 +150,10 @@ public class ViewList extends ViewSolutionSpace {
                     item.setBackground(GUIHelper.COLOR_GRAY);
                     previousHighlighted = item;
                     ARXNode node = (ARXNode) item.getData();
-                    table.redraw();
-                    table.setToolTipText(getTooltipDecorator().decorate(node));
+                    if (node != null) {
+                        table.redraw();
+                        table.setToolTipText(getTooltipDecorator().decorate(node));
+                    }
                 }
             }
         };
