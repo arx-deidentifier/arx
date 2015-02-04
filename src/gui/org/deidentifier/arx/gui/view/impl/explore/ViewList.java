@@ -110,19 +110,19 @@ public class ViewList extends ViewSolutionSpace {
 
         final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
         column0.setText("     "); //$NON-NLS-1$
-        column0.setWidth("30px");
+        column0.setWidth("30px"); //$NON-NLS-1$
         final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
-        column1.setWidth("25%", "100px");
+        column1.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         final DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.LEFT);
         column4.setText(Resources.getMessage("ListView.2")); //$NON-NLS-1$
-        column4.setWidth("25%", "100px");
+        column4.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         final DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.LEFT);
         column2.setText(Resources.getMessage("ListView.3")); //$NON-NLS-1$
-        column2.setWidth("25%", "100px");
+        column2.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         final DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.LEFT);
         column3.setText(Resources.getMessage("ListView.4")); //$NON-NLS-1$
-        column3.setWidth("25%", "100px");
+        column3.setWidth("25%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         table.setItemCount(0);
         
