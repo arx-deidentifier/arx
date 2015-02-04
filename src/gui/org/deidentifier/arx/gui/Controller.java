@@ -80,7 +80,13 @@ import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.ImportConfiguration;
 import org.deidentifier.arx.io.ImportConfigurationCSV;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.mihalis.opal.opalDialog.ChoiceItem;
+import org.mihalis.opal.opalDialog.Dialog;
+import org.mihalis.opal.opalDialog.Dialog.CenterOption;
+import org.mihalis.opal.opalDialog.Dialog.OpalDialogType;
 
 import cern.colt.Swapper;
 
@@ -475,19 +481,52 @@ public class Controller implements IView {
      * File->exit.
      */
     public void actionMenuFileExit() {
-        if (main.showQuestionDialog(main.getShell(),
-                                    Resources.getMessage("Controller.26"), //$NON-NLS-1$
-                                    Resources.getMessage("Controller.27"))) { //$NON-NLS-1$
-            if ((model != null) && model.isModified()) {
-                if (main.showQuestionDialog(main.getShell(),
-                                            Resources.getMessage("Controller.28"), //$NON-NLS-1$
-                                            Resources.getMessage("Controller.29"))) { //$NON-NLS-1$
-                    actionMenuFileSave();
-                }
-            }
-            main.getShell().getDisplay().dispose();
-            System.exit(0);
+        
+        // Prepare
+        ChoiceItem[] items;
+        boolean modified = model != null && model.isModified();
+        
+        // Build items
+        if (modified) {
+            items = new ChoiceItem[3];
+            items[0] = new ChoiceItem(Resources.getMessage("Controller.110"), //$NON-NLS-1$
+                                      Resources.getMessage("Controller.111")); //$NON-NLS-1$
+            items[1] = new ChoiceItem(Resources.getMessage("Controller.112"), //$NON-NLS-1$
+                                      Resources.getMessage("Controller.113")); //$NON-NLS-1$
+        } else {
+            items = new ChoiceItem[2];
+            items[0] = new ChoiceItem(Resources.getMessage("Controller.114"), //$NON-NLS-1$
+                                      Resources.getMessage("Controller.115")); //$NON-NLS-1$
         }
+        
+        items[items.length-1] = new ChoiceItem(Resources.getMessage("Controller.116"), //$NON-NLS-1$
+                                               Resources.getMessage("Controller.117")); //$NON-NLS-1$
+        
+        // Show dialog
+        final Dialog dialog = new Dialog(main.getShell());
+        dialog.setTitle(Resources.getMessage("Controller.26")); //$NON-NLS-1$
+        dialog.getMessageArea().setTitle(""); //$NON-NLS-1$ 
+        dialog.getMessageArea().setText(Resources.getMessage("Controller.27"));//$NON-NLS-1$
+        dialog.getMessageArea().setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION));
+        dialog.getMessageArea().addChoice(items.length - 1, items);
+        dialog.setCenterPolicy(CenterOption.CENTER_ON_DIALOG);
+        dialog.setButtonType(OpalDialogType.NONE);
+        dialog.show();
+        int choice = dialog.getMessageArea().getChoice();
+        
+        // Cancel
+        if (choice == -1 || choice == items.length-1) {
+            return;
+        }
+
+        // Save
+        if (modified && choice == 0) {
+            actionMenuFileSave();
+        }
+        
+        // Exit
+        main.getShell().getDisplay().dispose();
+        System.exit(0);
     }
 
     /**
