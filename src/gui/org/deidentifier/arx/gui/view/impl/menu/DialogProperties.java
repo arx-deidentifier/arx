@@ -86,7 +86,7 @@ public class DialogProperties implements IDialog {
     private void createTabInternals(DialogPreference window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.16"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
+                           controller.getResources().getImage("settings-internals.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.17"), 0, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getHistorySize(); }
@@ -116,7 +116,7 @@ public class DialogProperties implements IDialog {
     private void createTabProject(DialogPreference window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.3"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
+                           controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
           
         window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.4")) { //$NON-NLS-1$
             protected String getValue() { return model.getName(); }
@@ -142,7 +142,7 @@ public class DialogProperties implements IDialog {
     private void createTabTransformation(DialogPreference window) {
        
         window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
+                           controller.getResources().getImage("settings-transformation.png")); //$NON-NLS-1$
 
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isSuppressionAlwaysEnabled(); }
@@ -171,7 +171,7 @@ public class DialogProperties implements IDialog {
      */
     private void createTabVisualization(DialogPreference window) {
         window.addCategory(Resources.getMessage("PropertyDialog.22"), //$NON-NLS-1$
-                           controller.getResources().getImage("settings.png")); //$NON-NLS-1$
+                           controller.getResources().getImage("settings-visualization.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.23"), 0, 10000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getInitialNodesInViewer(); }
