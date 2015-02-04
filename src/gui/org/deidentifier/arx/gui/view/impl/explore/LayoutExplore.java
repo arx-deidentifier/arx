@@ -50,7 +50,7 @@ public class LayoutExplore implements ILayout {
         root.setLayout(SWTUtil.createGridLayout(1));
  
         // Create top composite
-        ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
+        ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30", true); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
         
         // Lattice
