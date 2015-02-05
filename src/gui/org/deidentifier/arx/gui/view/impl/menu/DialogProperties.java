@@ -35,6 +35,7 @@ import de.linearbits.preferences.PreferenceDouble;
 import de.linearbits.preferences.PreferenceInteger;
 import de.linearbits.preferences.PreferenceSelection;
 import de.linearbits.preferences.PreferenceString;
+import de.linearbits.preferences.PreferenceText;
 
 /**
  * This class implements a dialog for editing project properties.
@@ -122,7 +123,7 @@ public class DialogProperties implements IDialog {
             protected String getValue() { return model.getName(); }
             protected void setValue(Object t) { model.setName((String)t); }});
         
-        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.7")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceText(Resources.getMessage("PropertyDialog.7")) { //$NON-NLS-1$
             protected String getValue() { return model.getDescription(); }
             protected void setValue(Object t) { model.setDescription((String)t); }});
 
