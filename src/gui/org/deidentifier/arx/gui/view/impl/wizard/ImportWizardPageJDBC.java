@@ -46,8 +46,8 @@ import org.eclipse.swt.widgets.Text;
  * JDBC page
  *
  * This page offers means to specify connection details for a database. For
- * now MySQL, PostgreSQL and SQLite is supported. In case of remote database
- * types (i.e. MySQL and PostgreSQL) the user is asked for the server and a
+ * now MS SQL, MySQL, PostgreSQL and SQLite is supported. In case of remote database
+ * types (i.e. MS SQL, MySQL and PostgreSQL) the user is asked for the server and a
  * username and password. In case of SQLite the user can select any *.db file.
  *
  * After ther user specified the details a connection is established and
@@ -116,6 +116,9 @@ public class ImportWizardPageJDBC extends WizardPage {
 
     /* String constants for different database types */
     /**  TODO */
+    private static final String MSSQL = "MS SQL";
+
+    /**  TODO */
     private static final String MYSQL = "MySQL";
     
     /**  TODO */
@@ -161,7 +164,7 @@ public class ImportWizardPageJDBC extends WizardPage {
         /* Combo for choosing database type */
         comboType = new Combo(container, SWT.READ_ONLY);
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        comboType.setItems(new String[] {MYSQL, POSTGRESQL, SQLITE});
+        comboType.setItems(new String[] {MSSQL, MYSQL, POSTGRESQL, SQLITE});
         comboType.addSelectionListener(new SelectionAdapter() {
 
             /**
@@ -187,7 +190,9 @@ public class ImportWizardPageJDBC extends WizardPage {
                     /* Set default ports in case text field is empty */
                     if (txtPort.getText().isEmpty()) {
 
-                        if (comboType.getText().equals(MYSQL)) {
+                        if (comboType.getText().equals(MSSQL)) {
+                            txtPort.setText("1433");
+                        } else if (comboType.getText().equals(MYSQL)) {
                             txtPort.setText("3306");
                         } else if (comboType.getText().equals(POSTGRESQL)) {
                             txtPort.setText("5432");
@@ -433,6 +438,11 @@ public class ImportWizardPageJDBC extends WizardPage {
 
                 Class.forName("org.sqlite.JDBC");
                 connection = DriverManager.getConnection("jdbc:sqlite:" + comboLocation.getText());
+
+            } else if (comboType.getText().equals(MSSQL)) {
+
+                Class.forName("net.sourceforge.jtds.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:jtds:sqlserver://" + txtServer.getText() + ":" + txtPort.getText() + "/" + txtDatabase.getText(), txtUsername.getText(), txtPassword.getText());
 
             } else if (comboType.getText().equals(MYSQL)) {
 
