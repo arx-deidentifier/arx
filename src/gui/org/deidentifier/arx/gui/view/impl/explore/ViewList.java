@@ -265,18 +265,26 @@ public class ViewList extends ViewSolutionSpace {
         // Render
         final int WIDTH = 16;
         final int HEIGHT = 16;
-        Image image = getTransparentImage(table.getDisplay(), WIDTH, HEIGHT);
-        GC gc = new GC(image);
-        gc.setBackground(color);
+        Image image = null;
+        GC gc = null;
+        
+       
 
-        // "Fix" for Bug #50163
-        if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-            gc.fillRectangle(0, 0, WIDTH, HEIGHT);
-        } else {
-            gc.setAntialias(SWT.ON);
-            gc.fillOval(0, 0, WIDTH, HEIGHT);
-            gc.setAntialias(SWT.OFF);
-        }
+		// "Fix" for Bug #50163
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.indexOf("win") >= 0 || os.indexOf("mac") >= 0) {
+			image = new Image(table.getDisplay(), WIDTH, HEIGHT);
+			gc = new GC(image);
+			gc.setBackground(color);
+			gc.fillRectangle(0, 0, WIDTH, HEIGHT);
+		} else {
+			image = getTransparentImage(table.getDisplay(), WIDTH, HEIGHT);
+			gc = new GC(image);
+			gc.setBackground(color);
+			gc.setAntialias(SWT.ON);
+			gc.fillOval(0, 0, WIDTH, HEIGHT);
+			gc.setAntialias(SWT.OFF);
+		}
         
         gc.dispose();
         
