@@ -42,11 +42,8 @@ import org.eclipse.swt.widgets.Composite;
 import cern.colt.Arrays;
 import de.linearbits.tiles.DecoratorColor;
 import de.linearbits.tiles.DecoratorInteger;
-import de.linearbits.tiles.DecoratorListener;
 import de.linearbits.tiles.DecoratorString;
 import de.linearbits.tiles.Filter;
-import de.linearbits.tiles.Gradient;
-import de.linearbits.tiles.GradientHeatscale;
 import de.linearbits.tiles.TileLayoutDynamic;
 import de.linearbits.tiles.Tiles;
 
@@ -167,30 +164,12 @@ public class ViewTiles extends ViewSolutionSpace {
      */
     private DecoratorColor<ARXNode> createDecoratorBackgroundColor() {
 
-        final Gradient gradient = new GradientHeatscale(tiles);
-        final Color gray = new Color(tiles.getDisplay(), 160, 160, 160);
-        
         DecoratorColor<ARXNode> decorator = new DecoratorColor<ARXNode>() {
-
             @Override
             public Color decorate(ARXNode element) {
-                if (element.getMinimumInformationLoss().compareTo(element.getMaximumInformationLoss())!=0 &&
-                    asRelativeValue(element.getMinimumInformationLoss())==0d){
-                    return gray;
-                } else {
-                    return gradient.getColor(asRelativeValue(element.getMinimumInformationLoss()) / 100d);
-                }
+                return ViewTiles.this.getUtilityColor(element);
             }
         };
-
-        decorator.addDecoratorListener(new DecoratorListener() {
-            @Override
-            public void disposed() {
-                gradient.dispose();
-                gray.dispose();
-            }
-        });
-
         return decorator;
     }
 

@@ -50,7 +50,7 @@ public class LayoutExplore implements ILayout {
         root.setLayout(SWTUtil.createGridLayout(1));
  
         // Create top composite
-        ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30"); //$NON-NLS-1$
+        ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30", true); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
         
         // Lattice
@@ -69,7 +69,7 @@ public class LayoutExplore implements ILayout {
 
         // Tiles
         Composite item3 = folder.createItem(Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ 
-                                            controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
+                                            controller.getResources().getImage("explore_tiles.png")); //$NON-NLS-1$
         
         item3.setLayoutData(SWTUtil.createFillGridData());
         new ViewTiles(item3, controller);

@@ -18,9 +18,13 @@
 package org.deidentifier.arx.gui.view.impl.explore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -37,15 +41,20 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.mihalis.opal.dynamictablecolumns.DynamicTable;
+import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
 
-import cern.colt.Arrays;
 
 /**
  * This class implements a list view on selected nodes.
@@ -56,13 +65,19 @@ import cern.colt.Arrays;
 public class ViewList extends ViewSolutionSpace {
 
     /** The table. */
-    private final Table         table;
+    private final DynamicTable  table;
 
     /** The list. */
-    private final List<ARXNode> list   = new ArrayList<ARXNode>();
+    private final List<ARXNode> list       = new ArrayList<ARXNode>();
 
     /** The listener. */
     private Listener            listener;
+
+    /** Color */
+    private Color               background = null;
+
+    /** Map */
+    private Map<Color, Image>   symbols    = new HashMap<Color, Image>();
 
     /**
      * Contructor
@@ -74,7 +89,7 @@ public class ViewList extends ViewSolutionSpace {
         
         super(parent, controller);
 
-        table = new Table(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = new DynamicTable(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         
@@ -100,24 +115,42 @@ public class ViewList extends ViewSolutionSpace {
                 }
             }
         });
-        
-        final TableColumn column1 = new TableColumn(table, SWT.LEFT);
+
+        final DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.LEFT);
         column1.setText(Resources.getMessage("ListView.1")); //$NON-NLS-1$
-        final TableColumn column4 = new TableColumn(table, SWT.LEFT);
+        column1.setWidth("20%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        final DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.LEFT);
+        column0.setText("     "); //$NON-NLS-1$
+        column0.setWidth("30px"); //$NON-NLS-1$
+        
+        final DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.LEFT);
         column4.setText(Resources.getMessage("ListView.2")); //$NON-NLS-1$
-        final TableColumn column2 = new TableColumn(table, SWT.LEFT);
+        column4.setWidth("10%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+
+        final DynamicTableColumn column5 = new DynamicTableColumn(table, SWT.LEFT);
+        column5.setText("     "); //$NON-NLS-1$
+        column5.setWidth("30px"); //$NON-NLS-1$
+        
+        final DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.LEFT);
         column2.setText(Resources.getMessage("ListView.3")); //$NON-NLS-1$
-        final TableColumn column3 = new TableColumn(table, SWT.LEFT);
+        column2.setWidth("35%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        final DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.LEFT);
         column3.setText(Resources.getMessage("ListView.4")); //$NON-NLS-1$
+        column3.setWidth("35%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         table.setItemCount(0);
         
+        column0.pack();
         column1.pack();
         column2.pack();
         column3.pack();
         column4.pack();
+        column5.pack();
 
         // Create tooltip listener
+        // TODO: Does not work on Windows
         Listener tableListener = new Listener() {
 
             private TableItem previousHighlighted = null;
@@ -125,7 +158,7 @@ public class ViewList extends ViewSolutionSpace {
             public void handleEvent(Event event) {
                 if (previousHighlighted != null) {
                     if (!previousHighlighted.isDisposed()) {
-                        previousHighlighted.setBackground(getInnerColor((ARXNode)previousHighlighted.getData()));
+                        previousHighlighted.setBackground(background);
                     }
                 }
 
@@ -134,8 +167,10 @@ public class ViewList extends ViewSolutionSpace {
                     item.setBackground(GUIHelper.COLOR_GRAY);
                     previousHighlighted = item;
                     ARXNode node = (ARXNode) item.getData();
-                    table.redraw();
-                    table.setToolTipText(getTooltipDecorator().decorate(node));
+                    if (node != null) {
+                        table.redraw();
+                        table.setToolTipText(getTooltipDecorator().decorate(node));
+                    }
                 }
             }
         };
@@ -160,7 +195,21 @@ public class ViewList extends ViewSolutionSpace {
         }
         SWTUtil.disable(table);
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        for (Entry<Color, Image> entry : symbols.entrySet()) {
+            entry.getValue().dispose();
+        }
+        symbols.clear();
+    }
+    
     /**
      * Creates an item in the list.
      *
@@ -175,7 +224,7 @@ public class ViewList extends ViewSolutionSpace {
         item.setText(0, transformation);
 
         final String anonymity = node.getAnonymity().toString();
-        item.setText(1, anonymity);
+        item.setText(2, anonymity);
 
         String min = null;
         if (node.getMinimumInformationLoss() != null) {
@@ -184,8 +233,7 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
-        item.setText(2, min);
-
+        item.setText(4, min);
         String max = null;
         if (node.getMaximumInformationLoss() != null) {
             max = node.getMaximumInformationLoss().toString() +
@@ -193,10 +241,67 @@ public class ViewList extends ViewSolutionSpace {
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
-        item.setText(3, max);
+        item.setText(5, max);
         item.setData(node);
-        item.setBackground(getInnerColor(node));
-        item.setForeground(getOuterColor(node));
+
+        item.setImage(1, getSymbol(super.getInnerColor(node)));
+        item.setImage(3, getSymbol(super.getUtilityColor(node)));
+        
+        this.background = this.background != null ? this.background : item.getBackground();
+    }
+
+    /**
+     * Dynamically creates an image with the given color
+     * @param color
+     * @return
+     */
+    private Image getSymbol(Color color) {
+        
+        // Check cache
+        if (symbols.containsKey(color)) {
+            return symbols.get(color);
+        }
+        
+        // Render
+        final int WIDTH = 16;
+        final int HEIGHT = 16;
+        Image image = getTransparentImage(table.getDisplay(), WIDTH, HEIGHT);
+        GC gc = new GC(image);
+        gc.setBackground(color);
+
+        // "Fix" for Bug #50163
+        if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
+            gc.fillRectangle(0, 0, WIDTH, HEIGHT);
+        } else {
+            gc.setAntialias(SWT.ON);
+            gc.fillOval(0, 0, WIDTH, HEIGHT);
+            gc.setAntialias(SWT.OFF);
+        }
+        
+        gc.dispose();
+        
+        // Store in cache and return
+        symbols.put(color, image);
+        return image;
+    }
+    
+    /**
+     * Creates a transparent image
+     * @param display
+     * @param width
+     * @param height
+     * @return
+     */
+    private Image getTransparentImage(Display display, int width, int height) {
+        ImageData imData = new ImageData(width,
+                                         height,
+                                         24,
+                                         new PaletteData(0xff0000,
+                                                         0x00ff00,
+                                                         0x0000ff));
+        imData.setAlpha(0, 0, 0);
+        Arrays.fill(imData.alphaData, (byte) 0);
+        return new Image(display, imData);
     }
 
     /**
@@ -214,8 +319,10 @@ public class ViewList extends ViewSolutionSpace {
 
             @Override
             public void run() {
+                if (!table.isEnabled()) {
+                    SWTUtil.enable(table);
+                }
                 table.setRedraw(false);
-                SWTUtil.enable(table);
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
                 }
@@ -258,12 +365,6 @@ public class ViewList extends ViewSolutionSpace {
                 };
                 table.addListener(SWT.SetData, listener);
                 table.setItemCount(list.size());
-
-                TableColumn[] colums = table.getColumns();
-                for (TableColumn tableColumn : colums) {
-                    tableColumn.setWidth(120);
-                }
-                
                 table.setRedraw(true);
             }
         });
