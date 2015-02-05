@@ -63,6 +63,18 @@ import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
  * @author Florian Kohlmayer
  */
 public class ViewList extends ViewSolutionSpace {
+    
+    /** Are we on linux*/
+    private static final boolean IS_LINUX = isLinux();
+
+    /**
+     * Are we on linux?
+     * @return
+     */
+    private static final boolean isLinux() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return !(os.indexOf("win") >= 0 || os.indexOf("mac") >= 0);
+    }
 
     /** The table. */
     private final DynamicTable  table;
@@ -177,7 +189,21 @@ public class ViewList extends ViewSolutionSpace {
         table.addListener(SWT.MouseMove, tableListener);
         table.addListener(SWT.MouseExit, tableListener);
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        for (Entry<Color, Image> entry : symbols.entrySet()) {
+            entry.getValue().dispose();
+        }
+        symbols.clear();
+    }
+    
     /**
      * Resets the view.
      */
@@ -195,21 +221,7 @@ public class ViewList extends ViewSolutionSpace {
         }
         SWTUtil.disable(table);
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
-    @Override
-    public void dispose() {
-        super.dispose();
-        for (Entry<Color, Image> entry : symbols.entrySet()) {
-            entry.getValue().dispose();
-        }
-        symbols.clear();
-    }
-    
+
     /**
      * Creates an item in the list.
      *
@@ -249,7 +261,7 @@ public class ViewList extends ViewSolutionSpace {
         
         this.background = this.background != null ? this.background : item.getBackground();
     }
-
+    
     /**
      * Dynamically creates an image with the given color
      * @param color
@@ -262,22 +274,28 @@ public class ViewList extends ViewSolutionSpace {
             return symbols.get(color);
         }
         
-        // Render
+        // Define
         final int WIDTH = 16;
         final int HEIGHT = 16;
-        Image image = getTransparentImage(table.getDisplay(), WIDTH, HEIGHT);
+
+        // "Fix" for Bug #50163
+        Image image = IS_LINUX ? getTransparentImage(table.getDisplay(), WIDTH, HEIGHT) : 
+                                 new Image(table.getDisplay(), WIDTH, HEIGHT);
+        
+        // Prepare
         GC gc = new GC(image);
         gc.setBackground(color);
 
-        // "Fix" for Bug #50163
-        if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-            gc.fillRectangle(0, 0, WIDTH, HEIGHT);
-        } else {
-            gc.setAntialias(SWT.ON);
-            gc.fillOval(0, 0, WIDTH, HEIGHT);
-            gc.setAntialias(SWT.OFF);
-        }
-        
+        // Render
+		if (!IS_LINUX) {
+			gc.fillRectangle(0, 0, WIDTH, HEIGHT);
+		} else {
+			gc.setAntialias(SWT.ON);
+			gc.fillOval(0, 0, WIDTH, HEIGHT);
+			gc.setAntialias(SWT.OFF);
+		}
+		
+		// Cleanup
         gc.dispose();
         
         // Store in cache and return
