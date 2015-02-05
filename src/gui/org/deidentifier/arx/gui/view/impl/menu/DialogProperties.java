@@ -28,7 +28,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import de.linearbits.preferences.DialogPreference;
+import de.linearbits.preferences.PreferencesDialog;
 import de.linearbits.preferences.PreferenceBoolean;
 import de.linearbits.preferences.PreferenceCharacter;
 import de.linearbits.preferences.PreferenceDouble;
@@ -51,7 +51,7 @@ public class DialogProperties implements IDialog {
     private final Controller       controller;
 
     /** Window */
-    private final DialogPreference dialog;
+    private final PreferencesDialog dialog;
 
     /**
      * Creates a new instance.
@@ -66,7 +66,7 @@ public class DialogProperties implements IDialog {
         this.model = model;
         
         // Create dialog
-        this.dialog = new DialogPreference(parent, "Settings", "Project-specific preferences");
+        this.dialog = new PreferencesDialog(parent, "Settings", "Project-specific preferences");
         createTabProject(this.dialog);
         createTabTransformation(this.dialog);
         createTabInternals(this.dialog);
@@ -84,7 +84,7 @@ public class DialogProperties implements IDialog {
      * Create a tab
      * @param window
      */
-    private void createTabInternals(DialogPreference window) {
+    private void createTabInternals(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.16"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-internals.png")); //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class DialogProperties implements IDialog {
      * Create a tab
      * @param window
      */
-    private void createTabProject(DialogPreference window) {
+    private void createTabProject(PreferencesDialog window) {
         
         window.addCategory(Resources.getMessage("PropertyDialog.3"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-project.png")); //$NON-NLS-1$
@@ -133,14 +133,14 @@ public class DialogProperties implements IDialog {
 
         window.addPreference(new PreferenceSelection(Resources.getMessage("PropertyDialog.33"), getLocales()) { //$NON-NLS-1$
             protected String getValue() { return model.getLocale().getLanguage().toUpperCase(); }
-            protected void setValue(Object t) { model.setLocale(((String)t).equals("Default") ? Locale.getDefault() : new Locale(((String)t).toLowerCase())); }});
+            protected void setValue(Object t) { model.setLocale(((String)t).equals("Default") ? Locale.getDefault() : new Locale(((String)t).toLowerCase())); }}); //$NON-NLS-1$
     }
 
     /**
      * Create a tab
      * @param window
      */
-    private void createTabTransformation(DialogPreference window) {
+    private void createTabTransformation(PreferencesDialog window) {
        
         window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-transformation.png")); //$NON-NLS-1$
@@ -170,7 +170,7 @@ public class DialogProperties implements IDialog {
      * Create a tab
      * @param window
      */
-    private void createTabVisualization(DialogPreference window) {
+    private void createTabVisualization(PreferencesDialog window) {
         window.addCategory(Resources.getMessage("PropertyDialog.22"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-visualization.png")); //$NON-NLS-1$
         
