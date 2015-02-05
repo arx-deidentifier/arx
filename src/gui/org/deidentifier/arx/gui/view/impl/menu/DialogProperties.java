@@ -45,10 +45,10 @@ import de.linearbits.preferences.PreferenceText;
 public class DialogProperties implements IDialog {
 
     /** Model */
-    private final Model            model;
+    private final Model             model;
 
     /** Controller */
-    private final Controller       controller;
+    private final Controller        controller;
 
     /** Window */
     private final PreferencesDialog dialog;
@@ -89,23 +89,23 @@ public class DialogProperties implements IDialog {
         window.addCategory(Resources.getMessage("PropertyDialog.16"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-internals.png")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.17"), 0, 1000000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.17"), 0, 1000000, 200) { //$NON-NLS-1$
             protected Integer getValue() { return model.getHistorySize(); }
             protected void setValue(Object t) { model.setHistorySize((Integer)t); }});
         
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.19"), 0d, 1d) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.19"), 0d, 1d, 0.2d) { //$NON-NLS-1$
             protected Double getValue() { return model.getSnapshotSizeDataset(); }
             protected void setValue(Object t) { model.setSnapshotSizeDataset((Double)t); }});
         
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.21"), 0d, 1d) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.21"), 0d, 1d, 0.8d) { //$NON-NLS-1$
             protected Double getValue() { return model.getSnapshotSizeSnapshot(); }
             protected void setValue(Object t) { model.setSnapshotSizeSnapshot((Double)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.28"), 0, Integer.MAX_VALUE) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.28"), 0, Integer.MAX_VALUE, 5000000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getMaximalSizeForComplexOperations(); }
             protected void setValue(Object t) { model.setMaximalSizeForComplexOperations((Integer)t); }});
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.29")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.29"), false) { //$NON-NLS-1$
             protected Boolean getValue() { return model.isDebugEnabled(); }
             protected void setValue(Object t) { model.setDebugEnabled((Boolean)t); }});
     }
@@ -127,7 +127,7 @@ public class DialogProperties implements IDialog {
             protected String getValue() { return model.getDescription(); }
             protected void setValue(Object t) { model.setDescription((String)t); }});
 
-        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.9")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceCharacter(Resources.getMessage("PropertyDialog.9"), ';') { //$NON-NLS-1$
             protected String getValue() { return String.valueOf(model.getSeparator()); }
             protected void setValue(Object t) { model.setSeparator(((String)t).charAt(0)); }});
 
@@ -145,23 +145,23 @@ public class DialogProperties implements IDialog {
         window.addCategory(Resources.getMessage("PropertyDialog.10"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-transformation.png")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.11"), true) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isSuppressionAlwaysEnabled(); }
             protected void setValue(Object t) { model.getInputConfig().setSuppressionAlwaysEnabled((Boolean)t); }});
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.31")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.31"), false) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.SENSITIVE_ATTRIBUTE, (Boolean)t); }});
         
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32"), false) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, (Boolean)t); }});
         
-        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13")) { //$NON-NLS-1$
+        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13"), "*") { //$NON-NLS-1$
             protected String getValue() { return model.getInputConfig().getSuppressionString(); }
             protected void setValue(Object t) { model.getInputConfig().setSuppressionString((String)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.15"), 0, 1000000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.15"), 0, 1000000, 100000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getMaxNodesInLattice(); }
             protected void setValue(Object t) { model.setMaxNodesInLattice((Integer)t); }});
     }
@@ -174,11 +174,11 @@ public class DialogProperties implements IDialog {
         window.addCategory(Resources.getMessage("PropertyDialog.22"), //$NON-NLS-1$
                            controller.getResources().getImage("settings-visualization.png")); //$NON-NLS-1$
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.23"), 0, 10000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.23"), 0, 10000, 100) { //$NON-NLS-1$
             protected Integer getValue() { return model.getInitialNodesInViewer(); }
             protected void setValue(Object t) { model.setInitialNodesInViewer((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.25"), 0, 10000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.25"), 0, 10000, 700) { //$NON-NLS-1$
             protected Integer getValue() { return model.getMaxNodesInViewer(); }
             protected void setValue(Object t) { model.setMaxNodesInViewer((Integer)t); }});
     }
