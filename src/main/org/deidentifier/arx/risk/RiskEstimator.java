@@ -385,7 +385,7 @@ public class RiskEstimator {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
 
-        // TODO: consider outlier
+        // TODO: Think about whether outliers should be handled separately
         // Calculate equivalence classes
         Map<String, Integer> eqClasses = new HashMap<String, Integer>();
         for (int row = 0; row < handle.getNumRows(); row++) {
