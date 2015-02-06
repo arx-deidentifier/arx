@@ -162,7 +162,7 @@ public class TestRiskMetrics extends TestCase {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Test
-    public void testDecissionRule2() throws IOException {
+    public void testDecisionRule2() throws IOException {
 
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         DataHandle handle = data.getHandle();
