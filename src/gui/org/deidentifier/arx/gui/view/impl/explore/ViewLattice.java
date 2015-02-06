@@ -30,6 +30,7 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -49,7 +50,6 @@ import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -253,8 +253,8 @@ public class ViewLattice extends ViewSolutionSpace {
         this.font = new Font(parent.getDisplay(), fd[0]);
 
         // Build canvas
-        parent.setLayout(new FillLayout());
-        this.canvas = new Canvas(parent, SWT.DOUBLE_BUFFERED);
+        this.canvas = new Canvas(getPrimaryComposite(), SWT.DOUBLE_BUFFERED);
+        this.canvas.setLayoutData(SWTUtil.createFillGridData());
         this.canvas.addPaintListener(new PaintListener() {
             @Override
             public void paintControl(PaintEvent e) {
