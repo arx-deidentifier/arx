@@ -96,17 +96,9 @@ public class TestRiskMetrics extends TestCase {
         }
         final DataHandle outHandle = result.getOutput(false);
 
-        System.out.println(" - Transformed data:");
-        final Iterator<String[]> transformed = outHandle.iterator();
-        while (transformed.hasNext()) {
-            System.out.print("   ");
-            System.out.println(Arrays.toString(transformed.next()));
-        }
-
         RiskEstimator estimator2 = new RiskEstimator(outHandle);
         double riskAnon = estimator2.getEquivalenceClassRisk();
-
         // Risk after anonymization
-        assertTrue(riskAnon == 0.4444444d);
+        assertTrue(riskAnon == 0.42857142857142855d);
     }
 }
