@@ -191,11 +191,29 @@ public class DataHandleInput extends DataHandle {
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("Remove is unsupported!");
+                throw new UnsupportedOperationException("Remove is not supported by this iterator");
             }
         };
     }
 
+    @Override
+    public boolean replace(int column, String original, String replacement) {
+        checkRegistry();
+        checkColumn(column);
+        if (this.isLocked()) {
+            throw new IllegalStateException("This operation cannot be performed on locked handles");
+        }
+        String[] values = dictionary.getMapping()[column];
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        return found;
+    }
+    
     /**
      * Swaps two rows.
      *
@@ -218,7 +236,7 @@ public class DataHandleInput extends DataHandle {
         dataSE = null;
         dataIS = null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.DataHandle#getBaseDataType(java.lang.String)
      */
@@ -226,7 +244,7 @@ public class DataHandleInput extends DataHandle {
     protected DataType<?> getBaseDataType(final String attribute) {
         return this.getDataType(attribute);
     }
-
+    
     /* (non-Javadoc)
      * @see org.deidentifier.arx.DataHandle#getDataTypeArray()
      */
@@ -244,7 +262,7 @@ public class DataHandleInput extends DataHandle {
         }
         return dataTypes;
     }
-    
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.DataHandle#getDistinctValues(int, org.deidentifier.arx.DataHandleStatistics.InterruptHandler)
      */
@@ -261,7 +279,7 @@ public class DataHandleInput extends DataHandle {
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -271,7 +289,7 @@ public class DataHandleInput extends DataHandle {
     protected String internalGetValue(final int row, final int column) {
         return dictionary.getMapping()[column][data[row][column]];
     }
-    
+
     /**
      * Swaps the rows.
      *
@@ -290,7 +308,7 @@ public class DataHandleInput extends DataHandle {
         if (dataSE != null) swap(row1, row2, dataSE);
         if (dataIS != null) swap(row1, row2, dataIS);
     }
-
+    
     /**
      * Is this handle locked?.
      *
@@ -308,7 +326,7 @@ public class DataHandleInput extends DataHandle {
     protected void setDefinition(DataDefinition definition) {
         this.definition = definition;
     }
-    
+
     /**
      * Lock/unlock this handle.
      *

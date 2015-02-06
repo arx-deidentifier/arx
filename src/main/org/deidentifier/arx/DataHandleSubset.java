@@ -173,6 +173,11 @@ public class DataHandleSubset extends DataHandle {
         };
     }
 
+    @Override
+    public boolean replace(int column, String original, String replacement) {
+        throw new UnsupportedOperationException("This operation is not supported by handles for data subsets");
+    }
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.DataHandle#doRelease()
      */
@@ -232,7 +237,7 @@ public class DataHandleSubset extends DataHandle {
     protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
-
+    
     /* (non-Javadoc)
      * @see org.deidentifier.arx.DataHandle#internalGetValue(int, int)
      */
@@ -240,7 +245,7 @@ public class DataHandleSubset extends DataHandle {
     protected String internalGetValue(int row, int col) {
         return source.internalGetValue(this.subset.getArray()[row], col);
     }
-    
+
     /**
      * Rebuild array representation of subset.
      */
@@ -252,7 +257,7 @@ public class DataHandleSubset extends DataHandle {
             }
         }
     }
-    
+
     /**
      * Swaps the bits in the set representation.
      *

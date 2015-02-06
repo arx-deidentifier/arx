@@ -321,6 +321,16 @@ public abstract class DataHandle {
             registry.release(this);
         }
     }
+    
+    /**
+     * Replaces the original value with the replacement in the given column. Only supported by
+     * handles for input data.
+     * 
+     * @param original
+     * @param replacement
+     * @return Whether the original value was found
+     */
+    public abstract boolean replace(int column, String original, String replacement);
 
     /**
      * Writes the data to a CSV file.

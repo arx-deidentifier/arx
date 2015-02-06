@@ -313,6 +313,10 @@ public class DataHandleOutput extends DataHandle {
         return new ResultIterator();
     }
 
+    @Override
+    public boolean replace(int column, String original, String replacement) {
+        throw new UnsupportedOperationException("This operation is only supported by handles for data input");
+    }
 
     /**
      * Releases all resources.
@@ -336,7 +340,7 @@ public class DataHandleOutput extends DataHandle {
         statistics = null;
         node = null;
     }
-
+ 
     /**
      * Creates the data type array.
      *
@@ -377,7 +381,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return dataTypes;
     }
- 
+
     /**
      * Gets the distinct values.
      *
@@ -456,7 +460,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return 0;
     }
-
+    
     /**
      * Gets the value internal.
      * 
@@ -486,7 +490,7 @@ public class DataHandleOutput extends DataHandle {
             return dictionary[index][value];
         }
     }
-    
+
     /**
      * Returns whether the given row is an outlier.
      *
