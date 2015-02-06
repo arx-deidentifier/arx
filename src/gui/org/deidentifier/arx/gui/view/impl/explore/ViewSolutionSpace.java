@@ -257,7 +257,10 @@ public abstract class ViewSolutionSpace implements IView {
      */
     private boolean isTooLarge(ARXResult result, ModelNodeFilter filter, int max) {
 
-        if(result == null) return false;
+        if(result == null) {
+            showPrimaryComposite();
+            return false;
+        }
 
         int count = 0;
         final ARXLattice l = result.getLattice();
