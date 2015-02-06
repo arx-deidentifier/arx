@@ -450,9 +450,9 @@ class DataRegistry {
      */
     public boolean replace(int column, String original, String replacement) {
         boolean replaced = false; 
-        replaced |= input.replace(column, original, replacement);
+        replaced |= input.internalReplace(column, original, replacement);
         if (!output.isEmpty()) {
-            replaced |= output.values().iterator().next().replace(column, original, replacement);
+            replaced |= output.values().iterator().next().internalReplace(column, original, replacement);
         }
         return replaced;
     }
