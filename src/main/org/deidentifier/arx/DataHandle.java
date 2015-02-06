@@ -330,7 +330,11 @@ public abstract class DataHandle {
      * @param replacement
      * @return Whether the original value was found
      */
-    public abstract boolean replace(int column, String original, String replacement);
+    public boolean replace(int column, String original, String replacement) {
+        checkRegistry();
+        checkColumn(column);
+        return registry.replace(column, original, replacement);
+    }
 
     /**
      * Writes the data to a CSV file.
@@ -576,6 +580,15 @@ public abstract class DataHandle {
             throw new RuntimeException(e);
         }
     }  
+    
+    /**
+     * Internal replacement method
+     * @param column
+     * @param original
+     * @param replacement
+     * @return
+     */
+    protected abstract boolean internalReplace(int column, String original, String replacement); 
     
     /**
      * Internal representation of get value.

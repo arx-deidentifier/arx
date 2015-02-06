@@ -196,24 +196,6 @@ public class DataHandleInput extends DataHandle {
         };
     }
 
-    @Override
-    public boolean replace(int column, String original, String replacement) {
-        checkRegistry();
-        checkColumn(column);
-        if (this.isLocked()) {
-            throw new IllegalStateException("This operation cannot be performed on locked handles");
-        }
-        String[] values = dictionary.getMapping()[column];
-        boolean found = false;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].equals(original)) {
-                values[i] = replacement;
-                found = true;
-            }
-        }
-        return found;
-    }
-    
     /**
      * Swaps two rows.
      *
@@ -361,5 +343,21 @@ public class DataHandleInput extends DataHandle {
         this.dataQI = dataQI;
         this.dataSE = dataSE;
         this.dataIS = dataIS;
+    }
+
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+
+        String[] values = dictionary.getMapping()[column];
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        return found;
     }
 }

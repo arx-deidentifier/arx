@@ -318,6 +318,33 @@ public class DataHandleOutput extends DataHandle {
         throw new UnsupportedOperationException("This operation is only supported by handles for data input");
     }
 
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+
+
+        // Init and check
+        if (column >= inverseMap.length) return false;
+        int type = inverseMap[column] >>> AttributeType.SHIFT;
+        if (type >= inverseDictionaries.length) return false;
+        String[][] dictionary = inverseDictionaries[type].getMapping();
+        int index = inverseMap[column] & AttributeType.MASK;
+        if (index >= dictionary.length) return false;
+        String[] values = dictionary[index];
+            
+        // Replace
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        
+        // Return
+        return found;
+    }
     /**
      * Releases all resources.
      */

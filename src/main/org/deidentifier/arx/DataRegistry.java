@@ -440,4 +440,20 @@ class DataRegistry {
     protected void updateOutputSubset(ARXNode node, DataHandleSubset outputSubset){
         this.outputSubset.put(node, outputSubset);
     }
+
+    /**
+     * Replace a value in the given column
+     * @param column
+     * @param original
+     * @param replacement
+     * @return
+     */
+    public boolean replace(int column, String original, String replacement) {
+        boolean replaced = false; 
+        replaced |= input.replace(column, original, replacement);
+        if (!output.isEmpty()) {
+            replaced |= output.values().iterator().next().replace(column, original, replacement);
+        }
+        return replaced;
+    }
 }
