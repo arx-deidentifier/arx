@@ -33,7 +33,6 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.risk.RiskEstimator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -127,11 +126,11 @@ public class TestRiskMetrics extends TestCase {
         provider.createDataDefinition();
         DataHandle handle = provider.getData().getHandle();
 
-        RiskEstimator estimator = new RiskEstimator(handle);
-        double risk = estimator.getPopulationUniquesRisk();
+        double risk = handle.getRiskEstimator().getPopulationUniquesRisk();
 
         // Risk before anonymization
         assertTrue(risk == 1.0d);
+        assertTrue(risk <= handle.getRiskEstimator().getSampleUniquesRisk());
 
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
@@ -146,9 +145,8 @@ public class TestRiskMetrics extends TestCase {
         }
         final DataHandle outHandle = result.getOutput(false);
 
-        RiskEstimator estimator2 = new RiskEstimator(outHandle);
         try {
-            estimator2.getPopulationUniquesRisk();
+            outHandle.getRiskEstimator().getPopulationUniquesRisk();
         } catch (final IllegalStateException e) {
             return;
         }
@@ -167,17 +165,24 @@ public class TestRiskMetrics extends TestCase {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         DataHandle handle = data.getHandle();
 
-        double risk = handle.getRiskEstimator().getPopulationUniquesRisk();
-        assertTrue(risk == 0.27684993883831804);
+        double sampleRisk = handle.getRiskEstimator().getSampleUniquesRisk();
+        double populationRisk = handle.getRiskEstimator().getPopulationUniquesRisk();
+        assertTrue(populationRisk == 0.27684993883831804);
+        assertTrue(populationRisk <= sampleRisk);
 
-        risk = handle.getRiskEstimator(0.2).getPopulationUniquesRisk();
-        assertTrue(risk == 0.3577099234829125d);
+        populationRisk = handle.getRiskEstimator(0.2).getPopulationUniquesRisk();
+        assertTrue(populationRisk == 0.3577099234829125d);
+        assertTrue(populationRisk <= sampleRisk);
 
-        risk = handle.getRiskEstimator(0.01).getPopulationUniquesRisk();
-        assertTrue(risk == 0.14460835311745512);
+        populationRisk = handle.getRiskEstimator(0.01).getPopulationUniquesRisk();
+        assertTrue(populationRisk == 0.14460835311745512);
+        assertTrue(populationRisk <= sampleRisk);
 
-        risk = handle.getRiskEstimator(1).getPopulationUniquesRisk();
-        assertTrue(risk == 0.5142895033485844d);
+        populationRisk = handle.getRiskEstimator(1).getPopulationUniquesRisk();
+        assertTrue(populationRisk == 0.5142895033485844d);
+        assertTrue(populationRisk == sampleRisk);
+        
+        // TODO: Include SNB model
     }
 
     /**

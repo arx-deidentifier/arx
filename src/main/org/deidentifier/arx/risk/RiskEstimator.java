@@ -258,6 +258,15 @@ public class RiskEstimator {
     public int getMinimalClassSize() {
         return this.cMin;
     }
+    
+    /**
+     * Returns the percentage of sample uniques
+     * @return
+     * @throws IllegalStateException
+     */
+    public double getSampleUniquesRisk() throws IllegalStateException {
+        return (double)eqClasses.get(1) / (double)handle.getNumRows();
+    }
 
     /**
      * This class computes the percentage of population uniques, i.e. the
@@ -281,8 +290,7 @@ public class RiskEstimator {
              * exclude the SNB model and anonymized data
              */
             if (eqClasses.containsKey(1) && !eqClasses.containsKey(2)) {
-                final ModelZayatz model = new ModelZayatz(samplingFraction,
-                                                          eqClasses);
+                final ModelZayatz model = new ModelZayatz(samplingFraction, eqClasses);
                 result = model.getRisk();
                 return result;
             }
@@ -291,21 +299,17 @@ public class RiskEstimator {
             }
 
             if (samplingFraction <= 0.1) {
-                final ModelPitman model = new ModelPitman(samplingFraction,
-                                                          eqClasses);
+                final ModelPitman model = new ModelPitman(samplingFraction, eqClasses);
                 result = model.getRisk();
                 if (Double.isNaN(result)) {
-                    final ModelZayatz zayatzModel = new ModelZayatz(samplingFraction,
-                                                                    eqClasses);
+                    final ModelZayatz zayatzModel = new ModelZayatz(samplingFraction, eqClasses);
                     result = zayatzModel.getRisk();
                 }
             } else {
-                final ModelZayatz model = new ModelZayatz(samplingFraction,
-                                                          eqClasses);
+                final ModelZayatz model = new ModelZayatz(samplingFraction, eqClasses);
                 result = model.getRisk();
                 if (Double.isNaN(result)) {
-                    final ModelPitman pitmanModel = new ModelPitman(samplingFraction,
-                                                                    eqClasses);
+                    final ModelPitman pitmanModel = new ModelPitman(samplingFraction, eqClasses);
                     result = pitmanModel.getRisk();
                 }
             }
@@ -316,8 +320,7 @@ public class RiskEstimator {
              * Selection rule, according to Danker et al, 2010
              */
             if (eqClasses.containsKey(1) && !eqClasses.containsKey(2)) {
-                final ModelZayatz model = new ModelZayatz(samplingFraction,
-                                                          eqClasses);
+                final ModelZayatz model = new ModelZayatz(samplingFraction, eqClasses);
                 result = model.getRisk();
                 return result;
             }
@@ -326,33 +329,28 @@ public class RiskEstimator {
             }
 
             if (samplingFraction <= 0.1) {
-                final ModelPitman model = new ModelPitman(samplingFraction,
-                                                          eqClasses);
+                final ModelPitman model = new ModelPitman(samplingFraction, eqClasses);
                 result = model.getRisk();
                 if (Double.isNaN(result)) {
-                    final ModelZayatz zayatzModel = new ModelZayatz(samplingFraction,
-                                                                    eqClasses);
+                    final ModelZayatz zayatzModel = new ModelZayatz(samplingFraction, eqClasses);
                     result = zayatzModel.getRisk();
                 }
             } else {
-                final ModelZayatz model = new ModelZayatz(samplingFraction,
-                                                          eqClasses);
+                final ModelZayatz model = new ModelZayatz(samplingFraction, eqClasses);
                 final ModelSNB model2 = new ModelSNB(samplingFraction, eqClasses);
                 result = model.getRisk();
                 final double result2 = model2.getRisk();
                 if (Double.isNaN(result)) {
                     result = result2;
                     if (Double.isNaN(result)) {
-                        final ModelPitman pitmanModel = new ModelPitman(samplingFraction,
-                                                                        eqClasses);
+                        final ModelPitman pitmanModel = new ModelPitman(samplingFraction, eqClasses);
                         result = pitmanModel.getRisk();
                         return result;
                     }
                 }
                 if (Double.isNaN(result2)) {
                     if (Double.isNaN(result)) {
-                        final ModelPitman pitmanModel = new ModelPitman(samplingFraction,
-                                                                        eqClasses);
+                        final ModelPitman pitmanModel = new ModelPitman(samplingFraction, eqClasses);
                         result = pitmanModel.getRisk();
                     }
                     return result;
