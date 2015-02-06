@@ -35,6 +35,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -181,11 +182,11 @@ public abstract class ViewSolutionSpace implements IView {
         // Create the secondary composite
         this.secondary = new Composite(this.base, SWT.NONE);
         this.secondary.setLayout(SWTUtil.createGridLayout(1));
-        label = new CLabel(this.secondary, SWT.BORDER);
-        label.setLayoutData(SWTUtil.createFillGridData());
+        label = new CLabel(this.secondary, SWT.NONE);
+        label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(true, true).minSize(400, 200).create());
         label.setImage(controller.getResources().getImage("warning.png"));
         label.setText("");
-        label.setAlignment(SWT.CENTER);
+        label.setAlignment(SWT.LEFT);
         
         // Show primary
         this.showPrimaryComposite();
