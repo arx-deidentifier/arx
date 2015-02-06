@@ -18,7 +18,9 @@
 package org.deidentifier.arx.risk;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -71,14 +73,14 @@ public class RiskEstimator {
     public RiskEstimator(final DataHandle handle) {
         this(handle, 0.1d);
     }
-    
+
     /**
      * Creates a new instance of a class that allows to estimate different risk
      * measures for a given data set
      * 
      * @param handle This class provides access to dictionary encoded data.
-     *            
-     * @param pi  sampling fraction, defaults to 0.1
+     * 
+     * @param pi sampling fraction, defaults to 0.1
      */
     public RiskEstimator(final DataHandle handle, final double pi) {
         if ((pi == 0) || (pi > 1)) {
@@ -217,7 +219,7 @@ public class RiskEstimator {
         }
 
     }
-    
+
     /**
      * Returns the size of the largest equivalence class
      * @return
@@ -286,7 +288,7 @@ public class RiskEstimator {
             }
             return result;
         } else {
-    
+
             /*
              * Selection rule, according to Danker et al, 2010
              */
@@ -299,7 +301,7 @@ public class RiskEstimator {
             if (!eqClasses.containsKey(1)) {
                 throw new IllegalStateException("The data set does not contain any sample uniques! Computing Population Uniques not possible!");
             }
-    
+
             if (samplingFraction <= 0.1) {
                 final ModelPitman model = new ModelPitman(samplingFraction,
                                                           eqClasses);
@@ -338,7 +340,7 @@ public class RiskEstimator {
                         return result2;
                     }
                 }
-    
+
             }
             return result;
         }
@@ -365,16 +367,16 @@ public class RiskEstimator {
      * 
      * @param handle
      *            This class provides access to dictionary encoded data.
-     *            
-     * @return  Map containing the equivalence class sizes (as keys) of the data set and
-     *          the corresponding frequency (as values) e.g. if the key 2 has value 3
-     *          then there are 3 equivalence classes of size two.
+     * 
+     * @return Map containing the equivalence class sizes (as keys) of the data set and
+     *         the corresponding frequency (as values) e.g. if the key 2 has value 3
+     *         then there are 3 equivalence classes of size two.
      */
     private Map<Integer, Integer> getEquivalenceClasses(final DataHandle handle) {
 
         DataDefinition definition = handle.getDefinition();
-        
-        // Sort by quasi-identifiers
+
+        // Get indices of quasi identifiers
         Map<Integer, Integer> result = new HashMap<Integer, Integer>();
         final int[] indices = new int[definition.getQuasiIdentifyingAttributes()
                                                 .size()];
@@ -382,47 +384,39 @@ public class RiskEstimator {
         for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
-        handle.sort(true, indices);
 
-        // Iterate over all equivalence classes
-        int size = 0;
+        // TODO: consider outlier
+        // Calculate equivalence classes
+        Map<String, Integer> eqClasses = new HashMap<String, Integer>();
         for (int row = 0; row < handle.getNumRows(); row++) {
 
-            boolean newClass = false;
-            if (row > 0) {
-                for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
-                    final int column = handle.getColumnIndexOf(attribute);
-                    if (!handle.getValue(row, column)
-                               .equals(handle.getValue(row - 1, column))) {
-                        newClass = true;
-                        break;
-                    }
-                }
-            } else {
-                newClass = true;
+            String rowString = "";
+            for (int column = 0; column < indices.length; column++) {
+                rowString += handle.getValue(row, column);
             }
 
-            if (newClass) {
-                if (row != 0) {
-                    if (!result.containsKey(size)) {
-                        result.put(size, 1);
-                    } else {
-                        result.put(size, result.get(size) + 1);
-                    }
-                }
+            Integer size = eqClasses.get(rowString);
+            if (size == null) {
                 size = 1;
             } else {
                 size++;
             }
+            eqClasses.put(rowString, size);
         }
-        if (handle.getNumRows() > 1) {
-            if (!result.containsKey(size)) {
-                result.put(size, 1);
+
+        Iterator<Entry<String, Integer>> it = eqClasses.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
+
+            Integer size = result.get(entry.getValue());
+            if (size == null) {
+                size = 1;
             } else {
-                result.put(size, result.get(size) + 1);
+                size++;
             }
+            result.put(entry.getValue(), size);
         }
-        
+
         return result;
     }
 
