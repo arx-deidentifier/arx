@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class implements Newton Raphson algorithm for the Pitman Model to obtain
@@ -33,7 +33,7 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
      * The number of equivalence class sizes (keys) and corresponding frequency
      * (values)
      */
-    private final Map<Integer, Integer> eqClasses;
+    private final IntIntOpenHashMap eqClasses;
 
     /** The total number of entries in our sample data set */
     private final double                numberOfEntries;
@@ -55,7 +55,7 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
      */
     AlgorithmNewtonPitman(final double u,
                         final double n,
-                        final Map<Integer, Integer> eqClasses) {
+                        final IntIntOpenHashMap eqClasses) {
         this.numberOfEquivalenceClasses = u;
         this.numberOfEntries = n;
         this.eqClasses = eqClasses;
@@ -81,8 +81,13 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
             temp1 += (1 / ((iteratedSolution[0] + (i * iteratedSolution[1])) * (iteratedSolution[0] + (i * iteratedSolution[1]))));
         }
 
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            temp2 += (1 / ((iteratedSolution[0] + entry.getKey()) * (iteratedSolution[0] + entry.getKey())));
+        final int[] keys = eqClasses.keys;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                temp2 += (1 / ((iteratedSolution[0] + key) * (iteratedSolution[0] + key)));
+            }
         }
         result[0][0] = temp2 - temp1;
 
@@ -94,13 +99,18 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
             temp1 += ((i * i) / ((iteratedSolution[0] + (i * iteratedSolution[1])) * (iteratedSolution[0] + (i * iteratedSolution[1]))));
         }
 
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            temp3 = 0;
-            if (entry.getKey() != 1) {
-                for (int j = 1; j < entry.getKey(); j++) {
-                    temp3 += (1 / ((j - iteratedSolution[1]) * (j - iteratedSolution[1])));
+        final int[] values = eqClasses.values;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                int value = values[i];
+                temp3 = 0;
+                if (key != 1) {
+                    for (int j = 1; j < key; j++) {
+                        temp3 += (1 / ((j - iteratedSolution[1]) * (j - iteratedSolution[1])));
+                    }
+                    temp2 += value * temp3;
                 }
-                temp2 += entry.getValue() * temp3;
             }
         }
         result[1][1] = 0 - temp1 - temp2;
@@ -148,13 +158,20 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += (i / (iteratedSolution[0] + (i * iteratedSolution[1])));
         }
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            temp3 = 0;
-            if (entry.getKey() != 1) {
-                for (int j = 1; j < entry.getKey(); j++) {
-                    temp3 += (1 / (j - iteratedSolution[1]));
+        final int[] keys = eqClasses.keys;
+        final int[] values = eqClasses.values;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                int value = values[i];
+                temp3 = 0;
+                if (key != 1) {
+                    for (int j = 1; j < key; j++) {
+                        temp3 += (1 / (j - iteratedSolution[1]));
+                    }
+                    temp2 += value * temp3;
                 }
-                temp2 += entry.getValue() * temp3;
             }
         }
         result[1] = temp1 - temp2;

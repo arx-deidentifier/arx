@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class abstracts the different population uniqueness scenarios
@@ -40,7 +40,7 @@ abstract class AbstractModelUniqueness extends AbstractModelPopulation {
      *            size two.
      */
     public AbstractModelUniqueness(final double pi,
-                           final Map<Integer, Integer> eqClasses) {
+                           final IntIntOpenHashMap eqClasses) {
         super(pi, eqClasses);
     }
 

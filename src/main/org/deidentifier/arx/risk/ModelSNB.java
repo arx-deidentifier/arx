@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class implements the SNBModel, for details see Chen, 1998
@@ -54,7 +54,7 @@ class ModelSNB extends AbstractModelUniqueness {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    ModelSNB(final double pi, final Map<Integer, Integer> eqClasses) {
+    ModelSNB(final double pi, final IntIntOpenHashMap eqClasses) {
         super(pi, eqClasses);
         samplingFraction = pi;
         numberOfNonEmptyClasses = estimateNonEmptyEquivalenceClasses();
@@ -70,33 +70,21 @@ class ModelSNB extends AbstractModelUniqueness {
     private double estimateNonEmptyEquivalenceClasses() {
         double var1 = 0, var2 = 0, var3 = 0, var4 = 0;
 
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            var1 += entry.getKey() *
-                    samplingFraction *
-                    samplingFraction *
-                    Math.pow((1 - (samplingFraction * samplingFraction)),
-                             entry.getKey() - 1) * entry.getValue();
+        final int[] keys = eqClasses.keys;
+        final int[] values = eqClasses.values;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                int value = values[i];
+                var1 += key * samplingFraction * samplingFraction * Math.pow((1 - (samplingFraction * samplingFraction)), key - 1) * value;
+                var2 += Math.pow((1 - samplingFraction), key) * (Math.pow((1 + samplingFraction), key) - 1) * value;
+                var3 += Math.pow((1 - samplingFraction), key) * value;
+                var4 += key * samplingFraction * Math.pow((1 - samplingFraction), (key - 1)) * value;
+            }
         }
 
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            var2 += Math.pow((1 - samplingFraction), entry.getKey()) *
-                    (Math.pow((1 + samplingFraction), entry.getKey()) - 1) *
-                    entry.getValue();
-        }
-
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            var3 += Math.pow((1 - samplingFraction), entry.getKey()) *
-                    entry.getValue();
-        }
-
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            var4 += entry.getKey() * samplingFraction *
-                    Math.pow((1 - samplingFraction), (entry.getKey() - 1)) *
-                    entry.getValue();
-        }
-
-        final double K = numberOfEquivalenceClasses +
-                         (c1 * (var1 / var2) * ((var3 / var4) * (var3 / var4)));
+        final double K = numberOfEquivalenceClasses + (c1 * (var1 / var2) * ((var3 / var4) * (var3 / var4)));
         return K;
     }
 

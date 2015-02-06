@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class is the basis for estimating both population uniqueness and
@@ -44,7 +44,7 @@ abstract class AbstractModelPopulation {
      * the corresponding frequency (as values) e.g. if the key 2 has value 3
      * then there are 3 equivalence classes of size two.
      */
-    protected Map<Integer, Integer> eqClasses;
+    protected IntIntOpenHashMap eqClasses;
 
     /**
      * size of the data set aka sample
@@ -79,8 +79,7 @@ abstract class AbstractModelPopulation {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    public AbstractModelPopulation(final double pi,
-                           final Map<Integer, Integer> eqClasses) {
+    public AbstractModelPopulation(final double pi, final IntIntOpenHashMap eqClasses) {
         this.samplingFraction = pi;
         this.eqClasses = eqClasses;
         sampleSize = 0;
@@ -89,15 +88,22 @@ abstract class AbstractModelPopulation {
         // set the class attributes
         cMax = 0;
         cMin = Integer.MAX_VALUE;
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            cMin = entry.getKey();
-            sampleSize += entry.getKey() * entry.getValue();
-            numberOfEquivalenceClasses += entry.getValue();
-            if (entry.getKey() > cMax) {
-                cMax = entry.getKey();
-            }
-            if (entry.getKey() < cMin) {
-                cMin = entry.getKey();
+        final int[] keys = eqClasses.keys;
+        final int[] values = eqClasses.values;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                int value = values[i];
+                cMin = key;
+                sampleSize += key * value;
+                numberOfEquivalenceClasses += value;
+                if (key > cMax) {
+                    cMax = key;
+                }
+                if (key < cMin) {
+                    cMin = key;
+                }
             }
         }
         if (cMin == Integer.MAX_VALUE) {

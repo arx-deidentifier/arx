@@ -17,13 +17,11 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * This class is the frontend for computing different dislcosure risk measures
@@ -34,6 +32,55 @@ import org.deidentifier.arx.DataHandle;
  * @version 1.0
  */
 public class RiskEstimator {
+    
+    /**
+     * For hash tables
+     * @author Fabian Prasser
+     */
+    private static class TupleWrapper {
+        
+        /** Hash code*/
+        private final int        hashCode;
+        /** Row */
+        private final int        row;
+        /** Indices */
+        private final int[]      indices;
+        /** Handle */
+        private final DataHandle handle;
+
+        /**
+         * Constructor
+         * @param handle
+         * @param row
+         */
+        private TupleWrapper(DataHandle handle, int[] indices, int row) {
+            this.handle = handle;
+            this.row = row;
+            this.indices = indices;
+            
+            int result = 1;
+            for (int index : indices) {
+                result = 31 * result + handle.getValue(row, index).hashCode();
+            }
+            this.hashCode = result;
+        }
+
+        @Override
+        public int hashCode() {
+            return hashCode;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            TupleWrapper other = (TupleWrapper)obj;
+            for (int i = 0; i < indices.length; i++) {
+                if (!handle.getValue(this.row, i).equals(handle.getValue(other.row, i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 
     /**
      * Allows to include or exclude the SNB Model. If true, the SNBModel is
@@ -56,7 +103,7 @@ public class RiskEstimator {
      * the corresponding frequency (as values) e.g. if the key 2 has value 3
      * then there are 3 equivalence classes of size two.
      */
-    private final Map<Integer, Integer> eqClasses;
+    private final IntIntOpenHashMap eqClasses;
 
     /**
      * Sampling fraction, i.e. ration of sample size to population size
@@ -372,66 +419,54 @@ public class RiskEstimator {
      *         the corresponding frequency (as values) e.g. if the key 2 has value 3
      *         then there are 3 equivalence classes of size two.
      */
-    private Map<Integer, Integer> getEquivalenceClasses(final DataHandle handle) {
+    private IntIntOpenHashMap getEquivalenceClasses(final DataHandle handle) {
 
         DataDefinition definition = handle.getDefinition();
 
         // Get indices of quasi identifiers
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
-        final int[] indices = new int[definition.getQuasiIdentifyingAttributes()
-                                                .size()];
+        final int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
         int index = 0;
         for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
 
-        // TODO: Think about whether outliers should be handled separately
         // Calculate equivalence classes
-        Map<String, Integer> eqClasses = new HashMap<String, Integer>();
+        // TODO: Think about whether outliers should be handled separately
+        ObjectIntOpenHashMap<TupleWrapper> map = new ObjectIntOpenHashMap<TupleWrapper>();
         for (int row = 0; row < handle.getNumRows(); row++) {
-
-            String rowString = "";
-            for (int column = 0; column < indices.length; column++) {
-                rowString += handle.getValue(row, column);
-            }
-
-            Integer size = eqClasses.get(rowString);
-            if (size == null) {
-                size = 1;
-            } else {
-                size++;
-            }
-            eqClasses.put(rowString, size);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            map.putOrAdd(tuple, 1, 1);
         }
 
-        Iterator<Entry<String, Integer>> it = eqClasses.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
-
-            Integer size = result.get(entry.getValue());
-            if (size == null) {
-                size = 1;
-            } else {
-                size++;
+        // Build result
+        IntIntOpenHashMap result = new IntIntOpenHashMap();
+        final int[] values = map.values;
+        final boolean[] states = map.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                result.putOrAdd(values[i], 1, 1);
             }
-            result.put(entry.getValue(), size);
         }
-
         return result;
     }
 
     /**
-     * sets values of Cmin and Cmax, giving range of equivalence class sizes
+     * Sets values of Cmin and Cmax, giving range of equivalence class sizes
      */
     private void initialize() {
         cMin = Integer.MAX_VALUE;
         cMax = 0;
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            if (cMin > entry.getKey()) {
-                cMin = entry.getKey();
-            }
-            if (cMax < entry.getKey()) {
-                cMax = entry.getKey();
+        final int[] keys = eqClasses.keys;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                if (cMin > key) {
+                    cMin = key;
+                }
+                if (cMax < key) {
+                    cMax = key;
+                }
             }
         }
         if (cMin == Integer.MAX_VALUE) {

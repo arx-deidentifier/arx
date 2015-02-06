@@ -97,10 +97,10 @@ public class TestRiskMetrics extends TestCase {
         DataProvider provider = new DataProvider();
         provider.createDataDefinition();
         // Risk before anonymization
-        assertTrue(getAverageRisk(provider.getData().getHandle()) == 1.0d);
+        assertTrue(provider.getData().getHandle().getRiskEstimator().getEquivalenceClassRisk() == 1.0d);
 
         // Risk after anonymization
-        assertTrue(getAverageRisk(getAnonymizedData(provider.getData())) == 0.42857142857142855d);
+        assertTrue(getAnonymizedData(provider.getData()).getRiskEstimator().getEquivalenceClassRisk()  == 0.42857142857142855d);
     }
 
     /**
@@ -112,10 +112,10 @@ public class TestRiskMetrics extends TestCase {
     public void testAverageRisk2() throws IOException {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         // Risk before anonymization
-        assertTrue(getAverageRisk(data.getHandle()) == 0.6465751607983555d);
+        assertTrue(data.getHandle().getRiskEstimator().getEquivalenceClassRisk() == 0.6465751607983555d);
 
         // Risk after anonymization
-        assertTrue(getAverageRisk(getAnonymizedData(data)) == 0.001922949406538028);
+        assertTrue(getAnonymizedData(data).getRiskEstimator().getEquivalenceClassRisk() == 0.001922949406538028);
     }
 
     /**
@@ -167,26 +167,17 @@ public class TestRiskMetrics extends TestCase {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         DataHandle handle = data.getHandle();
 
-        RiskEstimator estimator = new RiskEstimator(handle);
-        double risk = estimator.getPopulationUniquesRisk();
+        double risk = handle.getRiskEstimator().getPopulationUniquesRisk();
+        assertTrue(risk == 0.27684993883831804);
 
-        assertTrue(risk == 0.2768499388383177d);
-
-        estimator = new RiskEstimator(handle, 0.2);
-        risk = estimator.getPopulationUniquesRisk();
-
+        risk = handle.getRiskEstimator(0.2).getPopulationUniquesRisk();
         assertTrue(risk == 0.3577099234829125d);
 
-        estimator = new RiskEstimator(handle, 0.01);
-        risk = estimator.getPopulationUniquesRisk();
+        risk = handle.getRiskEstimator(0.01).getPopulationUniquesRisk();
+        assertTrue(risk == 0.14460835311745512);
 
-        assertTrue(risk == 0.14460835311745487d);
-
-        estimator = new RiskEstimator(handle, 1);
-        risk = estimator.getPopulationUniquesRisk();
-
+        risk = handle.getRiskEstimator(1).getPopulationUniquesRisk();
         assertTrue(risk == 0.5142895033485844d);
-
     }
 
     /**
@@ -197,10 +188,10 @@ public class TestRiskMetrics extends TestCase {
         DataProvider provider = new DataProvider();
         provider.createDataDefinition();
         // Risk before anonymization
-        assertTrue(getHighestIndividualRisk(provider.getData().getHandle()) == 1.0d);
+        assertTrue(provider.getData().getHandle().getRiskEstimator().getHighestIndividualRisk() == 1.0d);
 
         // Risk after anonymization
-        assertTrue(getHighestIndividualRisk(getAnonymizedData(provider.getData())) == 0.5d);
+        assertTrue(getAnonymizedData(provider.getData()).getRiskEstimator().getHighestIndividualRisk() == 0.5d);
     }
 
     /**
@@ -212,10 +203,10 @@ public class TestRiskMetrics extends TestCase {
     public void testHighestIndividualRisk2() throws IOException {
         Data data = getDataObject("../arx-data/data-junit/adult.csv");
         // Risk before anonymization
-        assertTrue(getHighestIndividualRisk(data.getHandle()) == 1.0d);
+        assertTrue(data.getHandle().getRiskEstimator().getHighestIndividualRisk() == 1.0d);
 
         // Risk after anonymization
-        assertTrue(getHighestIndividualRisk(getAnonymizedData(data)) == 0.5d);
+        assertTrue(getAnonymizedData(data).getRiskEstimator().getHighestIndividualRisk() == 0.5d);
     }
 
     /**
@@ -239,29 +230,4 @@ public class TestRiskMetrics extends TestCase {
         final DataHandle outHandle = result.getOutput(false);
         return outHandle;
     }
-
-    /**
-     * Gets the average risk.
-     *
-     * @param handle the handle
-     * @return the average risk
-     */
-    private double getAverageRisk(DataHandle handle) {
-        RiskEstimator estimator = new RiskEstimator(handle);
-        double risk = estimator.getEquivalenceClassRisk();
-        return risk;
-    }
-
-    /**
-     * Gets the highest individual risk.
-     *
-     * @param handle the handle
-     * @return the highest individual risk
-     */
-    private double getHighestIndividualRisk(DataHandle handle) {
-        RiskEstimator estimator = new RiskEstimator(handle);
-        double risk = estimator.getHighestIndividualRisk();
-        return risk;
-    }
-
 }

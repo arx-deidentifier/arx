@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class allows to estimate the disclosure risk of a given data set based solely on the sample information
@@ -38,18 +38,20 @@ class ModelEquivalenceClass extends AbstractModelPopulation {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    protected ModelEquivalenceClass(final Map<Integer, Integer> eqClasses) {
+    protected ModelEquivalenceClass(final IntIntOpenHashMap eqClasses) {
         super(0, eqClasses);
     }
 
     @Override
     protected double getRisk() {
         double result = 0;
-
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            result += entry.getValue();
+        final int[] values = eqClasses.values;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                result += values[i];
+            }
         }
-
         return (result / sampleSize);
     }
 

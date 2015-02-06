@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class implements the Newton Raphson Algorithm for the SNB Model
@@ -64,7 +64,7 @@ class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
      */
     protected AlgorithmNewtonSNB(final double k,
                      final double pi,
-                     final Map<Integer, Integer> eqClasses) {
+                     final IntIntOpenHashMap eqClasses) {
         this.estimatedNumberOfNonEmptyClasses = k;
         this.samplingFraction = pi;
         c1 = eqClasses.get(1);

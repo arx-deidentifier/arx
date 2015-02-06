@@ -17,9 +17,9 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
-
 import org.apache.commons.math3.special.Gamma;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class implements the PitmanModel, for details see Hoshino, 2001
@@ -50,7 +50,7 @@ class ModelPitman extends AbstractModelUniqueness {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    protected ModelPitman(final double pi, final Map<Integer, Integer> eqClasses) {
+    protected ModelPitman(final double pi, final IntIntOpenHashMap eqClasses) {
         super(pi, eqClasses);
 
         c1 = this.eqClasses.get(1);

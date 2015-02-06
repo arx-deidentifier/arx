@@ -17,9 +17,9 @@
 
 package org.deidentifier.arx.risk;
 
-import java.util.Map;
-
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class implements the ZayatzModel based on Equivalence Class, for details see the paper
@@ -41,7 +41,7 @@ class ModelZayatz extends AbstractModelUniqueness {
      *            the key 2 has value 3 then there are 3 equivalence classes of
      *            size two.
      */
-    protected ModelZayatz(final double Pi, final Map<Integer, Integer> eqClasses) {
+    protected ModelZayatz(final double Pi, final IntIntOpenHashMap eqClasses) {
         super(Pi, eqClasses);
     }
 
@@ -54,20 +54,20 @@ class ModelZayatz extends AbstractModelUniqueness {
     private double computeConditionalUniquenessPercentage() {
         double temp = 0;
 
-        for (final Map.Entry<Integer, Integer> entry : eqClasses.entrySet()) {
-            final HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize,
-                                                                                           entry.getKey(),
-                                                                                           sampleSize);
-            temp += (entry.getValue() / ((double) numberOfEquivalenceClasses)) *
-                    distribution.probability(1);
+        final int[] keys = eqClasses.keys;
+        final int[] values = eqClasses.values;
+        final boolean[] states = eqClasses.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                int key = keys[i];
+                int value = values[i];
+                final HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, key, sampleSize);
+                temp += (value / ((double) numberOfEquivalenceClasses)) * distribution.probability(1);
+            }
         }
 
-        final HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize,
-                                                                                       1,
-                                                                                       sampleSize);
-        final double probCond = ((eqClasses.get(1) / ((double) numberOfEquivalenceClasses)) * (distribution.probability(1))) /
-                                temp;
-
+        final HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, 1, sampleSize);
+        final double probCond = ((eqClasses.get(1) / ((double) numberOfEquivalenceClasses)) * (distribution.probability(1))) / temp;
         return probCond;
     }
 
