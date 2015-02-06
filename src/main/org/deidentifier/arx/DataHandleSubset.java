@@ -258,6 +258,13 @@ public class DataHandleSubset extends DataHandle {
         }
     }
 
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+        return source.internalReplace(column, original, replacement);
+    }
+
     /**
      * Swaps the bits in the set representation.
      *
@@ -276,12 +283,5 @@ public class DataHandleSubset extends DataHandle {
      */
     protected int internalTranslate(int row) {
         return this.subset.getArray()[row];
-    }
-
-    @Override
-    protected boolean internalReplace(int column,
-                                      String original,
-                                      String replacement) {
-        return source.internalReplace(column, original, replacement);
     }
 }

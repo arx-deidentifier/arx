@@ -318,33 +318,6 @@ public class DataHandleOutput extends DataHandle {
         throw new UnsupportedOperationException("This operation is only supported by handles for data input");
     }
 
-    @Override
-    protected boolean internalReplace(int column,
-                                      String original,
-                                      String replacement) {
-
-
-        // Init and check
-        if (column >= inverseMap.length) return false;
-        int type = inverseMap[column] >>> AttributeType.SHIFT;
-        if (type >= inverseDictionaries.length) return false;
-        String[][] dictionary = inverseDictionaries[type].getMapping();
-        int index = inverseMap[column] & AttributeType.MASK;
-        if (index >= dictionary.length) return false;
-        String[] values = dictionary[index];
-            
-        // Replace
-        boolean found = false;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].equals(original)) {
-                values[i] = replacement;
-                found = true;
-            }
-        }
-        
-        // Return
-        return found;
-    }
     /**
      * Releases all resources.
      */
@@ -367,7 +340,6 @@ public class DataHandleOutput extends DataHandle {
         statistics = null;
         node = null;
     }
- 
     /**
      * Creates the data type array.
      *
@@ -408,7 +380,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return dataTypes;
     }
-
+ 
     /**
      * Gets the distinct values.
      *
@@ -487,7 +459,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return 0;
     }
-    
+
     /**
      * Gets the value internal.
      * 
@@ -517,7 +489,7 @@ public class DataHandleOutput extends DataHandle {
             return dictionary[index][value];
         }
     }
-
+    
     /**
      * Returns whether the given row is an outlier.
      *
@@ -526,6 +498,34 @@ public class DataHandleOutput extends DataHandle {
      */
     protected boolean internalIsOutlier(final int row) {
         return ((dataQI.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
+    }
+
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+
+
+        // Init and check
+        if (column >= inverseMap.length) return false;
+        int type = inverseMap[column] >>> AttributeType.SHIFT;
+        if (type >= inverseDictionaries.length) return false;
+        String[][] dictionary = inverseDictionaries[type].getMapping();
+        int index = inverseMap[column] & AttributeType.MASK;
+        if (index >= dictionary.length) return false;
+        String[] values = dictionary[index];
+        
+        // Replace
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        
+        // Return
+        return found;
     }
 
     /**

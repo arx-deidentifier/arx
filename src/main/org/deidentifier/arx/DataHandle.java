@@ -582,22 +582,22 @@ public abstract class DataHandle {
     }  
     
     /**
-     * Internal replacement method
-     * @param column
-     * @param original
-     * @param replacement
-     * @return
-     */
-    protected abstract boolean internalReplace(int column, String original, String replacement); 
-    
-    /**
      * Internal representation of get value.
      *
      * @param row
      * @param col
      * @return
      */
-    protected abstract String internalGetValue(int row, int col);
+    protected abstract String internalGetValue(int row, int col); 
+    
+    /**
+     * Internal replacement method
+     * @param column
+     * @param original
+     * @param replacement
+     * @return
+     */
+    protected abstract boolean internalReplace(int column, String original, String replacement);
     
     /**
      * Updates the registry.

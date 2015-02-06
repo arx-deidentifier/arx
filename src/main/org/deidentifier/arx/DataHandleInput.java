@@ -272,6 +272,22 @@ public class DataHandleInput extends DataHandle {
         return dictionary.getMapping()[column][data[row][column]];
     }
 
+    @Override
+    protected boolean internalReplace(int column,
+                                      String original,
+                                      String replacement) {
+
+        String[] values = dictionary.getMapping()[column];
+        boolean found = false;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(original)) {
+                values[i] = replacement;
+                found = true;
+            }
+        }
+        return found;
+    }
+    
     /**
      * Swaps the rows.
      *
@@ -299,7 +315,7 @@ public class DataHandleInput extends DataHandle {
     protected boolean isLocked(){
         return this.locked;
     }
-    
+
     /**
      * Overrides the handles data definition.
      *
@@ -343,21 +359,5 @@ public class DataHandleInput extends DataHandle {
         this.dataQI = dataQI;
         this.dataSE = dataSE;
         this.dataIS = dataIS;
-    }
-
-    @Override
-    protected boolean internalReplace(int column,
-                                      String original,
-                                      String replacement) {
-
-        String[] values = dictionary.getMapping()[column];
-        boolean found = false;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].equals(original)) {
-                values[i] = replacement;
-                found = true;
-            }
-        }
-        return found;
     }
 }
