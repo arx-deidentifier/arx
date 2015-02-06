@@ -86,17 +86,17 @@ public class RiskEstimator {
      * Allows to include or exclude the SNB Model. If true, the SNBModel is
      * excluded
      */
-    public boolean                      exlcudeSNB = true;
+    public boolean                  exlcudeSNB = true;
 
     /**
      * Size of biggest equivalence class in the data set
      */
-    private int                         cMax;
+    private int                     cMax;
 
     /**
      * Size of smallest equivalence class in the data set
      */
-    private int                         cMin;
+    private int                     cMin;
 
     /**
      * Map containing the equivalence class sizes (as keys) of the data set and
@@ -108,7 +108,10 @@ public class RiskEstimator {
     /**
      * Sampling fraction, i.e. ration of sample size to population size
      */
-    private double                      samplingFraction;
+    private double                  samplingFraction;
+
+    /** The associated handle */
+    private DataHandle              handle;
 
     /**
      * Creates a new instance of a class that allows to estimate different risk
@@ -139,6 +142,9 @@ public class RiskEstimator {
         // create map containing the equivalence class sizes (as keys) of the
         // data set and the corresponding frequency (as values)
         this.eqClasses = getEquivalenceClasses(handle);
+        
+        // Store reference to handle
+        this.handle = handle;
 
         // set values for Cmin and Cmax
         initialize();
@@ -175,62 +181,32 @@ public class RiskEstimator {
      * @return An array, in which the i-th entry contains the size of the equivalence class in which
      *         the i-th data entry is contained
      */
-    public int[] getEquivalenceClassSizes(final DataDefinition definition,
-                                          final DataHandle handle) {
+    public int[] getEquivalenceClassSizes() {
 
-        // Sort by quasi-identifiers
+        DataDefinition definition = handle.getDefinition();
+
+        // Get indices of quasi identifiers
         final int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
         int index = 0;
         for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
-        handle.sort(true, indices);
 
-        // Iterate over all equivalence classes and update array of equivalence classes
-        int size = 0;
-        boolean newClass = false;
-        final int[] classes = new int[handle.getNumRows()];
-
-        for (int row = 0; row < (handle.getNumRows() - 1); row++) {
-
-            size++;
-            // Discriminate equivalence classes
-            newClass = false;
-            for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
-                final int column = handle.getColumnIndexOf(attribute);
-                if (!handle.getValue(row, column).equals(handle.getValue(row + 1, column))) {
-                    newClass = true;
-                    break;
-                }
-            }
-
-            // Update entries
-            if (newClass) {
-                for (int j = 0; j < size; j++) {
-                    classes[row - j] = size;
-                }
-                size = 0;
-            }
-
-            // Correct last entry
-            if (row == (handle.getNumRows() - 2)) {
-                if (!newClass) {
-                    size++;
-                    for (int j = 0; j < size; j++) {
-                        classes[(row + 1) - j] = size;
-                    }
-                } else {
-                    classes[row + 1] = 1;
-                }
-            }
+        // Calculate equivalence classes
+        // TODO: Think about whether outliers should be handled separately
+        ObjectIntOpenHashMap<TupleWrapper> map = new ObjectIntOpenHashMap<TupleWrapper>();
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            map.putOrAdd(tuple, 1, 1);
         }
-
-        /**
-         * Classes is now a array where every array element indicates the size
-         * of the corresponding equivalence class this allows to manipulate
-         * attributes of single array elements
-         */
-        return classes;
+        
+        // Build result
+        int[] result = new int[this.handle.getNumRows()];
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            result[row] = map.get(tuple);
+        }
+        return result;
     }
 
     /**
