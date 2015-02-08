@@ -19,11 +19,9 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -152,7 +150,7 @@ public class Example27 extends Example {
         printMap(handle.getMatchingDataTypes(column, Long.class));
         printMap(handle.getMatchingDataTypes(column, String.class));
     }
-    
+
     /**
      * Prints a list of matching data types
      * @param types
@@ -182,18 +180,6 @@ public class Example27 extends Example {
                     System.out.println(entry.getValue());
                 }
             }
-        }
-    }
-
-    /**
-     * Prints a handle
-     * @param data
-     */
-    public static void print(DataHandle handle) {
-        Iterator<String[]> data = handle.iterator();
-        while (data.hasNext()) {
-            System.out.print("   ");
-            System.out.println(Arrays.toString(data.next()));
         }
     }
 }
