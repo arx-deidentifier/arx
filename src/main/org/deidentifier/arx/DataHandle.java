@@ -95,7 +95,7 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns the according datatype.
+     * Returns the according data type.
      *
      * @param attribute
      * @return
