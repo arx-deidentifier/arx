@@ -262,7 +262,7 @@ public abstract class DataHandle {
      * @param type The type to test
      * @return
      */
-    public int getNumberOfConformingValues(int column, DataType<?> type) {
+    public int getNumConformingValues(int column, DataType<?> type) {
         checkRegistry();
         checkColumn(column);
         int count = 0;
