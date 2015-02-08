@@ -23,7 +23,9 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
@@ -230,12 +232,53 @@ public abstract class DataHandle {
     }
 
     /**
+     * Returns a set of values that do not conform to the given data type.
+     * 
+     * @param column The column to test
+     * @param type The type to test
+     * @param max The maximal number of values returned by this method
+     * @return
+     */
+    public String[] getNonConformingValues(int column, DataType<?> type, int max) {
+        checkRegistry();
+        checkColumn(column);
+        Set<String> result = new HashSet<String>();
+        for (int i=0; i<this.getNumRows(); i++) {
+            String value = this.getValue(i, column);
+            if (!type.isValid(value)) {
+                result.add(value);
+            }
+            if (result.size()==max) {
+                break;
+            }
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
+    /**
+     * Returns the number of values that conform to the given data type.
+     * 
+     * @param column The column to test
+     * @param type The type to test
+     * @return
+     */
+    public int getNumberOfConformingValues(int column, DataType<?> type) {
+        checkRegistry();
+        checkColumn(column);
+        int count = 0;
+        for (int i=0; i<this.getNumRows(); i++) {
+            count += type.isValid(this.getValue(i, column)) ? 1 : 0;
+        }
+        return count;
+    }
+
+    /**
      * Returns the number of columns in the dataset.
      *
      * @return
      */
     public abstract int getNumColumns();
-
+    
     /**
      * Returns the number of rows in the dataset.
      *
@@ -252,7 +295,7 @@ public abstract class DataHandle {
     public StatisticsBuilder getStatistics(){
         return statistics;
     }
-    
+
     /**
      * Returns the transformation .
      *
@@ -284,7 +327,7 @@ public abstract class DataHandle {
             return this.subset;
         }
     }
-
+    
     /**
      * Determines whether this handle is orphaned, i.e., should not be used anymore
      * @return
@@ -311,7 +354,7 @@ public abstract class DataHandle {
      * @return
      */
     public abstract Iterator<String[]> iterator();
-
+    
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
