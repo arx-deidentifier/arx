@@ -18,15 +18,9 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -145,41 +139,19 @@ public class Example27 extends Example {
      */
     private static void determineDataType(DataHandle handle, int column) {
         System.out.println(" - Potential data types for attribute: "+handle.getAttributeName(column));
-        printMap(handle.getMatchingDataTypes(column, Date.class));
-        printMap(handle.getMatchingDataTypes(column, Double.class));
-        printMap(handle.getMatchingDataTypes(column, Long.class));
-        printMap(handle.getMatchingDataTypes(column, String.class));
-    }
+        List<Pair<DataType<?>, Double>> types = handle.getMatchingDataTypes(column);
 
-    /**
-     * Prints a list of matching data types
-     * @param types
-     */
-    private static <T> void printMap(Map<DataType<T>, Double> types) {
-        
-        // Create ordered list of match percentage
-        Set<Double> matches = new HashSet<Double>();
-        matches.addAll(types.values());
-        List<Double> sortedMatches = new ArrayList<Double>();
-        sortedMatches.addAll(matches);
-        Collections.sort(sortedMatches);
-        Collections.reverse(sortedMatches);
-        
         // Print entries sorted by match percentage
-        for (Double match : sortedMatches) {
-            for (Entry<DataType<T>, Double> entry : types.entrySet()) {
-                if (entry.getValue().equals(match)) {
-                    System.out.print("   * ");
-                    System.out.print(entry.getKey().getDescription().getLabel());
-                    if (entry.getKey().getDescription().hasFormat()) {
-                        System.out.print("[");
-                        System.out.print(((DataTypeWithFormat)entry.getKey()).getFormat());
-                        System.out.print("]");
-                    }
-                    System.out.print(": ");
-                    System.out.println(entry.getValue());
-                }
+        for (Pair<DataType<?>, Double> entry : types) {
+            System.out.print("   * ");
+            System.out.print(entry.getKey().getDescription().getLabel());
+            if (entry.getKey().getDescription().hasFormat()) {
+                System.out.print("[");
+                System.out.print(((DataTypeWithFormat) entry.getKey()).getFormat());
+                System.out.print("]");
             }
+            System.out.print(": ");
+            System.out.println(entry.getValue());
         }
     }
 }

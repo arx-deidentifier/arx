@@ -21,15 +21,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
@@ -247,7 +250,7 @@ public abstract class DataHandle {
      * @param column
      * @return
      */
-    public Map<DataType<?>, Double> getMatchingDataTypes(int column) {
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column) {
         return getMatchingDataTypes(column, Locale.getDefault(), 0.8d);
     }
     
@@ -260,7 +263,7 @@ public abstract class DataHandle {
      * @param clazz The wrapped class
      * @return
      */
-    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz) {
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz) {
         return getMatchingDataTypes(column, clazz, Locale.getDefault(), 0.8d);
     }
 
@@ -273,7 +276,7 @@ public abstract class DataHandle {
      * @param threshold Relative minimal number of values that must match to include a data type in the results
      * @return
      */
-    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz, double threshold) {
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, double threshold) {
         return getMatchingDataTypes(column, clazz, Locale.getDefault(), threshold);
     }
 
@@ -286,7 +289,7 @@ public abstract class DataHandle {
      * @param locale The locale to use
      * @return
      */
-    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz, Locale locale) {
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale) {
         return getMatchingDataTypes(column, clazz, locale, 0.8d);
     }
     
@@ -299,26 +302,26 @@ public abstract class DataHandle {
      * @param threshold Relative minimal number of values that must match to include a data type in the results
      * @return
      */
-    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz, Locale locale, double threshold) {
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale, double threshold) {
 
         checkRegistry();
         checkColumn(column);
         double distinct = this.getDistinctValues(column).length;
-        Map<DataType<T>, Double> result = new HashMap<DataType<T>, Double>();
-        DataTypeDescription<T> description = DataType.list(clazz);
+        List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
+        DataTypeDescription<U> description = DataType.list(clazz);
         if (description.hasFormat()) {
             for (String format : description.getExampleFormats()) {
-                DataType<T> type = description.newInstance(format, locale);
+                DataType<U> type = description.newInstance(format, locale);
                 double matching = (double)getNumConformingValues(column, type) / distinct;
                 if (matching >= threshold) {
-                    result.put(type, matching);
+                    result.add(new Pair<DataType<?>, Double>(type, matching));
                 }
             }
         } else {
-            DataType<T> type = description.newInstance();
+            DataType<U> type = description.newInstance();
             double matching = (double)getNumConformingValues(column, type) / distinct;
             if (matching >= threshold) {
-                result.put(type, matching);
+                result.add(new Pair<DataType<?>, Double>(type, matching));
             }
         }
         return result;
@@ -332,7 +335,7 @@ public abstract class DataHandle {
      * @param threshold Relative minimal number of values that must match to include a data type in the results
      * @return
      */
-    public Map<DataType<?>, Double> getMatchingDataTypes(int column, double threshold) {
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, double threshold) {
         return getMatchingDataTypes(column, Locale.getDefault(), threshold);
     }
 
@@ -344,7 +347,7 @@ public abstract class DataHandle {
      * @param locale The locale to use
      * @return
      */
-    public Map<DataType<?>, Double> getMatchingDataTypes(int column, Locale locale) {
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale) {
         return getMatchingDataTypes(column, locale, 0.8d);
     }
     
@@ -356,15 +359,55 @@ public abstract class DataHandle {
      * @param threshold Relative minimal number of values that must match to include a data type in the results
      * @return
      */
-    public Map<DataType<?>, Double> getMatchingDataTypes(int column, Locale locale, double threshold) {
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale, double threshold) {
        
         checkRegistry();
         checkColumn(column);
-        Map<DataType<?>, Double> result = new HashMap<DataType<?>, Double>();
-        result.putAll(getMatchingDataTypes(column, Date.class, locale, threshold));
-        result.putAll(getMatchingDataTypes(column, Double.class, locale, threshold));
-        result.putAll(getMatchingDataTypes(column, Long.class, locale, threshold));
-        result.put(DataType.STRING, 1.0d);
+        List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
+        result.addAll(getMatchingDataTypes(column, Long.class, locale, threshold));
+        result.addAll(getMatchingDataTypes(column, Date.class, locale, threshold));
+        result.addAll(getMatchingDataTypes(column, Double.class, locale, threshold));
+        result.add(new Pair<DataType<?>, Double>(DataType.STRING, 1.0d));
+        Collections.sort(result, new Comparator<Pair<DataType<?>, Double>>(){
+            @Override
+            public int compare(Pair<DataType<?>, Double> o1, Pair<DataType<?>, Double> o2) {
+                
+                Class<?> class1 = o1.getFirst().getClass();
+                Class<?> class2 = o2.getFirst().getClass();
+                
+                if (class1 == Long.class) {
+                    if (class2 == Long.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return -1;
+                    } 
+                } else if (class1 == Date.class) {
+                    if (class2 == Long.class) {
+                        return +1;
+                    } else if (class2 == Date.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return -1;
+                    }
+                } else if (class1 == Double.class) {
+                    if (class2 == Double.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else if (class2 == String.class) {
+                        return -1;
+                    } else {
+                        return +1;
+                    }
+                } else if (class1 == String.class) {
+                    if (class2 == String.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return +1;
+                    }
+                } else {
+                    return 0;
+                }
+            }
+        });
         return result;
     }
 
