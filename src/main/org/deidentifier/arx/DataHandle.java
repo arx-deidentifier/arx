@@ -306,8 +306,16 @@ public abstract class DataHandle {
         double distinct = this.getDistinctValues(column).length;
         Map<DataType<T>, Double> result = new HashMap<DataType<T>, Double>();
         DataTypeDescription<T> description = DataType.list(clazz);
-        for (String format : description.getExampleFormats()) {
-            DataType<T> type = description.newInstance(format, locale);
+        if (description.hasFormat()) {
+            for (String format : description.getExampleFormats()) {
+                DataType<T> type = description.newInstance(format, locale);
+                double matching = (double)getNumConformingValues(column, type) / distinct;
+                if (matching >= threshold) {
+                    result.put(type, matching);
+                }
+            }
+        } else {
+            DataType<T> type = description.newInstance();
             double matching = (double)getNumConformingValues(column, type) / distinct;
             if (matching >= threshold) {
                 result.put(type, matching);
