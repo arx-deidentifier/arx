@@ -18,18 +18,30 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.KAnonymity;
+
 
 /**
  * This class implements an example on how to use data cleansing capabilities
@@ -50,14 +62,14 @@ public class Example27 extends Example {
 
         // Define data
         final DefaultData data = Data.create();
-        data.add("age", "gender", "zipcode");
-        data.add("34", "male", "81667");
-        data.add("45", "female", "81675");
-        data.add("66", "male", "81925");
-        data.add("70", "female", "81931");
-        data.add("34", "female", "81931");
-        data.add("70", "male", "81931");
-        data.add("45", "male", "81931");
+        data.add("age", "gender", "zipcode", "dob");
+        data.add("34", "male", "81667", "3.2.1913");
+        data.add("45", "female", "81675", "5.5.1955");
+        data.add("66", "male", "81925", "3.3.1967");
+        data.add("70", "female", "81931", "1.1.1992");
+        data.add("34", "female", "81931", "25.11.1988");
+        data.add("70", "male", "81931", "13.3.1955");
+        data.add("45", "male", "81931", "28.6.2013");
 
         // Define hierarchies
         final DefaultHierarchy age = Hierarchy.create();
@@ -81,6 +93,7 @@ public class Example27 extends Example {
         data.getDefinition().setAttributeType("age", age);
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
+        data.getDefinition().setAttributeType("dob", AttributeType.INSENSITIVE_ATTRIBUTE);
 
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -91,6 +104,12 @@ public class Example27 extends Example {
         // Process results
         System.out.println("Input:");
         print(data.getHandle());
+        
+        System.out.println("Determining data types:");
+        determineDataType(data.getHandle(), 0);
+        determineDataType(data.getHandle(), 1);
+        determineDataType(data.getHandle(), 2);
+        determineDataType(data.getHandle(), 3);
         
         System.out.println("Replacing 34 with 99");
         data.getHandle().replace(0, "34", "99");
@@ -119,6 +138,51 @@ public class Example27 extends Example {
         System.out.println("New output:");
         print(result.getOutput(false));
 
+    }
+
+    /**
+     * Prints a list of matching data types
+     * @param handle
+     * @param column
+     */
+    private static void determineDataType(DataHandle handle, int column) {
+        System.out.println(" - Potential data types for attribute: "+handle.getAttributeName(column));
+        printMap(handle.getMatchingDataTypes(column, Date.class));
+        printMap(handle.getMatchingDataTypes(column, Double.class));
+        printMap(handle.getMatchingDataTypes(column, Long.class));
+        printMap(handle.getMatchingDataTypes(column, String.class));
+    }
+    
+    /**
+     * Prints a list of matching data types
+     * @param types
+     */
+    private static <T> void printMap(Map<DataType<T>, Double> types) {
+        
+        // Create ordered list of match percentage
+        Set<Double> matches = new HashSet<Double>();
+        matches.addAll(types.values());
+        List<Double> sortedMatches = new ArrayList<Double>();
+        sortedMatches.addAll(matches);
+        Collections.sort(sortedMatches);
+        Collections.reverse(sortedMatches);
+        
+        // Print entries sorted by match percentage
+        for (Double match : sortedMatches) {
+            for (Entry<DataType<T>, Double> entry : types.entrySet()) {
+                if (entry.getValue().equals(match)) {
+                    System.out.print("   * ");
+                    System.out.print(entry.getKey().getDescription().getLabel());
+                    if (entry.getKey().getDescription().hasFormat()) {
+                        System.out.print("[");
+                        System.out.print(((DataTypeWithFormat)entry.getKey()).getFormat());
+                        System.out.print("]");
+                    }
+                    System.out.print(": ");
+                    System.out.println(entry.getValue());
+                }
+            }
+        }
     }
 
     /**
