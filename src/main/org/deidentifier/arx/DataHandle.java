@@ -23,8 +23,11 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -32,6 +35,7 @@ import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
 
@@ -132,7 +136,7 @@ public abstract class DataHandle {
         checkRegistry();
         return definition;
     }
-
+    
     /**
      * Returns an array containing the distinct values in the given column.
      *
@@ -146,7 +150,7 @@ public abstract class DataHandle {
             }
         });
     }
-
+    
     /**
      * Returns a double value from the specified cell.
      *
@@ -187,6 +191,7 @@ public abstract class DataHandle {
         }
     }
 
+    
     /**
      * Returns the generalization level for the attribute.
      *
@@ -195,6 +200,7 @@ public abstract class DataHandle {
      */
     public abstract int getGeneralization(String attribute);
 
+    
     /**
      * Returns an int value from the specified cell.
      *
@@ -212,7 +218,8 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
-    
+
+
     /**
      * Returns a long value from the specified cell.
      *
@@ -230,6 +237,128 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     * This method uses the default locale.
+     * This method only returns types that match at least 80% of all values in the column .
+     * 
+     *  
+     * @param column
+     * @return
+     */
+    public Map<DataType<?>, Double> getMatchingDataTypes(int column) {
+        return getMatchingDataTypes(column, Locale.getDefault(), 0.8d);
+    }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method uses the default locale.
+     * This method only returns types that match at least 80% of all values in the column .
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @return
+     */
+    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz) {
+        return getMatchingDataTypes(column, clazz, Locale.getDefault(), 0.8d);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method uses the default locale.
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz, double threshold) {
+        return getMatchingDataTypes(column, clazz, Locale.getDefault(), threshold);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method only returns types that match at least 80% of all values in the column .
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @param locale The locale to use
+     * @return
+     */
+    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz, Locale locale) {
+        return getMatchingDataTypes(column, clazz, locale, 0.8d);
+    }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @param locale The locale to use
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public <T> Map<DataType<T>, Double> getMatchingDataTypes(int column, Class<T> clazz, Locale locale, double threshold) {
+
+        checkRegistry();
+        checkColumn(column);
+        double distinct = this.getDistinctValues(column).length;
+        Map<DataType<T>, Double> result = new HashMap<DataType<T>, Double>();
+        DataTypeDescription<T> description = DataType.list(clazz);
+        for (String format : description.getExampleFormats()) {
+            DataType<T> type = description.newInstance(format, locale);
+            double matching = (double)getNumConformingValues(column, type) / distinct;
+            if (matching >= threshold) {
+                result.put(type, matching);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     * This method uses the default locale.
+     *  
+     * @param column
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public Map<DataType<?>, Double> getMatchingDataTypes(int column, double threshold) {
+        return getMatchingDataTypes(column, Locale.getDefault(), threshold);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type
+     * This method only returns types that match at least 80% of all values in the column .
+     *  
+     * @param column
+     * @param locale The locale to use
+     * @return
+     */
+    public Map<DataType<?>, Double> getMatchingDataTypes(int column, Locale locale) {
+        return getMatchingDataTypes(column, locale, 0.8d);
+    }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type
+     *  
+     * @param column
+     * @param locale The locale to use
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public Map<DataType<?>, Double> getMatchingDataTypes(int column, Locale locale, double threshold) {
+       
+        checkRegistry();
+        checkColumn(column);
+        Map<DataType<?>, Double> result = new HashMap<DataType<?>, Double>();
+        result.putAll(getMatchingDataTypes(column, Date.class, locale, threshold));
+        result.putAll(getMatchingDataTypes(column, Double.class, locale, threshold));
+        result.putAll(getMatchingDataTypes(column, Long.class, locale, threshold));
+        result.put(DataType.STRING, 1.0d);
+        return result;
+    }
 
     /**
      * Returns a set of values that do not conform to the given data type.
@@ -243,8 +372,7 @@ public abstract class DataHandle {
         checkRegistry();
         checkColumn(column);
         Set<String> result = new HashSet<String>();
-        for (int i=0; i<this.getNumRows(); i++) {
-            String value = this.getValue(i, column);
+        for (String value : this.getDistinctValues(column)) {
             if (!type.isValid(value)) {
                 result.add(value);
             }
@@ -256,7 +384,14 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns the number of values that conform to the given data type.
+     * Returns the number of columns in the dataset.
+     *
+     * @return
+     */
+    public abstract int getNumColumns();
+
+    /**
+     * Returns the number of (distinct) values that conform to the given data type.
      * 
      * @param column The column to test
      * @param type The type to test
@@ -266,18 +401,11 @@ public abstract class DataHandle {
         checkRegistry();
         checkColumn(column);
         int count = 0;
-        for (int i=0; i<this.getNumRows(); i++) {
-            count += type.isValid(this.getValue(i, column)) ? 1 : 0;
+        for (String value : this.getDistinctValues(column)) {
+            count += type.isValid(value) ? 1 : 0;
         }
         return count;
     }
-
-    /**
-     * Returns the number of columns in the dataset.
-     *
-     * @return
-     */
-    public abstract int getNumColumns();
     
     /**
      * Returns the number of rows in the dataset.
