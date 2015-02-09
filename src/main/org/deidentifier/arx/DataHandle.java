@@ -555,6 +555,9 @@ public abstract class DataHandle {
     public boolean replace(int column, String original, String replacement) {
         checkRegistry();
         checkColumn(column);
+        if (!getDataType(getAttributeName(column)).isValid("replacement")) {
+            throw new IllegalArgumentException("Replacement does not match the attribute's data type");
+        }
         return registry.replace(column, original, replacement);
     }
 
