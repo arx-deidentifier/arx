@@ -205,6 +205,30 @@ public class MainMenu implements IView {
 
         new MenuItem(editMenu, SWT.SEPARATOR);
 
+        final MenuItem editFindReplace = new MenuItem(editMenu, SWT.PUSH);
+        editFindReplace.setText(Resources.getMessage("MainMenu.30")); //$NON-NLS-1$
+        editFindReplace.setImage(controller.getResources()
+                                           .getImage("edit_find_replace.png")); //$NON-NLS-1$
+        editFindReplace.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                controller.actionFindReplace();
+            }
+        });
+
+        final MenuItem editAuditTrail = new MenuItem(editMenu, SWT.PUSH);
+        editAuditTrail.setText(Resources.getMessage("MainMenu.31")); //$NON-NLS-1$
+        editAuditTrail.setImage(controller.getResources()
+                                           .getImage("edit_audit_trail.png")); //$NON-NLS-1$
+        editAuditTrail.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                controller.actionShowAuditTrail();
+            }
+        });
+
+        new MenuItem(editMenu, SWT.SEPARATOR);
+
         final MenuItem editSettings = new MenuItem(editMenu, SWT.PUSH);
         editSettings.setText(Resources.getMessage("MainMenu.25")); //$NON-NLS-1$
         editSettings.setImage(controller.getResources()
@@ -216,7 +240,7 @@ public class MainMenu implements IView {
             }
         });
 
-        /** Help Menu */
+        /** View Menu */
         final MenuItem helpMenuItem = new MenuItem(menu, SWT.CASCADE);
         final Menu helpMenu = new Menu(shell, SWT.DROP_DOWN);
         helpMenuItem.setText(HELP_NAME);

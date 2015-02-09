@@ -18,8 +18,10 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -123,8 +125,11 @@ public class Model implements Serializable {
     private long                                  time;
     
     /** Locale. */
-    private Locale                                locale                          = null;
     // TODO: This is only a quick-fix. A locale should be definable for each data type individually.
+    private Locale                                locale                          = null;
+
+    /** The audit trail*/
+    private List<ModelAuditTrailEntry>            auditTrail                      = new ArrayList<ModelAuditTrailEntry>();
 
     /* *****************************************
      * DEBUGGING
@@ -221,6 +226,15 @@ public class Model implements Serializable {
 	}
 
 	/**
+	 * Adds an entry to the audit trail
+	 * @param entry
+	 */
+	public void addAuditTrailEntry(ModelAuditTrailEntry entry) {
+	    this.getAuditTrail().add(entry);
+	    this.setModified();
+	}
+
+	/**
      * Creates an anonymizer for the current config.
      *
      * @return
@@ -240,8 +254,8 @@ public class Model implements Serializable {
         // Return the anonymizer
 		return anonymizer;
 	}
-
-	/**
+    
+    /**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
@@ -250,8 +264,8 @@ public class Model implements Serializable {
         outputConfig = inputConfig.clone();
         this.setModified();
 	}
-    
-    /**
+
+	/**
      * Creates an ARXConfiguration.
      */
 	public void createConfig() {
@@ -334,7 +348,7 @@ public class Model implements Serializable {
             }
         }
 	}
-
+    
 	/**
      * Creates an ARXConfiguration for the subset.
      *
@@ -353,7 +367,7 @@ public class Model implements Serializable {
         // Return the config
 		return config;
 	}
-    
+	
 	/**
      * Returns the current anonymizer.
      *
@@ -362,7 +376,7 @@ public class Model implements Serializable {
 	public ARXAnonymizer getAnonymizer() {
 		return anonymizer;
 	}
-
+	
 	/**
      * Returns the last two selected attributes.
      *
@@ -371,6 +385,17 @@ public class Model implements Serializable {
 	public String[] getAttributePair() {
 		if (pair == null) pair = new String[] { null, null };
 		return pair;
+	}
+
+	/**
+	 * Returns the audit trail
+	 * @return
+	 */
+	public List<ModelAuditTrailEntry> getAuditTrail() {
+	    if (this.auditTrail == null) {
+	        this.auditTrail = new ArrayList<ModelAuditTrailEntry>();
+	    }
+	    return auditTrail;
 	}
 
 	/**
@@ -973,6 +998,13 @@ public class Model implements Serializable {
     }
 
 	/**
+     * Marks this project as modified.
+     */
+    public void setModified() {
+		modified = true;
+	}
+
+	/**
      * Sets the project name.
      *
      * @param name
@@ -991,7 +1023,7 @@ public class Model implements Serializable {
 		nodeFilter = filter;
 		setModified();
 	}
-
+	
 	/**
      * Sets the current output.
      *
@@ -1026,7 +1058,7 @@ public class Model implements Serializable {
 	public void setPath(final String path) {
 		this.path = path;
 	}
-	
+
 	/**
      * Sets the query.
      *
@@ -1092,7 +1124,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the separator.
      *
      * @param separator
@@ -1100,8 +1132,8 @@ public class Model implements Serializable {
 	public void setSeparator(final char separator) {
 		this.separator = separator;
 	}
-
-    /**
+    
+	/**
      * 
      *
      * @param snapshotSize
@@ -1111,7 +1143,7 @@ public class Model implements Serializable {
 		setModified();
 	}
     
-	/**
+    /**
      * Sets the according parameter.
      *
      * @param snapshotSize
@@ -1129,8 +1161,8 @@ public class Model implements Serializable {
             this.subsetOrigin += " + manual";
         }
     }
-    
-    /**
+
+	/**
      * Sets how the subset was defined.
      *
      * @param origin
@@ -1138,8 +1170,8 @@ public class Model implements Serializable {
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
-
-	/**
+    
+    /**
      * Sets the execution time of the last anonymization process.
      *
      * @param time
@@ -1147,7 +1179,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
 		this.time = time;
 	}
-    
+
     /**
      * Marks this model as unmodified.
      */
@@ -1180,11 +1212,4 @@ public class Model implements Serializable {
         this.showVisualization = value;
         this.setModified();
     }
-
-    /**
-     * Marks this project as modified.
-     */
-    private void setModified() {
-		modified = true;
-	}
 }

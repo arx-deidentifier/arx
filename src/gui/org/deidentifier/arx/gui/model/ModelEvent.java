@@ -83,7 +83,10 @@ public class ModelEvent {
         VIEW_CONFIG,
         
         /**  TODO */
-        VISUALIZATION
+        VISUALIZATION,
+        
+        /**  TODO */
+        ATTRIBUTE_VALUE
     }
 
     /** The part of the model that has changed. */

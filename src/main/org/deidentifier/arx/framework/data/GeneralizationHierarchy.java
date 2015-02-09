@@ -105,9 +105,9 @@ public class GeneralizationHierarchy {
         }
 
         // Sanity check
-        if (distinctValues[0] < uniqueIn) { throw new IllegalArgumentException("Not all data elements are contained in the hierarchy for attribute '" +
-                                                                               name +
-                                                                               "'"); }
+        if (distinctValues[0] < uniqueIn) {
+            throw new IllegalArgumentException("Attribute '" + name + "': hierarchy misses some values or contains duplicates"); 
+        }
     }
     
     /**

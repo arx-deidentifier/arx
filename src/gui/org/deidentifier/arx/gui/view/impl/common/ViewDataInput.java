@@ -26,7 +26,15 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 /**
  * A view on a <code>Data</code> object.
@@ -34,23 +42,71 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class ViewDataInput extends ViewData {
-
+ 
     /**
      * 
-     * Creates a new data view.
+     * Creates a new (non-editable) data view.
      *
      * @param parent
      * @param controller
      */
     public ViewDataInput(final Composite parent,
                          final Controller controller) {
+        this (parent, controller, false);
+    }
+    
+    /**
+     * 
+     * Creates a new data view.
+     *
+     * @param parent
+     * @param controller
+     * @param editable
+     */
+    public ViewDataInput(final Composite parent,
+                         final Controller controller,
+                         boolean editable) {
         
         super(parent, controller, Resources.getMessage("AnalyzeView.1")); //$NON-NLS-1$
-
+        
         // Register
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
+        
+        // Make editable
+        if (editable) {
+            final Menu menu = new Menu(parent.getShell());
+            MenuItem item1 = new MenuItem(menu, SWT.NONE);
+            item1.setText("Find/Replace...");
+            item1.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    controller.actionFindReplace();
+                }
+            });
+
+            table.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseUp(MouseEvent arg0) {
+                    if (model != null && model.getSelectedAttribute() != null &&
+                        model.getInputConfig() != null &&
+                        model.getInputConfig().getInput() != null &&
+                        model.getInputConfig().getInput().getHandle() != null) {
+                        menu.setEnabled(true);
+                    } else {
+                        menu.setEnabled(false);
+                    } 
+                    if (arg0.button == 3 && menu.isEnabled()) {
+                        Point display = table.toDisplay(arg0.x, arg0.y);
+                        menu.setLocation(display.x, display.y);
+                        menu.setVisible(true);
+                    }
+                }
+            });
+        }
     }
     
     /* (non-Javadoc)
@@ -177,6 +233,9 @@ public class ViewDataInput extends ViewData {
             
             // Update research subset
             table.setResearchSubset((RowSet)event.data);
+            table.redraw();
+            
+        } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
             table.redraw();
             
         } else if (event.part == ModelPart.VIEW_CONFIG || event.part == ModelPart.RESULT) {

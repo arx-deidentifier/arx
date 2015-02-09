@@ -24,11 +24,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
@@ -40,10 +43,12 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
+import org.deidentifier.arx.gui.view.impl.menu.DialogFindReplace;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
@@ -245,6 +250,15 @@ public class MainWindow implements IView {
     }
     
     /**
+     * Shows the audit trail
+     */
+    public void showAuditTrail(List<ModelAuditTrailEntry> auditTrail) {
+        DialogAuditTrail dialog = new DialogAuditTrail(shell, auditTrail);
+        dialog.create();
+        dialog.open();
+    }
+
+    /**
      * Shows a debug dialog.
      */
     public void showDebugDialog() {
@@ -299,6 +313,20 @@ public class MainWindow implements IView {
      */
     public void showErrorDialog(final String message, final Throwable throwable) {
         showErrorDialog(this.shell, message, throwable);
+    }
+
+    /**
+     * Shows a find & replace dialog
+     * @param handle
+     * @param column
+     * @return A pair containing the string to be found and the string with which it is to be replaced,
+     *         <code>null</code> if cancel was pressed.
+     */
+    public Pair<String, String> showFindReplaceDialog(Model model, DataHandle handle, int column) {
+        DialogFindReplace dialog = new DialogFindReplace(shell, model, handle, column);
+        dialog.create();
+        dialog.open();
+        return dialog.getValue();
     }
 
     /**
