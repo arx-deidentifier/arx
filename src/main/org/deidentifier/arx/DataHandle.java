@@ -555,8 +555,13 @@ public abstract class DataHandle {
     public boolean replace(int column, String original, String replacement) {
         checkRegistry();
         checkColumn(column);
-        if (!getDataType(getAttributeName(column)).isValid("replacement")) {
-            throw new IllegalArgumentException("Replacement does not match the attribute's data type");
+        if (!getDataType(getAttributeName(column)).isValid(replacement)) {
+            throw new IllegalArgumentException("Replacement value does not match the attribute's data type");
+        }
+        for (String s : getDistinctValues(column)) {
+            if (s.equals(replacement)) {
+                throw new IllegalArgumentException("Replacement value is already contained in the data set");
+            }
         }
         return registry.replace(column, original, replacement);
     }
