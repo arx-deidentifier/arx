@@ -301,7 +301,7 @@ public class ViewHierarchy implements IView {
             model = (Model) event.data;
         } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
             AuditTrailEntryFindReplace entry = (AuditTrailEntryFindReplace) event.data;
-            if (entry.getAttribute().equals(this.attribute)) {
+            if (entry.getAttribute().equals(this.attribute) && hierarchy != null) {
                 for (String[] array : hierarchy) {
                     for (int i=0; i<array.length; i++) {
                         if (array[i].equals(entry.getSearchString())) {
