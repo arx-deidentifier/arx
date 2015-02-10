@@ -632,7 +632,7 @@ public class MainWindow implements IView {
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
                                    controller.getResources().getImage("information.png"), //$NON-NLS-1$
-                                   true) {
+                                   false) {
             public void action(Controller controller) { controller.actionMenuHelpAbout(); }
             public boolean isEnabled(Model model) { return true; }
         });
@@ -641,7 +641,7 @@ public class MainWindow implements IView {
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
                                    controller.getResources().getImage("information.png"), //$NON-NLS-1$
-                                   true) {
+                                   false) {
             public void action(Controller controller) { controller.actionMenuHelpDebug(); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.isDebugEnabled(); 
@@ -668,7 +668,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getSelectedAttribute() != null;
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
 
@@ -679,7 +679,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuEditCreateHierarchy(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getSelectedAttribute() != null;
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
 
@@ -690,7 +690,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionFindReplace(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getSelectedAttribute() != null;
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
         
@@ -765,7 +765,7 @@ public class MainWindow implements IView {
                                    controller.getResources().getImage("file_import_data.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileImportData(); }
-            public boolean isEnabled(Model model) { return model != null; }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() == Perspective.CONFIGURATION; }
         });
         
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.13"), //$NON-NLS-1$
@@ -773,7 +773,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileExportData(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getOutput() != null;
+                return model != null && model.getOutput() != null && model.getPerspective() == Perspective.ANALYSIS;
             }
         });
 
@@ -784,7 +784,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileImportHierarchy(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getSelectedAttribute() != null;
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
         
@@ -793,7 +793,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionMenuFileExportHierarchy(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getSelectedAttribute() != null;
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
 
@@ -801,7 +801,7 @@ public class MainWindow implements IView {
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.19"), //$NON-NLS-1$
                                    controller.getResources().getImage("exit.png"), //$NON-NLS-1$
-                                   true) {
+                                   false) {
             public void action(Controller controller) { controller.actionMenuFileExit(); }
             public boolean isEnabled(Model model) { 
                 return true;
