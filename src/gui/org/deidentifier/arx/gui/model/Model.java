@@ -677,6 +677,9 @@ public class Model implements Serializable {
      * @return the perspective
      */
     public Perspective getPerspective() {
+        if (perspective == null) {
+            perspective = Perspective.CONFIGURATION;
+        }
         return perspective;
     }
 	
