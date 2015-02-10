@@ -102,7 +102,7 @@ public class MainWindow implements IView {
     private final Controller            controller;
     
     /**  TODO */
-    private final MainMenu              menu;
+    private final AbstractMenu              menu;
 
     /**  TODO */
     private final ComponentTitledFolder root;
@@ -146,7 +146,7 @@ public class MainWindow implements IView {
         // Build menu
         List<MainMenuItem> items = getMenu();
         menu = new MainMenu(shell, controller, items);
-        new MainToolBar(shell, controller);
+        new MainToolBar(shell, controller, items);
 
         // Create shell
         shell.setLayout(SWTUtil.createGridLayout(1));

@@ -31,7 +31,6 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -57,7 +56,7 @@ import cern.colt.Arrays;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MainToolBar implements IView {
+public class MainToolBar extends AbstractMenu {
 
     /**
      * Helper class including some statistics.
@@ -228,9 +227,6 @@ public class MainToolBar implements IView {
     private String           tooltip;
 
     /** State. */
-    private Controller       controller;
-    
-    /** State. */
     private Model            model;
     
     /** State. */
@@ -260,16 +256,21 @@ public class MainToolBar implements IView {
      * @param parent
      * @param controller
      */
-    public MainToolBar(final Shell parent, final Controller controller) {
+    public MainToolBar(final Shell parent, final Controller controller, List<MainMenuItem> items) {
+        super(controller);
         toolbar = new ToolBar(parent, SWT.FLAT);
         toolbar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.controller = controller;
-        controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.SELECTED_NODE, this);
-        controller.addListener(ModelPart.OUTPUT, this);
-        controller.addListener(ModelPart.RESULT, this);
-        build();
+
+        // Create items
+        this.createItems(toolbar, items);
+        this.createLabels();
+
+        // Pack
         toolbar.pack();
+        
+        // Initialize
+        this.update(new ModelEvent(this, ModelPart.MODEL, null));
+        
     }
 
     /* (non-Javadoc)
@@ -277,7 +278,7 @@ public class MainToolBar implements IView {
      */
     @Override
     public void dispose() {
-        controller.removeListener(this);
+        super.dispose();
     }
 
     /* (non-Javadoc)
@@ -313,6 +314,8 @@ public class MainToolBar implements IView {
      */
     @Override
     public void update(final ModelEvent event) {
+        
+        super.update(event);
         
         if (event.part == ModelPart.SELECTED_NODE) {
             if (model.getSelectedNode() != null) {
@@ -371,158 +374,8 @@ public class MainToolBar implements IView {
             model = (Model) event.data;
         }
     }
-    
 
-    /**
-     * Builds the component.
-     */
-    private void build() {
-        toolitems = new ArrayList<ToolItem>();
-
-        ToolItem item;
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.9")); //$NON-NLS-1$
-        item.setImage(controller.getResources().getImage("file_new.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileNew();
-            }
-        });
-        toolitems.add(item);
-
-        toolitems.add(new ToolItem(toolbar, SWT.SEPARATOR));
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.11")); //$NON-NLS-1$
-        item.setImage(controller.getResources().getImage("file_load.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileOpen();
-            }
-        });
-        toolitems.add(item);
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.13")); //$NON-NLS-1$
-        item.setImage(controller.getResources().getImage("file_save.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileSave();
-            }
-        });
-        toolitems.add(item);
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.15")); //$NON-NLS-1$
-        item.setImage(controller.getResources().getImage("file_save_as.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileSaveAs();
-            }
-        });
-
-        toolitems.add(item);
-
-        toolitems.add(new ToolItem(toolbar, SWT.SEPARATOR));
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.17")); //$NON-NLS-1$
-        item.setImage(controller.getResources()
-                                .getImage("file_import_data.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileImportData();
-            }
-        });
-        toolitems.add(item);
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.19")); //$NON-NLS-1$
-        item.setImage(controller.getResources()
-                                .getImage("file_export_data.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileExportData();
-            }
-        });
-
-        toolitems.add(item);
-
-        toolitems.add(new ToolItem(toolbar, SWT.SEPARATOR));
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.21")); //$NON-NLS-1$
-        item.setImage(controller.getResources()
-                                .getImage("file_import_hierarchy.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileImportHierarchy();
-            }
-        });
-        toolitems.add(item);
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.23")); //$NON-NLS-1$
-        item.setImage(controller.getResources()
-                                .getImage("file_export_hierarchy.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuFileExportHierarchy();
-            }
-        });
-
-        toolitems.add(item);
-
-        toolitems.add(new ToolItem(toolbar, SWT.SEPARATOR));
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.25")); //$NON-NLS-1$
-        item.setImage(controller.getResources().getImage("edit_anonymize.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuEditAnonymize();
-            }
-        });
-
-        toolitems.add(item);
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.27")); //$NON-NLS-1$
-        item.setImage(controller.getResources()
-                                .getImage("edit_create_hierarchy.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuEditCreateHierarchy();
-            }
-        });
-
-        toolitems.add(item);
-
-        toolitems.add(new ToolItem(toolbar, SWT.SEPARATOR));
-
-        item = new ToolItem(toolbar, SWT.PUSH);
-        item.setToolTipText(Resources.getMessage("MainToolBar.29")); //$NON-NLS-1$
-        item.setImage(controller.getResources().getImage("edit_settings.png")); //$NON-NLS-1$
-        item.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                controller.actionMenuEditSettings();
-            }
-        });
-        toolitems.add(item);
-        toolitems.add(new ToolItem(toolbar, SWT.SEPARATOR));
+    private void createLabels() {
 
         // Add status labels
         infoItem = new ToolItem(toolbar, SWT.SEPARATOR);
@@ -619,5 +472,70 @@ public class MainToolBar implements IView {
         this.labelSelected.setToolTipText(tooltip);
         this.labelApplied.setToolTipText(tooltip);
         this.labelTransformations.setToolTipText(tooltip);
+    }
+
+    @Override
+    protected void update(Model model) {
+
+        // Check
+        if (toolbar == null) return;
+        
+        // For each item
+        for (final ToolItem item : toolbar.getItems()) {
+
+            // Check group
+            if (!(item.getData() instanceof MainMenuGroup)) {
+                MainMenuItem mItem = (MainMenuItem) item.getData();
+                item.setEnabled(mItem == null || mItem.isEnabled(model));
+            }
+        }        
+    }
+    
+    /**
+     * Creates all items
+     * @param toolbar2
+     * @param items
+     */
+    private void createItems(ToolBar toolbar, List<MainMenuItem> items) {
+        
+        this.toolitems = new ArrayList<ToolItem>();
+
+        // For each item
+        for (final MainMenuItem item : items) {
+
+            // Create group
+            if (item instanceof MainMenuGroup) {
+
+                MainMenuGroup group = (MainMenuGroup) item;
+                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                createItems(toolbar, group.getItems());
+                menuItem.setEnabled(false);
+                menuItem.setData(item);
+                this.toolitems.add(menuItem);
+                
+            // Create separator
+            } else if (item instanceof MainMenuSeparator) {
+                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                this.toolitems.add(menuItem);
+
+                // Create item
+            } else {
+
+                ToolItem menuItem = new ToolItem(toolbar, SWT.PUSH);
+                menuItem.setToolTipText(item.getLabel());
+                if (item.getImage() != null) {
+                    menuItem.setImage(item.getImage());
+                }
+                menuItem.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        item.action(getController());
+                    }
+                });
+                menuItem.setData(item);
+                menuItem.setEnabled(false);
+                this.toolitems.add(menuItem);
+            }
+        }
     }
 }

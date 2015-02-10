@@ -23,7 +23,6 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,16 +35,10 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @author Fabian Prasser
  */
-public class MainMenu implements IView {
+public class MainMenu extends AbstractMenu {
 
     /** The menu */
-    private Menu       menu;
-
-    /** The controller */
-    private Controller controller;
-
-    /** The model */
-    private Model      model;
+    private Menu menu;
 
     /**
      * Creates a new instance.
@@ -55,15 +48,7 @@ public class MainMenu implements IView {
      * @param items
      */
     public MainMenu(final Shell shell, final Controller controller, final List<MainMenuItem> items) {
-
-        // Store
-        this.controller = controller;
-        controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.SELECTED_NODE, this);
-        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-        controller.addListener(ModelPart.PERSPECTIVE, this);
-        controller.addListener(ModelPart.OUTPUT, this);
-        controller.addListener(ModelPart.RESULT, this);
+        super(controller);
 
         // Create Menu
         this.menu = new Menu(shell, SWT.BAR);
@@ -115,7 +100,7 @@ public class MainMenu implements IView {
                 menuItem.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
-                        item.action(controller);
+                        item.action(getController());
                     }
                 });
                 menuItem.setData(item);
@@ -126,24 +111,15 @@ public class MainMenu implements IView {
 
     @Override
     public void dispose() {
+        super.dispose();
         if (!menu.isDisposed()) {
             menu.dispose();
         }
     }
-
+    
     @Override
-    public void reset() {
-        this.model = null;
-    }
-
-    @Override
-    public void update(ModelEvent event) {
-        if (event.part == ModelPart.MODEL) {
-            if (event.data != null && (event.data instanceof Model)) {
-                this.model = (Model)event.data;
-            }
-        }
-        this.update(this.menu, this.model);
+    protected void update(Model model) {
+        update(menu, model);
     }
 
     /**
@@ -163,13 +139,13 @@ public class MainMenu implements IView {
             if (item.getData() instanceof MainMenuGroup) {
 
                 MainMenuGroup group = (MainMenuGroup) item.getData();
-                item.setEnabled(group.isEnabled(this.model));
+                item.setEnabled(group.isEnabled(model));
                 update(item.getMenu(), model);
 
                 // Check item
             } else {
                 MainMenuItem mItem = (MainMenuItem) item.getData();
-                item.setEnabled(mItem == null || mItem.isEnabled(this.model));
+                item.setEnabled(mItem == null || mItem.isEnabled(model));
             }
         }        
     }
