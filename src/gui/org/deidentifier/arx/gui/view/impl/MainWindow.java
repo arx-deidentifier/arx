@@ -80,32 +80,19 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MainWindow implements IView {
 
-    /**  TODO */
-    private static final String         TITLE                     = Resources.getMessage("MainWindow.0");                     //$NON-NLS-1$
-    
-    /**  TODO */
-    private static final String         TAB_ANALYZE_DATA          = Resources.getMessage("MainWindow.1");                     //$NON-NLS-1$
-    
-    /**  TODO */
-    private static final String         TAB_DEFINE_TRANSFORMATION = Resources.getMessage("MainWindow.2");                     //$NON-NLS-1$
-    
-    /**  TODO */
-    private static final String         TAB_EXPLORE_SEARCHSPACE   = Resources.getMessage("MainWindow.3");                     //$NON-NLS-1$
-
-    /**  TODO */
-    private final Display               display;
-    
-    /**  TODO */
-    private final Shell                 shell;
-    
-    /**  TODO */
+    /** Controller */
     private final Controller            controller;
-    
-    /**  TODO */
-    private final AbstractMenu              menu;
 
-    /**  TODO */
+    /** View */
+    private final Display               display;
+    /** View */
+    private final Shell                 shell;
+    /** View */
+    private final AbstractMenu          menu;
+    /** View */
     private final ComponentTitledFolder root;
+    /** View */
+    private final LayoutExplore         layoutExplore;
 
     /**
      * Creates a new instance.
@@ -125,7 +112,7 @@ public class MainWindow implements IView {
 
         // Style
         shell.setImages(Resources.getIconSet(display));
-        shell.setText(TITLE);
+        shell.setText(Resources.getMessage("MainWindow.0")); //$NON-NLS-1$
         shell.setMinimumSize(800, 600);
 
         // Center
@@ -156,11 +143,11 @@ public class MainWindow implements IView {
         root.setLayoutData(SWTUtil.createFillGridData());
 
         // Create the subviews
-        Composite item1 = root.createItem(TAB_DEFINE_TRANSFORMATION, controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$
+        Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutDefinition(item1, controller);
-        Composite item2 = root.createItem(TAB_EXPLORE_SEARCHSPACE, controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$
-        new LayoutExplore(item2, controller);
-        Composite item3 = root.createItem(TAB_ANALYZE_DATA, controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$
+        Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        this.layoutExplore = new LayoutExplore(item2, controller);
+        Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutAnalyze(item3, controller);
 
         // Hack to update visualizations
@@ -591,7 +578,7 @@ public class MainWindow implements IView {
         // Careful! In the main window, this is also called after editing the project properties
         if (event.part == ModelPart.MODEL) {
             final Model model = (Model) event.data;
-            shell.setText(TITLE + " - " + model.getName()); //$NON-NLS-1$
+            shell.setText(Resources.getMessage("MainWindow.0") + " - " + model.getName()); //$NON-NLS-1$
             root.setEnabled(true);
             menu.update(event);
         }
@@ -607,10 +594,110 @@ public class MainWindow implements IView {
 
         menu.add(getMenuFile());
         menu.add(getEditMenu());
+        menu.add(getViewMenu());
         menu.add(getHelpMenu());
         
         return menu;
     }
+    
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getViewMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.2"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_define.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(0);
+                controller.getModel().setPerspective(Perspective.CONFIGURATION);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.CONFIGURATION; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_explore.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(1);
+                controller.getModel().setPerspective(Perspective.EXPLORATION);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_analyze.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(2);
+                controller.getModel().setPerspective(Perspective.ANALYSIS);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_lattice.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showLattice(); 
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowLattice(); 
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.2"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_list.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showList();
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowList();
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.3"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                   controller.getResources().getImage("explore_tiles.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { 
+                layoutExplore.showTiles(); 
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { 
+                return model != null && 
+                       model.getPerspective() == Perspective.EXPLORATION && 
+                       model.getResult() != null &&
+                       !layoutExplore.isShowTiles();
+            }
+        });
+
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.33"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
 
     /**
      * Creates the help menu
@@ -705,6 +792,52 @@ public class MainWindow implements IView {
 
         items.add(new MainMenuSeparator());
 
+        List<MainMenuItem> subset = new ArrayList<MainMenuItem>();
+
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.1"), //$NON-NLS-1$
+                                   controller.getResources().getImage("page_white.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetNone(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+        
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.2"), //$NON-NLS-1$
+                                   controller.getResources().getImage("page_white_text.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetAll(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+        
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("disk.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetFile(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+        
+        subset.add(new MainMenuItem(Resources.getMessage("SubsetDefinitionView.4"), //$NON-NLS-1$
+                                   controller.getResources().getImage("find.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionSubsetQuery(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }
+        });
+
+        items.add(new MainMenuGroup(Resources.getMessage("MainMenu.35"), subset) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
+            }  
+        });
+        
+        items.add(new MainMenuSeparator());
+        
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.25"), //$NON-NLS-1$
                                    controller.getResources().getImage("edit_settings.png"), //$NON-NLS-1$
                                    true) {

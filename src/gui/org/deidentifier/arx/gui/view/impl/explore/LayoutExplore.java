@@ -18,11 +18,15 @@
 package org.deidentifier.arx.gui.view.impl.explore;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -33,9 +37,11 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class LayoutExplore implements ILayout {
 
-    /**  TODO */
-    private final Composite root;
-
+    /** View */
+    private final Composite             root;
+    /** View */
+    private final ComponentTitledFolder folder; 
+    
     /**
      * Creates a new instance.
      *
@@ -50,7 +56,7 @@ public class LayoutExplore implements ILayout {
         root.setLayout(SWTUtil.createGridLayout(1));
  
         // Create top composite
-        ComponentTitledFolder folder = new ComponentTitledFolder(root, controller, null, "id-30", true); //$NON-NLS-1$
+        folder = new ComponentTitledFolder(root, controller, null, "id-30", true); //$NON-NLS-1$
         folder.setLayoutData(SWTUtil.createFillGridData());
         
         // Lattice
@@ -76,6 +82,12 @@ public class LayoutExplore implements ILayout {
         
         // Select
         folder.setSelection(0);
+        folder.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                controller.update(new ModelEvent(LayoutExplore.this, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+        });
 
         // Create bottom composite
         final Composite bottom = new Composite(root, SWT.NONE);
@@ -88,5 +100,50 @@ public class LayoutExplore implements ILayout {
         new ViewFilter(bottom, controller);
         new ViewClipboard(bottom, controller);
         new ViewProperties(bottom, controller);
+    }
+
+    /**
+     * Returns which view is active
+     * @return
+     */
+    public boolean isShowLattice() {
+        return folder.getSelectionIndex() == 0;
+    }
+    
+    /**
+     * Returns which view is active
+     * @return
+     */
+    public boolean isShowList() {
+        return folder.getSelectionIndex() == 1;
+    }
+    
+    /**
+     * Returns which view is active
+     * @return
+     */
+    public boolean isShowTiles() {
+        return folder.getSelectionIndex() == 2;
+    }
+
+    /**
+     * Shows the according view
+     */
+    public void showLattice() {
+        folder.setSelection(0);
+    }
+
+    /**
+     * Shows the according view
+     */
+    public void showList() {
+        folder.setSelection(1);
+    }
+    
+    /**
+     * Shows the according view
+     */
+    public void showTiles() {
+        folder.setSelection(2);
     }
 }
