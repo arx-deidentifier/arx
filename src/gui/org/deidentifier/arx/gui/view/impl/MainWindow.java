@@ -835,6 +835,17 @@ public class MainWindow implements IView {
                 return model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null;
             }  
         });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.37"), //$NON-NLS-1$
+                                   controller.getResources().getImage("apply.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionApplySelectedTransformation(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getResult() != null && model.getSelectedNode() != null;
+            }
+        });
         
         items.add(new MainMenuSeparator());
         

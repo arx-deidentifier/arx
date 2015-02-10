@@ -221,34 +221,34 @@ public class MainToolBar extends AbstractMenu {
     }
 
     /** Static offset. */
-    private static final int OFFSET = 10;
+    private static final int     OFFSET    = 10;
 
     /** Text. */
-    private String           tooltip;
+    private String               tooltip;
 
     /** State. */
-    private Model            model;
-    
+    private Model                model;
+
     /** State. */
-    private List<ToolItem>   toolitems;
+    private final List<ToolItem> toolitems = new ArrayList<ToolItem>();
 
     /** Widget. */
-    private ToolBar          toolbar;
-    
+    private ToolBar              toolbar;
+
     /** Widget. */
-    private Label            labelTransformations;
-    
+    private Label                labelTransformations;
+
     /** Widget. */
-    private Label            labelApplied;
-    
+    private Label                labelApplied;
+
     /** Widget. */
-    private Label            labelSelected;
-    
+    private Label                labelSelected;
+
     /** Widget. */
-    private Composite        infoComposite;
-    
+    private Composite            infoComposite;
+
     /** Widget. */
-    private ToolItem         infoItem;
+    private ToolItem             infoItem;
 
     /**
      * Creates a new instance.
@@ -375,6 +375,57 @@ public class MainToolBar extends AbstractMenu {
         }
     }
 
+    /**
+     * Creates all items
+     * @param toolbar2
+     * @param items
+     */
+    private void createItems(ToolBar toolbar, List<MainMenuItem> items) {
+
+        // For each item
+        for (final MainMenuItem item : items) {
+
+            // Skip items that are not buttons
+            if (!item.isButton()) {
+                continue;
+            }
+            
+            // Create group
+            if (item instanceof MainMenuGroup) {
+
+                MainMenuGroup group = (MainMenuGroup) item;
+                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                createItems(toolbar, group.getItems());
+                menuItem.setEnabled(false);
+                menuItem.setData(item);
+                this.toolitems.add(menuItem);
+                
+            // Create separator
+            } else if (item instanceof MainMenuSeparator) {
+                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                this.toolitems.add(menuItem);
+
+                // Create item
+            } else {
+
+                ToolItem menuItem = new ToolItem(toolbar, SWT.PUSH);
+                menuItem.setToolTipText(item.getLabel());
+                if (item.getImage() != null) {
+                    menuItem.setImage(item.getImage());
+                }
+                menuItem.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        item.action(getController());
+                    }
+                });
+                menuItem.setData(item);
+                menuItem.setEnabled(false);
+                this.toolitems.add(menuItem);
+            }
+        }
+    }
+
     private void createLabels() {
 
         // Add status labels
@@ -473,7 +524,7 @@ public class MainToolBar extends AbstractMenu {
         this.labelApplied.setToolTipText(tooltip);
         this.labelTransformations.setToolTipText(tooltip);
     }
-
+    
     @Override
     protected void update(Model model) {
 
@@ -489,58 +540,5 @@ public class MainToolBar extends AbstractMenu {
                 item.setEnabled(mItem == null || mItem.isEnabled(model));
             }
         }        
-    }
-    
-    /**
-     * Creates all items
-     * @param toolbar2
-     * @param items
-     */
-    private void createItems(ToolBar toolbar, List<MainMenuItem> items) {
-        
-        this.toolitems = new ArrayList<ToolItem>();
-
-        // For each item
-        for (final MainMenuItem item : items) {
-
-            // Skip items that are not buttons
-            if (!item.isButton()) {
-                continue;
-            }
-            
-            // Create group
-            if (item instanceof MainMenuGroup) {
-
-                MainMenuGroup group = (MainMenuGroup) item;
-                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
-                createItems(toolbar, group.getItems());
-                menuItem.setEnabled(false);
-                menuItem.setData(item);
-                this.toolitems.add(menuItem);
-                
-            // Create separator
-            } else if (item instanceof MainMenuSeparator) {
-                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
-                this.toolitems.add(menuItem);
-
-                // Create item
-            } else {
-
-                ToolItem menuItem = new ToolItem(toolbar, SWT.PUSH);
-                menuItem.setToolTipText(item.getLabel());
-                if (item.getImage() != null) {
-                    menuItem.setImage(item.getImage());
-                }
-                menuItem.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(final SelectionEvent e) {
-                        item.action(getController());
-                    }
-                });
-                menuItem.setData(item);
-                menuItem.setEnabled(false);
-                this.toolitems.add(menuItem);
-            }
-        }
     }
 }
