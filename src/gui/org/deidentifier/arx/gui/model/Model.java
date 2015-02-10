@@ -47,6 +47,17 @@ import org.deidentifier.arx.metric.MetricDescription;
  * @author Fabian Prasser
  */
 public class Model implements Serializable {
+    
+    /**
+     * The currently selected perspective
+     * @author Fabian Prasser
+     *
+     */
+    public static enum Perspective {
+        CONFIGURATION,
+        EXPLORATION,
+        ANALYSIS
+    }
 
     /** SVUID. */
     private static final long                     serialVersionUID                = -7669920657919151279L;
@@ -75,6 +86,9 @@ public class Model implements Serializable {
     
     /** The clipboard. */
     private transient ModelClipboard              clipboard                       = null;
+    
+    /** The perspective */
+    private transient Perspective                 perspective                     = Perspective.CONFIGURATION;
 
 
     /* *****************************************
@@ -660,6 +674,16 @@ public class Model implements Serializable {
 	}
 
 	/**
+     * @return the perspective
+     */
+    public Perspective getPerspective() {
+        if (perspective == null) {
+            perspective = Perspective.CONFIGURATION;
+        }
+        return perspective;
+    }
+	
+	/**
      * Returns the current query.
      *
      * @return
@@ -676,7 +700,7 @@ public class Model implements Serializable {
 	public ARXResult getResult() {
 		return result;
 	}
-	
+
 	/**
      * Returns the currently selected attribute.
      *
@@ -686,7 +710,7 @@ public class Model implements Serializable {
 		return selectedAttribute;
 	}
 
-	/**
+    /**
      * Returns the selected transformation.
      *
      * @return
@@ -694,8 +718,8 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-
-    /**
+    
+	/**
      * Returns the separator.
      *
      * @return
@@ -703,7 +727,7 @@ public class Model implements Serializable {
 	public char getSeparator() {
 		return separator;
 	}
-    
+	
 	/**
      * Returns the according parameter.
      *
@@ -712,8 +736,8 @@ public class Model implements Serializable {
 	public double getSnapshotSizeDataset() {
 		return snapshotSizeDataset;
 	}
-	
-	/**
+
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -731,7 +755,7 @@ public class Model implements Serializable {
         return this.subsetOrigin;
     }
 
-    /**
+	/**
      * Returns the t-closeness model.
      *
      * @return
@@ -785,7 +809,7 @@ public class Model implements Serializable {
 		return modified;
 	}
 
-	/**
+    /**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
@@ -793,7 +817,7 @@ public class Model implements Serializable {
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
-
+    
     /**
      * Returns whether a sensitive attribute is selected.
      *
@@ -802,8 +826,8 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-    
-    /**
+
+	/**
      * Returns whether visualization is enabled.
      *
      * @return
@@ -815,7 +839,7 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-
+	
 	/**
      * Resets the model.
      */
@@ -827,7 +851,7 @@ public class Model implements Serializable {
 		output = null;
 		result = null;
 	}
-	
+
 	/**
      * Returns the last two selected attributes.
      */
@@ -858,8 +882,8 @@ public class Model implements Serializable {
 					attribute));
 		}
 	}
-
-	/**
+    
+    /**
      * Sets the anonymizer.
      *
      * @param anonymizer
@@ -868,8 +892,8 @@ public class Model implements Serializable {
 		setModified();
 		this.anonymizer = anonymizer;
 	}
-    
-    /**
+
+	/**
      * Enables debugging.
      *
      * @param value
@@ -928,7 +952,7 @@ public class Model implements Serializable {
 		this.inputBytes = inputBytes;
 	}
 
-	/**
+    /**
      * Sets the input config.
      *
      * @param config
@@ -939,7 +963,7 @@ public class Model implements Serializable {
 		this.metricDescription = config.getMetric().getDescription();
 	}
 
-    /**
+	/**
      * Sets the project locale.
      *
      * @param locale Null for default locale
@@ -1013,7 +1037,7 @@ public class Model implements Serializable {
 		this.name = name;
 		setModified();
 	}
-
+	
 	/**
      * Sets a filter.
      *
@@ -1049,7 +1073,7 @@ public class Model implements Serializable {
 	public void setOutputConfig(final ModelConfiguration config) {
 		outputConfig = config;
 	}
-	
+
 	/**
      * Sets the project path.
      *
@@ -1058,6 +1082,13 @@ public class Model implements Serializable {
 	public void setPath(final String path) {
 		this.path = path;
 	}
+
+	/**
+     * @param perspective the perspective to set
+     */
+    public void setPerspective(Perspective perspective) {
+        this.perspective = perspective;
+    }
 
 	/**
      * Sets the query.
@@ -1090,7 +1121,7 @@ public class Model implements Serializable {
 		modified = false;
 	}
 
-	/**
+    /**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1113,7 +1144,7 @@ public class Model implements Serializable {
 
 		setModified();
 	}
-
+    
 	/**
      * Sets the selected node.
      *
@@ -1123,7 +1154,7 @@ public class Model implements Serializable {
 		selectedNode = node;
 		setModified();
 	}
-
+    
     /**
      * Sets the separator.
      *
@@ -1133,7 +1164,7 @@ public class Model implements Serializable {
 		this.separator = separator;
 	}
     
-	/**
+    /**
      * 
      *
      * @param snapshotSize
@@ -1142,8 +1173,8 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-    
-    /**
+
+	/**
      * Sets the according parameter.
      *
      * @param snapshotSize
@@ -1162,7 +1193,7 @@ public class Model implements Serializable {
         }
     }
 
-	/**
+    /**
      * Sets how the subset was defined.
      *
      * @param origin
@@ -1170,7 +1201,7 @@ public class Model implements Serializable {
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
-    
+
     /**
      * Sets the execution time of the last anonymization process.
      *

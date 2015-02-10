@@ -86,7 +86,10 @@ public class ModelEvent {
         VISUALIZATION,
         
         /**  TODO */
-        ATTRIBUTE_VALUE
+        ATTRIBUTE_VALUE,
+
+        /**  TODO */
+        PERSPECTIVE
     }
 
     /** The part of the model that has changed. */
