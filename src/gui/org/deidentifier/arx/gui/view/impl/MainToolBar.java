@@ -398,12 +398,12 @@ public class MainToolBar extends AbstractMenu {
                 createItems(toolbar, group.getItems());
                 menuItem.setEnabled(false);
                 menuItem.setData(item);
-                this.toolitems.add(menuItem);
+                if (!this.toolitems.isEmpty()) this.toolitems.add(menuItem);
                 
             // Create separator
             } else if (item instanceof MainMenuSeparator) {
                 ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
-                this.toolitems.add(menuItem);
+                if (!this.toolitems.isEmpty()) this.toolitems.add(menuItem);
 
                 // Create item
             } else {
