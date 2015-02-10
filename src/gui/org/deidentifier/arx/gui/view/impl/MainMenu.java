@@ -52,9 +52,12 @@ public class MainMenu extends AbstractMenu {
 
         // Create Menu
         this.menu = new Menu(shell, SWT.BAR);
-
+        
         // Create items
         this.createItems(menu, items);
+
+        // Set menu bar
+        shell.setMenuBar(this.menu);
         
         // Initialize
         this.update(new ModelEvent(this, ModelPart.MODEL, null));
