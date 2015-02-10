@@ -31,6 +31,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.Model.Perspective;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -116,7 +117,7 @@ public class MainWindow implements IView {
 
         // Init
         this.display = display;
-        shell = new Shell(display);
+        this.shell = new Shell(display);
 
         // Build controller
         controller = new Controller(this);
@@ -143,7 +144,8 @@ public class MainWindow implements IView {
         });
 
         // Build menu
-        menu = new MainMenu(shell, controller);
+        List<MainMenuItem> items = getMenu();
+        menu = new MainMenu(shell, controller, items);
         new MainToolBar(shell, controller);
 
         // Create shell
@@ -165,7 +167,19 @@ public class MainWindow implements IView {
         root.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent arg0) {
+                switch (root.getSelectionIndex()) {
+                    case 0: 
+                        controller.getModel().setPerspective(Perspective.CONFIGURATION);
+                        break;
+                    case 1: 
+                        controller.getModel().setPerspective(Perspective.EXPLORATION);
+                        break;
+                    case 2: 
+                        controller.getModel().setPerspective(Perspective.ANALYSIS);
+                        break;
+                }
                 controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
             }
         });
         
@@ -581,5 +595,221 @@ public class MainWindow implements IView {
             root.setEnabled(true);
             menu.update(event);
         }
+    }
+    
+    /**
+     * Creates the global menu
+     * @return
+     */
+    private List<MainMenuItem> getMenu() {
+        
+        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
+
+        menu.add(getMenuFile());
+        menu.add(getEditMenu());
+        menu.add(getHelpMenu());
+        
+        return menu;
+    }
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getHelpMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
+                                   controller.getResources().getImage("help.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
+                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
+                                   controller.getResources().getImage("information.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the edit menu
+     * @return
+     */
+    private MainMenuItem getEditMenu() {
+        
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_anonymize.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.23"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditCreateHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.30"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_find_replace.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionFindReplace(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null;
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.31"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_audit_trail.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionShowAuditTrail(); }
+            public boolean isEnabled(Model model) { 
+                return model != null;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.25"), //$NON-NLS-1$
+                                   controller.getResources().getImage("edit_settings.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditSettings(); }
+            public boolean isEnabled(Model model) { 
+                return model != null;
+            }
+        });
+
+        return new MainMenuGroup(Resources.getMessage("MainMenu.1"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the file menu
+     * @return
+     */
+    private MainMenuItem getMenuFile() {
+        
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.3"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_new.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileNew(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.5"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_load.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileOpen(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.4"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_save.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileSave(); }
+            public boolean isEnabled(Model model) { return model != null; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.9"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_save_as.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileSaveAs(); }
+            public boolean isEnabled(Model model) { return model != null; }
+        });
+        
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.11"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_import_data.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileImportData(); }
+            public boolean isEnabled(Model model) { return model != null; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.13"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_export_data.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExportData(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getOutput() != null;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.15"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_import_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileImportHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null;
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.17"), //$NON-NLS-1$
+                                   controller.getResources().getImage("file_export_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExportHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null;
+            }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.19"), //$NON-NLS-1$
+                                   controller.getResources().getImage("exit.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExit(); }
+            public boolean isEnabled(Model model) { 
+                return true;
+            }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.0"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
     }
 }

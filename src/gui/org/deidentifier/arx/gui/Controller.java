@@ -1339,6 +1339,14 @@ public class Controller implements IView {
     }
 
     /**
+     * Returns the current model
+     * @return
+     */
+    public Model getModel() {
+        return model;
+    }
+    
+    /**
      * Returns the resources.
      *
      * @return
