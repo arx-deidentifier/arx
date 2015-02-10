@@ -643,7 +643,9 @@ public class MainWindow implements IView {
                                    controller.getResources().getImage("information.png"), //$NON-NLS-1$
                                    true) {
             public void action(Controller controller) { controller.actionMenuHelpDebug(); }
-            public boolean isEnabled(Model model) { return true; }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.isDebugEnabled(); 
+            }
         });
         
         return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
