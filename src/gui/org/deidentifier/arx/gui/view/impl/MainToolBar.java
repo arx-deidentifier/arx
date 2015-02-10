@@ -394,16 +394,21 @@ public class MainToolBar extends AbstractMenu {
             if (item instanceof MainMenuGroup) {
 
                 MainMenuGroup group = (MainMenuGroup) item;
-                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                if (!this.toolitems.isEmpty()) { 
+                    ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                    menuItem.setEnabled(false);
+                    menuItem.setData(item);
+                    this.toolitems.add(menuItem);
+                }
                 createItems(toolbar, group.getItems());
-                menuItem.setEnabled(false);
-                menuItem.setData(item);
-                if (!this.toolitems.isEmpty()) this.toolitems.add(menuItem);
                 
             // Create separator
             } else if (item instanceof MainMenuSeparator) {
-                ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
-                if (!this.toolitems.isEmpty()) this.toolitems.add(menuItem);
+                
+                if (!this.toolitems.isEmpty()) { 
+                    ToolItem menuItem = new ToolItem(toolbar, SWT.SEPARATOR);
+                    this.toolitems.add(menuItem);
+                }
 
                 // Create item
             } else {
