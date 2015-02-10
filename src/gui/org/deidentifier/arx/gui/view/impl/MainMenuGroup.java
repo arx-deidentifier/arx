@@ -37,7 +37,7 @@ public abstract class MainMenuGroup extends MainMenuItem {
      * @param items
      */
     public MainMenuGroup(String label, List<MainMenuItem> items) {
-        super(label, null, false);
+        super(label, null, true);
         this.items = items;
     }
     

@@ -503,6 +503,11 @@ public class MainToolBar extends AbstractMenu {
         // For each item
         for (final MainMenuItem item : items) {
 
+            // Skip items that are not buttons
+            if (!item.isButton()) {
+                continue;
+            }
+            
             // Create group
             if (item instanceof MainMenuGroup) {
 
