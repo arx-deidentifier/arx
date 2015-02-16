@@ -129,6 +129,7 @@ public class CSVDataInput extends CSVAbstractInput {
         while (column < (columns - 1)) {
             index = line.indexOf(separator, offset);
             if (index < 0) {
+                System.out.println(line);
                 throw new IOException("Each line must have at least ("+tuple.length+") columns");
             }
             tuple[column++] = line.substring(offset, index);
