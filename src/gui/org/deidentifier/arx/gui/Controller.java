@@ -424,8 +424,16 @@ public class Controller implements IView {
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
+            
 
-            // Update view
+            // Create filter
+            ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
+                                                         model.getInitialNodesInViewer());
+            filter.initialize(result);
+            model.setNodeFilter(filter);
+            
+            // Update model
+            update(new ModelEvent(this, ModelPart.FILTER, filter));
             update(new ModelEvent(this, ModelPart.RESULT, result));
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {

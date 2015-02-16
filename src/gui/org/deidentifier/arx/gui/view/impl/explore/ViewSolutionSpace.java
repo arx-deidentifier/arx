@@ -222,14 +222,14 @@ public abstract class ViewSolutionSpace implements IView {
             selectedNode = (ARXNode) event.data;
             eventNodeSelected();
         } else if (event.part == ModelPart.RESULT) {
-            if (model != null && model.getResult() != null &&
-                model.getResult().getGlobalOptimum() != null) {
-                optimum = model.getResult().getGlobalOptimum();
+            ARXResult result = (ARXResult)event.data;
+            if (model != null && result != null && result.getGlobalOptimum() != null) {
+                optimum = result.getGlobalOptimum();
             } else {
                 optimum = null;
             }
-            if (model!=null && !isTooLarge(model.getResult(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
-                eventResultChanged(model.getResult());
+            if (model!=null && !isTooLarge(result, model.getNodeFilter(), model.getMaxNodesInViewer())) {
+                eventResultChanged(result);
             }
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
