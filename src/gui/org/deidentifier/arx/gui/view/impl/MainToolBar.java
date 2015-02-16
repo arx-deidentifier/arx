@@ -262,7 +262,7 @@ public class MainToolBar extends AbstractMenu {
         toolbar.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 
         // Create items
-        this.createItems(toolbar, items);
+        this.createItems(toolbar, items, "");
         this.createLabels();
 
         // Pack
@@ -377,10 +377,11 @@ public class MainToolBar extends AbstractMenu {
 
     /**
      * Creates all items
-     * @param toolbar2
+     * @param toolbar
      * @param items
+     * @param label
      */
-    private void createItems(ToolBar toolbar, List<MainMenuItem> items) {
+    private void createItems(ToolBar toolbar, List<MainMenuItem> items, String label) {
 
         // For each item
         for (final MainMenuItem item : items) {
@@ -400,7 +401,8 @@ public class MainToolBar extends AbstractMenu {
                     menuItem.setData(item);
                     this.toolitems.add(menuItem);
                 }
-                createItems(toolbar, group.getItems());
+                
+                createItems(toolbar, group.getItems(), label.length() != 0 ? label + " -> " + group.getLabel() : group.getLabel());
                 
             // Create separator
             } else if (item instanceof MainMenuSeparator) {
@@ -414,7 +416,7 @@ public class MainToolBar extends AbstractMenu {
             } else {
 
                 ToolItem menuItem = new ToolItem(toolbar, SWT.PUSH);
-                menuItem.setToolTipText(item.getLabel());
+                menuItem.setToolTipText(label.length() != 0 ? label + " -> " + item.getLabel() : item.getLabel());
                 if (item.getImage() != null) {
                     menuItem.setImage(item.getImage());
                     SWTUtil.createDisabledImage(menuItem);
