@@ -32,7 +32,7 @@ import java.io.InputStreamReader;
  */
 public class CSVDataInput extends CSVAbstractInput {
 
-    /** The number of columns in the dataset. */
+    /** The number of columns in the data set. */
     private int                  columns     = -1;
 
     /** A reader. */
@@ -158,9 +158,31 @@ public class CSVDataInput extends CSVAbstractInput {
                 index = line.indexOf(separator, offset);
             }
             
-            // Store
-            tuple[column++] = line.substring(offset, index);
+            // Extract 
+            String value = line.substring(offset, index);
             offset = index + 1;
+            
+            // If starts with an escape character, read on
+            if (value.length() > 0 && value.charAt(0) == '\"' && value.charAt(value.length() - 1) != '\"') {
+                StringBuilder builder = new StringBuilder();
+                builder.append(value);
+                while (builder.charAt(builder.length() - 1) != '\"') {
+                    index = line.indexOf(separator, offset);
+                    while (index < 0) {
+                        offset = 0;
+                        line = readLine();
+                        if (line == null) { 
+                            throw new IOException("Schema mismatch: too few columns"); 
+                        }
+                        index = line.indexOf(separator, offset);
+                    }
+                    builder.append(line.substring(offset, index));
+                    offset = index + 1;
+                }
+            }
+            
+            // Store
+            tuple[column++] = value;
         }
         
         // Store remainder
