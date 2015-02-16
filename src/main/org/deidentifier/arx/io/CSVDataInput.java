@@ -103,22 +103,41 @@ public class CSVDataInput extends CSVAbstractInput {
         return result;
     }
 
+    /**
+     * Reads a line from the input
+     * @return
+     * @throws IOException
+     */
+    private String readLine() throws IOException {
+        
+        // Read line, ignoring empty lines
+        String line = "";
+        while (line != null && line.equals("")) {
+            line = reader.readLine();
+        }
+
+        // Extract number of columns
+        if (columns == -1) {
+            columns = countColumns(line);
+        }
+
+        // Return
+        return line;
+    }
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.io.CSVAbstractInput#readRow()
      */
     @Override
     protected String[] readRow() throws IOException {
 
-        // Read
-        final String line = reader.readLine();
+        // Read a line
+        String line = readLine();
+        
+        // Check for EOF
         if (line == null) {
             reader.close();
             return null;
-        }
-
-        // Extract num columns
-        if (columns == -1) {
-            columns = countColumns(line);
         }
 
         // Extract tuple
@@ -127,15 +146,30 @@ public class CSVDataInput extends CSVAbstractInput {
         int offset = 0;
         int index = 0;
         while (column < (columns - 1)) {
+            
+            // Read the next line in case of line breaks
             index = line.indexOf(separator, offset);
-            if (index < 0) {
-                System.out.println(line);
-                throw new IOException("Each line must have at least ("+tuple.length+") columns");
+            while (index < 0) {
+                offset = 0;
+                line = readLine();
+                if (line == null) {
+                    throw new IOException("Schema mismatch: too few columns");
+                }
+                index = line.indexOf(separator, offset);
             }
+            
+            // Store
             tuple[column++] = line.substring(offset, index);
             offset = index + 1;
         }
+        
+        // Store remainder
         tuple[column] = line.substring(offset);
+        
+        // Check if end of line equals end of tuple
+        if (line.indexOf(separator, offset) >= 0) {
+            throw new IOException("Schema mismatch: too few columns");
+        }
 
         // Return
         return tuple;

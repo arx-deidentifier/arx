@@ -112,15 +112,6 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     }
 
     /**
-     * @param containsHeader
-     *            {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
-    }
-
-    /**
      * Sets the indexes based on the header.
      *
      * @param row
@@ -142,5 +133,14 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
                 }
             }
         }
+    }
+
+    /**
+     * @param containsHeader
+     *            {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
     }
 }

@@ -35,9 +35,6 @@ import org.deidentifier.arx.DataType;
  */
 abstract public class ImportAdapter implements Iterator<String[]> {
     
-    /** The header. */
-    protected String[] header;
-
     /**
      * Factory method
      * 
@@ -63,6 +60,9 @@ abstract public class ImportAdapter implements Iterator<String[]> {
             throw new IllegalArgumentException("No adapter defined for this type of configuration");
         }
     }
+
+    /** The header. */
+    protected String[] header;
 
     /** Array of datatypes describing the columns. */
     protected DataType<?>[]     dataTypes;
@@ -101,13 +101,6 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     }
 
     /**
-     * Returns the percentage of data has has already been imported.
-     *
-     * @return Percentage of data already imported, 0 - 100
-     */
-    public abstract int getProgress();
-    
-    /**
      * Returns the header.
      *
      * @return
@@ -115,6 +108,13 @@ abstract public class ImportAdapter implements Iterator<String[]> {
     public String[] getHeader() {
         return header;
     }
+    
+    /**
+     * Returns the percentage of data has has already been imported.
+     *
+     * @return Percentage of data already imported, 0 - 100
+     */
+    public abstract int getProgress();
 
     /**
      * Returns an array with datatypes of columns that should be imported.

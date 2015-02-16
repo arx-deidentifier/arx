@@ -44,6 +44,26 @@ public abstract class CSVAbstractInput {
     }
 
     /**
+     * Closes the input.
+     *
+     * @throws IOException
+     */
+    public abstract void close() throws IOException;
+
+    /**
+     * Returns an iterator.
+     *
+     * @return
+     * @throws IOException
+     */
+    public Iterator<String[]> iterator() throws IOException {
+        if (iterator == null) {
+            iterator = buildIterator();
+        }
+        return iterator;
+    }
+
+    /**
      * Builds the iterator.
      *
      * @return
@@ -75,26 +95,6 @@ public abstract class CSVAbstractInput {
                 throw new UnsupportedOperationException();
             }
         };
-    }
-
-    /**
-     * Closes the input.
-     *
-     * @throws IOException
-     */
-    public abstract void close() throws IOException;
-
-    /**
-     * Returns an iterator.
-     *
-     * @return
-     * @throws IOException
-     */
-    public Iterator<String[]> iterator() throws IOException {
-        if (iterator == null) {
-            iterator = buildIterator();
-        }
-        return iterator;
     }
 
     /**
