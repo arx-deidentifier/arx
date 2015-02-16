@@ -215,6 +215,7 @@ public class CSVDataInput extends CSVAbstractInput {
                     builder.append(line.substring(offset, index));
                     offset = index + 1;
                 }
+                value = builder.toString();
             }
             
             // Store
@@ -222,10 +223,12 @@ public class CSVDataInput extends CSVAbstractInput {
         }
         
         // Store remainder
-        tuple[column] = line.substring(offset);
+        String value = line.substring(offset);
+        tuple[column] = value;
         
         // Check if end of line equals end of tuple
-        if (line.indexOf(separator, offset) >= 0) {
+        if (value.indexOf(separator) >= 0 && !(value.charAt(0) == delimiter && value.charAt(value.length()-1) == delimiter)) {
+            
             throw new IOException("Schema mismatch: too many columns");
         }
 
