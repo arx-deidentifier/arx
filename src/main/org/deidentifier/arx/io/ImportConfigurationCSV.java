@@ -29,6 +29,9 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
 
     /** Character that separates the columns from each other. */
     private char    separator;
+    
+    /** Character that delimits strings. */
+    private char    delimiter;
 
     /**
      * Indicates whether first row contains header (names of columns).
@@ -50,6 +53,26 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
 
         setFileLocation(fileLocation);
         this.separator = separator;
+        this.delimiter = '\"';
+        this.containsHeader = containsHeader;
+
+    }
+    
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param separator {@link #separator}
+     * @param containsHeader {@link #containsHeader}
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char separator,
+                                  char delimiter,
+                                  boolean containsHeader) {
+
+        setFileLocation(fileLocation);
+        this.separator = separator;
+        this.delimiter = delimiter;
         this.containsHeader = containsHeader;
 
     }
@@ -105,12 +128,19 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     }
 
     /**
+     * @return {@link #delimiter}
+     */
+    public char getDelimiter() {
+        return delimiter;
+    }
+
+    /**
      * @return {@link #separator}
      */
     public char getSeparator() {
         return separator;
     }
-
+    
     /**
      * Sets the indexes based on the header.
      *

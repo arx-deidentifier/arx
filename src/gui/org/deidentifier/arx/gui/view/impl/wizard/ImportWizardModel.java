@@ -77,6 +77,9 @@ public class ImportWizardModel {
     /** Separator for columns (in case of CSV import). */
     private char                          csvSeparator;
 
+    /** Separator for columns (in case of CSV import). */
+    private char                          csvDelimiter;
+
     /**
      * Indicates whether first row contains header
      * 
@@ -118,10 +121,16 @@ public class ImportWizardModel {
     public static final int               previewDataMaxLines    = 25;
 
     /**
+     * @return the csvDelimiter
+     */
+    public char getCsvDelimiter() {
+        return csvDelimiter;
+    }
+
+    /**
      * @return {@link #csvSeparator}
      */
     public char getCsvSeparator() {
-
         return csvSeparator;
     }
 
@@ -249,6 +258,13 @@ public class ImportWizardModel {
     public List<ImportWizardModelColumn> getWizardColumns() {
 
         return wizardColumns;
+    }
+
+    /**
+     * @param csvDelimiter the csvDelimiter to set
+     */
+    public void setCsvDelimiter(char csvDelimiter) {
+        this.csvDelimiter = csvDelimiter;
     }
 
     /**
