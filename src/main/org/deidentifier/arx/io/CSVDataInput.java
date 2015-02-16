@@ -49,7 +49,19 @@ public class CSVDataInput extends CSVAbstractInput {
      * @throws IOException
      */
     public CSVDataInput(final File file, final char separator) throws IOException {
-        super(separator);
+        super(separator, '\"');
+        reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file
+     * @param separator
+     * @throws IOException
+     */
+    public CSVDataInput(final File file, final char separator, final char stringdelimiter) throws IOException {
+        super(separator, stringdelimiter);
         reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
     }
 
@@ -61,7 +73,19 @@ public class CSVDataInput extends CSVAbstractInput {
      * @throws IOException
      */
     public CSVDataInput(final InputStream stream, final char separator) throws IOException {
-        super(separator);
+        super(separator, '\"');
+        reader = new BufferedReader(new InputStreamReader(stream), BUFFER_SIZE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param separator
+     * @throws IOException
+     */
+    public CSVDataInput(final InputStream stream, final char separator, final char stringdelimiter) throws IOException {
+        super(separator, stringdelimiter);
         reader = new BufferedReader(new InputStreamReader(stream), BUFFER_SIZE);
     }
 
@@ -73,7 +97,19 @@ public class CSVDataInput extends CSVAbstractInput {
      * @throws IOException
      */
     public CSVDataInput(final String file, final char separator) throws IOException {
-        super(separator);
+        super(separator, '\"');
+        reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file
+     * @param separator
+     * @throws IOException
+     */
+    public CSVDataInput(final String file, final char separator, final char stringdelimiter) throws IOException {
+        super(separator, stringdelimiter);
         reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
     }
 
@@ -163,10 +199,10 @@ public class CSVDataInput extends CSVAbstractInput {
             offset = index + 1;
             
             // If starts with an escape character, read on
-            if (value.length() > 0 && value.charAt(0) == '\"' && value.charAt(value.length() - 1) != '\"') {
+            if (value.length() > 0 && value.charAt(0) == delimiter && value.charAt(value.length() - 1) != delimiter) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(value);
-                while (builder.charAt(builder.length() - 1) != '\"') {
+                while (builder.charAt(builder.length() - 1) != delimiter) {
                     index = line.indexOf(separator, offset);
                     while (index < 0) {
                         offset = 0;

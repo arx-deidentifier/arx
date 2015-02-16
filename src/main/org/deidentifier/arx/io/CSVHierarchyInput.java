@@ -47,6 +47,18 @@ public class CSVHierarchyInput {
     }
 
     /**
+     * Create from file.
+     *
+     * @param file
+     * @param separator
+     * @param stringdelimiter
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final File file, final char separator, final char stringdelimiter) throws IOException {
+        load(new CSVDataInput(file, separator, stringdelimiter));
+    }
+
+    /**
      * Create from stream.
      *
      * @param stream
@@ -58,6 +70,18 @@ public class CSVHierarchyInput {
     }
 
     /**
+     * Create from stream.
+     *
+     * @param stream
+     * @param separator
+     * @param stringdelimiter
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final InputStream stream, final char separator, final char stringdelimiter) throws IOException {
+        load(new CSVDataInput(stream, separator, stringdelimiter));
+    }
+
+    /**
      * Create from path.
      *
      * @param file
@@ -66,6 +90,18 @@ public class CSVHierarchyInput {
      */
     public CSVHierarchyInput(final String file, final char separator) throws IOException {
         load(new CSVDataInput(file, separator));
+    }
+
+    /**
+     * Create from path.
+     *
+     * @param file
+     * @param separator
+     * @param stringdelimiter
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final String file, final char separator, final char stringdelimiter) throws IOException {
+        load(new CSVDataInput(file, separator, stringdelimiter));
     }
 
     /**

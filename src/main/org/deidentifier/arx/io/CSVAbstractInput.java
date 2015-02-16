@@ -34,13 +34,18 @@ public abstract class CSVAbstractInput {
     /** The separator. */
     protected final char         separator;
 
+    /** The separator. */
+    protected final char         delimiter;
+
     /**
      * Constructor.
      *
      * @param separator
+     * @param stringdelimiter
      */
-    public CSVAbstractInput(final char separator) {
+    public CSVAbstractInput(final char separator, final char stringdelimiter) {
         this.separator = separator;
+        this.delimiter = stringdelimiter;
     }
 
     /**
