@@ -110,9 +110,9 @@ public class CSVDataInput extends CSVAbstractInput {
      */
     private String readLine() throws IOException {
         
-        // Read line, ignoring empty lines
+        // Read a line, ignoring empty lines
         String line = "";
-        while (line != null && line.equals("")) {
+        while (line != null && line.length()==0) {
             line = reader.readLine();
         }
 
@@ -168,7 +168,7 @@ public class CSVDataInput extends CSVAbstractInput {
         
         // Check if end of line equals end of tuple
         if (line.indexOf(separator, offset) >= 0) {
-            throw new IOException("Schema mismatch: too few columns");
+            throw new IOException("Schema mismatch: too many columns");
         }
 
         // Return
