@@ -82,7 +82,7 @@ public class SWTUtil {
      * @param image
      */
     public static void createDisabledImage(ToolItem item) {
-        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_DISABLE));
+        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
     }
 
     /**
