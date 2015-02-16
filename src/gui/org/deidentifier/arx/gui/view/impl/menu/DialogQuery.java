@@ -582,16 +582,22 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
         });
         
         Button clear = new Button(actions, SWT.PUSH);
-        clear.setText("Clear");
-        clear.setToolTipText("Clear");
+        clear.setText("Clear selection");
+        clear.setToolTipText("Clear selection");
         clear.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         clear.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
-                text.setText("");
-                highlight();
-                parse();
-                updateButtons();
-            }
+                Point selection = text.getSelectionRange();
+                StringBuilder builder = new StringBuilder();
+                if (selection.y != 0) {
+                    builder.append(text.getTextRange(0, selection.x));
+                    builder.append(text.getTextRange(selection.x + selection.y, text.getText().length() - (selection.x + selection.y)));
+                    text.setText(builder.toString());
+                    highlight();
+                    parse();
+                    updateButtons();
+                }
+            }   
         });
         
         status = new Label(parent, SWT.NONE);
