@@ -417,6 +417,7 @@ public class MainToolBar extends AbstractMenu {
                 menuItem.setToolTipText(item.getLabel());
                 if (item.getImage() != null) {
                     menuItem.setImage(item.getImage());
+                    SWTUtil.createDisabledImage(menuItem);
                 }
                 menuItem.addSelectionListener(new SelectionAdapter() {
                     @Override
