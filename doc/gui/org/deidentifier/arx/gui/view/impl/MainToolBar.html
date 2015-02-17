@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>MainToolBar (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
@@ -85,7 +85,12 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">org.deidentifier.arx.gui.view.impl.AbstractMenu</a></li>
+<li>
+<ul class="inheritance">
 <li>org.deidentifier.arx.gui.view.impl.MainToolBar</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -99,8 +104,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">MainToolBar</span>
-extends java.lang.Object
-implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></pre>
+extends <a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">AbstractMenu</a></pre>
 <div class="block">This class implements the global application tool bar.</div>
 </li>
 </ul>
@@ -120,8 +124,9 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainToolBar.html#MainToolBar(org.eclipse.swt.widgets.Shell, org.deidentifier.arx.gui.Controller)">MainToolBar</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;parent,
-           <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</code>
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainToolBar.html#MainToolBar(org.eclipse.swt.widgets.Shell,%20org.deidentifier.arx.gui.Controller,%20java.util.List)">MainToolBar</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;parent,
+           <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+           java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainMenuItem.html" title="class in org.deidentifier.arx.gui.view.impl">MainMenuItem</a>&gt;&nbsp;items)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
@@ -153,12 +158,23 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainToolBar.html#update(org.deidentifier.arx.gui.model.Model)">update</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainToolBar.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
 </td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.gui.view.impl.AbstractMenu">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;org.deidentifier.arx.gui.view.impl.<a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">AbstractMenu</a></h3>
+<code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html#getController()">getController</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
@@ -180,14 +196,15 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="MainToolBar(org.eclipse.swt.widgets.Shell, org.deidentifier.arx.gui.Controller)">
+<a name="MainToolBar(org.eclipse.swt.widgets.Shell, org.deidentifier.arx.gui.Controller, java.util.List)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MainToolBar</h4>
 <pre>public&nbsp;MainToolBar(org.eclipse.swt.widgets.Shell&nbsp;parent,
-           <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller)</pre>
+           <a href="../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;controller,
+           java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainMenuItem.html" title="class in org.deidentifier.arx.gui.view.impl">MainMenuItem</a>&gt;&nbsp;items)</pre>
 <div class="block">Creates a new instance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd><dd><code>controller</code> - </dd></dl>
 </li>
@@ -212,6 +229,8 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html#dispose()">dispose</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html#dispose()">dispose</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">AbstractMenu</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -227,13 +246,15 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html#reset()">reset</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html#reset()">reset</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">AbstractMenu</a></code></dd>
 </dl>
 </li>
 </ul>
 <a name="update(org.deidentifier.arx.gui.model.ModelEvent)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>update</h4>
 <pre>public&nbsp;void&nbsp;update(<a href="../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</pre>
@@ -242,6 +263,21 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.html" title="interface in org.deidentifier.arx.gui.view.def">IView</a></code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">AbstractMenu</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="update(org.deidentifier.arx.gui.model.Model)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>update</h4>
+<pre>protected&nbsp;void&nbsp;update(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model)</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html#update(org.deidentifier.arx.gui.model.Model)">update</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/AbstractMenu.html" title="class in org.deidentifier.arx.gui.view.impl">AbstractMenu</a></code></dd>
 </dl>
 </li>
 </ul>

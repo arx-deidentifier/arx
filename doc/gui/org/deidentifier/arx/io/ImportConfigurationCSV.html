@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>ImportConfigurationCSV (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -140,8 +140,16 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.htm
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#ImportConfigurationCSV(java.lang.String, char, boolean)">ImportConfigurationCSV</a></strong>(java.lang.String&nbsp;fileLocation,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#ImportConfigurationCSV(java.lang.String,%20char,%20boolean)">ImportConfigurationCSV</a></strong>(java.lang.String&nbsp;fileLocation,
                       char&nbsp;separator,
+                      boolean&nbsp;containsHeader)</code>
+<div class="block">Creates a new instance of this object.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#ImportConfigurationCSV(java.lang.String,%20char,%20char,%20boolean)">ImportConfigurationCSV</a></strong>(java.lang.String&nbsp;fileLocation,
+                      char&nbsp;separator,
+                      char&nbsp;delimiter,
                       boolean&nbsp;containsHeader)</code>
 <div class="block">Creates a new instance of this object.</div>
 </td>
@@ -180,15 +188,19 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.htm
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>char</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#getSeparator()">getSeparator</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#getDelimiter()">getDelimiter</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>char</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#getSeparator()">getSeparator</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#prepare(java.lang.String[])">prepare</a></strong>(java.lang.String[]&nbsp;row)</code>
 <div class="block">Sets the indexes based on the header.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#setContainsHeader(boolean)">setContainsHeader</a></strong>(boolean&nbsp;containsHeader)</code>&nbsp;</td>
 </tr>
@@ -231,11 +243,25 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.htm
 <a name="ImportConfigurationCSV(java.lang.String, char, boolean)">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ImportConfigurationCSV</h4>
+<pre>public&nbsp;ImportConfigurationCSV(java.lang.String&nbsp;fileLocation,
+                      char&nbsp;separator,
+                      boolean&nbsp;containsHeader)</pre>
+<div class="block">Creates a new instance of this object.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileLocation</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.html#setFileLocation(java.lang.String)"><code>ImportConfigurationFile.setFileLocation(String)</code></a></dd><dd><code>separator</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#separator"><code>separator</code></a></dd><dd><code>containsHeader</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#containsHeader"><code>containsHeader</code></a></dd></dl>
+</li>
+</ul>
+<a name="ImportConfigurationCSV(java.lang.String, char, char, boolean)">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ImportConfigurationCSV</h4>
 <pre>public&nbsp;ImportConfigurationCSV(java.lang.String&nbsp;fileLocation,
                       char&nbsp;separator,
+                      char&nbsp;delimiter,
                       boolean&nbsp;containsHeader)</pre>
 <div class="block">Creates a new instance of this object.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileLocation</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.html#setFileLocation(java.lang.String)"><code>ImportConfigurationFile.setFileLocation(String)</code></a></dd><dd><code>separator</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#separator"><code>separator</code></a></dd><dd><code>containsHeader</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#containsHeader"><code>containsHeader</code></a></dd></dl>
@@ -281,6 +307,16 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.htm
 <dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#containsHeader"><code>containsHeader</code></a></dd></dl>
 </li>
 </ul>
+<a name="getDelimiter()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDelimiter</h4>
+<pre>public&nbsp;char&nbsp;getDelimiter()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#delimiter"><code>delimiter</code></a></dd></dl>
+</li>
+</ul>
 <a name="getSeparator()">
 <!--   -->
 </a>
@@ -291,25 +327,25 @@ extends <a href="../../../../org/deidentifier/arx/io/ImportConfigurationFile.htm
 <dl><dt><span class="strong">Returns:</span></dt><dd><a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#separator"><code>separator</code></a></dd></dl>
 </li>
 </ul>
-<a name="setContainsHeader(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setContainsHeader</h4>
-<pre>public&nbsp;void&nbsp;setContainsHeader(boolean&nbsp;containsHeader)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>containsHeader</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#containsHeader"><code>containsHeader</code></a></dd></dl>
-</li>
-</ul>
 <a name="prepare(java.lang.String[])">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>prepare</h4>
 <pre>public&nbsp;void&nbsp;prepare(java.lang.String[]&nbsp;row)</pre>
 <div class="block">Sets the indexes based on the header.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - </dd></dl>
+</li>
+</ul>
+<a name="setContainsHeader(boolean)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setContainsHeader</h4>
+<pre>public&nbsp;void&nbsp;setContainsHeader(boolean&nbsp;containsHeader)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>containsHeader</code> - <a href="../../../../org/deidentifier/arx/io/ImportConfigurationCSV.html#containsHeader"><code>containsHeader</code></a></dd></dl>
 </li>
 </ul>
 </li>

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>ModelNodeFilter (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -121,7 +121,7 @@ implements java.io.Serializable</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#ModelNodeFilter(int[], int)">ModelNodeFilter</a></strong>(int[]&nbsp;maxLevels,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#ModelNodeFilter(int[],%20int)">ModelNodeFilter</a></strong>(int[]&nbsp;maxLevels,
                int&nbsp;maxNumNodesInitial)</code>
 <div class="block">Creates a new instance.</div>
 </td>
@@ -155,14 +155,14 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#allowGeneralization(int, int)">allowGeneralization</a></strong>(int&nbsp;dimension,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#allowGeneralization(int,%20int)">allowGeneralization</a></strong>(int&nbsp;dimension,
                    int&nbsp;level)</code>
 <div class="block">Allows transformations with certain generalization level to pass the filter.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#allowInformationLoss(double, double)">allowInformationLoss</a></strong>(double&nbsp;min,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#allowInformationLoss(double,%20double)">allowInformationLoss</a></strong>(double&nbsp;min,
                     double&nbsp;max)</code>
 <div class="block">Allows transformations with certain information loss to pass the filter.</div>
 </td>
@@ -180,85 +180,91 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html" title="class in org.deidentifier.arx.gui.model">ModelNodeFilter</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#clone()">clone</a></strong>()</code>
+<div class="block">Clones the ModelNodeFilter instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#disallowAll()">disallowAll</a></strong>()</code>
 <div class="block">Allows no transformaions to pass the filter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#disallowAnonymous()">disallowAnonymous</a></strong>()</code>
 <div class="block">Filters out anonymous transformations.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#disallowGeneralization(int, int)">disallowGeneralization</a></strong>(int&nbsp;dimension,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#disallowGeneralization(int,%20int)">disallowGeneralization</a></strong>(int&nbsp;dimension,
                       int&nbsp;level)</code>
 <div class="block">Filters out transformations with certain generalization level.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#disallowNonAnonymous()">disallowNonAnonymous</a></strong>()</code>
 <div class="block">Filters out non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#disallowUnknown()">disallowUnknown</a></strong>()</code>
 <div class="block">Filters out unknown transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx">ARXLattice.Anonymity</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#getAllowedAnonymity()">getAllowedAnonymity</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;java.lang.Integer&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#getAllowedGeneralizations(int)">getAllowedGeneralizations</a></strong>(int&nbsp;dimension)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#getAllowedMaxInformationLoss()">getAllowedMaxInformationLoss</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#getAllowedMinInformationLoss()">getAllowedMinInformationLoss</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#initialize(org.deidentifier.arx.ARXResult)">initialize</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a>&nbsp;result)</code>
 <div class="block">Creates a node filter for the given result.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowed(org.deidentifier.arx.ARXLattice, org.deidentifier.arx.ARXLattice.ARXNode)">isAllowed</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowed(org.deidentifier.arx.ARXLattice,%20org.deidentifier.arx.ARXLattice.ARXNode)">isAllowed</a></strong>(<a href="../../../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
          <a href="../../../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Returns whether the given node is allowed to pass this filter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowedAnonymous()">isAllowedAnonymous</a></strong>()</code>
 <div class="block">Returns setting.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowedGeneralization(int, int)">isAllowedGeneralization</a></strong>(int&nbsp;dimension,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowedGeneralization(int,%20int)">isAllowedGeneralization</a></strong>(int&nbsp;dimension,
                        int&nbsp;level)</code>
 <div class="block">Returns whether the given generalization is allowed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowedNonAnonymous()">isAllowedNonAnonymous</a></strong>()</code>
 <div class="block">Returns setting.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html#isAllowedUnknown()">isAllowedUnknown</a></strong>()</code>
 <div class="block">Returns setting.</div>
@@ -270,7 +276,7 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -306,6 +312,20 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="clone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/gui/model/ModelNodeFilter.html" title="class in org.deidentifier.arx.gui.model">ModelNodeFilter</a>&nbsp;clone()</pre>
+<div class="block">Clones the ModelNodeFilter instance.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
 <a name="allowAllInformationLoss()">
 <!--   -->
 </a>
