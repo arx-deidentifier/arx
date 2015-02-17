@@ -338,6 +338,11 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                 }
 
                 @Override
+                public void check() {
+                    // ignore
+                }
+
+                @Override
                 public void invalid(int start) {
                     // ignore
                 }
