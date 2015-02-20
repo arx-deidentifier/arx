@@ -484,6 +484,25 @@ public abstract class DataHandle {
     }
 
     /**
+     * Returns a risk estimator for a sample fraction of 0.1
+     * @param definition
+     * @return
+     */
+    public RiskEstimator getRiskEstimator(DataDefinition definition) {
+        return new RiskEstimator(this, definition);
+    }
+
+    /**
+     * Returns a risk estimator
+     * @param definition
+     * @param sampleFraction The sample fraction (defaults to 0.1)
+     * @return
+     */
+    public RiskEstimator getRiskEstimator(DataDefinition definition, double sampleFraction) {
+        return new RiskEstimator(this, definition, sampleFraction);
+    }
+
+    /**
      * Returns an object providing access to basic descriptive statistics about the data represented
      * by this handle.
      *

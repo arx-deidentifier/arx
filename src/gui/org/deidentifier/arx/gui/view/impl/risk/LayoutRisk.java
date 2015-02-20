@@ -18,8 +18,10 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -32,31 +34,25 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class LayoutRisk implements ILayout {
 
-    /**  TODO */
+    /** Constant*/
     private static final int       WEIGHT_TOP    = 75;
     
-    /**  TODO */
+    /** Constant*/
     private static final int       WEIGHT_BOTTOM = 25;
     
-    /**  TODO */
+    /** Constant*/
     private static final int       WEIGHT_LEFT   = 50;
     
-    /**  TODO */
+    /** Constant*/
     private static final int       WEIGHT_RIGHT  = 50;
-
-    /**  TODO */
-    private final Composite        centerLeft;
     
-    /**  TODO */
-    private final Composite        centerRight;
-    
-    /**  TODO */
+    /** View*/
     private final Composite        bottomLeft;
     
-    /**  TODO */
+    /** View*/
     private final Composite        bottomRight;
     
-    /**  TODO */
+    /** View*/
     private final SashForm         centerSash;
     
     /**
@@ -70,25 +66,27 @@ public class LayoutRisk implements ILayout {
         // Create the SashForm with HORIZONTAL
         centerSash = new SashForm(parent, SWT.VERTICAL);
         centerSash.setLayoutData(SWTUtil.createFillGridData());
+        centerSash.setLayout(SWTUtil.createGridLayout(1));
         
         // Create center composite
-        final Composite center = new Composite(centerSash, SWT.NONE);
-        center.setLayoutData(SWTUtil.createFillGridData());
-        center.setLayout(SWTUtil.createGridLayout(2));
+        ComponentTitledFolder folder = new ComponentTitledFolder(centerSash, controller, null, "id-1030", true); //$NON-NLS-1$
+        folder.setLayoutData(SWTUtil.createFillGridData());
+        
+        // Lattice
+        Composite item1 = folder.createItem(Resources.getMessage("ViewSampleDistribution.4"), //$NON-NLS-1$ 
+                                            controller.getResources().getImage("explore_lattice.png")); //$NON-NLS-1$
+        
+        item1.setLayoutData(SWTUtil.createFillGridData());
+        new ViewDistributionPlot(item1, controller);
+        
+        // List
+        Composite item2 = folder.createItem(Resources.getMessage("ViewSampleDistribution.0"), //$NON-NLS-1$ 
+                                            controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
+        
+        item2.setLayoutData(SWTUtil.createFillGridData());
+        new ViewDistributionTable(item2, controller);
+        folder.setSelection(0);
 
-        // Create left composite
-        centerLeft = new Composite(center, SWT.NONE);
-        centerLeft.setLayoutData(SWTUtil.createFillGridData());
-        centerLeft.setLayout(SWTUtil.createGridLayout(1));
-
-        // Create right composite
-        centerRight = new Composite(center, SWT.NONE);
-        centerRight.setLayoutData(SWTUtil.createFillGridData());
-        centerRight.setLayout(SWTUtil.createGridLayout(1));
-
-        // --------------------------
-        // DATA VIEWS
-        // --------------------------
         
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
@@ -105,8 +103,10 @@ public class LayoutRisk implements ILayout {
         // --------------------------
         // STATISTICS VIEWS
         // --------------------------
-        
 
+        new ViewRisks(bottomLeft, controller);
+        new ViewUniquesPlot(bottomRight, controller);
+        
         // Set sash weights
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });
         bottomSash.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });

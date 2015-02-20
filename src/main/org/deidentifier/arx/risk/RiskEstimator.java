@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.risk;
 
+import java.util.Arrays;
+
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 
@@ -113,15 +115,28 @@ public class RiskEstimator {
     /** The associated handle */
     private DataHandle              handle;
 
+    /** The associated handle */
+    private DataDefinition          definition;
+
     /**
      * Creates a new instance of a class that allows to estimate different risk
      * measures for a given data set with a default sampling fraction of 0.1
      * 
      * @param handle
-     *            This class provides access to dictionary encoded data.
      */
     public RiskEstimator(final DataHandle handle) {
-        this(handle, 0.1d);
+        this(handle, handle.getDefinition(), 0.1d);
+    }
+    
+    /**
+     * Creates a new instance of a class that allows to estimate different risk
+     * measures for a given data set with a default sampling fraction of 0.1
+     * 
+     * @param definition
+     * @param handle
+     */
+    public RiskEstimator(final DataHandle handle, final DataDefinition definition) {
+        this(handle, definition, 0.1d);
     }
 
     /**
@@ -129,24 +144,40 @@ public class RiskEstimator {
      * measures for a given data set
      * 
      * @param handle This class provides access to dictionary encoded data.
-     * 
      * @param pi sampling fraction, defaults to 0.1
      */
     public RiskEstimator(final DataHandle handle, final double pi) {
-        if ((pi == 0) || (pi > 1)) {
-            this.samplingFraction = 0.1;
-        } else {
-            this.samplingFraction = pi;
-        }
+        this(handle, handle.getDefinition(), pi);
+    }
 
-        // create map containing the equivalence class sizes (as keys) of the
-        // data set and the corresponding frequency (as values)
-        this.eqClasses = getEquivalenceClasses(handle);
+    /**
+     * Creates a new instance of a class that allows to estimate different risk
+     * measures for a given data set
+     * 
+     * @param handle This class provides access to dictionary encoded data.
+     * @param definition The definition
+     * @param pi sampling fraction, defaults to 0.1
+     */
+    public RiskEstimator(final DataHandle handle, final DataDefinition definition, final double pi) {
         
-        // Store reference to handle
+        // Check
+        if ((pi <= 0) || (pi > 1)) {
+            throw new IllegalArgumentException("Sampling fraction must be in ]0, 1] but is "+pi);
+        } 
+        if (handle == null) {
+            throw new NullPointerException("Handle is null");
+        }
+        if (definition == null) {
+            throw new NullPointerException("Definition is null");
+        }
+        
+        // Store stuff
+        this.samplingFraction = pi;
         this.handle = handle;
+        this.definition = definition;
+        this.eqClasses = getEquivalenceClasses(handle);
 
-        // set values for Cmin and Cmax
+        // Initialize
         initialize();
     }
 
@@ -163,27 +194,32 @@ public class RiskEstimator {
         final ModelEquivalenceClass equiModel = new ModelEquivalenceClass(eqClasses);
         return equiModel.getRisk();
     }
-
     /**
-     * This functions takes a user defined data set and the defined
-     * quasi-identifiers and marks the entries with the highest
-     * re-identification risk. The estimate of the re-identification risk is
-     * based solely on the data set and there is no population estimate that
-     * plays into the calculation of the re-identification risk.<br>
-     * <br>
-     * As a side effect, this method may sort the data handle
-     * 
-     * @param definition
-     *            Encapsulates a definition of the types of attributes contained
-     *            in a given data set
-     * @param handle
-     *            This class provides access to dictionary encoded data.
-     * @return An array, in which the i-th entry contains the size of the equivalence class in which
-     *         the i-th data entry is contained
+     * This functions returns the distribution of the equivalence class sizes
+     * as an array int[][2] where int[][0] = size and int[][1] = count.
+     */
+    public int[][] getEquivalenceClassSizeDistribution() {
+
+        IntIntOpenHashMap classes = getEquivalenceClasses(handle);
+        int[][] result = new int[classes.size()][2];
+        int count = 0;
+        
+        final int[] values = classes.values;
+        final int[] keys = classes.keys;
+        final boolean[] states = classes.allocated;
+        for (int i = 0; i < states.length; i++) {
+            if (states[i]) {
+                result[count++] = new int[]{keys[i], values[i]};
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * This method returns an array, in which the i-th entry contains the size of the 
+     * equivalence class in which the i-th data entry is contained
      */
     public int[] getEquivalenceClassSizes() {
-
-        DataDefinition definition = handle.getDefinition();
 
         // Get indices of quasi identifiers
         final int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
@@ -191,6 +227,7 @@ public class RiskEstimator {
         for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
+        Arrays.sort(indices);
 
         // Calculate equivalence classes
         // TODO: Think about whether outliers should be handled separately
@@ -266,6 +303,14 @@ public class RiskEstimator {
      */
     public double getSampleUniquesRisk() throws IllegalStateException {
         return (double)eqClasses.get(1) / (double)handle.getNumRows();
+    }
+    
+    /**
+     * Returns the number of rows
+     * @return
+     */
+    public int getNumRows() {
+        return handle.getNumRows();
     }
 
     /**
@@ -395,14 +440,13 @@ public class RiskEstimator {
      */
     private IntIntOpenHashMap getEquivalenceClasses(final DataHandle handle) {
 
-        DataDefinition definition = handle.getDefinition();
-
         // Get indices of quasi identifiers
         final int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
         int index = 0;
         for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
+        Arrays.sort(indices);
 
         // Calculate equivalence classes
         // TODO: Think about whether outliers should be handled separately
