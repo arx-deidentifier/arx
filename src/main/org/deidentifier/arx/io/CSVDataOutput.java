@@ -49,6 +49,9 @@ public class CSVDataOutput {
     
     /** Settings*/
     private final CsvWriterSettings settings;
+    
+    /** Should the writer be closed*/
+    private final boolean close;
 
     /**
      * Instantiate.
@@ -105,6 +108,7 @@ public class CSVDataOutput {
         settings.setFormat(format);
         
         writer = new FileWriter(file);
+        close = true;
     }
     
     /**
@@ -162,6 +166,7 @@ public class CSVDataOutput {
         settings.setFormat(format);
         
         writer = new OutputStreamWriter(stream);
+        close = false;
     }
 
 
@@ -213,28 +218,33 @@ public class CSVDataOutput {
 
     /**
      * Write the results.
-     *
+     * 
      * @param iterator
      * @throws IOException
      */
     public void write(final Iterator<String[]> iterator) throws IOException {
-        
+
         CsvWriter csvwriter = new CsvWriter(writer, settings);
         while (iterator.hasNext()) {
-            csvwriter.writeRow((Object[])iterator.next());
+            csvwriter.writeRow((Object[]) iterator.next());
         }
-        csvwriter.close();
+        if (close) csvwriter.close();
+        else csvwriter.flush();
     }
 
     /**
      * 
-     *
+     * 
      * @param hierarchy
      * @throws IOException
      */
     public void write(final String[][] hierarchy) throws IOException {
 
         CsvWriter csvwriter = new CsvWriter(writer, settings);
-        csvwriter.writeRowsAndClose(hierarchy);
+        for (int i=0; i<hierarchy.length; i++) {
+            csvwriter.writeRow((Object[]) hierarchy[i]);
+        }
+        if (close) csvwriter.close();
+        else csvwriter.flush();
     }
 }
