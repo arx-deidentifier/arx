@@ -97,14 +97,6 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
 
     /**
-     * @param index
-     *            {@link #index}
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    /**
      * Gets the name.
      *
      * @return
@@ -114,20 +106,28 @@ abstract public class ImportColumnIndexed extends ImportColumn implements
     }
 
     /**
-     * Sets the name.
-     *
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    /**
      * Returns whether an index was given.
      *
      * @return
      */
     public boolean isIndexSpecified() {
         return this.index != Integer.MIN_VALUE;
+    }
+
+    /**
+     * @param index
+     *            {@link #index}
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
+    /**
+     * Sets the name.
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

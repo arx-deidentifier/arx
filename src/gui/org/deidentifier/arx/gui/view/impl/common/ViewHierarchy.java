@@ -26,6 +26,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAuditTrailEntry.AuditTrailEntryFindReplace;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -231,6 +232,7 @@ public class ViewHierarchy implements IView {
         // Register
         controller.addListener(ModelPart.HIERARCHY, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
 
         this.controller = controller;
         this.attribute = attribute;
@@ -297,6 +299,18 @@ public class ViewHierarchy implements IView {
             }
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
+        } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
+            AuditTrailEntryFindReplace entry = (AuditTrailEntryFindReplace) event.data;
+            if (entry.getAttribute().equals(this.attribute) && hierarchy != null) {
+                for (String[] array : hierarchy) {
+                    for (int i=0; i<array.length; i++) {
+                        if (array[i].equals(entry.getSearchString())) {
+                            array[i] = entry.getReplacementString();
+                        }
+                    }
+                }
+            }
+            table.refresh();
         } else if (event.part == ModelPart.INPUT) {
             Hierarchy h = model.getInputConfig().getHierarchy(attribute);
             if (h != null) {

@@ -101,7 +101,7 @@ public class ViewList extends ViewSolutionSpace {
         
         super(parent, controller);
 
-        table = new DynamicTable(parent, SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = new DynamicTable(super.getPrimaryComposite(), SWT.SINGLE | SWT.VIRTUAL | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setLayoutData(SWTUtil.createFillGridData());
         table.setHeaderVisible(true);
         
@@ -368,7 +368,7 @@ public class ViewList extends ViewSolutionSpace {
                 if (list.size() > getModel().getMaxNodesInViewer()) {
                     list.clear();
                 }
-
+                
                 if (listener != null) {
                     table.removeListener(SWT.SetData, listener);
                 }

@@ -57,6 +57,22 @@ class DataRegistry {
     }
     
     /**
+     * Replace a value in the given column
+     * @param column
+     * @param original
+     * @param replacement
+     * @return
+     */
+    public boolean replace(int column, String original, String replacement) {
+        boolean replaced = false; 
+        replaced |= input.internalReplace(column, original, replacement);
+        if (!output.isEmpty()) {
+            replaced |= output.values().iterator().next().internalReplace(column, original, replacement);
+        }
+        return replaced;
+    }
+    
+    /**
      * Helper that creates a view on a research subset.
      *
      * @param handle
@@ -128,7 +144,7 @@ class DataRegistry {
             subset.internalRebuild();
         }
     }
-    
+
     /**
      * Sort.
      *
@@ -165,7 +181,7 @@ class DataRegistry {
         // No need to swap and rebuild the subset views
         GenericSorting.mergeSort(from, to, c, s);
     }
-
+    
     /**
      * Swap.
      *
@@ -200,7 +216,7 @@ class DataRegistry {
         if (input!=null) input.internalSwap(row1, row2);
         for (DataHandleOutput outhandle : output.values()) outhandle.internalSwap(row1, row2);
     }
-    
+
     /**
      * Creates the views on the subset.
      *
@@ -241,7 +257,7 @@ class DataRegistry {
     protected DataType<?> getBaseDataType(String attribute) {
         return this.input.getBaseDataType(attribute);
     }
-
+    
     /**
      * Returns a registered handle, if any.
      *
@@ -251,7 +267,7 @@ class DataRegistry {
     protected DataHandle getOutputHandle(ARXNode node) {
         return this.output.get(node);
     }
-    
+
     /**
      * Implementation of {@link DataHandle#isOutlier(row)}.
      *
@@ -302,7 +318,7 @@ class DataRegistry {
             input.doRelease();
         }
     }
-
+    
     /**
      * Removes the association to all handles, but the input handle.
      */
@@ -324,7 +340,7 @@ class DataRegistry {
             this.inputSubset = null;
         }
     }
-    
+
     /**
      * Implementation of {@link DataHandle#sort(boolean, int...)}
      * @param handle

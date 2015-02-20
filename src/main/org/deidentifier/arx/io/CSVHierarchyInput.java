@@ -35,37 +35,144 @@ public class CSVHierarchyInput {
     /** The data. */
     private String[][] data;
 
+
     /**
-     * Create from file.
+     * Instantiate.
      *
      * @param file
-     * @param separator
      * @throws IOException
      */
-    public CSVHierarchyInput(final File file, final char separator) throws IOException {
-        load(new CSVDataInput(file, separator));
+    public CSVHierarchyInput(final File file) throws IOException {
+        load(new CSVDataInput(file));
     }
 
     /**
-     * Create from stream.
+     * Instantiate.
+     *
+     * @param file
+     * @param delimiter
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final File file, final char delimiter) throws IOException {
+        load(new CSVDataInput(file, delimiter));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file
+     * @param delimiter
+     * @param quote
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final File file, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(file, delimiter, quote));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(file, delimiter, quote, escape));
+    }
+    
+    /**
+     * Instantiate.
      *
      * @param stream
-     * @param separator
      * @throws IOException
      */
-    public CSVHierarchyInput(final InputStream stream, final char separator) throws IOException {
-        load(new CSVDataInput(stream, separator));
+    public CSVHierarchyInput(final InputStream stream) throws IOException {
+        load(new CSVDataInput(stream));
     }
 
     /**
-     * Create from path.
+     * Instantiate.
      *
-     * @param file
-     * @param separator
+     * @param stream
+     * @param delimiter
      * @throws IOException
      */
-    public CSVHierarchyInput(final String file, final char separator) throws IOException {
-        load(new CSVDataInput(file, separator));
+    public CSVHierarchyInput(final InputStream stream, final char delimiter) throws IOException {
+        load(new CSVDataInput(stream, delimiter));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param delimiter
+     * @param quote
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(stream, delimiter, quote));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(stream, delimiter, quote, escape));
+    }
+
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final String filename) throws IOException {
+        load(new CSVDataInput(filename));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter) throws IOException {
+        load(new CSVDataInput(filename, delimiter));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @param quote
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter, final char quote) throws IOException {
+        load(new CSVDataInput(filename, delimiter, quote));
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVHierarchyInput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
+        load(new CSVDataInput(filename, delimiter, quote, escape));
     }
 
     /**
@@ -83,7 +190,7 @@ public class CSVHierarchyInput {
      * @param input
      * @throws IOException
      */
-    private void load(final CSVAbstractInput input) throws IOException {
+    private void load(final CSVDataInput input) throws IOException {
 
         final Iterator<String[]> iter = input.iterator();
         final List<String[]> elems = new ArrayList<String[]>();

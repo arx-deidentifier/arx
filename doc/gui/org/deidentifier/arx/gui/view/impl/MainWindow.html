@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>MainWindow (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
@@ -120,7 +120,7 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#MainWindow(org.eclipse.swt.widgets.Display, org.eclipse.swt.widgets.Monitor)">MainWindow</a></strong>(org.eclipse.swt.widgets.Display&nbsp;display,
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#MainWindow(org.eclipse.swt.widgets.Display,%20org.eclipse.swt.widgets.Monitor)">MainWindow</a></strong>(org.eclipse.swt.widgets.Display&nbsp;display,
           org.eclipse.swt.widgets.Monitor&nbsp;monitor)</code>
 <div class="block">Creates a new instance.</div>
 </td>
@@ -190,43 +190,57 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showAuditTrail(java.util.List)">showAuditTrail</a></strong>(java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/model/ModelAuditTrailEntry.html" title="class in org.deidentifier.arx.gui.model">ModelAuditTrailEntry</a>&gt;&nbsp;auditTrail)</code>
+<div class="block">Shows the audit trail</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showDebugDialog()">showDebugDialog</a></strong>()</code>
 <div class="block">Shows a debug dialog.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String)">showErrorDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String)">showErrorDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                java.lang.String&nbsp;message,
                java.lang.String&nbsp;text)</code>
 <div class="block">Shows an error dialog.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.Throwable)">showErrorDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.Throwable)">showErrorDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                java.lang.String&nbsp;message,
                java.lang.Throwable&nbsp;throwable)</code>
 <div class="block">Shows an error dialog.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(java.lang.String, java.lang.String)">showErrorDialog</a></strong>(java.lang.String&nbsp;message,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(java.lang.String,%20java.lang.String)">showErrorDialog</a></strong>(java.lang.String&nbsp;message,
                java.lang.String&nbsp;text)</code>
 <div class="block">Shows an error dialog.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(java.lang.String, java.lang.Throwable)">showErrorDialog</a></strong>(java.lang.String&nbsp;message,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showErrorDialog(java.lang.String,%20java.lang.Throwable)">showErrorDialog</a></strong>(java.lang.String&nbsp;message,
                java.lang.Throwable&nbsp;throwable)</code>
 <div class="block">Shows an error dialog.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>org.apache.commons.math3.util.Pair&lt;java.lang.String,java.lang.String&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showFindReplaceDialog(org.deidentifier.arx.gui.model.Model,%20org.deidentifier.arx.DataHandle,%20int)">showFindReplaceDialog</a></strong>(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                     <a href="../../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                     int&nbsp;column)</code>
+<div class="block">Shows a find & replace dialog</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showFormatInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, java.util.Locale, org.deidentifier.arx.DataType.DataTypeDescription, java.util.Collection)">showFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showFormatInputDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20java.lang.String,%20java.util.Locale,%20org.deidentifier.arx.DataType.DataTypeDescription,%20java.util.Collection)">showFormatInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                      java.lang.String&nbsp;header,
                      java.lang.String&nbsp;text,
                      java.lang.String&nbsp;preselected,
@@ -244,7 +258,7 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showInfoDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String)">showInfoDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showInfoDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String)">showInfoDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
               java.lang.String&nbsp;header,
               java.lang.String&nbsp;text)</code>
 <div class="block">Shows an info dialog.</div>
@@ -252,7 +266,7 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String)">showInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showInputDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20java.lang.String)">showInputDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                java.lang.String&nbsp;header,
                java.lang.String&nbsp;text,
                java.lang.String&nbsp;initial)</code>
@@ -261,14 +275,14 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showOpenFileDialog(org.eclipse.swt.widgets.Shell, java.lang.String)">showOpenFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showOpenFileDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String)">showOpenFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                   java.lang.String&nbsp;filter)</code>
 <div class="block">Shows a file open dialog.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showOrderValuesDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, org.deidentifier.arx.DataType, java.util.Locale, java.lang.String[])">showOrderValuesDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showOrderValuesDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20java.util.Locale,%20java.lang.String[])">showOrderValuesDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                      java.lang.String&nbsp;header,
                      java.lang.String&nbsp;text,
                      <a href="../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
@@ -279,21 +293,21 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showProgressDialog(java.lang.String, org.deidentifier.arx.gui.worker.Worker)">showProgressDialog</a></strong>(java.lang.String&nbsp;text,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showProgressDialog(java.lang.String,%20org.deidentifier.arx.gui.worker.Worker)">showProgressDialog</a></strong>(java.lang.String&nbsp;text,
                   <a href="../../../../../../org/deidentifier/arx/gui/worker/Worker.html" title="class in org.deidentifier.arx.gui.worker">Worker</a>&lt;?&gt;&nbsp;worker)</code>
 <div class="block">Shows a progress dialog.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogQueryResult.html" title="class in org.deidentifier.arx.gui.view.impl.menu">DialogQueryResult</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showQueryDialog(java.lang.String, org.deidentifier.arx.Data)">showQueryDialog</a></strong>(java.lang.String&nbsp;query,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showQueryDialog(java.lang.String,%20org.deidentifier.arx.Data)">showQueryDialog</a></strong>(java.lang.String&nbsp;query,
                <a href="../../../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data)</code>
 <div class="block">Shows a query dialog for selecting a research subset.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showQuestionDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String)">showQuestionDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showQuestionDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String,%20java.lang.String)">showQuestionDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                   java.lang.String&nbsp;header,
                   java.lang.String&nbsp;text)</code>
 <div class="block">Shows a question dialog.</div>
@@ -301,7 +315,7 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showSaveFileDialog(org.eclipse.swt.widgets.Shell, java.lang.String)">showSaveFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/gui/view/impl/MainWindow.html#showSaveFileDialog(org.eclipse.swt.widgets.Shell,%20java.lang.String)">showSaveFileDialog</a></strong>(org.eclipse.swt.widgets.Shell&nbsp;shell,
                   java.lang.String&nbsp;filter)</code>
 <div class="block">Shows a file save dialog.</div>
 </td>
@@ -453,6 +467,16 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
 <div class="block">Shows an about dialog.</div>
 </li>
 </ul>
+<a name="showAuditTrail(java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>showAuditTrail</h4>
+<pre>public&nbsp;void&nbsp;showAuditTrail(java.util.List&lt;<a href="../../../../../../org/deidentifier/arx/gui/model/ModelAuditTrailEntry.html" title="class in org.deidentifier.arx.gui.model">ModelAuditTrailEntry</a>&gt;&nbsp;auditTrail)</pre>
+<div class="block">Shows the audit trail</div>
+</li>
+</ul>
 <a name="showDebugDialog()">
 <!--   -->
 </a>
@@ -511,6 +535,21 @@ implements <a href="../../../../../../org/deidentifier/arx/gui/view/def/IView.ht
                    java.lang.Throwable&nbsp;throwable)</pre>
 <div class="block">Shows an error dialog.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>message</code> - </dd><dd><code>throwable</code> - </dd></dl>
+</li>
+</ul>
+<a name="showFindReplaceDialog(org.deidentifier.arx.gui.model.Model, org.deidentifier.arx.DataHandle, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>showFindReplaceDialog</h4>
+<pre>public&nbsp;org.apache.commons.math3.util.Pair&lt;java.lang.String,java.lang.String&gt;&nbsp;showFindReplaceDialog(<a href="../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a>&nbsp;model,
+                                                                                          <a href="../../../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                                                                                          int&nbsp;column)</pre>
+<div class="block">Shows a find & replace dialog</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>column</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>A pair containing the string to be found and the string with which it is to be replaced,
+         <code>null</code> if cancel was pressed.</dd></dl>
 </li>
 </ul>
 <a name="showFormatInputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, java.util.Locale, org.deidentifier.arx.DataType.DataTypeDescription, java.util.Collection)">

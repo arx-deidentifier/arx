@@ -38,12 +38,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
+ * Tests for data handles
  */
 public class TestDataHandle extends AbstractTest {
 
     /**
-     * 
+     *  Test case 
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -81,7 +81,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -118,7 +118,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -151,7 +151,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -180,7 +180,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -217,7 +217,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -236,7 +236,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -268,7 +268,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -304,7 +304,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -350,7 +350,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -387,7 +387,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -428,7 +428,7 @@ public class TestDataHandle extends AbstractTest {
     }
 
     /**
-     * 
+     * Test case
      *
      * @throws IllegalArgumentException
      * @throws IOException

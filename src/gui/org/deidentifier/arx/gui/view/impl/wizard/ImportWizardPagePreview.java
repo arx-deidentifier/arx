@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.TableColumn;
  *
  * @author Karol Babioch
  * @author Fabian Prasser
- * @note Note that only up to {@link ImportWizardModel#previewDataMaxLines} lines will be shown.
+ * @note Note that only up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines will be shown.
  * 
  */
 public class ImportWizardPagePreview extends WizardPage {

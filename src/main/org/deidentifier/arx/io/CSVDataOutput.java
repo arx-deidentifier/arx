@@ -17,14 +17,17 @@
 
 package org.deidentifier.arx.io;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Iterator;
+
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 
 /**
  * Provides methods for writing CSV encoded data.
@@ -34,121 +37,214 @@ import java.util.Iterator;
  */
 public class CSVDataOutput {
 
-    /** The output file. */
-    private final OutputStream out;
+    /** Default values*/
+    private static final char DEFAULT_DELIMITER = ';';
+    /** Default values*/
+    private static final char DEFAULT_QUOTE = '\"';
+    /** Default values*/
+    private static final char DEFAULT_ESCAPE = '\"';
 
-    /** The separator. */
-    private final char         separator;
-
-    /** Size of the buffer. */
-    private static final int   BUFFER_SIZE = 1024 * 1024;
-
-    /** Are we writing to a stream?. */
-    private boolean            stream      = false;
+    /** A writer. */
+    private final Writer writer;
+    
+    /** Settings*/
+    private final CsvWriterSettings settings;
+    
+    /** Should the writer be closed*/
+    private final boolean close;
 
     /**
-     * New instance.
+     * Instantiate.
      *
      * @param file
-     * @param separator
-     * @throws FileNotFoundException
+     * @throws IOException
      */
-    public CSVDataOutput(final File file, final char separator) throws FileNotFoundException {
-        this.out = new FileOutputStream(file);
-        this.separator = separator;
+    public CSVDataOutput(final File file) throws IOException {
+        this(file, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
     }
 
     /**
-     * New instance.
+     * Instantiate.
      *
-     * @param out
-     * @param separator
+     * @param file
+     * @param delimiter
+     * @throws IOException
      */
-    public CSVDataOutput(final OutputStream out, final char separator) {
-        this.out = out;
-        this.separator = separator;
-        this.stream = true;
+    public CSVDataOutput(final File file, final char delimiter) throws IOException {
+        this(file, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
     }
 
     /**
-     * New instance.
+     * Instantiate.
      *
-     * @param output
-     * @param separator
-     * @throws FileNotFoundException
+     * @param file
+     * @param delimiter
+     * @param quote
+     * @throws IOException
      */
-    public CSVDataOutput(final String output, final char separator) throws FileNotFoundException {
-    	this.out = new FileOutputStream(new File(output));
-        this.separator = separator;
+    public CSVDataOutput(final File file, final char delimiter, final char quote) throws IOException {
+        this(file, delimiter, quote, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param file
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVDataOutput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(delimiter);
+        format.setQuote(quote);
+        format.setQuoteEscape(escape);
+        
+        settings = new CsvWriterSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        
+        writer = new FileWriter(file);
+        close = true;
+    }
+    
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @throws IOException
+     */
+    public CSVDataOutput(final OutputStream stream) throws IOException {
+        this(stream, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param delimiter
+     * @throws IOException
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter) throws IOException {
+        this(stream, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param delimiter
+     * @param quote
+     * @throws IOException
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote) throws IOException {
+        this(stream, delimiter, quote, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(delimiter);
+        format.setQuote(quote);
+        format.setQuoteEscape(escape);
+        
+        settings = new CsvWriterSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        
+        writer = new OutputStreamWriter(stream);
+        close = false;
+    }
+
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @throws IOException
+     */
+    public CSVDataOutput(final String filename) throws IOException {
+        this(filename, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @throws IOException
+     */
+    public CSVDataOutput(final String filename, final char delimiter) throws IOException {
+        this(new File(filename), delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @param quote
+     * @throws IOException
+     */
+    public CSVDataOutput(final String filename, final char delimiter, final char quote) throws IOException {
+        this(new File(filename), delimiter, quote, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVDataOutput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
+        this(new File(filename), delimiter, quote, escape);
     }
 
     /**
      * Write the results.
-     *
+     * 
      * @param iterator
      * @throws IOException
      */
     public void write(final Iterator<String[]> iterator) throws IOException {
-        write(iterator, Integer.MAX_VALUE);
-    }
 
-    /**
-     * Write the given number of columns from the results.
-     *
-     * @param iterator
-     * @param numColumns
-     * @throws IOException
-     */
-    public void
-            write(final Iterator<String[]> iterator, final int numColumns) throws IOException {
-        BufferedWriter os = null;
-        try {
-            os = new BufferedWriter(new OutputStreamWriter(out), BUFFER_SIZE);
-            while (iterator.hasNext()) {
-                final String[] tuple = iterator.next();
-                for (int i = 0; (i < tuple.length) && (i < numColumns); i++) {
-                    os.write(tuple[i]);
-                    if (i != (tuple.length - 1)) {
-                        os.write(separator);
-                    } else {
-                        os.newLine();
-                    }
-                }
-            }
-            os.flush();
-        } finally {
-            if (!stream && (os != null)) {
-                os.close();
-            }
+        CsvWriter csvwriter = new CsvWriter(writer, settings);
+        while (iterator.hasNext()) {
+            csvwriter.writeRow((Object[]) iterator.next());
         }
+        if (close) csvwriter.close();
+        else csvwriter.flush();
     }
 
     /**
      * 
-     *
+     * 
      * @param hierarchy
      * @throws IOException
      */
     public void write(final String[][] hierarchy) throws IOException {
-        BufferedWriter os = null;
-        try {
-            os = new BufferedWriter(new OutputStreamWriter(out), BUFFER_SIZE);
-            for (int h = 0; h < hierarchy.length; h++) {
-                final String[] tuple = hierarchy[h];
-                for (int i = 0; i < tuple.length; i++) {
-                    os.write(tuple[i]);
-                    if (i != (tuple.length - 1)) {
-                        os.write(separator);
-                    } else {
-                        os.newLine();
-                    }
-                }
-            }
-            os.flush();
-        } finally {
-            if (!stream && (os != null)) {
-                os.close();
-            }
+
+        CsvWriter csvwriter = new CsvWriter(writer, settings);
+        for (int i=0; i<hierarchy.length; i++) {
+            csvwriter.writeRow((Object[]) hierarchy[i]);
         }
+        if (close) csvwriter.close();
+        else csvwriter.flush();
     }
 }

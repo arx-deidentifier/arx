@@ -208,11 +208,12 @@ public class ViewFilter implements IView {
         if (event.part == ModelPart.INPUT) {
             reset();
         } else if (event.part == ModelPart.RESULT) {
-            if (model.getResult() == null || model.getResult().getLattice() == null){
+            ARXResult result = (ARXResult)event.data;
+            if (result == null || result.getLattice() == null){
                 reset();
                 SWTUtil.disable(root);
             } else {
-                initialize(model.getResult(), null);
+                initialize(result, model.getNodeFilter());
                 SWTUtil.enable(root);
             }
         } else if (event.part == ModelPart.MODEL) {
@@ -520,22 +521,10 @@ public class ViewFilter implements IView {
 
         // Reset filter
         if (nodeFilter == null) {
-
-            // Create filter
-            filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
-                                         model.getInitialNodesInViewer());
-            
-            // Initialize filter
-            filter.initialize(result);
-            
-            // Update model
-            if (model != null) {
-                model.setNodeFilter(filter);
-                controller.update(new ModelEvent(this, ModelPart.FILTER, filter));
-            }
-        } else {
-            filter = nodeFilter;
+            throw new IllegalStateException("Filter must not be null");
         }
+        
+        filter = nodeFilter;
         
         // Update
         this.update();

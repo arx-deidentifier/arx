@@ -39,6 +39,12 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
  */
 public class ImportWizardModel {
 
+    /** Maximum number of lines to be loaded for preview purposes. */
+    public static final int PREVIEW_MAX_LINES = 25;
+
+    /** Maximum number of chars to be loaded for detecting separators. */
+    public static final int DETECT_MAX_CHARS  = 100000;
+    
     /**
      * Possible sources for importing data from.
      *
@@ -77,6 +83,12 @@ public class ImportWizardModel {
     /** Separator for columns (in case of CSV import). */
     private char                          csvSeparator;
 
+    /** Separator for columns (in case of CSV import). */
+    private char                          csvEscape;
+
+    /** Separator for columns (in case of CSV import). */
+    private char                          csvDelimiter;
+
     /**
      * Indicates whether first row contains header
      * 
@@ -101,7 +113,7 @@ public class ImportWizardModel {
      * {@link ImportWizardPagePreview} doesn't need to know anything about the
      * source type the data is coming from.
      * 
-     * It will contain up to {@link #previewDataMaxLines} lines of data.
+     * It will contain up to {@link #PREVIEW_MAX_LINES} lines of data.
      */
     private List<String[]>                previewData;
 
@@ -114,15 +126,25 @@ public class ImportWizardModel {
     /** Jdbc connection potentially used throughout the wizard. */
     private Connection                    jdbcConnection;
 
-    /** Maximum number of lines to be loaded for preview purposes. */
-    public static final int               previewDataMaxLines    = 25;
+    /**
+     * @return the csvDelimiter
+     */
+    public char getCsvDelimiter() {
+        return csvDelimiter;
+    }
 
     /**
      * @return {@link #csvSeparator}
      */
     public char getCsvSeparator() {
-
         return csvSeparator;
+    }
+
+    /**
+     * @return {@link #csvEscape}
+     */
+    public char getCsvEscape() {
+        return csvEscape;
     }
 
     /**
@@ -252,6 +274,13 @@ public class ImportWizardModel {
     }
 
     /**
+     * @param csvDelimiter the csvDelimiter to set
+     */
+    public void setCsvDelimiter(char csvDelimiter) {
+        this.csvDelimiter = csvDelimiter;
+    }
+
+    /**
      * @param csvSeparator
      *            {@link #csvSeparator}
      */
@@ -260,6 +289,14 @@ public class ImportWizardModel {
         this.csvSeparator = csvSeparator;
     }
 
+    /**
+     * 
+     * @param csvEscape
+     */
+    public void setCsvEscape(char csvEscape) {
+        this.csvEscape = csvEscape;
+    }
+    
     /**
      * @param excelSheetIndex
      *            {@link #excelSheetIndex}
@@ -343,4 +380,5 @@ public class ImportWizardModel {
 
         this.wizardColumns = columns;
     }
+
 }

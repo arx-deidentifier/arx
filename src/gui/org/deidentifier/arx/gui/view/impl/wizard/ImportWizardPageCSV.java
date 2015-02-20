@@ -115,47 +115,91 @@ public class ImportWizardPageCSV extends WizardPage {
     }
 
     /** Reference to the wizard containing this page. */
-    private ImportWizard wizardImport;
+    private ImportWizard                       wizardImport;
 
-    /** Columns detected by this page and passed on to {@link ImportWizardModel}. */
+    /**
+     * Columns detected by this page and passed on to {@link ImportWizardModel}.
+     */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
     /* Widgets */
-    /**  TODO */
-    private Label lblLocation;
-    
-    /**  TODO */
-    private Combo comboLocation;
-    
-    /**  TODO */
-    private Button btnChoose;
-    
-    /**  TODO */
-    private Button btnContainsHeader;
-    
-    /**  TODO */
-    private Combo comboSeparator;
-    
-    /**  TODO */
-    private Label lblSeparator;
-    
-    /**  TODO */
-    private Table tablePreview;
+    /** TODO */
+    private Label                              lblLocation;
 
-    /**  TODO */
-    private TableViewer tableViewerPreview;
+    /** TODO */
+    private Combo                              comboLocation;
+
+    /** TODO */
+    private Button                             btnChoose;
+
+    /** TODO */
+    private Button                             btnContainsHeader;
+
+    /** TODO */
+    private Combo                              comboSeparator;
+
+    /** TODO */
+    private Combo                              comboDelimiter;
+
+    /** TODO */
+    private Combo                              comboEscape;
+
+    /** TODO */
+    private Label                              lblSeparator;
+
+    /** TODO */
+    private Label                              lblDelimiter;
+
+    /** TODO */
+    private Label                              lblEscape;
+    
+    /** TODO */
+    private Table                              tablePreview;
+
+    /** TODO */
+    private TableViewer                        tableViewerPreview;
 
     /**
      * Currently selected separator (index).
-     *
+     * 
      * @see {@link #separators}
      */
-    private int selection;
+    private int                                selectedSeparator = 0;
+
+    /**
+     * Currently selected delimiter (index).
+     * 
+     * @see {@link #delimiters}
+     */
+    private int                                selectedDelimiter = 0;
+
+    /**
+     * Currently selected escape (index).
+     * 
+     * @see {@link #delimiters}
+     */
+    private int                                selectedEscape = 0;
+
+    /**
+     * Supported escape characters.
+     *
+     * @see {@link #labels}
+     * @note This are the escape characters.
+     */
+    private final char[] escapes = {'\"', '\\'};
+    
+    /**
+     * Supported delimiters.
+     *
+     * @see {@link #labels}
+     * @note This are the delimiters.
+     */
+    private final char[] delimiters = {'\"', '\''};
 
     /**
      * Supported separators.
      *
      * @see {@link #labels}
-     * @note This are the separators itself. The appropriate combobox will
+     * @note This are the separators itself. The appropriate combo box will
      *       display the {@link #labels} instead.
      */
     private final char[] separators = {';', ',', '|', '\t'};
@@ -166,19 +210,19 @@ public class ImportWizardPageCSV extends WizardPage {
      * @see {@link #separators}
      */
     private final String[] labels = {";", ",", "|", "Tab"};
+
     /**
      * Indicates whether separator was detected automatically or by the user
-     *
+     * 
      * The separator will usually be detected automatically
-     * {@link #detectSeparator()}. In case the user selected another
-     * separator by hand, this flag will be set to true, making sure the rest
-     * of the logic knows about it.
+     * {@link #detectSeparator()}. In case the user selected another separator
+     * by hand, this flag will be set to true, making sure the rest of the logic
+     * knows about it.
      */
-    private boolean customSeparator;
+    private boolean                            customSeparator;
 
-
-    /**  TODO */
-    private final ArrayList<String[]> previewData = new ArrayList<String[]>();
+    /** TODO */
+    private final ArrayList<String[]>          previewData       = new ArrayList<String[]>();
 
     /**
      * Creates a new instance of this page and sets its title and description.
@@ -227,6 +271,10 @@ public class ImportWizardPageCSV extends WizardPage {
                 /* Make widgets visible */
                 lblSeparator.setVisible(true);
                 comboSeparator.setVisible(true);
+                lblDelimiter.setVisible(true);
+                comboDelimiter.setVisible(true);
+                lblEscape.setVisible(true);
+                comboEscape.setVisible(true);
                 btnContainsHeader.setVisible(true);
                 customSeparator = false;
                 evaluatePage();
@@ -271,7 +319,7 @@ public class ImportWizardPageCSV extends WizardPage {
         lblSeparator = new Label(container, SWT.NONE);
         lblSeparator.setVisible(false);
         lblSeparator.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblSeparator.setText("Separator");
+        lblSeparator.setText("Delimiter");
 
         /* Separator combobox */
         comboSeparator = new Combo(container, SWT.READ_ONLY);
@@ -282,7 +330,7 @@ public class ImportWizardPageCSV extends WizardPage {
             comboSeparator.add(s);
         }
 
-        comboSeparator.select(selection);
+        comboSeparator.select(selectedSeparator);
         comboSeparator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         comboSeparator.addSelectionListener(new SelectionAdapter() {
 
@@ -291,8 +339,72 @@ public class ImportWizardPageCSV extends WizardPage {
              */
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                selection = comboSeparator.getSelectionIndex();
+                selectedSeparator = comboSeparator.getSelectionIndex();
                 customSeparator = true;
+                evaluatePage();
+            }
+        });
+        
+        /* Place holder */
+        new Label(container, SWT.NONE);
+
+        /* Delimiter label */
+        lblDelimiter = new Label(container, SWT.NONE);
+        lblDelimiter.setVisible(false);
+        lblDelimiter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblDelimiter.setText("Quote");
+
+        /* Delimiter combobox */
+        comboDelimiter = new Combo(container, SWT.READ_ONLY);
+        comboDelimiter.setVisible(false);
+
+        /* Add labels */
+        for (final char c : delimiters) {
+            comboDelimiter.add(String.valueOf(c));
+        }
+
+        comboDelimiter.select(selectedDelimiter);
+        comboDelimiter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboDelimiter.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * Set selection index and custom delimiter and (re-)evaluates page
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                selectedDelimiter = comboDelimiter.getSelectionIndex();
+                evaluatePage();
+            }
+        });
+
+        /* Place holder */
+        new Label(container, SWT.NONE);
+
+        /* Delimiter label */
+        lblEscape = new Label(container, SWT.NONE);
+        lblEscape.setVisible(false);
+        lblEscape.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblEscape.setText("Escape");
+
+        /* Delimiter combobox */
+        comboEscape = new Combo(container, SWT.READ_ONLY);
+        comboEscape.setVisible(false);
+
+        /* Add labels */
+        for (final char c : escapes) {
+            comboEscape.add(String.valueOf(c));
+        }
+
+        comboEscape.select(selectedEscape);
+        comboEscape.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboEscape.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * Set selection index and custom delimiter and (re-)evaluates page
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                selectedEscape = comboEscape.getSelectionIndex();
                 evaluatePage();
             }
         });
@@ -345,7 +457,7 @@ public class ImportWizardPageCSV extends WizardPage {
     /**
      * Tries to detect the separator used within this file
      *
-     * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
+     * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
      * and tries to detect the used separator by counting how often each of
      * the available {@link #separators} is used.
      *
@@ -359,11 +471,12 @@ public class ImportWizardPageCSV extends WizardPage {
         for (int i=0; i<this.separators.length; i++) {
             separators.put(this.separators[i], i);
         }
-        int count = 0;
+        int countLines = 0;
+        int countChars = 0;
 
         /* Iterate over data */
         String line = r.readLine();
-        while ((count < ImportWizardModel.previewDataMaxLines) && (line != null)) {
+        outer: while ((countLines < ImportWizardModel.PREVIEW_MAX_LINES) && (line != null)) {
 
             /* Iterate over line character by character */
             final char[] a = line.toCharArray();
@@ -371,14 +484,18 @@ public class ImportWizardPageCSV extends WizardPage {
                 if (separators.containsKey(c)) {
                     map.putOrAdd(separators.get(c), 0, 1);
                 }
+                countChars++;
+                if (countChars > ImportWizardModel.DETECT_MAX_CHARS) {
+                    break outer;
+                }
             }
             line = r.readLine();
-            count++;
+            countLines++;
         }
         r.close();
 
         if (map.isEmpty()) {
-            selection = 0;
+            selectedSeparator = 0;
             return;
         }
 
@@ -390,7 +507,7 @@ public class ImportWizardPageCSV extends WizardPage {
         for (int i = 0; i < allocated.length; i++) {
             if (allocated[i] && values[i] > max) {
                 max = values[i];
-                selection = keys[i];
+                selectedSeparator = keys[i];
             }
         }
     }
@@ -418,7 +535,7 @@ public class ImportWizardPageCSV extends WizardPage {
         try {
             if (!customSeparator) {
                 detectSeparator();
-                comboSeparator.select(selection);
+                comboSeparator.select(selectedSeparator);
             }
             readPreview();
 
@@ -441,7 +558,9 @@ public class ImportWizardPageCSV extends WizardPage {
         data.setPreviewData(previewData);
         data.setFirstRowContainsHeader(btnContainsHeader.getSelection());
         data.setFileLocation(comboLocation.getText());
-        data.setCsvSeparator(separators[selection]);
+        data.setCsvSeparator(separators[selectedSeparator]);
+        data.setCsvDelimiter(delimiters[selectedDelimiter]);
+        data.setCsvEscape(escapes[selectedEscape]);
 
         /* Mark page as completed */
         setPageComplete(true);
@@ -451,7 +570,7 @@ public class ImportWizardPageCSV extends WizardPage {
     /**
      * Reads in preview data
      * 
-     * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
+     * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
      * within the appropriate file and reads them in. It uses {@link ImportAdapter} in combination with {@link ImportConfigurationCSV} to actually read in the data.
      *
      * @throws IOException
@@ -463,11 +582,13 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
-        final char separator = separators[selection];
+        final char separator = separators[selectedSeparator];
+        final char delimiter = delimiters[selectedDelimiter];
+        final char escape = escapes[selectedEscape];
         final boolean containsHeader = btnContainsHeader.getSelection();
 
         /* Variables needed for processing */
-        final CSVDataInput in = new CSVDataInput(location, separator);
+        final CSVDataInput in = new CSVDataInput(location, separator, delimiter, escape);
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
@@ -495,7 +616,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
         int count = 0;
-        while (importAdapter.hasNext() && (count <= ImportWizardModel.previewDataMaxLines)) {
+        while (importAdapter.hasNext() && (count <= ImportWizardModel.PREVIEW_MAX_LINES)) {
             previewData.add(importAdapter.next());
             count++;
         }

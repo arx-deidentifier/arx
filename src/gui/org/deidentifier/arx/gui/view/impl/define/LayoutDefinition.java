@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class LayoutDefinition implements ILayout {
 
-    /**  TODO */
+    /**  View */
     private final Composite center;
     
     /**
@@ -77,9 +77,10 @@ public class LayoutDefinition implements ILayout {
         compositeBottomRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        new ViewDataInput(compositeLeft, controller); 
+        new ViewDataInput(compositeLeft, controller, true);
         new ViewSubsetDefinition(compositeLeft, controller);
         new ViewDataDefinition(compositeTopRight, controller);
         new ViewGeneralSettings(compositeBottomRight, controller);
     }
+
 }

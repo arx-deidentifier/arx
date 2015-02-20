@@ -387,7 +387,7 @@ public class ImportWizardPageTable extends WizardPage {
         try {
 
             Statement statement = connection.createStatement();
-            statement.setMaxRows(ImportWizardModel.previewDataMaxLines);
+            statement.setMaxRows(ImportWizardModel.PREVIEW_MAX_LINES);
             statement.execute("SELECT * FROM " + selectedTable);
             ResultSet rs = statement.getResultSet();
 

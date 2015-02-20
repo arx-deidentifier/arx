@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
@@ -49,6 +50,7 @@ import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -306,6 +308,64 @@ public class Controller implements IView {
     }
 
     /**
+     * Find and replace action
+     */
+    public void actionFindReplace() {
+
+        // Check
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.3"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.4")); //$NON-NLS-1$
+            return;
+        }
+
+        // Check
+        if (model.getInputConfig().getInput() == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.6")); //$NON-NLS-1$
+            return;
+        }
+
+        // Show dialog
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int column = handle.getColumnIndexOf(model.getSelectedAttribute());
+        Pair<String, String> pair = main.showFindReplaceDialog(model, handle, column);
+        
+        // If action must be performed
+        if (pair != null) {
+            
+            // Replace in input
+            handle.replace(column, pair.getFirst(), pair.getSecond());
+            
+            // Replace in output
+            if (model.getOutputConfig() != null) {
+                Hierarchy hierarchy = model.getOutputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Fire event
+            ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 
+                                                                                      pair.getFirst(), 
+                                                                                      pair.getSecond());
+            update(new ModelEvent(this, ModelPart.ATTRIBUTE_VALUE, entry));
+            
+            // Store in model
+            model.addAuditTrailEntry(entry);
+            model.setModified();
+        }
+    }
+
+    /**
      * Starts the anonymization.
      */
     public void actionMenuEditAnonymize() {
@@ -364,8 +424,16 @@ public class Controller implements IView {
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
+            
 
-            // Update view
+            // Create filter
+            ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
+                                                         model.getInitialNodesInViewer());
+            filter.initialize(result);
+            model.setNodeFilter(filter);
+            
+            // Update model
+            update(new ModelEvent(this, ModelPart.FILTER, filter));
             update(new ModelEvent(this, ModelPart.RESULT, result));
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
@@ -967,6 +1035,13 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows the audit trail
+     */
+    public void actionShowAuditTrail() {
+        main.showAuditTrail(model.getAuditTrail());
+    }
+
+    /**
      * Shows an error dialog.
      *
      * @param shell
@@ -1272,6 +1347,14 @@ public class Controller implements IView {
     }
 
     /**
+     * Returns the current model
+     * @return
+     */
+    public Model getModel() {
+        return model;
+    }
+    
+    /**
      * Returns the resources.
      *
      * @return
@@ -1472,6 +1555,8 @@ public class Controller implements IView {
                                 Resources.getMessage("Controller.90"), //$NON-NLS-1$
                                 worker.getError().getMessage());
             return;
+        } else {
+            model.setUnmodified();
         }
     }
 

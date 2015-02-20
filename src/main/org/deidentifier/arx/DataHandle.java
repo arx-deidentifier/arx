@@ -21,15 +21,24 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.DataHandleStatistics.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.risk.RiskEstimator;
@@ -94,7 +103,7 @@ public abstract class DataHandle {
     }
     
     /**
-     * Returns the according datatype.
+     * Returns the according data type.
      *
      * @param attribute
      * @return
@@ -131,7 +140,7 @@ public abstract class DataHandle {
         checkRegistry();
         return definition;
     }
-
+    
     /**
      * Returns an array containing the distinct values in the given column.
      *
@@ -145,7 +154,7 @@ public abstract class DataHandle {
             }
         });
     }
-
+    
     /**
      * Returns a double value from the specified cell.
      *
@@ -186,6 +195,7 @@ public abstract class DataHandle {
         }
     }
 
+    
     /**
      * Returns the generalization level for the attribute.
      *
@@ -194,6 +204,7 @@ public abstract class DataHandle {
      */
     public abstract int getGeneralization(String attribute);
 
+    
     /**
      * Returns an int value from the specified cell.
      *
@@ -211,7 +222,8 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
-    
+
+
     /**
      * Returns a long value from the specified cell.
      *
@@ -229,6 +241,199 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: "+type.getClass().getSimpleName(), col);
         }
     }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     * This method uses the default locale.
+     * This method only returns types that match at least 80% of all values in the column .
+     * 
+     *  
+     * @param column
+     * @return
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column) {
+        return getMatchingDataTypes(column, Locale.getDefault(), 0.8d);
+    }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method uses the default locale.
+     * This method only returns types that match at least 80% of all values in the column .
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @return
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz) {
+        return getMatchingDataTypes(column, clazz, Locale.getDefault(), 0.8d);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method uses the default locale.
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, double threshold) {
+        return getMatchingDataTypes(column, clazz, Locale.getDefault(), threshold);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     * This method only returns types that match at least 80% of all values in the column .
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @param locale The locale to use
+     * @return
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale) {
+        return getMatchingDataTypes(column, clazz, locale, 0.8d);
+    }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.
+     *  
+     * @param column
+     * @param clazz The wrapped class
+     * @param locale The locale to use
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale, double threshold) {
+
+        checkRegistry();
+        checkColumn(column);
+        double distinct = this.getDistinctValues(column).length;
+        List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
+        DataTypeDescription<U> description = DataType.list(clazz);
+        if (description.hasFormat()) {
+            for (String format : description.getExampleFormats()) {
+                DataType<U> type = description.newInstance(format, locale);
+                double matching = (double)getNumConformingValues(column, type) / distinct;
+                if (matching >= threshold) {
+                    result.add(new Pair<DataType<?>, Double>(type, matching));
+                }
+            }
+        } else {
+            DataType<U> type = description.newInstance();
+            double matching = (double)getNumConformingValues(column, type) / distinct;
+            if (matching >= threshold) {
+                result.add(new Pair<DataType<?>, Double>(type, matching));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type.
+     * This method uses the default locale.
+     *  
+     * @param column
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, double threshold) {
+        return getMatchingDataTypes(column, Locale.getDefault(), threshold);
+    }
+
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type
+     * This method only returns types that match at least 80% of all values in the column .
+     *  
+     * @param column
+     * @param locale The locale to use
+     * @return
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale) {
+        return getMatchingDataTypes(column, locale, 0.8d);
+    }
+    
+    /**
+     * Returns a mapping from data types to the relative number of values that conform to the according type
+     *  
+     * @param column
+     * @param locale The locale to use
+     * @param threshold Relative minimal number of values that must match to include a data type in the results
+     * @return
+     */
+    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale, double threshold) {
+       
+        checkRegistry();
+        checkColumn(column);
+        List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
+        result.addAll(getMatchingDataTypes(column, Long.class, locale, threshold));
+        result.addAll(getMatchingDataTypes(column, Date.class, locale, threshold));
+        result.addAll(getMatchingDataTypes(column, Double.class, locale, threshold));
+        result.add(new Pair<DataType<?>, Double>(DataType.STRING, 1.0d));
+        Collections.sort(result, new Comparator<Pair<DataType<?>, Double>>(){
+            @Override
+            public int compare(Pair<DataType<?>, Double> o1, Pair<DataType<?>, Double> o2) {
+                
+                Class<?> class1 = o1.getFirst().getClass();
+                Class<?> class2 = o2.getFirst().getClass();
+                
+                if (class1 == Long.class) {
+                    if (class2 == Long.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return -1;
+                    } 
+                } else if (class1 == Date.class) {
+                    if (class2 == Long.class) {
+                        return +1;
+                    } else if (class2 == Date.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return -1;
+                    }
+                } else if (class1 == Double.class) {
+                    if (class2 == Double.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else if (class2 == String.class) {
+                        return -1;
+                    } else {
+                        return +1;
+                    }
+                } else if (class1 == String.class) {
+                    if (class2 == String.class) {
+                        return o1.getSecond().compareTo(o2.getSecond());
+                    } else {
+                        return +1;
+                    }
+                } else {
+                    return 0;
+                }
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Returns a set of values that do not conform to the given data type.
+     * 
+     * @param column The column to test
+     * @param type The type to test
+     * @param max The maximal number of values returned by this method
+     * @return
+     */
+    public String[] getNonConformingValues(int column, DataType<?> type, int max) {
+        checkRegistry();
+        checkColumn(column);
+        Set<String> result = new HashSet<String>();
+        for (String value : this.getDistinctValues(column)) {
+            if (!type.isValid(value)) {
+                result.add(value);
+            }
+            if (result.size()==max) {
+                break;
+            }
+        }
+        return result.toArray(new String[result.size()]);
+    }
 
     /**
      * Returns the number of columns in the dataset.
@@ -237,6 +442,23 @@ public abstract class DataHandle {
      */
     public abstract int getNumColumns();
 
+    /**
+     * Returns the number of (distinct) values that conform to the given data type.
+     * 
+     * @param column The column to test
+     * @param type The type to test
+     * @return
+     */
+    public int getNumConformingValues(int column, DataType<?> type) {
+        checkRegistry();
+        checkColumn(column);
+        int count = 0;
+        for (String value : this.getDistinctValues(column)) {
+            count += type.isValid(value) ? 1 : 0;
+        }
+        return count;
+    }
+    
     /**
      * Returns the number of rows in the dataset.
      *
@@ -270,7 +492,7 @@ public abstract class DataHandle {
     public StatisticsBuilder getStatistics(){
         return statistics;
     }
-    
+
     /**
      * Returns the transformation .
      *
@@ -302,7 +524,7 @@ public abstract class DataHandle {
             return this.subset;
         }
     }
-
+    
     /**
      * Determines whether this handle is orphaned, i.e., should not be used anymore
      * @return
@@ -329,7 +551,7 @@ public abstract class DataHandle {
      * @return
      */
     public abstract Iterator<String[]> iterator();
-
+    
     /**
      * Releases this handle and all associated resources. If a input handle is released all associated results are released
      * as well.
@@ -338,6 +560,28 @@ public abstract class DataHandle {
         if (registry != null){
             registry.release(this);
         }
+    }
+    
+    /**
+     * Replaces the original value with the replacement in the given column. Only supported by
+     * handles for input data.
+     * 
+     * @param original
+     * @param replacement
+     * @return Whether the original value was found
+     */
+    public boolean replace(int column, String original, String replacement) {
+        checkRegistry();
+        checkColumn(column);
+        if (!getDataType(getAttributeName(column)).isValid(replacement)) {
+            throw new IllegalArgumentException("Value does'nt match the attribute's data type");
+        }
+        for (String s : getDistinctValues(column)) {
+            if (s.equals(replacement)) {
+                throw new IllegalArgumentException("Value is already contained in the data set");
+            }
+        }
+        return registry.replace(column, original, replacement);
     }
 
     /**
@@ -592,7 +836,16 @@ public abstract class DataHandle {
      * @param col
      * @return
      */
-    protected abstract String internalGetValue(int row, int col);
+    protected abstract String internalGetValue(int row, int col); 
+    
+    /**
+     * Internal replacement method
+     * @param column
+     * @param original
+     * @param replacement
+     * @return
+     */
+    protected abstract boolean internalReplace(int column, String original, String replacement);
     
     /**
      * Updates the registry.

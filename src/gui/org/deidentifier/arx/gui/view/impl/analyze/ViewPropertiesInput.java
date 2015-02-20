@@ -332,7 +332,7 @@ public class ViewPropertiesInput extends ViewProperties {
             if (definition.getSensitiveAttributes().contains(s)) {
                 final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 values[0] = s;
-                if (config.getHierarchy(s) != null) {
+                if (config.getHierarchy(s) != null && config.getHierarchy(s).getHierarchy() != null) {
                     int height = 0;
                     if (config.getHierarchy(s).getHierarchy().length > 0) {
                         height = config.getHierarchy(s).getHierarchy()[0].length;

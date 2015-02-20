@@ -23,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -40,7 +41,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * @author Fabian Prasser
  */
 public class SWTUtil {
-
+    
     /** Static settings. */
     public static final int SLIDER_MAX = 1000;
 
@@ -57,7 +58,7 @@ public class SWTUtil {
         int y = (displayRect.height - shellRect.height) / 2;
         shell.setLocation(displayRect.x + x, displayRect.y + y);
     }
-
+    
     /**
      * Centers the given shell.
      *
@@ -71,6 +72,17 @@ public class SWTUtil {
         final int left = (bounds.width - p.x) / 2;
         final int top = (bounds.height - p.y) / 2;
         shell.setBounds(left + bounds.x, top + bounds.y, p.x, p.y);
+    }
+
+    /**
+     * Registers an image for a tool item. Generates a version of the image
+     * that renders well on windows toolbars, when disabled.
+     * 
+     * @param item
+     * @param image
+     */
+    public static void createDisabledImage(ToolItem item) {
+        item.setDisabledImage(new Image(item.getDisplay(), item.getImage(), SWT.IMAGE_GRAY));
     }
 
     /**

@@ -79,6 +79,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.VISUALIZATION, this);
+        controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
         controller.addListener(target, this);
         if (reset != null) {
             controller.addListener(reset, this);
@@ -146,7 +147,8 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         if (event.part == ModelPart.OUTPUT ||
             event.part == target ||
             event.part == ModelPart.SELECTED_ATTRIBUTE ||
-            event.part == ModelPart.VIEW_CONFIG) {
+            event.part == ModelPart.VIEW_CONFIG ||
+            event.part == ModelPart.ATTRIBUTE_VALUE) {
             
             this.viewContext = null;
             this.update();
