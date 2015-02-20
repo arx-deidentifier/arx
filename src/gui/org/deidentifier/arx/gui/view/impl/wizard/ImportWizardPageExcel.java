@@ -380,7 +380,7 @@ public class ImportWizardPageExcel extends WizardPage {
     /**
      * Reads in preview data
      * 
-     * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
+     * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
      * within the appropriate file and reads them in. It uses {@link ImportAdapter} in combination with {@link ImportConfigurationExcel} to actually read in the data.
      *
      * @throws IOException
@@ -429,7 +429,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
         int count = 0;
-        while (importAdapter.hasNext() && (count <= ImportWizardModel.previewDataMaxLines)) {
+        while (importAdapter.hasNext() && (count <= ImportWizardModel.PREVIEW_MAX_LINES)) {
             previewData.add(importAdapter.next());
             count++;
         }

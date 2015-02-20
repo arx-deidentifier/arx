@@ -39,6 +39,12 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
  */
 public class ImportWizardModel {
 
+    /** Maximum number of lines to be loaded for preview purposes. */
+    public static final int PREVIEW_MAX_LINES = 25;
+
+    /** Maximum number of chars to be loaded for detecting separators. */
+    public static final int DETECT_MAX_CHARS  = 100000;
+    
     /**
      * Possible sources for importing data from.
      *
@@ -104,7 +110,7 @@ public class ImportWizardModel {
      * {@link ImportWizardPagePreview} doesn't need to know anything about the
      * source type the data is coming from.
      * 
-     * It will contain up to {@link #previewDataMaxLines} lines of data.
+     * It will contain up to {@link #PREVIEW_MAX_LINES} lines of data.
      */
     private List<String[]>                previewData;
 
@@ -116,9 +122,6 @@ public class ImportWizardModel {
 
     /** Jdbc connection potentially used throughout the wizard. */
     private Connection                    jdbcConnection;
-
-    /** Maximum number of lines to be loaded for preview purposes. */
-    public static final int               previewDataMaxLines    = 25;
 
     /**
      * @return the csvDelimiter

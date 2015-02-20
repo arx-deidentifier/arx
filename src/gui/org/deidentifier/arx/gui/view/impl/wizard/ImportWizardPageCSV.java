@@ -402,7 +402,7 @@ public class ImportWizardPageCSV extends WizardPage {
     /**
      * Tries to detect the separator used within this file
      *
-     * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
+     * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
      * and tries to detect the used separator by counting how often each of
      * the available {@link #separators} is used.
      *
@@ -416,11 +416,12 @@ public class ImportWizardPageCSV extends WizardPage {
         for (int i=0; i<this.separators.length; i++) {
             separators.put(this.separators[i], i);
         }
-        int count = 0;
+        int countLines = 0;
+        int countChars = 0;
 
         /* Iterate over data */
         String line = r.readLine();
-        while ((count < ImportWizardModel.previewDataMaxLines) && (line != null)) {
+        outer: while ((countLines < ImportWizardModel.PREVIEW_MAX_LINES) && (line != null)) {
 
             /* Iterate over line character by character */
             final char[] a = line.toCharArray();
@@ -428,9 +429,13 @@ public class ImportWizardPageCSV extends WizardPage {
                 if (separators.containsKey(c)) {
                     map.putOrAdd(separators.get(c), 0, 1);
                 }
+                countChars++;
+                if (countChars > ImportWizardModel.DETECT_MAX_CHARS) {
+                    break outer;
+                }
             }
             line = r.readLine();
-            count++;
+            countLines++;
         }
         r.close();
 
@@ -509,7 +514,7 @@ public class ImportWizardPageCSV extends WizardPage {
     /**
      * Reads in preview data
      * 
-     * This goes through up to {@link ImportWizardModel#previewDataMaxLines} lines
+     * This goes through up to {@link ImportWizardModel#PREVIEW_MAX_LINES} lines
      * within the appropriate file and reads them in. It uses {@link ImportAdapter} in combination with {@link ImportConfigurationCSV} to actually read in the data.
      *
      * @throws IOException
@@ -554,7 +559,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Get up to {ImportData#previewDataMaxLines} lines for previewing */
         int count = 0;
-        while (importAdapter.hasNext() && (count <= ImportWizardModel.previewDataMaxLines)) {
+        while (importAdapter.hasNext() && (count <= ImportWizardModel.PREVIEW_MAX_LINES)) {
             previewData.add(importAdapter.next());
             count++;
         }
