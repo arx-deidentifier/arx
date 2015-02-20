@@ -54,6 +54,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
+import org.deidentifier.arx.gui.view.impl.risk.LayoutRisk;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -149,6 +150,8 @@ public class MainWindow implements IView {
         this.layoutExplore = new LayoutExplore(item2, controller);
         Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutAnalyze(item3, controller);
+        Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        new LayoutRisk(item4, controller);
 
         // Hack to update visualizations
         root.addSelectionListener(new SelectionAdapter(){
@@ -641,6 +644,17 @@ public class MainWindow implements IView {
                 controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.4"), //$NON-NLS-1$
+                                   controller.getResources().getImage("perspective_risk.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(3);
+                controller.getModel().setPerspective(Perspective.RISK);
+                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
         });
 
         items.add(new MainMenuSeparator());

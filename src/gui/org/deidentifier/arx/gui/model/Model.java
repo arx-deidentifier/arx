@@ -56,7 +56,8 @@ public class Model implements Serializable {
     public static enum Perspective {
         CONFIGURATION,
         EXPLORATION,
-        ANALYSIS
+        ANALYSIS,
+        RISK
     }
 
     /** SVUID. */
