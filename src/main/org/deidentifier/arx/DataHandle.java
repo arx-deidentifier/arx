@@ -485,21 +485,21 @@ public abstract class DataHandle {
 
     /**
      * Returns a risk estimator for a sample fraction of 0.1
-     * @param definition
+     * @param qis
      * @return
      */
-    public RiskEstimator getRiskEstimator(DataDefinition definition) {
-        return new RiskEstimator(this, definition);
+    public RiskEstimator getRiskEstimator(Set<String> qis) {
+        return new RiskEstimator(this, qis);
     }
 
     /**
      * Returns a risk estimator
-     * @param definition
+     * @param qis
      * @param sampleFraction The sample fraction (defaults to 0.1)
      * @return
      */
-    public RiskEstimator getRiskEstimator(DataDefinition definition, double sampleFraction) {
-        return new RiskEstimator(this, definition, sampleFraction);
+    public RiskEstimator getRiskEstimator(Set<String> qis, double sampleFraction) {
+        return new RiskEstimator(this, qis, sampleFraction);
     }
 
     /**

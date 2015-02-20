@@ -267,7 +267,7 @@ public class ViewUniquesPlot implements IView {
                     int idx = 0;
                     for (double pi = stepping; pi <= 1.0d; pi += stepping) {
 
-                        RiskEstimator estimator = handle.getRiskEstimator(model.getInputDefinition(), pi);
+                        RiskEstimator estimator = handle.getRiskEstimator(model.getInputDefinition().getQuasiIdentifyingAttributes(), pi);
                         if (pi == stepping && estimator.getSampleUniquesRisk() == 0.0d) {
                             reset();
                             break;
@@ -295,7 +295,7 @@ public class ViewUniquesPlot implements IView {
 
         ISeriesSet seriesSet = chart.getSeriesSet();
         ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE,
-                                                                Resources.getMessage("DistributionView.9")); //$NON-NLS-1$
+                                                                Resources.getMessage("Frequency")); //$NON-NLS-1$
         series.getLabel().setVisible(false);
         series.getLabel().setFont(chart.getFont());
         series.setYSeries(data);

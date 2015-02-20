@@ -233,7 +233,7 @@ public class ViewDistributionPlot implements IView {
                     estimator = model.getInputConfig()
                                      .getInput()
                                      .getHandle()
-                                     .getRiskEstimator(model.getInputDefinition());
+                                     .getRiskEstimator(model.getInputDefinition().getQuasiIdentifyingAttributes());
                     update();
                 }
                 

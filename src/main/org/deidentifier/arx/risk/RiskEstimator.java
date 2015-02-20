@@ -18,8 +18,8 @@
 package org.deidentifier.arx.risk;
 
 import java.util.Arrays;
+import java.util.Set;
 
-import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
@@ -115,8 +115,8 @@ public class RiskEstimator {
     /** The associated handle */
     private DataHandle              handle;
 
-    /** The associated handle */
-    private DataDefinition          definition;
+    /** Qis */
+    private Set<String>          qis;
 
     /**
      * Creates a new instance of a class that allows to estimate different risk
@@ -125,18 +125,18 @@ public class RiskEstimator {
      * @param handle
      */
     public RiskEstimator(final DataHandle handle) {
-        this(handle, handle.getDefinition(), 0.1d);
+        this(handle, handle.getDefinition().getQuasiIdentifyingAttributes(), 0.1d);
     }
     
     /**
      * Creates a new instance of a class that allows to estimate different risk
      * measures for a given data set with a default sampling fraction of 0.1
      * 
-     * @param definition
+     * @param qis
      * @param handle
      */
-    public RiskEstimator(final DataHandle handle, final DataDefinition definition) {
-        this(handle, definition, 0.1d);
+    public RiskEstimator(final DataHandle handle, final Set<String> qis) {
+        this(handle, qis, 0.1d);
     }
 
     /**
@@ -147,7 +147,7 @@ public class RiskEstimator {
      * @param pi sampling fraction, defaults to 0.1
      */
     public RiskEstimator(final DataHandle handle, final double pi) {
-        this(handle, handle.getDefinition(), pi);
+        this(handle, handle.getDefinition().getQuasiIdentifyingAttributes(), pi);
     }
 
     /**
@@ -155,10 +155,10 @@ public class RiskEstimator {
      * measures for a given data set
      * 
      * @param handle This class provides access to dictionary encoded data.
-     * @param definition The definition
+     * @param qis The definition
      * @param pi sampling fraction, defaults to 0.1
      */
-    public RiskEstimator(final DataHandle handle, final DataDefinition definition, final double pi) {
+    public RiskEstimator(final DataHandle handle, final Set<String> qis, final double pi) {
         
         // Check
         if ((pi <= 0) || (pi > 1)) {
@@ -167,15 +167,21 @@ public class RiskEstimator {
         if (handle == null) {
             throw new NullPointerException("Handle is null");
         }
-        if (definition == null) {
-            throw new NullPointerException("Definition is null");
+        if (qis == null) {
+            throw new NullPointerException("Quasi identifiers must not be null");
         }
         
         // Store stuff
         this.samplingFraction = pi;
         this.handle = handle;
-        this.definition = definition;
+        this.qis = qis;
         this.eqClasses = getEquivalenceClasses(handle);
+        
+        for (String q : qis) {
+            if (handle.getColumnIndexOf(q) == -1) {
+                throw new IllegalArgumentException(q + " is not an attribute");
+            }
+        }
 
         // Initialize
         initialize();
@@ -222,9 +228,9 @@ public class RiskEstimator {
     public int[] getEquivalenceClassSizes() {
 
         // Get indices of quasi identifiers
-        final int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
+        final int[] indices = new int[qis.size()];
         int index = 0;
-        for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
+        for (final String attribute : qis) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
         Arrays.sort(indices);
@@ -441,9 +447,9 @@ public class RiskEstimator {
     private IntIntOpenHashMap getEquivalenceClasses(final DataHandle handle) {
 
         // Get indices of quasi identifiers
-        final int[] indices = new int[definition.getQuasiIdentifyingAttributes().size()];
+        final int[] indices = new int[qis.size()];
         int index = 0;
-        for (final String attribute : definition.getQuasiIdentifyingAttributes()) {
+        for (final String attribute : qis) {
             indices[index++] = handle.getColumnIndexOf(attribute);
         }
         Arrays.sort(indices);
