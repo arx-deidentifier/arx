@@ -84,6 +84,9 @@ public class ImportWizardModel {
     private char                          csvSeparator;
 
     /** Separator for columns (in case of CSV import). */
+    private char                          csvEscape;
+
+    /** Separator for columns (in case of CSV import). */
     private char                          csvDelimiter;
 
     /**
@@ -135,6 +138,13 @@ public class ImportWizardModel {
      */
     public char getCsvSeparator() {
         return csvSeparator;
+    }
+
+    /**
+     * @return {@link #csvEscape}
+     */
+    public char getCsvEscape() {
+        return csvEscape;
     }
 
     /**
@@ -280,6 +290,14 @@ public class ImportWizardModel {
     }
 
     /**
+     * 
+     * @param csvEscape
+     */
+    public void setCsvEscape(char csvEscape) {
+        this.csvEscape = csvEscape;
+    }
+    
+    /**
      * @param excelSheetIndex
      *            {@link #excelSheetIndex}
      */
@@ -362,4 +380,5 @@ public class ImportWizardModel {
 
         this.wizardColumns = columns;
     }
+
 }

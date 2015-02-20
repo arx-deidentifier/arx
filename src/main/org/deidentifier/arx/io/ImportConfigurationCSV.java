@@ -24,59 +24,91 @@ package org.deidentifier.arx.io;
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public class ImportConfigurationCSV extends ImportConfigurationFile implements
-        IImportConfigurationWithHeader {
+public class ImportConfigurationCSV extends ImportConfigurationFile implements IImportConfigurationWithHeader {
+
+    /** Default values */
+    private static final char DEFAULT_DELIMITER = ';';
+    /** Default values */
+    private static final char DEFAULT_QUOTE     = '\"';
+    /** Default values */
+    private static final char DEFAULT_ESCAPE    = '\"';
 
     /** Character that separates the columns from each other. */
-    private char    separator;
-    
+    private final char        delimiter;
+
     /** Character that delimits strings. */
-    private char    delimiter;
+    private final char        quote;
+
+    /** Character that escapes. */
+    private final char        escape;
 
     /**
      * Indicates whether first row contains header (names of columns).
-     *
+     * 
      * @see {@link IImportConfigurationWithHeader}
      */
-    private boolean containsHeader;
+    private boolean     containsHeader;
 
     /**
      * Creates a new instance of this object.
      *
      * @param fileLocation {@link #setFileLocation(String)}
-     * @param separator {@link #separator}
      * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
-                                  char separator,
                                   boolean containsHeader) {
-
-        setFileLocation(fileLocation);
-        this.separator = separator;
-        this.delimiter = '\"';
-        this.containsHeader = containsHeader;
-
+        this(fileLocation, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, containsHeader);
+    }
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param delimiter {@link #separator}
+     * @param containsHeader {@link #containsHeader}
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  boolean containsHeader) {
+        this(fileLocation, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, containsHeader);
     }
     
     /**
      * Creates a new instance of this object.
      *
      * @param fileLocation {@link #setFileLocation(String)}
-     * @param separator {@link #separator}
+     * @param delimiter {@link #delimiter}
+     * @param quote {@link #quote}
      * @param containsHeader {@link #containsHeader}
      */
     public ImportConfigurationCSV(String fileLocation,
-                                  char separator,
                                   char delimiter,
+                                  char quote,
+                                  boolean containsHeader) {
+        this(fileLocation, delimiter, quote, DEFAULT_ESCAPE, containsHeader);
+    }
+
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation {@link #setFileLocation(String)}
+     * @param delimiter {@link #delimiter}
+     * @param quote {@link #quote}
+     * @param escape {@link #escape}
+     * @param containsHeader {@link #containsHeader}
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  char quote,
+                                  char escape,
                                   boolean containsHeader) {
 
         setFileLocation(fileLocation);
-        this.separator = separator;
+        this.quote = quote;
         this.delimiter = delimiter;
+        this.escape = escape;
         this.containsHeader = containsHeader;
-
     }
-
+    
     /**
      * Adds a single column to import from
      * 
@@ -135,10 +167,17 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements
     }
 
     /**
-     * @return {@link #separator}
+     * @return {@link #quote}
      */
-    public char getSeparator() {
-        return separator;
+    public char getQuote() {
+        return quote;
+    }
+
+    /**
+     * @return {@link #quote}
+     */
+    public char getEscape() {
+        return escape;
     }
     
     /**
