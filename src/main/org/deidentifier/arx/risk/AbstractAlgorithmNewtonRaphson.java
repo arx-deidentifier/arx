@@ -116,25 +116,17 @@ abstract class AbstractAlgorithmNewtonRaphson {
                                                                           initialValue.length));
                 updatedSolutionVector = solutionVector.minus(differenceVector);
             } else {
-                System.out.println("Newton Raphson Algorithm:");
-                System.out.println("The first derivative matrix of the object functions is "
-                                   + "singular. Using different method to estimate Population Uniqueness!");
                 final double[] result = solutionVector.getColumnPackedCopy();
                 for (int j = 0; j < result.length; j++) {
                     result[j] = Double.NaN;
                 }
                 return result;
-                /*
-                 * throw new IllegalArgumentException(
-                 * "The first derivative matrix of the object functions is " +
-                 * "singular.");
-                 */
             }
             solutionVector = updatedSolutionVector;
         }
 
         if (i == maxIterations) {
-            System.out.println("Maximum number of iterations have been acheived.");
+            System.out.println("Maximum number of iterations have been performed.");
         }
 
         return solutionVector.getColumnPackedCopy();

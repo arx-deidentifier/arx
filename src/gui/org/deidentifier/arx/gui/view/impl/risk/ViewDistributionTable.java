@@ -163,8 +163,7 @@ public class ViewDistributionTable implements IView {
      */
     private void create(final Composite parent) {
 
-        table = new DynamicTable(parent, SWT.SINGLE | SWT.BORDER |
-                                         SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = new DynamicTable(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         final GridData gdata = SWTUtil.createFillGridData();
@@ -208,19 +207,22 @@ public class ViewDistributionTable implements IView {
                 return Integer.compare(o1[0], o2[0]);
             }
         });
-
+        double total = 0d;
+        for (int[] entry : distribution) {
+            total += entry[1];
+        }
+        
         // Create entries
         for (int i = 0; i < distribution.length; i++) {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(0, String.valueOf(distribution[i][0]));
             item.setText(1, String.valueOf(distribution[i][1]));
-            item.setText(2, format.format((double) distribution[i][1] /
-                                          (double) estimator.getNumRows() * 100d));
+            item.setText(2, format.format((double) distribution[i][1] / total * 100d));
             items.add(item);
         }
 
         table.setRedraw(true);
         table.redraw();
-        SWTUtil.enable(table);
+        SWTUtil.enable(root);
     }
 }

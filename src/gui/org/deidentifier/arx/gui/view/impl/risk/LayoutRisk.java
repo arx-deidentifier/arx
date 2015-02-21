@@ -47,12 +47,6 @@ public class LayoutRisk implements ILayout {
     private static final int       WEIGHT_RIGHT  = 50;
     
     /** View*/
-    private final Composite        bottomLeft;
-    
-    /** View*/
-    private final Composite        bottomRight;
-    
-    /** View*/
     private final SashForm         centerSash;
     
     /**
@@ -102,18 +96,28 @@ public class LayoutRisk implements ILayout {
         final SashForm bottomSash = new SashForm(compositeBottom,
                                                  SWT.HORIZONTAL | SWT.SMOOTH);
 
-        bottomLeft = new Composite(bottomSash, SWT.NONE);
-        bottomLeft.setLayout(new FillLayout());
 
-        bottomRight = new Composite(bottomSash, SWT.NONE);
+        // Create center composite
+        ComponentTitledFolder bottomLeftFolder = new ComponentTitledFolder(bottomSash, controller, null, "id-1031"); //$NON-NLS-1$
+        bottomLeftFolder.setLayoutData(SWTUtil.createFillGridData());
+        
+        Composite item4 = bottomLeftFolder.createItem(Resources.getMessage("ViewSampleDistribution.5"), //$NON-NLS-1$ 
+                                            controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
+        
+        item4.setLayoutData(SWTUtil.createFillGridData());
+        new ViewRisks(item4, controller);
+
+        Composite item5 = bottomLeftFolder.createItem(Resources.getMessage("ViewSampleDistribution.16"), //$NON-NLS-1$ 
+                                            controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
+        
+        item5.setLayoutData(SWTUtil.createFillGridData());
+        new ViewPopulationModel(item5, controller);
+        
+        Composite bottomRight = new Composite(bottomSash, SWT.NONE);
         bottomRight.setLayout(new FillLayout());
-
-        // --------------------------
-        // STATISTICS VIEWS
-        // --------------------------
-
-        new ViewRisks(bottomLeft, controller);
         new ViewUniquesPlot(bottomRight, controller);
+        
+        bottomLeftFolder.setSelection(0);
         
         // Set sash weights
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });

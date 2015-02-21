@@ -18,9 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandle;
@@ -65,14 +63,14 @@ public class ViewUniquesPlot implements IView {
     /** Minimal width of a category label. */
     private static final int           MIN_CATEGORY_WIDTH = 10;
 
-    /** Steps in the analysis process. */
-    private static final int           ANALYSIS_STEPS     = 10;
-
     /** View */
-    private static final DecimalFormat FORMAT             = new DecimalFormat("##0.00000");
+    private static final DecimalFormat FORMAT             = new DecimalFormat("##0.0###################");
 
     /** Labels for the plot. */
-    private static final String[]      LABELS             = getLabels(ANALYSIS_STEPS);
+    private static final double[]      POINTS             = getPoints();
+
+    /** Labels for the plot. */
+    private static final String[]      LABELS             = getLabels(POINTS);
 
     /** Controller */
     private final Controller           controller;
@@ -91,17 +89,23 @@ public class ViewUniquesPlot implements IView {
 
     /**
      * Creates a set of labels
-     * @param analysisSteps
+     * @param points
      * @return
      */
-    private static String[] getLabels(int steps) {
-        
-        List<String> result = new ArrayList<String>();
-        double stepping = 1.0d / (double)steps;
-        for (double value = stepping; value <= 1d; value += stepping) {
-            result.add(FORMAT.format(value));
+    private static String[] getLabels(double[] points) {
+        String[] result = new String[points.length];
+        for (int i = 0; i < points.length; i++) {
+            result[i] = FORMAT.format(points[i]);
         }
-        return result.toArray(new String[result.size()]);
+        return result;
+    }
+    
+    /**
+     * Creates an array of points
+     * @return
+     */
+    private static double[] getPoints() {
+        return new double[]{0.0000001d, 0.000001d, 0.00001d, 0.0001d, 0.001d, 0.01d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d};
     }
 
 
@@ -116,6 +120,7 @@ public class ViewUniquesPlot implements IView {
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
         controller.addListener(ModelPart.MODEL, this);
         this.controller = controller;
 
@@ -148,6 +153,14 @@ public class ViewUniquesPlot implements IView {
     public void reset() {
         
         qis.clear();
+        resetChart();
+        SWTUtil.disable(root);
+    }
+
+    /**
+     * Resets the chart
+     */
+    private void resetChart() {
 
         if (chart != null) {
             chart.dispose();
@@ -240,6 +253,7 @@ public class ViewUniquesPlot implements IView {
         updateCategories();
     }
 
+
     /*
      * (non-Javadoc)
      * 
@@ -251,7 +265,7 @@ public class ViewUniquesPlot implements IView {
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model) event.data;
-        } else if (event.part == ModelPart.INPUT ||
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.POPULATION_MODEL ||
                    event.part == ModelPart.ATTRIBUTE_TYPE) {
             if (model != null && model.getInputConfig() != null &&
                 model.getInputConfig().getInput() != null) {
@@ -262,17 +276,14 @@ public class ViewUniquesPlot implements IView {
                     DataHandle handle = model.getInputConfig()
                                              .getInput()
                                              .getHandle();
-                    data = new double[LABELS.length];
-                    double stepping = 1.0d / ANALYSIS_STEPS;
-                    int idx = 0;
-                    for (double pi = stepping; pi <= 1.0d; pi += stepping) {
-
-                        RiskEstimator estimator = handle.getRiskEstimator(model.getInputDefinition().getQuasiIdentifyingAttributes(), pi);
-                        if (pi == stepping && estimator.getSampleUniquesRisk() == 0.0d) {
+                    data = new double[POINTS.length];
+                    for (int idx = 0; idx < POINTS.length; idx++) {
+                        RiskEstimator estimator = handle.getRiskEstimator(model.getInputDefinition().getQuasiIdentifyingAttributes(), POINTS[idx]);
+                        if (idx == 0 && estimator.getSampleUniquesRisk() == 0.0d) {
                             reset();
                             break;
                         }
-                        data[idx++] = estimator.getPopulationUniquesRisk();
+                        data[idx] = estimator.getPopulationUniquesRisk();
                     }
                     update();
                 }
@@ -291,7 +302,8 @@ public class ViewUniquesPlot implements IView {
     private void update() {
 
         // Update chart
-        chart.setRedraw(false);
+        root.setRedraw(false);
+        resetChart();
 
         ISeriesSet seriesSet = chart.getSeriesSet();
         ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE,
@@ -307,14 +319,16 @@ public class ViewUniquesPlot implements IView {
         yAxis.setRange(new Range(0d, 1d));
 
         IAxis xAxis = axisSet.getXAxis(0);
-        xAxis.setRange(new Range(0d, ANALYSIS_STEPS));
+        xAxis.setRange(new Range(0d, LABELS.length));
         xAxis.setCategorySeries(LABELS);
 
         chart.updateLayout();
         chart.update();
-        chart.setRedraw(true);
+        root.setRedraw(true);
         chart.redraw();
-        SWTUtil.enable(chart);
+        
+        SWTUtil.enable(root);
+        root.layout();
     }
 
     /**

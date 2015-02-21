@@ -200,6 +200,9 @@ public class Model implements Serializable {
     
     /** The current output configuration. */
     private ModelConfiguration                    outputConfig                    = null;
+    
+    /** The current population model.*/
+    private ModelPopulation                       populationModel                 = null;
 
     /* *****************************************
      * PRIVACY CRITERIA
@@ -685,6 +688,17 @@ public class Model implements Serializable {
     }
 	
 	/**
+     * Returns the population model
+     * @return the populationModel
+     */
+    public ModelPopulation getPopulationModel() {
+        if (this.populationModel == null) {
+            this.populationModel = new ModelPopulation();
+        }
+        return populationModel;
+    }
+	
+	/**
      * Returns the current query.
      *
      * @return
@@ -692,7 +706,7 @@ public class Model implements Serializable {
 	public String getQuery() {
         return query;
     }
-	
+
 	/**
      * Returns the current result.
      *
@@ -702,7 +716,7 @@ public class Model implements Serializable {
 		return result;
 	}
 
-	/**
+    /**
      * Returns the currently selected attribute.
      *
      * @return
@@ -710,8 +724,8 @@ public class Model implements Serializable {
 	public String getSelectedAttribute() {
 		return selectedAttribute;
 	}
-
-    /**
+    
+	/**
      * Returns the selected transformation.
      *
      * @return
@@ -719,7 +733,7 @@ public class Model implements Serializable {
 	public ARXNode getSelectedNode() {
 		return selectedNode;
 	}
-    
+	
 	/**
      * Returns the separator.
      *
@@ -728,8 +742,8 @@ public class Model implements Serializable {
 	public char getSeparator() {
 		return separator;
 	}
-	
-	/**
+
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -747,7 +761,7 @@ public class Model implements Serializable {
 		return snapshotSizeSnapshot;
 	}
 
-    /**
+	/**
      * Returns the origin of the subset.
      *
      * @return
@@ -792,7 +806,7 @@ public class Model implements Serializable {
 	    return debugEnabled;
 	}
 
-	/**
+    /**
      * Returns whether this project is modified.
      *
      * @return
@@ -801,6 +815,9 @@ public class Model implements Serializable {
 		if (inputConfig.isModified()) {
 			return true;
 		}
+		if (populationModel.isModified()) {
+            return true;
+        }
 		if ((outputConfig != null) && outputConfig.isModified()) {
 			return true;
 		}
@@ -809,7 +826,7 @@ public class Model implements Serializable {
         }
 		return modified;
 	}
-
+    
     /**
      * Returns whether a quasi-identifier is selected.
      *
@@ -818,8 +835,8 @@ public class Model implements Serializable {
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
-    
-    /**
+
+	/**
      * Returns whether a sensitive attribute is selected.
      *
      * @return
@@ -827,7 +844,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-
+	
 	/**
      * Returns whether visualization is enabled.
      *
@@ -840,7 +857,7 @@ public class Model implements Serializable {
 	        return this.showVisualization;
 	    }
 	}
-	
+
 	/**
      * Resets the model.
      */
@@ -862,8 +879,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-
-	/**
+    
+    /**
      * Resets the configuration of the privacy criteria.
      */
 	public void resetCriteria() {
@@ -883,8 +900,8 @@ public class Model implements Serializable {
 					attribute));
 		}
 	}
-    
-    /**
+
+	/**
      * Sets the anonymizer.
      *
      * @param anonymizer
@@ -943,7 +960,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the size of the input in bytes.
      *
      * @param inputBytes
@@ -953,7 +970,7 @@ public class Model implements Serializable {
 		this.inputBytes = inputBytes;
 	}
 
-    /**
+	/**
      * Sets the input config.
      *
      * @param config
@@ -1028,7 +1045,7 @@ public class Model implements Serializable {
     public void setModified() {
 		modified = true;
 	}
-
+	
 	/**
      * Sets the project name.
      *
@@ -1065,7 +1082,7 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-	
+
 	/**
      * Sets the output config.
      *
@@ -1115,14 +1132,14 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Marks this project as saved.
      */
 	public void setSaved() {
 		modified = false;
 	}
-
-    /**
+    
+	/**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1146,7 +1163,7 @@ public class Model implements Serializable {
 		setModified();
 	}
     
-	/**
+    /**
      * Sets the selected node.
      *
      * @param node
@@ -1164,8 +1181,8 @@ public class Model implements Serializable {
 	public void setSeparator(final char separator) {
 		this.separator = separator;
 	}
-    
-    /**
+
+	/**
      * 
      *
      * @param snapshotSize
@@ -1174,8 +1191,8 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-
-	/**
+    
+    /**
      * Sets the according parameter.
      *
      * @param snapshotSize
@@ -1184,7 +1201,7 @@ public class Model implements Serializable {
 		setModified();
 		snapshotSizeSnapshot = snapshotSize;
 	}
-    
+
     /**
      * Sets how the subset was defined.
      */
@@ -1218,6 +1235,7 @@ public class Model implements Serializable {
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
+		populationModel.setUnmodified();
 		if (outputConfig != null) {
 			outputConfig.setUnmodified();
 		}

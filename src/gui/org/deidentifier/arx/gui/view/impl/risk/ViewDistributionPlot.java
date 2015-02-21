@@ -261,9 +261,14 @@ public class ViewDistributionPlot implements IView {
         // Create array
         double[] frequencies = new double[distribution.length];
         String[] labels = new String[distribution.length];
+        
+        double total = 0d;
+        for (int[] entry : distribution) {
+            total += entry[1];
+        }
+        
         for (int i = 0; i < distribution.length; i++) {
-            frequencies[i] = (double) distribution[i][1] /
-                             (double) estimator.getNumRows() * 100d;
+            frequencies[i] = (double) distribution[i][1] / total * 100d;
             labels[i] = String.valueOf(distribution[i][0]);
         }
 
@@ -294,7 +299,7 @@ public class ViewDistributionPlot implements IView {
         chart.update();
         chart.setRedraw(true);
         chart.redraw();
-        SWTUtil.enable(chart);
+        SWTUtil.enable(root);
     }
 
     /**

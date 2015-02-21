@@ -89,7 +89,10 @@ public class ModelEvent {
         ATTRIBUTE_VALUE,
 
         /**  TODO */
-        PERSPECTIVE
+        PERSPECTIVE,
+
+        /**  TODO */
+        POPULATION_MODEL
     }
 
     /** The part of the model that has changed. */

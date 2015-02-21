@@ -31,11 +31,9 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.deidentifier.arx.risk.RiskEstimator;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -87,15 +85,12 @@ public class ViewRisks implements IView {
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
         controller.addListener(ModelPart.MODEL, this);
         this.controller = controller;
 
         // Create group
-        ComponentTitledBorder border = new ComponentTitledBorder(parent,
-                                                                 controller,
-                                                                 Resources.getMessage("ViewSampleDistribution.5"), "id-1022"); //$NON-NLS-1$
-        root = new Composite(border.getControl(), SWT.NONE);
-        border.setChild(root);
+        root = parent;
         root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
 
         create(root);
@@ -141,16 +136,17 @@ public class ViewRisks implements IView {
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model) event.data;
-        } else if (event.part == ModelPart.INPUT ||
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.POPULATION_MODEL ||
                    event.part == ModelPart.ATTRIBUTE_TYPE) {
             if (model != null && model.getInputConfig() != null &&
                 model.getInputConfig().getInput() != null) {
-                if (!model.getInputDefinition().getQuasiIdentifyingAttributes().equals(qis)) {
+                if (!model.getInputDefinition().getQuasiIdentifyingAttributes().equals(qis) || 
+                     event.part == ModelPart.POPULATION_MODEL ) {
                     qis = model.getInputDefinition().getQuasiIdentifyingAttributes();
                     estimator = model.getInputConfig()
                                      .getInput()
                                      .getHandle()
-                                     .getRiskEstimator(model.getInputDefinition().getQuasiIdentifyingAttributes());
+                                     .getRiskEstimator(model.getInputDefinition().getQuasiIdentifyingAttributes(), model.getPopulationModel().getSampleFraction());
                     update();
                 }
             } else {
@@ -166,12 +162,10 @@ public class ViewRisks implements IView {
      */
     private void create(final Composite parent) {
 
-        table = new DynamicTable(parent, SWT.SINGLE | SWT.BORDER |
-                                         SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = new DynamicTable(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
-        final GridData gdata = SWTUtil.createFillGridData();
-        table.setLayoutData(gdata);
+        table.setLayoutData(SWTUtil.createFillGridData());
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
@@ -214,7 +208,7 @@ public class ViewRisks implements IView {
         
         table.setRedraw(true);
         table.redraw();
-        SWTUtil.enable(table);
+        SWTUtil.enable(root);
     }
     
     /**

@@ -90,13 +90,12 @@ public class ViewQuasiIdentifierRisks implements IView {
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.controller = controller;
 
         // Create group
         root = parent;
         root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
-
-        create(root);
         reset();
     }
 
@@ -125,6 +124,9 @@ public class ViewQuasiIdentifierRisks implements IView {
             for (final TableItem i : items) {
                 i.dispose();
             }
+            for (TableColumn c : columns) {
+                c.dispose();
+            }
             table.setRedraw(true);
             table.dispose();
         }
@@ -144,7 +146,7 @@ public class ViewQuasiIdentifierRisks implements IView {
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model) event.data;
-        } else if (event.part == ModelPart.INPUT) {
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.POPULATION_MODEL) {
             if (model != null && model.getInputConfig() != null &&
                 model.getInputConfig().getInput() != null) {
                 
@@ -167,7 +169,7 @@ public class ViewQuasiIdentifierRisks implements IView {
                         RiskEstimator estimator = model.getInputConfig()
                                                  .getInput()
                                                  .getHandle()
-                                                 .getRiskEstimator(set);
+                                                 .getRiskEstimator(set, model.getPopulationModel().getSampleFraction());
                         double score = 0d;
                         if (estimator.getSampleUniquesRisk() != 0d) {
                             score = estimator.getPopulationUniquesRisk();
@@ -183,34 +185,6 @@ public class ViewQuasiIdentifierRisks implements IView {
     }
 
     /**
-     * Creates the required controls.
-     * 
-     * @param parent
-     */
-    private void create(final Composite parent) {
-//
-//        table = new DynamicTable(parent, SWT.SINGLE | SWT.BORDER |
-//                                         SWT.V_SCROLL | SWT.FULL_SELECTION);
-//        table.setHeaderVisible(true);
-//        table.setLinesVisible(true);
-//        final GridData gdata = SWTUtil.createFillGridData();
-//        table.setLayoutData(gdata);
-//        table.setMenu(new ClipboardHandlerTable(table).getMenu());
-//
-//        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-//        c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-//        c.setText(Resources.getMessage("ViewSampleDistribution.6")); //$NON-NLS-1$
-//        columns.add(c);
-//        c = new DynamicTableColumn(table, SWT.LEFT);
-//        c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-//        c.setText(Resources.getMessage("ViewSampleDistribution.7")); //$NON-NLS-1$
-//        columns.add(c);
-//        for (final TableColumn col : columns) {
-//            col.pack();
-//        }
-    }
-
-    /**
      * Updates the view.
      * 
      * @param node
@@ -222,9 +196,12 @@ public class ViewQuasiIdentifierRisks implements IView {
             for (final TableItem i : items) {
                 i.dispose();
             }
-            table.setRedraw(true);
             items.clear();
+            for (TableColumn c : columns) {
+                c.dispose();
+            }
             columns.clear();
+            table.setRedraw(true);
             table.dispose();
         }
         
@@ -294,7 +271,7 @@ public class ViewQuasiIdentifierRisks implements IView {
         
         table.setRedraw(true);
         table.redraw();
-        SWTUtil.enable(table);
+        SWTUtil.enable(root);
     }
     
     /**
