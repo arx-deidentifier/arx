@@ -85,7 +85,7 @@ public class LayoutRisk implements ILayout {
                                             controller.getResources().getImage("explore_list.png")); //$NON-NLS-1$
         
         item3.setLayoutData(SWTUtil.createFillGridData());
-        new ViewQuasiIdentifierRisks(item3, controller);
+        new ViewAttributeRisks(item3, controller);
         
         folder.setSelection(0);
 

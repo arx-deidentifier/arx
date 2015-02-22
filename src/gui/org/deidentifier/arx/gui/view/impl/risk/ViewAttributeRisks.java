@@ -50,7 +50,13 @@ import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewQuasiIdentifierRisks implements IView {
+public class ViewAttributeRisks implements IView {
+    
+    /** The measure to use*/
+    public static enum Measure {
+        SAMPLE,
+        POPULATION
+    }
 
     /** Controller */
     private final Controller         controller;
@@ -74,6 +80,9 @@ public class ViewQuasiIdentifierRisks implements IView {
     private int                      size     = 0;
 
     /** Model */
+    private Measure                  measure  = Measure.SAMPLE;
+    
+    /** Model */
     private Set<Set<String>>         powerset = new HashSet<Set<String>>();
 
     /** Model */
@@ -85,8 +94,8 @@ public class ViewQuasiIdentifierRisks implements IView {
      * @param parent
      * @param controller
      */
-    public ViewQuasiIdentifierRisks(final Composite parent,
-                                  final Controller controller) {
+    public ViewAttributeRisks(final Composite parent,
+                              final Controller controller) {
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
@@ -146,7 +155,7 @@ public class ViewQuasiIdentifierRisks implements IView {
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model) event.data;
-        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.POPULATION_MODEL) {
+        } else if (event.part == ModelPart.INPUT || (event.part == ModelPart.POPULATION_MODEL && measure == Measure.POPULATION)) {
             if (model != null && model.getInputConfig() != null &&
                 model.getInputConfig().getInput() != null) {
                 
@@ -172,7 +181,7 @@ public class ViewQuasiIdentifierRisks implements IView {
                                                  .getRiskEstimator(set, model.getPopulationModel().getSampleFraction());
                         double score = 0d;
                         if (estimator.getSampleUniquesRisk() != 0d) {
-                            score = estimator.getPopulationUniquesRisk();
+                            score = measure == Measure.SAMPLE ? estimator.getSampleUniquesRisk() : estimator.getPopulationUniquesRisk();
                         }
                         scores.put(set, score);
                     }
