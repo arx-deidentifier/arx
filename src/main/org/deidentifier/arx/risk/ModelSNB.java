@@ -17,48 +17,63 @@
 
 package org.deidentifier.arx.risk;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 
 /**
  * This class implements the SNBModel, for details see Chen, 1998
  * 
+ * @author Fabian Prasser
  * @author Michael Schneider
  * @version 1.09
  */
-class ModelSNB extends AbstractModelUniqueness {
+class ModelSNB extends RiskModelPopulationBased {
 
+    /** The result*/
+    private final double uniques;
+    
     /**
-     * number of equivalence classes of size one
-     */
-    protected int    c1;
-
-    /**
-     * number of non-empty classes equivalence classes in the population
-     */
-    protected double numberOfNonEmptyClasses;
-
-    /**
-     * sampling fraction
-     */
-    protected double samplingFraction;
-
-    /**
-     * Shlosser estimator for variable K, giving number of non zero classes in
-     * the population
+     * Creates a new instance
      * 
-     * @param pi
-     *            sampling fraction
-     * @param eqClasses
-     *            Map containing the equivalence class sizes (as keys) of the
-     *            data set and the corresponding frequency (as values) e.g. if
-     *            the key 2 has value 3 then there are 3 equivalence classes of
-     *            size two.
+     * @param classes
+     * @param model
      */
-    ModelSNB(final double pi, final IntIntOpenHashMap eqClasses) {
-        super(pi, eqClasses);
-        samplingFraction = pi;
-        numberOfNonEmptyClasses = estimateNonEmptyEquivalenceClasses();
-        c1 = eqClasses.get(1);
+    ModelSNB(final ARXPopulationModel model, 
+             final RiskModelEquivalenceClasses classes,
+             final double accuracy,
+             final int maxIterations,
+             final WrappedBoolean stop) {
+        super(classes, model, stop);
+        
+        int[] _classes = super.getClasses().getEquivalenceClasses();
+        double numClassesOfSize1 = super.getNumClassesOfSize(1);
+        
+        double numNonEmptyClasses = estimateNonEmptyEquivalenceClasses(_classes,
+                                                                       super.getNumClasses(),
+                                                                       numClassesOfSize1,
+                                                                       super.getSampleFraction());
+
+        AlgorithmNewtonSNB snbModel = new AlgorithmNewtonSNB(numNonEmptyClasses, 
+                                                             super.getSampleFraction(), 
+                                                             (int)numClassesOfSize1,
+                                                             (int)super.getNumClassesOfSize(2),
+                                                             maxIterations,
+                                                             accuracy,
+                                                             stop);
+
+        // Use Newton Raphson Algorithm to compute solution for the nonlinear multivariate equations
+        // Start values are initialized randomly
+        double[] initialGuess = { Math.random(), Math.random() };
+        double[] output = snbModel.getSolution(initialGuess);
+        this.uniques = numNonEmptyClasses * Math.pow(output[1], output[0]);
+    }
+
+    /**
+     * Returns the number of uniques
+     * @return
+     */
+    public double getNumUniques() {
+        return this.uniques;
     }
 
     /**
@@ -67,52 +82,23 @@ class ModelSNB extends AbstractModelUniqueness {
      *         Shlosser
      * 
      */
-    private double estimateNonEmptyEquivalenceClasses() {
+    private double estimateNonEmptyEquivalenceClasses(int[] classes, 
+                                                      double numClasses,
+                                                      double numClassesOfSize1, 
+                                                      double samplingFraction) {
         double var1 = 0, var2 = 0, var3 = 0, var4 = 0;
 
-        final int[] keys = eqClasses.keys;
-        final int[] values = eqClasses.values;
-        final boolean[] states = eqClasses.allocated;
-        for (int i = 0; i < states.length; i++) {
-            if (states[i]) {
-                int key = keys[i];
-                int value = values[i];
-                var1 += key * samplingFraction * samplingFraction * Math.pow((1 - (samplingFraction * samplingFraction)), key - 1) * value;
-                var2 += Math.pow((1 - samplingFraction), key) * (Math.pow((1 + samplingFraction), key) - 1) * value;
-                var3 += Math.pow((1 - samplingFraction), key) * value;
-                var4 += key * samplingFraction * Math.pow((1 - samplingFraction), (key - 1)) * value;
-            }
+        for (int i = 0; i < classes.length; i+=2) {
+            int size = classes[i];
+            int count = classes[i + 1];
+            var1 += size * samplingFraction * samplingFraction * Math.pow((1 - (samplingFraction * samplingFraction)), size - 1) * count;
+            var2 += Math.pow((1 - samplingFraction), size) * (Math.pow((1 + samplingFraction), size) - 1) * count;
+            var3 += Math.pow((1 - samplingFraction), size) * count;
+            var4 += size * samplingFraction * Math.pow((1 - samplingFraction), (size - 1)) * count;
+            checkInterrupt();
         }
 
-        final double K = numberOfEquivalenceClasses + (c1 * (var1 / var2) * ((var3 / var4) * (var3 / var4)));
+        final double K = numClasses + (numClassesOfSize1 * (var1 / var2) * ((var3 / var4) * (var3 / var4)));
         return K;
     }
-
-    @Override
-    protected double getRisk() {
-        return (getPopulationUniques() / populationSize);
-    }
-
-    @Override
-    protected double getPopulationUniques() {
-        double result = Double.NaN;
-        double alpha = 0, beta = 0;
-
-        final AlgorithmNewtonSNB snbModel = new AlgorithmNewtonSNB(numberOfNonEmptyClasses,
-                                                 samplingFraction,
-                                                 eqClasses);
-
-        // start values are initialized randomly
-        alpha = Math.random();
-        beta = Math.random();
-        final double[] initialGuess = { alpha, beta };
-
-        // use Newton Raphson Algorithm to compute solution for the nonlinear
-        // multivariate equations
-        final double[] output = snbModel.getSolution(initialGuess);
-
-        result = numberOfNonEmptyClasses * Math.pow(output[1], output[0]);
-        return result;
-    }
-
 }

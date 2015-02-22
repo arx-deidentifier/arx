@@ -80,19 +80,22 @@ public class ModelEvent {
         RESEARCH_SUBSET,
         
         /**  TODO */
-        VIEW_CONFIG,
+        SELECTED_VIEW_CONFIG,
         
         /**  TODO */
-        VISUALIZATION,
+        SELECTED_UTILITY_VISUALIZATION,
         
         /**  TODO */
         ATTRIBUTE_VALUE,
 
         /**  TODO */
-        PERSPECTIVE,
+        SELECTED_PERSPECTIVE,
 
         /**  TODO */
-        POPULATION_MODEL
+        POPULATION_MODEL,
+
+        /**  TODO */
+        SELECTED_RISK_VISUALIZATION
     }
 
     /** The part of the model that has changed. */

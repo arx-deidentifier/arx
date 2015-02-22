@@ -17,48 +17,49 @@
 
 package org.deidentifier.arx.risk;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+
 
 /**
  * This class implements Newton Raphson algorithm for the Pitman Model to obtain
  * results for the Maximum Likelihood estimation. For further details see
  * Hoshino, 2001
  * 
+ * @author Fabian Prasser
  * @author Michael Schneider
  * @version 1.0
  */
-class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
+class AlgorithmNewtonPitman extends AlgorithmNewtonRaphson {
 
     /**
-     * The number of equivalence class sizes (keys) and corresponding frequency
-     * (values)
+     * The number of equivalence class sizes (keys) and corresponding frequency (values)
      */
-    private final IntIntOpenHashMap eqClasses;
+    private final int[]  classes;
 
     /** The total number of entries in our sample data set */
-    private final double                numberOfEntries;
+    private final double numberOfEntries;
 
     /** The total number of equivalence classes in the sample data set */
-    private final double                numberOfEquivalenceClasses;
+    private final double numberOfEquivalenceClasses;
 
     /**
      * Creates an instance of the Newton-Raphson Algorithm to determine the
      * Maximum Likelihood Estimator for the Pitman Model
      * 
-     * @param u
-     *            total number of entries in the sample data set
-     * @param n
-     *            size of sample
-     * @param eqClasses
-     *            The number of equivalence class sizes (keys) and corresponding
-     *            frequency (values)
+     * @param u total number of entries in the sample data set
+     * @param n size of sample
+     * @param classes
      */
     AlgorithmNewtonPitman(final double u,
-                        final double n,
-                        final IntIntOpenHashMap eqClasses) {
+                          final double n,
+                          final int[] classes,
+                          final int maxIterations,
+                          final double accuracy,
+                          final WrappedBoolean stop) {
+        super(accuracy, maxIterations, stop);
         this.numberOfEquivalenceClasses = u;
         this.numberOfEntries = n;
-        this.eqClasses = eqClasses;
+        this.classes = classes;
     }
 
     /**
@@ -79,15 +80,13 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
         // compute d^2L/(dtheta)^2
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += (1 / ((iteratedSolution[0] + (i * iteratedSolution[1])) * (iteratedSolution[0] + (i * iteratedSolution[1]))));
+            checkInterrupt();
         }
 
-        final int[] keys = eqClasses.keys;
-        final boolean[] states = eqClasses.allocated;
-        for (int i = 0; i < states.length; i++) {
-            if (states[i]) {
-                int key = keys[i];
-                temp2 += (1 / ((iteratedSolution[0] + key) * (iteratedSolution[0] + key)));
-            }
+        for (int i = 0; i < classes.length; i += 2) {
+            int key = classes[i];
+            temp2 += (1 / ((iteratedSolution[0] + key) * (iteratedSolution[0] + key)));
+            checkInterrupt();
         }
         result[0][0] = temp2 - temp1;
 
@@ -97,21 +96,20 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
         temp3 = 0;
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += ((i * i) / ((iteratedSolution[0] + (i * iteratedSolution[1])) * (iteratedSolution[0] + (i * iteratedSolution[1]))));
+            checkInterrupt();
         }
 
-        final int[] values = eqClasses.values;
-        for (int i = 0; i < states.length; i++) {
-            if (states[i]) {
-                int key = keys[i];
-                int value = values[i];
-                temp3 = 0;
-                if (key != 1) {
-                    for (int j = 1; j < key; j++) {
-                        temp3 += (1 / ((j - iteratedSolution[1]) * (j - iteratedSolution[1])));
-                    }
-                    temp2 += value * temp3;
+        for (int i = 0; i < classes.length; i += 2) {
+            int key = classes[i];
+            int value = classes[i + 1];
+            temp3 = 0;
+            if (key != 1) {
+                for (int j = 1; j < key; j++) {
+                    temp3 += (1 / ((j - iteratedSolution[1]) * (j - iteratedSolution[1])));
                 }
+                temp2 += value * temp3;
             }
+            checkInterrupt();
         }
         result[1][1] = 0 - temp1 - temp2;
 
@@ -121,6 +119,7 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
         temp3 = 0;
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += (i / (((i * iteratedSolution[1]) + iteratedSolution[0]) * ((i * iteratedSolution[1]) + iteratedSolution[0])));
+            checkInterrupt();
         }
         result[0][1] = 0 - temp1;
         result[1][0] = 0 - temp1;
@@ -145,9 +144,11 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
         // compute theta
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += (1 / (iteratedSolution[0] + (i * iteratedSolution[1])));
+            checkInterrupt();
         }
         for (int i = 1; i < numberOfEntries; i++) {
             temp2 += (1 / (iteratedSolution[0] + i));
+            checkInterrupt();
         }
         result[0] = temp1 - temp2;
 
@@ -157,22 +158,20 @@ class AlgorithmNewtonPitman extends AbstractAlgorithmNewtonRaphson {
         temp3 = 0;
         for (int i = 1; i < numberOfEquivalenceClasses; i++) {
             temp1 += (i / (iteratedSolution[0] + (i * iteratedSolution[1])));
+            checkInterrupt();
         }
-        final int[] keys = eqClasses.keys;
-        final int[] values = eqClasses.values;
-        final boolean[] states = eqClasses.allocated;
-        for (int i = 0; i < states.length; i++) {
-            if (states[i]) {
-                int key = keys[i];
-                int value = values[i];
-                temp3 = 0;
-                if (key != 1) {
-                    for (int j = 1; j < key; j++) {
-                        temp3 += (1 / (j - iteratedSolution[1]));
-                    }
-                    temp2 += value * temp3;
+        for (int i = 0; i < classes.length; i += 2) {
+            int key = classes[i];
+            int value = classes[i + 1];
+            temp3 = 0;
+            if (key != 1) {
+                for (int j = 1; j < key; j++) {
+                    temp3 += (1 / (j - iteratedSolution[1]));
                 }
+                temp2 += value * temp3;
             }
+            checkInterrupt();
+
         }
         result[1] = temp1 - temp2;
 

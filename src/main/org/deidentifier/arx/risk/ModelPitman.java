@@ -18,66 +18,49 @@
 package org.deidentifier.arx.risk;
 
 import org.apache.commons.math3.special.Gamma;
-
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 
 /**
  * This class implements the PitmanModel, for details see Hoshino, 2001
  * 
+ * @author Fabian Prasser
  * @author Michael Schneider
  * @version 1.0
  */
-class ModelPitman extends AbstractModelUniqueness {
+class ModelPitman extends RiskModelPopulationBased {
+
+    /** The result */
+    private final double numUniques;
 
     /**
-     * number of equivalence classes of size one in the sample
-     */
-    private final int c1;
-
-    /**
-     * number of equivalence classes of size two in the sample
-     */
-    private final int c2;
-
-    /**
-     * Population model according to Pitman, 1996
+     * Creates a new instance
      * 
-     * @param pi
-     *            sampling fraction
-     * @param eqClasses
-     *            Map containing the equivalence class sizes (as keys) of the
-     *            data set and the corresponding frequency (as values) e.g. if
-     *            the key 2 has value 3 then there are 3 equivalence classes of
-     *            size two.
+     * @param classes
+     * @param model
      */
-    protected ModelPitman(final double pi, final IntIntOpenHashMap eqClasses) {
-        super(pi, eqClasses);
+    ModelPitman(final ARXPopulationModel model, 
+                final RiskModelEquivalenceClasses classes, 
+                final double accuracy,
+                final int maxIterations,
+                final WrappedBoolean stop) {
+        super(classes, model, stop);
 
-        c1 = this.eqClasses.get(1);
-        c2 = this.eqClasses.get(2);
-    }
+        int numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
+        int numClassesOfSize2 = (int) super.getNumClassesOfSize(2);
+        int numClasses = (int) super.getNumClasses();
+        int sampleSize = (int) super.getSampleSize();
+        int populationSize = (int) super.getPopulationSize(); // TODO: Might overflow
 
-    @Override
-    protected double getRisk() {
-        return (getPopulationUniques() / populationSize);
-    }
+        // Initial guess
+        final double c = (numClassesOfSize1 * (numClassesOfSize1 - 1)) / numClassesOfSize2;
+        final double thetaGuess = ((sampleSize * numClasses * c) - (numClassesOfSize1 * (sampleSize - 1) * ((2 * numClasses) + c))) /
+                                  (((2 * numClassesOfSize1 * numClasses) + (numClassesOfSize1 * c)) - (sampleSize * c));
+        final double alphaGuess = ((thetaGuess * (numClassesOfSize1 - sampleSize)) + ((sampleSize - 1) * numClassesOfSize1)) /
+                                  (sampleSize * numClasses);
 
-    @Override
-    protected double getPopulationUniques() throws IllegalArgumentException {
-
-        // initial guess
-        final double c = (c1 * (c1 - 1)) / c2;
-        final double thetaGuess = ((sampleSize * numberOfEquivalenceClasses * c) - (c1 *
-                                                                                    (sampleSize - 1) * ((2 * numberOfEquivalenceClasses) + c))) /
-                                  (((2 * c1 * numberOfEquivalenceClasses) + (c1 * c)) - (sampleSize * c));
-        final double alphaGuess = ((thetaGuess * (c1 - sampleSize)) + ((sampleSize - 1) * c1)) /
-                                  (sampleSize * numberOfEquivalenceClasses);
-
-        // apply Newton-Rhapson algorithm to solve the Maximum Likelihood
-        // Estimates
-        final AlgorithmNewtonPitman pitmanNewton = new AlgorithmNewtonPitman(numberOfEquivalenceClasses,
-                                                           sampleSize,
-                                                           eqClasses);
+        // Apply Newton-Rhapson algorithm to solve the Maximum Likelihood Estimates
+        final AlgorithmNewtonPitman pitmanNewton = new AlgorithmNewtonPitman(numClasses, sampleSize, classes.getEquivalenceClasses(), maxIterations, accuracy, stop);
         final double[] initialGuess = { thetaGuess, alphaGuess };
         final double[] output = pitmanNewton.getSolution(initialGuess);
 
@@ -85,16 +68,19 @@ class ModelPitman extends AbstractModelUniqueness {
         final double alpha = output[1];
         double result;
         if (alpha != 0) {
-            // result = ( (Gamma.gamma(theta + 1) / Gamma.gamma(theta + alpha))
-            // * Math.pow(N, alpha) );
-            result = Math.exp(Gamma.logGamma(theta + 1) -
-                              Gamma.logGamma(theta + alpha)) *
-                     Math.pow(populationSize, alpha);
+            result = Math.exp(Gamma.logGamma(theta + 1) - Gamma.logGamma(theta + alpha)) * Math.pow(populationSize, alpha);
         } else {
             result = Double.NaN;
         }
 
-        return result;
+        this.numUniques = result;
     }
 
+    /**
+     * Returns the number of uniques
+     * @return
+     */
+    public double getNumUniques() {
+        return this.numUniques;
+    }
 }

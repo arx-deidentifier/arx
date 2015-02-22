@@ -14,124 +14,132 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
 
 /**
- * This class models population properties for risk estimation
- * 
+ * A class for population models
+ *
  * @author Fabian Prasser
  */
 public class ModelPopulation implements Serializable {
 
-    /** Regions*/
-    public static enum Region implements Serializable{
-
-        // FIXME: Correct and extend list
-        NONE("None", 0l),
-        // FIXME: Correct and extend list
-        WORLD("World", 9000000000l),
-        // FIXME: Correct and extend list
-        EUROPE("Europe", 400000000l),
-        // FIXME: Correct and extend list
-        GERMANY("Germany", 80000000l),
-        // FIXME: Correct and extend list
-        USA("USA", 200000000);
-        
-        /** Field */
-        private final String name;
-        /** Field */
-        private final long   population;
-        
-        /**
-         * Creates a new instance
-         * @param name
-         * @param population
-         */
-        private Region(String name, long population) {
-            this.name = name;
-            this.population = population;
-        }
-
-        /**
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @return the population
-         */
-        public long getPopulation() {
-            return population;
-        }
-    }
-
-    /** SVUID*/
-    private static final long serialVersionUID = 6331644478717881214L;
-    
-    /** The region*/
-    private Region region = Region.NONE;
-    
-    /** The sample fraction*/
-    private double sampleFraction = 0.1;
-    
+    /** SVUID */
+    private static final long  serialVersionUID = 5405871228130041796L;
     /** Modified */
-    private boolean modified       = false;
-
+    private boolean            modified         = false;
+    /** Model */
+    private ARXPopulationModel model;
+    
     /**
-     * @return the region
+     * Creates a new instance
      */
-    public Region getRegion() {
-        return region;
-    }
-
-    /**
-     * @return the sampleFraction
-     */
-    public double getSampleFraction() {
-        return sampleFraction;
-    }
-
-    /**
-     * @param region the region to set
-     * @param handle the input dataset
-     */
-    public void setRegion(Region region, DataHandle handle) {
-        this.region = region;
-        if (region == Region.NONE) {
-            this.sampleFraction = 0.1d; // Default
-        } else {
-            this.sampleFraction = (double)handle.getNumRows() / (double)region.getPopulation();
-        }
-        this.modified = true;
-    }
-
-    /**
-     * @param sampleFraction the sampleFraction to set
-     */
-    public void setSampleFraction(double sampleFraction) {
-        this.sampleFraction = sampleFraction;
-        this.region = Region.NONE;
-        this.modified = true;
+    public ModelPopulation() {
+        this.model = new ARXPopulationModel(0.1d);
     }
     
     /**
-     * Is it modified
+     * @param handle
+     * @return
+     * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize(org.deidentifier.arx.DataHandle)
+     */
+    public double getPopulationSize(DataHandle handle) {
+        return model.getPopulationSize(handle);
+    }
+
+    /**
+     * @param sampleSize
+     * @return
+     * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize(double)
+     */
+    public double getPopulationSize(double sampleSize) {
+        return model.getPopulationSize(sampleSize);
+    }
+
+    /**
+     * Returns the region
      * @return
      */
-    protected boolean isModified(){
+    public Region getRegion() {
+        return this.model.getRegion();
+    }
+
+    /**
+     * Returns the sample fraction
+     * @param handle
+     * @return
+     */
+    public double getSampleFraction(DataHandle handle) {
+        return this.model.getSampleFraction(handle);
+    }
+    
+    /**
+     * @param sampleSize
+     * @return
+     * @see org.deidentifier.arx.ARXPopulationModel#getSampleFraction(double)
+     */
+    public double getSampleFraction(double sampleSize) {
+        return model.getSampleFraction(sampleSize);
+    }
+    
+    /**
+     * Is this model modified
+     * @return
+     */
+    public boolean isModified() {
         return modified;
     }
     
     /**
-     * Marks the model as unmodified
+     * Sets the population size
+     * @param handle
+     * @param populationSize
      */
-    protected void setUnmodified(){
+    public void setPopulationSize(DataHandle handle, double populationSize) {
+        if (populationSize != model.getPopulationSize(handle)) {
+            this.model = new ARXPopulationModel(handle, populationSize);
+            this.modified = true;
+        }
+    }
+
+    /**
+     * Sets the region
+     * @param region
+     */
+    public void setRegion(Region region) {
+        if (region != model.getRegion()) {
+            this.model = new ARXPopulationModel(region);
+            this.modified = true;
+        }
+    }
+    
+    /**
+     * Sets the sample fraction
+     * @param sampleFraction
+     */
+    public void setSampleFraction(double sampleFraction) {
+        this.model = new ARXPopulationModel(sampleFraction);
+        this.modified = true;
+    }
+    
+    /**
+     * Set unmodified
+     */
+    public void setUnmodified() {
         this.modified = false;
+    }
+
+    /**
+     * Returns the backing model
+     * @return
+     */
+    public ARXPopulationModel getModel() {
+        return this.model;
     }
 }

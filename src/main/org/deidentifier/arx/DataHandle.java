@@ -41,7 +41,8 @@ import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.io.CSVDataOutput;
-import org.deidentifier.arx.risk.RiskEstimator;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
 
 import cern.colt.Swapper;
 
@@ -467,39 +468,32 @@ public abstract class DataHandle {
     public abstract int getNumRows();
     
     /**
-     * Returns a risk estimator for a sample fraction of 0.1
+     * Returns a risk estimator for the given set of quasi-identifiers
+     * @param model
+     * @param qis
      * @return
      */
-    public RiskEstimator getRiskEstimator() {
-        return new RiskEstimator(this);
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis) {
+        return new RiskEstimateBuilder(model, this, qis);
+    }
+
+    /**
+     * Returns a risk estimator for the given set of equivalence classes. Saves resources by re-using existing classes
+     * @param model
+     * @param classes
+     * @return
+     */
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelEquivalenceClasses classes) {
+        return new RiskEstimateBuilder(model, this, classes);
     }
 
     /**
      * Returns a risk estimator
-     * @param sampleFraction The sample fraction (defaults to 0.1)
+     * @param model
      * @return
      */
-    public RiskEstimator getRiskEstimator(double sampleFraction) {
-        return new RiskEstimator(this, sampleFraction);
-    }
-
-    /**
-     * Returns a risk estimator for a sample fraction of 0.1
-     * @param qis
-     * @return
-     */
-    public RiskEstimator getRiskEstimator(Set<String> qis) {
-        return new RiskEstimator(this, qis);
-    }
-
-    /**
-     * Returns a risk estimator
-     * @param qis
-     * @param sampleFraction The sample fraction (defaults to 0.1)
-     * @return
-     */
-    public RiskEstimator getRiskEstimator(Set<String> qis, double sampleFraction) {
-        return new RiskEstimator(this, qis, sampleFraction);
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model) {
+        return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes());
     }
 
     /**

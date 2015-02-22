@@ -155,7 +155,7 @@ public class Controller implements IView {
             } else {
                 this.model.getViewConfig().setMode(Mode.UNSORTED);
             }
-            this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+            this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
         }
     }
 
@@ -266,7 +266,7 @@ public class Controller implements IView {
         this.updateViewConfig(false);
 
         // Update
-        this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+        this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
     }
 
     /**
@@ -289,7 +289,7 @@ public class Controller implements IView {
         this.updateViewConfig(false);
 
         // Update
-        this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+        this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
     }
 
     /**
@@ -304,7 +304,7 @@ public class Controller implements IView {
         boolean val = !model.getViewConfig().isSubset();
         this.model.getViewConfig().setSubset(val);
         this.updateViewConfig(false);
-        this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+        this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
     }
 
     /**
@@ -457,7 +457,7 @@ public class Controller implements IView {
                     this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.UNSORTED);
                 }
-                this.update(new ModelEvent(this, ModelPart.VIEW_CONFIG, model.getOutput()));
+                this.update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, model.getOutput()));
             } else {
                 model.setOutput(null, null);
                 model.setSelectedNode(null);
@@ -1026,7 +1026,7 @@ public class Controller implements IView {
         // Update view config
         if (model.getOutput() != null) {
             update(new ModelEvent(this,
-                                  ModelPart.VIEW_CONFIG,
+                                  ModelPart.SELECTED_VIEW_CONFIG,
                                   model.getOutput()));
         }
 
@@ -1530,7 +1530,7 @@ public class Controller implements IView {
         model.setOutput(null, null);
         model.setSelectedNode(null);
 
-        update(new ModelEvent(this, ModelPart.VIEW_CONFIG, null));
+        update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
         update(new ModelEvent(this, ModelPart.RESULT, null));
         update(new ModelEvent(this, ModelPart.OUTPUT, null));
         update(new ModelEvent(this, ModelPart.SELECTED_NODE, null));

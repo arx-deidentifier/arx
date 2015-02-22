@@ -238,7 +238,7 @@ public class ViewDataInput extends ViewData {
         } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
             table.redraw();
             
-        } else if (event.part == ModelPart.VIEW_CONFIG || event.part == ModelPart.RESULT) {
+        } else if (event.part == ModelPart.SELECTED_VIEW_CONFIG || event.part == ModelPart.RESULT) {
 
             // Update the table
             DataHandle handle = getHandle();

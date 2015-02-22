@@ -101,7 +101,7 @@ public abstract class ViewData implements IView {
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.OUTPUT, this);
-        controller.addListener(ModelPart.VIEW_CONFIG, this);
+        controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.INPUT, this);
         
         // Store
@@ -240,7 +240,7 @@ public abstract class ViewData implements IView {
         // Enable/Disable sort button
         if (event.part == ModelPart.OUTPUT ||
             event.part == ModelPart.INPUT ||
-            event.part == ModelPart.VIEW_CONFIG) {
+            event.part == ModelPart.SELECTED_VIEW_CONFIG) {
             
             if (model != null && model.getOutput() != null){
                 groupsButton.setEnabled(true);
@@ -257,7 +257,7 @@ public abstract class ViewData implements IView {
             reset();
         }
         
-        if (event.part == ModelPart.VIEW_CONFIG) {          
+        if (event.part == ModelPart.SELECTED_VIEW_CONFIG) {          
             subsetButton.setSelection(model.getViewConfig().isSubset());
         }
         

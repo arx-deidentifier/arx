@@ -18,77 +18,75 @@
 package org.deidentifier.arx.risk;
 
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
-
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
 
 /**
- * This class implements the ZayatzModel based on Equivalence Class, for details see the paper
+ * This class implements the ZayatzModel based on equivalence classes, for details see the paper
  * ESTIMATION OF THE NUMBER OF UNIQUE POPULATION ELEMENTS USING A SAMPLE, Zayatz, 1991
  * 
+ * @author Fabian Prasser
  * @author Michael Schneider
  * @version 1.0
  */
-class ModelZayatz extends AbstractModelUniqueness {
+class ModelZayatz extends RiskModelPopulationBased {
+    
+    /** Resulting estimate */
+    private final double numUniques;
 
     /**
-     * Zayatz model, based on Zayatz, 1991
+     * Creates a new instance
      * 
-     * @param samplingFraction
-     *            sampling fraction
-     * @param eqClasses
-     *            Map containing the equivalence class sizes (as keys) of the
-     *            data set and the corresponding frequency (as values) e.g. if
-     *            the key 2 has value 3 then there are 3 equivalence classes of
-     *            size two.
+     * @param classes
+     * @param model
      */
-    protected ModelZayatz(final double Pi, final IntIntOpenHashMap eqClasses) {
-        super(Pi, eqClasses);
+    ModelZayatz(ARXPopulationModel model, final RiskModelEquivalenceClasses classes, WrappedBoolean stop) {
+        super(classes, model, stop);
+        
+        int[] _classes = super.getClasses().getEquivalenceClasses();
+        double conditionalUniquenessPercentage =  computeConditionalUniquenessPercentage(_classes,
+                                                      (int)super.getPopulationSize(), // TODO: Might overflow
+                                                      (int)super.getSampleSize(),
+                                                      (int)super.getNumClasses());
+        
+        this.numUniques = super.getNumClassesOfSize(1) * conditionalUniquenessPercentage / super.getSampleFraction();
     }
 
     /**
-     * 
-     * @return estimate of the the probability that an equivalence class of size
-     *         1 in the sample was chosen from an equivalence class of size 1 in
-     *         the population
+     * Returns the number of uniques
+     * @return
      */
-    private double computeConditionalUniquenessPercentage() {
+    public double getNumUniques() {
+        return this.numUniques;
+    }
+    
+    /**
+     * Estimates the probability that an equivalence class of size
+     * 1 in the sample was chosen from an equivalence class of size 1 in
+     * the population
+     * @param classes
+     * @param populationSize
+     * @param sampleSize
+     * @param numClasses
+     * @return
+     */
+    private double computeConditionalUniquenessPercentage(int[] classes,
+                                                          int populationSize,
+                                                          int sampleSize,
+                                                          int numClasses) {
+        
+        int numClassesOfSize1 = classes[0] == 1 ? classes[1] : 0;
         double temp = 0;
 
-        final int[] keys = eqClasses.keys;
-        final int[] values = eqClasses.values;
-        final boolean[] states = eqClasses.allocated;
-        for (int i = 0; i < states.length; i++) {
-            if (states[i]) {
-                int key = keys[i];
-                int value = values[i];
-                final HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, key, sampleSize);
-                temp += (value / ((double) numberOfEquivalenceClasses)) * distribution.probability(1);
-            }
+        for (int i = 0; i < classes.length; i+=2) {
+            int size = classes[i];
+            int count = classes[i + 1];
+            HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, size, sampleSize);
+            temp += (count / ((double) numClasses)) * distribution.probability(1);
+            checkInterrupt();
         }
 
-        final HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, 1, sampleSize);
-        final double probCond = ((eqClasses.get(1) / ((double) numberOfEquivalenceClasses)) * (distribution.probability(1))) / temp;
-        return probCond;
+        HypergeometricDistribution distribution = new HypergeometricDistribution(populationSize, 1, sampleSize);
+        return (((double)numClassesOfSize1 / ((double) numClasses)) * (distribution.probability(1))) / temp;
     }
-
-    /**
-     * 
-     * @return estimate of the total number of sample uniques that are also
-     *         population uniques
-     */
-    private double computeConditionalUniquenessTotal() {
-        return (eqClasses.get(1) * computeConditionalUniquenessPercentage());
-    }
-
-    @Override
-    protected double getRisk() {
-        return (computeConditionalUniquenessTotal() / sampleSize);
-    }
-
-    @Override
-    protected double getPopulationUniques() {
-        final double condUniqPercentage = computeConditionalUniquenessPercentage();
-        return ((eqClasses.get(1) * condUniqPercentage) / samplingFraction);
-    }
-
 }

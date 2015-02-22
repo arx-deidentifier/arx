@@ -57,7 +57,8 @@ public class ComponentStatus {
      * @param child
      */
     public ComponentStatus(Controller controller, 
-                           Composite parent, Control child){
+                           Composite parent, 
+                           Control child){
         
         
         this.child = child;

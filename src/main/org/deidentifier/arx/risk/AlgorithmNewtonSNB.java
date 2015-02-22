@@ -17,7 +17,8 @@
 
 package org.deidentifier.arx.risk;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+
 
 /**
  * This class implements the Newton Raphson Algorithm for the SNB Model
@@ -25,7 +26,7 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
  * @author Michael Schneider
  * @version 1.0
  */
-class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
+class AlgorithmNewtonSNB extends AlgorithmNewtonRaphson {
 
     /**
      * number of equivalence classes of size one in the sample
@@ -51,24 +52,28 @@ class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
     /**
      * Implements procedures of Newton Raphson algorithm for SNB Model
      * 
-     * @param pi
-     *            sampling fraction,
-     * @param eqClasses
-     *            Map containing the equivalence class sizes (as keys) of the
-     *            data set and the corresponding frequency (as values) e.g. if
-     *            the key 2 has value 3 then there are 3 equivalence classes of
-     *            size two.
      * @param k
      *            number of non zero classes equivalence classes in the
      *            population (estimated)
+     * @param pi
+     *            sampling fraction,
+     *            
+     * @param numClassesOfSize1
+     * 
+     * @param numClassesOfSize2
      */
     protected AlgorithmNewtonSNB(final double k,
                      final double pi,
-                     final IntIntOpenHashMap eqClasses) {
+                     final int numClassesOfSize1,
+                     final int numClassesOfSize2,
+                     final int maxIterations,
+                     final double accuracy,
+                     final WrappedBoolean stop) {
+        super(accuracy, maxIterations, stop);
         this.estimatedNumberOfNonEmptyClasses = k;
         this.samplingFraction = pi;
-        c1 = eqClasses.get(1);
-        c2 = eqClasses.get(2);
+        c1 = numClassesOfSize1;
+        c2 = numClassesOfSize2;
     }
 
     /**
@@ -97,7 +102,7 @@ class AlgorithmNewtonSNB extends AbstractAlgorithmNewtonRaphson {
                 result = Math.pow(Math.abs(base), power);
             }
         }
-
+        checkInterrupt();
         return result;
     }
 

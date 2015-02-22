@@ -85,7 +85,7 @@ public class LayoutExplore implements ILayout {
         folder.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                controller.update(new ModelEvent(LayoutExplore.this, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(LayoutExplore.this, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
         });
 

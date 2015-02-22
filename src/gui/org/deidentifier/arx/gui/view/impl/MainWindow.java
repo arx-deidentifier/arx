@@ -39,7 +39,6 @@ import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.analyze.LayoutAnalyze;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
@@ -54,7 +53,8 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
-import org.deidentifier.arx.gui.view.impl.risk.LayoutRisk;
+import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
+import org.deidentifier.arx.gui.view.impl.utility.LayoutAnalyze;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -151,7 +151,7 @@ public class MainWindow implements IView {
         Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutAnalyze(item3, controller);
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        new LayoutRisk(item4, controller);
+        new LayoutRisks(item4, controller);
 
         // Hack to update visualizations
         root.addSelectionListener(new SelectionAdapter(){
@@ -168,8 +168,8 @@ public class MainWindow implements IView {
                         controller.getModel().setPerspective(Perspective.ANALYSIS);
                         break;
                 }
-                controller.update(new ModelEvent(this, ModelPart.VISUALIZATION, null));
-                controller.update(new ModelEvent(this, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
         });
         
@@ -619,7 +619,7 @@ public class MainWindow implements IView {
             public void action(Controller controller) { 
                 root.setSelection(0);
                 controller.getModel().setPerspective(Perspective.CONFIGURATION);
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.CONFIGURATION; }
         });
@@ -630,7 +630,7 @@ public class MainWindow implements IView {
             public void action(Controller controller) { 
                 root.setSelection(1);
                 controller.getModel().setPerspective(Perspective.EXPLORATION);
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
         });
@@ -641,7 +641,7 @@ public class MainWindow implements IView {
             public void action(Controller controller) { 
                 root.setSelection(2);
                 controller.getModel().setPerspective(Perspective.ANALYSIS);
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
         });
@@ -652,7 +652,7 @@ public class MainWindow implements IView {
             public void action(Controller controller) { 
                 root.setSelection(3);
                 controller.getModel().setPerspective(Perspective.RISK);
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
         });
@@ -664,7 +664,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { 
                 layoutExplore.showLattice(); 
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { 
                 return model != null && 
@@ -679,7 +679,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { 
                 layoutExplore.showList();
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { 
                 return model != null && 
@@ -694,7 +694,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { 
                 layoutExplore.showTiles(); 
-                controller.update(new ModelEvent(controller, ModelPart.PERSPECTIVE, controller.getModel().getPerspective()));
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { 
                 return model != null && 

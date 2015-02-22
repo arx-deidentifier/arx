@@ -39,7 +39,7 @@ public abstract class AbstractMenu implements IView {
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_NODE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-        controller.addListener(ModelPart.PERSPECTIVE, this);
+        controller.addListener(ModelPart.SELECTED_PERSPECTIVE, this);
         controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.RESULT, this);
     }

@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.utility;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.model.Model.Perspective;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -31,36 +30,36 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This is a base class for displaying risk estimates.
+ * This is a base class for displaying utility data.
  *
  * @author Fabian Prasser
  * @param <T>
  */
-public abstract class ViewRisks<T extends AnalysisContextVisualization> implements IView {
+public abstract class ViewStatistics<T extends AnalysisContextVisualization> implements IView {
 
     /** Our users are patient. */
-    public static final int       MINIMAL_WORKING_TIME = 500;
-
+    public static final int MINIMAL_WORKING_TIME = 500;
+    
     /** Internal stuff. */
-    private AnalysisContext       context              = new AnalysisContext();
-
+    private AnalysisContext       context  = new AnalysisContext();
+    
     /** Internal stuff. */
     private final Controller      controller;
-
+    
     /** Internal stuff. */
     private Model                 model;
-
+    
     /** Internal stuff. */
     private final ModelPart       reset;
-
+    
     /** Internal stuff. */
     private final ModelPart       target;
-
+    
     /** Internal stuff. */
     private final ComponentStatus status;
-
+    
     /** Internal stuff. */
-    private T                     viewContext;
+    private T viewContext;
     
 	/**
      * Creates a new instance.
@@ -70,19 +69,19 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param target
      * @param reset
      */
-    public ViewRisks( final Composite parent,
-                      final Controller controller,
-                      final ModelPart target,
-                      final ModelPart reset) {
+    public ViewStatistics( final Composite parent,
+                           final Controller controller,
+                           final ModelPart target,
+                           final ModelPart reset) {
 
         // Register
-        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.POPULATION_MODEL, this);
-        controller.addListener(ModelPart.SELECTED_PERSPECTIVE, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
-        controller.addListener(ModelPart.SELECTED_RISK_VISUALIZATION, this);
-        
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.DATA_TYPE, this);
+        controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
+        controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
         controller.addListener(target, this);
         if (reset != null) {
             controller.addListener(reset, this);
@@ -132,27 +131,44 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         // Store
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
+            this.model.resetAttributePair();
             this.context.setModel(model);
             this.context.setTarget(target);
             this.viewContext = null;
             this.reset();
         }
-
-        // Potentially invalidate
-        if (event.part == ModelPart.POPULATION_MODEL ||
-            event.part == ModelPart.SELECTED_VIEW_CONFIG ||
-            (event.part == ModelPart.SELECTED_PERSPECTIVE &&
-             model != null && model.getPerspective() == Perspective.RISK)) {
-            this.viewContext = null;
-            this.update();
-            return;
-        }
-
+        
         // Reset on null-target
         if (event.part == target && event.data==null) {
             this.viewContext = null;
             this.reset();
             return;
+        }
+        
+        // Invalidate
+        if (event.part == ModelPart.OUTPUT ||
+            event.part == target ||
+            event.part == ModelPart.SELECTED_ATTRIBUTE ||
+            event.part == ModelPart.SELECTED_VIEW_CONFIG ||
+            event.part == ModelPart.ATTRIBUTE_VALUE) {
+            
+            this.viewContext = null;
+            this.update();
+            return;
+        }
+        
+        // Potentially invalidate
+        if (event.part == ModelPart.DATA_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE) {
+            
+            if (model == null || 
+                viewContext == null ||
+                viewContext.isAttributeSelected(model.getSelectedAttribute())) {
+                
+                this.viewContext = null;
+                this.update();
+                return;
+            }
         }
 
         // Reset
@@ -164,13 +180,11 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
          
         // Update
         if (event.part == target ||
-           event.part == ModelPart.POPULATION_MODEL ||
-           event.part == ModelPart.SELECTED_RISK_VISUALIZATION ||
+           event.part == ModelPart.SELECTED_ATTRIBUTE ||
            event.part == ModelPart.ATTRIBUTE_TYPE ||
-           (event.part == ModelPart.SELECTED_PERSPECTIVE && 
-           model != null && 
-           model.getPerspective() == Perspective.RISK)) {
-           
+           event.part == ModelPart.SELECTED_VIEW_CONFIG ||
+           event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
+            
             this.update();
         }
     }
@@ -180,7 +194,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     private void update() {
 
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || !model.isVisualizationEnabled()){
             this.status.setEmpty();
             return;
         }
@@ -189,10 +203,10 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             this.status.setDone();
             return;
         }
-
+        
         T context = createViewConfig(this.context);
         if (context.isValid()) {
-
+            
             // Update context
             this.viewContext = context;
 

@@ -164,7 +164,7 @@ public class ViewDataOutput extends ViewData {
             table.setResearchSubset((RowSet)event.data);
             table.redraw();
             
-        } else if (event.part == ModelPart.VIEW_CONFIG || event.part == ModelPart.RESULT) {
+        } else if (event.part == ModelPart.SELECTED_VIEW_CONFIG || event.part == ModelPart.RESULT) {
 
             // Update the table
             DataHandle handle = getHandle();
