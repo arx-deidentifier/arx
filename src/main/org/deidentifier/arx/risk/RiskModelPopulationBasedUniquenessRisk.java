@@ -187,34 +187,34 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      * Estimated number of unique tuples in the population according to Dankar's decision rule
      */
     public double getFractionOfUniqueTuplesDankar() {
-        return numUniquesDankar / super.getPopulationSize();
+        return getNumUniqueTuplesDankar() / super.getPopulationSize();
     }
 
     /**
      * Estimated number of unique tuples in the population according to Dankar's decision rule, excluding the SNB model
      */
     public double getFractionOfUniqueTuplesDankarWithoutSNB() {
-        return numUniquesDankarWithoutSNB / super.getPopulationSize();
+        return getNumUniqueTuplesDankarWithoutSNB() / super.getPopulationSize();
     }
 
     /**
      * Estimated number of unique tuples in the population according to Pitman's statistical model
      */
     public double getFractionOfUniqueTuplesPitman() {
-        return numUniquesPitman / super.getPopulationSize();
+        return getNumUniqueTuplesPitman() / super.getPopulationSize();
     }
 
     /**
      * Estimated number of unique tuples in the population according to the SNB statistical model
      */
     public double getFractionOfUniqueTuplesSNB() {
-        return numUniquesSNB / super.getPopulationSize();
+        return getNumUniqueTuplesSNB() / super.getPopulationSize();
     }
     /**
      * Estimated number of unique tuples in the population according to Zayatz's statistical model
      */
     public double getFractionOfUniqueTuplesZayatz() {
-        return numUniquesZayatz / super.getPopulationSize();
+        return getNumUniqueTuplesZayatz() / super.getPopulationSize();
     }
     
     /**
@@ -240,35 +240,35 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      * Estimated number of unique tuples in the population according to Dankar's decision rule
      */
     public double getNumUniqueTuplesDankar() {
-        return numUniquesDankar;
+        return isValid(numUniquesDankar) ? numUniquesDankar : 0d;
     }
 
     /**
      * Estimated number of unique tuples in the population according to Dankar et al.'s decision rule, excluding the SNB model
      */
     public double getNumUniqueTuplesDankarWithoutSNB() {
-        return numUniquesDankarWithoutSNB;
+        return isValid(numUniquesDankarWithoutSNB) ? numUniquesDankarWithoutSNB : 0d;
     }
 
     /**
      * Estimated number of unique tuples in the population according to Pitman's statistical model
      */
     public double getNumUniqueTuplesPitman() {
-        return numUniquesPitman;
+        return isValid(numUniquesPitman) ? numUniquesPitman : 0d;
     }
 
     /**
      * Estimated number of unique tuples in the population according to the SNB model
      */
     public double getNumUniqueTuplesSNB() {
-        return numUniquesSNB;
+        return isValid(numUniquesSNB) ? numUniquesSNB : 0d;
     }
 
     /**
      * Estimated number of unique tuples in the population according to Zayatz's statistical model
      */
     public double getNumUniqueTuplesZayatz() {
-        return numUniquesZayatz;
+        return isValid(numUniquesZayatz) ? numUniquesZayatz : 0d;
     }
 
     /**

@@ -55,11 +55,14 @@ public class LayoutRisksBottom implements ILayout {
         item1.setLayout(new FillLayout());
         final Composite item3 = folder.createItem(Resources.getMessage("RiskAnalysis.13"), null); //$NON-NLS-1$ 
         item3.setLayout(new FillLayout());
+        final Composite item5 = folder.createItem(Resources.getMessage("RiskAnalysis.24"), null); //$NON-NLS-1$ 
+        item5.setLayout(new FillLayout());
 
         
         // Create the views
         new ViewRisksBasicEstimates(item1, controller, target, reset);
-        new ViewRisksPlotUniquenessEstimates(item3, controller, target, reset);
+        new ViewRisksPlotUniquenessEstimates(item3, controller, target, reset, false);
+        new ViewRisksPlotUniquenessEstimates(item5, controller, target, reset, true);
         
         if (target == ModelPart.INPUT) {
             final Composite item2 = folder.createItem(Resources.getMessage("RiskAnalysis.16"), null); //$NON-NLS-1$ 

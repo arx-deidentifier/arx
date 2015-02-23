@@ -128,7 +128,7 @@ public class LayoutRisks implements ILayout {
             public void widgetSelected(final SelectionEvent arg0) {
                 layoutBottomRight.setSelectionIdex(layoutBottomLeft.getSelectionIndex());
                 
-                if (layoutBottomLeft.getSelectionIndex() == 3) {
+                if (layoutBottomLeft.getSelectionIndex() == 4) {
                     layoutTopLeft.setSelectionIdex(2);
                     layoutTopRight.setSelectionIdex(2);
                 }
@@ -150,7 +150,7 @@ public class LayoutRisks implements ILayout {
                 layoutTopRight.setSelectionIdex(layoutTopLeft.getSelectionIndex());
                 
                 if (layoutTopLeft.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(3);
+                    layoutBottomLeft.setSelectionIdex(4);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
@@ -162,7 +162,7 @@ public class LayoutRisks implements ILayout {
                 layoutTopLeft.setSelectionIdex(layoutTopRight.getSelectionIndex());
 
                 if (layoutTopRight.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(3);
+                    layoutBottomLeft.setSelectionIdex(4);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
