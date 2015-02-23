@@ -176,11 +176,10 @@ public class ViewRisksPopulationModel implements IView {
                     if (populationSize == -1) {
                         return;
                     }
-                    double sampleFraction = (double)sampleSize / (double)populationSize;
                     model.getPopulationModel().setRegion(selected);
                     controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getPopulationModel()));
-                    text.setText(format.format(sampleFraction));
-                    text2.setText(format.format(populationSize));
+                    text.setText(format.format(model.getPopulationModel().getSampleFraction(sampleSize)));
+                    text2.setText(format.format(model.getPopulationModel().getPopulationSize(sampleSize)));
                 }
             }
         });

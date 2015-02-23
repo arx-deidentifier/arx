@@ -182,13 +182,13 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
 
-            // Create an analysis
-            Analysis analysis = new Analysis(){
+        // Create an analysis
+        Analysis analysis = new Analysis() {
 
             // The statistics builder
             RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
-            private boolean  stopped = false;
-            private RiskModelAttributes risks;
+            private boolean                  stopped = false;
+            private RiskModelAttributes      risks;
 
             @Override
             public void onError() {
@@ -207,7 +207,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                     i.dispose();
                 }
                 items.clear();
-                
+
                 // For all sizes
                 for (QuasiIdentifierRisks item : risks.getAttributeRisks()) {
                     createItem(item);
@@ -216,9 +216,13 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                 for (final TableColumn col : columns) {
                     col.pack();
                 }
-                
-                setStatusDone();
-                
+
+                if (risks.getAttributeRisks().length==0) {
+                    setStatusEmpty();
+                } else {
+                    setStatusDone();
+                }
+
                 table.layout();
                 table.redraw();
             }
@@ -230,15 +234,15 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
 
             @Override
             public void run() throws InterruptedException {
-                
+
                 // Timestamp
                 long time = System.currentTimeMillis();
-                
+
                 // Perform work
                 risks = builder.getPopulationBasedAttributeRisks();
 
                 // Our users are patient
-                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
+                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
                     Thread.sleep(10);
                 }
             }
@@ -249,7 +253,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                 this.stopped = true;
             }
         };
-        
+
         this.manager.start(analysis);
     }
 }

@@ -28,11 +28,13 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -75,7 +77,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
 
         // Create group
         root = parent;
-        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).create());
+        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
         create(root);
         reset();
     }
@@ -129,33 +131,57 @@ public class ViewRisksQuasiIdentifiers implements IView {
     private void create(final Composite parent) {
 
         table = new Table(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        table.setLayoutData(SWTUtil.createFillGridData());
+        table.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
         
-        label = new Label(parent, SWT.NONE);
+        Button button = new Button(parent, SWT.PUSH);
+        button.setLayoutData(SWTUtil.createGridData());
+        button.setText("Clear");
+        button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent arg0) {
+                for (TableItem item : table.getItems()) {
+                    item.setChecked(false);
+                }
+                fireEvent();
+            }
+        });
+        
+        label = new Label(parent, SWT.RIGHT);
         label.setText("");
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         table.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
-                Set<String> selection = new HashSet<String>();
-                for (TableItem item : table.getItems()) {
-                    if (item.getChecked()) {
-                        selection.add(item.getText());
-                    }
-                }
-                if (model != null) {
-                    if (selection.size() <= model.getPopulationModel().getMaxQiSize()) {
-                        model.setSelectedQuasiIdentifiers(selection);
-                        controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
-                        label.setText("Resulting quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
-                        label.setForeground(GUIHelper.COLOR_BLACK);
-                    } else {
-                        label.setText("Too many quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
-                        label.setForeground(GUIHelper.COLOR_RED);
-                    }
-                }
+                fireEvent();
             }   
         });
+    }
+
+    /**
+     * Checks the selected items and fires an event on changes
+     */
+    private void fireEvent() {
+        Set<String> selection = new HashSet<String>();
+        for (TableItem item : table.getItems()) {
+            if (item.getChecked()) {
+                selection.add(item.getText());
+            }
+        }
+        if (model != null) {
+            
+            if (selection.equals(model.getSelectedQuasiIdentifiers())) {
+                return;
+            }
+            
+            if (selection.size() <= model.getPopulationModel().getMaxQiSize()) {
+                model.setSelectedQuasiIdentifiers(selection);
+                controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
+                label.setText("Resulting quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
+                label.setForeground(GUIHelper.COLOR_BLACK);
+            } else {
+                label.setText("Too many quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));
+                label.setForeground(GUIHelper.COLOR_RED);
+            }
+        }
     }
 
     /**
