@@ -136,7 +136,7 @@ public class RiskEstimateBuilderInterruptible {
      * it will always return 0
      * @return
      */
-    public int getPercentageDone() {
-        return parent.getPercentageDone();
+    public int getProgress() {
+        return parent.getProgress();
     }
 }

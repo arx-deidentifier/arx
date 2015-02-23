@@ -26,10 +26,10 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
-import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.utility.AnalysisManager;
+import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelEquivalenceClasses;
 import org.eclipse.swt.SWT;
@@ -226,7 +226,14 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     }
 
     @Override
-    protected ProgressProvider getProgressProvider() {
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
         return null;
+    }
+
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

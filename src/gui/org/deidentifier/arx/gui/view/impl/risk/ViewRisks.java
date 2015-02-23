@@ -26,7 +26,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
-import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
@@ -170,12 +170,13 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     private void update() {
 
         if (!this.status.isVisible()){
-            this.status.setEmpty();
             return;
         }
         
         if (this.viewContext != null) {
-            this.status.setDone();
+            if (!isRunning()) {
+                this.status.setDone();
+            }
             return;
         }
 
@@ -192,6 +193,12 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             status.setWorking();
         }
     }
+
+    /**
+     * Is a job running
+     * @return
+     */
+    protected abstract boolean isRunning();
 
     /**
      * 
@@ -260,7 +267,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * May return a progress provider, if any
      * @return
      */
-    protected abstract ProgressProvider getProgressProvider();
+    protected abstract ComponentStatusLabelProgressProvider getProgressProvider();
 
     /**
      * Status update.

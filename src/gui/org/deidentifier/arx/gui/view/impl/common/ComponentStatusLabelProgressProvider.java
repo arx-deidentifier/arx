@@ -21,7 +21,7 @@ package org.deidentifier.arx.gui.view.impl.common;
  * @author Fabian Prasser
  *
  */
-public interface ProgressProvider {
+public interface ComponentStatusLabelProgressProvider {
     
     /** May return a progress value between 0 and 100, or always 0.*/
     public abstract int getProgress();

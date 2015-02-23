@@ -20,6 +20,7 @@ package org.deidentifier.arx.risk;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
  * Abstract base class for population-based models
@@ -33,17 +34,29 @@ public abstract class RiskModelPopulationBased {
     private final ARXPopulationModel          populationModel;
     /** Stop flag */
     private final WrappedBoolean              stop;
+    /** Progress*/
+    private final WrappedInteger              progress;
 
     /**
      * Creates a new instance
      * @param classes
+     * @param progress 
      */
     public RiskModelPopulationBased(RiskModelEquivalenceClasses classes,
                                     ARXPopulationModel populationModel,
-                                    WrappedBoolean stop) {
+                                    WrappedBoolean stop, WrappedInteger progress) {
         this.classes = classes;
         this.populationModel = populationModel;
         this.stop = stop;
+        this.progress = progress;
+    }
+    
+    /**
+     * Sets the progress
+     * @param progress
+     */
+    protected void setProgress(int progress) {
+        this.progress.value = progress;
     }
     
     /**

@@ -23,10 +23,10 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
-import org.deidentifier.arx.gui.view.impl.utility.AnalysisManager;
+import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
@@ -60,7 +60,6 @@ import org.swtchart.Range;
  */
 public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextRisk> {
 
-
     /** Minimal width of a category label. */
     private static final int           MIN_CATEGORY_WIDTH = 10;
 
@@ -91,7 +90,10 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
      * @return
      */
     private static double[] getPoints() {
-        return new double[]{0.0000001d, 0.000001d, 0.00001d, 0.0001d, 0.001d, 0.01d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d};
+        return new double[]{0.0000001d, 0.000001d, 0.00001d, 
+                            0.0001d, 0.001d, 0.01d, 0.1d, 
+                            0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 
+                            0.7d, 0.8d, 0.9d};
     }
 
     /** View */
@@ -319,10 +321,11 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
             private double[] dataSNB;
             private double[] dataDankar;
             private double[] dataDankarWithoutSNB;
+            private int idx;
 
             @Override
             public int getProgress() {
-                return 0;
+                return (int)Math.round(idx * 100d + (double)builder.getProgress()) / POINTS.length; 
             }
             
             @Override
@@ -391,7 +394,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                     dataSNB = new double[POINTS.length];
                     dataDankar = new double[POINTS.length];
                 }
-                for (int idx = 0; idx < POINTS.length; idx++) {
+                for (idx = 0; idx < POINTS.length; idx++) {
                     if (stopped) {
                         throw new InterruptedException();
                     }
@@ -435,7 +438,22 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     }
 
     @Override
-    protected ProgressProvider getProgressProvider() {
-        return null;
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
+    }
+
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

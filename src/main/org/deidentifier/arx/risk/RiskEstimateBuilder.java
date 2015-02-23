@@ -76,7 +76,7 @@ public class RiskEstimateBuilder {
     /** Model */
     private final double                accuracy;
     /** Model */
-    private final WrappedInteger        percentageDone         = new WrappedInteger();
+    private final WrappedInteger        progress         = new WrappedInteger();
 
     /**
      * Creates a new instance
@@ -196,10 +196,18 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelEquivalenceClasses getEquivalenceClassModel() {
+        return getEquivalenceClassModel(1.0d);
+    }
+
+    /**
+     * Returns a model of the equivalence classes in this data set
+     * @return
+     */
+    private RiskModelEquivalenceClasses getEquivalenceClassModel(double factor) {
         synchronized(this) {
             if (classes == null) {
-                percentageDone.value = 0;
-                classes = new RiskModelEquivalenceClasses(handle, identifiers, stop);
+                progress.value = 0;
+                classes = new RiskModelEquivalenceClasses(handle, identifiers, stop, progress, factor);
             }
             return classes;
         }
@@ -211,7 +219,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskEstimateBuilderInterruptible getInterruptibleInstance(){
-        percentageDone.value = 0;
+        progress.value = 0;
         return new RiskEstimateBuilderInterruptible(this);
     }
 
@@ -238,8 +246,8 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRisk(){
-        percentageDone.value = 0;
-        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(), stop, accuracy, maxIterations);
+        progress.value = 0;
+        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(0.25), stop, progress, accuracy, maxIterations);
     }
     
     /**
@@ -255,7 +263,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelSampleBasedReidentificationRisk getSampleBasedReidentificationRisk(){
-        percentageDone.value = 0;
+        progress.value = 0;
         return new RiskModelSampleBasedReidentificationRisk(getEquivalenceClassModel());
     }
 
@@ -264,7 +272,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelSampleBasedUniquenessRisk getSampleBasedUniquenessRisk(){
-        percentageDone.value = 0;
+        progress.value = 0;
         return new RiskModelSampleBasedUniquenessRisk(getEquivalenceClassModel());
     }
 
@@ -274,8 +282,8 @@ public class RiskEstimateBuilder {
      * @return
      */
     private RiskModelAttributes getAttributeRisks(final StatisticalModel model) {
-        percentageDone.value = 0;
-        return new RiskModelAttributes(this.identifiers, this.stop, percentageDone) {
+        progress.value = 0;
+        return new RiskModelAttributes(this.identifiers, this.stop, progress) {
             @Override
             protected RiskProvider getRiskProvider(final Set<String> attributes, 
                                                    final WrappedBoolean stop) {
@@ -329,7 +337,7 @@ public class RiskEstimateBuilder {
      * Returns progress data, if available
      * @return
      */
-    int getPercentageDone() {
-        return this.percentageDone.value;
+    int getProgress() {
+        return this.progress.value;
     }
 }

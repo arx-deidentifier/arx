@@ -19,6 +19,7 @@ package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
  * This class implements the SNBModel, for details see Chen, 1998
@@ -43,7 +44,7 @@ class ModelSNB extends RiskModelPopulationBased {
              final double accuracy,
              final int maxIterations,
              final WrappedBoolean stop) {
-        super(classes, model, stop);
+        super(classes, model, stop, new WrappedInteger());
         
         int[] _classes = super.getClasses().getEquivalenceClasses();
         double numClassesOfSize1 = super.getNumClassesOfSize(1);

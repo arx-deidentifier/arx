@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.utility;
+package org.deidentifier.arx.gui.view.impl.common.async;
 
-import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.eclipse.swt.widgets.Display;
 
 
@@ -218,5 +217,13 @@ public class AnalysisManager {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Returns whether a process is running
+     * @return
+     */
+    public boolean isRunning() {
+        return worker != null;
     }
 }

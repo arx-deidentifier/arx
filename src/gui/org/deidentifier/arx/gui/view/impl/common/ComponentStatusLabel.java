@@ -37,7 +37,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -50,119 +49,71 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * Adapted from https://stackoverflow.com/questions/6896632/is-there-a-custom-label-widget
- *      -which-supports-animated-gif
+ * A label that can display animated GIFs. 
+ * Adapted from https://stackoverflow.com/questions/6896632/is-there-a-custom-label-widget-which-supports-animated-gif
  */
 public class ComponentStatusLabel extends Canvas {
-    
-    /**
-     * 
-     */
-    private class GIFHandler implements Runnable {
-
-        /**  TODO */
-        private int         imageNumber = 0;
-        
-        /**  TODO */
-        private ImageLoader loader      = null;
-        
-        /**  TODO */
-        private boolean     stop        = false;
-
-        /**
-         * 
-         *
-         * @param loader
-         */
-        public GIFHandler(ImageLoader loader) {
-            this.loader = loader;
-        }
-        
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
-        @Override
-        public void run() {
-            int delayTime = loader.data[imageNumber].delayTime;
-            if (!ComponentStatusLabel.this.isDisposed()) {
-                imageNumber = imageNumber == loader.data.length - 1 ? 0 : imageNumber + 1;
-                if (!ComponentStatusLabel.this.image.isDisposed()) ComponentStatusLabel.this.image.dispose();
-                ImageData nextFrameData = loader.data[imageNumber];
-                ComponentStatusLabel.this.image = new Image(ComponentStatusLabel.this.getDisplay(), nextFrameData);
-                ComponentStatusLabel.this.redraw();
-                if (!stop) {
-                    ComponentStatusLabel.this.getDisplay().timerExec(delayTime * 10, this);
-                }
-            }
-        } 
-        
-        /**
-         * 
-         */
-        public void stop(){
-            this.stop = true;
-        }
-    }
 
     /** Gap between icon and text. */
-    private static final int    GAP            = 5;
+    private static final int                     GAP            = 5;
 
     /** Left and right margins. */
-    private static final int    DEFAULT_MARGIN = 3;
+    private static final int                     DEFAULT_MARGIN = 3;
 
     /** A string inserted in the middle of text that has been shortened. */
-    private static final String ELLIPSIS       = "...";                                                                       //$NON-NLS-1$
+    private static final String                  ELLIPSIS       = "..."; //$NON-NLS-1$
 
     /** The alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
-    private int                 align          = SWT.LEFT;
+    private int                                  align          = SWT.LEFT;
 
     /** TODO */
-    private int                 leftMargin     = DEFAULT_MARGIN;
+    private int                                  leftMargin     = DEFAULT_MARGIN;
 
     /** TODO */
-    private int                 topMargin      = DEFAULT_MARGIN;
+    private int                                  topMargin      = DEFAULT_MARGIN;
 
     /** TODO */
-    private int                 rightMargin    = DEFAULT_MARGIN;
+    private int                                  rightMargin    = DEFAULT_MARGIN;
 
     /** TODO */
-    private int                 bottomMargin   = DEFAULT_MARGIN;
+    private int                                  bottomMargin   = DEFAULT_MARGIN;
 
     /** TODO */
-    private String              text;
+    private String                               text;
 
     /** TODO */
-    private Image               image;
+    Image                                        image;
 
     /** TODO */
-    private String              appToolTipText;
+    private String                               appToolTipText;
 
     /** TODO */
-    private ProgressProvider    progressProvider;
+    private ComponentStatusLabelProgressProvider progressProvider;
 
     /** TODO */
-    private boolean             ignoreDispose;
+    private boolean                              ignoreDispose;
 
     /** TODO */
-    private Image               backgroundImage;
+    private Image                                backgroundImage;
 
     /** TODO */
-    private Color[]             gradientColors;
+    private Color[]                              gradientColors;
 
     /** TODO */
-    private int[]               gradientPercents;
+    private int[]                                gradientPercents;
 
     /** TODO */
-    private boolean             gradientVertical;
+    private boolean                              gradientVertical;
 
     /** TODO */
-    private Color               background;
+    private Color                                background;
 
     /** TODO */
-    private GIFHandler          thread         = null;
+    private ComponentStatusLabelGIFHandler       thread         = null;
 
     /** TODO */
-    private static int          DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
+    private static int                           DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT |
+                                                                  SWT.DRAW_DELIMITER;
 
     /**
      * Checkstyle method.
@@ -513,7 +464,7 @@ public class ComponentStatusLabel extends Canvas {
         if (loader.data[0] != null) this.image = new Image(this.getDisplay(), loader.data[0]);
 
         if (loader.data.length > 1) {
-            thread = new GIFHandler(loader);
+            thread = new ComponentStatusLabelGIFHandler(this, loader);
             thread.run();
         }
 
@@ -1066,8 +1017,8 @@ public class ComponentStatusLabel extends Canvas {
                         lineX = Math.max(x, rect.x + rect.width - rightMargin - lineWidth);
                     }
                 }
-                if (progressProvider != null && progressProvider.getProgress() != 0) {
-                    gc.drawText(lines[i] + "(" + progressProvider.getProgress()+"%)", lineX, lineY, DRAW_FLAGS);
+                if (i == lines.length-1 && progressProvider != null && progressProvider.getProgress() != 0) {
+                    gc.drawText(lines[i] + " (" + progressProvider.getProgress()+"%)", lineX, lineY, DRAW_FLAGS);
                 } else {
                     gc.drawText(lines[i], lineX, lineY, DRAW_FLAGS);
                 }
@@ -1092,7 +1043,7 @@ public class ComponentStatusLabel extends Canvas {
      * Sets a progress provider, if any
      * @param provider
      */
-    public void setProgressProvider(ProgressProvider provider) {
+    public void setProgressProvider(ComponentStatusLabelProgressProvider provider) {
         this.progressProvider = provider;
     }
 }

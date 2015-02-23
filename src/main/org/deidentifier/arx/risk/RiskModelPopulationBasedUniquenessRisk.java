@@ -19,15 +19,18 @@ package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
- * Class for risks based on uniqueness
+ * Class for risks based on uniqueness.
+ * 
  * @author Fabian Prasser
  */
 public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationBased{
 
     /** 
-     * The statistical model used for computing Dankar's estimate
+     * The statistical model used for computing Dankar's estimate.
+     * 
      * @author Fabian Prasser
      */
     public static enum StatisticalModel {
@@ -60,7 +63,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      */
     public RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model, 
                                                   RiskModelEquivalenceClasses classes) {
-        this(model, classes, new WrappedBoolean(), RiskEstimateBuilder.DEFAULT_ACCURACY, RiskEstimateBuilder.DEFAULT_MAX_ITERATIONS);
+        this(model, classes, new WrappedBoolean(), new WrappedInteger(), RiskEstimateBuilder.DEFAULT_ACCURACY, RiskEstimateBuilder.DEFAULT_MAX_ITERATIONS);
     }
     
     /**
@@ -71,9 +74,10 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
     RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model, 
                                            RiskModelEquivalenceClasses classes,
                                            WrappedBoolean stop,
+                                           WrappedInteger progress,
                                            double accuracy,
                                            int maxIterations) {
-        super(classes, model, stop);
+        super(classes, model, stop, progress);
         
         // Init
         int numClassesOfSize1 = (int)super.getNumClassesOfSize(1);
@@ -89,17 +93,21 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
             numUniquesDankarWithoutSNB = 0d;
             dankarModelWithoutSNB = null;
             dankarModel = null;
+            progress.value = 100;
             return;
         }
         
         // Estimate with Zayatz's model 
         numUniquesZayatz = new ModelZayatz(model, classes, stop).getNumUniques();
+        progress.value = 50;
         
         // Estimate with Pitman's model
         numUniquesPitman = numClassesOfSize2 != 0 ? new ModelPitman(model, classes, accuracy, maxIterations, stop).getNumUniques() : 0d;
+        progress.value = 75;
         
         // Estimate with SNB model
         numUniquesSNB = new ModelSNB(model, classes, accuracy, maxIterations, stop).getNumUniques();
+        progress.value = 100;
         
         // Estimate with Dankar's model. TODO: Check against the paper
         if (numClassesOfSize2 == 0) {

@@ -20,6 +20,7 @@ package org.deidentifier.arx.risk;
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
  * This class implements the ZayatzModel based on equivalence classes, for details see the paper
@@ -41,7 +42,7 @@ class ModelZayatz extends RiskModelPopulationBased {
      * @param model
      */
     ModelZayatz(ARXPopulationModel model, final RiskModelEquivalenceClasses classes, WrappedBoolean stop) {
-        super(classes, model, stop);
+        super(classes, model, stop, new WrappedInteger());
         
         int[] _classes = super.getClasses().getEquivalenceClasses();
         double conditionalUniquenessPercentage =  computeConditionalUniquenessPercentage(_classes,

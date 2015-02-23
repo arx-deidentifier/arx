@@ -73,7 +73,7 @@ public class ComponentStatus {
     public ComponentStatus(Controller controller, 
                            Composite parent, 
                            Control child,
-                           ProgressProvider progressProvider){
+                           ComponentStatusLabelProgressProvider progressProvider){
         
         this.child = child;
         this.parent = parent;
@@ -146,7 +146,7 @@ public class ComponentStatus {
      * @param parent
      * @return
      */
-    private Composite getWorkingComposite(Composite parent, ProgressProvider provider) {
+    private Composite getWorkingComposite(Composite parent, ComponentStatusLabelProgressProvider provider) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);

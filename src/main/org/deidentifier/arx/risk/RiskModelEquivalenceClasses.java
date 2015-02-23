@@ -25,6 +25,7 @@ import java.util.Set;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
@@ -112,14 +113,18 @@ public class RiskModelEquivalenceClasses {
      * @param qis
      */
     public RiskModelEquivalenceClasses(final DataHandle handle, final Set<String> qis) {
-        this(handle, qis, new WrappedBoolean());
+        this(handle, qis, new WrappedBoolean(), new WrappedInteger(), 1.0d);
     }
     /**
      * Creates a new instance
      * @param handle
      * @param qis
      */
-    RiskModelEquivalenceClasses(final DataHandle handle, final Set<String> qis, final WrappedBoolean stop) {
+    RiskModelEquivalenceClasses(final DataHandle handle,
+                                final Set<String> qis,
+                                final WrappedBoolean stop,
+                                final WrappedInteger progress,
+                                double factor) {
         
         /* ********************************
          *  Check
@@ -150,7 +155,14 @@ public class RiskModelEquivalenceClasses {
 
         // Calculate equivalence classes
         ObjectIntOpenHashMap<TupleWrapper> map = new ObjectIntOpenHashMap<TupleWrapper>();
-        for (int row = 0; row < handle.getNumRows(); row++) {
+        int numRows = handle.getNumRows();
+        for (int row = 0; row < numRows; row++) {
+            
+            int prog = (int)Math.round((double)row / (double)numRows * factor * 80d);
+            if (prog != progress.value) {
+                progress.value = prog;
+            }
+            
             TupleWrapper tuple = new TupleWrapper(handle, indices, row);
             map.putOrAdd(tuple, 1, 1);
             if (stop.value) {
@@ -164,6 +176,10 @@ public class RiskModelEquivalenceClasses {
         final boolean[] states = map.allocated;
         for (int i = 0; i < states.length; i++) {
             if (states[i]) {
+                int prog = (int)Math.round((80d + (double)i / (double)states.length * 20d) * factor);
+                if (prog != progress.value) {
+                    progress.value = prog;
+                }
                 grouped.putOrAdd(values[i], 1, 1);
             }
             if (stop.value) {

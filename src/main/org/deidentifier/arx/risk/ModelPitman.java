@@ -20,6 +20,7 @@ package org.deidentifier.arx.risk;
 import org.apache.commons.math3.special.Gamma;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
  * This class implements the PitmanModel, for details see Hoshino, 2001
@@ -44,7 +45,7 @@ class ModelPitman extends RiskModelPopulationBased {
                 final double accuracy,
                 final int maxIterations,
                 final WrappedBoolean stop) {
-        super(classes, model, stop);
+        super(classes, model, stop, new WrappedInteger());
 
         int numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
         int numClassesOfSize2 = (int) super.getNumClassesOfSize(2);
