@@ -52,6 +52,12 @@ public class AnalysisContextRisk implements AnalysisContextVisualization{
         if (model==null) return; 
     }
     
+    @Override
+    public boolean isAttributeSelected(String attribute) {
+        if (attribute==null) return false;
+        else return true;
+    }
+
     /**
      * Is this a valid context.
      *
@@ -60,12 +66,6 @@ public class AnalysisContextRisk implements AnalysisContextVisualization{
     public boolean isValid(){
         if (this.handle == null) return false;
         else if (this.model == null) return false;
-        else return true;
-    }
-
-    @Override
-    public boolean isAttributeSelected(String attribute) {
-        if (attribute==null) return false;
         else return true;
     }
 }

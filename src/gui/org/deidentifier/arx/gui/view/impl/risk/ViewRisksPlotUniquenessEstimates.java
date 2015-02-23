@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
@@ -70,9 +71,6 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     /** Labels for the plot. */
     private static final String[]      LABELS             = getLabels(POINTS);
 
-    /** View */
-    private Chart                      chart;
-    
     /**
      * Creates a set of labels
      * @param points
@@ -85,7 +83,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         }
         return result;
     }
-
+    
     /**
      * Creates an array of points
      * @return
@@ -93,6 +91,9 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
     private static double[] getPoints() {
         return new double[]{0.0000001d, 0.000001d, 0.00001d, 0.0001d, 0.001d, 0.01d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d};
     }
+
+    /** View */
+    private Chart                      chart;
     
     /** View */
     private Composite         root;
@@ -115,30 +116,18 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
     }
     
     @Override
-    protected Control createControl(Composite parent) {
-        
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
-        return this.root;
-    }
-
-    @Override
-    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
-        return new AnalysisContextRisk(context);
-    }
-
-    @Override
-    protected void doReset() {
-        if (this.manager != null) {
-            this.manager.stop();
+    public void update(ModelEvent event) {
+        super.update(event);
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
+            triggerUpdate();
         }
-        resetChart();
     }
-
-
+    
     /**
      * Resets the chart
      */
@@ -252,6 +241,28 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
                 }
             }
         }
+    }
+
+    @Override
+    protected Control createControl(Composite parent) {
+        
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
+        return this.root;
+    }
+
+
+    @Override
+    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
+        return new AnalysisContextRisk(context);
+    }
+
+    @Override
+    protected void doReset() {
+        if (this.manager != null) {
+            this.manager.stop();
+        }
+        resetChart();
     }
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {

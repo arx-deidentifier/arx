@@ -127,12 +127,13 @@ public class LayoutRisks implements ILayout {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 layoutBottomRight.setSelectionIdex(layoutBottomLeft.getSelectionIndex());
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
                 
                 if (layoutBottomLeft.getSelectionIndex() == 3) {
                     layoutTopLeft.setSelectionIdex(2);
                     layoutTopRight.setSelectionIdex(2);
                 }
+                
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
         layoutBottomRight.addSelectionListener(new SelectionAdapter() {
@@ -147,22 +148,24 @@ public class LayoutRisks implements ILayout {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 layoutTopRight.setSelectionIdex(layoutTopLeft.getSelectionIndex());
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
                 
                 if (layoutTopLeft.getSelectionIndex() == 2) {
                     layoutBottomLeft.setSelectionIdex(3);
                 }
+                
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
         layoutTopRight.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 layoutTopLeft.setSelectionIdex(layoutTopRight.getSelectionIndex());
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
 
                 if (layoutTopRight.getSelectionIndex() == 2) {
                     layoutBottomLeft.setSelectionIdex(3);
                 }
+                
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
 

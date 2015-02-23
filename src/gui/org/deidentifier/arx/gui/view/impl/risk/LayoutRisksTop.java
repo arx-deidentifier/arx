@@ -114,6 +114,11 @@ public class LayoutRisksTop implements ILayout, IView {
         folder.addSelectionListener(listener);
     }
 
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
     /**
      * Returns the selection index.
      *
@@ -123,6 +128,11 @@ public class LayoutRisksTop implements ILayout, IView {
         return folder.getSelectionIndex();
     }
 
+    @Override
+    public void reset() {
+        subsetButton.setEnabled(false);
+    }
+
     /**
      * Sets the selection index.
      *
@@ -130,16 +140,6 @@ public class LayoutRisksTop implements ILayout, IView {
      */
     public void setSelectionIdex(final int index) {
         folder.setSelection(index);
-    }
-
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
-
-    @Override
-    public void reset() {
-        subsetButton.setEnabled(false);
     }
 
     @Override

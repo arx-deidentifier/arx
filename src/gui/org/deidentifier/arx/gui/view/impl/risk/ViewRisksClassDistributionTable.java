@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -78,6 +79,15 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+    }
+    
+    @Override
+    public void update(ModelEvent event) {
+        super.update(event);
+        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            triggerUpdate();
+        }
     }
     
     @Override

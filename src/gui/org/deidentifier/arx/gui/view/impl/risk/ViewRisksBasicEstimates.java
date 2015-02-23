@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -81,9 +82,43 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                                    final ModelPart reset) {
         
         super(parent, controller, target, reset);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
+    @Override
+    public void update(ModelEvent event) {
+        super.update(event);
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
+            triggerUpdate();
+        }
+    }
+
+    /**
+     * Creates a table item
+     * @param label
+     * @param value
+     */
+    private void createItem(String label, double value) {
+        TableItem item = new TableItem(table, SWT.NONE);
+        item.setText(0, label);
+        item.setText(1, format.format(value * 100d));
+        items.add(item);
+    }
+
+    /**
+     * Creates a table item
+     * @param label
+     * @param value
+     */
+    private void createItem(String label, StatisticalModel value) {
+        TableItem item = new TableItem(table, SWT.NONE);
+        item.setText(0, label);
+        item.setText(1, value == null ? "N/A" : value.toString());
+        items.add(item);
+    }
+
     @Override
     protected Control createControl(Composite parent) {
         
@@ -118,6 +153,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
         return new AnalysisContextRisk(context);
     }
+    
 
     @Override
     protected void doReset() {
@@ -131,7 +167,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         items.clear();
         table.setRedraw(true);
     }
-
+    
     @Override
     protected void doUpdate(AnalysisContextRisk context) {
 
@@ -223,30 +259,5 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         };
         
         this.manager.start(analysis);
-    }
-    
-
-    /**
-     * Creates a table item
-     * @param label
-     * @param value
-     */
-    private void createItem(String label, double value) {
-        TableItem item = new TableItem(table, SWT.NONE);
-        item.setText(0, label);
-        item.setText(1, format.format(value * 100d));
-        items.add(item);
-    }
-    
-    /**
-     * Creates a table item
-     * @param label
-     * @param value
-     */
-    private void createItem(String label, StatisticalModel value) {
-        TableItem item = new TableItem(table, SWT.NONE);
-        item.setText(0, label);
-        item.setText(1, value == null ? "N/A" : value.toString());
-        items.add(item);
     }
 }

@@ -76,15 +76,48 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
      * @param reset
      */
     public ViewRisksAttributesTable(final Composite parent,
-                                   final Controller controller,
-                                   final ModelPart target,
-                                   final ModelPart reset) {
+                                    final Controller controller,
+                                    final ModelPart target,
+                                    final ModelPart reset) {
         
         super(parent, controller, target, reset);
         controller.addListener(ModelPart.SELECTED_QUASI_IDENTIFIERS, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
+    @Override
+    public void update(ModelEvent event) {
+        super.update(event);
+        if (event.part == ModelPart.SELECTED_QUASI_IDENTIFIERS || event.part == ModelPart.POPULATION_MODEL) {
+            triggerUpdate();
+        }
+    }
+
+    /**
+     * Creates a table item
+     * @param risks
+     */
+    private void createItem(QuasiIdentifierRisks risks) {
+        final TableItem item = new TableItem(table, SWT.NONE);
+        List<String> list = new ArrayList<String>();
+        list.addAll(risks.getIdentifier());
+        Collections.sort(list);
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<list.size(); i++) {
+            builder.append(list.get(i));
+            if (i < list.size() - 1){
+                builder.append(", ");
+            }
+        }
+        item.setText(0, builder.toString());
+        item.setText(1, format.format(risks.getFractionOfUniqueTuples() * 100d));
+        item.setText(2, format.format(risks.getHighestReidentificationRisk() * 100d));
+        item.setText(3, format.format(risks.getAverageReidentificationRisk() * 100d));
+
+        items.add(item);
+    }
+
     @Override
     protected Control createControl(Composite parent) {
 
@@ -128,14 +161,6 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
     }
 
     @Override
-    public void update(ModelEvent event) {
-        super.update(event);
-        if (event.part == ModelPart.SELECTED_QUASI_IDENTIFIERS) {
-            triggerUpdate();
-        }
-    }
-
-    @Override
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
         return new AnalysisContextRisk(context);
     }
@@ -152,30 +177,6 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         table.setRedraw(true);
 
         items.clear();
-    }
-
-    /**
-     * Creates a table item
-     * @param risks
-     */
-    private void createItem(QuasiIdentifierRisks risks) {
-        final TableItem item = new TableItem(table, SWT.NONE);
-        List<String> list = new ArrayList<String>();
-        list.addAll(risks.getIdentifier());
-        Collections.sort(list);
-        StringBuilder builder = new StringBuilder();
-        for (int i=0; i<list.size(); i++) {
-            builder.append(list.get(i));
-            if (i < list.size() - 1){
-                builder.append(", ");
-            }
-        }
-        item.setText(0, builder.toString());
-        item.setText(1, format.format(risks.getFractionOfUniqueTuples() * 100d));
-        item.setText(2, format.format(risks.getHighestReidentificationRisk() * 100d));
-        item.setText(3, format.format(risks.getAverageReidentificationRisk() * 100d));
-
-        items.add(item);
     }
 
     @Override

@@ -167,6 +167,9 @@ public class MainWindow implements IView {
                     case 2: 
                         controller.getModel().setPerspective(Perspective.ANALYSIS);
                         break;
+                    case 3: 
+                        controller.getModel().setPerspective(Perspective.RISK);
+                        break;
                 }
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));

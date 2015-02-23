@@ -17,6 +17,7 @@
 package org.deidentifier.arx.gui.view.impl.risk;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
@@ -83,29 +84,16 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
     
     @Override
-    protected Control createControl(Composite parent) {
-        
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
-        return this.root;
-    }
-
-    @Override
-    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
-        return new AnalysisContextRisk(context);
-    }
-
-    @Override
-    protected void doReset() {
-        if (this.manager != null) {
-            this.manager.stop();
+    public void update(ModelEvent event) {
+        super.update(event);
+        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            triggerUpdate();
         }
-        resetChart();
     }
-
 
     /**
      * Resets the chart
@@ -220,6 +208,28 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
                 }
             }
         }
+    }
+
+    @Override
+    protected Control createControl(Composite parent) {
+        
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
+        return this.root;
+    }
+
+
+    @Override
+    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
+        return new AnalysisContextRisk(context);
+    }
+
+    @Override
+    protected void doReset() {
+        if (this.manager != null) {
+            this.manager.stop();
+        }
+        resetChart();
     }
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {

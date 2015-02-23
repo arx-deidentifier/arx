@@ -79,9 +79,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                       final ModelPart reset) {
 
         // Register
-        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.POPULATION_MODEL, this);
         controller.addListener(ModelPart.SELECTED_PERSPECTIVE, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_RISK_VISUALIZATION, this);
@@ -139,46 +137,31 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             this.context.setTarget(target);
             this.viewContext = null;
             this.reset();
+            return;
         }
 
-        // Potentially invalidate
-        if (event.part == ModelPart.POPULATION_MODEL ||
-            event.part == ModelPart.SELECTED_VIEW_CONFIG ||
-            event.part == ModelPart.ATTRIBUTE_TYPE) {
+        // Invalidate
+        if (event.part == ModelPart.SELECTED_VIEW_CONFIG) {
             triggerUpdate();
+            return;
         }
 
         // Reset on null-target
-        if (event.part == target && event.data==null) {
+        if (event.part == target && event.data == null || event.part == reset) {
             this.viewContext = null;
             this.reset();
             return;
         }
 
-        // Reset
-        if (event.part == reset) {
-            this.viewContext = null;
-            this.reset();
-            return;
-        }
-         
         // Update
         if (event.part == target ||
             event.part == ModelPart.SELECTED_RISK_VISUALIZATION ||
             (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.RISK)) {
             this.update();
+            return;
         }
     }
     
-    /**
-     * Triggers an update
-     */
-    protected void triggerUpdate() {
-        this.viewContext = null;
-        this.update();
-        return;
-    }
-
     /**
      * Redraws the plot.
      */
@@ -207,6 +190,15 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             status.setWorking();
         }
     }
+
+    /**
+     * 
+     * Implement this to create the widget.
+     *
+     * @param parent
+     * @return
+     */
+    protected abstract Control createControl(Composite parent);
     
     /**
      * 
@@ -216,15 +208,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     protected abstract T createViewConfig(AnalysisContext context);
     
-    /**
-     * 
-     * Implement this to create the widget.
-     *
-     * @param parent
-     * @return
-     */
-    protected abstract Control createControl(Composite parent);
-
     /**
      * Implement this to reset.
      */
@@ -237,27 +220,6 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     protected abstract void doUpdate(T context);
 
-    /**
-     * Status update.
-     */
-    protected void setStatusDone(){
-        this.status.setDone();
-    }
-
-    /**
-     * Status empty.
-     */
-    protected void setStatusEmpty(){
-        this.status.setEmpty();
-    }
-
-    /**
-     * Status working.
-     */
-    protected void setStatusWorking(){
-        this.status.setWorking();
-    }
-    
     /**
      * Creates a risk estimate builder
      * @param context
@@ -290,5 +252,35 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
                                                analysisContext.getModel().getPopulationModel().getAccuracy(),
                                                analysisContext.getModel().getPopulationModel().getMaxIterations())
                                                .getInterruptibleInstance();
+    }
+
+    /**
+     * Status update.
+     */
+    protected void setStatusDone(){
+        this.status.setDone();
+    }
+
+    /**
+     * Status empty.
+     */
+    protected void setStatusEmpty(){
+        this.status.setEmpty();
+    }
+    
+    /**
+     * Status working.
+     */
+    protected void setStatusWorking(){
+        this.status.setWorking();
+    }
+
+    /**
+     * Triggers an update
+     */
+    protected void triggerUpdate() {
+        this.viewContext = null;
+        this.update();
+        return;
     }
 }
