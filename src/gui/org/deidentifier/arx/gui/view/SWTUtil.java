@@ -21,6 +21,8 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -32,6 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -365,4 +369,35 @@ public class SWTUtil {
         }
     }
 
+    /**
+     * Creates a generic tooltip for the table
+     * @param table
+     */
+    public static void createGenericTooltip(final Table table) {
+        table.addMouseMoveListener(new MouseMoveListener() {
+            private TableItem current = null;
+
+            @Override
+            public void mouseMove(MouseEvent arg0) {
+                TableItem item = table.getItem(new Point(arg0.x, arg0.y));
+                if (item != null && item != current) {
+                    current = item;
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("(");
+                    int columns = item.getParent().getColumnCount();
+                    for (int i = 0; i < columns; i++) {
+                        String value = item.getText(i);
+                        if (value != null && !value.equals("")) {
+                            builder.append(value);
+                            if (i < columns - 1) {
+                                builder.append(", ");
+                            }
+                        }
+                    }
+                    builder.append(")");
+                    table.setToolTipText(builder.toString());
+                }
+            }
+        });
+    }
 }

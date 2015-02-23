@@ -51,9 +51,9 @@ public class LayoutRisksBottom implements ILayout {
 
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, null, null);
-        final Composite item1 = folder.createItem(Resources.getMessage("ViewSampleDistribution.5"), null); //$NON-NLS-1$ 
+        final Composite item1 = folder.createItem(Resources.getMessage("RiskAnalysis.5"), null); //$NON-NLS-1$ 
         item1.setLayout(new FillLayout());
-        final Composite item3 = folder.createItem(Resources.getMessage("ViewSampleDistribution.13"), null); //$NON-NLS-1$ 
+        final Composite item3 = folder.createItem(Resources.getMessage("RiskAnalysis.13"), null); //$NON-NLS-1$ 
         item3.setLayout(new FillLayout());
 
         
@@ -62,7 +62,7 @@ public class LayoutRisksBottom implements ILayout {
         new ViewRisksPlotUniquenessEstimates(item3, controller, target, reset);
         
         if (target == ModelPart.INPUT) {
-            final Composite item2 = folder.createItem(Resources.getMessage("ViewSampleDistribution.16"), null); //$NON-NLS-1$ 
+            final Composite item2 = folder.createItem(Resources.getMessage("RiskAnalysis.16"), null); //$NON-NLS-1$ 
             item2.setLayout(new FillLayout());
             new ViewRisksPopulationModel(item2, controller);
         } 

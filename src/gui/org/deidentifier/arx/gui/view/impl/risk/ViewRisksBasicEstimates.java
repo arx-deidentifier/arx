@@ -23,6 +23,7 @@ import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -100,15 +101,16 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
 
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewSampleDistribution.6")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.6")); //$NON-NLS-1$
         columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewSampleDistribution.7")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.7")); //$NON-NLS-1$
         columns.add(c);
         for (final TableColumn col : columns) {
             col.pack();
         }
+        SWTUtil.createGenericTooltip(table);
         return root;
     }
 
@@ -169,14 +171,14 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
                 }
                 items.clear();
                 
-                createItem(Resources.getMessage("ViewSampleDistribution.14"), lowestRisk);
-                createItem(Resources.getMessage("ViewSampleDistribution.17"), fractionOfTuplesAffectedByLowestRisk);
-                createItem(Resources.getMessage("ViewSampleDistribution.8"), averageRisk);
-                createItem(Resources.getMessage("ViewSampleDistribution.9"), highestRisk);
-                createItem(Resources.getMessage("ViewSampleDistribution.10"), fractionOfTuplesAffectedByHighestRisk);
-                createItem(Resources.getMessage("ViewSampleDistribution.11"), fractionOfUniqueTuples);
-                createItem(Resources.getMessage("ViewSampleDistribution.12"), fractionOfUniqueTuplesDankarWithoutSNB);
-                createItem(Resources.getMessage("ViewSampleDistribution.18"), dankarModelWithoutSNB);
+                createItem(Resources.getMessage("RiskAnalysis.14"), lowestRisk);
+                createItem(Resources.getMessage("RiskAnalysis.17"), fractionOfTuplesAffectedByLowestRisk);
+                createItem(Resources.getMessage("RiskAnalysis.8"), averageRisk);
+                createItem(Resources.getMessage("RiskAnalysis.9"), highestRisk);
+                createItem(Resources.getMessage("RiskAnalysis.10"), fractionOfTuplesAffectedByHighestRisk);
+                createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples);
+                createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankarWithoutSNB);
+                createItem(Resources.getMessage("RiskAnalysis.18"), dankarModelWithoutSNB);
 
                 table.setRedraw(true);
                 

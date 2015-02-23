@@ -201,6 +201,7 @@ public class ViewProperties implements IView {
         c = new TableColumn(table, SWT.NONE);
         c.setText(Resources.getMessage("NodePropertiesView.17")); //$NON-NLS-1$
         columns.add(c);
+        SWTUtil.createGenericTooltip(table);
         for (final TableColumn col : columns) {
             col.pack();
         }

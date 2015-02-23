@@ -23,6 +23,7 @@ import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -96,20 +97,20 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewSampleDistribution.1")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.1")); //$NON-NLS-1$
         columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewSampleDistribution.2")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.2")); //$NON-NLS-1$
         columns.add(c);
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("ViewSampleDistribution.3")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("RiskAnalysis.3")); //$NON-NLS-1$
         columns.add(c);
         for (final DynamicTableColumn col : columns) {
             col.pack();
         }
-        
+        SWTUtil.createGenericTooltip(table);
         return this.root;
     }
 

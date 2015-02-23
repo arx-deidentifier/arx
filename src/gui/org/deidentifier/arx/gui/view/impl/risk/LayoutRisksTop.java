@@ -87,11 +87,11 @@ public class LayoutRisksTop implements ILayout, IView {
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillGridData());
-        final Composite item1 = folder.createItem(Resources.getMessage("ViewSampleDistribution.4"), null); //$NON-NLS-1$ 
+        final Composite item1 = folder.createItem(Resources.getMessage("RiskAnalysis.4"), null); //$NON-NLS-1$ 
         item1.setLayout(new FillLayout());
-        final Composite item2 = folder.createItem(Resources.getMessage("ViewSampleDistribution.0"), null); //$NON-NLS-1$ 
+        final Composite item2 = folder.createItem(Resources.getMessage("RiskAnalysis.0"), null); //$NON-NLS-1$ 
         item2.setLayout(new FillLayout());
-        final Composite item3 = folder.createItem(Resources.getMessage("ViewSampleDistribution.15"), null); //$NON-NLS-1$ 
+        final Composite item3 = folder.createItem(Resources.getMessage("RiskAnalysis.15"), null); //$NON-NLS-1$ 
         item3.setLayout(new FillLayout());
         
         // Create the views

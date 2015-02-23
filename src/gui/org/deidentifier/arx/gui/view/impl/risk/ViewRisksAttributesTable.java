@@ -16,12 +16,15 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -44,6 +47,9 @@ import org.mihalis.opal.dynamictablecolumns.DynamicTableColumn;
  * @author Fabian Prasser
  */
 public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
+
+    /** View */
+    private DecimalFormat     format = new DecimalFormat("##0.000");
 
     /** View */
     private Composite         root;
@@ -80,13 +86,43 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
     @Override
     protected Control createControl(Composite parent) {
 
-        this.items = new ArrayList<TableItem>();
-        this.columns = new ArrayList<TableColumn>();
-
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        return this.root;
+        this.items = new ArrayList<TableItem>();
+        this.columns = new ArrayList<TableColumn>();
+
+        table = new DynamicTable(root, SWT.SINGLE | SWT.BORDER |
+                                       SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        table.setMenu(new ClipboardHandlerTable(table).getMenu());
+
+        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("70%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("RiskAnalysis.19")); //$NON-NLS-1$
+        c.setResizable(true);
+        columns.add(c);
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("RiskAnalysis.20")); //$NON-NLS-1$
+        c.setResizable(true);
+        columns.add(c);
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("RiskAnalysis.21")); //$NON-NLS-1$
+        c.setResizable(true);
+        columns.add(c);
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth("10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("RiskAnalysis.22")); //$NON-NLS-1$
+        c.setResizable(true);
+        columns.add(c);
+        for (final TableColumn col : columns) {
+            col.pack();
+        }
+        SWTUtil.createGenericTooltip(table);
+        return root;
     }
 
     @Override
@@ -99,19 +135,13 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         if (this.manager != null) {
             this.manager.stop();
         }
-        if (table != null && !table.isDisposed()) {
-            table.setRedraw(false);
-            for (final TableItem i : items) {
-                i.dispose();
-            }
-            for (TableColumn c : columns) {
-                c.dispose();
-            }
-            table.setRedraw(true);
-            table.dispose();
+        table.setRedraw(false);
+        for (final TableItem i : items) {
+            i.dispose();
         }
+        table.setRedraw(true);
+
         items.clear();
-        columns.clear();
     }
 
     /**
@@ -119,18 +149,22 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
      * @param risks
      */
     private void createItem(QuasiIdentifierRisks risks) {
-        TableItem item = new TableItem(table, SWT.NONE);
-        int idx = 0;
+        final TableItem item = new TableItem(table, SWT.NONE);
         List<String> list = new ArrayList<String>();
         list.addAll(risks.getIdentifier());
         Collections.sort(list);
-        for (String s : list) {
-            item.setText(idx++, s);
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<list.size(); i++) {
+            builder.append(list.get(i));
+            if (i < list.size() - 1){
+                builder.append(", ");
+            }
         }
-        item.setText(table.getColumnCount()-3, String.valueOf(risks.getFractionOfUniqueTuples()));
-        item.setText(table.getColumnCount()-2, String.valueOf(risks.getHighestReidentificationRisk()));
-        item.setText(table.getColumnCount()-1, String.valueOf(risks.getAverageReidentificationRisk()));
-        
+        item.setText(0, builder.toString());
+        item.setText(1, format.format(risks.getFractionOfUniqueTuples() * 100d));
+        item.setText(2, format.format(risks.getHighestReidentificationRisk() * 100d));
+        item.setText(3, format.format(risks.getAverageReidentificationRisk() * 100d));
+
         items.add(item);
     }
 
@@ -161,62 +195,24 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                 }
 
                 // Update chart
-                if (table != null && !table.isDisposed()) {
-                    for (final TableItem i : items) {
-                        i.dispose();
-                    }
-                    items.clear();
-                    for (TableColumn c : columns) {
-                        c.dispose();
-                    }
-                    columns.clear();
-                    table.dispose();
+                for (final TableItem i : items) {
+                    i.dispose();
                 }
-                
-
-                table = new DynamicTable(root, SWT.SINGLE | SWT.BORDER |
-                                               SWT.V_SCROLL | SWT.FULL_SELECTION);
-                table.setHeaderVisible(true);
-                table.setLinesVisible(true);
-                table.setMenu(new ClipboardHandlerTable(table).getMenu());
-
-                double columnsize = (int)(1.0d / (double)(this.risks.getNumIdentifiers()+3) * 100d);
-                
-                for (int i=0; i<this.risks.getNumIdentifiers(); i++) {
-                    DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-                    c.setWidth(columnsize+"%", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
-                    c.setText("Attribute "+i); //$NON-NLS-1$
-                    columns.add(c);
-                }
-                
-                DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-                c.setWidth(columnsize+"%", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
-                c.setText("Score"); //$NON-NLS-1$
-                columns.add(c);
-
-                c = new DynamicTableColumn(table, SWT.LEFT);
-                c.setWidth(columnsize+"%", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
-                c.setText("Highest"); //$NON-NLS-1$
-                columns.add(c);
-
-                c = new DynamicTableColumn(table, SWT.LEFT);
-                c.setWidth(columnsize+"%", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
-                c.setText("Avg"); //$NON-NLS-1$
-                columns.add(c);
-                
-                for (final TableColumn col : columns) {
-                    col.pack();
-                }
+                items.clear();
                 
                 // For all sizes
                 for (QuasiIdentifierRisks item : risks.getAttributeRisks()) {
                     createItem(item);
                 }
+
+                for (final TableColumn col : columns) {
+                    col.pack();
+                }
                 
                 setStatusDone();
-
-                root.layout();
-                root.redraw();
+                
+                table.layout();
+                table.redraw();
             }
 
             @Override

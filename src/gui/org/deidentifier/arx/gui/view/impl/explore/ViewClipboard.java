@@ -198,7 +198,7 @@ public class ViewClipboard implements IView {
         final TableColumn c2 = new TableColumn(table, SWT.NONE);
         c2.setText(Resources.getMessage("NodeClipboardView.7")); //$NON-NLS-1$
         columns.add(c2);
-
+        SWTUtil.createGenericTooltip(table);
         c.pack();
         c2.pack();
     }
