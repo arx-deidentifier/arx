@@ -47,16 +47,52 @@ public class RiskEstimateBuilder {
         public boolean value = false;
     }
 
+    /** Convergence threshold for the Newton-Raphson algorithm. */
+    public static final double          DEFAULT_ACCURACY       = 1.0e-9;
+
+    /** Maximum number of iterations for the Newton-Raphson algorithm. */
+    public static final int             DEFAULT_MAX_ITERATIONS = 300;
+
     /** Fields */
-    private final ARXPopulationModel          population;
+    private final ARXPopulationModel    population;
     /** Fields */
-    private final DataHandle                  handle;
+    private final DataHandle            handle;
     /** Fields */
-    private final Set<String>                 identifiers;
+    private final Set<String>           identifiers;
     /** Classes */
     private RiskModelEquivalenceClasses classes;
-    /** Asynchronous computation*/
-    private final WrappedBoolean              stop;
+    /** Asynchronous computation */
+    private final WrappedBoolean        stop;
+    /** Model */
+    private final int                   maxIterations;
+    /** Model */
+    private final double                accuracy;
+
+    /**
+     * Creates a new instance
+     * @param population
+     * @param handle
+     * @param classes
+     * @param accuracy
+     * @param maxIterations
+     */
+    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, RiskModelEquivalenceClasses classes,
+                               double accuracy, int maxIterations) {
+        this(population, handle, null, classes, accuracy, maxIterations);
+    }
+
+    /**
+     * Creates a new instance
+     * @param population
+     * @param handle
+     * @param identifiers
+     * @param accuracy
+     * @param maxIterations
+     */
+    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers,
+                               double accuracy, int maxIterations) {
+        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null, accuracy, maxIterations);
+    }
 
     /**
      * Creates a new instance
@@ -65,7 +101,7 @@ public class RiskEstimateBuilder {
      * @param classes
      */
     public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, RiskModelEquivalenceClasses classes) {
-        this(population, handle, null, classes);
+        this(population, handle, null, classes, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
     }
 
     /**
@@ -75,19 +111,23 @@ public class RiskEstimateBuilder {
      * @param identifiers
      */
     public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers) {
-        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null);
+        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
     }
+    
     /**
      * Creates a new instance
      * @param population
      * @param handle
      * @param identifiers
      */
-    private RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, RiskModelEquivalenceClasses classes, WrappedBoolean stop) {
+    private RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, RiskModelEquivalenceClasses classes, WrappedBoolean stop,
+                                double accuracy, int maxIterations) {
         this.population = population;
         this.handle = handle;
         this.identifiers = null;
         this.classes = classes;
+        this.accuracy = accuracy;
+        this.maxIterations = maxIterations;
         synchronized(this) {
             this.stop = stop;
         }
@@ -103,11 +143,14 @@ public class RiskEstimateBuilder {
     private RiskEstimateBuilder(ARXPopulationModel population, 
                                 DataHandle handle, 
                                 Set<String> identifiers, 
-                                RiskModelEquivalenceClasses classes) {
+                                RiskModelEquivalenceClasses classes,
+                                double accuracy, int maxIterations) {
         this.population = population;
         this.handle = handle;
         this.identifiers = identifiers;
         this.classes = classes;
+        this.accuracy = accuracy;
+        this.maxIterations = maxIterations;
         synchronized(this) {
             stop = new WrappedBoolean();
         }
@@ -118,12 +161,21 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param identifiers
+     * @param accuracy
+     * @param maxIterations
      */
-    private RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers, WrappedBoolean stop) {
+    private RiskEstimateBuilder(ARXPopulationModel population,
+                                DataHandle handle,
+                                Set<String> identifiers,
+                                WrappedBoolean stop,
+                                double accuracy,
+                                int maxIterations) {
         this.population = population;
         this.handle = handle;
         this.identifiers = identifiers;
         this.classes = null;
+        this.accuracy = accuracy;
+        this.maxIterations = maxIterations;
         synchronized(this) {
             this.stop = stop;
         }
@@ -174,9 +226,8 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRisk(){
-        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(), stop);
+        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(), stop, accuracy, maxIterations);
     }
-    
     
     /**
      * Returns a class providing access to sample-based risk estimates about the attributes
@@ -214,12 +265,12 @@ public class RiskEstimateBuilder {
                                                    final WrappedBoolean stop) {
                 
                 // Compute classes
-                RiskEstimateBuilder builder = new RiskEstimateBuilder(population,
-                                                                      handle,
-                                                                      attributes,
-                                                                      stop);
+                RiskEstimateBuilder builder = new RiskEstimateBuilder(population, handle,
+                                                                      attributes, stop,
+                                                                      accuracy, maxIterations);
                 RiskModelEquivalenceClasses classes = builder.getEquivalenceClassModel();
-                builder = new RiskEstimateBuilder(population, handle, classes, stop);
+                builder = new RiskEstimateBuilder(population, handle, classes, stop,
+                                                  accuracy, maxIterations);
                 
                 
                 // Use classes to compute risks

@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
+import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -252,5 +253,21 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     protected void setStatusWorking(){
         this.status.setWorking();
+    }
+    
+    /**
+     * Creates a risk estimate builder
+     * @param context
+     * @return
+     */
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context) {
+        
+        AnalysisContext analysisContext = context.context;
+        
+        return context.handle.getRiskEstimator(analysisContext.getModel().getPopulationModel().getModel(),
+                                               analysisContext.getContext().definition.getQuasiIdentifyingAttributes(),
+                                               analysisContext.getModel().getPopulationModel().getAccuracy(),
+                                               analysisContext.getModel().getPopulationModel().getMaxIterations())
+                                               .getInterruptibleInstance();
     }
 }

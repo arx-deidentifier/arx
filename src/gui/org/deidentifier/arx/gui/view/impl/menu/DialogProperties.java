@@ -71,6 +71,7 @@ public class DialogProperties implements IDialog {
         createTabTransformation(this.dialog);
         createTabInternals(this.dialog);
         createTabVisualization(this.dialog);
+        createTabRisk(this.dialog);
     }
 
     /**
@@ -181,6 +182,28 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.25"), 0, 10000, 700) { //$NON-NLS-1$
             protected Integer getValue() { return model.getMaxNodesInViewer(); }
             protected void setValue(Object t) { model.setMaxNodesInViewer((Integer)t); }});
+    }
+
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabRisk(PreferencesDialog window) {
+
+        window.addCategory(Resources.getMessage("PropertyDialog.40"), //$NON-NLS-1$
+                           controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 300) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getPopulationModel().getMaxIterations(); }
+            protected void setValue(Object t) { model.getPopulationModel().setMaxIterations((Integer)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-9) { //$NON-NLS-1$
+            protected Double getValue() { return model.getPopulationModel().getAccuracy(); }
+            protected void setValue(Object t) { model.getPopulationModel().setAccuracy((Double)t); }});
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getPopulationModel().getMaxQiSize(); }
+            protected void setValue(Object t) { model.getPopulationModel().setMaxQiSize((Integer)t); }});
     }
 
     /**

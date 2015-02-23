@@ -136,9 +136,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
     protected void doUpdate(AnalysisContextRisk context) {
 
         // The statistics builder
-        final RiskEstimateBuilderInterruptible builder = context.handle.getRiskEstimator(
-                                                                 context.context.getModel().getPopulationModel().getModel(),
-                                                                 context.context.getContext().definition.getQuasiIdentifyingAttributes()).getInterruptibleInstance();
+        final RiskEstimateBuilderInterruptible builder = getBuilder(context);
         
         // Create an analysis
         Analysis analysis = new Analysis(){

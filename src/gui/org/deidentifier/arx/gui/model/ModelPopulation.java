@@ -36,12 +36,47 @@ public class ModelPopulation implements Serializable {
     private boolean            modified         = false;
     /** Model */
     private ARXPopulationModel model;
+    /** Model */
+    private int                maxIterations    = 300;
+    /** Model */
+    private double             accuracy         = 1.0e-9;
+    /** Model */
+    private int                maxQiSize        = 10;
     
     /**
      * Creates a new instance
      */
     public ModelPopulation() {
         this.model = new ARXPopulationModel(0.1d);
+    }
+    
+    /**
+     * @return the accuracy
+     */
+    public double getAccuracy() {
+        return accuracy;
+    }
+
+    /**
+     * @return the maxIterations
+     */
+    public int getMaxIterations() {
+        return maxIterations;
+    }
+
+    /**
+     * @return the maxQiSize
+     */
+    public int getMaxQiSize() {
+        return maxQiSize;
+    }
+
+    /**
+     * Returns the backing model
+     * @return
+     */
+    public ARXPopulationModel getModel() {
+        return this.model;
     }
     
     /**
@@ -52,7 +87,7 @@ public class ModelPopulation implements Serializable {
     public double getPopulationSize(DataHandle handle) {
         return model.getPopulationSize(handle);
     }
-
+    
     /**
      * @param sampleSize
      * @return
@@ -61,7 +96,7 @@ public class ModelPopulation implements Serializable {
     public double getPopulationSize(double sampleSize) {
         return model.getPopulationSize(sampleSize);
     }
-
+    
     /**
      * Returns the region
      * @return
@@ -95,7 +130,37 @@ public class ModelPopulation implements Serializable {
     public boolean isModified() {
         return modified;
     }
-    
+
+    /**
+     * @param accuracy the accuracy to set
+     */
+    public void setAccuracy(double accuracy) {
+        if (accuracy != this.accuracy) {
+            this.modified = true;
+        }
+        this.accuracy = accuracy;
+    }
+
+    /**
+     * @param maxIterations the maxIterations to set
+     */
+    public void setMaxIterations(int maxIterations) {
+        if (maxIterations != this.maxIterations) {
+            this.modified = true;
+        }
+        this.maxIterations = maxIterations;
+    }
+
+    /**
+     * @param maxQiSize the maxQiSize to set
+     */
+    public void setMaxQiSize(int maxQiSize) {
+        if (maxQiSize != this.maxQiSize) {
+            this.modified = true;
+        }
+        this.maxQiSize = maxQiSize;
+    }
+
     /**
      * Sets the population size
      * @param handle
@@ -118,7 +183,7 @@ public class ModelPopulation implements Serializable {
             this.modified = true;
         }
     }
-    
+
     /**
      * Sets the sample fraction
      * @param sampleFraction
@@ -127,19 +192,11 @@ public class ModelPopulation implements Serializable {
         this.model = new ARXPopulationModel(sampleFraction);
         this.modified = true;
     }
-    
+
     /**
      * Set unmodified
      */
     public void setUnmodified() {
         this.modified = false;
-    }
-
-    /**
-     * Returns the backing model
-     * @return
-     */
-    public ARXPopulationModel getModel() {
-        return this.model;
     }
 }

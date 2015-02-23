@@ -38,12 +38,6 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         DANKAR_WITHOUT_SNB
     }
     
-    /** Convergence threshold for the Newton-Raphson algorithm. */
-    public static final double     DEFAULT_ACCURACY       = 1.0e-9;
-
-    /** Maximum number of iterations for the Newton-Raphson algorithm. */
-    public static final int        DEFAULT_MAX_ITERATIONS = 300;
-
     /** Estimate */
     private final double           numUniquesZayatz;
     /** Estimate */
@@ -66,7 +60,7 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      */
     public RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model, 
                                                   RiskModelEquivalenceClasses classes) {
-        this(model, classes, new WrappedBoolean());
+        this(model, classes, new WrappedBoolean(), RiskEstimateBuilder.DEFAULT_ACCURACY, RiskEstimateBuilder.DEFAULT_MAX_ITERATIONS);
     }
     
     /**
@@ -76,7 +70,9 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      */
     RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model, 
                                            RiskModelEquivalenceClasses classes,
-                                           WrappedBoolean stop) {
+                                           WrappedBoolean stop,
+                                           double accuracy,
+                                           int maxIterations) {
         super(classes, model, stop);
         
         // Init
@@ -100,10 +96,10 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         numUniquesZayatz = new ModelZayatz(model, classes, stop).getNumUniques();
         
         // Estimate with Pitman's model
-        numUniquesPitman = numClassesOfSize2 != 0 ? new ModelPitman(model, classes, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS, stop).getNumUniques() : 0d;
+        numUniquesPitman = numClassesOfSize2 != 0 ? new ModelPitman(model, classes, accuracy, maxIterations, stop).getNumUniques() : 0d;
         
         // Estimate with SNB model
-        numUniquesSNB = new ModelSNB(model, classes, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS, stop).getNumUniques();
+        numUniquesSNB = new ModelSNB(model, classes, accuracy, maxIterations, stop).getNumUniques();
         
         // Estimate with Dankar's model. TODO: Check against the paper
         if (numClassesOfSize2 == 0) {

@@ -468,13 +468,23 @@ public abstract class DataHandle {
     public abstract int getNumRows();
     
     /**
-     * Returns a risk estimator for the given set of quasi-identifiers
+     * Returns a risk estimator
      * @param model
-     * @param qis
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis) {
-        return new RiskEstimateBuilder(model, this, qis);
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model) {
+        return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes());
+    }
+
+    /**
+     * Returns a risk estimator
+     * @param model
+     * @param accuracy
+     * @param maxIterations
+     * @return
+     */
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, double accuracy, int maxIterations) {
+        return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes(), accuracy, maxIterations);
     }
 
     /**
@@ -488,12 +498,37 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns a risk estimator
+     * Returns a risk estimator for the given set of equivalence classes. Saves resources by re-using existing classes
      * @param model
+     * @param classes
+     * @param accuracy
+     * @param maxIterations
      * @return
      */
-    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model) {
-        return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes());
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, RiskModelEquivalenceClasses classes, double accuracy, int maxIterations) {
+        return new RiskEstimateBuilder(model, this, classes, accuracy, maxIterations);
+    }
+
+    /**
+     * Returns a risk estimator for the given set of quasi-identifiers
+     * @param model
+     * @param qis
+     * @return
+     */
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis) {
+        return new RiskEstimateBuilder(model, this, qis);
+    }
+
+    /**
+     * Returns a risk estimator for the given set of quasi-identifiers
+     * @param model
+     * @param qis
+     * @param accuracy
+     * @param maxIterations
+     * @return
+     */
+    public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, Set<String> qis, double accuracy, int maxIterations) {
+        return new RiskEstimateBuilder(model, this, qis, accuracy, maxIterations);
     }
 
     /**

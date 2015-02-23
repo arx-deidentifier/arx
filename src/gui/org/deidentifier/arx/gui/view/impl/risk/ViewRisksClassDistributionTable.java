@@ -140,9 +140,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
             Analysis analysis = new Analysis(){
 
             // The statistics builder
-            RiskEstimateBuilderInterruptible builder = context.handle.getRiskEstimator(
-                                                                     context.context.getModel().getPopulationModel().getModel(),
-                                                                     context.context.getContext().definition.getQuasiIdentifyingAttributes()).getInterruptibleInstance();
+            RiskEstimateBuilderInterruptible builder = getBuilder(context);
             
             private boolean  stopped = false;
             private int[] distribution; 
