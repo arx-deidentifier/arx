@@ -54,7 +54,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
-import org.deidentifier.arx.gui.view.impl.utility.LayoutAnalyze;
+import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -149,7 +149,7 @@ public class MainWindow implements IView {
         Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
         this.layoutExplore = new LayoutExplore(item2, controller);
         Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        new LayoutAnalyze(item3, controller);
+        new LayoutUtility(item3, controller);
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
         new LayoutRisks(item4, controller);
 

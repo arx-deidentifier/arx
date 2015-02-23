@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Listener;
  *
  * @author Fabian Prasser
  */
-public class LayoutAnalyze implements ILayout {
+public class LayoutUtility implements ILayout {
 
     /**
      * A runnable for synchronizing both tables.
@@ -143,50 +143,50 @@ public class LayoutAnalyze implements ILayout {
         }
     }
 
-    /**  TODO */
-    private static final int       WEIGHT_TOP    = 75;
-    
-    /**  TODO */
-    private static final int       WEIGHT_BOTTOM = 25;
-    
-    /**  TODO */
-    private static final int       WEIGHT_LEFT   = 50;
-    
-    /**  TODO */
-    private static final int       WEIGHT_RIGHT  = 50;
+    /** Constant */
+    private static final int              WEIGHT_TOP    = 75;
 
-    /**  TODO */
-    private final Composite        centerLeft;
-    
-    /**  TODO */
-    private final Composite        centerRight;
-    
-    /**  TODO */
-    private final Composite        bottomLeft;
-    
-    /**  TODO */
-    private final Composite        bottomRight;
-    
-    /**  TODO */
-    private final SashForm         centerSash;
-    
-    /**  TODO */
-    private final ViewData         dataInputView;
-    
-    /**  TODO */
-    private final ViewData         dataOutputView;
+    /** Constant */
+    private static final int              WEIGHT_BOTTOM = 25;
 
-    /**  TODO */
-    private final LayoutStatistics statisticsInputLayout;
-    
-    /**  TODO */
-    private final LayoutStatistics statisticsOutputLayout;
+    /** Constant */
+    private static final int              WEIGHT_LEFT   = 50;
 
-    /**  TODO */
-    private Synchronizer           synchronizer  = null;
-    
-    /**  TODO */
-    private String[]               monitor = new String[0];
+    /** Constant */
+    private static final int              WEIGHT_RIGHT  = 50;
+
+    /** View */
+    private final Composite               centerLeft;
+
+    /** View */
+    private final Composite               centerRight;
+
+    /** View */
+    private final Composite               bottomLeft;
+
+    /** View */
+    private final Composite               bottomRight;
+
+    /** View */
+    private final SashForm                centerSash;
+
+    /** View */
+    private final ViewData                dataInputView;
+
+    /** View */
+    private final ViewData                dataOutputView;
+
+    /** View */
+    private final LayoutUtilityStatistics statisticsInputLayout;
+
+    /** View */
+    private final LayoutUtilityStatistics statisticsOutputLayout;
+
+    /** View */
+    private Synchronizer                  synchronizer  = null;
+
+    /** View */
+    private String[]                      monitor       = new String[0];
 
     /**
      * Creates a new instance.
@@ -194,7 +194,7 @@ public class LayoutAnalyze implements ILayout {
      * @param parent
      * @param controller
      */
-    public LayoutAnalyze(final Composite parent, final Controller controller) {
+    public LayoutUtility(final Composite parent, final Controller controller) {
 
         // Create the SashForm with HORIZONTAL
         centerSash = new SashForm(parent, SWT.VERTICAL);
@@ -261,11 +261,11 @@ public class LayoutAnalyze implements ILayout {
         bottomRight = new Composite(bottomSash, SWT.NONE);
         bottomRight.setLayout(new FillLayout());
 
-        statisticsInputLayout = new LayoutStatistics(bottomLeft,
+        statisticsInputLayout = new LayoutUtilityStatistics(bottomLeft,
                                                  controller,
                                                  ModelPart.INPUT,
                                                  null);
-        statisticsOutputLayout = new LayoutStatistics(bottomRight,
+        statisticsOutputLayout = new LayoutUtilityStatistics(bottomRight,
                                                   controller,
                                                   ModelPart.OUTPUT,
                                                   ModelPart.INPUT);

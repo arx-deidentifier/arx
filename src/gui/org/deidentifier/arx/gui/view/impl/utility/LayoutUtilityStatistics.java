@@ -37,39 +37,39 @@ import org.eclipse.swt.widgets.ToolItem;
  *
  * @author Fabian Prasser
  */
-public class LayoutStatistics implements ILayout, IView {
+public class LayoutUtilityStatistics implements ILayout, IView {
 
-    /**  TODO */
+    /**  Constant */
     private static final String         TAB_DISTRIBUTION       = Resources.getMessage("StatisticsView.0"); //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Constant */
     private static final String         TAB_DISTRIBUTION_TABLE = Resources.getMessage("StatisticsView.4"); //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Constant */
     private static final String         TAB_CONTINGENCY        = Resources.getMessage("StatisticsView.1"); //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Constant */
     private static final String         TAB_CONTINGENCY_TABLE  = Resources.getMessage("StatisticsView.5"); //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Constant */
     private static final String         TAB_PROPERTIES         = Resources.getMessage("StatisticsView.2"); //$NON-NLS-1$
 
-    /**  TODO */
+    /**  View */
     private final ComponentTitledFolder folder;
     
-    /**  TODO */
+    /**  View */
     private final ToolItem              enable;
     
-    /**  TODO */
+    /**  View */
     private final Image                 enabled;
     
-    /**  TODO */
+    /**  View */
     private final Image                 disabled;
     
-    /**  TODO */
+    /** Controller*/
     private final Controller            controller;
     
-    /**  TODO */
+    /**  Model */
     private Model model = null;
 
     /**
@@ -80,7 +80,7 @@ public class LayoutStatistics implements ILayout, IView {
      * @param target
      * @param reset
      */
-    public LayoutStatistics(final Composite parent,
+    public LayoutUtilityStatistics(final Composite parent,
                             final Controller controller,
                             final ModelPart target,
                             final ModelPart reset) {
