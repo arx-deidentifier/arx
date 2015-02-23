@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -80,6 +81,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
                                    final ModelPart reset) {
         
         super(parent, controller, target, reset);
+        controller.addListener(ModelPart.SELECTED_QUASI_IDENTIFIERS, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
@@ -123,6 +125,14 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         }
         SWTUtil.createGenericTooltip(table);
         return root;
+    }
+
+    @Override
+    public void update(ModelEvent event) {
+        super.update(event);
+        if (event.part == ModelPart.SELECTED_QUASI_IDENTIFIERS) {
+            triggerUpdate();
+        }
     }
 
     @Override
@@ -175,7 +185,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
             Analysis analysis = new Analysis(){
 
             // The statistics builder
-            RiskEstimateBuilderInterruptible builder = getBuilder(context);
+            RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
             private boolean  stopped = false;
             private RiskModelAttributes risks;
 

@@ -21,10 +21,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -228,6 +230,11 @@ public class Model implements Serializable {
     
     /** Description. */
     private MetricDescription                     metricDescription               = ARXConfiguration.create().getMetric().getDescription();
+    
+    /* *****************************************
+     * RISK-BASED STUFF
+     ******************************************/
+    private Set<String>                           selectedQuasiIdentifiers        = null;
     
     /**
      * Creates a new instance.
@@ -735,6 +742,25 @@ public class Model implements Serializable {
 	}
 	
 	/**
+     * Returns a set of quasi identifiers selected for risk analysis
+     * @return
+     */
+    public Set<String> getSelectedQuasiIdentifiers() {
+        if (this.selectedQuasiIdentifiers == null) {
+            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
+                DataHandle handle = this.getInputConfig().getInput().getHandle();
+                int max = handle.getNumColumns();
+                max = Math.min(max, getPopulationModel().getMaxQiSize());
+                this.selectedQuasiIdentifiers = new HashSet<String>();
+                for (int i=0; i<max; i++) {
+                    this.selectedQuasiIdentifiers.add(handle.getAttributeName(i));
+                }
+            }
+        }
+        return this.selectedQuasiIdentifiers;
+    }
+
+    /**
      * Returns the separator.
      *
      * @return
@@ -752,7 +778,7 @@ public class Model implements Serializable {
 		return snapshotSizeDataset;
 	}
 
-    /**
+	/**
      * Returns the according parameter.
      *
      * @return
@@ -797,7 +823,7 @@ public class Model implements Serializable {
         return this.viewConfig;
     }
 
-	/**
+    /**
      * Returns whether debugging is enabled.
      *
      * @return
@@ -805,7 +831,7 @@ public class Model implements Serializable {
 	public boolean isDebugEnabled() {
 	    return debugEnabled;
 	}
-
+    
     /**
      * Returns whether this project is modified.
      *
@@ -826,8 +852,8 @@ public class Model implements Serializable {
         }
 		return modified;
 	}
-    
-    /**
+
+	/**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
@@ -835,7 +861,7 @@ public class Model implements Serializable {
 	public boolean isQuasiIdentifierSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) instanceof Hierarchy);
 	}
-
+	
 	/**
      * Returns whether a sensitive attribute is selected.
      *
@@ -844,7 +870,7 @@ public class Model implements Serializable {
 	public boolean isSensitiveAttributeSelected() {
 		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
 	}
-	
+
 	/**
      * Returns whether visualization is enabled.
      *
@@ -869,8 +895,8 @@ public class Model implements Serializable {
 		output = null;
 		result = null;
 	}
-
-	/**
+    
+    /**
      * Returns the last two selected attributes.
      */
     public void resetAttributePair() {
@@ -879,8 +905,8 @@ public class Model implements Serializable {
 		pair[0] = null;
 		pair[1] = null;
 	}
-    
-    /**
+
+	/**
      * Resets the configuration of the privacy criteria.
      */
 	public void resetCriteria() {
@@ -950,7 +976,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-	/**
+    /**
      * Sets the according parameter.
      *
      * @param val
@@ -960,7 +986,7 @@ public class Model implements Serializable {
 		setModified();
 	}
 
-    /**
+	/**
      * Sets the size of the input in bytes.
      *
      * @param inputBytes
@@ -1038,7 +1064,7 @@ public class Model implements Serializable {
     public void setMetricDescription(MetricDescription description) {
         this.metricDescription = description;
     }
-
+	
 	/**
      * Marks this project as modified.
      */
@@ -1065,7 +1091,7 @@ public class Model implements Serializable {
 		nodeFilter = filter;
 		setModified();
 	}
-	
+
 	/**
      * Sets the current output.
      *
@@ -1118,7 +1144,7 @@ public class Model implements Serializable {
         setModified();
     }
 
-	/**
+    /**
      * Sets the result.
      *
      * @param result
@@ -1131,15 +1157,15 @@ public class Model implements Serializable {
 		}
 		setModified();
 	}
-
-    /**
+    
+	/**
      * Marks this project as saved.
      */
 	public void setSaved() {
 		modified = false;
 	}
     
-	/**
+    /**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1172,6 +1198,15 @@ public class Model implements Serializable {
 		selectedNode = node;
 		setModified();
 	}
+
+	/**
+     * Sets a set of quasi identifiers selected for risk analysis
+     * @param set
+     */
+    public void setSelectedQuasiIdentifiers(Set<String> set) {
+        this.selectedQuasiIdentifiers = set;
+        this.setModified();
+    }
     
     /**
      * Sets the separator.
@@ -1182,7 +1217,7 @@ public class Model implements Serializable {
 		this.separator = separator;
 	}
 
-	/**
+    /**
      * 
      *
      * @param snapshotSize
@@ -1191,7 +1226,7 @@ public class Model implements Serializable {
 		snapshotSizeDataset = snapshotSize;
 		setModified();
 	}
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1243,7 +1278,7 @@ public class Model implements Serializable {
 		    clipboard.setUnmodified();
 		}
 	}
-
+    
     /**
      * Sets the view configuration.
      *
@@ -1252,7 +1287,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-
+    
     /**
      * Sets visualization as enabled/disabled.
      *

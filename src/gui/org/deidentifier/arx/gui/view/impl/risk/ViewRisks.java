@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.gui.view.impl.risk;
 
+import java.util.Set;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
@@ -142,11 +144,8 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         // Potentially invalidate
         if (event.part == ModelPart.POPULATION_MODEL ||
             event.part == ModelPart.SELECTED_VIEW_CONFIG ||
-            (event.part == ModelPart.SELECTED_PERSPECTIVE &&
-             model != null && model.getPerspective() == Perspective.RISK)) {
-            this.viewContext = null;
-            this.update();
-            return;
+            event.part == ModelPart.ATTRIBUTE_TYPE) {
+            triggerUpdate();
         }
 
         // Reset on null-target
@@ -165,15 +164,19 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
          
         // Update
         if (event.part == target ||
-           event.part == ModelPart.POPULATION_MODEL ||
-           event.part == ModelPart.SELECTED_RISK_VISUALIZATION ||
-           event.part == ModelPart.ATTRIBUTE_TYPE ||
-           (event.part == ModelPart.SELECTED_PERSPECTIVE && 
-           model != null && 
-           model.getPerspective() == Perspective.RISK)) {
-           
+            event.part == ModelPart.SELECTED_RISK_VISUALIZATION ||
+            (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.RISK)) {
             this.update();
         }
+    }
+    
+    /**
+     * Triggers an update
+     */
+    protected void triggerUpdate() {
+        this.viewContext = null;
+        this.update();
+        return;
     }
 
     /**
@@ -266,6 +269,24 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         
         return context.handle.getRiskEstimator(analysisContext.getModel().getPopulationModel().getModel(),
                                                analysisContext.getContext().definition.getQuasiIdentifyingAttributes(),
+                                               analysisContext.getModel().getPopulationModel().getAccuracy(),
+                                               analysisContext.getModel().getPopulationModel().getMaxIterations())
+                                               .getInterruptibleInstance();
+    }
+
+    /**
+     * Creates a risk estimate builder
+     * @param context
+     * @param identifiers
+     * @return
+     */
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context,
+                                                          Set<String> identifiers) {
+        
+        AnalysisContext analysisContext = context.context;
+        
+        return context.handle.getRiskEstimator(analysisContext.getModel().getPopulationModel().getModel(),
+                                               identifiers,
                                                analysisContext.getModel().getPopulationModel().getAccuracy(),
                                                analysisContext.getModel().getPopulationModel().getMaxIterations())
                                                .getInterruptibleInstance();

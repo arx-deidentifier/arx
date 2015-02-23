@@ -65,6 +65,9 @@ public class LayoutRisksBottom implements ILayout {
             final Composite item2 = folder.createItem(Resources.getMessage("RiskAnalysis.16"), null); //$NON-NLS-1$ 
             item2.setLayout(new FillLayout());
             new ViewRisksPopulationModel(item2, controller);
+            final Composite item4 = folder.createItem(Resources.getMessage("RiskAnalysis.23"), null); //$NON-NLS-1$ 
+            item4.setLayout(new FillLayout());
+            new ViewRisksQuasiIdentifiers(item4, controller);
         } 
         
         folder.setSelection(0);

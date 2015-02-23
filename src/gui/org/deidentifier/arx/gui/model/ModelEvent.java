@@ -95,7 +95,10 @@ public class ModelEvent {
         POPULATION_MODEL,
 
         /**  TODO */
-        SELECTED_RISK_VISUALIZATION
+        SELECTED_RISK_VISUALIZATION,
+        
+        /**  TODO */
+        SELECTED_QUASI_IDENTIFIERS
     }
 
     /** The part of the model that has changed. */
