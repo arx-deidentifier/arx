@@ -66,11 +66,11 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /**  View */
     private final Image                 disabled;
     
-    /** Controller*/
+    /** Controller */
     private final Controller            controller;
-    
-    /**  Model */
-    private Model model = null;
+
+    /** Model */
+    private Model                       model                  = null;
 
     /**
      * Creates a new instance.
