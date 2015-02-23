@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.risk.RiskEstimateBuilder.ComputationInterruptedException;
 import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedBoolean;
+import org.deidentifier.arx.risk.RiskEstimateBuilder.WrappedInteger;
 
 /**
  * A class for attribute-related risks
@@ -114,17 +115,19 @@ public abstract class RiskModelAttributes {
      * @param identifiers
      * @param stop
      */
-    RiskModelAttributes(Set<String> identifiers, WrappedBoolean stop) {
+    RiskModelAttributes(Set<String> identifiers, WrappedBoolean stop, WrappedInteger percentageDone) {
         this.stop = stop;
         this.numIdentifiers = identifiers.size();
         
         // Compute risk estimates for all elements in the power set
         Set<Set<String>> powerset = getPowerSet(identifiers);
         Map<Set<String>, QuasiIdentifierRisks> scores = new HashMap<Set<String>, QuasiIdentifierRisks>();
+        int done = 0;
         for (Set<String> set : powerset) {
             checkInterrupt();
             if (!set.isEmpty()) {
                 scores.put(set, new QuasiIdentifierRisks(set));
+                percentageDone.value = (int)Math.round((double)done++ / (double)(powerset.size() - 1) * 100d);
             }
         }
         

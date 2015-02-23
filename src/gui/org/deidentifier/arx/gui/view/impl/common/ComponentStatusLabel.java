@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Listener;
  * Adapted from https://stackoverflow.com/questions/6896632/is-there-a-custom-label-widget
  *      -which-supports-animated-gif
  */
-public class ComponentGIFLabel extends Canvas {
+public class ComponentStatusLabel extends Canvas {
     
     /**
      * 
@@ -84,14 +84,14 @@ public class ComponentGIFLabel extends Canvas {
         @Override
         public void run() {
             int delayTime = loader.data[imageNumber].delayTime;
-            if (!ComponentGIFLabel.this.isDisposed()) {
+            if (!ComponentStatusLabel.this.isDisposed()) {
                 imageNumber = imageNumber == loader.data.length - 1 ? 0 : imageNumber + 1;
-                if (!ComponentGIFLabel.this.image.isDisposed()) ComponentGIFLabel.this.image.dispose();
+                if (!ComponentStatusLabel.this.image.isDisposed()) ComponentStatusLabel.this.image.dispose();
                 ImageData nextFrameData = loader.data[imageNumber];
-                ComponentGIFLabel.this.image = new Image(ComponentGIFLabel.this.getDisplay(), nextFrameData);
-                ComponentGIFLabel.this.redraw();
+                ComponentStatusLabel.this.image = new Image(ComponentStatusLabel.this.getDisplay(), nextFrameData);
+                ComponentStatusLabel.this.redraw();
                 if (!stop) {
-                    ComponentGIFLabel.this.getDisplay().timerExec(delayTime * 10, this);
+                    ComponentStatusLabel.this.getDisplay().timerExec(delayTime * 10, this);
                 }
             }
         } 
@@ -103,63 +103,66 @@ public class ComponentGIFLabel extends Canvas {
             this.stop = true;
         }
     }
-    
+
     /** Gap between icon and text. */
     private static final int    GAP            = 5;
-    
+
     /** Left and right margins. */
     private static final int    DEFAULT_MARGIN = 3;
-    
+
     /** A string inserted in the middle of text that has been shortened. */
-    private static final String ELLIPSIS       = "..."; //$NON-NLS-1$
+    private static final String ELLIPSIS       = "...";                                                                       //$NON-NLS-1$
 
     /** The alignment. Either CENTER, RIGHT, LEFT. Default is LEFT */
-    private int        align        = SWT.LEFT;
-    
-    /**  TODO */
-    private int        leftMargin   = DEFAULT_MARGIN;
-    
-    /**  TODO */
-    private int        topMargin    = DEFAULT_MARGIN;
-    
-    /**  TODO */
-    private int        rightMargin  = DEFAULT_MARGIN;
-    
-    /**  TODO */
-    private int        bottomMargin = DEFAULT_MARGIN;
-    
-    /**  TODO */
-    private String     text;
-    
-    /**  TODO */
-    private Image      image;
+    private int                 align          = SWT.LEFT;
 
-    /**  TODO */
-    private String     appToolTipText;
-    
-    /**  TODO */
-    private boolean    ignoreDispose;
-    
-    /**  TODO */
-    private Image      backgroundImage;
-    
-    /**  TODO */
-    private Color[]    gradientColors;
-    
-    /**  TODO */
-    private int[]      gradientPercents;
+    /** TODO */
+    private int                 leftMargin     = DEFAULT_MARGIN;
 
-    /**  TODO */
-    private boolean    gradientVertical;
+    /** TODO */
+    private int                 topMargin      = DEFAULT_MARGIN;
 
-    /**  TODO */
-    private Color      background;
+    /** TODO */
+    private int                 rightMargin    = DEFAULT_MARGIN;
 
-    /**  TODO */
-    private GIFHandler thread       = null;
+    /** TODO */
+    private int                 bottomMargin   = DEFAULT_MARGIN;
 
-    /**  TODO */
-    private static int DRAW_FLAGS   = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
+    /** TODO */
+    private String              text;
+
+    /** TODO */
+    private Image               image;
+
+    /** TODO */
+    private String              appToolTipText;
+
+    /** TODO */
+    private ProgressProvider    progressProvider;
+
+    /** TODO */
+    private boolean             ignoreDispose;
+
+    /** TODO */
+    private Image               backgroundImage;
+
+    /** TODO */
+    private Color[]             gradientColors;
+
+    /** TODO */
+    private int[]               gradientPercents;
+
+    /** TODO */
+    private boolean             gradientVertical;
+
+    /** TODO */
+    private Color               background;
+
+    /** TODO */
+    private GIFHandler          thread         = null;
+
+    /** TODO */
+    private static int          DRAW_FLAGS     = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
 
     /**
      * Checkstyle method.
@@ -180,7 +183,7 @@ public class ComponentGIFLabel extends Canvas {
      * @param parent
      * @param style
      */
-    public ComponentGIFLabel(Composite parent, int style) {
+    public ComponentStatusLabel(Composite parent, int style) {
         super(parent, checkStyle(style));
         if ((style & (SWT.CENTER | SWT.RIGHT)) == 0) style |= SWT.LEFT;
         if ((style & SWT.CENTER) != 0) align = SWT.CENTER;
@@ -686,7 +689,7 @@ public class ComponentGIFLabel extends Canvas {
             }
 
             public void getKeyboardShortcut(AccessibleEvent e) {
-                char mnemonic = _findMnemonic(ComponentGIFLabel.this.text);
+                char mnemonic = _findMnemonic(ComponentStatusLabel.this.text);
                 if (mnemonic != '\0') {
                     e.result = "Alt+" + mnemonic; //$NON-NLS-1$
                 }
@@ -1063,7 +1066,11 @@ public class ComponentGIFLabel extends Canvas {
                         lineX = Math.max(x, rect.x + rect.width - rightMargin - lineWidth);
                     }
                 }
-                gc.drawText(lines[i], lineX, lineY, DRAW_FLAGS);
+                if (progressProvider != null && progressProvider.getProgress() != 0) {
+                    gc.drawText(lines[i] + "(" + progressProvider.getProgress()+"%)", lineX, lineY, DRAW_FLAGS);
+                } else {
+                    gc.drawText(lines[i], lineX, lineY, DRAW_FLAGS);
+                }
                 lineY += lineHeight;
             }
         }
@@ -1071,7 +1078,6 @@ public class ComponentGIFLabel extends Canvas {
 
     /**
      * 
-     *
      * @param layout
      * @param offset
      * @return
@@ -1080,5 +1086,13 @@ public class ComponentGIFLabel extends Canvas {
         int nextOffset = layout.getNextOffset(offset, SWT.MOVEMENT_CLUSTER);
         if (nextOffset != offset) return layout.getPreviousOffset(nextOffset, SWT.MOVEMENT_CLUSTER);
         return offset;
+    }
+
+    /**
+     * Sets a progress provider, if any
+     * @param provider
+     */
+    public void setProgressProvider(ProgressProvider provider) {
+        this.progressProvider = provider;
     }
 }

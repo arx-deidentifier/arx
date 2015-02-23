@@ -47,6 +47,14 @@ public class RiskEstimateBuilder {
         public boolean value = false;
     }
 
+    /**
+     * Helper class
+     * @author Fabian Prasser
+     */
+    static final class WrappedInteger {
+        public int value = 0;
+    }
+
     /** Convergence threshold for the Newton-Raphson algorithm. */
     public static final double          DEFAULT_ACCURACY       = 1.0e-9;
 
@@ -67,6 +75,8 @@ public class RiskEstimateBuilder {
     private final int                   maxIterations;
     /** Model */
     private final double                accuracy;
+    /** Model */
+    private final WrappedInteger        percentageDone         = new WrappedInteger();
 
     /**
      * Creates a new instance
@@ -188,6 +198,7 @@ public class RiskEstimateBuilder {
     public RiskModelEquivalenceClasses getEquivalenceClassModel() {
         synchronized(this) {
             if (classes == null) {
+                percentageDone.value = 0;
                 classes = new RiskModelEquivalenceClasses(handle, identifiers, stop);
             }
             return classes;
@@ -200,6 +211,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskEstimateBuilderInterruptible getInterruptibleInstance(){
+        percentageDone.value = 0;
         return new RiskEstimateBuilderInterruptible(this);
     }
 
@@ -226,6 +238,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRisk(){
+        percentageDone.value = 0;
         return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(), stop, accuracy, maxIterations);
     }
     
@@ -242,6 +255,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelSampleBasedReidentificationRisk getSampleBasedReidentificationRisk(){
+        percentageDone.value = 0;
         return new RiskModelSampleBasedReidentificationRisk(getEquivalenceClassModel());
     }
 
@@ -250,6 +264,7 @@ public class RiskEstimateBuilder {
      * @return
      */
     public RiskModelSampleBasedUniquenessRisk getSampleBasedUniquenessRisk(){
+        percentageDone.value = 0;
         return new RiskModelSampleBasedUniquenessRisk(getEquivalenceClassModel());
     }
 
@@ -259,7 +274,8 @@ public class RiskEstimateBuilder {
      * @return
      */
     private RiskModelAttributes getAttributeRisks(final StatisticalModel model) {
-        return new RiskModelAttributes(this.identifiers, this.stop) {
+        percentageDone.value = 0;
+        return new RiskModelAttributes(this.identifiers, this.stop, percentageDone) {
             @Override
             protected RiskProvider getRiskProvider(final Set<String> attributes, 
                                                    final WrappedBoolean stop) {
@@ -307,5 +323,13 @@ public class RiskEstimateBuilder {
         synchronized(this) {
             this.stop.value = true;
         }
+    }
+    
+    /**
+     * Returns progress data, if available
+     * @return
+     */
+    int getPercentageDone() {
+        return this.percentageDone.value;
     }
 }

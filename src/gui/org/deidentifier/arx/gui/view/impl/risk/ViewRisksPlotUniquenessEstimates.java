@@ -23,6 +23,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.utility.AnalysisManager;
@@ -134,6 +135,26 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         }
     }
     
+    /**
+     * Creates a series
+     * @param seriesSet
+     * @param data
+     * @param label
+     * @param symbol
+     * @param color
+     */
+    private void createSeries(ISeriesSet seriesSet, double[] data, String label, PlotSymbolType symbol, Color color) {
+        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, label); //$NON-NLS-1$
+        series.getLabel().setVisible(false);
+        series.getLabel().setFont(chart.getFont());
+        series.setYSeries(data);
+        series.setSymbolType(symbol);
+        series.setSymbolColor(color);
+        series.setLineColor(color);
+        series.setXAxisId(0);
+        series.setYAxisId(0);
+    }
+
     /**
      * Resets the chart
      */
@@ -262,6 +283,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         }
     }
 
+
     @Override
     protected Control createControl(Composite parent) {
         
@@ -270,12 +292,10 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         return this.root;
     }
 
-
     @Override
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
         return new AnalysisContextRisk(context);
     }
-
     @Override
     protected void doReset() {
         if (this.manager != null) {
@@ -283,11 +303,12 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         }
         resetChart();
     }
+
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
 
-            // Create an analysis
-            Analysis analysis = new Analysis(){
+        // Create an analysis
+        Analysis analysis = new Analysis() {
 
             // The statistics builder
             RiskEstimateBuilderInterruptible builder = getBuilder(context);
@@ -299,6 +320,11 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
             private double[] dataDankar;
             private double[] dataDankarWithoutSNB;
 
+            @Override
+            public int getProgress() {
+                return 0;
+            }
+            
             @Override
             public void onError() {
                 setStatusEmpty();
@@ -408,23 +434,8 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         this.manager.start(analysis);
     }
 
-    /**
-     * Creates a series
-     * @param seriesSet
-     * @param data
-     * @param label
-     * @param symbol
-     * @param color
-     */
-    private void createSeries(ISeriesSet seriesSet, double[] data, String label, PlotSymbolType symbol, Color color) {
-        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, label); //$NON-NLS-1$
-        series.getLabel().setVisible(false);
-        series.getLabel().setFont(chart.getFont());
-        series.setYSeries(data);
-        series.setSymbolType(symbol);
-        series.setSymbolColor(color);
-        series.setLineColor(color);
-        series.setXAxisId(0);
-        series.setYAxisId(0);
+    @Override
+    protected ProgressProvider getProgressProvider() {
+        return null;
     }
 }

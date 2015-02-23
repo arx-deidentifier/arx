@@ -118,6 +118,11 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
             
             private boolean                         stopped = false;
             private StatisticsFrequencyDistribution distribution;
+
+            @Override
+            public int getProgress() {
+                return 0;
+            }
             
             @Override
             public void onError() {

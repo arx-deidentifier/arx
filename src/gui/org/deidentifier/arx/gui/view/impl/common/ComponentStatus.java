@@ -31,24 +31,24 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ComponentStatus {
 
-    /**  TODO */
+    /**  View */
     private final Controller controller;
     
-    /**  TODO */
+    /**  View */
     private final StackLayout layout;
     
-    /**  TODO */
+    /**  View */
     private final Composite working;
     
-    /**  TODO */
+    /**  View */
     private final Composite empty;
     
-    /**  TODO */
+    /**  View */
     private final Composite parent;
     
-    /**  TODO */
+    /**  View */
     private final Control child;
-    
+
     /**
      * Creates a new instance.
      *
@@ -56,10 +56,24 @@ public class ComponentStatus {
      * @param parent
      * @param child
      */
+    public ComponentStatus(Controller controller,
+                           Composite parent,
+                           Control child) {
+        this(controller, parent, child, null);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param controller
+     * @param parent
+     * @param child
+     * @param provider
+     */
     public ComponentStatus(Controller controller, 
                            Composite parent, 
-                           Control child){
-        
+                           Control child,
+                           ProgressProvider progressProvider){
         
         this.child = child;
         this.parent = parent;
@@ -72,7 +86,7 @@ public class ComponentStatus {
         
         this.layout = (StackLayout)parent.getLayout();
         
-        this.working = getWorkingComposite(parent);
+        this.working = getWorkingComposite(parent, progressProvider);
         this.empty = getEmptyComposite(parent);
         
         this.layout.topControl = child;
@@ -121,7 +135,7 @@ public class ComponentStatus {
     private Composite getEmptyComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
-        ComponentGIFLabel label = new ComponentGIFLabel(composite, SWT.CENTER);
+        ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
         label.setText("No data available.");
         return composite;
     }
@@ -132,12 +146,15 @@ public class ComponentStatus {
      * @param parent
      * @return
      */
-    private Composite getWorkingComposite(Composite parent) {
+    private Composite getWorkingComposite(Composite parent, ProgressProvider provider) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
-        ComponentGIFLabel label = new ComponentGIFLabel(composite, SWT.CENTER);
+        ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
         label.setGIF(controller.getResources().getStream("working.gif"));
         label.setText("Analyzing...");
+        if (provider != null) {
+            label.setProgressProvider(provider);
+        }
         return composite;
     }
 }

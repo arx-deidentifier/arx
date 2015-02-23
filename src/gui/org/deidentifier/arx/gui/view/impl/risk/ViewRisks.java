@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
+import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContextVisualization;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
@@ -101,7 +102,8 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         // Update status
         this.status = new ComponentStatus(controller,
                                           parent, 
-                                          control);
+                                          control,
+                                          getProgressProvider());
         
         // Reset
         this.reset();
@@ -255,26 +257,32 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     }
 
     /**
+     * May return a progress provider, if any
+     * @return
+     */
+    protected abstract ProgressProvider getProgressProvider();
+
+    /**
      * Status update.
      */
     protected void setStatusDone(){
         this.status.setDone();
     }
-
+    
     /**
      * Status empty.
      */
     protected void setStatusEmpty(){
         this.status.setEmpty();
     }
-    
+
     /**
      * Status working.
      */
     protected void setStatusWorking(){
         this.status.setWorking();
     }
-
+    
     /**
      * Triggers an update
      */

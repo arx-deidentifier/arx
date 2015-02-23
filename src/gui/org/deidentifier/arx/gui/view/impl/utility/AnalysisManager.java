@@ -143,6 +143,14 @@ public class AnalysisManager {
         public synchronized boolean isStopped(){
             return this.stopped;
         }
+        
+        /**
+         * Returns the progress, if any
+         * @return
+         */
+        public synchronized int getProgress() {
+            return this.analysis.getProgress();
+        }
     }
     
     /** The current worker. */
@@ -197,6 +205,18 @@ public class AnalysisManager {
                 /* Ignore*/
             }
             worker = null;
+        }
+    }
+    
+    /**
+     * Returns the progress, if any
+     * @return
+     */
+    public int getProgress() {
+        if (worker != null) {
+            return worker.getProgress();
+        } else {
+            return 0;
         }
     }
 }

@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
+import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.utility.AnalysisManager;
@@ -188,6 +189,11 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             private StatisticalModel dankarModelWithoutSNB;
 
             @Override
+            public int getProgress() {
+                return 0;
+            }
+            
+            @Override
             public void onError() {
                 setStatusEmpty();
             }
@@ -259,5 +265,10 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         };
         
         this.manager.start(analysis);
+    }
+
+    @Override
+    protected ProgressProvider getProgressProvider() {
+        return null;
     }
 }

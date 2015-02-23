@@ -27,6 +27,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
+import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.utility.AnalysisManager;
@@ -189,6 +190,11 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
             RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
             private boolean                  stopped = false;
             private RiskModelAttributes      risks;
+            
+            @Override
+            public int getProgress() {
+                return builder.getPercentageDone();
+            }
 
             @Override
             public void onError() {
@@ -255,5 +261,18 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
         };
 
         this.manager.start(analysis);
+    }
+
+    @Override
+    protected ProgressProvider getProgressProvider() {
+        return new ProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
     }
 }

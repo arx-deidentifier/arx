@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
+import org.deidentifier.arx.gui.view.impl.common.ProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.utility.AnalysisManager;
@@ -146,15 +147,20 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
 
-            // Create an analysis
-            Analysis analysis = new Analysis(){
+        // Create an analysis
+        Analysis analysis = new Analysis() {
 
             // The statistics builder
             RiskEstimateBuilderInterruptible builder = getBuilder(context);
-            
-            private boolean  stopped = false;
-            private int[] distribution; 
-            private double numClasses;
+
+            private boolean                  stopped = false;
+            private int[]                    distribution;
+            private double                   numClasses;
+
+            @Override
+            public int getProgress() {
+                return 0;
+            }
 
             @Override
             public void onError() {
@@ -173,17 +179,17 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                     i.dispose();
                 }
                 items.clear();
-       
+
                 // Create entries
-                for (int i = 0; i < distribution.length; i+=2) {
+                for (int i = 0; i < distribution.length; i += 2) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, String.valueOf(distribution[i]));
-                    item.setText(1, String.valueOf(distribution[i+1]));
-                    item.setText(2, format.format((double) distribution[i+1] / numClasses * 100d));
+                    item.setText(1, String.valueOf(distribution[i + 1]));
+                    item.setText(2, format.format((double) distribution[i + 1] / numClasses * 100d));
                     items.add(item);
                 }
 
-                root.layout();                
+                root.layout();
                 setStatusDone();
             }
 
@@ -194,17 +200,17 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
             @Override
             public void run() throws InterruptedException {
-                
+
                 // Timestamp
                 long time = System.currentTimeMillis();
-                
+
                 // Perform work
                 RiskModelEquivalenceClasses model = builder.getEquivalenceClassModel();
                 distribution = model.getEquivalenceClasses();
                 numClasses = model.getNumClasses();
 
                 // Our users are patient
-                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
+                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
                     Thread.sleep(10);
                 }
             }
@@ -215,7 +221,12 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
                 this.stopped = true;
             }
         };
-        
+
         this.manager.start(analysis);
+    }
+
+    @Override
+    protected ProgressProvider getProgressProvider() {
+        return null;
     }
 }

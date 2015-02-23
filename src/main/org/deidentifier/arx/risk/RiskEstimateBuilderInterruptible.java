@@ -130,4 +130,13 @@ public class RiskEstimateBuilderInterruptible {
     public void interrupt() {
         parent.interrupt();
     }
+    
+    /**
+     * If supported by the according builder, this method will report a progress value in [0,100]. Otherwise,
+     * it will always return 0
+     * @return
+     */
+    public int getPercentageDone() {
+        return parent.getPercentageDone();
+    }
 }

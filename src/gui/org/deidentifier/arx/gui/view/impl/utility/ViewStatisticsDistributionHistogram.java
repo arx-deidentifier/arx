@@ -240,6 +240,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             private boolean                         stopped = false;
             private StatisticsFrequencyDistribution distribution;
+
+            @Override
+            public int getProgress() {
+                return 0;
+            }
             
             @Override
             public void onError() {

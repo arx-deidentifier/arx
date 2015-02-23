@@ -25,6 +25,11 @@ package org.deidentifier.arx.gui.view.impl.common.async;
 public abstract class Analysis {
 
     /**
+     * May return a progress value in [0,100] or 0.
+     */
+    public abstract int getProgress();
+    
+    /**
      * Called to stop the analysis.
      */
     public abstract void stop();

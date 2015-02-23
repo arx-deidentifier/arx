@@ -130,6 +130,11 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
             private double[][]                 outputFrequencies;
 
             @Override
+            public int getProgress() {
+                return 0;
+            }
+            
+            @Override
             public void onError() {
                 setStatusEmpty();
             }
