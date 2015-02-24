@@ -217,7 +217,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
                 buttonEnable.setSelection(enabled);
                 if (view.isEnabled() != enabled) {
                     view.setEnabled(enabled);
-                }
+                } 
             } else {
                 enabled = model.getRiskModel().isViewEnabledForOutput(view.getViewType());
                 buttonEnable.setSelection(enabled);
@@ -246,7 +246,7 @@ public class LayoutRisksAbstract implements ILayout, IView {
                 if (enabled != model.getRiskModel().isViewEnabledForInput(view.getViewType())) {
                     model.getRiskModel().setViewEnabledForInput(view.getViewType(), enabled);
                     view.setEnabled(enabled);
-                }
+                } 
             } else {
                 if (enabled != model.getRiskModel().isViewEnabledForOutput(view.getViewType())) {
                     model.getRiskModel().setViewEnabledForOutput(view.getViewType(), enabled);

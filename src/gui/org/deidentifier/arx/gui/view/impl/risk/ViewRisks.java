@@ -143,9 +143,11 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param enabled
      */
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        this.viewContext = null;
-        this.update();
+        if (enabled != this.enabled) {
+            this.enabled = enabled;
+            this.viewContext = null;
+            this.update();
+        }
     }
 
     /* (non-Javadoc)
