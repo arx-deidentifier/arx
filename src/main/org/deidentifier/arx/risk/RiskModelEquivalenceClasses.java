@@ -73,7 +73,7 @@ public class RiskModelEquivalenceClasses {
         public boolean equals(Object obj) {
             TupleWrapper other = (TupleWrapper)obj;
             for (int i = 0; i < indices.length; i++) {
-                if (!handle.getValue(this.row, i).equals(handle.getValue(other.row, i))) {
+                if (handle.getValue(this.row, i) != handle.getValue(other.row, i)) {
                     return false;
                 }
             }
