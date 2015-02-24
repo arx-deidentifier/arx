@@ -169,6 +169,7 @@ public class WorkerLoad extends Worker<Model> {
                 if (vocabulary.isClipboard(localName)) {
                     return true;
                 } else if (vocabulary.isNode(localName)) {
+                    if (payload == null || map == null) return true;
                     final ARXNode node = map.get(payload.trim());
                     model.getClipboard().addToClipboard(node);
                     return true;
