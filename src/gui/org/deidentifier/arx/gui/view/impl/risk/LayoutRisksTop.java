@@ -22,13 +22,8 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -37,19 +32,16 @@ import org.eclipse.swt.widgets.ToolItem;
  *
  * @author Fabian Prasser
  */
-public class LayoutRisksTop implements ILayout, IView {
+public class LayoutRisksTop extends LayoutRisksAbstract implements IView {
 
     /** View */
-    private final ComponentTitledFolder folder;
-
-    /** View */
-    private final ToolItem              subsetButton;
+    private final ToolItem     subsetButton;
 
     /** Controller */
-    protected final Controller          controller;
+    protected final Controller controller;
 
     /** Model */
-    protected Model                     model;
+    protected Model            model;
 
     /**
      * Creates a new instance.
@@ -64,6 +56,7 @@ public class LayoutRisksTop implements ILayout, IView {
                           final ModelPart target,
                           final ModelPart reset) {
 
+        super(parent, controller, getButtonBar(controller));
         this.controller = controller;
         
         controller.addListener(ModelPart.OUTPUT, this);
@@ -71,7 +64,22 @@ public class LayoutRisksTop implements ILayout, IView {
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.MODEL, this);
 
-        // Create title bar
+        registerView(0, new ViewRisksClassDistributionPlot(createTab(Resources.getMessage("RiskAnalysis.4")), controller, target, reset)); //$NON-NLS-1$
+        registerView(1, new ViewRisksClassDistributionTable(createTab(Resources.getMessage("RiskAnalysis.0")), controller, target, reset)); //$NON-NLS-1$
+        registerView(2, new ViewRisksAttributesTable(createTab(Resources.getMessage("RiskAnalysis.15")), controller, target, reset)); //$NON-NLS-1$
+        
+        setSelectionIdex(0);
+        
+        this.subsetButton = getButtonItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
+        this.subsetButton.setEnabled(false);
+    }
+
+    /**
+     * Creates the button bar
+     * @param controller
+     * @return
+     */
+    private static ComponentTitledFolderButton getButtonBar(final Controller controller) {
         ComponentTitledFolderButton bar = new ComponentTitledFolderButton("id-140");
         bar.add(Resources.getMessage("DataView.3"), //$NON-NLS-1$ 
                 controller.getResources().getImage("sort_subset.png"),
@@ -82,36 +90,7 @@ public class LayoutRisksTop implements ILayout, IView {
                         controller.actionDataToggleSubset();
                     }
                 });
-        
-
-        // Create the tab folder
-        folder = new ComponentTitledFolder(parent, controller, bar, null);
-        folder.setLayoutData(SWTUtil.createFillGridData());
-        final Composite item1 = folder.createItem(Resources.getMessage("RiskAnalysis.4"), null); //$NON-NLS-1$ 
-        item1.setLayout(new FillLayout());
-        final Composite item2 = folder.createItem(Resources.getMessage("RiskAnalysis.0"), null); //$NON-NLS-1$ 
-        item2.setLayout(new FillLayout());
-        final Composite item3 = folder.createItem(Resources.getMessage("RiskAnalysis.15"), null); //$NON-NLS-1$ 
-        item3.setLayout(new FillLayout());
-        
-        // Create the views
-        new ViewRisksClassDistributionPlot(item1, controller, target, reset);
-        new ViewRisksClassDistributionTable(item2, controller, target, reset);
-        new ViewRisksAttributesTable(item3, controller, target, reset);
-
-        // Init
-        folder.setSelection(0);
-        this.subsetButton = folder.getButtonItem(Resources.getMessage("DataView.3")); //$NON-NLS-1$
-        this.subsetButton.setEnabled(false);
-    }
-
-    /**
-     * Adds a selection listener.
-     *
-     * @param listener
-     */
-    public void addSelectionListener(final SelectionListener listener) {
-        folder.addSelectionListener(listener);
+        return bar;
     }
 
     @Override
@@ -119,27 +98,9 @@ public class LayoutRisksTop implements ILayout, IView {
         controller.removeListener(this);
     }
 
-    /**
-     * Returns the selection index.
-     *
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
     @Override
     public void reset() {
         subsetButton.setEnabled(false);
-    }
-
-    /**
-     * Sets the selection index.
-     *
-     * @param index
-     */
-    public void setSelectionIdex(final int index) {
-        folder.setSelection(index);
     }
 
     @Override

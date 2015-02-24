@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.risk;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelRisk.ViewRisk;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
@@ -79,9 +80,9 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
      * @param reset
      */
     public ViewRisksClassDistributionPlot(final Composite parent,
-                                   final Controller controller,
-                                   final ModelPart target,
-                                   final ModelPart reset) {
+                                          final Controller controller,
+                                          final ModelPart target,
+                                          final ModelPart reset) {
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -342,5 +343,10 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
+    }
+
+    @Override
+    protected ViewRisk getViewType() {
+        return ViewRisk.CLASSES_PLOT;
     }
 }

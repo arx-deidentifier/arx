@@ -23,6 +23,7 @@ import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelRisk.ViewRisk;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
@@ -235,5 +236,10 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
+    }
+
+    @Override
+    protected ViewRisk getViewType() {
+        return ViewRisk.CLASSES_TABLE;
     }
 }

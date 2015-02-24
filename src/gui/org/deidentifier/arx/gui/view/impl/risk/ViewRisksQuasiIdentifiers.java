@@ -172,7 +172,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
                 return;
             }
             
-            if (selection.size() <= model.getPopulationModel().getMaxQiSize()) {
+            if (selection.size() <= model.getRiskModel().getMaxQiSize()) {
                 model.setSelectedQuasiIdentifiers(selection);
                 controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
                 label.setText("Resulting quasi-identifiers: " + (int)(Math.pow(2, selection.size())-1));

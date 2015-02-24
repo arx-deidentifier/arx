@@ -18,36 +18,56 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandle;
 
 /**
- * A class for population models
+ * A model for risk analysis
  *
  * @author Fabian Prasser
  */
-public class ModelPopulation implements Serializable {
+public class ModelRisk implements Serializable {
+    
+    /**
+     * A enum for views
+     * @author Fabian Prasser
+     *
+     */
+    public static enum ViewRisk {
+        CLASSES_PLOT,
+        CLASSES_TABLE,
+        ATTRIBUTES,
+        UNIQUES_DANKAR,
+        UNIQUES_ALL,
+        OVERVIEW
+    }
 
     /** SVUID */
-    private static final long  serialVersionUID = 5405871228130041796L;
+    private static final long      serialVersionUID     = 5405871228130041796L;
     /** Modified */
-    private boolean            modified         = false;
+    private boolean                modified             = false;
     /** Model */
-    private ARXPopulationModel model;
+    private ARXPopulationModel     populationModel;
     /** Model */
-    private int                maxIterations    = 300;
+    private int                    maxIterations        = 300;
     /** Model */
-    private double             accuracy         = 1.0e-9;
+    private double                 accuracy             = 1.0e-9;
     /** Model */
-    private int                maxQiSize        = 10;
-    
+    private int                    maxQiSize            = 10;
+    /** Model */
+    private Map<ViewRisk, Boolean> viewEnabledForInput  = new HashMap<ViewRisk, Boolean>();
+    /** Model */
+    private Map<ViewRisk, Boolean> viewEnabledForOutput = new HashMap<ViewRisk, Boolean>();
+
     /**
      * Creates a new instance
      */
-    public ModelPopulation() {
-        this.model = new ARXPopulationModel(0.1d);
+    public ModelRisk() {
+        this.populationModel = new ARXPopulationModel(0.1d);
     }
     
     /**
@@ -75,8 +95,8 @@ public class ModelPopulation implements Serializable {
      * Returns the backing model
      * @return
      */
-    public ARXPopulationModel getModel() {
-        return this.model;
+    public ARXPopulationModel getPopulationModel() {
+        return this.populationModel;
     }
     
     /**
@@ -85,7 +105,7 @@ public class ModelPopulation implements Serializable {
      * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize(org.deidentifier.arx.DataHandle)
      */
     public double getPopulationSize(DataHandle handle) {
-        return model.getPopulationSize(handle);
+        return populationModel.getPopulationSize(handle);
     }
     
     /**
@@ -94,7 +114,7 @@ public class ModelPopulation implements Serializable {
      * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize(double)
      */
     public double getPopulationSize(double sampleSize) {
-        return model.getPopulationSize(sampleSize);
+        return populationModel.getPopulationSize(sampleSize);
     }
     
     /**
@@ -102,7 +122,7 @@ public class ModelPopulation implements Serializable {
      * @return
      */
     public Region getRegion() {
-        return this.model.getRegion();
+        return this.populationModel.getRegion();
     }
 
     /**
@@ -111,7 +131,7 @@ public class ModelPopulation implements Serializable {
      * @return
      */
     public double getSampleFraction(DataHandle handle) {
-        return this.model.getSampleFraction(handle);
+        return this.populationModel.getSampleFraction(handle);
     }
     
     /**
@@ -120,7 +140,7 @@ public class ModelPopulation implements Serializable {
      * @see org.deidentifier.arx.ARXPopulationModel#getSampleFraction(double)
      */
     public double getSampleFraction(double sampleSize) {
-        return model.getSampleFraction(sampleSize);
+        return populationModel.getSampleFraction(sampleSize);
     }
     
     /**
@@ -131,6 +151,32 @@ public class ModelPopulation implements Serializable {
         return modified;
     }
 
+    /***
+     * Returns whether a view is enabled
+     * @param view
+     * @return
+     */
+    public boolean isViewEnabledForInput(ViewRisk view) {
+        if (!viewEnabledForInput.containsKey(view)) {
+            return true;
+        } else {
+            return viewEnabledForInput.get(view);
+        }
+    }
+
+    /***
+     * Returns whether a view is enabled
+     * @param view
+     * @return
+     */
+    public boolean isViewEnabledForOutput(ViewRisk view) {
+        if (!viewEnabledForOutput.containsKey(view)) {
+            return true;
+        } else {
+            return viewEnabledForOutput.get(view);
+        }
+    }
+    
     /**
      * @param accuracy the accuracy to set
      */
@@ -167,8 +213,8 @@ public class ModelPopulation implements Serializable {
      * @param populationSize
      */
     public void setPopulationSize(DataHandle handle, double populationSize) {
-        if (populationSize != model.getPopulationSize(handle)) {
-            this.model = new ARXPopulationModel(handle, populationSize);
+        if (populationSize != populationModel.getPopulationSize(handle)) {
+            this.populationModel = new ARXPopulationModel(handle, populationSize);
             this.modified = true;
         }
     }
@@ -178,8 +224,8 @@ public class ModelPopulation implements Serializable {
      * @param region
      */
     public void setRegion(Region region) {
-        if (region != model.getRegion()) {
-            this.model = new ARXPopulationModel(region);
+        if (region != populationModel.getRegion()) {
+            this.populationModel = new ARXPopulationModel(region);
             this.modified = true;
         }
     }
@@ -189,7 +235,7 @@ public class ModelPopulation implements Serializable {
      * @param sampleFraction
      */
     public void setSampleFraction(double sampleFraction) {
-        this.model = new ARXPopulationModel(sampleFraction);
+        this.populationModel = new ARXPopulationModel(sampleFraction);
         this.modified = true;
     }
 
@@ -198,5 +244,23 @@ public class ModelPopulation implements Serializable {
      */
     public void setUnmodified() {
         this.modified = false;
+    }
+    
+    /**
+     * Allows to enable/disable views
+     * @param view
+     * @param value
+     */
+    public void setViewEnabledForInput(ViewRisk view, boolean value) {
+        this.viewEnabledForInput.put(view, value);
+    }
+
+    /**
+     * Allows to enable/disable views
+     * @param view
+     * @param value
+     */
+    public void setViewEnabledForOutput(ViewRisk view, boolean value) {
+        this.viewEnabledForOutput.put(view, value);
     }
 }

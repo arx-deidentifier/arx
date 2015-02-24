@@ -23,6 +23,7 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelRisk.ViewRisk;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -455,5 +456,14 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
+    }
+
+    @Override
+    protected ViewRisk getViewType() {
+        if (this.showAllModels) {
+            return ViewRisk.UNIQUES_ALL;
+        } else {
+            return ViewRisk.UNIQUES_DANKAR;
+        }
     }
 }

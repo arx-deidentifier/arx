@@ -176,10 +176,10 @@ public class ViewRisksPopulationModel implements IView {
                     if (populationSize == -1) {
                         return;
                     }
-                    model.getPopulationModel().setRegion(selected);
-                    controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getPopulationModel()));
-                    text.setText(format.format(model.getPopulationModel().getSampleFraction(sampleSize)));
-                    text2.setText(format.format(model.getPopulationModel().getPopulationSize(sampleSize)));
+                    model.getRiskModel().setRegion(selected);
+                    controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
+                    text.setText(format.format(model.getRiskModel().getSampleFraction(sampleSize)));
+                    text2.setText(format.format(model.getRiskModel().getPopulationSize(sampleSize)));
                 }
             }
         });
@@ -201,11 +201,11 @@ public class ViewRisksPopulationModel implements IView {
                 }
 
                 DataHandle handle = model.getInputConfig().getInput().getHandle();
-                if (value == model.getPopulationModel().getSampleFraction(handle)) {
+                if (value == model.getRiskModel().getSampleFraction(handle)) {
                     return;
                 }
                 
-                model.getPopulationModel().setSampleFraction(value);
+                model.getRiskModel().setSampleFraction(value);
                 
                 for (int i=0; i<list.getItemCount(); i++) {
                     if (list.getItem(i).equals(Region.NONE.getName())) {
@@ -213,8 +213,8 @@ public class ViewRisksPopulationModel implements IView {
                         break;
                     }
                 }
-                text2.setText(format.format(model.getPopulationModel().getPopulationSize(handle.getNumRows())));
-                controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getPopulationModel()));
+                text2.setText(format.format(model.getRiskModel().getPopulationSize(handle.getNumRows())));
+                controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
             } 
         });
         
@@ -240,11 +240,11 @@ public class ViewRisksPopulationModel implements IView {
                     text2.setForeground(GUIHelper.COLOR_BLACK);
                 }
 
-                if (value == model.getPopulationModel().getPopulationSize(handle)) {
+                if (value == model.getRiskModel().getPopulationSize(handle)) {
                     return;
                 }
                 
-                model.getPopulationModel().setPopulationSize(handle, value);
+                model.getRiskModel().setPopulationSize(handle, value);
                 
                 for (int i=0; i<list.getItemCount(); i++) {
                     if (list.getItem(i).equals(Region.NONE.getName())) {
@@ -252,8 +252,8 @@ public class ViewRisksPopulationModel implements IView {
                         break;
                     }
                 }
-                text.setText(format.format(model.getPopulationModel().getSampleFraction(handle)));
-                controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getPopulationModel()));
+                text.setText(format.format(model.getRiskModel().getSampleFraction(handle)));
+                controller.update(new ModelEvent(ViewRisksPopulationModel.this, ModelPart.POPULATION_MODEL, model.getRiskModel()));
             } 
         });
     }
@@ -275,16 +275,16 @@ public class ViewRisksPopulationModel implements IView {
         }
         
         for (int i=0; i<list.getItemCount(); i++) {
-            if (list.getItem(i).equals(model.getPopulationModel().getRegion().getName())) {
+            if (list.getItem(i).equals(model.getRiskModel().getRegion().getName())) {
                 list.select(i);
                 break;
             }
         }
         
         DataHandle handle = model.getInputConfig().getInput().getHandle();
-        text.setText(format.format(model.getPopulationModel().getSampleFraction(handle)));
+        text.setText(format.format(model.getRiskModel().getSampleFraction(handle)));
         text.setEnabled(true);
-        text2.setText(format.format(model.getPopulationModel().getPopulationSize(handle)));
+        text2.setText(format.format(model.getRiskModel().getPopulationSize(handle)));
         text2.setEnabled(true);
         root.setRedraw(true);
     }

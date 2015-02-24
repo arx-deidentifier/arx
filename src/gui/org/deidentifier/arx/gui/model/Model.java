@@ -202,9 +202,9 @@ public class Model implements Serializable {
     
     /** The current output configuration. */
     private ModelConfiguration                    outputConfig                    = null;
-    
-    /** The current population model.*/
-    private ModelPopulation                       populationModel                 = null;
+
+    /** The current risk model. */
+    private ModelRisk                             riskModel                       = null;
 
     /* *****************************************
      * PRIVACY CRITERIA
@@ -695,14 +695,14 @@ public class Model implements Serializable {
     }
 	
 	/**
-     * Returns the population model
-     * @return the populationModel
+     * Returns the risk model
+     * @return the risk model
      */
-    public ModelPopulation getPopulationModel() {
-        if (this.populationModel == null) {
-            this.populationModel = new ModelPopulation();
+    public ModelRisk getRiskModel() {
+        if (this.riskModel == null) {
+            this.riskModel = new ModelRisk();
         }
-        return populationModel;
+        return riskModel;
     }
     
 	/**
@@ -750,7 +750,7 @@ public class Model implements Serializable {
             if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
                 DataHandle handle = this.getInputConfig().getInput().getHandle();
                 int max = handle.getNumColumns();
-                max = Math.min(max, getPopulationModel().getMaxQiSize());
+                max = Math.min(max, getRiskModel().getMaxQiSize());
                 this.selectedQuasiIdentifiers = new HashSet<String>();
                 for (int i=0; i<max; i++) {
                     this.selectedQuasiIdentifiers.add(handle.getAttributeName(i));
@@ -841,7 +841,7 @@ public class Model implements Serializable {
 		if (inputConfig.isModified()) {
 			return true;
 		}
-		if (populationModel.isModified()) {
+		if (riskModel.isModified()) {
             return true;
         }
 		if ((outputConfig != null) && outputConfig.isModified()) {
@@ -1270,7 +1270,7 @@ public class Model implements Serializable {
     public void setUnmodified() {
 		modified = false;
 		inputConfig.setUnmodified();
-		populationModel.setUnmodified();
+		riskModel.setUnmodified();
 		if (outputConfig != null) {
 			outputConfig.setUnmodified();
 		}

@@ -56,9 +56,9 @@ public class LayoutRisks implements ILayout {
     /** View */
     private final SashForm          centerSash;
     /** View */
-    private final LayoutRisksBottom layoutBottomLeft;
+    private final LayoutRisksAbstract layoutBottomLeft;
     /** View */
-    private final LayoutRisksBottom layoutBottomRight;
+    private final LayoutRisksAbstract layoutBottomRight;
     /** View */
     private final LayoutRisksTop    layoutTopLeft;
     /** View */
@@ -84,12 +84,12 @@ public class LayoutRisks implements ILayout {
         // Create left composite
         centerLeft = new Composite(center, SWT.NONE);
         centerLeft.setLayoutData(SWTUtil.createFillGridData());
-        centerLeft.setLayout(SWTUtil.createGridLayout(1));
+        centerLeft.setLayout(new FillLayout());
 
         // Create right composite
         centerRight = new Composite(center, SWT.NONE);
         centerRight.setLayoutData(SWTUtil.createFillGridData());
-        centerRight.setLayout(SWTUtil.createGridLayout(1));
+        centerRight.setLayout(new FillLayout());
 
         // Create views
         layoutTopLeft = new LayoutRisksTop(centerLeft,

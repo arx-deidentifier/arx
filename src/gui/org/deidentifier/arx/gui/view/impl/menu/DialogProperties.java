@@ -194,16 +194,16 @@ public class DialogProperties implements IDialog {
                            controller.getResources().getImage("perspective_risk.png")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.41"), 1, 100000, 300) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getPopulationModel().getMaxIterations(); }
-            protected void setValue(Object t) { model.getPopulationModel().setMaxIterations((Integer)t); }});
+            protected Integer getValue() { return model.getRiskModel().getMaxIterations(); }
+            protected void setValue(Object t) { model.getRiskModel().setMaxIterations((Integer)t); }});
         
         window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.42"), 1.0e-10, 1d, 1.0e-9) { //$NON-NLS-1$
-            protected Double getValue() { return model.getPopulationModel().getAccuracy(); }
-            protected void setValue(Object t) { model.getPopulationModel().setAccuracy((Double)t); }});
+            protected Double getValue() { return model.getRiskModel().getAccuracy(); }
+            protected void setValue(Object t) { model.getRiskModel().setAccuracy((Double)t); }});
 
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.43"), 1, 10, 10) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getPopulationModel().getMaxQiSize(); }
-            protected void setValue(Object t) { model.getPopulationModel().setMaxQiSize((Integer)t); }});
+            protected Integer getValue() { return model.getRiskModel().getMaxQiSize(); }
+            protected void setValue(Object t) { model.getRiskModel().setMaxQiSize((Integer)t); }});
     }
 
     /**

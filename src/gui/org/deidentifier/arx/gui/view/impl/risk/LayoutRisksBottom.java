@@ -17,13 +17,10 @@
 
 package org.deidentifier.arx.gui.view.impl.risk;
 
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.def.ILayout;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -31,11 +28,8 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class LayoutRisksBottom implements ILayout {
+public class LayoutRisksBottom extends LayoutRisksAbstract {
 
-    /**  TODO */
-    private final ComponentTitledFolder folder;
-    
     /**
      * Creates a new instance.
      *
@@ -48,58 +42,18 @@ public class LayoutRisksBottom implements ILayout {
                             final Controller controller,
                             final ModelPart target,
                             final ModelPart reset) {
-
-        // Create the tab folder
-        folder = new ComponentTitledFolder(parent, controller, null, null);
-        final Composite item1 = folder.createItem(Resources.getMessage("RiskAnalysis.5"), null); //$NON-NLS-1$ 
-        item1.setLayout(new FillLayout());
-        final Composite item3 = folder.createItem(Resources.getMessage("RiskAnalysis.13"), null); //$NON-NLS-1$ 
-        item3.setLayout(new FillLayout());
-        final Composite item5 = folder.createItem(Resources.getMessage("RiskAnalysis.24"), null); //$NON-NLS-1$ 
-        item5.setLayout(new FillLayout());
-
         
-        // Create the views
-        new ViewRisksBasicEstimates(item1, controller, target, reset);
-        new ViewRisksPlotUniquenessEstimates(item3, controller, target, reset, false);
-        new ViewRisksPlotUniquenessEstimates(item5, controller, target, reset, true);
-        
+        super(parent, controller);
+
+        registerView(0, new ViewRisksBasicEstimates(createTab(Resources.getMessage("RiskAnalysis.5")), controller, target, reset)); //$NON-NLS-1$
+        registerView(1, new ViewRisksPlotUniquenessEstimates(createTab(Resources.getMessage("RiskAnalysis.13")), controller, target, reset, false)); //$NON-NLS-1$
+        registerView(2, new ViewRisksPlotUniquenessEstimates(createTab(Resources.getMessage("RiskAnalysis.24")), controller, target, reset, true)); //$NON-NLS-1$
+
         if (target == ModelPart.INPUT) {
-            final Composite item2 = folder.createItem(Resources.getMessage("RiskAnalysis.16"), null); //$NON-NLS-1$ 
-            item2.setLayout(new FillLayout());
-            new ViewRisksPopulationModel(item2, controller);
-            final Composite item4 = folder.createItem(Resources.getMessage("RiskAnalysis.23"), null); //$NON-NLS-1$ 
-            item4.setLayout(new FillLayout());
-            new ViewRisksQuasiIdentifiers(item4, controller);
+            new ViewRisksPopulationModel(createTab(Resources.getMessage("RiskAnalysis.16")), controller); //$NON-NLS-1$
+            new ViewRisksQuasiIdentifiers(createTab(Resources.getMessage("RiskAnalysis.23")), controller); //$NON-NLS-1$
         } 
         
-        folder.setSelection(0);
-    }
-
-    /**
-     * Adds a selection listener.
-     *
-     * @param listener
-     */
-    public void addSelectionListener(final SelectionListener listener) {
-        folder.addSelectionListener(listener);
-    }
-
-    /**
-     * Returns the selection index.
-     *
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    /**
-     * Sets the selection index.
-     *
-     * @param index
-     */
-    public void setSelectionIdex(final int index) {
-        folder.setSelection(index);
+        setSelectionIdex(0);
     }
 }
