@@ -305,10 +305,20 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
             this.manager.stop();
         }
         resetChart();
+        setStatusEmpty();
     }
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
+
+        // Enable/disable
+        if (!this.isEnabled()) {
+            if (manager != null) {
+                manager.stop();
+            }
+            this.setStatusEmpty();
+            return;
+        }
 
         // Create an analysis
         Analysis analysis = new Analysis() {
@@ -337,7 +347,7 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -378,7 +388,11 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (stopped || !isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override
@@ -451,13 +465,6 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         };
     }
 
-    /**
-     * Is an analysis running
-     */
-    protected boolean isRunning() {
-        return manager != null && manager.isRunning();
-    }
-
     @Override
     protected ViewRisk getViewType() {
         if (this.showAllModels) {
@@ -465,5 +472,12 @@ public class ViewRisksPlotUniquenessEstimates extends ViewRisks<AnalysisContextR
         } else {
             return ViewRisk.UNIQUES_DANKAR;
         }
+    }
+
+    /**
+     * Is an analysis running
+     */
+    protected boolean isRunning() {
+        return manager != null && manager.isRunning();
     }
 }

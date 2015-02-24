@@ -65,6 +65,9 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     private final ComponentStatus status;
 
     /** Internal stuff. */
+    private boolean               enabled = true;
+
+    /** Internal stuff. */
     private T                     viewContext;
     
 	/**
@@ -118,6 +121,14 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         controller.removeListener(this);
     }
 
+    /**
+     * Is this view enabled
+     * @return
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     /* (non-Javadoc)
      * @see org.deidentifier.arx.gui.view.def.IView#reset()
      */
@@ -125,6 +136,16 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     public void reset() {
         this.doReset();
         status.setEmpty();
+    }
+    
+    /**
+     * Enables or disables this view
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        this.viewContext = null;
+        this.update();
     }
 
     /* (non-Javadoc)
@@ -164,16 +185,22 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             return;
         }
     }
-    
+
     /**
      * Redraws the plot.
      */
     private void update() {
-
+        
         if (!this.status.isVisible()){
             return;
         }
-        
+
+        if (!this.isEnabled()) {
+            this.doReset();
+            this.setStatusEmpty();
+            return;
+        }
+
         if (this.viewContext != null) {
             if (!isRunning()) {
                 this.status.setDone();
@@ -194,13 +221,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
             status.setWorking();
         }
     }
-
-    /**
-     * Is a job running
-     * @return
-     */
-    protected abstract boolean isRunning();
-
+    
     /**
      * 
      * Implement this to create the widget.
@@ -217,7 +238,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @return
      */
     protected abstract T createViewConfig(AnalysisContext context);
-    
+
     /**
      * Implement this to reset.
      */
@@ -269,7 +290,19 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @return
      */
     protected abstract ComponentStatusLabelProgressProvider getProgressProvider();
+    
+    /**
+     * Returns the according type of view
+     * @return
+     */
+    protected abstract ViewRisk getViewType();
 
+    /**
+     * Is a job running
+     * @return
+     */
+    protected abstract boolean isRunning();
+    
     /**
      * Status update.
      */
@@ -297,12 +330,5 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     protected void triggerUpdate() {
         this.viewContext = null;
         this.update();
-        return;
     }
-    
-    /**
-     * Returns the according type of view
-     * @return
-     */
-    protected abstract ViewRisk getViewType();
 }

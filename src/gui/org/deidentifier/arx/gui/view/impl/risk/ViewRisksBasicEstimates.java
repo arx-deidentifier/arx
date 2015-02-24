@@ -168,10 +168,20 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         }
         items.clear();
         table.setRedraw(true);
+        setStatusEmpty();
     }
     
     @Override
     protected void doUpdate(AnalysisContextRisk context) {
+
+        // Enable/disable
+        if (!this.isEnabled()) {
+            if (manager != null) {
+                manager.stop();
+            }
+            this.setStatusEmpty();
+            return;
+        }
 
         // The statistics builder
         final RiskEstimateBuilderInterruptible builder = getBuilder(context);
@@ -202,7 +212,7 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -228,7 +238,11 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (stopped || !isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override
@@ -273,15 +287,15 @@ public class ViewRisksBasicEstimates extends ViewRisks<AnalysisContextRisk> {
         return null;
     }
 
+    @Override
+    protected ViewRisk getViewType() {
+        return ViewRisk.OVERVIEW;
+    }
+
     /**
      * Is an analysis running
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
-    }
-
-    @Override
-    protected ViewRisk getViewType() {
-        return ViewRisk.OVERVIEW;
     }
 }

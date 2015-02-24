@@ -142,11 +142,21 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
         }
         items.clear();
         table.setRedraw(true);
+        setStatusEmpty();
     }
 
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
+
+        // Enable/disable
+        if (!this.isEnabled()) {
+            if (manager != null) {
+                manager.stop();
+            }
+            this.setStatusEmpty();
+            return;
+        }
 
         // Create an analysis
         Analysis analysis = new Analysis() {
@@ -171,7 +181,7 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -196,7 +206,11 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (stopped || !isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override
@@ -231,15 +245,15 @@ public class ViewRisksClassDistributionTable extends ViewRisks<AnalysisContextRi
         return null;
     }
 
+    @Override
+    protected ViewRisk getViewType() {
+        return ViewRisk.CLASSES_TABLE;
+    }
+
     /**
      * Is an analysis running
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
-    }
-
-    @Override
-    protected ViewRisk getViewType() {
-        return ViewRisk.CLASSES_TABLE;
     }
 }

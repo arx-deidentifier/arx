@@ -43,7 +43,7 @@ public class LayoutRisksBottom extends LayoutRisksAbstract {
                             final ModelPart target,
                             final ModelPart reset) {
         
-        super(parent, controller);
+        super(parent, controller, target == ModelPart.INPUT, false);
 
         registerView(0, new ViewRisksBasicEstimates(createTab(Resources.getMessage("RiskAnalysis.5")), controller, target, reset)); //$NON-NLS-1$
         registerView(1, new ViewRisksPlotUniquenessEstimates(createTab(Resources.getMessage("RiskAnalysis.13")), controller, target, reset, false)); //$NON-NLS-1$

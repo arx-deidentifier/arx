@@ -232,12 +232,23 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
             this.manager.stop();
         }
         resetChart();
+        setStatusEmpty();
     }
+    
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
 
-            // Create an analysis
-            Analysis analysis = new Analysis(){
+        // Enable/disable
+        if (!this.isEnabled()) {
+            if (manager != null) {
+                manager.stop();
+            }
+            this.setStatusEmpty();
+            return;
+        }
+
+        // Create an analysis
+        Analysis analysis = new Analysis() {
 
             // The statistics builder
             RiskEstimateBuilderInterruptible builder = getBuilder(context);
@@ -259,7 +270,7 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
             @Override
             public void onFinish() {
 
-                if (stopped) {
+                if (stopped || !isEnabled()) {
                     return;
                 }
 
@@ -295,7 +306,11 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
 
             @Override
             public void onInterrupt() {
-                setStatusWorking();
+                if (stopped || !isEnabled()) {
+                    setStatusEmpty();
+                } else {
+                    setStatusWorking();
+                }
             }
 
             @Override
@@ -338,15 +353,15 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
         return null;
     }
 
+    @Override
+    protected ViewRisk getViewType() {
+        return ViewRisk.CLASSES_PLOT;
+    }
+
     /**
      * Is an analysis running
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
-    }
-
-    @Override
-    protected ViewRisk getViewType() {
-        return ViewRisk.CLASSES_PLOT;
     }
 }
