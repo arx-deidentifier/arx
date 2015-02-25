@@ -27,10 +27,10 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
  */
 public class HashGroupifyEntry {
 
-    /** The number of elements in this class. */
+    /** The number of elements in this class. Excluding elements from the public table.*/
     public int               count        = 0;
 
-    /** The number of public table elements in this class. */
+    /** The number of elements in this class. Including elements from the public table */
     public int               pcount       = 0;
 
     /** The hashcode of this class. */
