@@ -36,27 +36,24 @@ public abstract class RiskModelPopulationBased {
     private final WrappedBoolean              stop;
     /** Progress*/
     private final WrappedInteger              progress;
+    /** The sample size */
+    private final int                         sampleSize;
 
     /**
      * Creates a new instance
      * @param classes
      * @param progress 
      */
-    public RiskModelPopulationBased(RiskModelEquivalenceClasses classes,
-                                    ARXPopulationModel populationModel,
-                                    WrappedBoolean stop, WrappedInteger progress) {
+    RiskModelPopulationBased(RiskModelEquivalenceClasses classes,
+                             ARXPopulationModel populationModel,
+                             int sampleSize,
+                             WrappedBoolean stop, 
+                             WrappedInteger progress) {
         this.classes = classes;
         this.populationModel = populationModel;
         this.stop = stop;
         this.progress = progress;
-    }
-    
-    /**
-     * Sets the progress
-     * @param progress
-     */
-    protected void setProgress(int progress) {
-        this.progress.value = progress;
+        this.sampleSize = sampleSize;
     }
     
     /**
@@ -84,12 +81,13 @@ public abstract class RiskModelPopulationBased {
     }
     
     /**
-     * Returns the number of classes of the given size
+     * Returns the number of classes of the given size. This method is only efficient for
+     * smaller class sizes.
+     * 
      * @param size
      * @return
      */
     protected double getNumClassesOfSize(int size) {
-        // TODO: Use binary search
         int[] classes = this.classes.getEquivalenceClasses();
         for (int i = 0; i < classes.length; i += 2) {
             if (classes[i] == size) {
@@ -107,13 +105,13 @@ public abstract class RiskModelPopulationBased {
     protected ARXPopulationModel getPopulationModel() {
         return populationModel;
     }
-
+    
     /**
      * Returns the population size
      * @return
      */
     protected double getPopulationSize() {
-        return this.populationModel.getPopulationSize(this.classes.getHandle());
+        return this.populationModel.getPopulationSize(this.sampleSize);
     }
 
     /**
@@ -121,7 +119,7 @@ public abstract class RiskModelPopulationBased {
      * @return
      */
     protected double getSampleFraction() {
-        return this.populationModel.getSampleFraction(this.classes.getHandle());
+        return this.populationModel.getSampleFraction(this.sampleSize);
     }
 
     /**
@@ -129,6 +127,14 @@ public abstract class RiskModelPopulationBased {
      * @return
      */
     protected double getSampleSize() {
-        return this.classes.getHandle().getNumRows();
+        return this.sampleSize;
+    }
+
+    /**
+     * Sets the progress
+     * @param progress
+     */
+    protected void setProgress(int progress) {
+        this.progress.value = progress;
     }
 }

@@ -89,6 +89,15 @@ public class RiskEstimateBuilderInterruptible {
         }
     }
     /**
+     * If supported by the according builder, this method will report a progress value in [0,100]. Otherwise,
+     * it will always return 0
+     * @return
+     */
+    public int getProgress() {
+        return parent.getProgress();
+    }
+
+    /**
      * Returns a class providing access to sample-based risk estimates about the attributes
      * @return
      */
@@ -99,7 +108,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * @return
@@ -111,7 +120,7 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
     /**
      * Returns a class providing sample-based uniqueness estimates
      * @return
@@ -123,20 +132,11 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
+    
     /**
      * Interrupts all computations. Raises an InterruptedException.
      */
     public void interrupt() {
         parent.interrupt();
-    }
-    
-    /**
-     * If supported by the according builder, this method will report a progress value in [0,100]. Otherwise,
-     * it will always return 0
-     * @return
-     */
-    public int getProgress() {
-        return parent.getProgress();
     }
 }

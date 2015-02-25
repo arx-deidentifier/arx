@@ -30,7 +30,7 @@ public abstract class RiskModelSampleBased {
      * Creates a new instance
      * @param classes
      */
-    public RiskModelSampleBased(RiskModelEquivalenceClasses classes) {
+    RiskModelSampleBased(RiskModelEquivalenceClasses classes) {
         this.classes = classes;
     }
 

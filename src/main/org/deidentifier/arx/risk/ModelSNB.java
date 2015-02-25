@@ -35,16 +35,20 @@ class ModelSNB extends RiskModelPopulationBased {
     
     /**
      * Creates a new instance
-     * 
-     * @param classes
      * @param model
+     * @param classes
+     * @param sampleSize
+     * @param accuracy
+     * @param maxIterations
+     * @param stop
      */
     ModelSNB(final ARXPopulationModel model, 
              final RiskModelEquivalenceClasses classes,
+             final int sampleSize,
              final double accuracy,
              final int maxIterations,
              final WrappedBoolean stop) {
-        super(classes, model, stop, new WrappedInteger());
+        super(classes, model, sampleSize, stop, new WrappedInteger());
         
         int[] _classes = super.getClasses().getEquivalenceClasses();
         double numClassesOfSize1 = super.getNumClassesOfSize(1);

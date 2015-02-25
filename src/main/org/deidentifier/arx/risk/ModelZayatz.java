@@ -37,12 +37,13 @@ class ModelZayatz extends RiskModelPopulationBased {
 
     /**
      * Creates a new instance
-     * 
-     * @param classes
      * @param model
+     * @param classes
+     * @param sampleSize
+     * @param stop
      */
-    ModelZayatz(ARXPopulationModel model, final RiskModelEquivalenceClasses classes, WrappedBoolean stop) {
-        super(classes, model, stop, new WrappedInteger());
+    ModelZayatz(ARXPopulationModel model, final RiskModelEquivalenceClasses classes, final int sampleSize, final WrappedBoolean stop) {
+        super(classes, model, sampleSize, stop, new WrappedInteger());
         
         int[] _classes = super.getClasses().getEquivalenceClasses();
         double conditionalUniquenessPercentage = computeConditionalUniquenessPercentage( _classes,

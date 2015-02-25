@@ -36,22 +36,25 @@ class ModelPitman extends RiskModelPopulationBased {
 
     /**
      * Creates a new instance
-     * 
-     * @param classes
      * @param model
+     * @param classes
+     * @param sampleSize
+     * @param accuracy
+     * @param maxIterations
+     * @param stop
      */
     ModelPitman(final ARXPopulationModel model, 
                 final RiskModelEquivalenceClasses classes, 
+                final int sampleSize,
                 final double accuracy,
                 final int maxIterations,
                 final WrappedBoolean stop) {
-        super(classes, model, stop, new WrappedInteger());
+        super(classes, model, sampleSize, stop, new WrappedInteger());
 
         int numClassesOfSize1 = (int) super.getNumClassesOfSize(1);
         int numClassesOfSize2 = (int) super.getNumClassesOfSize(2);
         if (numClassesOfSize2 == 0) numClassesOfSize2 = 1; // Overestimate
         int numClasses = (int) super.getNumClasses();
-        int sampleSize = (int) super.getSampleSize();
         double populationSize = super.getPopulationSize();
 
         // Initial guess

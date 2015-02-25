@@ -29,6 +29,7 @@ import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.SampleBasedPrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.metric.Metric;
@@ -70,12 +71,21 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         
         /**
-         * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
+         * Returns all class-based criteria (except k-anonymity) as an array. 
+         * Only used internally. If k-anonymity is included the minimal
          * group size should be obtained and enforced 
          * @return
          */
-        public PrivacyCriterion[] getCriteriaAsArray() {
+        public PrivacyCriterion[] getClassBasedCriteriaAsArray() {
             return config.getCriteriaAsArray();
+        }
+
+        /**
+         * Returns all sample-based criteria as an array.
+         * @return
+         */
+        public SampleBasedPrivacyCriterion[] getSampleBasedCriteriaAsArray() {
+            return config.getSampleBasedCriteriaAsArray();
         }
 
         /**
@@ -260,6 +270,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Criteria. */
     private PrivacyCriterion[]                 aCriteria                    = new PrivacyCriterion[0];
+
+    /** Criteria. */
+    private SampleBasedPrivacyCriterion[]      bCriteria                    = new SampleBasedPrivacyCriterion[0];
 
     /** A map of weights per attribute. */
     private Map<String, Double>                attributeWeights             = null;
@@ -730,6 +743,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Returns all sample-based criteria as an array. Only used internally.
+     * @return
+     */
+    protected SampleBasedPrivacyCriterion[] getSampleBasedCriteriaAsArray() {
+        return this.bCriteria;
+    }
+
+    /**
      * Returns the minimal size of an equivalence class induced by the contained criteria.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
      * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
@@ -790,7 +811,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected void initialize(DataManager manager) {
 
         // Check
-        if (criteria.isEmpty()) { throw new RuntimeException("At least one privacy criterion must be specified!"); }
+        if (criteria.isEmpty()) { 
+            throw new RuntimeException("At least one privacy criterion must be specified!"); 
+        }
 
         // Compute requirements
         this.requirements = 0x0;
@@ -821,7 +844,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Compute optimized array with criteria, assuming complexities
         // dPresence <= lDiversity <= tCloseness and ignoring kAnonymity
-        // TODO: Configuration should not know anything about them
         List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
         if (this.containsCriterion(DPresence.class)) {
             list.add(this.getCriterion(DPresence.class));
@@ -833,6 +855,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
             list.addAll(this.getCriteria(TCloseness.class));
         }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
+        
+        // Compute array of sample-based criteria
+        this.bCriteria = new SampleBasedPrivacyCriterion[0];
+        if (this.containsCriterion(SampleBasedPrivacyCriterion.class)) {
+            this.bCriteria = this.getCriteria(SampleBasedPrivacyCriterion.class).toArray(new SampleBasedPrivacyCriterion[0]);
+        }
 
         // Compute snapshot length
         this.snapshotLength = 2;

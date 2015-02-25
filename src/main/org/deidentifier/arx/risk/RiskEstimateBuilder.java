@@ -83,6 +83,16 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param classes
+     */
+    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, RiskModelEquivalenceClasses classes) {
+        this(population, handle, null, classes, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
+    }
+
+    /**
+     * Creates a new instance
+     * @param population
+     * @param handle
+     * @param classes
      * @param accuracy
      * @param maxIterations
      */
@@ -96,22 +106,9 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param identifiers
-     * @param accuracy
-     * @param maxIterations
      */
-    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers,
-                               double accuracy, int maxIterations) {
-        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null, accuracy, maxIterations);
-    }
-
-    /**
-     * Creates a new instance
-     * @param population
-     * @param handle
-     * @param classes
-     */
-    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, RiskModelEquivalenceClasses classes) {
-        this(population, handle, null, classes, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
+    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers) {
+        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
     }
 
     /**
@@ -119,9 +116,12 @@ public class RiskEstimateBuilder {
      * @param population
      * @param handle
      * @param identifiers
+     * @param accuracy
+     * @param maxIterations
      */
-    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers) {
-        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null, DEFAULT_ACCURACY, DEFAULT_MAX_ITERATIONS);
+    public RiskEstimateBuilder(ARXPopulationModel population, DataHandle handle, Set<String> identifiers,
+                               double accuracy, int maxIterations) {
+        this(population, handle, identifiers, (RiskModelEquivalenceClasses)null, accuracy, maxIterations);
     }
     
     /**
@@ -200,20 +200,6 @@ public class RiskEstimateBuilder {
     }
 
     /**
-     * Returns a model of the equivalence classes in this data set
-     * @return
-     */
-    private RiskModelEquivalenceClasses getEquivalenceClassModel(double factor) {
-        synchronized(this) {
-            if (classes == null) {
-                progress.value = 0;
-                classes = new RiskModelEquivalenceClasses(handle, identifiers, stop, progress, factor);
-            }
-            return classes;
-        }
-    }
-    
-    /**
      * Returns an interruptible instance of this object.
      *
      * @return
@@ -222,7 +208,7 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskEstimateBuilderInterruptible(this);
     }
-
+    
     /**
      * Returns a class providing access to population-based risk estimates about the attributes.
      * Uses the decision rule by Dankar et al., excluding the SNB model
@@ -240,14 +226,14 @@ public class RiskEstimateBuilder {
     public RiskModelAttributes getPopulationBasedAttributeRisks(StatisticalModel model) {
        return getAttributeRisks(model);
     }
-    
+
     /**
      * Returns a class providing population-based uniqueness estimates
      * @return
      */
     public RiskModelPopulationBasedUniquenessRisk getPopulationBasedUniquenessRisk(){
         progress.value = 0;
-        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(0.25), stop, progress, accuracy, maxIterations);
+        return new RiskModelPopulationBasedUniquenessRisk(population, getEquivalenceClassModel(0.25), handle.getNumRows(), stop, progress, accuracy, maxIterations);
     }
     
     /**
@@ -257,7 +243,7 @@ public class RiskEstimateBuilder {
     public RiskModelAttributes getSampleBasedAttributeRisks() {
        return getAttributeRisks(null);
     }
-
+    
     /**
      * Returns a class providing sample-based re-identification risk estimates
      * @return
@@ -323,13 +309,18 @@ public class RiskEstimateBuilder {
             }
         };
     }
-    
+
     /**
-     * Interrupts this instance
+     * Returns a model of the equivalence classes in this data set
+     * @return
      */
-    void interrupt() {
+    private RiskModelEquivalenceClasses getEquivalenceClassModel(double factor) {
         synchronized(this) {
-            this.stop.value = true;
+            if (classes == null) {
+                progress.value = 0;
+                classes = new RiskModelEquivalenceClasses(handle, identifiers, stop, progress, factor);
+            }
+            return classes;
         }
     }
     
@@ -339,5 +330,14 @@ public class RiskEstimateBuilder {
      */
     int getProgress() {
         return this.progress.value;
+    }
+    
+    /**
+     * Interrupts this instance
+     */
+    void interrupt() {
+        synchronized(this) {
+            this.stop.value = true;
+        }
     }
 }

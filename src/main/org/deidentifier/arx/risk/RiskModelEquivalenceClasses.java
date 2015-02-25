@@ -19,7 +19,6 @@ package org.deidentifier.arx.risk;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandle;
@@ -86,18 +85,22 @@ public class RiskModelEquivalenceClasses {
         }
     }
 
-    /** The handle */
-    private final DataHandle  handle;
-    /** The base quasi-identifiers */
-    private final Set<String> quasiIdentifiers;
     /** The equivalence classes */
-    private final int[]       equivalenceClasses;
+    private int[]       equivalenceClasses;
     /** Summary */
-    private final double      avgClassSize;
+    private double      avgClassSize;
     /** Summary */
-    private final double      numTuples;
+    private double      numTuples;
     /** Summary */
-    private final double      numClasses;
+    private double      numClasses;
+    
+    /**
+     * Creates a new instance
+     * @param distribution
+     */
+    public RiskModelEquivalenceClasses(final IntIntOpenHashMap distribution) {
+        this.convertAndAnalyze(distribution, new WrappedBoolean(), new WrappedInteger());
+    }
 
     /**
      * Creates a new instance
@@ -140,8 +143,6 @@ public class RiskModelEquivalenceClasses {
                 throw new IllegalArgumentException(q + " is not an attribute");
             }
         }
-        this.quasiIdentifiers = qis;
-        this.handle = handle;
 
         /* ********************************
          *  Build equivalence classes
@@ -188,6 +189,20 @@ public class RiskModelEquivalenceClasses {
         }
         map = null;
         
+        convertAndAnalyze(grouped, stop, progress);
+    }
+
+    /**
+     * Convert and analyze
+     * @param grouped
+     * @param stop
+     * @param progress
+     */
+    private void convertAndAnalyze(IntIntOpenHashMap grouped, 
+                                   final WrappedBoolean stop, 
+                                   final WrappedInteger progress) {
+
+        
         // Convert
         int[][] temp = new int[grouped.size()][2];
         int idx = 0;
@@ -216,17 +231,19 @@ public class RiskModelEquivalenceClasses {
         
         // Convert and analyze
         int numClasses = 0;
+        int numTuples = 0;
         this.equivalenceClasses = new int[temp.length * 2];
         idx = 0;
         for (int[] entry : temp) {
             this.equivalenceClasses[idx++] = entry[0];
             this.equivalenceClasses[idx++] = entry[1];
             numClasses += entry[1];
+            numTuples += entry[0] * entry[1];
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
         }
-        this.numTuples = (double)handle.getNumRows();
+        this.numTuples = numTuples;
         this.numClasses = numClasses;
         this.avgClassSize = this.numTuples / this.numClasses;
     }
@@ -262,20 +279,5 @@ public class RiskModelEquivalenceClasses {
      */
     public double getNumTuples() {
         return numTuples;
-    }
-
-    /**
-     * Returns the quasi identifiers
-     * @return the quasiIdentifiers
-     */
-    public Set<String> getQuasiIdentifiers() {
-        return new HashSet<String>(quasiIdentifiers);
-    }
-
-    /**
-     * @return the handle
-     */
-    protected DataHandle getHandle() {
-        return handle;
     }
 }

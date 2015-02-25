@@ -55,50 +55,64 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
      * Creates a new instance
      * @param model
      * @param classes
+     * @param sampleSize
      */
     public RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model, 
-                                                  RiskModelEquivalenceClasses classes) {
-        this(model, classes, new WrappedBoolean(), new WrappedInteger(), RiskEstimateBuilder.DEFAULT_ACCURACY, RiskEstimateBuilder.DEFAULT_MAX_ITERATIONS);
+                                                  RiskModelEquivalenceClasses classes,
+                                                  int sampleSize) {
+        this(model,
+             classes,
+             sampleSize,
+             new WrappedBoolean(),
+             new WrappedInteger(),
+             RiskEstimateBuilder.DEFAULT_ACCURACY,
+             RiskEstimateBuilder.DEFAULT_MAX_ITERATIONS);
     }
     
     /**
      * Creates a new instance
      * @param model
      * @param classes
+     * @param sampleSize
+     * @param stop
+     * @param progress
+     * @param accuracy
+     * @param maxIterations
      */
     RiskModelPopulationBasedUniquenessRisk(ARXPopulationModel model, 
                                            RiskModelEquivalenceClasses classes,
+                                           int sampleSize,
                                            WrappedBoolean stop,
                                            WrappedInteger progress,
                                            double accuracy,
                                            int maxIterations) {
-        super(classes, model, stop, progress);
+        super(classes, model, sampleSize, stop, progress);
         
         // Init
         int numClassesOfSize1 = (int)super.getNumClassesOfSize(1);
         double sampleFraction = super.getSampleFraction();
     
-        // Handle where there are not sample uniques 
+        // Handle cases where there are no sample uniques 
         if (numClassesOfSize1 == 0) {
             numUniquesZayatz = 0d;
             numUniquesSNB = 0d;
             numUniquesPitman = 0d;
             numUniquesDankar = 0d;
-            dankarModel = null;
+            dankarModel = StatisticalModel.DANKAR;
             progress.value = 100;
             return;
         }
         
         // Estimate with Zayatz's model 
-        numUniquesZayatz = new ModelZayatz(model, classes, stop).getNumUniques();
+        numUniquesZayatz = new ModelZayatz(model, classes, sampleSize, stop).getNumUniques();
         progress.value = 50;
         
         // Estimate with Pitman's model
-        numUniquesPitman = new ModelPitman(model, classes, accuracy, maxIterations, stop).getNumUniques();
+        numUniquesPitman = new ModelPitman(model, classes, sampleSize, accuracy, maxIterations, stop).getNumUniques();
         progress.value = 75;
         
         // Estimate with SNB model
-        numUniquesSNB = new ModelSNB(model, classes, accuracy, maxIterations, stop).getNumUniques();
+        numUniquesSNB = new ModelSNB(model, classes, sampleSize, accuracy, maxIterations, stop).getNumUniques();
         progress.value = 100;
         
         // Decision rule by Dankar et al.
