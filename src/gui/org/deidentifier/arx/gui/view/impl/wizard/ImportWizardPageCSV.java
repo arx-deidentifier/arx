@@ -598,6 +598,7 @@ public class ImportWizardPageCSV extends WizardPage {
         if (it.hasNext()) {
             firstLine = it.next();
         } else {
+            in.close();
             throw new IOException("No data in file");
         }
 
