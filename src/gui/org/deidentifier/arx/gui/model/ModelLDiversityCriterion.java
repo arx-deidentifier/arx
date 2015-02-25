@@ -68,9 +68,6 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 		return c;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
-	 */
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    switch (variant) {
@@ -99,9 +96,6 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 		return variant;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.model.ModelExplicitCriterion#pull(org.deidentifier.arx.gui.model.ModelExplicitCriterion)
-	 */
 	@Override
     public void pull(ModelExplicitCriterion criterion) {
         if (!(criterion instanceof ModelLDiversityCriterion)) {
@@ -140,9 +134,6 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 		this.variant = variant;
 	}
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
-     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties

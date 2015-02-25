@@ -37,9 +37,6 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 	/** Dmax. */
 	private double dmax = 0.0d;
 	
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
-	 */
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
@@ -82,9 +79,6 @@ public class ModelDPresenceCriterion extends ModelImplicitCriterion{
 		this.dmin = dmin;
 	}
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
-     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties

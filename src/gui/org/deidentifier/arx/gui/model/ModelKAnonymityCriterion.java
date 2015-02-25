@@ -33,9 +33,6 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
 	/** K. */
 	private int k = 2;
 	
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
-	 */
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
 		return new KAnonymity(k);
@@ -59,9 +56,6 @@ public class ModelKAnonymityCriterion extends ModelImplicitCriterion{
 		this.k = k;
 	}
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
-     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties

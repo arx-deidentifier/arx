@@ -52,9 +52,6 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
         super(attribute);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.model.ModelCriterion#getCriterion(org.deidentifier.arx.gui.model.Model)
-     */
     @Override
 	public PrivacyCriterion getCriterion(Model model) {
 	    switch (variant) {
@@ -114,9 +111,6 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 		this.variant = variant;
 	}
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.model.ModelCriterion#toString()
-     */
     @Override
     public String toString() {
         // TODO: Move to messages.properties
