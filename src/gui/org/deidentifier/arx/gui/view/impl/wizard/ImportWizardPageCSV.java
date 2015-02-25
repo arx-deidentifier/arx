@@ -114,6 +114,9 @@ public class ImportWizardPageCSV extends WizardPage {
         }
     }
 
+    /** The default number of characters to read in the case of line break guessing*/
+    private static final int DEFAULT_BUFFER_SIZE = 4096;
+
     /** Reference to the wizard containing this page. */
     private ImportWizard                       wizardImport;
 
@@ -136,6 +139,9 @@ public class ImportWizardPageCSV extends WizardPage {
 
     /** TODO */
     private Combo                              comboSeparator;
+    
+    /** TODO */
+    private Combo                              comboLinebreak;
 
     /** TODO */
     private Combo                              comboDelimiter;
@@ -148,6 +154,9 @@ public class ImportWizardPageCSV extends WizardPage {
 
     /** TODO */
     private Label                              lblDelimiter;
+    
+    /** TODO */
+    private Label                              lblLinebreak;
 
     /** TODO */
     private Label                              lblEscape;
@@ -178,6 +187,12 @@ public class ImportWizardPageCSV extends WizardPage {
      * @see {@link #delimiters}
      */
     private int                                selectedEscape    = 0;
+    
+    /**
+     * Currently selected line break (index).
+     */
+    private int                                selectedLinebreak    = 0;
+
 
     /**
      * Supported escape characters.
@@ -194,6 +209,16 @@ public class ImportWizardPageCSV extends WizardPage {
      * @note This are the delimiters.
      */
     private final char[]                       delimiters        = { '\"', '\'' };
+    
+    /**
+     * Supported line breaks
+     */
+    private final char[][]                     linebreaks        = { { '\n' }, { '\r', '\n' }, { '\r' } };
+
+    /**
+     * Labels for supported line breaks
+     */
+    private final String[]                     linebreaklabels   = { "Unix ('\\n')", "Windows ('\\r\\n')", "Mac OS ('\\r')" };
 
     /**
      * Supported separators.
@@ -272,6 +297,8 @@ public class ImportWizardPageCSV extends WizardPage {
                 comboSeparator.setVisible(true);
                 lblDelimiter.setVisible(true);
                 comboDelimiter.setVisible(true);
+                lblLinebreak.setVisible(true);
+                comboLinebreak.setVisible(true);
                 lblEscape.setVisible(true);
                 comboEscape.setVisible(true);
                 btnContainsHeader.setVisible(true);
@@ -407,6 +434,38 @@ public class ImportWizardPageCSV extends WizardPage {
                 evaluatePage();
             }
         });
+        
+        /* Place holder */
+        new Label(container, SWT.NONE);
+
+        /* Line break label */
+        lblLinebreak = new Label(container, SWT.NONE);
+        lblLinebreak.setVisible(false);
+        lblLinebreak.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblLinebreak.setText("Linebreak");
+
+        /* Line break combobox */
+        comboLinebreak = new Combo(container, SWT.READ_ONLY);
+        comboLinebreak.setVisible(false);
+
+        /* Add labels */
+        for (final String c : linebreaklabels) {
+            comboLinebreak.add(String.valueOf(c));
+        }
+
+        comboLinebreak.select(selectedEscape);
+        comboLinebreak.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboLinebreak.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * Set selection index and custom line break and (re-)evaluates page
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                selectedEscape = comboLinebreak.getSelectionIndex();
+                evaluatePage();
+            }
+        });
 
         /* Place holders */
         new Label(container, SWT.NONE);
@@ -450,6 +509,40 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Set page to incomplete by default */
         setPageComplete(false);
+
+    }
+    
+    private void detectLinebreak() throws IOException {
+        BufferedReader r = null;
+        final char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+        int read = 0;
+
+        try {
+            r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+            read = r.read(buffer);
+        } finally {
+            if (r != null) {
+                r.close();
+            }
+        }
+
+        if (read > 0) {
+            for (int i = 0; i < buffer.length; i++) {
+                char current = buffer[i];
+                if (current == '\r') {
+                    if (i < buffer.length - 1 && buffer[i + 1] == '\n') { // Windows
+                        selectedLinebreak = 1;
+                    } else { // Mac OS
+                        selectedLinebreak = 2;
+                    }
+                    return;
+                }
+                if (current == '\n') { // Unix
+                    selectedLinebreak = 0;
+                    return;
+                }
+            }
+        }
 
     }
 
@@ -532,6 +625,8 @@ public class ImportWizardPageCSV extends WizardPage {
         }
 
         try {
+            detectLinebreak();
+            comboLinebreak.select(selectedLinebreak);
             if (!customSeparator) {
                 detectSeparator();
                 comboSeparator.select(selectedSeparator);
@@ -560,6 +655,8 @@ public class ImportWizardPageCSV extends WizardPage {
         data.setCsvSeparator(separators[selectedSeparator]);
         data.setCsvDelimiter(delimiters[selectedDelimiter]);
         data.setCsvEscape(escapes[selectedEscape]);
+        data.setCsvLinebreak(linebreaks[selectedLinebreak]);
+
 
         /* Mark page as completed */
         setPageComplete(true);
@@ -582,16 +679,17 @@ public class ImportWizardPageCSV extends WizardPage {
         /* Parameters from the user interface */
         final String location = comboLocation.getText();
         final char separator = separators[selectedSeparator];
+        final char[] linebreak = linebreaks[selectedLinebreak];
         final char delimiter = delimiters[selectedDelimiter];
         final char escape = escapes[selectedEscape];
         final boolean containsHeader = btnContainsHeader.getSelection();
 
         /* Variables needed for processing */
-        final CSVDataInput in = new CSVDataInput(location, separator, delimiter, escape);
+        final CSVDataInput in = new CSVDataInput(location, separator, delimiter, escape, linebreak);
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
-        ImportConfigurationCSV config = new ImportConfigurationCSV(location, separator, delimiter, escape, containsHeader);
+        ImportConfigurationCSV config = new ImportConfigurationCSV(location, separator, delimiter, escape, linebreak, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {

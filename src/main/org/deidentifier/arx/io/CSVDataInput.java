@@ -43,6 +43,8 @@ public class CSVDataInput {
     private static final char DEFAULT_QUOTE = '\"';
     /** Default values*/
     private static final char DEFAULT_ESCAPE = '\"';
+    /** Default values*/
+    private static final char[] DEFAULT_LINEBREAK = {'\n'};
 
     /** A reader. */
     private final Reader reader;
@@ -57,7 +59,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final File file) throws IOException {
-        this(file, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(file, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -68,7 +70,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final File file, final char delimiter) throws IOException {
-        this(file, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(file, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -80,7 +82,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final File file, final char delimiter, final char quote) throws IOException {
-        this(file, delimiter, quote, DEFAULT_ESCAPE);
+        this(file, delimiter, quote, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -93,11 +95,34 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+        this(file, delimiter, quote, escape, DEFAULT_LINEBREAK);
+    }
+    
+    /**
+     * Instantiate.
+     * 
+     * @param file
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @param linebreak
+     * @throws IOException
+     */
+    public CSVDataInput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
 
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
         format.setQuote(quote);
         format.setQuoteEscape(escape);
+        format.setLineSeparator(linebreak);
+        
+        if (linebreak[0] == '\n') {
+            format.setNormalizedNewline('\n');
+        } else  if (linebreak[0] == '\r' && linebreak.length < 2) {
+            format.setNormalizedNewline('\r');
+        } else {
+            format.setNormalizedNewline('\n');
+        }
         
         settings = new CsvParserSettings();
         settings.setEmptyValue("");
@@ -114,7 +139,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final InputStream stream) throws IOException {
-        this(stream, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(stream, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -125,7 +150,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final InputStream stream, final char delimiter) throws IOException {
-        this(stream, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(stream, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -137,7 +162,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final InputStream stream, final char delimiter, final char quote) throws IOException {
-        this(stream, delimiter, quote, DEFAULT_ESCAPE);
+        this(stream, delimiter, quote, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -149,12 +174,21 @@ public class CSVDataInput {
      * @param escape
      * @throws IOException
      */
-    public CSVDataInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+    public CSVDataInput(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
 
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
         format.setQuote(quote);
         format.setQuoteEscape(escape);
+        format.setLineSeparator(linebreak);
+
+        if (linebreak[0] == '\n') {
+            format.setNormalizedNewline('\n');
+        } else  if (linebreak[0] == '\r' && linebreak.length < 2) {
+            format.setNormalizedNewline('\r');
+        } else {
+            format.setNormalizedNewline('\n');
+        }
         
         settings = new CsvParserSettings();
         settings.setEmptyValue("");
@@ -162,6 +196,19 @@ public class CSVDataInput {
         settings.setFormat(format);
         
         reader = new InputStreamReader(stream);
+    }
+    
+    /**
+     * Instantiate.
+     *
+     * @param stream
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVDataInput(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+        this(stream, delimiter, quote, escape, DEFAULT_LINEBREAK);
     }
 
 
@@ -172,7 +219,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final String filename) throws IOException {
-        this(filename, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(filename, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -183,7 +230,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final String filename, final char delimiter) throws IOException {
-        this(new File(filename), delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(new File(filename), delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -195,7 +242,7 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final String filename, final char delimiter, final char quote) throws IOException {
-        this(new File(filename), delimiter, quote, DEFAULT_ESCAPE);
+        this(new File(filename), delimiter, quote, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -208,7 +255,20 @@ public class CSVDataInput {
      * @throws IOException
      */
     public CSVDataInput(final String filename, final char delimiter, final char quote, final char escape) throws IOException {
-        this(new File(filename), delimiter, quote, escape);
+        this(new File(filename), delimiter, quote, escape, DEFAULT_LINEBREAK);
+    }
+    
+    /**
+     * Instantiate.
+     *
+     * @param filename
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @throws IOException
+     */
+    public CSVDataInput(final String filename, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this(new File(filename), delimiter, quote, escape, linebreak);
     }
 
     /**

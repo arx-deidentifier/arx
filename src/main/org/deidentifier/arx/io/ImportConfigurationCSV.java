@@ -32,12 +32,19 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     private static final char DEFAULT_QUOTE     = '\"';
     /** Default values */
     private static final char DEFAULT_ESCAPE    = '\"';
+    /** Default values */
+    private static final char[] DEFAULT_LINEBREAK    = {'\n'};
 
+    
     /** Character that separates the columns from each other. */
     private final char        delimiter;
 
     /** Character that delimits strings. */
     private final char        quote;
+    
+    /** Characters that delimits lines. */
+    private final char[]        linebreak;
+
 
     /** Character that escapes. */
     private final char        escape;
@@ -101,12 +108,32 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
                                   char quote,
                                   char escape,
                                   boolean containsHeader) {
+       this(fileLocation, delimiter, quote, escape, DEFAULT_LINEBREAK, containsHeader);
+    }
+    
+    /**
+     * Creates a new instance of this object.
+     * 
+     * @param fileLocation
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @param linebreak
+     * @param containsHeader
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  char delimiter,
+                                  char quote,
+                                  char escape,
+                                  char[] linebreak,
+                                  boolean containsHeader) {
 
         setFileLocation(fileLocation);
         this.quote = quote;
         this.delimiter = delimiter;
         this.escape = escape;
         this.containsHeader = containsHeader;
+        this.linebreak = linebreak;
     }
     
     /**
@@ -164,6 +191,13 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
      */
     public char getDelimiter() {
         return delimiter;
+    }
+    
+    /**
+     * @return {@link #linebreak}
+     */
+    public char[] getLinebreak() {
+        return linebreak;
     }
 
     /**

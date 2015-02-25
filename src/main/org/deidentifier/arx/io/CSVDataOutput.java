@@ -43,6 +43,8 @@ public class CSVDataOutput {
     private static final char DEFAULT_QUOTE = '\"';
     /** Default values*/
     private static final char DEFAULT_ESCAPE = '\"';
+    /** Default values*/
+    private static final char[] DEFAULT_LINEBREAK = {'\n'};
 
     /** A writer. */
     private final Writer writer;
@@ -60,7 +62,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final File file) throws IOException {
-        this(file, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(file, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -71,7 +73,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final File file, final char delimiter) throws IOException {
-        this(file, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(file, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -83,7 +85,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final File file, final char delimiter, final char quote) throws IOException {
-        this(file, delimiter, quote, DEFAULT_ESCAPE);
+        this(file, delimiter, quote, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -96,11 +98,27 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final File file, final char delimiter, final char quote, final char escape) throws IOException {
+        this(file, delimiter, quote, escape, DEFAULT_LINEBREAK);
+    }
+    
+
+    /**
+     * Instantiate.
+     * 
+     * @param file
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @param linebreak
+     * @throws IOException
+     */
+    public CSVDataOutput(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
 
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
         format.setQuote(quote);
         format.setQuoteEscape(escape);
+        format.setLineSeparator(linebreak);
         
         settings = new CsvWriterSettings();
         settings.setEmptyValue("");
@@ -118,7 +136,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final OutputStream stream) throws IOException {
-        this(stream, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(stream, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -129,7 +147,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter) throws IOException {
-        this(stream, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(stream, delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -141,7 +159,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote) throws IOException {
-        this(stream, delimiter, quote, DEFAULT_ESCAPE);
+        this(stream, delimiter, quote, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -154,11 +172,26 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
+        this(stream, delimiter, quote, escape, DEFAULT_LINEBREAK);
+    }
+    
+    /**
+     * Instantiate.
+     * 
+     * @param stream
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @param linebreak
+     * @throws IOException
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
 
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
         format.setQuote(quote);
         format.setQuoteEscape(escape);
+        format.setLineSeparator(linebreak);
         
         settings = new CsvWriterSettings();
         settings.setEmptyValue("");
@@ -177,7 +210,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final String filename) throws IOException {
-        this(filename, DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(new File(filename), DEFAULT_DELIMITER, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -188,7 +221,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final String filename, final char delimiter) throws IOException {
-        this(new File(filename), delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE);
+        this(new File(filename), delimiter, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**
@@ -200,7 +233,7 @@ public class CSVDataOutput {
      * @throws IOException
      */
     public CSVDataOutput(final String filename, final char delimiter, final char quote) throws IOException {
-        this(new File(filename), delimiter, quote, DEFAULT_ESCAPE);
+        this(new File(filename), delimiter, quote, DEFAULT_ESCAPE, DEFAULT_LINEBREAK);
     }
 
     /**

@@ -83,6 +83,9 @@ public class ImportWizardModel {
     /** Separator for columns (in case of CSV import). */
     private char                          csvSeparator;
 
+    /** Line break characters (in case of CSV import). */
+    private char[]                        csvLinebreak;
+
     /** Separator for columns (in case of CSV import). */
     private char                          csvEscape;
 
@@ -380,5 +383,15 @@ public class ImportWizardModel {
 
         this.wizardColumns = columns;
     }
+
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
+    }
+
+    public void setCsvLinebreak(char[] csvLinebreak) {
+        this.csvLinebreak = csvLinebreak;
+    }
+
+   
 
 }

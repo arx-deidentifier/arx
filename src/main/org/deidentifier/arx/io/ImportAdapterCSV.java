@@ -101,7 +101,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
 
         /* Get CSV iterator */
-        in = new CSVDataInput(cin, config.getDelimiter(), config.getQuote(), config.getEscape());
+        in = new CSVDataInput(cin, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
         it = in.iterator();
 
         /* Check whether there is actual data within the CSV file */
