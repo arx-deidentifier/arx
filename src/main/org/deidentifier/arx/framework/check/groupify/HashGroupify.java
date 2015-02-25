@@ -268,9 +268,6 @@ public class HashGroupify implements IHashGroupify {
         dpresence = (criteria.length > 0 && (criteria[0] instanceof DPresence) && !(criteria[0] instanceof Inclusion));
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#addAll(int[], int, int, int[], int)
-     */
     @Override
     public void addAll(int[] key, int representant, int count, int[] sensitive, int pcount) {
 
@@ -300,9 +297,6 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#addGroupify(int[], int, int, org.deidentifier.arx.framework.check.distribution.Distribution[], int)
-     */
     @Override
     public void addGroupify(int[] key, int representant, int count, Distribution[] distributions, int pcount) {
 
@@ -324,9 +318,6 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#addSnapshot(int[], int, int, int[][], int[][], int)
-     */
     @Override
     public void addSnapshot(int[] key, int representant, int count, int[][] elements, int[][] frequencies, int pcount) {
 
@@ -354,20 +345,12 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#analyze(boolean)
-     */
     @Override
     public void analyze(boolean force){
         if (force) analyzeAll();
         else analyzeWithEarlyAbort();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.groupify.IHashGroupify#clear()
-     */
     @Override
     public void clear() {
         if (elementCount > 0) {
@@ -379,21 +362,11 @@ public class HashGroupify implements IHashGroupify {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.deidentifier.ARX.framework.check.groupify.IHashGroupify#getFirstEntry
-     * ()
-     */
     @Override
     public HashGroupifyEntry getFirstEntry() {
         return firstEntry;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#getGroupStatistics()
-     */
     @Override
     public GroupStatistics getGroupStatistics() {
 
@@ -465,25 +438,16 @@ public class HashGroupify implements IHashGroupify {
                                     numberOfOutlyingTuples);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#isAnonymous()
-     */
     @Override
     public boolean isAnonymous() {
         return anonymous;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#isKAnonymous()
-     */
     @Override
     public boolean isKAnonymous() {
         return kAnonymous;
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.framework.check.groupify.IHashGroupify#markOutliers(int[][])
-     */
     @Override
     public void markOutliers(final int[][] data) {
         
@@ -516,11 +480,6 @@ public class HashGroupify implements IHashGroupify {
         this.currentOutliers = 0;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.groupify.IHashGroupify#size()
-     */
     @Override
     public int size() {
         return elementCount;
@@ -538,7 +497,7 @@ public class HashGroupify implements IHashGroupify {
      */
     private final HashGroupifyEntry addInternal(final int[] key, final int hash, final int representant, int count, final int pcount) {
 
-        // Is the line contained in the research subset
+        // Is the tuple contained in the research subset
         if (subset != null && !subset.contains(representant)) {
             count = 0;
         }
@@ -555,17 +514,17 @@ public class HashGroupify implements IHashGroupify {
         }
         entry.count += count;
 
-        // indirectly check if we are in d-presence mode
+        // Indirectly check if we enforce d-presence
         if (subset != null) {
             entry.pcount += pcount;
             if (count > 0) {
-                // this is a tuple from the research subset: Reset its representative, necessary for rollup / history
+                // This is a tuple from the research subset: Reset its representative, necessary for rollup / history
                 // (otherwise subset.contains(tupleID) could potentially return false)
                 entry.representant = representant;
             }
         }
 
-        // Compute current outliers, if k-anonymity is part of the criteria
+        // Compute current outliers, if k-anonymity is contained in the set of criteria
         if (entry.count >= k) {
             if (!entry.isNotOutlier) {
                 entry.isNotOutlier = true;

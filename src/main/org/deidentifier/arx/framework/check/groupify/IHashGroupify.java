@@ -21,7 +21,7 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify.GroupStatistics;
 
 /**
- * 
+ * Interface for hash groupify operators
  */
 public interface IHashGroupify {
 
@@ -64,8 +64,8 @@ public interface IHashGroupify {
      * Computes the anonymity properties and suppressed tuples etc. Must be called
      * when all tuples have been passed to the operator. When the flag is set to true
      * the method will make sure that all equivalence classes that do not fulfill all
-     * privacy criteria are marked as being suppressed. If the flag is set to false,
-     * the operator may perform an early abort, which may lead to inconsistent classification
+     * privacy criteria are marked for suppression. If the flag is set to false,
+     * the operator may perform an early abort, which may lead to an inconsistent classification
      * of equivalence classes.
      * 
      * @param force
