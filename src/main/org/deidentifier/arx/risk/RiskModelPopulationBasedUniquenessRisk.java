@@ -109,6 +109,21 @@ public class RiskModelPopulationBasedUniquenessRisk extends RiskModelPopulationB
         numUniquesSNB = new ModelSNB(model, classes, accuracy, maxIterations, stop).getNumUniques();
         progress.value = 100;
         
+// Decision rule of Dankar et al.
+//    If sampfrac <= 0.1 then 
+//        E1=Pitman 
+//    Else 
+//    If SNB converges then 
+//        if Est(SNB) > Est(Zayatz) then 
+//            E1=Zayatz 
+//        Else 
+//            E1=SNB 
+//        Endif 
+//    Else 
+//        E1=Zayatz 
+//    Endif
+//    Endif
+        
         // Estimate with Dankar's model. TODO: Check against the paper
         if (numClassesOfSize2 == 0) {
             numUniquesDankar = numUniquesZayatz;
