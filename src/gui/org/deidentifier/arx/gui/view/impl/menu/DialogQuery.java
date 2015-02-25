@@ -72,6 +72,12 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
                 } catch (InterruptedException e) {
                     // Ignore
                 }
+                
+                DataSelector selector = null;
+                synchronized(DialogQuery.this){
+                    selector = DialogQuery.this.selector;
+                }
+                
                 if (selector != null && selector != previous){
                     previous = selector;
                     int count = 0;
@@ -413,22 +419,25 @@ public class DialogQuery extends TitleAreaDialog implements IDialog {
      */
     private void parse() {
         
-        // Query
-        final String query = text.getText();
-        final DataSelector selector;
-        try {
-            selector = DataSelector.create(data, query);
-            selector.build();
-        } catch (Exception e){
-            this.status.setText(e.getMessage());
-            this.ok.setEnabled(false);
-            this.selector = null;
-            return;
+        synchronized (this) {
+            
+            // Query
+            final String query = text.getText();
+            final DataSelector selector;
+            try {
+                selector = DataSelector.create(data, query);
+                selector.build();
+            } catch (Exception e){
+                this.status.setText(e.getMessage());
+                this.ok.setEnabled(false);
+                this.selector = null;
+                return;
+            }
+            this.status.setText("OK");
+            this.queryString = text.getText();
+            this.selector = selector;
+            this.ok.setEnabled(true);
         }
-        this.status.setText("OK");
-        this.queryString = text.getText();
-        this.selector = selector;
-        this.ok.setEnabled(true);
     }
     
     /**
