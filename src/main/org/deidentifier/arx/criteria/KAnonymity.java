@@ -49,18 +49,12 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         this.k = k;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#getRequirements()
-     */
     @Override
     public int getRequirements(){
         // Requires only one counter
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.criteria.PrivacyCriterion#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)
-     */
     @Override
     public boolean isAnonymous(HashGroupifyEntry entry) {
         throw new RuntimeException("This should never be called!");
@@ -75,9 +69,6 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         return k;
     }
     
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.criteria.PrivacyCriterion#toString()
-	 */
 	@Override
 	public String toString() {
 		return k+"-anonymity";
