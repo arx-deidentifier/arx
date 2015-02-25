@@ -151,7 +151,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
     /** TODO */
     private Label                              lblEscape;
-    
+
     /** TODO */
     private Table                              tablePreview;
 
@@ -177,45 +177,44 @@ public class ImportWizardPageCSV extends WizardPage {
      * 
      * @see {@link #delimiters}
      */
-    private int                                selectedEscape = 0;
+    private int                                selectedEscape    = 0;
 
     /**
      * Supported escape characters.
-     *
+     * 
      * @see {@link #labels}
      * @note This are the escape characters.
      */
-    private final char[] escapes = {'\"', '\\'};
-    
+    private final char[]                       escapes           = { '\"', '\\' };
+
     /**
      * Supported delimiters.
-     *
+     * 
      * @see {@link #labels}
      * @note This are the delimiters.
      */
-    private final char[] delimiters = {'\"', '\''};
+    private final char[]                       delimiters        = { '\"', '\'' };
 
     /**
      * Supported separators.
-     *
+     * 
      * @see {@link #labels}
      * @note This are the separators itself. The appropriate combo box will
      *       display the {@link #labels} instead.
      */
-    private final char[] separators = {';', ',', '|', '\t'};
+    private final char[]                       separators        = { ';', ',', '|', '\t' };
 
     /**
      * Labels for separators defined in {@link #separators}.
-     *
+     * 
      * @see {@link #separators}
      */
-    private final String[] labels = {";", ",", "|", "Tab"};
+    private final String[]                     labels            = { ";", ",", "|", "Tab" };
 
     /**
      * Indicates whether separator was detected automatically or by the user
      * 
-     * The separator will usually be detected automatically
-     * {@link #detectSeparator()}. In case the user selected another separator
+     * The separator will usually be detected automatically {@link #detectSeparator()}. In case the user selected another separator
      * by hand, this flag will be set to true, making sure the rest of the logic
      * knows about it.
      */
