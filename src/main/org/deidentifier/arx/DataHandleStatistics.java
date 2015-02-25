@@ -24,23 +24,18 @@ package org.deidentifier.arx;
  */
 public class DataHandleStatistics {
 
-    /**
-     * 
-     */
+    /** Stupid interface */
     public static interface InterruptHandler {
         
-        /**
-         * 
-         */
+        /** Stupid method*/
         public void checkInterrupt();
     }
     
-    /**  TODO */
+    /**  Stupid handle */
     private DataHandle handle;
     
     /**
-     * 
-     *
+     * Stupid constructor
      * @param handle
      */
     protected DataHandleStatistics(DataHandle handle){
@@ -48,8 +43,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @param column
      * @return
      */
@@ -68,8 +62,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @param attribute
      * @return
      */
@@ -78,8 +71,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @return
      */
     public DataDefinition getDefinition() {
@@ -87,8 +79,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @param column
      * @param stop
      * @return
@@ -98,8 +89,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @param attribute
      * @return
      */
@@ -108,8 +98,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @return
      */
     public int getNumRows() {   
@@ -117,8 +106,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @return
      */
     public String getSuppressionString() {
@@ -126,8 +114,7 @@ public class DataHandleStatistics {
     }
 
     /**
-     * 
-     *
+     * Stupid method
      * @param row
      * @param column
      * @return
