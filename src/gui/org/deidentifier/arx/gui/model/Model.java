@@ -746,15 +746,38 @@ public class Model implements Serializable {
      * @return
      */
     public Set<String> getSelectedQuasiIdentifiers() {
+        
         if (this.selectedQuasiIdentifiers == null) {
+            
+            // Add qis or other attributes
             if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
                 DataHandle handle = this.getInputConfig().getInput().getHandle();
-                int max = handle.getNumColumns();
-                max = Math.min(max, getRiskModel().getMaxQiSize());
                 this.selectedQuasiIdentifiers = new HashSet<String>();
-                for (int i=0; i<max; i++) {
-                    this.selectedQuasiIdentifiers.add(handle.getAttributeName(i));
+                Set<String> qis = this.getInputDefinition().getQuasiIdentifyingAttributes();
+                
+                // Add standard attributes
+                if (qis.isEmpty()) {
+                    int max = handle.getNumColumns();
+                    max = Math.min(max, getRiskModel().getMaxQiSize());
+                    for (int i=0; i<max; i++) {
+                        this.selectedQuasiIdentifiers.add(handle.getAttributeName(i));
+                    }
+                    
+                // Add QIs
+                } else {
+                    int max = qis.size();
+                    max = Math.min(max, getRiskModel().getMaxQiSize());
+                    for (int i = 0; i < handle.getNumColumns() && selectedQuasiIdentifiers.size() <= max; i++) {
+                        String attr = handle.getAttributeName(i);
+                        if (qis.contains(attr)) {
+                            this.selectedQuasiIdentifiers.add(attr);
+                        }
+                    }
                 }
+            } else {
+                
+                // Return empty set
+                return new HashSet<String>();
             }
         }
         return this.selectedQuasiIdentifiers;
@@ -894,7 +917,7 @@ public class Model implements Serializable {
         outputConfig = null;
         output = null;
         result = null;
-        auditTrail.clear();
+        if (auditTrail != null) auditTrail.clear();
         selectedQuasiIdentifiers = null;
         subsetOrigin = "None";
         groups = null;
