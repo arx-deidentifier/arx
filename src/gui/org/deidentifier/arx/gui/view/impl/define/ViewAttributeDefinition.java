@@ -34,6 +34,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
@@ -209,10 +210,20 @@ public class ViewAttributeDefinition implements IView {
                             model.getDPresenceModel().setActive(false);
                             model.getKAnonymityModel().setEnabled(false);
                             model.getDPresenceModel().setEnabled(false);
+                            for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
+                                if (c.isEnabled()) {
+                                    criteriaDisabled = true;
+                                }
+                                c.setEnabled(false);
+                                c.setActive(false);
+                            }
 
                         } else {
                             model.getKAnonymityModel().setActive(true);
                             model.getDPresenceModel().setActive(true);
+                            for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
+                                c.setActive(true);
+                            }
                         }
 
                         // Update icon

@@ -30,9 +30,9 @@ import org.deidentifier.arx.risk.RiskModelPopulationBasedUniquenessRisk.Statisti
  */
 public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 
-	/** SVUID*/
-    private static final long serialVersionUID = -962175682217963137L;
-    
+    /** SVUID*/
+    private static final long serialVersionUID = -3653781193588952725L;
+
     /** Threshold */
 	private double threshold = 0.01d;
 
@@ -56,6 +56,14 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
 
     /** The variant to use. */
     private int               variant                           = 0;
+
+    /**
+     * Creates a new instance
+     * @param variant
+     */
+    public ModelRiskBasedCriterion(int variant) {
+        this.variant = variant;
+    }
     
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {

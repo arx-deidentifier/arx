@@ -617,13 +617,6 @@ public class ViewHierarchy implements IView {
         this.base.setLayout(bottomLayout);
         this.base.setLayoutData(bottomLayoutData);
 
-        // Create label
-        if (attribute != null) {
-            Label l = new Label(base, SWT.NONE);
-            l.setText(Resources.getMessage("HierarchyView.2") + attribute + //$NON-NLS-1$  
-                      Resources.getMessage("HierarchyView.3")); //$NON-NLS-2$
-        }
-
         // Configure table
         CTConfiguration config = new CTConfiguration(parent, CTConfiguration.STYLE_TABLE);
         config.setHorizontalAlignment(SWT.LEFT);
