@@ -592,7 +592,7 @@ public class ImportWizardPageCSV extends WizardPage {
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
-        ImportConfigurationCSV config = new ImportConfigurationCSV(location, separator, containsHeader);
+        ImportConfigurationCSV config = new ImportConfigurationCSV(location, separator, delimiter, escape, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {
