@@ -28,10 +28,11 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -94,15 +95,14 @@ public class ViewCriteriaList implements IView {
         this.symbolK = controller.getResources().getImage("symbol_k.png"); //$NON-NLS-1$
         this.symbolD = controller.getResources().getImage("symbol_d.png"); //$NON-NLS-1$
 
-        root = new Composite(parent, SWT.NONE);
-        GridLayout l = new GridLayout();
-        l.numColumns = 1;
-        root.setLayout(l);
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null);
+        folder.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).minSize(1, 200).create());
+        root = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null);
+        root.setLayout(new FillLayout());
+        folder.setSelection(0);
 
         table = new Table(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
         table.setHeaderVisible(true);
-        final GridData d = SWTUtil.createFillGridData();
-        table.setLayoutData(d);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
         column1 = new TableColumn(table, SWT.NONE);
@@ -115,23 +115,19 @@ public class ViewCriteriaList implements IView {
         column1.pack();
         column2.pack();
         column3.pack();
+        
+        reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
-        controller.removeListener(this);
+        this.controller.removeListener(this);
         this.symbolL.dispose();
         this.symbolT.dispose();
         this.symbolK.dispose();
         this.symbolD.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         root.setRedraw(false);
@@ -140,11 +136,9 @@ public class ViewCriteriaList implements IView {
         if (column2 != null) column2.pack();
         if (column3 != null) column3.pack();
         root.setRedraw(true);
+        SWTUtil.disable(root);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
@@ -194,6 +188,7 @@ public class ViewCriteriaList implements IView {
                 column2.pack();
                 column3.pack();
                 root.setRedraw(true);
+                SWTUtil.enable(root);
             }
         }
     }

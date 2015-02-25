@@ -26,7 +26,6 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -36,7 +35,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -86,15 +84,6 @@ public class ViewMetric implements IView {
     private Composite             root;
     
     /** View. */
-    private ComponentTitledFolder folder;
-    
-    /** View. */
-    private IView                 viewCodingModel;
-    
-    /** View. */
-    private IView                 viewAttributeWeights;
-    
-    /** View. */
     private Button                monotonicVariant;
     
     /** View. */
@@ -108,31 +97,19 @@ public class ViewMetric implements IView {
      * @param folder
      */
     public ViewMetric(final Composite parent,
-                      final Controller controller,
-                      final ComponentTitledFolder folder) {
+                      final Controller controller) {
 
         this.controller = controller;
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.METRIC, this);
-        this.controller.addListener(ModelPart.INPUT, this);
-        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
-        this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
-        this.folder = folder;
         this.root = build(parent);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
     }
     
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
 
@@ -141,48 +118,32 @@ public class ViewMetric implements IView {
         SWTUtil.disable(root);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
+        
         if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
-            root.setRedraw(false);
-            
-            boolean found = false;
-            for (int i = 0; i < METRICS.size(); i++) {
-                if (METRICS.get(i).isInstance(model.getInputConfig().getMetric())) {
-                    comboMetric.select(i);
-                    found = true;
-                    break;
+
+            // Ensure backwards compatibility with older project files
+            Metric<?> metric = model.getInputConfig().getMetric();
+            if (metric != null) {
+                for (int i = 0; i < METRICS.size(); i++) {
+                    if (METRICS.get(i).isInstance(metric)) {
+                        comboMetric.select(i);
+                        break;
+                    }
                 }
             }
-            
-            // Sanity check for tracking potential bugs introduced by ARX 2.3
-            if (!found) {
-                controller.actionShowErrorDialog(this.root.getShell(), "Metric not found", new RuntimeException(model.getInputConfig().getMetric().getClass().getSimpleName()));
-            }
-            
-            updateControlls();
-            root.setRedraw(true);
-        } else if (event.part == ModelPart.INPUT) {
-            SWTUtil.enable(root);
-            updateControlls();
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE ||
-                   event.part == ModelPart.ATTRIBUTE_TYPE ||
-                   event.part == ModelPart.CRITERION_DEFINITION ||
-                   event.part == ModelPart.METRIC) {
-            
-            if (model != null){
-                updateControlls();
-            }
+            updateControls();
+        } 
+        
+        if (event.part == ModelPart.INPUT || event.part == ModelPart.METRIC) {
+            updateControls();
         }
     }
 
     /**
-     * 
-     *
+     * Builds the component
      * @param parent
      * @return
      */
@@ -273,143 +234,70 @@ public class ViewMetric implements IView {
     }
 
     /**
-     * Hides the settings for the attribute weights.
-     */
-    private void hideSettingsAttributeWeights(){
-
-        if (this.viewAttributeWeights != null) {
-            this.viewAttributeWeights.dispose();
-            this.viewAttributeWeights = null;
-            folder.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
-        }
-    }
-    
-    /**
-     * Hides the settings for the coding model.
-     */
-    private void hideSettingsCodingModel(){
-        if (this.viewCodingModel != null) {
-            this.viewCodingModel.dispose();
-            this.viewCodingModel = null;
-            folder.disposeItem(Resources.getMessage("CriterionDefinitionView.65"));  //$NON-NLS-1$
-        }
-    }
-
-    /**
      * Select metric action.
      *
      * @param metric
      */
     private void selectMetricAction(final MetricDescription metric) {
-        if (model == null) { return; }
-        if (metric != null) {
-            
+        if (metric != null && model != null) {
             model.setMetricDescription(metric);
-            
-            if (metric.isConfigurableCodingModelSupported()) {
-                this.showSettingsCodingModel();
-            } else {
-                this.hideSettingsCodingModel();
-            }
-
-            if (metric.isAttributeWeightsSupported() && 
-                 model != null &&
-                 model.getInputDefinition() != null &&
-                 model.getInputDefinition().getQuasiIdentifyingAttributes() != null &&
-                 !model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty()){
-                this.showSettingsAttributeWeights();
-            } else {
-                this.hideSettingsAttributeWeights();
-            }
-            
-            this.updateControlls();
+            controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
+            this.updateControls();
         }
     }
-    
-    /**
-     * Shows the settings for the attribute weights.
-     */
-    private void showSettingsAttributeWeights(){
-        if (this.viewAttributeWeights != null) return;
-        Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.63"), null, folder.getItemCount()-1);  //$NON-NLS-1$
-        composite1.setLayout(new FillLayout());
-        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
-        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
-  
-    /**
-     * Shows the settings for the coding model.
-     */
-    private void showSettingsCodingModel(){
-        if (this.viewCodingModel != null) return;
-        Composite composite2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.65"), null, folder.getItemCount()-1);  //$NON-NLS-1$
-        composite2.setLayout(new FillLayout());
-        this.viewCodingModel = new ViewCodingModel(composite2, controller);
-        this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
 
     /**
-     * This method adjusts the toolbar attached to the folder with criteria
-     * according to the current state of the model.
+     * This method updates the view
      */
-    private void updateControlls(){
+    private void updateControls(){
 
-        root.setRedraw(false);
+        // Check
+        if (model == null) {
+            return;
+        }
         
+        // Configure
         MetricConfiguration config = model.getMetricConfiguration();
         MetricDescription description = model.getMetricDescription();
-        
-        if (config != null && 
-            description != null) {
-            
-            // Monotonicity
-            if (!description.isMonotonicVariantSupported()) {
-                this.monotonicVariant.setSelection(false);
-                this.monotonicVariant.setEnabled(false);
-            } else {
-                this.monotonicVariant.setEnabled(true);
-                this.monotonicVariant.setSelection(config.isMonotonic());
-            }
-            
-            // Weights
-            if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
-                model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
-               !description.isAttributeWeightsSupported()) {
-                hideSettingsAttributeWeights();
-                hideSettingsCodingModel();
-            } else {
-                showSettingsAttributeWeights();
-                if (description.isConfigurableCodingModelSupported()) {
-                    showSettingsCodingModel();
-                } else {
-                    hideSettingsCodingModel();
-                }
-            }
-            
-            // Aggregate function
-            comboAggregate.removeAll();
-            int index = 0;
-            int selected = -1;
-            for (AggregateFunction function : description.getSupportedAggregateFunctions()) {
-                comboAggregate.add(function.toString());
-                if (function.toString().equals(config.getAggregateFunction().toString())) {
-                    selected = index;
-                }
-                index++;
-            }
-            if (selected != -1) {
-                comboAggregate.select(selected);
-            }
 
-            if (comboAggregate.getItemCount()==0) {
-                comboAggregate.add("None available");
-                comboAggregate.select(0);
-            }
-            
-        } else {
+        // Check
+        if (config == null || description == null) {
             reset();
+            return;
         }
-        
+
+        root.setRedraw(false);
+
+        // Monotonicity
+        if (!description.isMonotonicVariantSupported()) {
+            this.monotonicVariant.setSelection(false);
+            this.monotonicVariant.setEnabled(false);
+        } else {
+            this.monotonicVariant.setEnabled(true);
+            this.monotonicVariant.setSelection(config.isMonotonic());
+        }
+
+        // Aggregate function
+        comboAggregate.removeAll();
+        int index = 0;
+        int selected = -1;
+        for (AggregateFunction function : description.getSupportedAggregateFunctions()) {
+            comboAggregate.add(function.toString());
+            if (function.toString().equals(config.getAggregateFunction().toString())) {
+                selected = index;
+            }
+            index++;
+        }
+        if (selected != -1) {
+            comboAggregate.select(selected);
+        }
+
+        if (comboAggregate.getItemCount() == 0) {
+            comboAggregate.add("None available");
+            comboAggregate.select(0);
+        }
+
         root.setRedraw(true);
+        SWTUtil.enable(root);
     }
 }

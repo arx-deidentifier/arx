@@ -104,6 +104,9 @@ public class ViewAttributeWeights implements IView {
      */
     @Override
     public void reset() {
+        if (root.isDisposed()) {
+            return;
+        }
         root.setRedraw(false);
         if (panel != null) {
             panel.dispose();

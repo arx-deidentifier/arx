@@ -100,17 +100,17 @@ public class ModelRiskBasedCriterion extends ModelImplicitCriterion{
         // TODO: Move to messages.properties
         switch (variant) {
         case VARIANT_AVERAGE_RISK:
-            return "(" + threshold + ")-avg-risk";
+            return "(" + threshold + ")-Average-Reidentification-Risk";
         case VARIANT_POPULATION_UNIQUES_DANKAR:
-            return "(" + threshold + ")-pupulation-uniques (Dankar)";
+            return "(" + threshold + ")-Population-Uniqueness (Dankar)";
         case VARIANT_POPULATION_UNIQUES_PITMAN:
-            return "(" + threshold + ")-pupulation-uniques (Pitman)";
+            return "(" + threshold + ")-Population-Uniqueness (Pitman)";
         case VARIANT_POPULATION_UNIQUES_SNB:
-            return "(" + threshold + ")-pupulation-uniques (SNB)";
+            return "(" + threshold + ")-Population-Uniqueness (SNB)";
         case VARIANT_POPULATION_UNIQUES_ZAYATZ:
-            return "(" + threshold + ")-pupulation-uniques (Zayatz)";
+            return "(" + threshold + ")-Population-Uniqueness (Zayatz)";
         case VARIANT_SAMPLE_UNIQUES:
-            return "(" + threshold + ")-sample-uniques";
+            return "(" + threshold + ")-Sample-Uniqueness";
         default:
             throw new RuntimeException("Internal error: invalid variant of risk-based criterion");
         }

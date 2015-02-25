@@ -60,9 +60,6 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.ATTRIBUTE_TYPE) {
@@ -71,9 +68,6 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         super.update(event);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
-     */
     @Override
     public void reset() {
         sliderK.setSelection(0);
@@ -81,15 +75,12 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         super.reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
-        group.setLayoutData(SWTUtil.createFillGridData());
+        group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 3;
         group.setLayout(groupInputGridLayout);
@@ -125,9 +116,6 @@ public class ViewCriterionKAnonymity extends ViewCriterion {
         return group;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
-     */
     @Override
     protected void parse() {
         ModelKAnonymityCriterion m = model.getKAnonymityModel();

@@ -88,9 +88,6 @@ public class ViewTransformationSettings implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.METRIC, this);
         this.controller.addListener(ModelPart.INPUT, this);
-        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
-        this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.root = build(parent);
     }
 
@@ -106,6 +103,7 @@ public class ViewTransformationSettings implements IView {
         sliderOutliers.setSelection(0);
         labelOutliers.setText("0"); //$NON-NLS-1
         buttonPracticalMonotonicity.setSelection(false);
+        SWTUtil.disable(root);
     }
 
     @Override
@@ -113,7 +111,7 @@ public class ViewTransformationSettings implements IView {
         if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             updateControls();            
-        } else if (event.part == ModelPart.INPUT) {
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.METRIC) {
             updateControls();
         } 
     }
@@ -251,12 +249,27 @@ public class ViewTransformationSettings implements IView {
      * This method updates the controls
      */
     private void updateControls(){
+        
+        // Disable
+        root.setRedraw(false);
+        
+        // Metric-related stuff
         double threshold = model.getMetricConfiguration().getPrecomputationThreshold();
+        boolean supported = model.getMetricDescription().isPrecomputationSupported();
         boolean precomputed = model.getMetricConfiguration().isPrecomputed();
         this.precomputedVariant.setSelection(precomputed);
+        this.precomputedVariant.setEnabled(supported);
         this.precomputationThreshold.setSelection(SWTUtil.doubleToSlider(0d, 1d, threshold));
-        this.precomputationThreshold.setEnabled(precomputed);
+        this.precomputationThreshold.setEnabled(supported);
         this.labelThreshold.setText(String.valueOf(threshold));
+        
+        // Other stuff
+        sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
+        labelOutliers.setText(String.valueOf(model.getInputConfig().getAllowedOutliers()));
+        buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
+        
+        // Enable
+        root.setRedraw(true);
         SWTUtil.enable(root);
     }
 }

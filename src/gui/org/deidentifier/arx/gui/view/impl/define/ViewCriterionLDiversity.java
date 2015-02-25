@@ -79,9 +79,6 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
-     */
     @Override
     public void reset() {
         sliderL.setSelection(0);
@@ -93,9 +90,6 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         super.reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
@@ -109,15 +103,12 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         super.update(event);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
-        group.setLayoutData(SWTUtil.createFillGridData());
+        group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 8;
         group.setLayout(groupInputGridLayout);
@@ -209,9 +200,6 @@ public class ViewCriterionLDiversity extends ViewCriterion {
         return group;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
-     */
     @Override
     protected void parse() {
         ModelLDiversityCriterion m = model.getLDiversityModel().get(attribute);

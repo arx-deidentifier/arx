@@ -32,17 +32,17 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class ViewCriterion implements IView {
 
-	/**  TODO */
-	protected static final int LABEL_WIDTH = 50;
+    /** TODO */
+    protected static final int LABEL_WIDTH = 50;
 
-	/**  TODO */
-	protected Controller controller;
-	
-	/**  TODO */
-	protected Model model;
-	
-	/**  TODO */
-	protected Composite root;
+    /** TODO */
+    protected Controller       controller;
+
+    /** TODO */
+    protected Model            model;
+
+    /** TODO */
+    protected Composite        root;
 
 	/**
      * Creates a new instance.
@@ -62,25 +62,16 @@ public abstract class ViewCriterion implements IView {
 		SWTUtil.disable(root);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-	 */
 	@Override
 	public void dispose() {
 		controller.removeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.view.def.IView#reset()
-	 */
 	@Override
 	public void reset() {
 		SWTUtil.disable(root);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-	 */
 	@Override
 	public void update(ModelEvent event) {
 		if (event.part == ModelPart.MODEL) {

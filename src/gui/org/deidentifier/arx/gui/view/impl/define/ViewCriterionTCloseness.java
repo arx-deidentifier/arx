@@ -42,8 +42,7 @@ import org.eclipse.swt.widgets.Scale;
 public class ViewCriterionTCloseness extends ViewCriterion {
 
     /**  TODO */
-    private static final String VARIANTS[] = {
-                                           Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
 
     /**  TODO */
     private Scale               sliderT;
@@ -73,9 +72,6 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#reset()
-     */
     @Override
     public void reset() {
         sliderT.setSelection(0);
@@ -84,9 +80,6 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         super.reset();
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
@@ -100,15 +93,12 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         super.update(event);
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#build(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Composite build(Composite parent) {
 
         // Create input group
         final Composite group = new Composite(parent, SWT.NONE);
-        group.setLayoutData(SWTUtil.createFillGridData());
+        group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
         groupInputGridLayout.numColumns = 5;
         group.setLayout(groupInputGridLayout);
@@ -167,9 +157,6 @@ public class ViewCriterionTCloseness extends ViewCriterion {
         return group;
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.impl.define.ViewCriterion#parse()
-     */
     @Override
     protected void parse() {
         ModelTClosenessCriterion m = model.getTClosenessModel().get(attribute);

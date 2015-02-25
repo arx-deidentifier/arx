@@ -235,6 +235,9 @@ public class ViewCodingModel implements IView {
      */
     @Override
     public void reset() {
+        if (root.isDisposed()) {
+            return;
+        }
         root.setRedraw(false);
         setSuppressionWeight(0.5d);
         root.setRedraw(true);

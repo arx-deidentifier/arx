@@ -19,38 +19,25 @@ package org.deidentifier.arx.gui.view.impl.define;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButton;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
+import org.deidentifier.arx.metric.MetricConfiguration;
+import org.deidentifier.arx.metric.MetricDescription;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
 
 /**
- * This view displays general settings regarding data transformation.
+ * This layout manages views for general settings regarding data transformation.
  *
  * @author Fabian Prasser
  */
-public class LayoutTransformationSettings implements ILayout {
-
-    /** Static settings. */
-    private static final int      LABEL_WIDTH  = 50;
-
-    /** Static settings. */
-    private static final int      LABEL_HEIGHT = 20;
+public class LayoutTransformationSettings implements ILayout, IView {
 
     /** Controller. */
     private final Controller      controller;
@@ -59,13 +46,16 @@ public class LayoutTransformationSettings implements ILayout {
     private Model                 model;
 
     /** View. */
-    private Composite             root;
-
-    /** View. */
     private ComponentTitledFolder folder;
 
     /** View. */
-    private ViewCriteriaList      clv;
+    private IView                 viewCodingModel;
+
+    /** View. */
+    private IView                 viewAttributeWeights;
+
+    /** View. */
+    private Composite             root;
 
     /**
      * Creates a new instance.
@@ -74,9 +64,15 @@ public class LayoutTransformationSettings implements ILayout {
      * @param controller
      */
     public LayoutTransformationSettings(final Composite parent,
-                               final Controller controller) {
+                                        final Controller controller) {
 
         this.controller = controller;
+        
+        controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.INPUT, this);
+        controller.addListener(ModelPart.METRIC, this);
+                
         this.root = build(parent);
     }
 
@@ -103,15 +99,111 @@ public class LayoutTransformationSettings implements ILayout {
         // Create metrics tab
         Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.66"), null);  //$NON-NLS-1$
         composite1.setLayout(new FillLayout());
-        new ViewMetric(composite1, controller, folder);
-        
-        // Create overview tab
-        Composite c = folder.createItem(Resources.getMessage("CriterionDefinitionView.62"), null);  //$NON-NLS-1$
-        c.setLayout(new FillLayout());
-        clv = new ViewCriteriaList(c, controller);
+        new ViewMetric(composite1, controller);
         
         // Select first and finish
         folder.setSelection(0);
         return group;
+    }
+
+    /**
+     * Hides the settings for the attribute weights.
+     */
+    private void hideSettingsAttributeWeights(){
+
+        if (this.viewAttributeWeights != null) {
+            this.viewAttributeWeights.dispose();
+            this.viewAttributeWeights = null;
+            folder.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
+        }
+    }
+    
+    /**
+     * Hides the settings for the coding model.
+     */
+    private void hideSettingsCodingModel(){
+        if (this.viewCodingModel != null) {
+            this.viewCodingModel.dispose();
+            this.viewCodingModel = null;
+            folder.disposeItem(Resources.getMessage("CriterionDefinitionView.65"));  //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Shows the settings for the attribute weights.
+     */
+    private void showSettingsAttributeWeights(){
+        if (this.viewAttributeWeights != null) return;
+        Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
+        composite1.setLayout(new FillLayout());
+        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
+        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
+    }
+  
+    /**
+     * Shows the settings for the coding model.
+     */
+    private void showSettingsCodingModel(){
+        if (this.viewCodingModel != null) return;
+        Composite composite2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
+        composite2.setLayout(new FillLayout());
+        this.viewCodingModel = new ViewCodingModel(composite2, controller);
+        this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
+    }
+
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
+
+    @Override
+    public void reset() {
+        hideSettingsAttributeWeights();
+        hideSettingsCodingModel();
+    }
+
+    @Override
+    public void update(ModelEvent event) {
+        
+        if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+            updateControls();
+        } 
+        
+        if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.INPUT ||
+            event.part == ModelPart.METRIC) {
+            updateControls();
+        }
+    }
+
+    /**
+     * This method updates the view
+     */
+    private void updateControls() {
+        
+        root.setRedraw(false);
+
+        MetricConfiguration config = model.getMetricConfiguration();
+        MetricDescription description = model.getMetricDescription();
+
+        if (config != null && description != null) {
+
+            if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
+                model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
+                !description.isAttributeWeightsSupported()) {
+                hideSettingsAttributeWeights();
+            } else {
+                showSettingsAttributeWeights();
+            }
+            
+            if (description.isConfigurableCodingModelSupported()) {
+                showSettingsCodingModel();
+            } else {
+                hideSettingsCodingModel();
+            }
+        }
+
+        root.setRedraw(true);        
     }
 }

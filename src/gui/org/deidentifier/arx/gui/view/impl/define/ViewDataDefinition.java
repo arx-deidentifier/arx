@@ -103,9 +103,6 @@ public class ViewDataDefinition implements IView {
         });
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
     @Override
     public void dispose() {
         controller.removeListener(this);
@@ -114,9 +111,6 @@ public class ViewDataDefinition implements IView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
     @Override
     public void reset() {
         folder.setRedraw(false);
@@ -149,9 +143,6 @@ public class ViewDataDefinition implements IView {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
-     */
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
