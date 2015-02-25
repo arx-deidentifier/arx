@@ -188,7 +188,7 @@ public class ViewRisksPopulationModel implements IView {
             public void modifyText(ModifyEvent arg0) {
                 double value;
                 try {
-                    value = Double.valueOf(text.getText());
+                    value = format.parse(text.getText()).doubleValue();
                 } catch (Exception e) {
                     value = -1;
                 }
@@ -222,7 +222,7 @@ public class ViewRisksPopulationModel implements IView {
             public void modifyText(ModifyEvent arg0) {
                 double value;
                 try {
-                    value = Double.valueOf(text2.getText());
+                    value = format.parse(text2.getText()).doubleValue();
                 } catch (Exception e) {
                     value = -1;
                 }
