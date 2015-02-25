@@ -306,7 +306,7 @@ public class ViewRisksClassDistributionPlot extends ViewRisks<AnalysisContextRis
 
             @Override
             public void onInterrupt() {
-                if (!isEnabled()) {
+                if (!isEnabled() || !isValid()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();

@@ -225,6 +225,18 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     }
     
     /**
+     * Is there still some data to show
+     * @return
+     */
+    protected boolean isValid() {
+        if (this.target == ModelPart.INPUT) {
+            return this.model != null && this.model.getInputConfig() != null && this.model.getInputConfig().getInput() != null;
+        } else {
+            return this.model != null && this.model.getOutput() != null;
+        }
+    }
+    
+    /**
      * 
      * Implement this to create the widget.
      *
@@ -234,7 +246,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     protected abstract Control createControl(Composite parent);
     
     /**
-     * 
+     * Creates a view config
      *
      * @param context
      * @return

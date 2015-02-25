@@ -245,7 +245,7 @@ public class ViewRisksAttributesTable extends ViewRisks<AnalysisContextRisk> {
 
             @Override
             public void onInterrupt() {
-                if (!isEnabled()) {
+                if (!isEnabled() || !isValid()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();
