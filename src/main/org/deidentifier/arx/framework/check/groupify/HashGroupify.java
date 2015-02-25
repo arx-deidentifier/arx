@@ -519,9 +519,10 @@ public class HashGroupify implements IHashGroupify {
         // Indirectly check if we enforce d-presence
         if (subset != null) {
             entry.pcount += pcount;
-            if (count > 0) {
-                // This is a tuple from the research subset: Reset its representative, necessary for rollup / history
-                // (otherwise subset.contains(tupleID) could potentially return false)
+            if (count > 0 && entry.count == 0) {
+                // This is a tuple from the research subset, but the class is not represented by a tuple from the subset.
+                // Reset its representative, which is necessary for rollup / history, because
+                // otherwise subset.contains(tupleID) could potentially return false
                 entry.representant = representant;
             }
         }
@@ -535,7 +536,14 @@ public class HashGroupify implements IHashGroupify {
         } else {
             currentOutliers += count;
         }
+        
+        // Make sure that we represent classes with the minimal representative index
+        // to ensure consistent suppression in different transformations for class-based criteria
+        if (subset == null || count > 0) {
+            entry.representant = entry.representant < representant ? entry.representant : representant;
+        }
 
+        // Return
         return entry;
     }
 
